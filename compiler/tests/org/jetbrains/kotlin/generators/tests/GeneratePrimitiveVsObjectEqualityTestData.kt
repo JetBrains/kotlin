@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tests
@@ -44,16 +33,20 @@ object GeneratePrimitiveVsObjectEqualityTestData {
         println("    return when {")
 
         generateFailureClauses(
-                *failuresForEqualAndUnequalLeft("nx", x, y),
-                *failuresForEqualAndUnequalLeft("nx", "x", "y"),
-                *failuresForUnequalLeft("nn", x),
-                *failuresForUnequalLeft("nn", "x"),
-                *failuresForEqualAndUnequalLeft("ax", x, y),
-                *failuresForEqualAndUnequalLeft("ax", "x", "y"),
-                *failuresForEqualAndUnequalLeft("ax", "bx", "by"),
-                *failuresForUnequalLeft("an", x),
-                *failuresForUnequalLeft("an", "x"),
-                *failuresForUnequalLeft("an", "bx")
+            *failuresForEqualAndUnequalLeft("nx", x, y),
+            *failuresForEqualAndUnequalLeft("nx", "x", "y"),
+            *failuresForUnequalLeft("nn", x),
+            *failuresForUnequalLeft("nn", "x"),
+            *failuresForEqualAndUnequalLeft("ax", x, y),
+            *failuresForEqualAndUnequalLeft("ax", "x", "y"),
+            *failuresForEqualAndUnequalLeft(
+                "ax",
+                "bx",
+                "by"
+            ),
+            *failuresForUnequalLeft("an", x),
+            *failuresForUnequalLeft("an", "x"),
+            *failuresForUnequalLeft("an", "bx")
         )
 
         println("        else -> \"OK\"")
@@ -62,18 +55,18 @@ object GeneratePrimitiveVsObjectEqualityTestData {
     }
 
     private fun failuresForEqualAndUnequalLeft(lhs: String, equalRhs: String, unequalRhs: String) =
-            arrayOf(
-                    "$lhs != $equalRhs",
-                    "$lhs == $unequalRhs",
-                    "!($lhs == $equalRhs)",
-                    "!($lhs != $unequalRhs)"
-            )
+        arrayOf(
+            "$lhs != $equalRhs",
+            "$lhs == $unequalRhs",
+            "!($lhs == $equalRhs)",
+            "!($lhs != $unequalRhs)"
+        )
 
     private fun failuresForUnequalLeft(lhs: String, unequalRhs: String) =
-            arrayOf(
-                    "$lhs == $unequalRhs",
-                    "!($lhs != $unequalRhs)"
-            )
+        arrayOf(
+            "$lhs == $unequalRhs",
+            "!($lhs != $unequalRhs)"
+        )
 
     private fun PrintWriter.generateLocalVals(type: String, x: String, y: String, boxedType: String = "$type?") {
         println("    val ax: $boxedType = $x")
@@ -114,16 +107,28 @@ object GeneratePrimitiveVsObjectEqualityTestData {
         println("    return when {")
 
         generateFailureClauses(
-                *failuresForEqualAndUnequalRight(x, y, "nx"),
-                *failuresForEqualAndUnequalRight("x", "y", "nx"),
-                *failuresForUnequalRight(x, "nn"),
-                *failuresForUnequalRight("x", "nn"),
-                *failuresForEqualAndUnequalRight(x, y, "ax"),
-                *failuresForEqualAndUnequalRight("x", "y", "ax"),
-                *failuresForEqualAndUnequalRight("bx", "by", "ax"),
-                *failuresForUnequalRight(x, "an"),
-                *failuresForUnequalRight("x", "an"),
-                *failuresForUnequalRight("bx", "an")
+            *failuresForEqualAndUnequalRight(x, y, "nx"),
+            *failuresForEqualAndUnequalRight(
+                "x",
+                "y",
+                "nx"
+            ),
+            *failuresForUnequalRight(x, "nn"),
+            *failuresForUnequalRight("x", "nn"),
+            *failuresForEqualAndUnequalRight(x, y, "ax"),
+            *failuresForEqualAndUnequalRight(
+                "x",
+                "y",
+                "ax"
+            ),
+            *failuresForEqualAndUnequalRight(
+                "bx",
+                "by",
+                "ax"
+            ),
+            *failuresForUnequalRight(x, "an"),
+            *failuresForUnequalRight("x", "an"),
+            *failuresForUnequalRight("bx", "an")
         )
 
         println("        else -> \"OK\"")
@@ -131,9 +136,8 @@ object GeneratePrimitiveVsObjectEqualityTestData {
         println("}")
     }
 
-    private fun generatePrimitiveVsObjectTest(type: String, x: String, y: String, header: String = "") {
+    private fun generatePrimitiveVsObjectTest(type: String, x: String, y: String) {
         PrintWriter(File(GENERATED_DIR, "primitiveEqObject$type.kt")).use {
-            if (header.isNotBlank()) it.println(header)
             it.generatePrimitiveVsObjectTestBody(type, x, y)
         }
     }
@@ -151,16 +155,28 @@ object GeneratePrimitiveVsObjectEqualityTestData {
         println("    return when {")
 
         generateFailureClauses(
-                *failuresForEqualAndUnequalRight(x, y, "nx"),
-                *failuresForEqualAndUnequalRight("x", "y", "nx"),
-                *failuresForUnequalRight(x, "nn"),
-                *failuresForUnequalRight("x", "nn"),
-                *failuresForEqualAndUnequalRight(x, y, "ax"),
-                *failuresForEqualAndUnequalRight("x", "y", "ax"),
-                *failuresForEqualAndUnequalRight("bx", "by", "ax"),
-                *failuresForUnequalRight(x, "an"),
-                *failuresForUnequalRight("x", "an"),
-                *failuresForUnequalRight("bx", "an")
+            *failuresForEqualAndUnequalRight(x, y, "nx"),
+            *failuresForEqualAndUnequalRight(
+                "x",
+                "y",
+                "nx"
+            ),
+            *failuresForUnequalRight(x, "nn"),
+            *failuresForUnequalRight("x", "nn"),
+            *failuresForEqualAndUnequalRight(x, y, "ax"),
+            *failuresForEqualAndUnequalRight(
+                "x",
+                "y",
+                "ax"
+            ),
+            *failuresForEqualAndUnequalRight(
+                "bx",
+                "by",
+                "ax"
+            ),
+            *failuresForUnequalRight(x, "an"),
+            *failuresForUnequalRight("x", "an"),
+            *failuresForUnequalRight("bx", "an")
         )
 
         println("        else -> \"OK\"")
@@ -169,18 +185,18 @@ object GeneratePrimitiveVsObjectEqualityTestData {
     }
 
     private fun failuresForEqualAndUnequalRight(equalLhs: String, unequalLhs: String, rhs: String) =
-            arrayOf(
-                    "$equalLhs != $rhs",
-                    "$unequalLhs == $rhs",
-                    "!($equalLhs == $rhs)",
-                    "!($unequalLhs != $rhs)"
-            )
+        arrayOf(
+            "$equalLhs != $rhs",
+            "$unequalLhs == $rhs",
+            "!($equalLhs == $rhs)",
+            "!($unequalLhs != $rhs)"
+        )
 
     private fun failuresForUnequalRight(unequalLhs: String, rhs: String) =
-            arrayOf(
-                    "$unequalLhs == $rhs",
-                    "!($unequalLhs != $rhs)"
-            )
+        arrayOf(
+            "$unequalLhs == $rhs",
+            "!($unequalLhs != $rhs)"
+        )
 
 
     @JvmStatic
@@ -190,24 +206,64 @@ object GeneratePrimitiveVsObjectEqualityTestData {
         FileUtil.delete(GENERATED_DIR)
         GENERATED_DIR.mkdirs()
 
-        generateBoxedVsPrimitiveTest("Boolean", "true", "false")
+        generateBoxedVsPrimitiveTest(
+            "Boolean",
+            "true",
+            "false"
+        )
         generateBoxedVsPrimitiveTest("Char", "'0'", "'1'")
-        generateBoxedVsPrimitiveTest("Byte", "0.toByte()", "1.toByte()")
-        generateBoxedVsPrimitiveTest("Short", "0.toShort()", "1.toShort()")
+        generateBoxedVsPrimitiveTest(
+            "Byte",
+            "0.toByte()",
+            "1.toByte()"
+        )
+        generateBoxedVsPrimitiveTest(
+            "Short",
+            "0.toShort()",
+            "1.toShort()"
+        )
         generateBoxedVsPrimitiveTest("Int", "0", "1")
         generateBoxedVsPrimitiveTest("Long", "0L", "1L")
 
-        generatePrimitiveVsBoxedTest("Boolean", "true", "false")
+        generatePrimitiveVsBoxedTest(
+            "Boolean",
+            "true",
+            "false"
+        )
         generatePrimitiveVsBoxedTest("Char", "'0'", "'1'")
-        generatePrimitiveVsBoxedTest("Byte", "0.toByte()", "1.toByte()")
-        generatePrimitiveVsBoxedTest("Short", "0.toShort()", "1.toShort()")
+        generatePrimitiveVsBoxedTest(
+            "Byte",
+            "0.toByte()",
+            "1.toByte()"
+        )
+        generatePrimitiveVsBoxedTest(
+            "Short",
+            "0.toShort()",
+            "1.toShort()"
+        )
         generatePrimitiveVsBoxedTest("Int", "0", "1")
         generatePrimitiveVsBoxedTest("Long", "0L", "1L")
 
-        generatePrimitiveVsObjectTest("Boolean", "true", "false")
-        generatePrimitiveVsObjectTest("Char", "'0'", "'1'", header = "// IGNORE_BACKEND: JS") // KT-19081
-        generatePrimitiveVsObjectTest("Byte", "0.toByte()", "1.toByte()")
-        generatePrimitiveVsObjectTest("Short", "0.toShort()", "1.toShort()")
+        generatePrimitiveVsObjectTest(
+            "Boolean",
+            "true",
+            "false"
+        )
+        generatePrimitiveVsObjectTest(
+            "Char",
+            "'0'",
+            "'1'"
+        ) // KT-19081
+        generatePrimitiveVsObjectTest(
+            "Byte",
+            "0.toByte()",
+            "1.toByte()"
+        )
+        generatePrimitiveVsObjectTest(
+            "Short",
+            "0.toShort()",
+            "1.toShort()"
+        )
         generatePrimitiveVsObjectTest("Int", "0", "1")
         generatePrimitiveVsObjectTest("Long", "0L", "1L")
     }
