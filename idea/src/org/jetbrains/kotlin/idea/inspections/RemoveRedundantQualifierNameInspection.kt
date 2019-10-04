@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.hasNotReceiver
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRowWithSelf
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -43,6 +40,13 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                     parent as KtExpression
                 else
                     expressionForAnalyze
+
+                val parentEnumEntry = expressionForAnalyze.getStrictParentOfType<KtEnumEntry>()
+                if (parentEnumEntry != null) {
+                    val companionObject = (expressionForAnalyze.receiverExpression.mainReference?.resolve() as? KtObjectDeclaration)
+                        ?.takeIf { it.isCompanion() }
+                    if (companionObject?.containingClass() == parentEnumEntry.getStrictParentOfType<KtClass>()) return
+                }
 
                 val context = originalExpression.analyze()
 
