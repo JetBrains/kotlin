@@ -12,6 +12,7 @@ import com.intellij.execution.remote.RemoteTargetsManager;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataKey;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
@@ -55,6 +56,8 @@ import java.awt.event.ActionListener;
 
 public final class SingleConfigurationConfigurable<Config extends RunConfiguration>
   extends BaseRCSettingsConfigurable {
+  public static final DataKey<String> RUN_ON_TARGET_NAME_KEY = DataKey.create("RunOnTargetName");
+
   private static final Logger LOG = Logger.getInstance(SingleConfigurationConfigurable.class);
 
   private final PlainDocument myNameDocument = new PlainDocument();
@@ -174,6 +177,9 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     DataManager.registerDataProvider(result, dataId -> {
       if (ConfigurationSettingsEditorWrapper.CONFIGURATION_EDITOR_KEY.is(dataId)) {
         return getEditor();
+      }
+      if (RUN_ON_TARGET_NAME_KEY.is(dataId)) {
+        return ((RunOnTargetComboBox)myComponent.myRunOnComboBox).getSelectedTargetName();
       }
       return null;
     });
