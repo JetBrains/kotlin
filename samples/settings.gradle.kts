@@ -31,6 +31,7 @@ if (isMacos || isLinux || isWindows) {
     include(":tetris")
     include(":videoplayer")
     include(":workers")
+    include(":coverage")
 }
 
 if (isMacos || isLinux) {
@@ -43,7 +44,6 @@ if (isMacos) {
     include(":objc")
     include(":opengl")
     include(":uikit")
-    include(":coverage")
     include(":watchos")
 }
 
