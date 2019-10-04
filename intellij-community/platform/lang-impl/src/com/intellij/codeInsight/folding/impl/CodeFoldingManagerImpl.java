@@ -3,6 +3,8 @@ package com.intellij.codeInsight.folding.impl;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.folding.CodeFoldingManager;
+import com.intellij.lang.folding.FoldingBuilder;
+import com.intellij.lang.folding.LanguageFolding;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -10,6 +12,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.FoldRegion;
 import com.intellij.openapi.editor.ex.FoldingModelEx;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.impl.text.CodeFoldingState;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -17,6 +24,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderEx;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.KeyedLazyInstance;
 import com.intellij.util.containers.WeakList;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +43,29 @@ public class CodeFoldingManagerImpl extends CodeFoldingManager implements Dispos
 
   public CodeFoldingManagerImpl(Project project) {
     myProject = project;
+
+    LanguageFolding.EP_NAME.addExtensionPointListener(
+      new ExtensionPointListener<KeyedLazyInstance<FoldingBuilder>>() {
+        @Override
+        public void extensionAdded(@NotNull KeyedLazyInstance<FoldingBuilder> extension, @NotNull PluginDescriptor pluginDescriptor) {
+          // Asynchronously remove foldings when extension is added
+          for (FileEditor fileEditor : FileEditorManager.getInstance(project).getAllEditors()) {
+            if (fileEditor instanceof TextEditor) {
+              scheduleAsyncFoldingUpdate(((TextEditor) fileEditor).getEditor());
+            }
+          }
+        }
+
+        @Override
+        public void extensionRemoved(@NotNull KeyedLazyInstance<FoldingBuilder> extension, @NotNull PluginDescriptor pluginDescriptor) {
+          // Synchronously remove foldings when extension is removed
+          for (FileEditor fileEditor : FileEditorManager.getInstance(project).getAllEditors()) {
+            if (fileEditor instanceof TextEditor) {
+              updateFoldRegions(((TextEditor)fileEditor).getEditor());
+            }
+          }
+        }
+      }, myProject);
   }
 
   @Override
