@@ -26,7 +26,6 @@ public final class KlibMetadataProtoBuf {
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.enumEntryOrdinal);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.enumEntryUniqId);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.parameterAnnotation);
-    registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.valueParamUniqId);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeParameterAnnotation);
     registry.add(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.typeParamUniqId);
@@ -152,6 +151,20 @@ public final class KlibMetadataProtoBuf {
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getEmptyPackageBytes(int index);
+
+    /**
+     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> 
+        getFileList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+     */
+    org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File getFile(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+     */
+    int getFileCount();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.library.metadata.Header}
@@ -266,6 +279,14 @@ public final class KlibMetadataProtoBuf {
               emptyPackage_.add(bs);
               break;
             }
+            case 74: {
+              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+                file_ = new java.util.ArrayList<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File>();
+                mutable_bitField0_ |= 0x00000080;
+              }
+              file_.add(input.readMessage(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File.PARSER, extensionRegistry));
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -282,6 +303,9 @@ public final class KlibMetadataProtoBuf {
         }
         if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
           emptyPackage_ = emptyPackage_.getUnmodifiableView();
+        }
+        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+          file_ = java.util.Collections.unmodifiableList(file_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -517,6 +541,41 @@ public final class KlibMetadataProtoBuf {
       return emptyPackage_.getByteString(index);
     }
 
+    public static final int FILE_FIELD_NUMBER = 9;
+    private java.util.List<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> file_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> getFileList() {
+      return file_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.FileOrBuilder> 
+        getFileOrBuilderList() {
+      return file_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+     */
+    public int getFileCount() {
+      return file_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+     */
+    public org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File getFile(int index) {
+      return file_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+     */
+    public org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.FileOrBuilder getFileOrBuilder(
+        int index) {
+      return file_.get(index);
+    }
+
     private void initFields() {
       moduleName_ = "";
       flags_ = 0;
@@ -525,6 +584,7 @@ public final class KlibMetadataProtoBuf {
       annotation_ = java.util.Collections.emptyList();
       packageFragmentName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      file_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -544,6 +604,12 @@ public final class KlibMetadataProtoBuf {
       }
       for (int i = 0; i < getAnnotationCount(); i++) {
         if (!getAnnotation(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getFileCount(); i++) {
+        if (!getFile(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -575,6 +641,9 @@ public final class KlibMetadataProtoBuf {
       }
       for (int i = 0; i < emptyPackage_.size(); i++) {
         output.writeBytes(8, emptyPackage_.getByteString(i));
+      }
+      for (int i = 0; i < file_.size(); i++) {
+        output.writeMessage(9, file_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -622,6 +691,10 @@ public final class KlibMetadataProtoBuf {
         }
         size += dataSize;
         size += 1 * getEmptyPackageList().size();
+      }
+      for (int i = 0; i < file_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(9, file_.get(i));
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -731,6 +804,8 @@ public final class KlibMetadataProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000020);
         emptyPackage_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000040);
+        file_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
         return this;
       }
 
@@ -785,6 +860,11 @@ public final class KlibMetadataProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000040);
         }
         result.emptyPackage_ = emptyPackage_;
+        if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          file_ = java.util.Collections.unmodifiableList(file_);
+          bitField0_ = (bitField0_ & ~0x00000080);
+        }
+        result.file_ = file_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -835,6 +915,16 @@ public final class KlibMetadataProtoBuf {
           }
           
         }
+        if (!other.file_.isEmpty()) {
+          if (file_.isEmpty()) {
+            file_ = other.file_;
+            bitField0_ = (bitField0_ & ~0x00000080);
+          } else {
+            ensureFileIsMutable();
+            file_.addAll(other.file_);
+          }
+          
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
@@ -853,6 +943,12 @@ public final class KlibMetadataProtoBuf {
         }
         for (int i = 0; i < getAnnotationCount(); i++) {
           if (!getAnnotation(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getFileCount(); i++) {
+          if (!getFile(i).isInitialized()) {
             
             return false;
           }
@@ -1482,6 +1578,131 @@ public final class KlibMetadataProtoBuf {
         return this;
       }
 
+      private java.util.List<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> file_ =
+        java.util.Collections.emptyList();
+      private void ensureFileIsMutable() {
+        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+          file_ = new java.util.ArrayList<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File>(file_);
+          bitField0_ |= 0x00000080;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> getFileList() {
+        return java.util.Collections.unmodifiableList(file_);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public int getFileCount() {
+        return file_.size();
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File getFile(int index) {
+        return file_.get(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public Builder setFile(
+          int index, org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFileIsMutable();
+        file_.set(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public Builder setFile(
+          int index, org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File.Builder builderForValue) {
+        ensureFileIsMutable();
+        file_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public Builder addFile(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFileIsMutable();
+        file_.add(value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public Builder addFile(
+          int index, org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureFileIsMutable();
+        file_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public Builder addFile(
+          org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File.Builder builderForValue) {
+        ensureFileIsMutable();
+        file_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public Builder addFile(
+          int index, org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File.Builder builderForValue) {
+        ensureFileIsMutable();
+        file_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public Builder addAllFile(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> values) {
+        ensureFileIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, file_);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public Builder clearFile() {
+        file_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000080);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 9;</code>
+       */
+      public Builder removeFile(int index) {
+        ensureFileIsMutable();
+        file_.remove(index);
+
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.library.metadata.Header)
     }
 
@@ -1498,49 +1719,18 @@ public final class KlibMetadataProtoBuf {
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
     /**
-     * <code>optional int32 id = 1;</code>
-     *
-     * <pre>
-     * If absent, id is the index of the file in the Files.file list
-     * </pre>
-     */
-    boolean hasId();
-    /**
-     * <code>optional int32 id = 1;</code>
-     *
-     * <pre>
-     * If absent, id is the index of the file in the Files.file list
-     * </pre>
-     */
-    int getId();
-
-    /**
-     * <code>required string name = 2;</code>
+     * <code>required string name = 1;</code>
      */
     boolean hasName();
     /**
-     * <code>required string name = 2;</code>
+     * <code>required string name = 1;</code>
      */
     java.lang.String getName();
     /**
-     * <code>required string name = 2;</code>
+     * <code>required string name = 1;</code>
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getNameBytes();
-
-    /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-     */
-    java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> 
-        getAnnotationList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-     */
-    org.jetbrains.kotlin.metadata.ProtoBuf.Annotation getAnnotation(int index);
-    /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-     */
-    int getAnnotationCount();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.library.metadata.File}
@@ -1592,23 +1782,10 @@ public final class KlibMetadataProtoBuf {
               }
               break;
             }
-            case 8: {
-              bitField0_ |= 0x00000001;
-              id_ = input.readInt32();
-              break;
-            }
-            case 18: {
+            case 10: {
               org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
-              bitField0_ |= 0x00000002;
+              bitField0_ |= 0x00000001;
               name_ = bs;
-              break;
-            }
-            case 26: {
-              if (!((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-                annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>();
-                mutable_bitField0_ |= 0x00000004;
-              }
-              annotation_.add(input.readMessage(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.PARSER, extensionRegistry));
               break;
             }
           }
@@ -1619,9 +1796,6 @@ public final class KlibMetadataProtoBuf {
         throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000004) == 0x00000004)) {
-          annotation_ = java.util.Collections.unmodifiableList(annotation_);
-        }
         try {
           unknownFieldsCodedOutput.flush();
         } catch (java.io.IOException e) {
@@ -1648,39 +1822,16 @@ public final class KlibMetadataProtoBuf {
     }
 
     private int bitField0_;
-    public static final int ID_FIELD_NUMBER = 1;
-    private int id_;
+    public static final int NAME_FIELD_NUMBER = 1;
+    private java.lang.Object name_;
     /**
-     * <code>optional int32 id = 1;</code>
-     *
-     * <pre>
-     * If absent, id is the index of the file in the Files.file list
-     * </pre>
+     * <code>required string name = 1;</code>
      */
-    public boolean hasId() {
+    public boolean hasName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>optional int32 id = 1;</code>
-     *
-     * <pre>
-     * If absent, id is the index of the file in the Files.file list
-     * </pre>
-     */
-    public int getId() {
-      return id_;
-    }
-
-    public static final int NAME_FIELD_NUMBER = 2;
-    private java.lang.Object name_;
-    /**
-     * <code>required string name = 2;</code>
-     */
-    public boolean hasName() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    /**
-     * <code>required string name = 2;</code>
+     * <code>required string name = 1;</code>
      */
     public java.lang.String getName() {
       java.lang.Object ref = name_;
@@ -1697,7 +1848,7 @@ public final class KlibMetadataProtoBuf {
       }
     }
     /**
-     * <code>required string name = 2;</code>
+     * <code>required string name = 1;</code>
      */
     public org.jetbrains.kotlin.protobuf.ByteString
         getNameBytes() {
@@ -1713,45 +1864,8 @@ public final class KlibMetadataProtoBuf {
       }
     }
 
-    public static final int ANNOTATION_FIELD_NUMBER = 3;
-    private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> annotation_;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-     */
-    public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> getAnnotationList() {
-      return annotation_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-     */
-    public java.util.List<? extends org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder> 
-        getAnnotationOrBuilderList() {
-      return annotation_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-     */
-    public int getAnnotationCount() {
-      return annotation_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-     */
-    public org.jetbrains.kotlin.metadata.ProtoBuf.Annotation getAnnotation(int index) {
-      return annotation_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-     */
-    public org.jetbrains.kotlin.metadata.ProtoBuf.AnnotationOrBuilder getAnnotationOrBuilder(
-        int index) {
-      return annotation_.get(index);
-    }
-
     private void initFields() {
-      id_ = 0;
       name_ = "";
-      annotation_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1763,12 +1877,6 @@ public final class KlibMetadataProtoBuf {
         memoizedIsInitialized = 0;
         return false;
       }
-      for (int i = 0; i < getAnnotationCount(); i++) {
-        if (!getAnnotation(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
       memoizedIsInitialized = 1;
       return true;
     }
@@ -1777,13 +1885,7 @@ public final class KlibMetadataProtoBuf {
                         throws java.io.IOException {
       getSerializedSize();
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeInt32(1, id_);
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getNameBytes());
-      }
-      for (int i = 0; i < annotation_.size(); i++) {
-        output.writeMessage(3, annotation_.get(i));
+        output.writeBytes(1, getNameBytes());
       }
       output.writeRawBytes(unknownFields);
     }
@@ -1796,15 +1898,7 @@ public final class KlibMetadataProtoBuf {
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeInt32Size(1, id_);
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeBytesSize(2, getNameBytes());
-      }
-      for (int i = 0; i < annotation_.size(); i++) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(3, annotation_.get(i));
+          .computeBytesSize(1, getNameBytes());
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -1900,12 +1994,8 @@ public final class KlibMetadataProtoBuf {
 
       public Builder clear() {
         super.clear();
-        id_ = 0;
-        bitField0_ = (bitField0_ & ~0x00000001);
         name_ = "";
-        bitField0_ = (bitField0_ & ~0x00000002);
-        annotation_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
+        bitField0_ = (bitField0_ & ~0x00000001);
         return this;
       }
 
@@ -1932,38 +2022,16 @@ public final class KlibMetadataProtoBuf {
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
           to_bitField0_ |= 0x00000001;
         }
-        result.id_ = id_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
         result.name_ = name_;
-        if (((bitField0_ & 0x00000004) == 0x00000004)) {
-          annotation_ = java.util.Collections.unmodifiableList(annotation_);
-          bitField0_ = (bitField0_ & ~0x00000004);
-        }
-        result.annotation_ = annotation_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
 
       public Builder mergeFrom(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File other) {
         if (other == org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File.getDefaultInstance()) return this;
-        if (other.hasId()) {
-          setId(other.getId());
-        }
         if (other.hasName()) {
-          bitField0_ |= 0x00000002;
+          bitField0_ |= 0x00000001;
           name_ = other.name_;
-          
-        }
-        if (!other.annotation_.isEmpty()) {
-          if (annotation_.isEmpty()) {
-            annotation_ = other.annotation_;
-            bitField0_ = (bitField0_ & ~0x00000004);
-          } else {
-            ensureAnnotationIsMutable();
-            annotation_.addAll(other.annotation_);
-          }
           
         }
         setUnknownFields(
@@ -1975,12 +2043,6 @@ public final class KlibMetadataProtoBuf {
         if (!hasName()) {
           
           return false;
-        }
-        for (int i = 0; i < getAnnotationCount(); i++) {
-          if (!getAnnotation(i).isInitialized()) {
-            
-            return false;
-          }
         }
         return true;
       }
@@ -2004,63 +2066,15 @@ public final class KlibMetadataProtoBuf {
       }
       private int bitField0_;
 
-      private int id_ ;
+      private java.lang.Object name_ = "";
       /**
-       * <code>optional int32 id = 1;</code>
-       *
-       * <pre>
-       * If absent, id is the index of the file in the Files.file list
-       * </pre>
+       * <code>required string name = 1;</code>
        */
-      public boolean hasId() {
+      public boolean hasName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
-       * <code>optional int32 id = 1;</code>
-       *
-       * <pre>
-       * If absent, id is the index of the file in the Files.file list
-       * </pre>
-       */
-      public int getId() {
-        return id_;
-      }
-      /**
-       * <code>optional int32 id = 1;</code>
-       *
-       * <pre>
-       * If absent, id is the index of the file in the Files.file list
-       * </pre>
-       */
-      public Builder setId(int value) {
-        bitField0_ |= 0x00000001;
-        id_ = value;
-        
-        return this;
-      }
-      /**
-       * <code>optional int32 id = 1;</code>
-       *
-       * <pre>
-       * If absent, id is the index of the file in the Files.file list
-       * </pre>
-       */
-      public Builder clearId() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        id_ = 0;
-        
-        return this;
-      }
-
-      private java.lang.Object name_ = "";
-      /**
-       * <code>required string name = 2;</code>
-       */
-      public boolean hasName() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      /**
-       * <code>required string name = 2;</code>
+       * <code>required string name = 1;</code>
        */
       public java.lang.String getName() {
         java.lang.Object ref = name_;
@@ -2077,7 +2091,7 @@ public final class KlibMetadataProtoBuf {
         }
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required string name = 1;</code>
        */
       public org.jetbrains.kotlin.protobuf.ByteString
           getNameBytes() {
@@ -2093,163 +2107,38 @@ public final class KlibMetadataProtoBuf {
         }
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required string name = 1;</code>
        */
       public Builder setName(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  bitField0_ |= 0x00000001;
         name_ = value;
         
         return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required string name = 1;</code>
        */
       public Builder clearName() {
-        bitField0_ = (bitField0_ & ~0x00000002);
+        bitField0_ = (bitField0_ & ~0x00000001);
         name_ = getDefaultInstance().getName();
         
         return this;
       }
       /**
-       * <code>required string name = 2;</code>
+       * <code>required string name = 1;</code>
        */
       public Builder setNameBytes(
           org.jetbrains.kotlin.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
-  bitField0_ |= 0x00000002;
+  bitField0_ |= 0x00000001;
         name_ = value;
         
-        return this;
-      }
-
-      private java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> annotation_ =
-        java.util.Collections.emptyList();
-      private void ensureAnnotationIsMutable() {
-        if (!((bitField0_ & 0x00000004) == 0x00000004)) {
-          annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation>(annotation_);
-          bitField0_ |= 0x00000004;
-         }
-      }
-
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> getAnnotationList() {
-        return java.util.Collections.unmodifiableList(annotation_);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public int getAnnotationCount() {
-        return annotation_.size();
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public org.jetbrains.kotlin.metadata.ProtoBuf.Annotation getAnnotation(int index) {
-        return annotation_.get(index);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public Builder setAnnotation(
-          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureAnnotationIsMutable();
-        annotation_.set(index, value);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public Builder setAnnotation(
-          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder builderForValue) {
-        ensureAnnotationIsMutable();
-        annotation_.set(index, builderForValue.build());
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public Builder addAnnotation(org.jetbrains.kotlin.metadata.ProtoBuf.Annotation value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureAnnotationIsMutable();
-        annotation_.add(value);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public Builder addAnnotation(
-          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureAnnotationIsMutable();
-        annotation_.add(index, value);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public Builder addAnnotation(
-          org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder builderForValue) {
-        ensureAnnotationIsMutable();
-        annotation_.add(builderForValue.build());
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public Builder addAnnotation(
-          int index, org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Builder builderForValue) {
-        ensureAnnotationIsMutable();
-        annotation_.add(index, builderForValue.build());
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public Builder addAllAnnotation(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.ProtoBuf.Annotation> values) {
-        ensureAnnotationIsMutable();
-        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-            values, annotation_);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public Builder clearAnnotation() {
-        annotation_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000004);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.metadata.Annotation annotation = 3;</code>
-       */
-      public Builder removeAnnotation(int index) {
-        ensureAnnotationIsMutable();
-        annotation_.remove(index);
-
         return this;
       }
 
@@ -2262,499 +2151,6 @@ public final class KlibMetadataProtoBuf {
     }
 
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.library.metadata.File)
-  }
-
-  public interface FilesOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.library.metadata.Files)
-      org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
-
-    /**
-     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-     */
-    java.util.List<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> 
-        getFileList();
-    /**
-     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-     */
-    org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File getFile(int index);
-    /**
-     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-     */
-    int getFileCount();
-  }
-  /**
-   * Protobuf type {@code org.jetbrains.kotlin.library.metadata.Files}
-   */
-  public static final class Files extends
-      org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-      // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.library.metadata.Files)
-      FilesOrBuilder {
-    // Use Files.newBuilder() to construct.
-    private Files(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
-      super(builder);
-      this.unknownFields = builder.getUnknownFields();
-    }
-    private Files(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
-
-    private static final Files defaultInstance;
-    public static Files getDefaultInstance() {
-      return defaultInstance;
-    }
-
-    public Files getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-
-    private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-    private Files(
-        org.jetbrains.kotlin.protobuf.CodedInputStream input,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      initFields();
-      int mutable_bitField0_ = 0;
-      org.jetbrains.kotlin.protobuf.ByteString.Output unknownFieldsOutput =
-          org.jetbrains.kotlin.protobuf.ByteString.newOutput();
-      org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
-          org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-              unknownFieldsOutput);
-      try {
-        boolean done = false;
-        while (!done) {
-          int tag = input.readTag();
-          switch (tag) {
-            case 0:
-              done = true;
-              break;
-            default: {
-              if (!parseUnknownField(input, unknownFieldsCodedOutput,
-                                     extensionRegistry, tag)) {
-                done = true;
-              }
-              break;
-            }
-            case 10: {
-              if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-                file_ = new java.util.ArrayList<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File>();
-                mutable_bitField0_ |= 0x00000001;
-              }
-              file_.add(input.readMessage(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File.PARSER, extensionRegistry));
-              break;
-            }
-          }
-        }
-      } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-        throw e.setUnfinishedMessage(this);
-      } catch (java.io.IOException e) {
-        throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
-            e.getMessage()).setUnfinishedMessage(this);
-      } finally {
-        if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-          file_ = java.util.Collections.unmodifiableList(file_);
-        }
-        try {
-          unknownFieldsCodedOutput.flush();
-        } catch (java.io.IOException e) {
-        // Should not happen
-        } finally {
-          unknownFields = unknownFieldsOutput.toByteString();
-        }
-        makeExtensionsImmutable();
-      }
-    }
-    public static org.jetbrains.kotlin.protobuf.Parser<Files> PARSER =
-        new org.jetbrains.kotlin.protobuf.AbstractParser<Files>() {
-      public Files parsePartialFrom(
-          org.jetbrains.kotlin.protobuf.CodedInputStream input,
-          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-        return new Files(input, extensionRegistry);
-      }
-    };
-
-    @java.lang.Override
-    public org.jetbrains.kotlin.protobuf.Parser<Files> getParserForType() {
-      return PARSER;
-    }
-
-    public static final int FILE_FIELD_NUMBER = 1;
-    private java.util.List<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> file_;
-    /**
-     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-     */
-    public java.util.List<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> getFileList() {
-      return file_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-     */
-    public java.util.List<? extends org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.FileOrBuilder> 
-        getFileOrBuilderList() {
-      return file_;
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-     */
-    public int getFileCount() {
-      return file_.size();
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-     */
-    public org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File getFile(int index) {
-      return file_.get(index);
-    }
-    /**
-     * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-     */
-    public org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.FileOrBuilder getFileOrBuilder(
-        int index) {
-      return file_.get(index);
-    }
-
-    private void initFields() {
-      file_ = java.util.Collections.emptyList();
-    }
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized == 1) return true;
-      if (isInitialized == 0) return false;
-
-      for (int i = 0; i < getFileCount(); i++) {
-        if (!getFile(i).isInitialized()) {
-          memoizedIsInitialized = 0;
-          return false;
-        }
-      }
-      memoizedIsInitialized = 1;
-      return true;
-    }
-
-    public void writeTo(org.jetbrains.kotlin.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      getSerializedSize();
-      for (int i = 0; i < file_.size(); i++) {
-        output.writeMessage(1, file_.get(i));
-      }
-      output.writeRawBytes(unknownFields);
-    }
-
-    private int memoizedSerializedSize = -1;
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
-
-      size = 0;
-      for (int i = 0; i < file_.size(); i++) {
-        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-          .computeMessageSize(1, file_.get(i));
-      }
-      size += unknownFields.size();
-      memoizedSerializedSize = size;
-      return size;
-    }
-
-    private static final long serialVersionUID = 0L;
-    @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
-    }
-
-    public static org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parseFrom(
-        org.jetbrains.kotlin.protobuf.ByteString data)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parseFrom(
-        org.jetbrains.kotlin.protobuf.ByteString data,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parseFrom(byte[] data)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data);
-    }
-    public static org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parseFrom(
-        byte[] data,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return PARSER.parseFrom(data, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parseFrom(
-        java.io.InputStream input,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input);
-    }
-    public static org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parseDelimitedFrom(
-        java.io.InputStream input,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseDelimitedFrom(input, extensionRegistry);
-    }
-    public static org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parseFrom(
-        org.jetbrains.kotlin.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input);
-    }
-    public static org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parseFrom(
-        org.jetbrains.kotlin.protobuf.CodedInputStream input,
-        org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return PARSER.parseFrom(input, extensionRegistry);
-    }
-
-    public static Builder newBuilder() { return Builder.create(); }
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files prototype) {
-      return newBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() { return newBuilder(this); }
-
-    /**
-     * Protobuf type {@code org.jetbrains.kotlin.library.metadata.Files}
-     */
-    public static final class Builder extends
-        org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-          org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files, Builder>
-        implements
-        // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.library.metadata.Files)
-        org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.FilesOrBuilder {
-      // Construct using org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-
-      private void maybeForceBuilderInitialization() {
-      }
-      private static Builder create() {
-        return new Builder();
-      }
-
-      public Builder clear() {
-        super.clear();
-        file_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
-        return this;
-      }
-
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
-      }
-
-      public org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files getDefaultInstanceForType() {
-        return org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files.getDefaultInstance();
-      }
-
-      public org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files build() {
-        org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-
-      public org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files buildPartial() {
-        org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files result = new org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files(this);
-        int from_bitField0_ = bitField0_;
-        if (((bitField0_ & 0x00000001) == 0x00000001)) {
-          file_ = java.util.Collections.unmodifiableList(file_);
-          bitField0_ = (bitField0_ & ~0x00000001);
-        }
-        result.file_ = file_;
-        return result;
-      }
-
-      public Builder mergeFrom(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files other) {
-        if (other == org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files.getDefaultInstance()) return this;
-        if (!other.file_.isEmpty()) {
-          if (file_.isEmpty()) {
-            file_ = other.file_;
-            bitField0_ = (bitField0_ & ~0x00000001);
-          } else {
-            ensureFileIsMutable();
-            file_.addAll(other.file_);
-          }
-          
-        }
-        setUnknownFields(
-            getUnknownFields().concat(other.unknownFields));
-        return this;
-      }
-
-      public final boolean isInitialized() {
-        for (int i = 0; i < getFileCount(); i++) {
-          if (!getFile(i).isInitialized()) {
-            
-            return false;
-          }
-        }
-        return true;
-      }
-
-      public Builder mergeFrom(
-          org.jetbrains.kotlin.protobuf.CodedInputStream input,
-          org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files parsedMessage = null;
-        try {
-          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
-        } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files) e.getUnfinishedMessage();
-          throw e;
-        } finally {
-          if (parsedMessage != null) {
-            mergeFrom(parsedMessage);
-          }
-        }
-        return this;
-      }
-      private int bitField0_;
-
-      private java.util.List<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> file_ =
-        java.util.Collections.emptyList();
-      private void ensureFileIsMutable() {
-        if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-          file_ = new java.util.ArrayList<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File>(file_);
-          bitField0_ |= 0x00000001;
-         }
-      }
-
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public java.util.List<org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> getFileList() {
-        return java.util.Collections.unmodifiableList(file_);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public int getFileCount() {
-        return file_.size();
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File getFile(int index) {
-        return file_.get(index);
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public Builder setFile(
-          int index, org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureFileIsMutable();
-        file_.set(index, value);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public Builder setFile(
-          int index, org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File.Builder builderForValue) {
-        ensureFileIsMutable();
-        file_.set(index, builderForValue.build());
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public Builder addFile(org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureFileIsMutable();
-        file_.add(value);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public Builder addFile(
-          int index, org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        ensureFileIsMutable();
-        file_.add(index, value);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public Builder addFile(
-          org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File.Builder builderForValue) {
-        ensureFileIsMutable();
-        file_.add(builderForValue.build());
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public Builder addFile(
-          int index, org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File.Builder builderForValue) {
-        ensureFileIsMutable();
-        file_.add(index, builderForValue.build());
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public Builder addAllFile(
-          java.lang.Iterable<? extends org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.File> values) {
-        ensureFileIsMutable();
-        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
-            values, file_);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public Builder clearFile() {
-        file_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000001);
-
-        return this;
-      }
-      /**
-       * <code>repeated .org.jetbrains.kotlin.library.metadata.File file = 1;</code>
-       */
-      public Builder removeFile(int index) {
-        ensureFileIsMutable();
-        file_.remove(index);
-
-        return this;
-      }
-
-      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.library.metadata.Files)
-    }
-
-    static {
-      defaultInstance = new Files(true);
-      defaultInstance.initFields();
-    }
-
-    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.library.metadata.Files)
   }
 
   public interface DescriptorUniqIdOrBuilder extends
@@ -3421,22 +2817,6 @@ public final class KlibMetadataProtoBuf {
         org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
         false,
         org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.class);
-  public static final int VALUE_PARAM_UNIQ_ID_FIELD_NUMBER = 171;
-  /**
-   * <code>extend .org.jetbrains.kotlin.metadata.ValueParameter { ... }</code>
-   */
-  public static final
-    org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter,
-      org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.DescriptorUniqId> valueParamUniqId = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.metadata.ProtoBuf.ValueParameter.getDefaultInstance(),
-        org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.DescriptorUniqId.getDefaultInstance(),
-        org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.DescriptorUniqId.getDefaultInstance(),
-        null,
-        171,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.DescriptorUniqId.class);
   public static final int TYPE_ANNOTATION_FIELD_NUMBER = 170;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.Type { ... }</code>
@@ -3492,15 +2872,15 @@ public final class KlibMetadataProtoBuf {
   public static final
     org.jetbrains.kotlin.protobuf.GeneratedMessageLite.GeneratedExtension<
       org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment,
-      org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files> packageFragmentFiles = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
+      java.util.List<java.lang.Integer>> packageFragmentFiles = org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
         org.jetbrains.kotlin.metadata.ProtoBuf.PackageFragment.getDefaultInstance(),
-        org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files.getDefaultInstance(),
-        org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files.getDefaultInstance(),
+        null,
         null,
         170,
-        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.MESSAGE,
-        org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf.Files.class);
+        org.jetbrains.kotlin.protobuf.WireFormat.FieldType.INT32,
+        false,
+        java.lang.Integer.class);
   public static final int IS_EMPTY_FIELD_NUMBER = 172;
   /**
    * <code>extend .org.jetbrains.kotlin.metadata.PackageFragment { ... }</code>

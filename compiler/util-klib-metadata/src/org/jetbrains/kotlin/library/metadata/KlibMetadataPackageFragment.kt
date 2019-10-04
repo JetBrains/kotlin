@@ -19,6 +19,16 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.StorageManager
 
+private val KotlinLibrary.fileSources: KlibMetadataFileRegistry get() {
+        val result = KlibMetadataFileRegistry()
+        val proto = parseModuleHeader(moduleHeaderData)
+        proto.fileList.forEachIndexed { index, it ->
+                result.provide(it.name, index, this)
+            }
+        return result
+}
+
+
 class KlibMetadataPackageFragment(
     fqName: FqName,
     private val library: KotlinLibrary,
@@ -27,6 +37,10 @@ class KlibMetadataPackageFragment(
     module: ModuleDescriptor,
     private val partName: String
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
+
+    val fileRegistry: KlibMetadataFileRegistry by lazy {
+            library.fileSources
+    }
 
     lateinit var components: DeserializationComponents
 
