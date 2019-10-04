@@ -190,6 +190,7 @@ class JavaClassEnhancementScope(
                         firMethod.visibility,
                         isExpect = false,
                         isActual = false,
+                        isInner = firMethod.isInner,
                         delegatedSelfTypeRef = newReturnTypeRef,
                         delegatedConstructor = null
                     )

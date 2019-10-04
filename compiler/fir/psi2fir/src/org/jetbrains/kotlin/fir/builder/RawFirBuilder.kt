@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -386,6 +387,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 this?.visibility ?: defaultVisibility(),
                 this?.hasExpectModifier() ?: false,
                 this?.hasActualModifier() ?: false,
+                owner.hasModifier(INNER_KEYWORD),
                 delegatedSelfTypeRef,
                 firDelegatedCall
             )
@@ -644,6 +646,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 visibility,
                 hasExpectModifier(),
                 hasActualModifier(),
+                owner.hasModifier(INNER_KEYWORD),
                 delegatedSelfTypeRef,
                 getDelegationCall().convert(delegatedSuperTypeRef, delegatedSelfTypeRef, hasPrimaryConstructor)
             )

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl.Companion.N
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -29,6 +28,7 @@ class FirJavaConstructor(
     override val symbol: FirConstructorSymbol,
     visibility: Visibility,
     override val isPrimary: Boolean,
+    override val isInner: Boolean,
     delegatedSelfTypeRef: FirTypeRef
 ) : FirAbstractCallableMember<FirConstructor>(
     session,

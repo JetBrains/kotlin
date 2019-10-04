@@ -589,6 +589,7 @@ class DeclarationsConverter(
                 if (primaryConstructor != null) modifiers.getVisibility() else defaultVisibility,
                 modifiers.hasExpect(),
                 modifiers.hasActual(),
+                classWrapper.isInner(),
                 classWrapper.delegatedSelfTypeRef,
                 firDelegatedCall
             ).apply {
@@ -647,6 +648,7 @@ class DeclarationsConverter(
             modifiers.getVisibility(),
             modifiers.hasExpect(),
             modifiers.hasActual(),
+            classWrapper.isInner(),
             delegatedSelfTypeRef,
             constructorDelegationCall
         )

@@ -229,7 +229,8 @@ class JavaSymbolProvider(
                         val firJavaConstructor = FirJavaConstructor(
                             this@JavaSymbolProvider.session, psi,
                             constructorSymbol, visibility, isPrimary,
-                            FirResolvedTypeRefImpl(
+                            isInner = !javaClass.isStatic,
+                            delegatedSelfTypeRef = FirResolvedTypeRefImpl(
                                 null,
                                 firSymbol.constructType(
                                     classTypeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),

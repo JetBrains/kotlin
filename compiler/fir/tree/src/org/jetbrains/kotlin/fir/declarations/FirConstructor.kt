@@ -17,6 +17,8 @@ interface FirConstructor : @VisitedSupertype FirMemberFunction<FirConstructor> {
 
     override val isOverride: Boolean get() = status.isOverride
 
+    val isInner: Boolean
+
     val delegatedConstructor: FirDelegatedConstructorCall?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

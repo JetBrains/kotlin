@@ -252,6 +252,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
                 Flags.IS_EXPECT_FUNCTION.get(flags),
                 false,
+                klass.isInner,
                 delegatedSelfType,
                 null
             )
@@ -263,6 +264,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
                 Flags.IS_EXPECT_FUNCTION.get(flags),
                 false,
+                klass.isInner,
                 delegatedSelfType,
                 null
             )

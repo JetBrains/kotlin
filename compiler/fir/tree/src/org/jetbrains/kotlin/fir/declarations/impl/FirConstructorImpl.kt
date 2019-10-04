@@ -30,6 +30,12 @@ open class FirConstructorImpl : FirAbstractCallableMember<FirConstructor>, FirCo
 
     final override var delegatedConstructor: FirDelegatedConstructorCall? = null
 
+    final override var isInner: Boolean
+        get() = status.isInner
+        set(isInner) {
+            status.isInner = isInner
+        }
+
     constructor(
         session: FirSession,
         psi: PsiElement?,
@@ -37,6 +43,7 @@ open class FirConstructorImpl : FirAbstractCallableMember<FirConstructor>, FirCo
         visibility: Visibility,
         isExpect: Boolean,
         isActual: Boolean,
+        isInner: Boolean,
         delegatedSelfTypeRef: FirTypeRef,
         delegatedConstructor: FirDelegatedConstructorCall?
     ) : super(
@@ -44,6 +51,7 @@ open class FirConstructorImpl : FirAbstractCallableMember<FirConstructor>, FirCo
         isExpect, isActual, isOverride = false, receiverTypeRef = null, returnTypeRef = delegatedSelfTypeRef
     ) {
         this.symbol = symbol
+        this.isInner = isInner
         this.delegatedConstructor = delegatedConstructor
         symbol.bind(this)
     }
