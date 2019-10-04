@@ -99,8 +99,36 @@ private fun KtDotQualifiedExpression.applicableExpression(
         ?.mainReference?.resolveToDescriptors(newContext)
         ?.firstOrNull() ?: return null
 
+    val newFqName = newDescriptor.importableFqName
+    if (newFqName == null) {
+        val receiverReference = receiverExpression.mainReference?.resolve()
+        when {
+            receiverReference is KtObjectDeclaration || receiverReference is KtClass && receiverReference.isEnum() -> {
+                val containingDeclaration = if (receiverReference is KtObjectDeclaration) {
+                    getStrictParentOfType<KtObjectDeclaration>()
+                } else {
+                    getStrictParentOfType<KtClass>()?.let {
+                        if (it is KtEnumEntry) it.getStrictParentOfType<KtClass>() else it
+                    }?.takeIf { it.isEnum() }
+                }
+                if (containingDeclaration != null && containingDeclaration != receiverReference) return null
+
+                val newReceiverReferenceContainingDeclaration =
+                    ((newExpression as? KtDotQualifiedExpression)?.receiverExpression as? KtSimpleNameExpression)
+                        ?.mainReference
+                        ?.resolveToDescriptors(newContext)
+                        ?.firstOrNull()
+                        ?.containingDeclaration
+                if (newReceiverReferenceContainingDeclaration != null
+                    && newReceiverReferenceContainingDeclaration != oldContext[BindingContext.DECLARATION_TO_DESCRIPTOR, receiverReference]
+                ) return null
+            }
+            else -> return null
+        }
+    }
+
     return takeIf {
-        originalDescriptor.importableFqName == newDescriptor.importableFqName &&
+        originalDescriptor.importableFqName == newFqName &&
                 if (newDescriptor is ImportedFromObjectCallableDescriptor<*>)
                     compareDescriptors(project, newDescriptor.callableFromObject, originalDescriptor)
                 else

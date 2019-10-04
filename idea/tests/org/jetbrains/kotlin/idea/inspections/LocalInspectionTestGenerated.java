@@ -8229,6 +8229,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/companionWithOuterName.kt");
         }
 
+        @TestMetadata("enumEntry.kt")
+        public void testEnumEntry() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/enumEntry.kt");
+        }
+
+        @TestMetadata("enumInEnum.kt")
+        public void testEnumInEnum() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/enumInEnum.kt");
+        }
+
+        @TestMetadata("enumInEnum2.kt")
+        public void testEnumInEnum2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/enumInEnum2.kt");
+        }
+
         @TestMetadata("expression.kt")
         public void testExpression() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/expression.kt");
@@ -8344,6 +8359,31 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableCompanionType2.kt");
         }
 
+        @TestMetadata("notApplicableEnumEntry.kt")
+        public void testNotApplicableEnumEntry() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableEnumEntry.kt");
+        }
+
+        @TestMetadata("notApplicableEnumEntryInEnumEntry.kt")
+        public void testNotApplicableEnumEntryInEnumEntry() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableEnumEntryInEnumEntry.kt");
+        }
+
+        @TestMetadata("notApplicableEnumEntryInEnumEntry2.kt")
+        public void testNotApplicableEnumEntryInEnumEntry2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableEnumEntryInEnumEntry2.kt");
+        }
+
+        @TestMetadata("notApplicableEnumInEnum.kt")
+        public void testNotApplicableEnumInEnum() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableEnumInEnum.kt");
+        }
+
+        @TestMetadata("notApplicableEnumInEnum2.kt")
+        public void testNotApplicableEnumInEnum2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableEnumInEnum2.kt");
+        }
+
         @TestMetadata("notApplicableExpression.kt")
         public void testNotApplicableExpression() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableExpression.kt");
@@ -8377,6 +8417,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("notApplicableLocalVariable2.kt")
         public void testNotApplicableLocalVariable2() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableLocalVariable2.kt");
+        }
+
+        @TestMetadata("notApplicableObject.kt")
+        public void testNotApplicableObject() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableObject.kt");
+        }
+
+        @TestMetadata("notApplicableObject2.kt")
+        public void testNotApplicableObject2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableObject2.kt");
+        }
+
+        @TestMetadata("notApplicableObject3.kt")
+        public void testNotApplicableObject3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableObject3.kt");
         }
 
         @TestMetadata("notApplicableOuterClass.kt")
