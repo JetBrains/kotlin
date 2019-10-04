@@ -60,7 +60,7 @@ class ServiceViewDragHelper {
             ServiceViewDragBean dragBean = (ServiceViewDragBean)o;
             ItemPresentation presentation;
             if (dragBean.getItems().size() > 1 && dragBean.getContributor() != null) {
-              presentation = dragBean.getContributor().getViewDescriptor().getPresentation();
+              presentation = dragBean.getContributor().getViewDescriptor(project).getPresentation();
             }
             else {
               presentation = dragBean.getItems().get(0).getViewDescriptor().getPresentation();
@@ -222,7 +222,7 @@ class ServiceViewDragHelper {
       else {
         ServiceViewContributor contributor = dragBean.getContributor();
         if (contributor != null) {
-          presentation = contributor.getViewDescriptor().getPresentation();
+          presentation = contributor.getViewDescriptor(myServiceView.getProject()).getPresentation();
         }
       }
 

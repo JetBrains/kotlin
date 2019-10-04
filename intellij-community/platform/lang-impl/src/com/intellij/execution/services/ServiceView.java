@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 abstract class ServiceView extends JPanel implements Disposable {
-  protected final Project myProject;
+  private final Project myProject;
   private final ServiceViewModel myModel;
   protected final ServiceViewUi myUi;
   private AutoScrollToSourceHandler myAutoScrollToSourceHandler;
@@ -36,6 +36,10 @@ abstract class ServiceView extends JPanel implements Disposable {
 
   @Override
   public void dispose() {
+  }
+
+  Project getProject() {
+    return myProject;
   }
 
   ServiceViewModel getModel() {
@@ -134,7 +138,7 @@ abstract class ServiceView extends JPanel implements Disposable {
       if (PlatformDataKeys.DELETE_ELEMENT_PROVIDER.is(dataId)) {
         List<ServiceViewItem> selection = serviceView.getSelectedItems();
         ServiceViewContributor contributor = ServiceViewDragHelper.getTheOnlyRootContributor(selection);
-        DataProvider delegate = contributor == null ? null : contributor.getViewDescriptor().getDataProvider();
+        DataProvider delegate = contributor == null ? null : contributor.getViewDescriptor(serviceView.getProject()).getDataProvider();
         DeleteProvider deleteProvider = delegate == null ? null : PlatformDataKeys.DELETE_ELEMENT_PROVIDER.getData(delegate);
         return deleteProvider == null ? new ServiceViewDeleteProvider(serviceView) : deleteProvider;
       }

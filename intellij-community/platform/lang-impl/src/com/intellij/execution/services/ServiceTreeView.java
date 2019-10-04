@@ -70,10 +70,10 @@ class ServiceTreeView extends ServiceView {
         .onSuccess(result -> AppUIUtil.invokeOnEdt(() -> {
           JComponent component = getUi().getDetailsComponent();
           if (component != null) {
-            IdeFocusManager.getInstance(myProject).requestFocus(component, false);
+            IdeFocusManager.getInstance(getProject()).requestFocus(component, false);
           }
-        }, myProject.getDisposed()));
-    myNavBarPanel = new ServiceViewNavBarPanel(myProject, true, getModel(), selector);
+        }, getProject().getDisposed()));
+    myNavBarPanel = new ServiceViewNavBarPanel(getProject(), true, getModel(), selector);
     myNavBarPanel.getModel().updateModel(null);
     myUi.setNavBar(myNavBarPanel);
 
@@ -157,7 +157,7 @@ class ServiceTreeView extends ServiceView {
   @Override
   void jumpToServices() {
     if (myTree.isShowing()) {
-      IdeFocusManager.getInstance(myProject).requestFocus(myTree, false);
+      IdeFocusManager.getInstance(getProject()).requestFocus(myTree, false);
     }
     else {
       myNavBarPanel.rebuildAndSelectTail(true);
@@ -211,7 +211,7 @@ class ServiceTreeView extends ServiceView {
           myUi.setDetailsComponent(descriptor == null ? null : descriptor.getContentComponent());
         }
       }
-    }, myProject.getDisposed());
+    }, getProject().getDisposed());
   }
 
   private void updateNavBar() {
@@ -227,11 +227,11 @@ class ServiceTreeView extends ServiceView {
             if (updatedItem.equals(navBarItem)) {
               myNavBarPanel.getModel().updateModel(updatedItem);
             }
-          }, myProject.getDisposed());
+          }, getProject().getDisposed());
         }
       });
     });
-    AppUIUtil.invokeOnEdt(() -> itemPromise.setResult(getNavBarItem()), myProject.getDisposed());
+    AppUIUtil.invokeOnEdt(() -> itemPromise.setResult(getNavBarItem()), getProject().getDisposed());
   }
 
   private ServiceViewItem getNavBarItem() {
@@ -310,7 +310,7 @@ class ServiceTreeView extends ServiceView {
             }
           });
         });
-      }, myProject.getDisposed());
+      }, getProject().getDisposed());
     }
   }
 

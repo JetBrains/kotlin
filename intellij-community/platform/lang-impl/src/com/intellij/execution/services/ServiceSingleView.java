@@ -91,7 +91,7 @@ class ServiceSingleView extends ServiceView {
           myUi.setDetailsComponent(descriptor.getContentComponent());
         }
       }
-    }, myProject.getDisposed());
+    }, getProject().getDisposed());
   }
 
   private void showContent() {

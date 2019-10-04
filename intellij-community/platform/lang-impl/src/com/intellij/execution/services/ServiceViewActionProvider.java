@@ -203,7 +203,7 @@ class ServiceViewActionProvider {
     }
     else {
       ServiceViewContributor<?> contributor = getTheOnlyRootContributor(selectedItems);
-      descriptor = contributor == null ? null : contributor.getViewDescriptor();
+      descriptor = contributor == null ? null : contributor.getViewDescriptor(project);
     }
     if (descriptor == null) return AnAction.EMPTY_ARRAY;
 

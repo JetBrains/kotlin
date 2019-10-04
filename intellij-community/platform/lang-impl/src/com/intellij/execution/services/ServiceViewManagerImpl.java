@@ -112,7 +112,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         myActivationActionsRegistered = true;
         Collection<ServiceViewContributor<?>> contributors = myGroups.get(getToolWindowId());
         if (contributors != null) {
-          registerActivateByContributorActions(contributors);
+          registerActivateByContributorActions(myProject, contributors);
         }
       }
 
@@ -408,7 +408,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
   private static ItemPresentation getContentPresentation(Project project, ServiceViewModel viewModel, ServiceViewState viewState) {
     if (viewModel instanceof ContributorModel) {
-      return ((ContributorModel)viewModel).getContributor().getViewDescriptor().getContentPresentation();
+      return ((ContributorModel)viewModel).getContributor().getViewDescriptor(project).getContentPresentation();
     }
     else if (viewModel instanceof GroupModel) {
       return ((GroupModel)viewModel).getGroup().getViewDescriptor().getContentPresentation();
@@ -474,7 +474,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     Set<ServiceViewContributor<?>> contributors = ContainerUtil.newHashSet(ServiceModel.getContributors());
     if (Registry.is("ide.service.view.split")) {
       for (ServiceViewContributor<?> contributor : contributors) {
-        result.put(contributor.getViewDescriptor().getId(), ContainerUtil.newSmartList(contributor));
+        result.put(contributor.getClass().getName(), ContainerUtil.newSmartList(contributor));
       }
     }
     else {
@@ -777,7 +777,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     }
   }
 
-  private static void registerActivateByContributorActions(Collection<ServiceViewContributor<?>> contributors) {
+  private static void registerActivateByContributorActions(Project project, Collection<ServiceViewContributor<?>> contributors) {
     for (ServiceViewContributor<?> contributor : contributors) {
       ActionManager actionManager = ActionManager.getInstance();
       String actionId = getActivateContributorActionId(contributor);
@@ -785,26 +785,25 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
       AnAction action = actionManager.getAction(actionId);
       if (action == null) {
-        action = new ActivateToolWindowByContributorAction(contributor);
+        action = new ActivateToolWindowByContributorAction(contributor, contributor.getViewDescriptor(project).getPresentation());
         actionManager.registerAction(actionId, action);
       }
     }
   }
 
   private static String getActivateContributorActionId(ServiceViewContributor<?> contributor) {
-    String id = contributor.getViewDescriptor().getId();
-    return id == null ? null : "ServiceView.Activate" + id.replaceAll(" ", "");
+    String name = contributor.getClass().getSimpleName();
+    return name.isEmpty() ? null : "ServiceView.Activate" + name;
   }
 
   private static class ActivateToolWindowByContributorAction extends DumbAwareAction {
     private final ServiceViewContributor<?> myContributor;
 
-    private ActivateToolWindowByContributorAction(ServiceViewContributor<?> contributor) {
+    ActivateToolWindowByContributorAction(ServiceViewContributor<?> contributor, ItemPresentation contributorPresentation) {
       myContributor = contributor;
-      ItemPresentation presentation = contributor.getViewDescriptor().getPresentation();
       Presentation templatePresentation = getTemplatePresentation();
-      templatePresentation.setText(ServiceViewDragHelper.getDisplayName(presentation) + " (Services)");
-      templatePresentation.setIcon(presentation.getIcon(false));
+      templatePresentation.setText(ServiceViewDragHelper.getDisplayName(contributorPresentation) + " (Services)");
+      templatePresentation.setIcon(contributorPresentation.getIcon(false));
       templatePresentation.setDescription("Activate " + getToolWindowId() + " window");
     }
 

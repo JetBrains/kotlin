@@ -78,7 +78,7 @@ public class RunDashboardServiceViewContributor
 
   @NotNull
   @Override
-  public ServiceViewDescriptor getViewDescriptor() {
+  public ServiceViewDescriptor getViewDescriptor(@NotNull Project project) {
     return CONTRIBUTOR_DESCRIPTOR;
   }
 
@@ -94,8 +94,8 @@ public class RunDashboardServiceViewContributor
 
   @NotNull
   @Override
-  public ServiceViewDescriptor getServiceDescriptor(@NotNull RunConfigurationContributor contributor) {
-    return contributor.getViewDescriptor();
+  public ServiceViewDescriptor getServiceDescriptor(@NotNull Project project, @NotNull RunConfigurationContributor contributor) {
+    return contributor.getViewDescriptor(project);
   }
 
   @NotNull
@@ -518,7 +518,7 @@ public class RunDashboardServiceViewContributor
 
     @NotNull
     @Override
-    public ServiceViewDescriptor getViewDescriptor() {
+    public ServiceViewDescriptor getViewDescriptor(@NotNull Project project) {
       return new RunConfigurationServiceViewDescriptor(myNode);
     }
 
@@ -530,7 +530,7 @@ public class RunDashboardServiceViewContributor
 
     @NotNull
     @Override
-    public ServiceViewDescriptor getServiceDescriptor(@NotNull AbstractTreeNode service) {
+    public ServiceViewDescriptor getServiceDescriptor(@NotNull Project project, @NotNull AbstractTreeNode service) {
       return new ServiceViewDescriptor() {
         @Override
         public ActionGroup getToolbarActions() {
