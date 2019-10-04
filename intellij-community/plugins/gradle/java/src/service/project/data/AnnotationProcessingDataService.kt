@@ -38,9 +38,6 @@ import kotlin.collections.ArrayList
 @Order(ExternalSystemConstants.UNORDERED)
 class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationProcessingData, ProcessorConfigProfile>() {
 
-  private lateinit var sourceFolderManager: SourceFolderManager
-  private lateinit var modelsProvider: IdeModifiableModelsProvider
-
   override fun getTargetDataKey(): Key<AnnotationProcessingData> {
     return AnnotationProcessingData.KEY
   }
@@ -51,8 +48,7 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
                           modifiableModelsProvider: IdeModifiableModelsProvider) {
     val importedData = mutableSetOf<AnnotationProcessingData>()
     val config = CompilerConfiguration.getInstance(project) as CompilerConfigurationImpl
-    sourceFolderManager = SourceFolderManager.getInstance(project)
-    modelsProvider = modifiableModelsProvider
+    val sourceFolderManager = SourceFolderManager.getInstance(project)
     for (node in toImport) {
       val moduleData = node.parent?.data as? ModuleData
       if (moduleData == null) {
@@ -60,7 +56,7 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
         continue
       }
 
-      val ideModule = modelsProvider.findIdeModule(moduleData)
+      val ideModule = modifiableModelsProvider.findIdeModule(moduleData)
       if (ideModule == null) {
         LOG.debug("Failed to find ide module for module data: ${moduleData}")
         continue
@@ -72,22 +68,23 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
         val isDelegatedBuild = GradleSettings.getInstance(project).getLinkedProjectSettings(
           projectData.linkedExternalProjectPath)?.delegatedBuild ?: true
 
-        clearGeneratedSourceFolders(ideModule, node)
-        addGeneratedSourceFolders(ideModule, node, isDelegatedBuild)
+        clearGeneratedSourceFolders(ideModule, node, modifiableModelsProvider)
+        addGeneratedSourceFolders(ideModule, node, isDelegatedBuild, modifiableModelsProvider, sourceFolderManager)
       }
     }
   }
 
   private fun clearGeneratedSourceFolders(ideModule: Module,
-                                          node: DataNode<AnnotationProcessingData>) {
+                                          node: DataNode<AnnotationProcessingData>,
+                                          modelsProvider: IdeModifiableModelsProvider) {
     val gradleOutputs = ExternalSystemApiUtil.findAll(node, AnnotationProcessingData.OUTPUT_KEY)
 
     val pathsToRemove =
       (gradleOutputs
          .map { it.data.outputPath } +
        listOf(
-         getAnnotationProcessorGenerationPath(ideModule, false),
-         getAnnotationProcessorGenerationPath(ideModule, true)
+         getAnnotationProcessorGenerationPath(ideModule, false, modelsProvider),
+         getAnnotationProcessorGenerationPath(ideModule, true, modelsProvider)
        ))
         .filterNotNull()
 
@@ -111,25 +108,27 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
 
   private fun addGeneratedSourceFolders(ideModule: Module,
                                         node: DataNode<AnnotationProcessingData>,
-                                        delegatedBuild: Boolean) {
+                                        delegatedBuild: Boolean,
+                                        modelsProvider: IdeModifiableModelsProvider,
+                                        sourceFolderManager: SourceFolderManager) {
 
     if (delegatedBuild) {
       val outputs = ExternalSystemApiUtil.findAll(node, AnnotationProcessingData.OUTPUT_KEY)
       outputs.forEach {
         val outputPath = it.data.outputPath
         val isTestSource = it.data.isTestSources
-        addGeneratedSourceFolder(ideModule, outputPath, isTestSource)
+        addGeneratedSourceFolder(ideModule, outputPath, isTestSource, modelsProvider, sourceFolderManager)
       }
     }
     else {
-      val outputPath = getAnnotationProcessorGenerationPath(ideModule, false)
+      val outputPath = getAnnotationProcessorGenerationPath(ideModule, false, modelsProvider)
       if (outputPath != null) {
-        addGeneratedSourceFolder(ideModule, outputPath, false)
+        addGeneratedSourceFolder(ideModule, outputPath, false, modelsProvider, sourceFolderManager)
       }
 
-      val testOutputPath = getAnnotationProcessorGenerationPath(ideModule, true)
+      val testOutputPath = getAnnotationProcessorGenerationPath(ideModule, true, modelsProvider)
       if (testOutputPath != null) {
-        addGeneratedSourceFolder(ideModule, testOutputPath, true)
+        addGeneratedSourceFolder(ideModule, testOutputPath, true, modelsProvider, sourceFolderManager)
       }
     }
   }
@@ -137,7 +136,9 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
 
   private fun addGeneratedSourceFolder(ideModule: Module,
                                        path: String,
-                                       isTest: Boolean) {
+                                       isTest: Boolean,
+                                       modelsProvider: IdeModifiableModelsProvider,
+                                       sourceFolderManager: SourceFolderManager) {
     val type = if (isTest) JavaSourceRootType.TEST_SOURCE else JavaSourceRootType.SOURCE
     val url = VfsUtilCore.pathToUrl(path)
     val vf = LocalFileSystem.getInstance().refreshAndFindFileByPath(path)
@@ -172,7 +173,8 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
     return entryVar to folderVar
   }
 
-  private fun getAnnotationProcessorGenerationPath(ideModule: Module, forTests: Boolean): String? {
+  private fun getAnnotationProcessorGenerationPath(ideModule: Module, forTests: Boolean,
+                                                   modelsProvider: IdeModifiableModelsProvider): String? {
     val config = CompilerConfiguration.getInstance(ideModule.project).getAnnotationProcessingConfiguration(ideModule)
     val sourceDirName = config.getGeneratedSourcesDirectoryName(forTests)
       val roots = modelsProvider.getModifiableRootModel(ideModule).contentRootUrls
@@ -261,6 +263,6 @@ class AnnotationProcessingDataService : AbstractProjectDataService<AnnotationPro
 
   companion object {
     private val LOG = Logger.getInstance(AnnotationProcessingDataService::class.java)
-    val IMPORTED_PROFILE_NAME = "Gradle Imported"
+    const val IMPORTED_PROFILE_NAME = "Gradle Imported"
   }
 }
