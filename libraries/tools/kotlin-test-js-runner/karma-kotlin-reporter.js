@@ -105,14 +105,29 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
 
     this.TEST_STD_OUT = "##teamcity[testStdOut name='%s' out='%s' flowId='']";
 
+    const END_KOTLIN_TEST = "'--END_KOTLIN_TEST--";
+
     const tcOnBrowserStart = this.onBrowserStart;
     this.onBrowserStart = function (browser) {
         tcOnBrowserStart.call(this, browser);
         this.browserResults[browser.id].consoleCollector = [];
+        this.browserResults[browser.id].consoleResultCollector = {};
+    };
+
+    const concatenateFqn = function (result) {
+        return `${result.suite.join(".")}.${result.description}`
     };
 
     this.onBrowserLog = (browser, log, type) => {
         const browserResult = this.browserResults[browser.id];
+
+        if (log.startsWith(END_KOTLIN_TEST)) {
+            var result = JSON.parse(log.substring(END_KOTLIN_TEST.length, log.length - 1));
+            browserResult.consoleResultCollector[concatenateFqn(result)] = browserResult.consoleCollector;
+            browserResult.consoleCollector = [];
+            return
+        }
+
         if (browserResult) {
             browserResult.consoleCollector.push(`[${type}] ${log}\n`)
         }
@@ -126,14 +141,12 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
         const testName = result.description;
 
         const endMessage = log.pop();
-        this.browserResults[browser.id].consoleCollector.forEach(item => {
+        this.browserResults[browser.id].consoleResultCollector[concatenateFqn(result)].forEach(item => {
             log.push(
                 formatMessage(this.TEST_STD_OUT, testName, item)
             )
         });
         log.push(endMessage);
-
-        this.browserResults[browser.id].consoleCollector = []
     };
 
     this.specFailure = function (browser, result) {
@@ -141,7 +154,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
         const testName = result.description;
 
         log.push(formatMessage(this.TEST_START, testName));
-        this.browserResults[browser.id].consoleCollector.forEach(item => {
+        this.browserResults[browser.id].consoleResultCollector[concatenateFqn(result)].forEach(item => {
             log.push(
                 formatMessage(this.TEST_STD_OUT, testName, item)
             )
@@ -153,8 +166,6 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
                                    .join('\n\n')
         ));
         log.push(formatMessage(this.TEST_END, testName, result.time));
-
-        this.browserResults[browser.id].consoleCollector = []
     };
 
     this.flushLogs = function (browserResult) {
