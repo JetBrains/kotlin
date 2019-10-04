@@ -17,12 +17,13 @@ jvmTarget = "1.8"
 val ktorExcludesForDaemon : List<Pair<String, String>> by rootProject.extra
 
 dependencies {
-    compile(project(":compiler:cli"))
-    compile(project(":compiler:cli-js"))
-    compile(project(":daemon-common-new"))
-    compile(project(":compiler:incremental-compilation-impl"))
     compile(commonDep("org.fusesource.jansi", "jansi"))
     compile(commonDep("org.jline", "jline"))
+
+    compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:cli-js"))
+    compileOnly(project(":compiler:incremental-compilation-impl"))
+    compileOnly(project(":daemon-common-new"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("trove4j") }
