@@ -12,30 +12,22 @@ import org.jetbrains.kotlin.nj2k.tree.JKOtherModifierElement
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 import org.jetbrains.kotlin.nj2k.tree.OtherModifier
 
-class InnerClassConversion(context : NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
-    override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKClass) return recurse(element)
-        return recurseArmed(element, element)
-    }
+class InnerClassConversion(context: NewJ2kConverterContext) : StatefulRecursiveApplicableConversionBase<JKClass>(context) {
+    override fun applyToElement(element: JKTreeElement, state: JKClass?): JKTreeElement {
+        if (element !is JKClass) return recurse(element, state)
 
-    private fun recurseArmed(element: JKTreeElement, outer: JKClass): JKTreeElement {
-        return applyRecursive(element, outer, ::applyArmed)
-    }
-
-    private fun applyArmed(element: JKTreeElement, outer: JKClass): JKTreeElement {
-        if (element !is JKClass) return recurseArmed(element, outer)
-        if (element.classKind == JKClass.ClassKind.COMPANION) return recurseArmed(element, outer)
-        if (element.isLocalClass()) return recurseArmed(element, outer)
+        if (element.classKind == JKClass.ClassKind.COMPANION) return recurse(element, state)
+        if (element.isLocalClass()) return recurse(element, state)
 
         val static = element.otherModifierElements.find { it.otherModifier == OtherModifier.STATIC }
-        if (static != null) {
-            element.otherModifierElements -= static
-        } else if (element.classKind != JKClass.ClassKind.INTERFACE &&
-            outer.classKind != JKClass.ClassKind.INTERFACE &&
-            element.classKind != JKClass.ClassKind.ENUM
-        ) {
-            element.otherModifierElements += JKOtherModifierElement(OtherModifier.INNER)
+        when {
+            static != null -> element.otherModifierElements -= static
+            state != null
+                    && element.classKind != JKClass.ClassKind.INTERFACE
+                    && state.classKind != JKClass.ClassKind.INTERFACE
+                    && element.classKind != JKClass.ClassKind.ENUM
+            -> element.otherModifierElements += JKOtherModifierElement(OtherModifier.INNER)
         }
-        return recurseArmed(element, element)
+        return recurse(element, element)
     }
 }
