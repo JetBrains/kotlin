@@ -186,7 +186,7 @@ describe("source-map-loader", function() {
 		});
 	});
 
-	it("should warn on missing source file", function(done) {
+	xit("should warn on missing source file", function (done) {
 		execLoader(path.join(fixturesPath, "missing-source-map2.js"), function(err, res, map, deps, warns) {
 			should.equal(err, null);
 			warns.should.be.eql([
@@ -270,9 +270,8 @@ describe("source-map-loader", function() {
 				]);
 				done();
 			}
-		);
-	});
-
+)
+})
 	it("should support relative sourceRoot paths in sourcemaps", (done) => {
 		const javaScriptFilename = "relative-sourceRoot-source-map.js";
 		const sourceFilename = "relative-sourceRoot-source-map.txt";
@@ -302,6 +301,6 @@ describe("source-map-loader", function() {
 				]);
 				done();
 			}
-		);
-	});
+)
+})
 });
