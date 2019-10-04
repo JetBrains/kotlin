@@ -37,6 +37,12 @@ import java.io.File
 // configuration is based on those directories names
 fun AbstractMultiModuleTest.setupMppProjectFromDirStructure(testRoot: File) {
     assert(testRoot.isDirectory) { testRoot.absolutePath + " must be a directory" }
+    val dependencies = dependenciesFile(testRoot)
+    if (dependencies.exists()) {
+        setupMppProjectFromDependenciesFile(dependencies, testRoot)
+        return
+    }
+
     val dirs = testRoot.listFiles().filter { it.isDirectory }
     val rootInfos = dirs.map { parseDirName(it) }
     doSetupProject(rootInfos)
@@ -44,7 +50,13 @@ fun AbstractMultiModuleTest.setupMppProjectFromDirStructure(testRoot: File) {
 
 fun AbstractMultiModuleTest.setupMppProjectFromTextFile(testRoot: File) {
     assert(testRoot.isDirectory) { testRoot.absolutePath + " must be a directory" }
-    val dependencies = File(testRoot, "dependencies.txt")
+    val dependencies = dependenciesFile(testRoot)
+    setupMppProjectFromDependenciesFile(dependencies, testRoot)
+}
+
+private fun dependenciesFile(testRoot: File) = File(testRoot, "dependencies.txt")
+
+fun AbstractMultiModuleTest.setupMppProjectFromDependenciesFile(dependencies: File, testRoot: File) {
     val projectModel = ProjectStructureParser(testRoot).parse(FileUtil.loadFile(dependencies))
 
     check(projectModel.modules.isNotEmpty()) { "No modules were parsed from dependencies.txt" }
