@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <jni.h>
@@ -163,10 +164,12 @@ static void checkException(JNIEnv *env) {
 static void ffi_fun(ffi_cif *cif, void *ret, void **args, void *user_data) {
     JNIEnv* env = getCurrentEnv();
 
-    static jmethodID ffiFunImpl0 = NULL;
+    static jmethodID acceptFun = NULL;
     static jclass cls = NULL;
-    if (ffiFunImpl0 == NULL) {
-        jclass clsLocal = (*env)->FindClass(env, "kotlinx/cinterop/JvmCallbacksKt");
+    if (acceptFun == NULL) {
+        // Note: in some cases [FindClass] below may use a classloader different from the one loaded interop classes,
+        // so stick to JVM-provided class:
+        jclass clsLocal = (*env)->FindClass(env, "java/util/function/LongConsumer");
         checkException(env);
         assert(clsLocal != NULL);
 
@@ -174,12 +177,13 @@ static void ffi_fun(ffi_cif *cif, void *ret, void **args, void *user_data) {
         checkException(env);
         assert(cls != NULL);
 
-        ffiFunImpl0 = (*env)->GetStaticMethodID(env, cls, "ffiFunImpl0", "(JJJLjava/lang/Object;)V");
+        acceptFun = (*env)->GetMethodID(env, cls, "accept", "(J)V");
         checkException(env);
-        assert(ffiFunImpl0 != NULL);
+        assert(acceptFun != NULL);
     }
 
-    (*env)->CallStaticVoidMethod(env, cls, ffiFunImpl0, (jlong) cif, (jlong) ret, (jlong) args, (jobject) user_data);
+    jlong retAndArgs[2] = { (jlong)ret, (jlong)args }; // Unpacked in [ffiClosureImpl].
+    (*env)->CallVoidMethod(env, (jobject) user_data, acceptFun, (jlong)(intptr_t)&retAndArgs[0]);
     checkException(env);
 }
 
