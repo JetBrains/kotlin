@@ -42,7 +42,7 @@ public class ActionSearchEverywhereContributor implements SearchEverywhereContri
   private final Component myContextComponent;
   private final GotoActionModel myModel;
   private final GotoActionItemProvider myProvider;
-  private boolean myDisabledActions;
+  protected boolean myDisabledActions;
 
   public ActionSearchEverywhereContributor(Project project, Component contextComponent, Editor editor) {
     myProject = project;
