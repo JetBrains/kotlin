@@ -474,7 +474,8 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
     final Ref<Couple<String>> error = Ref.create();
     ImportSpec importSpec = createImportSpec();
-    if (importSpec.getCallback() == null) {
+    ExternalProjectRefreshCallback callback = importSpec.getCallback();
+    if (callback == null || callback instanceof ImportSpecBuilder.DefaultProjectRefreshCallback) {
       importSpec = new ImportSpecBuilder(importSpec).callback(new ExternalProjectRefreshCallback() {
         @Override
         public void onSuccess(@Nullable final DataNode<ProjectData> externalProject) {
