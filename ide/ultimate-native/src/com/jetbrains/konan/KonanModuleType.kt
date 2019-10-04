@@ -6,16 +6,17 @@
 package com.jetbrains.konan
 
 import com.intellij.icons.AllIcons
-import com.intellij.ide.util.projectWizard.EmptyModuleBuilder
+import com.intellij.ide.util.projectWizard.JavaModuleBuilder
+import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.module.ModuleTypeManager
 import com.intellij.openapi.module.impl.ModuleTypeManagerImpl
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 
-class KonanModuleType : ModuleType<EmptyModuleBuilder>(KonanBundle.message("id.module")) {
-    override fun createModuleBuilder(): EmptyModuleBuilder {
-        return object : EmptyModuleBuilder() {
+class KonanModuleType : JavaModuleType(KonanBundle.message("id.module")) {
+    override fun createModuleBuilder(): JavaModuleBuilder {
+        return object : JavaModuleBuilder() {
             override fun getModuleType(): ModuleType<*> {
                 return ModuleTypeManager.getInstance().findByID(KonanBundle.message("id.module"))
             }

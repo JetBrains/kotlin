@@ -24,7 +24,7 @@ dependencies {
     compileOnly(intellijUltimateDep()) { includeJars("platform-api", "platform-impl", "util", "jdom") }
     compileOnly(intellijUltimatePluginDep("gradle"))
     compileOnly(intellijUltimatePluginDep("Groovy"))
-    compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-impl") }
+    compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-api", "java-impl") }
     addCidrDeps(project)
 
     if (intellijBranch >= 192) {
