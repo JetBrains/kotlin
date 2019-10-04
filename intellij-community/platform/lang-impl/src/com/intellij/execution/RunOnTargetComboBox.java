@@ -24,6 +24,7 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
   public static final Logger LOGGER = Logger.getInstance(RunOnTargetComboBox.class);
   @NotNull private final Project myProject;
   @Nullable private LanguageRuntimeType<?> myDefaultRuntimeType;
+  private boolean hasSavedTargets = false;
 
   public RunOnTargetComboBox(@NotNull Project project) {
     super();
@@ -33,6 +34,7 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
   }
 
   public void initModel() {
+    hasSavedTargets = false;
     MyModel model = (MyModel)getModel();
     model.removeAllElements();
     model.addElement(null);
@@ -56,6 +58,10 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
   }
 
   public void addTarget(@NotNull RemoteTargetConfiguration config, int index) {
+    if (!hasSavedTargets) {
+      hasSavedTargets = true;
+      ((MyModel)getModel()).insertElementAt(new Separator("Saved Targets"), 1);
+    }
     Icon icon = RemoteTargetConfigurationKt.getTargetType(config).getIcon();
     ((MyModel)getModel()).insertElementAt(new Target(config.getDisplayName(), icon), index);
   }
@@ -66,7 +72,7 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
   }
 
   public void addTargets(List<RemoteTargetConfiguration> configs) {
-    int index = 1;
+    int index = 2;
     for (RemoteTargetConfiguration config : configs) {
       addTarget(config, index);
       index++;
@@ -154,8 +160,8 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
           RemoteTargetWizard wizard = new RemoteTargetWizard(myProject, "New Target", newTarget, wizardData.second);
           if (wizard.showAndGet()) {
             RemoteTargetsManager.getInstance().addTarget(newTarget);
-            addTarget(newTarget, 1);
-            setSelectedIndex(1);
+            addTarget(newTarget, 2);
+            setSelectedIndex(2);
           }
         }
         return;
