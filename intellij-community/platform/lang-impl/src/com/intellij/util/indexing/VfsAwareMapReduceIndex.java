@@ -174,6 +174,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
   @Override
   public void removeTransientDataForFile(int inputId) {
+    myModificationStamp.incrementAndGet();
     Lock lock = getWriteLock();
     lock.lock();
     try {
