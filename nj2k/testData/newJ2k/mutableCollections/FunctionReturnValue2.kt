@@ -1,3 +1,5 @@
+import java.util.ArrayList
+
 internal class A {
     private val collection: MutableCollection<String>
     fun createCollection(): MutableCollection<String> {

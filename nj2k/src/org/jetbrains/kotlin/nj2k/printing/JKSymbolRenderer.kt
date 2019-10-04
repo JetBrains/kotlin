@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.nj2k.printing
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.nj2k.JKImportStorage
 import org.jetbrains.kotlin.nj2k.escaped
@@ -77,7 +77,13 @@ private class CanBeShortenedCache(project: Project) {
     }
 
     fun canBeShortened(symbol: JKClassSymbol): Boolean = canBeShortenedCache.getOrPut(symbol.name) {
-        !shortNameCache.processClassesWithName(symbol.name, { false }, searchScope, null)
+        var symbolsWithSuchNameCount = 0
+        val processSymbol = { _: PsiClass ->
+            symbolsWithSuchNameCount++
+            symbolsWithSuchNameCount <= 1 //stop if met more than one symbol with such name
+        }
+        shortNameCache.processClassesWithName(symbol.name, processSymbol, searchScope, null)
+        symbolsWithSuchNameCount == 1
     }
 
     companion object {

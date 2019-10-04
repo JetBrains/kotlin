@@ -1,3 +1,5 @@
+import java.util.ArrayList
+
 class Owner {
     var list: MutableList<String> = ArrayList()
 }
