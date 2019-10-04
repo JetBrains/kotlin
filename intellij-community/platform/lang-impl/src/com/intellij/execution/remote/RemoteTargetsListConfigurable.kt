@@ -29,6 +29,8 @@ class RemoteTargetsListConfigurable(project: Project, initialSelectedName: Strin
 
   override fun createComponent(): JComponent = editor.createComponent()
 
+  override fun getHelpTopic(): String? = "reference.remote.targets"
+
   override fun apply() {
     editor.apply()
   }
@@ -41,5 +43,4 @@ class RemoteTargetsListConfigurable(project: Project, initialSelectedName: Strin
     editor.disposeUIResources()
     super.disposeUIResources()
   }
-
 }

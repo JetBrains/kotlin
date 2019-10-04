@@ -7,4 +7,5 @@ import com.intellij.openapi.project.Project
 
 class RemoteTargetWizard(project: Project, title: String, val subject: RemoteTargetConfiguration, steps: List<AbstractWizardStepEx>)
   : AbstractWizardEx(title, project, steps) {
+  override fun getHelpId(): String? = "reference.remote.target.wizard.${subject.typeId}"
 }
