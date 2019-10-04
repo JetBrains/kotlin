@@ -104,6 +104,10 @@ class JvmSymbols(
             addValueParameter("value", irBuiltIns.anyNType)
             addValueParameter("expression", irBuiltIns.stringType)
         }
+        klass.addFunction("stringPlus", irBuiltIns.stringType, isStatic = true).apply {
+            addValueParameter("self", irBuiltIns.stringType.makeNullable())
+            addValueParameter("other", irBuiltIns.anyNType)
+        }
     }
 
     val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
@@ -114,6 +118,9 @@ class JvmSymbols(
 
     override val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwUninitializedPropertyAccessException" }
+
+    val intrinsicStringPlus: IrFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "stringPlus" }
 
     override val stringBuilder: IrClassSymbol
         get() = context.getTopLevelClass(FqName("java.lang.StringBuilder"))
@@ -437,9 +444,26 @@ class JvmSymbols(
             addValueParameter("v", irBuiltIns.anyNType)
             returnType = irBuiltIns.stringType
         }.symbol
+
+    private val javaLangString: IrClassSymbol = context.getTopLevelClass(FqName("java.lang.String"))
+
+    private val defaultValueOfFunction = javaLangString.functions.single {
+        it.owner.name.asString() == "valueOf" && it.owner.valueParameters.singleOrNull()?.type?.isNullableAny() == true
+    }
+
+    private val valueOfFunctions: Map<IrType, IrSimpleFunctionSymbol?> =
+        (context.irBuiltIns.primitiveIrTypes + context.irBuiltIns.stringType).associateWith { type ->
+            javaLangString.functions.singleOrNull {
+                it.owner.name.asString() == "valueOf" && it.owner.valueParameters.singleOrNull()?.type == type
+            }
+        }
+
+    fun typeToStringValueOfFunction(type: IrType): IrSimpleFunctionSymbol =
+        valueOfFunctions[type] ?: defaultValueOfFunction
 }
 
 private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =
     functions.single { it.owner.name.asString() == name }
+
 private fun IrClassSymbol.fieldByName(name: String): IrFieldSymbol =
     fields.single { it.owner.name.asString() == name }
