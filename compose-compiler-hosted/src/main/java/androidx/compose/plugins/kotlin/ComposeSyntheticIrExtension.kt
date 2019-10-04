@@ -191,7 +191,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
 
             if (irValueExpression is IrConst<*>) {
                 // For constant expression don't create the temporary.
-                irValueExpression
+                ({ irValueExpression.copy() })
             } else {
                 // Create a temporary variable to hold the value of the expression
                 val attributeType = attribute.type
@@ -205,7 +205,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                 val attrVariableDeclaration =
                     statementGenerator.context.symbolTable.declareVariable(
                         valueExpression.startOffset, valueExpression.endOffset,
-                        IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE,
+                        IrDeclarationOrigin.DEFINED,
                         attributeVariable.descriptor,
                         attributeType.toIrType(),
                         irValueExpression
@@ -213,22 +213,22 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                 // OUTPUT: var _el_attr_name = <attribute expression>
                 statements.add(attrVariableDeclaration)
 
-                val getValue = IrGetValueImpl(
-                    valueExpression.startOffset, valueExpression.endOffset,
-                    statementGenerator.context.symbolTable.referenceVariable(
-                        attributeVariable.descriptor
+                ({
+                    IrGetValueImpl(
+                        valueExpression.startOffset, valueExpression.endOffset,
+                        statementGenerator.context.symbolTable.referenceVariable(
+                            attributeVariable.descriptor
+                        )
                     )
-                )
-
-                getValue
+                })
             }
         }.toMap()
 
-        fun getAttribute(name: String) = attributeExpressions[name]
-            ?: error("Expected attribute $name")
+        fun getAttribute(name: String) = (attributeExpressions[name]
+            ?: error("Expected attribute $name"))()
 
         // TODO(lmr): if this is a "get local variable" will this still work?
-        val getComposer = statementGenerator.getProperty(
+        fun getComposer() = statementGenerator.getProperty(
             openTagName.startOffset, openTagName.endOffset,
             resolvedKtxCall.getComposerCall ?: error("Invalid KTX Call")
         )
@@ -253,7 +253,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                         .callMethod(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                             joinKeyCall,
-                            getComposer
+                            getComposer()
                         )
                         .apply {
                             putValueArgument(0, left)
@@ -300,7 +300,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                         startOffset,
                         endOffset,
                         composerCall,
-                        getComposer
+                        getComposer()
                     ).apply {
                         // Place the key parameter
                         putValueArgument(
@@ -320,7 +320,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                             lambdaExpression(
                                 ctorLambdaDescriptor,
                                 ctorParameterType,
-                                IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
+                                IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                             ) { statements ->
                             val ctorCall = statementGenerator.buildCtorCall(
                                 openTagName.startOffset,
@@ -363,7 +363,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                         val updaterLambda = lambdaExpression(
                             updaterLambdaDescriptor,
                             updaterParameterType,
-                            IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
+                            IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                         ) { statements ->
                             statements.addAll(
                                 memoize.validations.map { validation ->
@@ -425,7 +425,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                         endOffset,
                         resolvedCall = resolvedCall,
                         descriptor = resolvedCall.resultingDescriptor as FunctionDescriptor,
-                        dispatchReceiver = receiver ?: attributeExpressions[TAG_KEY],
+                        dispatchReceiver = receiver ?: attributeExpressions[TAG_KEY]?.invoke(),
                         valueArgumentsCount = resolvedCall.valueArguments.size
                     ).apply {
                         putValueParameters(callNode.params, statementGenerator) {
@@ -453,7 +453,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
 
                         val elVarDecl = statementGenerator.context.symbolTable.declareVariable(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE,
+                            IrDeclarationOrigin.DEFINED,
                             elVarDescriptor,
                             elType.toIrType(),
                             result
@@ -461,7 +461,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
 
                         postAssignmentStatements.add(elVarDecl)
 
-                        val getEl = IrGetValueImpl(
+                        fun getEl() = IrGetValueImpl(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                             statementGenerator.context.symbolTable.referenceVariable(
                                 elVarDescriptor
@@ -475,14 +475,14 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                                 is PropertyDescriptor -> statementGenerator.assignmentReceiver(
                                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                                     assignment.assignment,
-                                    getEl,
+                                    getEl(),
                                     elType
                                 ).assign(getAttribute(assignment.attribute.name))
 
                                 is FunctionDescriptor -> statementGenerator.callMethod(
                                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                                     assignment.assignment,
-                                    getEl
+                                    getEl()
                                 ).apply {
                                     putValueArgument(0, getAttribute(assignment.attribute.name))
                                 }
@@ -492,12 +492,12 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
 
                             postAssignmentStatements.add(statement)
                         }
-                        postAssignmentStatements.add(getEl)
+                        postAssignmentStatements.add(getEl())
 
                         result = IrBlockImpl(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                             type = elType.toIrType(),
-                            origin = IrStatementOrigin.IR_TRANSFORM,
+                            origin = null,
                             statements = postAssignmentStatements
                         )
                     }
@@ -564,7 +564,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                         startOffset,
                         endOffset,
                         composerCall,
-                        getComposer
+                        getComposer()
                     ).apply {
                         // Place the key parameter
                         putValueArgument(
@@ -581,7 +581,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                             val ctorLambda = lambdaExpression(
                                 ctorLambdaDescriptor,
                                 ctorParameterType,
-                                IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
+                                IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                             ) { statements ->
                                 val ctorCall = statementGenerator.buildCtorCall(
                                     openTagName.startOffset,
@@ -625,7 +625,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                             lambdaExpression(
                                 validateLambdaDescriptor,
                                 validateParameterType,
-                                IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
+                                IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                             ) { statements ->
                             // all as one expression: a or b or c ... or z
 
@@ -695,7 +695,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                         val bodyLambda =
                             lambdaExpression(
                                 bodyLambdaDescriptor, bodyParameterType,
-                                IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
+                                IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                             ) { statements ->
                             val nextReceiver =
                                 bodyLambdaDescriptor.valueParameters.firstOrNull()?.let {
@@ -826,7 +826,7 @@ private fun StatementGenerator.validationCall(
                 startOffset, endOffset,
                 assignmentLambdaDescriptor,
                 validationCall.resultingDescriptor.valueParameters[1].type,
-                IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
+                IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
             ) { statements ->
                 val parameterDefinition = validation.assignmentLambda.valueParameters.first()
                 val parameterReference = context.symbolTable.referenceValueParameter(
@@ -1224,7 +1224,7 @@ private fun StatementGenerator.lambdaExpression(
                 symbol = declaration.symbol,
                 descriptor = declaration.symbol.descriptor,
                 typeArgumentsCount = 0,
-                origin = IrStatementOrigin.IR_TRANSFORM
+                origin = IrStatementOrigin.LAMBDA
             )
         )
     )

@@ -423,7 +423,8 @@ open class GeneratedViewClassDescriptor(val metadata: ComponentMetadata) : Class
                 LockBasedStorageManager.NO_LOCKS
             )
         this.defaultType =
-            TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
+            TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope,
+                KotlinTypeFactory.EMPTY_REFINED_TYPE_FACTORY)
     }
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = null
