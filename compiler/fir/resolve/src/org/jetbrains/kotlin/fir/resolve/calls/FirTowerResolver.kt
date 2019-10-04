@@ -19,7 +19,7 @@ enum class TowerDataKind {
     TOWER_LEVEL
 }
 
-class CallResolver(
+class FirTowerResolver(
     val typeCalculator: ReturnTypeCalculator,
     val components: BodyResolveComponents,
     private val resolutionStageRunner: ResolutionStageRunner,
@@ -141,7 +141,7 @@ class CallResolver(
     private lateinit var towerDataConsumer: TowerDataConsumer
     private lateinit var implicitReceiverValues: List<ImplicitReceiverValue<*>>
 
-    fun runTowerResolver(consumer: TowerDataConsumer, implicitReceiverValues: List<ImplicitReceiverValue<*>>): CandidateCollector {
+    fun runResolver(consumer: TowerDataConsumer, implicitReceiverValues: List<ImplicitReceiverValue<*>>): CandidateCollector {
         this.implicitReceiverValues = implicitReceiverValues
         towerDataConsumer = consumer
 

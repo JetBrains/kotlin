@@ -61,7 +61,7 @@ fun createFunctionConsumer(
     callInfo: CallInfo,
     bodyResolveComponents: BodyResolveComponents,
     resultCollector: CandidateCollector,
-    callResolver: CallResolver
+    towerResolver: FirTowerResolver
 ): TowerDataConsumer {
     val varCallInfo = CallInfo(
         CallKind.VariableAccess,
@@ -92,7 +92,7 @@ fun createFunctionConsumer(
                 varCallInfo,
                 bodyResolveComponents,
                 InvokeReceiverCandidateCollector(
-                    callResolver,
+                    towerResolver,
                     invokeCallInfo = callInfo,
                     components = bodyResolveComponents,
                     invokeConsumer = this,

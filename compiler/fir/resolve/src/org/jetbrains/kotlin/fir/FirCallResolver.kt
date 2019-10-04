@@ -60,14 +60,14 @@ class FirCallResolver(
             file,
             transformer.container
         ) { it.resultType }
-        val resolver = CallResolver(
+        val towerResolver = FirTowerResolver(
             returnTypeCalculator, this, resolutionStageRunner,
             topLevelScopes = topLevelScopes.asReversed(),
             localScopes = localScopes.asReversed()
         )
 
-        val consumer = createFunctionConsumer(session, name, info, this, resolver.collector, resolver)
-        val result = resolver.runTowerResolver(consumer, implicitReceiverStack.receiversAsReversed())
+        val consumer = createFunctionConsumer(session, name, info, this, towerResolver.collector, towerResolver)
+        val result = towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()
@@ -154,7 +154,7 @@ class FirCallResolver(
             file,
             transformer.container
         ) { it.resultType }
-        val resolver = CallResolver(
+        val towerResolver = FirTowerResolver(
             returnTypeCalculator, this, resolutionStageRunner,
             topLevelScopes = topLevelScopes.asReversed(),
             localScopes = localScopes.asReversed()
@@ -164,9 +164,9 @@ class FirCallResolver(
             session,
             callee.name,
             info, this,
-            resolver.collector
+            towerResolver.collector
         )
-        val result = resolver.runTowerResolver(consumer, implicitReceiverStack.receiversAsReversed())
+        val result = towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
 
         val candidates = result.bestCandidates()
         val nameReference = createResolvedNamedReference(

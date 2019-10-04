@@ -69,7 +69,7 @@ open class CandidateCollector(
 // Collects properties that potentially could be invoke receivers, like 'propertyName()',
 // and initiates further invoke resolution by adding property-bound invoke consumers
 class InvokeReceiverCandidateCollector(
-    val callResolver: CallResolver,
+    val towerResolver: FirTowerResolver,
     val invokeCallInfo: CallInfo,
     components: BodyResolveComponents,
     val invokeConsumer: AccumulatingTowerDataConsumer,
@@ -91,7 +91,7 @@ class InvokeReceiverCandidateCollector(
                     )
                     dispatchReceiver = candidate.dispatchReceiverExpression()
                     extensionReceiver = candidate.extensionReceiverExpression()
-                    typeRef = callResolver.typeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe())
+                    typeRef = towerResolver.typeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe())
                 },
                 invokeCallInfo.arguments,
                 invokeCallInfo.isSafeCall,
@@ -105,7 +105,7 @@ class InvokeReceiverCandidateCollector(
             invokeConsumer.addConsumer(
                 createSimpleFunctionConsumer(
                     session, OperatorNameConventions.INVOKE,
-                    boundInvokeCallInfo, callResolver.components, callResolver.collector
+                    boundInvokeCallInfo, towerResolver.components, towerResolver.collector
                 )
             )
         }
