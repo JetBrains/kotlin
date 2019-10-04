@@ -218,6 +218,7 @@ private val jvmFilePhases =
         flattenStringConcatenationPhase then
         foldConstantLoweringPhase then
         computeStringTrimPhase then
+        jvmStringConcatenationLowering then
 
         defaultArgumentStubPhase then
         defaultArgumentInjectorPhase then

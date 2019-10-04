@@ -80,42 +80,55 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
         )
 
         /** @return true if the given expression is a call to [String.plus] */
-        private fun isStringPlusCall(expression: IrCall): Boolean {
-            val function = expression.symbol.owner
-            val receiver = expression.dispatchReceiver ?: expression.extensionReceiver
+        private val IrCall.isStringPlusCall: Boolean
+            get() {
+                val function = symbol.owner
+                val receiver = dispatchReceiver ?: extensionReceiver
 
-            return receiver != null
-                    && receiver.type.isStringClassType()
-                    && function.returnType.isStringClassType()
-                    && function.valueParameters.size == 1
-                    && function.name.asString() == "plus"
-                    && function.fqNameWhenAvailable?.parent() in PARENT_NAMES
-        }
+                return receiver != null
+                        && receiver.type.isStringClassType()
+                        && function.returnType.isStringClassType()
+                        && function.valueParameters.size == 1
+                        && function.name.asString() == "plus"
+                        && function.fqNameWhenAvailable?.parent() in PARENT_NAMES
+            }
+
+        /** @return true if the function is Any.toString or an override of Any.toString */
+        val IrSimpleFunction.isToString: Boolean
+            get() {
+                if (name.asString() != "toString" || valueParameters.size != 0 || !returnType.isString())
+                    return false
+
+                return (dispatchReceiverParameter != null && extensionReceiverParameter == null
+                        && (dispatchReceiverParameter?.type?.isAny() == true || this.overriddenSymbols.isNotEmpty()))
+            }
+
+        /** @return true if the function is Any?.toString */
+        private val IrSimpleFunction.isNullableToString: Boolean
+            get() {
+                if (name.asString() != "toString" || valueParameters.size != 0 || !returnType.isString())
+                    return false
+
+                return dispatchReceiverParameter == null
+                        && extensionReceiverParameter?.type?.isNullableAny() == true
+                        && fqNameWhenAvailable?.parent() == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+            }
 
         /** @return true if the given expression is a call to [toString] */
-        private fun isToStringCall(expression: IrCall): Boolean {
-            if (expression.superQualifierSymbol != null)
-                return false
+        private val IrCall.isToStringCall: Boolean
+            get() {
+                if (superQualifierSymbol != null)
+                    return false
 
-            val function = expression.symbol.owner
-            if (function.name.asString() != "toString" || function.valueParameters.size != 0 || !function.returnType.isString())
-                return false
+                val function = symbol.owner as? IrSimpleFunction
+                    ?: return false
 
-            // Check for Any?.toString, which is an extension method defined in the kotlin package.
-            if (function.dispatchReceiverParameter == null
-                && function.extensionReceiverParameter?.type?.isNullableAny() == true
-                && function.fqNameWhenAvailable?.parent() == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
-                return true
-
-            // Check for Any.toString or an override.
-            return (function.dispatchReceiverParameter != null && function.extensionReceiverParameter == null
-                    && (function.dispatchReceiverParameter?.type?.isAny() == true
-                    || (function as? IrSimpleFunction)?.overriddenSymbols?.isNotEmpty() == true))
-        }
+                return function.isToString || function.isNullableToString
+            }
 
         /** @return true if the given expression is a [IrStringConcatenation], or an [IrCall] to [toString] or [String.plus]. */
         private fun isStringConcatenationExpression(expression: IrExpression): Boolean =
-            (expression is IrStringConcatenation) || (expression is IrCall) && (isStringPlusCall(expression) || isToStringCall(expression))
+            (expression is IrStringConcatenation) || (expression is IrCall) && (expression.isStringPlusCall || expression.isToStringCall)
 
         /** Recursively collects string concatenation arguments from the given expression. */
         private fun collectStringConcatenationArguments(expression: IrExpression): List<IrExpression> {

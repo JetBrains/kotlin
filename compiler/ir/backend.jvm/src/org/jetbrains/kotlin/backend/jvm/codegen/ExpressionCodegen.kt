@@ -671,54 +671,6 @@ class ExpressionCodegen(
         }
     }
 
-    override fun visitStringConcatenation(expression: IrStringConcatenation, data: BlockInfo): PromisedValue {
-        expression.markLineNumber(startOffset = true)
-        val arity = expression.arguments.size
-        when {
-            arity == 0 -> mv.aconst("")
-            arity == 1 -> {
-                // Convert single arg to string.
-                val arg = expression.arguments[0]
-                val result = arg.accept(this, data).boxInlineClasses(arg.type).materialized
-                if (!arg.type.isString()) {
-                    result.genToString(mv)
-                }
-            }
-            arity == 2 && expression.arguments[0].type.isStringClassType() -> {
-                // Call the stringPlus intrinsic
-                for ((index, argument) in expression.arguments.withIndex()) {
-                    val result = argument.accept(this, data).boxInlineClasses(argument.type).materialized
-                    if (result.type.sort != Type.OBJECT) {
-                        result.genToString(mv)
-                    } else if (index == 0) {
-                        result.coerce(context.irBuiltIns.stringType).materialize()
-                    }
-                }
-                mv.invokestatic(
-                    IrIntrinsicMethods.INTRINSICS_CLASS_NAME,
-                    "stringPlus",
-                    "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;",
-                    false
-                )
-            }
-            else -> {
-                // Use StringBuilder to concatenate.
-                genStringBuilderConstructor(mv)
-                for (argument in expression.arguments) {
-                    genInvokeAppendMethod(mv, argument.accept(this, data).boxInlineClasses(argument.type).materialized.type, null)
-                }
-                mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
-            }
-        }
-        return expression.onStack
-    }
-
-    private fun MaterialValue.genToString(v: InstructionAdapter) {
-        val asmType =
-            if (irType.getClass()?.isInline == true) OBJECT_TYPE else stringValueOfType(type)
-        v.invokestatic("java/lang/String", "valueOf", Type.getMethodDescriptor(AsmTypes.JAVA_STRING_TYPE, asmType), false)
-    }
-
     override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): PromisedValue {
         val continueLabel = markNewLabel()
         val endLabel = Label()
