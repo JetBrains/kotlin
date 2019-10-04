@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.konan.util.DependencyDirectories
 class Distribution(
     private val onlyDefaultProfiles: Boolean = false,
     private val konanHomeOverride: String? = null,
-    private val runtimeFileOverride: String? = null) {
+    private val runtimeFileOverride: String? = null
+) {
 
     val localKonanDir = DependencyDirectories.localKonanDir
 

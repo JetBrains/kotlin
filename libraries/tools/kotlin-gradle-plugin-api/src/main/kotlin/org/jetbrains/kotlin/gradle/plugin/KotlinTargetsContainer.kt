@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.NamedDomainObjectContainer
 
 interface KotlinTargetsContainer {
     val targets: NamedDomainObjectCollection<KotlinTarget>
@@ -13,4 +14,8 @@ interface KotlinTargetsContainer {
 
 interface KotlinTargetsContainerWithPresets : KotlinTargetsContainer {
     val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
+}
+
+interface KotlinSourceSetContainer {
+    val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 }

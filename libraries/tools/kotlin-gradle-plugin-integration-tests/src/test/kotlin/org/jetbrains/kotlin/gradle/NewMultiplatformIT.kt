@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
+import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Test
 import java.util.jar.JarFile
