@@ -42,6 +42,13 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                 else
                     expressionForAnalyze
 
+                val parentEnumEntry = expressionForAnalyze.getStrictParentOfType<KtEnumEntry>()
+                if (parentEnumEntry != null) {
+                    val companionObject = (expressionForAnalyze.receiverExpression.mainReference?.resolve() as? KtObjectDeclaration)
+                        ?.takeIf { it.isCompanion() }
+                    if (companionObject?.containingClass() == parentEnumEntry.getStrictParentOfType<KtClass>()) return
+                }
+
                 val context = originalExpression.analyze()
 
                 val originalDescriptor = expressionForAnalyze.getQualifiedElementSelector()
