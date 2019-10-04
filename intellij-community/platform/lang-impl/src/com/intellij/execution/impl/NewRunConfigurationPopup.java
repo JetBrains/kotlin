@@ -12,6 +12,7 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.EmptyIcon;
+import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +24,36 @@ import java.util.List;
  * @author Irina.Chernushina on 10/8/2015.
  */
 public class NewRunConfigurationPopup {
+  static final ConfigurationType HIDDEN_ITEMS_STUB = new ConfigurationType() {
+    @NotNull
+    @Override
+    public String getDisplayName() {
+      return "";
+    }
+
+    @Nls
+    @Override
+    public String getConfigurationTypeDescription() {
+      return "";
+    }
+
+    @Override
+    public Icon getIcon() {
+      return EmptyIcon.ICON_16;
+    }
+
+    @NotNull
+    @Override
+    public String getId() {
+      return "";
+    }
+
+    @Override
+    public ConfigurationFactory[] getConfigurationFactories() {
+      return new ConfigurationFactory[0];
+    }
+  };
+
   @NotNull
   public static ListPopup createAddPopup(@NotNull Project project,
                                          @NotNull final List<? extends ConfigurationType> typesToShow,
@@ -36,7 +67,7 @@ public class NewRunConfigurationPopup {
       @Override
       @NotNull
       public String getTextFor(final ConfigurationType type) {
-        return type != null ? type.getDisplayName() : defaultText;
+        return type != HIDDEN_ITEMS_STUB ? type.getDisplayName() : defaultText;
       }
 
       @Override
@@ -46,7 +77,7 @@ public class NewRunConfigurationPopup {
 
       @Override
       public Icon getIconFor(final ConfigurationType type) {
-        return type != null ? type.getIcon() : EmptyIcon.ICON_16;
+        return type.getIcon();
       }
 
       @Override
@@ -54,7 +85,7 @@ public class NewRunConfigurationPopup {
         if (hasSubstep(type)) {
           return getSupStep(type);
         }
-        if (type == null) {
+        if (type == HIDDEN_ITEMS_STUB) {
           return doFinalStep(finalStep);
         }
 
@@ -67,7 +98,7 @@ public class NewRunConfigurationPopup {
 
       @Override
       public int getDefaultOptionIndex() {
-        return selectedConfigurationType != null ? typesToShow.indexOf(selectedConfigurationType) : super.getDefaultOptionIndex();
+        return selectedConfigurationType != HIDDEN_ITEMS_STUB ? typesToShow.indexOf(selectedConfigurationType) : super.getDefaultOptionIndex();
       }
 
       private ListPopupStep getSupStep(final ConfigurationType type) {
@@ -97,7 +128,7 @@ public class NewRunConfigurationPopup {
 
       @Override
       public boolean hasSubstep(final ConfigurationType type) {
-        return type != null && type.getConfigurationFactories().length > 1;
+        return type.getConfigurationFactories().length > 1;
       }
     };
 

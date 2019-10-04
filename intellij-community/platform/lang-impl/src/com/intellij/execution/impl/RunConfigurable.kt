@@ -959,7 +959,7 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
       val configurationTypes: MutableList<ConfigurationType?> = configurationTypeSorted(project, showApplicableTypesOnly, allTypes).toMutableList()
       val hiddenCount = allTypes.size - configurationTypes.size
       if (hiddenCount > 0) {
-        configurationTypes.add(null)
+        configurationTypes.add(NewRunConfigurationPopup.HIDDEN_ITEMS_STUB);
       }
 
       val popup = NewRunConfigurationPopup.createAddPopup(project, configurationTypes,
