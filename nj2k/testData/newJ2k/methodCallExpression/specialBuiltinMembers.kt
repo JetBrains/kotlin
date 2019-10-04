@@ -1,3 +1,5 @@
+import java.util.HashMap
+
 internal enum class E {
     A, B, C
 }

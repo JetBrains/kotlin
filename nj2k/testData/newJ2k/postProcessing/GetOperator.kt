@@ -1,5 +1,6 @@
 import javaApi.JavaClass
 import kotlinApi.KotlinClass
+import java.util.HashMap
 
 internal class X {
     operator fun get(index: Int): Int {

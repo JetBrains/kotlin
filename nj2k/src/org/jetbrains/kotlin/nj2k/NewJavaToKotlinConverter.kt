@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.nj2k
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
@@ -27,13 +26,18 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import org.jetbrains.kotlin.idea.core.util.EDT
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.printing.JKCodeBuilder
 import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImportList
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.resolve.ImportPath
 
 class NewJavaToKotlinConverter(
     val project: Project,
@@ -66,12 +70,11 @@ class NewJavaToKotlinConverter(
                     val kotlinFile = ApplicationManager.getApplication().runReadAction(Computable {
                         KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", result!!.text, files[i])
                     })
-                    runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
-                        withContext(EDT) {
-                            CommandProcessor.getInstance().runUndoTransparentAction {
-                                result!!.importsToAdd.forEach {
-                                    postProcessor.insertImport(kotlinFile, it)
-                                }
+
+                    ApplicationManager.getApplication().invokeAndWait {
+                        CommandProcessor.getInstance().runUndoTransparentAction {
+                            runWriteAction {
+                                kotlinFile.addImports(result!!.importsToAdd)
                             }
                         }
                     }
@@ -95,6 +98,33 @@ class NewJavaToKotlinConverter(
         }
     }
 
+    private fun KtFile.addImports(imports: Collection<FqName>) {
+        val factory = KtPsiFactory(this)
+        var importList = importList
+        for (import in imports) {
+            val importDirective = factory.createImportDirective(ImportPath(import, isAllUnder = false))
+            if (importList == null) {
+                importList = addImportList(importDirective.parent as KtImportList)
+            } else {
+                importList.add(importDirective)
+            }
+        }
+    }
+
+    private fun KtFile.addImportList(importList: KtImportList): KtImportList {
+        if (packageDirective != null) {
+            return addAfter(importList, packageDirective) as KtImportList
+        }
+
+        val firstDeclaration = findChildByClass(KtDeclaration::class.java)
+        if (firstDeclaration != null) {
+            return addBefore(importList, firstDeclaration) as KtImportList
+        }
+
+        return add(importList) as KtImportList
+    }
+
+
     override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
         val phaseDescription = "Converting Java code to Kotlin code"
         val contextElement = inputElements.firstOrNull() ?: return Result(emptyList(), null, null)
@@ -102,9 +132,14 @@ class NewJavaToKotlinConverter(
         val typeFactory = JKTypeFactory(symbolProvider)
         symbolProvider.typeFactory = typeFactory
         symbolProvider.preBuildTree(inputElements)
-        val importStorage = JKImportStorage()
-        val treeBuilder = JavaToJKTreeBuilder(symbolProvider, typeFactory, converterServices, importStorage)
 
+        val languageVersion = when {
+            contextElement.isPhysical -> contextElement.languageVersionSettings
+            else -> LanguageVersionSettingsImpl.DEFAULT
+        }
+
+        val importStorage = JKImportStorage(languageVersion)
+        val treeBuilder = JavaToJKTreeBuilder(symbolProvider, typeFactory, converterServices, importStorage)
 
         // we want to leave all imports as is in the case when user is converting only imports
         val saveImports = inputElements.all { element ->
