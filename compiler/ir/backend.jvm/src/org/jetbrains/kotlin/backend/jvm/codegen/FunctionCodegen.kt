@@ -76,7 +76,7 @@ open class FunctionCodegen(
         if (!state.classBuilderMode.generateBodies || flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
         } else {
-            val frameMap = createFrameMapWithReceivers(signature)
+            val frameMap = createFrameMapWithReceivers()
             val irClass = context.suspendFunctionContinuations[irFunction]
             val element = (irFunction.symbol.descriptor.psiElement
                 ?: context.suspendLambdaToOriginalFunctionMap[irFunction.parent]?.symbol?.descriptor?.psiElement) as? KtElement
@@ -189,7 +189,7 @@ open class FunctionCodegen(
         enter(parameter, type)
     }
 
-    private fun createFrameMapWithReceivers(signature: JvmMethodSignature): IrFrameMap {
+    private fun createFrameMapWithReceivers(): IrFrameMap {
         val frameMap = IrFrameMap()
         val functionView = irFunction.getOrCreateSuspendFunctionViewIfNeeded(context)
 
@@ -198,20 +198,9 @@ open class FunctionCodegen(
         } else if (functionView.dispatchReceiverParameter != null) {
             frameMap.enterDispatchReceiver(functionView.dispatchReceiverParameter!!)
         }
-
-        for (parameter in signature.valueParameters) {
-            if (parameter.kind == JvmMethodParameterKind.RECEIVER) {
-                val receiverParameter = functionView.extensionReceiverParameter
-                if (receiverParameter != null) {
-                    frameMap.enter(receiverParameter, classCodegen.typeMapper.mapType(receiverParameter))
-                } else {
-                    frameMap.enterTemp(parameter.asmType)
-                }
-            } else if (parameter.kind != JvmMethodParameterKind.VALUE) {
-                frameMap.enterTemp(parameter.asmType)
-            }
+        functionView.extensionReceiverParameter?.let {
+            frameMap.enter(it, classCodegen.typeMapper.mapType(it))
         }
-
         for (parameter in functionView.valueParameters) {
             frameMap.enter(parameter, classCodegen.typeMapper.mapType(parameter.type))
         }
@@ -247,15 +236,12 @@ fun generateParameterAnnotations(
 
     kotlinParameterTypes.forEachIndexed { i, parameterSignature ->
         val kind = parameterSignature.kind
-        if (kind.isSkippedInGenericSignature) return@forEachIndexed
-
         val annotated = when (kind) {
-            JvmMethodParameterKind.VALUE -> iterator.next()
             JvmMethodParameterKind.RECEIVER -> irFunction.extensionReceiverParameter
-            else -> null
+            else -> iterator.next()
         }
 
-        if (annotated != null) {
+        if (!kind.isSkippedInGenericSignature) {
             AnnotationCodegen(innerClassConsumer, context) { descriptor, visible ->
                 mv.visitParameterAnnotation(
                     if (AsmUtil.IS_BUILT_WITH_ASM6) i else i - syntheticParameterCount,
