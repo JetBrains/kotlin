@@ -16,6 +16,7 @@ import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.actionSystem.impl.ActionButtonWithText;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.keymap.KeymapUtil;
@@ -219,7 +220,9 @@ public abstract class AbstractGotoSEContributor implements WeightedSearchEverywh
     if (myProject == null) return; //nowhere to search
     if (!isEmptyPatternSupported() && pattern.isEmpty()) return;
 
-    ProgressIndicatorUtils.yieldToPendingWriteActions();
+    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+      ProgressIndicatorUtils.yieldToPendingWriteActions();
+    }
     ProgressIndicatorUtils.runInReadActionWithWriteActionPriority(() -> {
       if (!isDumbAware() && DumbService.isDumb(myProject)) return;
 
