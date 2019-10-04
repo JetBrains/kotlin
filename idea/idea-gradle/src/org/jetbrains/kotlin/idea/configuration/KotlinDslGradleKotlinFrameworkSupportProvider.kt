@@ -153,9 +153,10 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
                 .addOther("""
                     tasks {
                         compileKotlin {
-                            kotlinOptions {
-                                jvmTarget = "1.8"
-                            }
+                            kotlinOptions.jvmTarget = "1.8"
+                        }
+                        compileTestKotlin {
+                            kotlinOptions.jvmTarget = "1.8"
                         }
                     }""".trimIndent()
                 )
