@@ -22,7 +22,7 @@ class KlibMetadataSerializerExtension(
     private val languageVersionSettings: LanguageVersionSettings,
     override val metadataVersion: BinaryVersion,
     val declarationTableHandler: (DeclarationDescriptor) -> KlibMetadataProtoBuf.DescriptorUniqId?,
-    val descriptorFileId: (DeclarationDescriptor) -> Int?,
+    val descriptorFileId: (DeclarationDescriptorWithSource) -> Int?,
     override val stringTable: StringTableImpl
 ) : KotlinSerializerExtensionBase(KlibMetadataSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true

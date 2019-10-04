@@ -33,6 +33,7 @@ message Header {
   repeated org.jetbrains.kotlin.metadata.Annotation annotation = 6;
   repeated string package_fragment_name = 7;
   repeated string empty_package = 8;
+  repeated File file = 9;
 
   // TODO: Unused.
   // TODO: We need to have backend specific extension for versionings.
@@ -42,14 +43,7 @@ message Header {
 }
 
 message File {
-  // If absent, id is the index of the file in the Files.file list
-  optional int32 id = 1;
-  required string name = 2;
-  repeated org.jetbrains.kotlin.metadata.Annotation annotation = 3;
-}
-
-message Files {
-  repeated File file = 1;
+  required string name = 1;
 }
 
 message DescriptorUniqId {
@@ -92,6 +86,10 @@ extend org.jetbrains.kotlin.metadata.EnumEntry {
   optional DescriptorUniqId enum_entry_uniq_id = 172;
 }
 
+extend org.jetbrains.kotlin.metadata.ValueParameter {
+   repeated org.jetbrains.kotlin.metadata.Annotation parameter_annotation = 170;
+}
+
 extend org.jetbrains.kotlin.metadata.Type {
   repeated org.jetbrains.kotlin.metadata.Annotation type_annotation = 170;
 }
@@ -102,7 +100,7 @@ extend org.jetbrains.kotlin.metadata.TypeParameter {
 }
 
 extend org.jetbrains.kotlin.metadata.PackageFragment {
-  optional Files package_fragment_files = 170;
+  repeated int32 package_fragment_files = 170;
   optional bool is_empty = 172;
   optional string fq_name = 173;
   // id in StringTable
