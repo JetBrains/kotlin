@@ -19,7 +19,6 @@ package androidx.compose.plugins.kotlin
 import android.app.Activity
 import android.view.ViewGroup
 import android.widget.TextView
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -201,7 +200,8 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
               }
             }
 
-            val president = FrameManager.unframed { FcsPersonC("$PRESIDENT_NAME_1", $PRESIDENT_AGE_1) }
+            val president = FrameManager.unframed { FcsPersonC("$PRESIDENT_NAME_1", ${
+                PRESIDENT_AGE_1}) }
             """, { mapOf("name" to name, "age" to age) }, """
                president.name = name
                president.age = age
@@ -243,7 +243,8 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
               }
             }
 
-            val president = FrameManager.framed { FcsPersonD("$PRESIDENT_NAME_1", $PRESIDENT_AGE_1).apply { age = $PRESIDENT_AGE_1 } }
+            val president = FrameManager.framed { FcsPersonD("$PRESIDENT_NAME_1", ${
+            PRESIDENT_AGE_1}).apply { age = $PRESIDENT_AGE_1 } }
             """, { mapOf("name" to name, "age" to age) }, """
                president.name = name
                president.age = age
@@ -262,6 +263,26 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
             val tvAge = activity.findViewById(tvAgeId) as TextView
             assertEquals(PRESIDENT_NAME_16, tvName.text)
             assertEquals(PRESIDENT_AGE_16.toString(), tvAge.text)
+        }
+    }
+
+    @Test
+    fun testCGModelView_LambdaInInitializer(): Unit = ensureSetup {
+        // Check that the lambda gets moved correctly.
+        compose("""
+            @Model
+            class Database(val name: String) {
+              var queries = (1..10).map { "query ${'$'}it" }
+            }
+
+            @Composable
+            fun View() {
+                val d = Database("some")
+                TextView(text = "query = ${'$'}{d.queries[0]}", id=100)
+            }
+        """, { emptyMap<String, Any>() }, "", "View()").then {
+            val tv = it.findViewById<TextView>(100)
+            assertEquals("query = query 1", tv.text)
         }
     }
 
@@ -326,12 +347,14 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
         }
 
         val instanceOfClass = instanceClass.newInstance()
-        val advanceMethod = instanceClass.getMethod("advance", *parameterTypes)
-        val composeMethod = instanceClass.getMethod("compose")
 
-        return composeModel({ composeMethod.invoke(instanceOfClass) }) {
+        return composeModel({
+            val composeMethod = instanceClass.getMethod("compose")
+            composeMethod.invoke(instanceOfClass)
+        }) {
             val values = valuesFactory()
             val arguments = values.map { it.value }.toTypedArray()
+            val advanceMethod = instanceClass.getMethod("advance", *parameterTypes)
             advanceMethod.invoke(instanceOfClass, *arguments)
         }
     }

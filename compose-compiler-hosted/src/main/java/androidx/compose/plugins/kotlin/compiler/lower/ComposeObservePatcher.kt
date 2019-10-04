@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irTemporary
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
@@ -113,7 +114,7 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
 
         val descriptor = declaration.descriptor
 
-        // Do not insert observe scope in an inline  function
+        // Do not insert observe scope in an inline function
         if (descriptor.isInline) return declaration
 
         // Do not insert an observe scope in an inline composable lambda
@@ -138,7 +139,8 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
             val restartCalls = bindingContext.get(ComposeWritableSlices.RESTART_CALLS, descriptor)
 
             val oldBody = declaration.body
-            if (restartCalls != null && oldBody != null) {
+            // TODO(b/142286425): Re-enable restart groups
+            if (restartCalls != null && oldBody != null /* disabled */ && descriptor.isInline) {
                 val composerResolvedCall = restartCalls.composer
                 val symbols = context.ir.symbols
                 val symbolTable = symbols.externalSymbolTable
@@ -198,7 +200,7 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
 
                 val fn = IrFunctionImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE,
+                    IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
                     IrSimpleFunctionSymbolImpl(lambdaDescriptor),
                     context.irBuiltIns.unitType
                 ).also {
@@ -256,7 +258,7 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
                                     fn.symbol,
                                     fn.descriptor,
                                     0,
-                                    IrStatementOrigin.IR_TRANSFORM
+                                    IrStatementOrigin.LAMBDA
                                 )
                             )
                         }
@@ -337,44 +339,59 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
             body = irBuilder.irBlockBody {
                 val fn = IrFunctionImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE,
+                    IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
                     IrSimpleFunctionSymbolImpl(lambdaDescriptor),
                     context.irBuiltIns.unitType
                 ).also { fn ->
                     fn.body = declaration.body.apply {
                         // Move the target for the returns to avoid introducing a non-local return.
-                        transformChildrenVoid(object : IrElementTransformerVoid() {
+                        // Update declaration parent that point to the old function to the new
+                        // function.
+                        val oldFunction = declaration
+                        this?.transformChildrenVoid(object : IrElementTransformerVoid() {
                             override fun visitReturn(expression: IrReturn): IrExpression {
-                                if (expression.returnTargetSymbol === declaration.symbol) {
-                                    return IrReturnImpl(
+                                val newExpression = if (
+                                    expression.returnTargetSymbol === declaration.symbol)
+                                    IrReturnImpl(
                                         startOffset = expression.startOffset,
                                         endOffset = expression.endOffset,
                                         type = expression.type,
                                         returnTargetSymbol = fn.symbol,
                                         value = expression.value
                                     )
+                                else expression
+                                return super.visitReturn(newExpression)
+                            }
+
+                            override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+                                if (declaration.parent == oldFunction) {
+                                    declaration.parent = fn
                                 }
-                                return expression
+                                return super.visitDeclaration(declaration)
                             }
                         })
                     }
+                    fn.parent = declaration
                 }
-                +fn
                 +irCall(
                     observeFunctionSymbol,
                     observeFunctionDescriptor,
                     context.irBuiltIns.unitType
                 ).also {
                     it.putValueArgument(
-                        0, IrFunctionReferenceImpl(
-                            UNDEFINED_OFFSET,
-                            UNDEFINED_OFFSET,
-                            type.toIrType(),
-                            fn.symbol,
-                            fn.descriptor,
-                            0,
-                            IrStatementOrigin.IR_TRANSFORM
-                        )
+                        0,
+                        irBlock(origin = IrStatementOrigin.LAMBDA) {
+                            +fn
+                            +IrFunctionReferenceImpl(
+                                UNDEFINED_OFFSET,
+                                UNDEFINED_OFFSET,
+                                type.toIrType(),
+                                fn.symbol,
+                                fn.descriptor,
+                                0,
+                                IrStatementOrigin.LAMBDA
+                            )
+                        }
                     )
                 }
             }

@@ -83,7 +83,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -98,7 +97,6 @@ import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.referenceClassifier
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -112,7 +110,10 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import androidx.compose.plugins.kotlin.frames.analysis.FrameMetadata
 import androidx.compose.plugins.kotlin.frames.analysis.FrameWritableSlices
 import androidx.compose.plugins.kotlin.frames.analysis.FrameWritableSlices.FRAMED_DESCRIPTOR
+import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
@@ -123,6 +124,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.ClassTypeConstructorImpl
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
@@ -132,18 +134,27 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.Printer
 
 /**
- * The frame transformer extension transforms a "framed" classes properties into the form expected by the frames runtime.
+ * The frame transformer extension transforms a "framed" classes properties into the form expected
+ * by the frames runtime.
+ *
  * The transformation is:
  *   - Move the backing fields for public properties from the class itself to a value record.
  *   - Change the property initializers to initialize the value record.
- *   - Change the public property getters and setters to get the current frame record and set or get the value from that
- *     record.
- *
- * The frame runtime will which value record is current for the frame.
+ *   - Change the public property getters and setters to get the current frame record and set or get
+ *     the value from that record.
+ *   - Remove the moved fields from the class and rewrite any methods that refer to the removed
+ *     methods to use the getters and setters instead.
  */
 class FrameIrTransformer(val context: JvmBackendContext) :
     IrElementTransformerVoidWithContext(),
     FileLoweringPass {
+
+    private class FieldRewriteInformation(
+        val getter: IrSimpleFunction?,
+        val setter: IrSimpleFunction?
+    )
+
+    private val fieldRewrites = mutableMapOf<IrFieldSymbol, FieldRewriteInformation>()
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -285,7 +296,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                 ?: error("No this receiver found for class ${declaration.name}")
             val thisSymbol = thisReceiver.symbol
             val thisType = thisReceiver.type
-            val thisValue = syntheticGetValue(thisSymbol, thisType)
+            fun thisValue() = syntheticGetValue(thisSymbol, thisType)
 
             val recordPropertyDescriptor = PropertyDescriptorImpl.create(
                 /* containingDeclaration = */ framedDescriptor,
@@ -333,7 +344,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
             +method(metadata.prependFrameRecordDescriptor(recordTypeDescriptor)) {
                 val receiverParameter = it.dispatchReceiverParameter
                     ?: error("Expected reciver for $metadata")
-                val dispatchReceiver = syntheticGetValue(
+                fun dispatchReceiver() = syntheticGetValue(
                     receiverParameter.symbol,
                     receiverParameter.type
                 )
@@ -348,18 +359,18 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                     symbolTable.referenceFunction(nextField.setter
                         ?: error("Expected setter for Record.next"))
                 val valueParameter = it.valueParameters[0]
-                val value = syntheticGetValue(valueParameter.symbol, valueParameter.type)
+                fun value() = syntheticGetValue(valueParameter.symbol, valueParameter.type)
 
                 +syntheticSetterCall(
                     setNextSymbol,
                     nextField.setter!!,
-                    value,
-                    syntheticGetField(fieldReference, dispatchReceiver)
+                    value(),
+                    syntheticGetField(fieldReference, dispatchReceiver())
                 )
                 +syntheticSetField(
                     fieldReference,
-                    dispatchReceiver,
-                    value
+                    dispatchReceiver(),
+                    value()
                 )
             }
 
@@ -372,7 +383,7 @@ class FrameIrTransformer(val context: JvmBackendContext) :
             +initializer {
                 // Create the initial state record
                 +syntheticSetField(
-                    fieldReference, thisValue, syntheticConstructorCall(
+                    fieldReference, thisValue(), syntheticConstructorCall(
                         recordClassDescriptor.defaultType.toIrType(),
                         recordCtorSymbol!!,
                         // Non-null was already validated when the record class was constructed
@@ -399,7 +410,10 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                         +syntheticSetField(
                             irRecordField,
                             getRecord(thisSymbol, thisType),
-                            initializer.expression
+                            updateDeclarationParents(
+                                initializer.expression,
+                                backingField,
+                                classBuilder.irClass)
                         )
                     }
                 }
@@ -415,13 +429,12 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                     symbolTable.referenceSimpleFunction(createdDescriptor),
                     createdDescriptor
                 ).apply {
-                    putValueArgument(0, thisValue)
+                    putValueArgument(0, thisValue())
                 }
-
-                // TODO(http://b/79588393): Determine if the order is important here. Should this be added before, all other initializers, after, be before the property
             }
 
-            // Replace property getter/setters with _readable/_writable calls (this, indirectly, removes the backing field)
+            // Replace property getter/setters with _readable/_writable calls (this,
+            // indirectly, removes the backing field)
             val readableDescriptor =
                 framesPackageDescriptor.memberScope.getContributedFunctions(
                     Name.identifier("_readable"),
@@ -443,6 +456,8 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                     ?: error("Could not find ir representation of ${propertyDescriptor.name}")
                 val irRecordField = fields.find { it.name == propertyDescriptor.name }
                     ?: error("Could not find record field of ${propertyDescriptor.name}")
+                // Properties without backing fields will cause an erro above.
+                val backingField = irFramedProperty.backingField!!
                 irFramedProperty.backingField = null
                 irFramedProperty.getter?.let { getter ->
                     // replace this.field with (_readable(this.next) as <record>).<field>
@@ -525,10 +540,47 @@ class FrameIrTransformer(val context: JvmBackendContext) :
                         }
                     }, null)
                 }
+
+                fieldRewrites[backingField.symbol] = FieldRewriteInformation(
+                    irFramedProperty.getter,
+                    irFramedProperty.setter
+                )
             }
         }
 
         return super.visitClassNew(classBuilder.irClass)
+    }
+
+    override fun visitGetField(expression: IrGetField): IrExpression {
+        val getter = fieldRewrites[expression.symbol]?.getter
+        if (getter != null) {
+            return callAccessor(expression, getter)
+        }
+        return super.visitGetField(expression)
+    }
+
+    override fun visitSetField(expression: IrSetField): IrExpression {
+        val setter = fieldRewrites[expression.symbol]?.setter
+        if (setter != null) {
+            return callAccessor(expression, setter).apply {
+                putValueArgument(0, expression.value)
+            }
+        }
+        return super.visitSetField(expression)
+    }
+
+    private fun callAccessor(
+        expression: IrFieldAccessExpression,
+        function: IrSimpleFunction
+    ) = IrCallImpl(
+        startOffset = expression.startOffset,
+        endOffset = expression.endOffset,
+        type = expression.type,
+        descriptor = function.descriptor,
+        symbol = function.symbol
+
+    ).apply {
+        dispatchReceiver = expression.receiver
     }
 }
 
@@ -666,7 +718,9 @@ class IrClassBuilder(
         IrDeclarationOrigin.DELEGATE,
         classSymbol
     ).also {
-        it.thisReceiver = syntheticValueParameter(receiverParameterDescriptor)
+        it.thisReceiver = syntheticValueParameter(receiverParameterDescriptor).apply {
+            parent = it
+        }
         it.descriptor.getAllSuperclassesWithoutAny().forEach { superClass ->
             it.superTypes.add(superClass.defaultType.toIrType())
         }
@@ -910,6 +964,22 @@ class SyntheticFramePackageDescriptor(
     }
 }
 
+private fun updateDeclarationParents(
+    expression: IrExpression,
+    oldParent: IrDeclarationParent,
+    newParent: IrDeclarationParent
+): IrExpression {
+    expression.transformChildrenVoid(object : IrElementTransformerVoid() {
+        override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+            if (declaration.parent == oldParent) {
+                declaration.parent = newParent
+            }
+            return super.visitDeclaration(declaration)
+        }
+    })
+    return expression
+}
+
 // TODO(chuckj): Consider refactoring to have a shared synthetic base with other synthetic classes
 class FrameRecordClassDescriptor(
     private val myName: Name,
@@ -989,7 +1059,8 @@ class FrameRecordClassDescriptor(
     private val myScope = genScope(bindingContext)
 
     private val myDefaultType: SimpleType by lazy {
-        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
+        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope,
+            KotlinTypeFactory.EMPTY_REFINED_TYPE_FACTORY)
     }
 
     private val thisAsReceiverParameter = LazyClassReceiverParameterDescriptor(this)

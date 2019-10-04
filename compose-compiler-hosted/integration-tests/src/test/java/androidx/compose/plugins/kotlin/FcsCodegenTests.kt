@@ -22,7 +22,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
@@ -657,7 +656,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 )
               }
             }
-        """, noParameters, "example()", dumpClasses = true).then { activity ->
+        """, noParameters, "example()").then { activity ->
             assertEquals("Test", activity.findViewById<TextView>(101).text)
         }
     }
@@ -674,7 +673,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             InlineWrapper(200) {
               TextView(text = "Test", id=101)
             }
-            """, dumpClasses = true).then { activity ->
+            """).then { activity ->
             assertEquals("Test", activity.findViewById<TextView>(101).text)
         }
     }
@@ -692,7 +691,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             InlineWrapper(200) {
               TextView(text = "Test", id=101)
             }
-            """, dumpClasses = true).then { activity ->
+            """).then { activity ->
             assertEquals("Test", activity.findViewById<TextView>(101).text)
         }
     }
@@ -719,7 +718,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                   { set("Test") { text = it }; set(101) { id = it } }
                 )
               }
-        """, dumpClasses = true).then { activity ->
+        """).then { activity ->
             val tv = activity.findViewById<TextView>(101)
             // Assert the TextView was created with the correct text
             assertEquals("Test", tv.text)
@@ -743,7 +742,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             InlineWrapper(200) {
               TextView(text = "Test", id=101)
             }
-            """, dumpClasses = true).then { activity ->
+            """).then { activity ->
             val tv = activity.findViewById<TextView>(101)
             // Assert the TextView was created with the correct text
             assertEquals("Test", tv.text)

@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.ClassTypeConstructorImpl
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
@@ -217,7 +218,8 @@ open class GeneratedKtxChildrenLambdaClassDescriptor(
             LockBasedStorageManager.NO_LOCKS
         )
         this.defaultType =
-            TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
+            TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope,
+                KotlinTypeFactory.EMPTY_REFINED_TYPE_FACTORY)
     }
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = null

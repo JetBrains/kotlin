@@ -51,7 +51,7 @@ class KtxCodegenTests : AbstractCodegenTest() {
 class ModelClass() {
     var x = 0
 }
-            """, true
+            """
         )
     }
 
@@ -658,8 +658,7 @@ class ModelClass() {
             { mapOf("text" to text) },
             """
              <Foo text />
-        """,
-            true
+        """
         ).then { activity ->
             val textView = activity.findViewById(tvId) as TextView
 
