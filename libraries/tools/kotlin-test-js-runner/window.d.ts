@@ -7,6 +7,10 @@ interface Window {
     __karma__: {
         config: {
             args: string[]
-        }
+        },
+        result: (result: BrowserResult) => void
     }
+}
+
+interface BrowserResult {
 }

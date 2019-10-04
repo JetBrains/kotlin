@@ -21,3 +21,9 @@ const untypedArgs = parser.parse(processArgs);
 
 const initialAdapter = kotlin_test.kotlin.test.detectAdapter_8be2vx$();
 kotlin_test.setAdapter(getFilteringAdapter(initialAdapter, untypedArgs));
+
+const resultFun = window.__karma__.result;
+window.__karma__.result = function (result) {
+    console.log(`--END_KOTLIN_TEST--\n${JSON.stringify(result)}`);
+    resultFun(result)
+};
