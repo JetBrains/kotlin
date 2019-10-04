@@ -107,7 +107,7 @@ internal class SchemeListManager<T : Any>(private val schemeManager: SchemeManag
       }
 
       if (oldCurrentScheme != newScheme) {
-        schemeManager.processor.onCurrentSchemeSwitched(oldCurrentScheme, newScheme)
+        schemeManager.processor.onCurrentSchemeSwitched(oldCurrentScheme, newScheme, false)
       }
     }
   }

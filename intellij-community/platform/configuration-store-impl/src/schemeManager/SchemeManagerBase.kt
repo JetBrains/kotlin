@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.configurationStore.schemeManager
 
 import com.intellij.openapi.options.SchemeProcessor
@@ -26,13 +26,13 @@ abstract class SchemeManagerBase<T : Any, in MUTABLE_SCHEME : T>(internal val pr
     return false
   }
 
-  override fun setCurrent(scheme: T?, notify: Boolean) {
+  override fun setCurrent(scheme: T?, notify: Boolean, processChangeSynchronously: Boolean) {
     currentPendingSchemeName = null
 
     val oldCurrent = activeScheme
     activeScheme = scheme
     if (notify && oldCurrent !== scheme) {
-      processor.onCurrentSchemeSwitched(oldCurrent, scheme)
+      processor.onCurrentSchemeSwitched(oldCurrent, scheme, processChangeSynchronously)
     }
   }
 

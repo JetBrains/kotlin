@@ -99,7 +99,7 @@ internal class SchemeChangeApplicator(private val schemeManager: SchemeManagerIm
 
     if (newActiveScheme != null) {
       schemeManager.activeScheme = newActiveScheme
-      processor.onCurrentSchemeSwitched(oldActiveScheme, newActiveScheme)
+      processor.onCurrentSchemeSwitched(oldActiveScheme, newActiveScheme, false)
     }
   }
 }
