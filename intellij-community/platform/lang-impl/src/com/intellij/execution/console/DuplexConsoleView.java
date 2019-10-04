@@ -3,9 +3,9 @@ package com.intellij.execution.console;
 
 import com.google.common.collect.Lists;
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.actions.ClearConsoleAction;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.HyperlinkInfo;
-import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
@@ -278,7 +278,7 @@ public class DuplexConsoleView<S extends ConsoleView, T extends ConsoleView> ext
       else if (action2 instanceof ScrollToTheEndToolbarAction) {
         return new MergedToggleAction(((ToggleAction)action1), (ToggleAction)action2);
       }
-      else if (action2 instanceof ConsoleViewImpl.ClearAllAction) {
+      else if (action2 instanceof ClearConsoleAction) {
         return new MergedAction(action1, action2);
       }
       else {

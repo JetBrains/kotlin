@@ -7,6 +7,7 @@ import com.intellij.codeInsight.navigation.IncrementalSearchHandler;
 import com.intellij.codeInsight.template.impl.editorActions.TypedActionHandlerBase;
 import com.intellij.execution.ConsoleFolding;
 import com.intellij.execution.ExecutionBundle;
+import com.intellij.execution.actions.ClearConsoleAction;
 import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.actions.EOFAction;
 import com.intellij.execution.filters.*;
@@ -15,7 +16,6 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.ObservableConsoleView;
-import com.intellij.icons.AllIcons;
 import com.intellij.ide.CommonActionsManager;
 import com.intellij.ide.OccurenceNavigator;
 import com.intellij.ide.startup.StartupManagerEx;
@@ -64,10 +64,7 @@ import com.intellij.util.DocumentUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.annotations.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -1121,7 +1118,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     return null;
   }
 
-  private static class ClearThisConsoleAction extends ClearAllAction {
+  private static class ClearThisConsoleAction extends ClearConsoleAction {
     private final ConsoleView myConsoleView;
 
     ClearThisConsoleAction(@NotNull ConsoleView consoleView) {
@@ -1140,25 +1137,12 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     }
   }
 
-  public static class ClearAllAction extends DumbAwareAction {
-    public ClearAllAction() {
-      super(ExecutionBundle.message("clear.all.from.console.action.name"), "Clear the contents of the console", AllIcons.Actions.GC);
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-      ConsoleView data = e.getData(LangDataKeys.CONSOLE_VIEW);
-      boolean enabled = data != null && data.getContentSize() > 0;
-      e.getPresentation().setEnabled(enabled);
-    }
-
-    @Override
-    public void actionPerformed(@NotNull final AnActionEvent e) {
-      final ConsoleView consoleView = e.getData(LangDataKeys.CONSOLE_VIEW);
-      if (consoleView != null) {
-        consoleView.clear();
-      }
-    }
+  /**
+   * @deprecated use {@link ClearConsoleAction} instead
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  public static class ClearAllAction extends ClearConsoleAction {
   }
 
   // finds range marker the [offset..offset+1) belongs to
