@@ -1,26 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-package org.jetbrains.kotlin.backend.common.serialization.metadata
+package org.jetbrains.kotlin.library.metadata
 
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.library.KotlinLibrary
 
-private class DeserializedSourceFile(
-        val name_: String, val index: Int, val library: KotlinLibrary) : SourceFile {
-    override fun getName(): String? = name_
-
-    override fun equals(other: Any?): Boolean {
-        return other is DeserializedSourceFile && library == other.library && index == other.index
-    }
-
-    override fun hashCode(): Int {
-        return library.hashCode() xor index
-    }
-}
-
-class SourceFileMap {
+class KlibMetadataFileRegistry {
     private val sourceToIndex = mutableMapOf<SourceFile, Int>()
     private val indexToSource = mutableMapOf<Int, SourceFile>()
 
@@ -37,7 +24,7 @@ class SourceFileMap {
     }
 
     fun sourceFile(index: Int): SourceFile =
-            indexToSource[index] ?: throw Error("Unknown file for $index")
+        indexToSource[index] ?: throw Error("Unknown file for $index")
 
     fun filesAndClear() =
         sourceToIndex.keys.sortedBy {
@@ -50,5 +37,19 @@ class SourceFileMap {
     fun clear() {
         sourceToIndex.clear()
         indexToSource.clear()
+    }
+}
+
+class DeserializedSourceFile(
+    val name_: String, val index: Int, val library: KotlinLibrary
+) : SourceFile {
+    override fun getName(): String? = name_
+
+    override fun equals(other: Any?): Boolean {
+        return other is DeserializedSourceFile && library == other.library && index == other.index
+    }
+
+    override fun hashCode(): Int {
+        return library.hashCode() xor index
     }
 }

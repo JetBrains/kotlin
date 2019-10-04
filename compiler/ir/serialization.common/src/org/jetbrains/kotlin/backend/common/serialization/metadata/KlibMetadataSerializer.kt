@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KlibMetadataFileRegistry
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KotlinPsiFileMetadata
+import org.jetbrains.kotlin.library.metadata.KlibMetadataFileRegistry
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -35,7 +34,6 @@ abstract class KlibMetadataSerializer(
     val metadataVersion: BinaryVersion,
     val descriptorTable: DescriptorTable
 ) {
-
     val fileRegistry = KlibMetadataFileRegistry()
 
     lateinit var serializerContext: SerializerContext
@@ -57,7 +55,7 @@ abstract class KlibMetadataSerializer(
             languageVersionSettings,
             metadataVersion,
             ::declarationTableHandler,
-            {descriptor -> fileRegistry.getFileId(descriptor) } ,
+            {descriptor: DeclarationDescriptorWithSource -> fileRegistry.assign(descriptor.source.containingFile) } ,
             KlibMetadataStringTable()
         )
         return SerializerContext(
@@ -82,10 +80,6 @@ abstract class KlibMetadataSerializer(
 
         val (stringTableProto, nameTableProto) = serializerExtension.stringTable.buildProto()
 
-        // TODO: we place files table to each and every fragment.
-        // Need to refactor it out sonehow.
-        val files = serializeFiles(fileRegistry, bindingContext, AnnotationSerializer(serializerExtension.stringTable))
-
         return ProtoBuf.PackageFragment.newBuilder()
             .setPackage(packageProto)
             .addAllClass_(classesProto.map { it.first })
@@ -95,7 +89,6 @@ abstract class KlibMetadataSerializer(
                 classesProto.forEach {
                     packageFragment.addExtension(KlibMetadataProtoBuf.className, it.second )
                 }
-                packageFragment.setExtension(KlibMetadataProtoBuf.packageFragmentFiles, files)
                 packageFragment.setExtension(KlibMetadataProtoBuf.isEmpty, isEmpty)
                 packageFragment.setExtension(KlibMetadataProtoBuf.fqName, fqName.asString())
             }
@@ -224,32 +217,17 @@ abstract class KlibMetadataSerializer(
     }
 
     private fun serializeFiles(
-        fileRegistry: KlibMetadataFileRegistry,
-        bindingContext: BindingContext,
-        serializer: AnnotationSerializer
-    ): KlibMetadataProtoBuf.Files {
-        val filesProto = KlibMetadataProtoBuf.Files.newBuilder()
-        for ((file, id) in fileRegistry.fileIds.entries.sortedBy { it.value }) {
+        header: KlibMetadataProtoBuf.Header.Builder,
+        fileRegistry: KlibMetadataFileRegistry
+    ) {
+
+        fileRegistry.filesAndClear().map { it.name ?: "" }.forEach {
             val fileProto = KlibMetadataProtoBuf.File.newBuilder()
-            if (id != filesProto.fileCount) {
-                fileProto.id = id
-            }
-            val annotations = when (file) {
-                is KotlinPsiFileMetadata -> file.ktFile.annotationEntries.map { bindingContext[BindingContext.ANNOTATION, it]!! }
-                //is KotlinDeserializedFileMetadata -> file.packageFragment.fileMap[file.fileId]!!.annotations
-                else -> TODO("support other file types")
-            }
-            for (annotation in annotations.filterOutSourceAnnotations()) {
-                fileProto.addAnnotation(serializer.serializeAnnotation(annotation))
-            }
-            val name = when (file) {
-                is KotlinPsiFileMetadata -> file.ktFile.getName()
-                else -> TODO("support other file types")
-            }
-            fileProto.name = name
-            filesProto.addFile(fileProto)
+                .setName(it)
+                .build()
+
+            header.addFile(fileProto)
         }
-        return filesProto.build()
     }
 
     protected fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
@@ -296,6 +274,9 @@ abstract class KlibMetadataSerializer(
         emptyPackages.forEach {
             header.addEmptyPackage(it)
         }
+
+        serializeFiles(header, fileRegistry)
+
         return header.build()
     }
 
