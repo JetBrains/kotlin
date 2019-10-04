@@ -47,6 +47,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jdom.Element;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -289,6 +290,7 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
     return group;
   }
 
+  @ApiStatus.Internal
   public void initStructure() {
     myStructure = new ExternalProjectsStructure(myProject, myTree);
     Disposer.register(this, myStructure);

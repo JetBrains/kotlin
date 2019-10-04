@@ -17,13 +17,18 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.impl.ToolWindowHeadlessManagerImpl
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.PsiTestUtil
-import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
+import org.junit.runners.Parameterized
 
 class GradleToolWindowTest extends GradleImportingTestCase {
   ToolWindowHeadlessManagerImpl.MockToolWindow toolWindow
   ExternalProjectsViewImpl view
   boolean isPreview
+
+  @Parameterized.Parameters(name = "with Gradle-{0}")
+  static Collection<Object[]> data() {
+    return [["5.0"] as Object[]]
+  }
 
   @Override
   void setUp() throws Exception {
@@ -36,7 +41,6 @@ class GradleToolWindowTest extends GradleImportingTestCase {
   }
 
   @Test
-  @TargetVersions("5.0")
   void testSimpleBuild() {
     createSettingsFile("""
 rootProject.name='rooot'
@@ -62,7 +66,6 @@ version '1.0-SNAPSHOT'
   }
 
   @Test
-  @TargetVersions("5.0")
   void testDotInModuleName() {
     createSettingsFile("""
 rootProject.name='rooot'
@@ -95,7 +98,6 @@ version '1.0-SNAPSHOT'
   }
 
   @Test
-  @TargetVersions("5.0")
   void testBuildSrc() {
     createSettingsFile("""
 rootProject.name='rooot'
@@ -126,7 +128,6 @@ public class BuildSrcClass {
 
 
   @Test
-  @TargetVersions("5.0")
   void testSimpleBuildWithoutGrouping() {
     createSettingsFile("""
 rootProject.name='rooot'
@@ -153,7 +154,6 @@ version '1.0-SNAPSHOT'
 
 
   @Test
-  @TargetVersions("5.0")
   void testWithExistedRootModule() {
     createMainModule("project")
 
@@ -185,7 +185,6 @@ version '1.0-SNAPSHOT'
   }
 
   @Test
-  @TargetVersions("5.0")
   void testWithExistedRootModuleWithoutPreviewImport() {
     createMainModule("project")
 
@@ -224,7 +223,6 @@ version '1.0-SNAPSHOT'
   }
 
   @Test
-  @TargetVersions("5.0")
   void testBasicCompositeBuild() throws Exception {
     createSettingsFile("""
 rootProject.name='adhoc'
