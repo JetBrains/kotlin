@@ -17,11 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -335,7 +332,7 @@ class Fir2IrVisitor(
                 if (ownerClassId == null) {
                     lastClass
                 } else {
-                    val classLikeSymbol = session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(ownerClassId)
+                    val classLikeSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(ownerClassId)
                     if (classLikeSymbol !is FirClassSymbol) {
                         lastClass
                     } else {
@@ -423,7 +420,7 @@ class Fir2IrVisitor(
         val constructedIrType = constructedTypeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
         // TODO: find delegated constructor correctly
         val classId = constructedClassSymbol.classId
-        val provider = this@Fir2IrVisitor.session.service<FirSymbolProvider>()
+        val provider = this@Fir2IrVisitor.session.firSymbolProvider
         var constructorSymbol: FirConstructorSymbol? = null
         provider.getClassUseSiteMemberScope(classId, this@Fir2IrVisitor.session, ScopeSession())!!.processFunctionsByName(
             classId.shortClassName

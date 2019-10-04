@@ -56,6 +56,7 @@ interface FirSessionProvider {
     fun getSession(moduleInfo: ModuleInfo): FirSession?
 }
 
+@Deprecated("This is very slow, introduce & use componentArrayAccessor instead")
 inline fun <reified T : Any> FirSession.service(): T =
     getService(T::class)
 

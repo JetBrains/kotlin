@@ -267,7 +267,7 @@ fun FirCallableDeclaration<*>.dispatchReceiverValue(session: FirSession): ClassD
     // TODO: this is not true atCall least for inner class constructors
     if (this is FirConstructor) return null
     val id = this.symbol.callableId.classId ?: return null
-    val symbol = session.service<FirSymbolProvider>().getClassLikeSymbolByFqName(id) as? FirClassSymbol ?: return null
+    val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(id) as? FirClassSymbol ?: return null
     val regularClass = symbol.fir
 
     return ClassDispatchReceiverValue(regularClass.symbol)

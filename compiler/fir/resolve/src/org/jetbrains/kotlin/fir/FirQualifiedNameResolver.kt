@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageOrClass
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.resolve.transformers.resultType
@@ -44,7 +44,7 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
         }
 
     fun tryResolveAsQualifier(): FirResolvedQualifier? {
-        val symbolProvider = session.service<FirSymbolProvider>()
+        val symbolProvider = session.firSymbolProvider
         var qualifierParts = qualifierStack.asReversed().map { it.asString() }
         var resolved: PackageOrClass?
         do {

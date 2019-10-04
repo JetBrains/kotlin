@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.constructClassType
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -247,7 +248,7 @@ private fun JavaAnnotationArgument.toFirExpression(
                 val classId = this@toFirExpression.enumClassId
                 val entryName = this@toFirExpression.entryName
                 val calleeReference = if (classId != null && entryName != null) {
-                    val callableSymbol = session.service<FirSymbolProvider>().getClassDeclaredCallableSymbols(
+                    val callableSymbol = session.firSymbolProvider.getClassDeclaredCallableSymbols(
                         classId, entryName
                     ).firstOrNull()
                     callableSymbol?.let {

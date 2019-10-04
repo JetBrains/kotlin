@@ -210,7 +210,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                     val entryLookupTag = ConeClassLikeLookupTagImpl(entryClassId)
                     val entryClassSymbol = entryLookupTag.toSymbol(this@KotlinDeserializedJvmSymbolsProvider.session)
                     val entryCallableSymbol =
-                        this@KotlinDeserializedJvmSymbolsProvider.session.service<FirSymbolProvider>().getClassDeclaredCallableSymbols(
+                        this@KotlinDeserializedJvmSymbolsProvider.session.firSymbolProvider.getClassDeclaredCallableSymbols(
                             this@toEnumEntryReferenceExpression, name
                         ).firstOrNull()
 

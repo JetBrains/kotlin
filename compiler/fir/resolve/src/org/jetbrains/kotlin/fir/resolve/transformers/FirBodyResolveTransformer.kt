@@ -54,7 +54,7 @@ open class FirBodyResolveTransformer(
     final override val noExpectedType = FirImplicitTypeRefImpl(null)
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
 
-    final override val symbolProvider = session.service<FirSymbolProvider>()
+    final override val symbolProvider = session.firSymbolProvider
 
     private var packageFqName = FqName.ROOT
     final override lateinit var file: FirFile
@@ -173,7 +173,7 @@ open class FirBodyResolveTransformer(
     }
 
     override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Any?): CompositeTransformResult<FirStatement> {
-        val symbolProvider = session.service<FirSymbolProvider>()
+        val symbolProvider = session.firSymbolProvider
         val resolved = transformExpression(typeOperatorCall, data).single
         when ((resolved as FirTypeOperatorCall).operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
@@ -826,7 +826,7 @@ open class FirBodyResolveTransformer(
 
     override fun transformGetClassCall(getClassCall: FirGetClassCall, data: Any?): CompositeTransformResult<FirStatement> {
         val transformedGetClassCall = transformExpression(getClassCall, data).single as FirGetClassCall
-        val kClassSymbol = ClassId.fromString("kotlin/reflect/KClass")(session.service())
+        val kClassSymbol = ClassId.fromString("kotlin/reflect/KClass")(session.firSymbolProvider)
 
         val typeOfExpression = when (val lhs = transformedGetClassCall.argument) {
             is FirResolvedQualifier -> {

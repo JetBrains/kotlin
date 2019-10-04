@@ -54,7 +54,7 @@ val DECLARED = scopeSessionKey<FirScope>()
 data class SubstitutionScopeKey<T : FirClassSubstitutionScope>(val type: ConeClassLikeType) : ScopeSessionKey<T>() {}
 
 fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
-    val symbolProvider = useSiteSession.service<FirSymbolProvider>()
+    val symbolProvider = useSiteSession.firSymbolProvider
     return symbolProvider.getClassUseSiteMemberScope(this.classId, useSiteSession, builder)
 }
 

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
@@ -117,7 +117,7 @@ private fun extraLambdaInfo(
             ?: expectedType?.typeArguments?.singleOrNull()?.safeAs<ConeTypedProjection>()?.type?.takeIf { isFunctionSupertype }
             ?: typeVariable.defaultType
 
-    val nothingType = StandardClassIds.Nothing(argument.session.service()).constructType(emptyArray(), false)
+    val nothingType = StandardClassIds.Nothing(argument.session.firSymbolProvider).constructType(emptyArray(), false)
     val parameters = argument.valueParameters?.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: nothingType
     } ?: emptyList()
@@ -156,7 +156,7 @@ private fun extractLambdaParameters(expectedType: ConeKotlinType, argument: FirA
     val parameters = argument.valueParameters
     val expectedParameters = expectedType.valueParameterTypes
 
-    val nullableAnyType = StandardClassIds.Any(argument.session.service()).constructType(emptyArray(), true)
+    val nullableAnyType = StandardClassIds.Any(argument.session.firSymbolProvider).constructType(emptyArray(), true)
 
     if (parameters.isEmpty()) {
         return expectedParameters.map { it?.type ?: nullableAnyType }

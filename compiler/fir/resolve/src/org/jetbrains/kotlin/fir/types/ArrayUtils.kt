@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.invoke
 
 
 fun ConeKotlinType.createArrayOf(session: FirSession, nullable: Boolean = false): ConeKotlinType {
-    val symbolProvider: FirSymbolProvider = session.service()
+    val symbolProvider: FirSymbolProvider = session.firSymbolProvider
     if (this is ConeClassType) {
         val primitiveArrayId = StandardClassIds.primitiveArrayTypeByElementType[lookupTag.classId]
         if (primitiveArrayId != null) {
@@ -33,7 +33,7 @@ fun ConeKotlinType.arrayElementType(session: FirSession): ConeKotlinType? {
         return (typeArguments.first() as ConeTypedProjection).type
     val elementType = StandardClassIds.elementTypeByPrimitiveArrayType[classId]
     if (elementType != null) {
-        return elementType.invoke(session.service()).constructType(emptyArray(), isNullable = false)
+        return elementType.invoke(session.firSymbolProvider).constructType(emptyArray(), isNullable = false)
     }
 
     return null

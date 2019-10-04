@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -43,7 +44,7 @@ class Fir2IrDeclarationStorage(
     private val irSymbolTable: SymbolTable,
     private val moduleDescriptor: FirModuleDescriptor
 ) {
-    private val firSymbolProvider = session.service<FirSymbolProvider>()
+    private val firSymbolProvider = session.firSymbolProvider
 
     private val firProvider = session.service<FirProvider>()
 

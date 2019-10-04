@@ -62,7 +62,7 @@ abstract class FirSymbolProvider : FirSessionComponent {
     fun getSessionForClass(classId: ClassId): FirSession? = getClassLikeSymbolByFqName(classId)?.fir?.session
 
     companion object {
-        fun getInstance(session: FirSession) = session.service<FirSymbolProvider>()
+        fun getInstance(session: FirSession) = session.firSymbolProvider
     }
 }
 
