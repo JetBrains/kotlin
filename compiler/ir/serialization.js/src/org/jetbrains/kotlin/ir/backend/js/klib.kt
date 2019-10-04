@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -27,6 +24,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KlibMetad
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.ExpectDeclarationRemover
+import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
@@ -71,7 +69,7 @@ val KotlinLibrary.isBuiltIns: Boolean
 fun loadKlib(klibPath: String) =
     createKotlinLibrary(KFile(KFile(klibPath).absolutePath))
 
-private val emptyLoggingContext = object : LoggingContext {
+val emptyLoggingContext = object : LoggingContext {
     override var inVerbosePhase = false
 
     override fun log(message: () -> String) {}
@@ -227,24 +225,22 @@ fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deserializer: I
 
 
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}
-val JsFactories = KlibMetadataFactories(::createBuiltIns, DynamicTypeDeserializer)
+private val JsFactories = KlibMetadataFactories(::createBuiltIns, DynamicTypeDeserializer)
 
-fun getModuleDescriptorByLibrary(
-    current: KotlinLibrary
-): ModuleDescriptorImpl {
-    val parts = loadKlibMetadataParts(current)
-    val isBuiltIns = parts.importedModules.isEmpty()
-    return loadKlibMetadata(
-        parts,
+fun getModuleDescriptorByLibrary(current: KotlinLibrary, mapping: Map<String, ModuleDescriptorImpl>): ModuleDescriptorImpl {
+    val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
         current,
-        isBuiltIns,
-        LookupTracker.DO_NOTHING,
-        LockBasedStorageManager("ModulesStructure"),
-        JsKlibMetadataVersion.INSTANCE,
         LanguageVersionSettingsImpl.DEFAULT,
+        LockBasedStorageManager.NO_LOCKS,
         null,
-        emptyList()
+        packageAccessHandler = null // TODO: This is a speed optimization used by Native. Don't bother for now.
     )
+//    if (isBuiltIns) runtimeModule = md
+
+    val dependencies = current.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).map { mapping.getValue(it) }
+
+    md.setDependencies(listOf(md) + dependencies)
+    return md
 }
 
 private class ModulesStructure(
@@ -254,7 +250,7 @@ private class ModulesStructure(
     val allDependencies: KotlinLibraryResolveResult,
     private val friendDependencies: List<KotlinLibrary>
 ) {
-    val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> = {
+    val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> = run {
         val result = mutableMapOf<KotlinLibrary, List<KotlinLibrary>>()
 
         allDependencies.forEach { klib, _ ->
@@ -264,7 +260,7 @@ private class ModulesStructure(
             result.put(klib, dependencies.minus(klib))
         }
         result
-    }()
+    }
 
     val builtInsDep = allDependencies.getFullList().find { it.isBuiltIns }
 
