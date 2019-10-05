@@ -36,10 +36,11 @@ class MergeElseIfIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpressi
             return newBody.textRange!!.startOffset
         }
 
-        private fun KtExpression.nestedIf() = when (this) {
-            is KtBlockExpression -> this.statements.singleOrNull() as? KtIfExpression
-            is KtIfExpression -> null
-            else -> null
-        }
+        private fun KtExpression.nestedIf() =
+            if (this is KtBlockExpression) {
+                this.statements.singleOrNull() as? KtIfExpression
+            } else {
+                null
+            }
     }
 }
