@@ -688,6 +688,10 @@ fun main(args: Array<String>) {
             model("debugger/fileRanking")
         }
 
+        testClass<AbstractIrFileRankingTest> {
+            model("debugger/fileRanking", targetBackend = TargetBackend.JVM_IR)
+        }
+
         testClass<AbstractSequenceTraceTestCase> {
             // We need to implement mapping logic for terminal operations
             model("debugger/tinyApp/src/streams/sequence", excludeDirs = listOf("terminal"))
