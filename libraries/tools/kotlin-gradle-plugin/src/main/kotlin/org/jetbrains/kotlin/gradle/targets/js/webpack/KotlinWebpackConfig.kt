@@ -231,13 +231,7 @@ data class KotlinWebpackConfig(
                     const webpack = require('webpack');
                     const handler = (percentage, message, ...args) => {
                         let p = percentage * 100;
-                        let leadingValue;
-                        if (p < 10) {
-                            leadingValue = "0"
-                        } else {
-                            leadingValue = ""
-                        }
-                        let msg = leadingValue + Math.trunc(p) + '% ' + message + ' ' + args.join(' ');
+                        let msg = `${"$"}{Math.trunc(p / 10)}${"$"}{Math.trunc(p % 10)}% ${"$"}{message} ${"$"}{args.join(' ')}`;
                         ${if (progressReporterPathFilter == null) "" else """
                             msg = msg.replace(new RegExp(${progressReporterPathFilter.jsQuoted()}, 'g'), '');
                         """.trimIndent()};
