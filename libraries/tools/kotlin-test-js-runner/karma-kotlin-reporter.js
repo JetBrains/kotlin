@@ -1,38 +1,11 @@
-/*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 const util = require('util');
-const resolve = require('url').resolve;
+const resolve = require('path').resolve;
 
-const escapeMessage = function (message) {
-    if (message === null || message === undefined) {
-        return ''
-    }
-
-    return message.toString()
-        .replace(/\|/g, '||')
-        .replace(/'/g, "|'")
-        .replace(/\n/g, '|n')
-        .replace(/\r/g, '|r')
-        .replace(/\u0085/g, '|x')
-        .replace(/\u2028/g, '|l')
-        .replace(/\u2029/g, '|p')
-        .replace(/\[/g, '|[')
-        .replace(/]/g, '|]')
-};
-
-const formatMessage = function () {
-    const args = Array.prototype.slice.call(arguments);
-
-    for (let i = args.length - 1; i > 0; i--) {
-        args[i] = escapeMessage(args[i])
-    }
-
-    return util.format.apply(null, args) + '\n'
-};
-
+/**
+ * From karma
+ * The MIT License
+ * Copyright (C) 2011-2019 Google, Inc.
+ */
 // This ErrorFormatter is copied from standard karma's,
 //  but without warning in case of failed original location finding
 function createFormatError(config, emitter) {
@@ -93,6 +66,38 @@ function createFormatError(config, emitter) {
         return msg + '\n'
     };
 }
+
+/**
+ * From karma-teamcity-reporter.
+ * The MIT License
+ * Copyright (C) 2011-2013 Vojta Jína and contributors
+ */
+const escapeMessage = function (message) {
+    if (message === null || message === undefined) {
+        return ''
+    }
+
+    return message.toString()
+        .replace(/\|/g, '||')
+        .replace(/'/g, "|'")
+        .replace(/\n/g, '|n')
+        .replace(/\r/g, '|r')
+        .replace(/\u0085/g, '|x')
+        .replace(/\u2028/g, '|l')
+        .replace(/\u2029/g, '|p')
+        .replace(/\[/g, '|[')
+        .replace(/]/g, '|]')
+};
+
+const formatMessage = function () {
+    const args = Array.prototype.slice.call(arguments);
+
+    for (let i = args.length - 1; i > 0; i--) {
+        args[i] = escapeMessage(args[i])
+    }
+
+    return util.format.apply(null, args) + '\n'
+};
 
 // This reporter extends karma-teamcity-reporter
 //  It is necessary, because karma-teamcity-reporter can't write browser's log
