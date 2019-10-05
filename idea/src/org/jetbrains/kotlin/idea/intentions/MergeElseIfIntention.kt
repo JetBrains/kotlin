@@ -38,7 +38,7 @@ class MergeElseIfIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpressi
 
         private fun KtExpression.nestedIf() = when (this) {
             is KtBlockExpression -> this.statements.singleOrNull() as? KtIfExpression
-            is KtIfExpression -> this
+            is KtIfExpression -> null
             else -> null
         }
     }
