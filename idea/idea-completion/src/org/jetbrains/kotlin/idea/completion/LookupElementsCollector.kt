@@ -115,32 +115,13 @@ class LookupElementsCollector(
             element.putUserData(NOT_IMPORTED_KEY, Unit)
             if (isResultEmpty && elements.isEmpty()) { /* without these checks we may get duplicated items */
                 addElement(element.suppressAutoInsertion())
-            }
-            else {
+            } else {
                 addElement(element)
             }
             return
         }
 
-        val decorated = object : LookupElementDecorator<LookupElement>(element) {
-            override fun handleInsert(context: InsertionContext) {
-                delegate.handleInsert(context)
-
-                if (context.shouldAddCompletionChar() && !isJustTyping(context, this)) {
-                    when (context.completionChar) {
-                        ',' -> WithTailInsertHandler.COMMA.postHandleInsert(context, delegate)
-
-                        '=' -> WithTailInsertHandler.EQ.postHandleInsert(context, delegate)
-
-                        '!' -> {
-                            WithExpressionPrefixInsertHandler("!").postHandleInsert(context)
-                            context.setAddCompletionChar(false)
-                        }
-                    }
-                }
-
-            }
-        }
+        val decorated = JustTypingLookupElementDecorator(element, completionParameters)
 
         var result: LookupElement = decorated
         for (postProcessor in postProcessors) {
@@ -149,9 +130,7 @@ class LookupElementsCollector(
 
         val declarationLookupObject = result.`object` as? DeclarationLookupObject
         if (declarationLookupObject != null) {
-            result = object : LookupElementDecorator<LookupElement>(result) {
-                override fun getPsiElement() = declarationLookupObject.psiElement
-            }
+            result = DeclarationLookupObjectLookupElementDecorator(result, declarationLookupObject)
         }
 
         if (filter?.invoke(result) ?: true) {
@@ -162,13 +141,6 @@ class LookupElementsCollector(
         bestMatchingDegree = max(bestMatchingDegree, matchingDegree)
     }
 
-    // used to avoid insertion of spaces before/after ',', '=' on just typing
-    private fun isJustTyping(context: InsertionContext, element: LookupElement): Boolean {
-        if (!completionParameters.isAutoPopup) return false
-        val insertedText = context.document.getText(TextRange(context.startOffset, context.tailOffset))
-        return insertedText == element.getUserDataDeep(KotlinCompletionCharFilter.JUST_TYPING_PREFIX)
-    }
-
     fun addElements(elements: Iterable<LookupElement>, notImported: Boolean = false) {
         elements.forEach { addElement(it, notImported) }
     }
@@ -176,6 +148,41 @@ class LookupElementsCollector(
     fun restartCompletionOnPrefixChange(prefixCondition: ElementPattern<String>) {
         resultSet.restartCompletionOnPrefixChange(prefixCondition)
     }
+}
+
+private class JustTypingLookupElementDecorator(element: LookupElement, private val completionParameters: CompletionParameters) :
+    LookupElementDecorator<LookupElement>(element) {
+    // used to avoid insertion of spaces before/after ',', '=' on just typing
+    private fun isJustTyping(context: InsertionContext, element: LookupElement): Boolean {
+        if (!completionParameters.isAutoPopup) return false
+        val insertedText = context.document.getText(TextRange(context.startOffset, context.tailOffset))
+        return insertedText == element.getUserDataDeep(KotlinCompletionCharFilter.JUST_TYPING_PREFIX)
+    }
+
+    override fun handleInsert(context: InsertionContext) {
+        delegate.handleInsert(context)
+
+        if (context.shouldAddCompletionChar() && !isJustTyping(context, this)) {
+            when (context.completionChar) {
+                ',' -> WithTailInsertHandler.COMMA.postHandleInsert(context, delegate)
+
+                '=' -> WithTailInsertHandler.EQ.postHandleInsert(context, delegate)
+
+                '!' -> {
+                    WithExpressionPrefixInsertHandler("!").postHandleInsert(context)
+                    context.setAddCompletionChar(false)
+                }
+            }
+        }
+
+    }
+}
+
+private class DeclarationLookupObjectLookupElementDecorator(
+    element: LookupElement,
+    private val declarationLookupObject: DeclarationLookupObject
+) : LookupElementDecorator<LookupElement>(element) {
+    override fun getPsiElement() = declarationLookupObject.psiElement
 }
 
 private fun unwrapIfImportedFromObject(descriptor: CallableDescriptor): CallableDescriptor =
