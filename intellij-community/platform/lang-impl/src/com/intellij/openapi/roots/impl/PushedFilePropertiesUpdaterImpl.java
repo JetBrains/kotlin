@@ -82,8 +82,6 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
             ContainerUtil.addIfNotNull(delayedTasks, createRecursivePushTask(event, pushers));
           }
         }
-
-        ContainerUtil.addIfNotNull(syncTasks, createRecursivePushTask(event, pushers));
       }
       else if (event instanceof VFileMoveEvent || event instanceof VFileCopyEvent) {
         VirtualFile file = getFile(event);
