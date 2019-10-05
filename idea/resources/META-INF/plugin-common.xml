@@ -1480,6 +1480,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.MergeElseIfIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.AddMissingDestructuringIntention</className>
       <category>Kotlin</category>
     </intentionAction>
