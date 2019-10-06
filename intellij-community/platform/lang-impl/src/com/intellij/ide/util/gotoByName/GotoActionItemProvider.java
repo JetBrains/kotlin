@@ -117,9 +117,8 @@ public class GotoActionItemProvider implements ChooseByNameItemProvider {
       provider.consumeTopHits(pattern, collector, project);
     }
     Collection<Object> result = collector.getResult();
-    JBIterable<Comparable> wrappers = JBIterable.from(result)
-      .transform(object -> object instanceof AnAction ? wrapAnAction((AnAction)object, dataContext) : object)
-      .filter(Comparable.class);
+    JBIterable<?> wrappers = JBIterable.from(result)
+      .transform(object -> object instanceof AnAction ? wrapAnAction((AnAction)object, dataContext) : object);
     return processItems(pattern, wrappers, consumer);
   }
 
