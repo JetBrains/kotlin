@@ -160,28 +160,4 @@ internal val DeclarationDescriptor.isExpectMember: Boolean
 internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
     get() = this is ClassDescriptor && ExpectedActualDeclarationChecker.shouldGenerateExpectClass(this)
 
-// TODO: temporary disabling. Need to figure out proper SourceFileMap and FileRegistry commonization.
-//private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
-//    val fragment = descriptor.findPackage() as KonanPackageFragment
-//    return fragment.sourceFileMap.sourceFile(index)
-//}
-
-fun CallableMemberDescriptor.findSourceFile(): SourceFile {
-    val source = this.source.containingFile
-    if (source != SourceFile.NO_SOURCE_FILE)
-        return source
-    return when {
-        // TODO: temporary disabling. Need to figure out proper SourceFileMap and FileRegistry commonization.
-        this is DeserializedSimpleFunctionDescriptor && proto.hasExtension(KlibMetadataProtoBuf.functionFile) ->
-            SourceFile.NO_SOURCE_FILE
-            //sourceByIndex(
-            //    this, proto.getExtension(KlibMetadataProtoBuf.functionFile))
-        this is DeserializedPropertyDescriptor && proto.hasExtension(KlibMetadataProtoBuf.propertyFile) ->
-            SourceFile.NO_SOURCE_FILE
-            //sourceByIndex(
-            //    this, proto.getExtension(KlibMetadataProtoBuf.propertyFile))
-        else -> TODO()
-    }
-}
-
 val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
