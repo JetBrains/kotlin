@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -79,6 +80,31 @@ private val CompilerConfiguration.metadataVersion
     get() = get(CommonConfigurationKeys.METADATA_VERSION) as? JsKlibMetadataVersion ?: JsKlibMetadataVersion.INSTANCE
 
 class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
+
+// TODO: This is a temporary set of library resolver policies for js compiler.
+fun jsResolveLibraries(libraries: List<String>): KotlinLibraryResolveResult {
+
+    val unresolvedLibraries = libraries.map { UnresolvedLibrary(it ,null) }
+    val libraryAbsolutePaths = libraries.map{ File(it).absolutePath }
+    // Configure the resolver to only work with absolute paths for now.
+    val libraryResolver = KotlinLibrarySearchPathResolver<KotlinLibrary>(
+        repositories = emptyList(),
+        directLibs = libraryAbsolutePaths,
+        distributionKlib = null,
+        localKotlinDir = null,
+        skipCurrentDir = false
+        // TODO: pass logger attached to message collector here.
+    ).libraryResolver()
+    val resolvedLibraries =
+        libraryResolver.resolveWithDependencies(
+            unresolvedLibraries = unresolvedLibraries,
+            noStdLib = true,
+            noDefaultLibs = true,
+            noEndorsedLibs = true
+        )
+    return resolvedLibraries
+}
+
 
 fun generateKLib(
     project: Project,
