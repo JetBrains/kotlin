@@ -142,17 +142,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        val unresolvedLibraries = libraries.toUnresolvedLibraries
-        // Configure resolver to only understands absolute path libraries.
-        val libraryResolver = KotlinLibrarySearchPathResolver<KotlinLibrary>(
-            repositories = emptyList(),
-            directLibs = libraries,
-            distributionKlib = null,
-            localKotlinDir = null,
-            skipCurrentDir = true
-            // TODO: pass logger attached to message collector here.
-        ).libraryResolver()
-        val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries, true, true, true)
+        val resolvedLibraries = jsResolveLibraries(libraries)
 
         val friendAbsolutePaths = friendLibraries.map { File(it).absolutePath }
         val friendDependencies = resolvedLibraries.getFullList().filter {

@@ -116,19 +116,7 @@ fun main(args: Array<String>) {
     if (outputPath == null) {
         error("Please set path to .klm file: `-o some/dir/module-name.klm`")
     }
-
-    val dependencyAbsolutePaths = dependencies.map{ File(it).absolutePath }
-    val unresolvedLibraries = dependencies.map { UnresolvedLibrary(it, null) }
-    // Configure the resolver to only understand absolute path libraries.
-    val libraryResolver = KotlinLibrarySearchPathResolver<KotlinLibrary>(
-        repositories = emptyList(),
-        directLibs = dependencyAbsolutePaths,
-        distributionKlib = null,
-        localKotlinDir = null,
-        skipCurrentDir = true
-        // TODO: pass logger attached to message collector here.
-    ).libraryResolver()
-    val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries, true, true, true)
+    val resolvedLibraries = jsResolveLibraries(dependencies)
 
     buildKLib(File(outputPath).absolutePath, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))
 }
