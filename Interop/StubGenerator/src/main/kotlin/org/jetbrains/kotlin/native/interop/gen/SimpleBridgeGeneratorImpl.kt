@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.native.interop.indexer.CompilationWithPCH
 import org.jetbrains.kotlin.native.interop.indexer.Language
 import org.jetbrains.kotlin.native.interop.indexer.mapFragmentIsCompilable
 
+internal val INVALID_CLANG_IDENTIFIER_REGEX = "[^a-zA-Z1-9_]".toRegex()
+
 class SimpleBridgeGeneratorImpl(
         private val platform: KotlinPlatform,
         private val pkgName: String,
@@ -245,9 +247,5 @@ class SimpleBridgeGeneratorImpl(
             override fun isSupported(nativeBacked: NativeBacked): Boolean =
                     nativeBacked !in excludedClients
         }
-    }
-
-    companion object {
-        internal val INVALID_CLANG_IDENTIFIER_REGEX = "[^a-zA-Z1-9_]".toRegex()
     }
 }
