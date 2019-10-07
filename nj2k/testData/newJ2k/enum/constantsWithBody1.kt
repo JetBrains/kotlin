@@ -3,5 +3,5 @@ enum class E {
         override fun bar() {}
     };
 
-    internal open fun bar() {}
+    open fun bar() {}
 }

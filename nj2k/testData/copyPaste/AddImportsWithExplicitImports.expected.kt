@@ -1,6 +1,6 @@
 import java.io.File
 
-class C {
+internal class C {
     private fun memberFun(file: File) {}
 
     companion object {

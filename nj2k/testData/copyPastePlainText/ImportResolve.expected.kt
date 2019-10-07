@@ -14,9 +14,9 @@ class Target {
 
     var hashMapOfNotImported: Map<ToBeImportedJava, ToBeImportedKotlin> = HashMap()
 
-    internal fun acceptKotlinClass(tbi: ToBeImportedKotlin?) {}
+    fun acceptKotlinClass(tbi: ToBeImportedKotlin?) {}
 
-    internal fun acceptJavaClass(tbi: ToBeImportedJava?) {}
+    fun acceptJavaClass(tbi: ToBeImportedJava?) {}
 
     var ambiguousKotlin: IAmbiguousKotlin = AmbiguousKotlin() // Should not add import in case of 2 declarations in Kotlin
 
@@ -25,7 +25,7 @@ class Target {
     var ambiguousJava: IAmbiguousJava = AmbiguousJava() // Should not add import in case of 2 declarations in Java
 
 
-    internal fun workWithStatics() {
+    fun workWithStatics() {
         val a = TO_BE_IMPORTED_CONST
         staticMethod()
     }

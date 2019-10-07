@@ -1,9 +1,9 @@
 class A {
 
 
-    internal fun foo() {}
+    fun foo() {}
 
-    internal fun bar() {}
+    fun bar() {}
 
 
     fun f() {}
