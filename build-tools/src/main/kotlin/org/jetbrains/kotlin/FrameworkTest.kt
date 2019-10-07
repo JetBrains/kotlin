@@ -160,7 +160,7 @@ open class FrameworkTest : DefaultTask() {
         val configurables = project.platformManager.platform(testTarget).configurables as AppleConfigurables
 
         val bitcodeBuildTool = Paths.get("${configurables.absoluteAdditionalToolsDir}/bin/bitcode-build-tool")
-        val ldPath = "${configurables.absoluteTargetToolchain}/usr/bin/ld"
+        val toolPath = "${configurables.absoluteTargetToolchain}/usr/bin/"
         val sdk = when (testTarget) {
             KonanTarget.IOS_X64,
             KonanTarget.TVOS_X64,
@@ -175,6 +175,6 @@ open class FrameworkTest : DefaultTask() {
             else -> error("Cannot validate bitcode for test target $testTarget")
         }
 
-        runTest(bitcodeBuildTool, args = listOf("--sdk", sdk, "-v", "-t", ldPath, frameworkBinary))
+        runTest(bitcodeBuildTool, args = listOf("--sdk", sdk, "-v", "-t", toolPath, frameworkBinary))
     }
 }
