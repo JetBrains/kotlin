@@ -239,11 +239,9 @@ class StubIrBridgeBuilder(
         }
     }
 
-    private fun isCValuesRef(type: StubType): Boolean {
-        if (type !is WrapperStubType) return false
-
-        return type.kotlinType is KotlinClassifierType && type.kotlinType.classifier == KotlinTypes.cValuesRef
-    }
+    private fun isCValuesRef(type: StubType): Boolean =
+            (type as? ClassifierStubType)?.let { it.classifier == KotlinTypes.cValuesRef }
+                    ?: false
 
     private fun generateBridgeBody(function: FunctionStub) {
         assert(context.platform == KotlinPlatform.JVM) { "Function ${function.name} was not marked as external." }

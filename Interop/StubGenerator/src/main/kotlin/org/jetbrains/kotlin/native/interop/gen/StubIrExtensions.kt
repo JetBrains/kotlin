@@ -42,8 +42,8 @@ fun StubContainer.computeNamesToBeDeclared(pkgName: String): List<String> {
     }.onEach { checkPackageCorrectness(it) }.map { it.topLevelName }
 
     val typealiasNames = typealiases
-            .onEach { checkPackageCorrectness(it.alias.classifier) }
-            .map { it.alias.classifier.topLevelName }
+            .onEach { checkPackageCorrectness(it.alias) }
+            .map { it.alias.topLevelName }
 
     val namesFromNestedContainers = simpleContainers
             .flatMap { it.computeNamesToBeDeclared(pkgName) }

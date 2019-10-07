@@ -209,7 +209,7 @@ class StubIrTextEmitter(
         }
 
         override fun visitTypealias(element: TypealiasStub, owner: StubContainer?) {
-            val alias = renderClassifierDeclaration(element.alias.classifier) + renderTypeArguments(element.alias.typeArguments)
+            val alias = renderClassifierDeclaration(element.alias)
             val aliasee = renderStubType(element.aliasee)
             out("typealias $alias = $aliasee")
         }
@@ -464,15 +464,27 @@ class StubIrTextEmitter(
         return "${renderStubType(superClassInit.type)}$parameters"
     }
 
-    private fun renderStubType(stubType: StubType): String = when (stubType) {
-        is WrapperStubType -> stubType.kotlinType.render(kotlinFile)
-        is ClassifierStubType -> {
-            val classifier = kotlinFile.reference(stubType.classifier)
-            val typeArguments = renderTypeArguments(stubType.typeArguments)
-            val nullability = if (stubType.nullable) "?" else ""
-            "$classifier$typeArguments$nullability"
+    private fun renderStubType(stubType: StubType): String {
+        val nullable = if (stubType.nullable) "?" else ""
+
+        return when (stubType) {
+            is ClassifierStubType -> {
+                val classifier = kotlinFile.reference(stubType.classifier)
+                val typeArguments = renderTypeArguments(stubType.typeArguments)
+                "$classifier$typeArguments$nullable"
+            }
+            is FunctionalType -> buildString {
+                if (stubType.nullable) append("(")
+
+                append('(')
+                stubType.parameterTypes.joinTo(this) { renderStubType(it) }
+                append(") -> ")
+                append(renderStubType(stubType.returnType))
+
+                if (stubType.nullable) append(")?")
+            }
+            is TypeParameterType -> "${stubType.name}$nullable"
         }
-        is SymbolicStubType -> stubType.name + if (stubType.nullable) "?" else ""
     }
 
     private fun renderValueUsage(value: ValueStub): String = when (value) {
@@ -647,10 +659,23 @@ class StubIrTextEmitter(
         }
     }
 
-    private fun renderTypeArguments(typeArguments: List<TypeArgumentStub>) = if (typeArguments.isNotEmpty()) {
-        typeArguments.joinToString(", ", "<", ">") { renderStubType(it.type) }
+    private fun renderTypeArguments(typeArguments: List<TypeArgument>) = if (typeArguments.isNotEmpty()) {
+        typeArguments.joinToString(", ", "<", ">") { renderTypeArgument(it) }
     } else {
         ""
+    }
+
+    private fun renderTypeArgument(typeArgument: TypeArgument) = when (typeArgument) {
+        is TypeArgumentStub -> {
+            val variance = when (typeArgument.variance) {
+                TypeArgument.Variance.INVARIANT -> ""
+                TypeArgument.Variance.IN -> "in "
+                TypeArgument.Variance.OUT -> "out "
+            }
+            "$variance${renderStubType(typeArgument.type)}"
+        }
+        TypeArgument.StarProjection -> "*"
+        else -> error("Unexpected type argument: $typeArgument")
     }
 
     private fun renderTypeParameters(typeParameters: List<TypeParameterStub>) = if (typeParameters.isNotEmpty()) {

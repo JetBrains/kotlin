@@ -45,11 +45,6 @@ class SimpleStubContainer(
 val StubContainer.children: List<StubIrElement>
     get() = (classes as List<StubIrElement>) + properties + functions + typealiases
 
-
-sealed class StubType {
-    abstract val nullable: Boolean
-}
-
 /**
  * Marks that abstract value of such type can be passed as value.
  */
@@ -59,45 +54,25 @@ class TypeParameterStub(
         val name: String,
         val upperBound: StubType? = null
 ) {
-    fun getStubType(nullable: Boolean): StubType =
-            SymbolicStubType(name, nullable = nullable)
+    fun getStubType(nullable: Boolean) =
+            TypeParameterType(name, nullable = nullable)
 
 }
 
-// Add variance if needed
-class TypeArgumentStub(val type: StubType)
+interface TypeArgument {
+    object StarProjection : TypeArgument
 
-/**
- * Wrapper over [KotlinType].
- */
-class WrapperStubType(
-        val kotlinType: KotlinType
-) : StubType() {
-    override val nullable: Boolean
-        get() = when (kotlinType) {
-            is KotlinClassifierType -> kotlinType.nullable
-            is KotlinFunctionType -> kotlinType.nullable
-            else -> error("Unknown KotlinType: $kotlinType")
-        }
+    enum class Variance {
+        INVARIANT,
+        IN,
+        OUT
+    }
 }
 
-/**
- * Wrapper over [Classifier].
- */
-class ClassifierStubType(
-        val classifier: Classifier,
-        val typeArguments: List<TypeArgumentStub> = emptyList(),
-        override val nullable: Boolean = false
-) : StubType()
-
-
-/**
- * Fallback variant for all cases where we cannot refer to specific [KotlinType] or [Classifier].
- */
-class SymbolicStubType(
-        val name: String,
-        override val nullable: Boolean = false
-) : StubType()
+class TypeArgumentStub(
+        val type: StubType,
+        val variance: TypeArgument.Variance = TypeArgument.Variance.INVARIANT
+) : TypeArgument
 
 /**
  * Represents a source of StubIr element.
@@ -344,7 +319,7 @@ sealed class PropertyAccessor : FunctionalStub {
             override val annotations: List<AnnotationStub> = emptyList()
         }
 
-        class InterpretPointed(val cGlobalName:String, pointedType: WrapperStubType) : Getter() {
+        class InterpretPointed(val cGlobalName:String, pointedType: StubType) : Getter() {
             override val annotations: List<AnnotationStub> = emptyList()
             val typeParameters: List<StubType> = listOf(pointedType)
         }
@@ -416,7 +391,7 @@ class EnumEntryStub(
 }
 
 class TypealiasStub(
-        val alias: ClassifierStubType,
+        val alias: Classifier,
         val aliasee: StubType
 ) : StubIrElement {
 

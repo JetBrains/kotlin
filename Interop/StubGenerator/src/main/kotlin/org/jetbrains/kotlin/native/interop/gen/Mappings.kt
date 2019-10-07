@@ -411,9 +411,9 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
             !type.def.isAnonymous -> {
                 val baseTypeMirror = mirror(declarationMapper, type.def.baseType)
                 TypeMirror.ByValue(
-                        Classifier.topLevel(pkg, kotlinName + "Var").type,
+                        Classifier.topLevel(pkg, kotlinName + "Var").typeAbbreviation(baseTypeMirror.pointedType),
                         baseTypeMirror.info,
-                        Classifier.topLevel(pkg, kotlinName).type
+                        Classifier.topLevel(pkg, kotlinName).typeAbbreviation(baseTypeMirror.argType)
                 )
             }
             else -> mirror(declarationMapper, type.def.baseType)
@@ -463,13 +463,16 @@ fun mirror(declarationMapper: DeclarationMapper, type: Type): TypeMirror = when 
         val name = type.def.name
         when (baseType) {
             is TypeMirror.ByValue -> TypeMirror.ByValue(
-                    Classifier.topLevel(pkg, "${name}Var").type,
+                    Classifier.topLevel(pkg, "${name}Var").typeAbbreviation(baseType.pointedType),
                     baseType.info,
-                    Classifier.topLevel(pkg, name).type,
+                    Classifier.topLevel(pkg, name).typeAbbreviation(baseType.valueType),
                     nullable = baseType.nullable
             )
 
-            is TypeMirror.ByRef -> TypeMirror.ByRef(Classifier.topLevel(pkg, name).type, baseType.info)
+            is TypeMirror.ByRef -> TypeMirror.ByRef(
+                    Classifier.topLevel(pkg, name).typeAbbreviation(baseType.pointedType),
+                    baseType.info
+            )
         }
 
     }

@@ -78,10 +78,13 @@ data class Classifier(
 }
 
 val Classifier.type
-    get() = KotlinClassifierType(this, arguments = emptyList(), nullable = false)
+    get() = KotlinClassifierType(this, arguments = emptyList(), nullable = false, underlyingType = null)
 
 fun Classifier.typeWith(vararg arguments: KotlinTypeArgument) =
-        KotlinClassifierType(this, arguments.toList(), nullable = false)
+        KotlinClassifierType(this, arguments.toList(), nullable = false, underlyingType = null)
+
+fun Classifier.typeAbbreviation(expandedType: KotlinType) =
+        KotlinClassifierType(this, arguments = emptyList(), nullable = false, underlyingType = expandedType)
 
 interface KotlinTypeArgument {
     /**
@@ -99,10 +102,14 @@ interface KotlinType : KotlinTypeArgument {
     fun makeNullableAsSpecified(nullable: Boolean): KotlinType
 }
 
+/**
+ * @property underlyingType is non-null if this type is an alias to another type.
+ */
 data class KotlinClassifierType(
         override val classifier: Classifier,
         val arguments: List<KotlinTypeArgument>,
-        val nullable: Boolean
+        val nullable: Boolean,
+        val underlyingType: KotlinType?
 ) : KotlinType {
 
     override fun makeNullableAsSpecified(nullable: Boolean) = if (this.nullable == nullable) {
@@ -195,6 +202,7 @@ object KotlinTypes {
 
     val cValuesRef by InteropClassifier
 
+    val cPointed by InteropClassifier
     val cPointer by InteropClassifier
     val cPointerVar by InteropClassifier
     val cArrayPointer by InteropClassifier
@@ -225,7 +233,6 @@ object KotlinTypes {
 
     private object InteropClassifier : ClassifierAtPackage("kotlinx.cinterop")
     private object InteropType : TypeAtPackage("kotlinx.cinterop")
-
 }
 
 abstract class KotlinFile(
