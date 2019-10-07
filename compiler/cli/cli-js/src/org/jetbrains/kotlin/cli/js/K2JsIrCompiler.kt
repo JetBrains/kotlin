@@ -142,7 +142,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        val resolvedLibraries = jsResolveLibraries(libraries, messageCollectorLogger(configuration))
+        val resolvedLibraries = jsResolveLibraries(
+            libraries,
+            messageCollectorLogger(configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY] ?: error("Could not find message collector"))
+        )
 
         val friendAbsolutePaths = friendLibraries.map { File(it).absolutePath }
         val friendDependencies = resolvedLibraries.getFullList().filter {
@@ -337,8 +340,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
     }
 }
 
-fun messageCollectorLogger(configuration: CompilerConfiguration) = object : Logger {
-    val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+fun messageCollectorLogger(collector: MessageCollector) = object : Logger {
     override fun warning(message: String)= collector.report(STRONG_WARNING, message)
     override fun error(message: String) = collector.report(ERROR, message)
     override fun log(message: String) = collector.report(LOGGING, message)

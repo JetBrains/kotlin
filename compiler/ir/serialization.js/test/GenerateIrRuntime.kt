@@ -9,6 +9,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
@@ -17,7 +19,6 @@ import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
 fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): CompilerConfiguration {
@@ -115,13 +116,7 @@ fun main(args: Array<String>) {
     }
 
     val resolvedLibraries = jsResolveLibraries(
-        dependencies,
-        object : Logger {
-            override fun log(message: String) = println(message)
-            override fun error(message: String) = kotlin.error(message)
-            override fun warning(message: String) = println(message)
-            override fun fatal(message: String) = kotlin.error(message)
-        }
+        dependencies, messageCollectorLogger(MessageCollector.NONE)
     )
 
     buildKLib(File(outputPath).absolutePath, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))
