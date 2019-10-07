@@ -52,6 +52,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.gradle.util.GradleVersion;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder;
@@ -62,10 +63,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.intellij.ide.util.newProjectWizard.AbstractProjectWizard.getNewProjectJdk;
 import static com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.setupCreatedProject;
@@ -74,7 +72,7 @@ import static org.jetbrains.plugins.gradle.service.project.open.GradleProjectImp
 /**
  * @author Denis Zhdanov
  */
-public class AbstractGradleModuleBuilder extends AbstractExternalModuleBuilder<GradleProjectSettings> {
+public abstract class AbstractGradleModuleBuilder extends AbstractExternalModuleBuilder<GradleProjectSettings> {
 
   private static final Logger LOG = Logger.getInstance(AbstractGradleModuleBuilder.class);
 
@@ -279,17 +277,12 @@ public class AbstractGradleModuleBuilder extends AbstractExternalModuleBuilder<G
     }
   }
 
-  @Override
-  public ModuleWizardStep[] createWizardSteps(@NotNull WizardContext wizardContext, @NotNull ModulesProvider modulesProvider) {
+  protected void setWizardContext(@NotNull WizardContext wizardContext) {
     myWizardContext = wizardContext;
-    return new ModuleWizardStep[]{new GradleStructureWizardStep(this, wizardContext)};
   }
 
-  @NotNull
   @Override
-  public List<Class<? extends ModuleWizardStep>> getIgnoredSteps() {
-    return Collections.singletonList(ProjectSettingsStep.class);
-  }
+  public abstract ModuleWizardStep[] createWizardSteps(@NotNull WizardContext wizardContext, @NotNull ModulesProvider modulesProvider);
 
   @Nullable
   @Override
