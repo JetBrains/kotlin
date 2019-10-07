@@ -151,7 +151,7 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
       long eventTime = System.currentTimeMillis();
       Long startTime = myStatusEventIds.remove(eventDescription);
       if (startTime == null) {
-        myListener.onTaskOutput(myTaskId, STARTING_GRADLE_DAEMON_EVENT + "...", true);
+        myListener.onTaskOutput(myTaskId, STARTING_GRADLE_DAEMON_EVENT + "...\n", true);
         myStatusEventIds.put(eventDescription, eventTime);
       }
       else {
