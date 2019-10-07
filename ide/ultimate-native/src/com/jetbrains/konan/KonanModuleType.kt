@@ -27,7 +27,7 @@ class KonanModuleType : JavaModuleType(KonanBundle.message("id.module")) {
 
     override fun getDescription() = KonanBundle.message("label.moduleDescription.text")
 
-    override fun getNodeIcon(isOpened: Boolean) = AllIcons.Modules.SourceFolder
+    override fun getNodeIcon(isOpened: Boolean) = AllIcons.Nodes.Package
 
     override fun isSupportedRootType(type: JpsModuleSourceRootType<*>): Boolean {
         return type !== JavaSourceRootType.TEST_SOURCE
