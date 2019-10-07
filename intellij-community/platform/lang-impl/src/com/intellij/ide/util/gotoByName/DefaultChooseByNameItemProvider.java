@@ -2,11 +2,13 @@
 package com.intellij.ide.util.gotoByName;
 
 import com.intellij.concurrency.JobLauncher;
+import com.intellij.ide.actions.searcheverywhere.FoundItemDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiCompiledElement;
@@ -43,7 +45,8 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
                                 boolean everywhere,
                                 @NotNull ProgressIndicator indicator,
                                 @NotNull Processor<Object> consumer) {
-    return filterElements(base, createParameters(base, pattern, everywhere), indicator, consumer);
+    return filterElementsWithWeights(base, createParameters(base, pattern, everywhere), indicator,
+                                     res -> consumer.process(res.getItem()));
   }
 
   @Override
@@ -51,6 +54,23 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
                                 @NotNull FindSymbolParameters parameters,
                                 @NotNull ProgressIndicator indicator,
                                 @NotNull Processor<Object> consumer) {
+    return filterElementsWithWeights(base, parameters, indicator, res -> consumer.process(res.getItem()));
+  }
+
+  @Override
+  public boolean filterElementsWithWeights(@NotNull ChooseByNameBase base,
+                                           @NotNull String pattern,
+                                           boolean everywhere,
+                                           @NotNull ProgressIndicator indicator,
+                                           @NotNull Processor<FoundItemDescriptor<?>> consumer) {
+    return filterElementsWithWeights(base, createParameters(base, pattern, everywhere), indicator, consumer);
+  }
+
+  @Override
+  public boolean filterElementsWithWeights(@NotNull ChooseByNameBase base,
+                                @NotNull FindSymbolParameters parameters,
+                                @NotNull ProgressIndicator indicator,
+                                @NotNull Processor<FoundItemDescriptor<?>> consumer) {
     return ProgressManager.getInstance().computePrioritized(
       () -> filterElements(base, indicator, myContext == null ? null : myContext.getElement(),
                            () -> base.getNames(parameters.isSearchInLibraries()), consumer, parameters));
@@ -70,7 +90,8 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
                                        @NotNull ProgressIndicator indicator,
                                        @Nullable PsiElement context,
                                        @NotNull Processor<Object> consumer) {
-    return filterElements(base, indicator, context, null, consumer,
+    return filterElements(base, indicator, context, null,
+                          res -> consumer.process(res.getItem()),
                           createParameters(base, pattern, everywhere));
   }
 
@@ -78,7 +99,7 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
                                         @NotNull ProgressIndicator indicator,
                                         @Nullable PsiElement context,
                                         @Nullable Supplier<String[]> allNamesProducer,
-                                        @NotNull Processor<Object> consumer,
+                                        @NotNull Processor<FoundItemDescriptor<?>> consumer,
                                         @NotNull FindSymbolParameters parameters) {
     boolean everywhere = parameters.isSearchInLibraries();
     String pattern = parameters.getCompletePattern();
@@ -201,23 +222,22 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
                                         boolean everywhere,
                                         @NotNull ProgressIndicator indicator,
                                         @Nullable PsiElement context,
-                                        @NotNull Processor<Object> consumer,
+                                        @NotNull Processor<FoundItemDescriptor<?>> consumer,
                                         boolean preferStartMatches,
                                         List<? extends MatchResult> namesList,
                                         FindSymbolParameters parameters) {
-    List<Object> sameNameElements = new SmartList<>();
-    final Map<Object, MatchResult> qualifierMatchResults = ContainerUtil.newIdentityTroveMap();
+    List<Pair<Object, MatchResult>> sameNameElements = new SmartList<>();
 
     ChooseByNameModel model = base.getModel();
-    Comparator<Object> weightComparator = new Comparator<Object>() {
+    Comparator<Pair<Object, MatchResult>> weightComparator = new Comparator<Pair<Object, MatchResult>>() {
       @SuppressWarnings("unchecked") final
       Comparator<Object> modelComparator = model instanceof Comparator ? (Comparator<Object>)model :
                                            new PathProximityComparator(context);
 
       @Override
-      public int compare(Object o1, Object o2) {
-        int result = modelComparator.compare(o1, o2);
-        return result != 0 ? result : qualifierMatchResults.get(o1).compareWith(qualifierMatchResults.get(o2), preferStartMatches);
+      public int compare(Pair<Object, MatchResult> o1, Pair<Object, MatchResult> o2) {
+        int result = modelComparator.compare(o1.first, o2.first);
+        return result != 0 ? result : o1.second.compareWith(o2.second, preferStartMatches);
       }
     };
 
@@ -233,20 +253,23 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
                           : model.getElementsByName(name, everywhere, getNamePattern(base, parameters.getCompletePattern()));
       if (elements.length > 1) {
         sameNameElements.clear();
-        qualifierMatchResults.clear();
         for (final Object element : elements) {
           indicator.checkCanceled();
           MatchResult qualifierResult = matchQualifiedName(model, fullMatcher, element);
           if (qualifierResult != null) {
-            sameNameElements.add(element);
-            qualifierMatchResults.put(element, qualifierResult);
+            sameNameElements.add(Pair.create(element, qualifierResult));
           }
         }
         Collections.sort(sameNameElements, weightComparator);
-        if (!ContainerUtil.process(sameNameElements, consumer)) return false;
+        List<FoundItemDescriptor<?>> processedItems =
+          ContainerUtil.map(sameNameElements, p -> new FoundItemDescriptor<>(p.first, p.second.matchingDegree));
+        if (!ContainerUtil.process(processedItems, consumer)) return false;
       }
-      else if (elements.length == 1 && matchQualifiedName(model, fullMatcher, elements[0]) != null) {
-        if (!consumer.process(elements[0])) return false;
+      else if (elements.length == 1) {
+        MatchResult matchResult = matchQualifiedName(model, fullMatcher, elements[0]);
+        if (matchResult != null) {
+          if (!consumer.process(new FoundItemDescriptor<>(elements[0], matchResult.matchingDegree))) return false;
+        }
       }
     }
     return true;

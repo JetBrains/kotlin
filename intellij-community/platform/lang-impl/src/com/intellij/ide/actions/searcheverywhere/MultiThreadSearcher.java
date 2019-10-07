@@ -173,27 +173,16 @@ class MultiThreadSearcher implements SESearcher {
         do {
           ProgressIndicator wrapperIndicator = new SensitiveProgressWrapper(myIndicator);
           try {
-            ProgressManager.getInstance().runProcess(() -> myContributor.fetchElements(
-              myPattern, wrapperIndicator,
-              element -> {
-                try {
-                  if (element == null) {
-                    LOG.debug("Skip null element");
-                    return true;
-                  }
+            Runnable runnable = (myContributor instanceof WeightedSearchEverywhereContributor)
+                                ? () -> ((WeightedSearchEverywhereContributor<Item>)myContributor).fetchWeightedElements(myPattern, wrapperIndicator,
+                                      descriptor -> processFoundItem(descriptor.getItem(), descriptor.getWeight(), wrapperIndicator))
+                                : () -> myContributor.fetchElements(myPattern, wrapperIndicator,
+                                      element -> {
+                                        int priority = myContributor.getElementPriority(element, myPattern);
+                                        return processFoundItem(element, priority, wrapperIndicator);
+                                      });
 
-                  int priority = myContributor.getElementPriority(element, myPattern);
-                  boolean added = myAccumulator.addElement(element, myContributor, priority, wrapperIndicator);
-                  if (!added) {
-                    myAccumulator.setContributorHasMore(myContributor, true);
-                  }
-                  return added;
-                }
-                catch (InterruptedException e) {
-                  LOG.warn("Search task was interrupted");
-                  return false;
-                }
-              }), wrapperIndicator);
+            ProgressManager.getInstance().runProcess(runnable, wrapperIndicator);
           }
           catch (ProcessCanceledException ignore) {}
           repeat = !myIndicator.isCanceled() && wrapperIndicator.isCanceled();
@@ -209,6 +198,25 @@ class MultiThreadSearcher implements SESearcher {
         finishCallback.run();
       }
       LOG.debug("Search task finished for contributor ", myContributor);
+    }
+
+    private boolean processFoundItem(Item element, int priority, ProgressIndicator wrapperIndicator) {
+      try {
+        if (element == null) {
+          LOG.debug("Skip null element");
+          return true;
+        }
+
+        boolean added = myAccumulator.addElement(element, myContributor, priority, wrapperIndicator);
+        if (!added) {
+          myAccumulator.setContributorHasMore(myContributor, true);
+        }
+        return added;
+      }
+      catch (InterruptedException e) {
+        LOG.warn("Search task was interrupted");
+        return false;
+      }
     }
   }
 
