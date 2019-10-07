@@ -18,7 +18,6 @@ object DummyLogger : Logger {
     override fun error(message: String) = println("e: $message")
     override fun warning(message: String) = println("w: $message")
     override fun fatal(message: String): Nothing {
-        println("e: $message")
-        exitProcess(1)
+        kotlin.error(message)
     }
 }
