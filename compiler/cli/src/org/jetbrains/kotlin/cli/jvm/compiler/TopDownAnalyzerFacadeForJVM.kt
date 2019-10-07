@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentPr
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
@@ -125,7 +126,11 @@ object TopDownAnalyzerFacadeForJVM {
         targetEnvironment: TargetEnvironment = CompilerEnvironment,
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files)
     ): ComponentProvider {
-        val moduleContext = createModuleContext(project, configuration)
+        val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT)
+        val languageVersionSettings = configuration.languageVersionSettings
+        val jvmPlatform = JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget)
+
+        val moduleContext = createModuleContext(project, configuration, jvmPlatform)
 
         val storageManager = moduleContext.storageManager
         val module = moduleContext.module
@@ -139,9 +144,6 @@ object TopDownAnalyzerFacadeForJVM {
 
         val sourceScope = if (separateModules) sourceModuleSearchScope else GlobalSearchScope.allScope(project)
         val moduleClassResolver = SourceOrBinaryModuleClassResolver(sourceScope)
-
-        val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT)
-        val languageVersionSettings = configuration.languageVersionSettings
 
         val fallbackBuiltIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FALLBACK).apply {
             initialize(builtInsModule, languageVersionSettings)
@@ -161,14 +163,14 @@ object TopDownAnalyzerFacadeForJVM {
         val dependencyModule = if (separateModules) {
             val dependenciesContext = ContextForNewModule(
                 moduleContext, Name.special("<dependencies of ${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"),
-                module.builtIns, null
+                module.builtIns, jvmPlatform
             )
 
             // Scope for the dependency module contains everything except files present in the scope for the source module
             val dependencyScope = GlobalSearchScope.notScope(sourceScope)
 
             val dependenciesContainer = createContainerForLazyResolveWithJava(
-                JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget),
+                jvmPlatform,
                 dependenciesContext, trace, DeclarationProviderFactory.EMPTY, dependencyScope, moduleClassResolver,
                 targetEnvironment, lookupTracker, expectActualTracker,
                 packagePartProvider(dependencyScope), languageVersionSettings,
@@ -200,7 +202,7 @@ object TopDownAnalyzerFacadeForJVM {
         // to be stored in CliLightClassGenerationSupport, and it better be the source one (otherwise light classes would not be found)
         // TODO: get rid of duplicate invocation of CodeAnalyzerInitializer#initialize, or refactor CliLightClassGenerationSupport
         val container = createContainerForLazyResolveWithJava(
-            JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget),
+            jvmPlatform,
             moduleContext, trace, declarationProviderFactory(storageManager, files), sourceScope, moduleClassResolver,
             targetEnvironment, lookupTracker, expectActualTracker,
             partProvider, languageVersionSettings,
@@ -275,11 +277,11 @@ object TopDownAnalyzerFacadeForJVM {
         }
     }
 
-    private fun createModuleContext(project: Project, configuration: CompilerConfiguration): MutableModuleContext {
+    private fun createModuleContext(project: Project, configuration: CompilerConfiguration, platform: TargetPlatform?): MutableModuleContext {
         val projectContext = ProjectContext(project, "TopDownAnalyzer for JVM")
         val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
         return ContextForNewModule(
-            projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"), builtIns, null
+            projectContext, Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>"), builtIns, platform
         ).apply {
             builtIns.builtInsModule = module
         }

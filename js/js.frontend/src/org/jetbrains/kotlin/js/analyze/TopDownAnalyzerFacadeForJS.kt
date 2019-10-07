@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -67,7 +68,7 @@ object TopDownAnalyzerFacadeForJS {
             ProjectContext(project, "TopDownAnalyzer for JS"),
             Name.special("<$moduleName>"),
             builtIns,
-            platform = null
+            platform = JsPlatforms.defaultJsPlatform
         )
 
         val additionalPackages = mutableListOf<PackageFragmentProvider>()

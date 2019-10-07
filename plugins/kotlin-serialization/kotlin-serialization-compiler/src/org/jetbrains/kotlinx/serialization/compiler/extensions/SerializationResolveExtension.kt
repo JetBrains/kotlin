@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
@@ -33,7 +35,7 @@ import java.util.*
 
 open class SerializationResolveExtension : SyntheticResolveExtension {
     override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = when {
-        thisDescriptor.annotations.hasAnnotation(serialInfoFqName) -> listOf(SerialEntityNames.IMPL_NAME)
+        thisDescriptor.annotations.hasAnnotation(serialInfoFqName) && thisDescriptor.platform?.isJvm() == true -> listOf(SerialEntityNames.IMPL_NAME)
         thisDescriptor.isInternalSerializable && !thisDescriptor.hasCompanionObjectAsSerializer ->
             listOf(SerialEntityNames.SERIALIZER_CLASS_NAME)
         else -> listOf()
