@@ -30,7 +30,9 @@ fun ClassifierDescriptorWithTypeParameters.computeConstructorTypeParameters(): L
 
     val parametersFromContainingFunctions =
         parents.takeWhile { it is CallableDescriptor }
-            .flatMap { (it as CallableDescriptor).typeParameters.asSequence() }.toList()
+            .filter { it !is ConstructorDescriptor }
+            .flatMap { (it as CallableDescriptor).typeParameters.asSequence() }
+            .toList()
 
     val containingClassTypeConstructorParameters = parents.firstIsInstanceOrNull<ClassDescriptor>()?.typeConstructor?.parameters.orEmpty()
     if (parametersFromContainingFunctions.isEmpty() && containingClassTypeConstructorParameters.isEmpty()) return declaredTypeParameters
