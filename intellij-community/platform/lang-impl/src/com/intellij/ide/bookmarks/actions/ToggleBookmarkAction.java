@@ -72,7 +72,7 @@ public class ToggleBookmarkAction extends BookmarksAction implements DumbAware, 
     }
   }
 
-  protected BookmarkInContextInfo getBookmarkInfo(@NotNull AnActionEvent e) {
+  public static BookmarkInContextInfo getBookmarkInfo(@NotNull AnActionEvent e) {
     Project project = e.getProject();
     if (project == null) return null;
 

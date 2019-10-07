@@ -9,6 +9,8 @@ import com.intellij.ide.structureView.TreeBasedStructureViewBuilder;
 import com.intellij.lang.LanguageStructureViewBuilder;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.NavigationItem;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.editor.colors.CodeInsightColors;
@@ -572,6 +574,12 @@ public final class Bookmark implements Navigatable, Comparable<Bookmark> {
     @Override
      public int hashCode() {
       return getIcon().hashCode();
+    }
+
+    @Nullable
+    @Override
+    public ActionGroup getPopupMenuActions() {
+      return (ActionGroup)ActionManager.getInstance().getAction("popup@BookmarkContextMenu");
     }
   }
 }
