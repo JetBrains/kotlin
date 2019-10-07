@@ -720,7 +720,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiField.toJK(): JKField {
             return JKField(
-                typeElement.toJK(),
+                JKTypeElement(type.toJK(), typeElement.annotationList()).withFormattingFrom(typeElement),
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 annotationList(this),
@@ -750,10 +750,6 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiTypeElement?.annotationList(): JKAnnotationList {
             return JKAnnotationList(this?.applicableAnnotations?.map { it.toJK() }.orEmpty())
-        }
-
-        fun PsiTypeElement?.toJK(): JKTypeElement {
-            return JKTypeElement(this?.type.toJK(), annotationList()).withFormattingFrom(this)
         }
 
         fun PsiAnnotation.toJK(): JKAnnotation =
@@ -873,7 +869,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiLocalVariable.toJK(): JKLocalVariable {
             return JKLocalVariable(
-                typeElement.toJK(),
+                JKTypeElement(type.toJK(), typeElement.annotationList()).withFormattingFrom(typeElement),
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 JKMutabilityModifierElement(
