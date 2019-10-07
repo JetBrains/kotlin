@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -153,7 +154,13 @@ class IrSourceCompilerForInline(
         get() = callElement.descriptor as FunctionDescriptor
 
     override fun getContextLabels(): Set<String> {
-        return setOf(codegen.irFunction.name.asString())
+        val name = codegen.irFunction.name.asString()
+        if (name == INVOKE_SUSPEND_METHOD_NAME) {
+            codegen.context.suspendLambdaToOriginalFunctionMap[codegen.irFunction.parent]?.let {
+                return setOf(it.name.asString())
+            }
+        }
+        return setOf(name)
     }
 
     private class FakeClassCodegen(irFunction: IrFunction, codegen: ClassCodegen) :
