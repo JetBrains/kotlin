@@ -1466,7 +1466,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 if (at(COMMA)) {
                     errorAndAdvance("Expecting a name");
                 }
-                else if (at(RPAR)) {
+                else if (at(RPAR)) { // For declaration similar to `val () = somethingCall()`
                     error("Expecting a name");
                     break;
                 }
@@ -1484,6 +1484,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
                 if (!at(COMMA)) break;
                 advance(); // COMMA
+                if (at(RPAR)) break;
             }
         }
 
@@ -1549,10 +1550,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
             expect(IDENTIFIER, "Expecting parameter name", TokenSet.create(RPAR, COLON, LBRACE, EQ));
 
             if (at(COLON)) {
-                advance();  // COLON
+                advance(); // COLON
                 parseTypeRef();
             }
             setterParameter.done(VALUE_PARAMETER);
+            if (at(COMMA)) {
+                advance(); // COMMA
+            }
             parameterList.done(VALUE_PARAMETER_LIST);
         }
         if (!at(RPAR)) {
@@ -1896,6 +1900,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
                 if (!at(COMMA)) break;
                 advance(); // COMMA
+                if (at(GT)) {
+                    break;
+                }
             }
 
             expect(GT, "Missing '>'", recoverySet);
@@ -2263,6 +2270,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
             projection.done(TYPE_PROJECTION);
             if (!at(COMMA)) break;
             advance(); // COMMA
+            if (at(GT)) {
+                break;
+            }
         }
 
         boolean atGT = at(GT);
@@ -2325,7 +2335,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     errorAndAdvance("Expecting a parameter declaration");
                 }
                 else if (at(RPAR)) {
-                    error("Expecting a parameter declaration");
                     break;
                 }
 

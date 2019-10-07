@@ -1,5 +1,6 @@
 // FILE: first.before.kt
 // "Import" "false"
+// ERROR: The feature "trailing commas" is only available since language version 1.4
 // ERROR: Type mismatch: inferred type is Int but String was expected
 // ACTION: Add 'toString()' call
 // ACTION: Change parameter 'p' type of function 'foo' to 'Int'

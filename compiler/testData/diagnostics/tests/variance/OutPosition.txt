@@ -32,7 +32,7 @@ public interface Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     public abstract fun neOk11(): Inv<out I>
     public abstract fun neOk2(): In<O>
     public abstract fun neOk3(): In<In<I>>
-    public abstract fun neOk30(): Pair<I, [ERROR : No type element]>
+    public abstract fun neOk30(): [ERROR : Pair]<I>
     public abstract fun neOk31(): Pair<I, [ERROR : Inv]>
     public abstract fun neOk32(): [ERROR : Inv]
     public abstract fun neOk33(): Inv<[ERROR : No type element]>

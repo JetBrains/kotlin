@@ -533,8 +533,6 @@ KtFile: ForWithMultiDecl.kt
             DESTRUCTURING_DECLARATION_ENTRY
               PsiElement(IDENTIFIER)('a')
             PsiElement(COMMA)(',')
-            PsiErrorElement:Expecting a name
-              <empty list>
             PsiWhiteSpace(' ')
             PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -593,8 +591,6 @@ KtFile: ForWithMultiDecl.kt
                 PsiErrorElement:Type expected
                   <empty list>
             PsiElement(COMMA)(',')
-            PsiErrorElement:Expecting a name
-              <empty list>
             PsiWhiteSpace(' ')
             PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')

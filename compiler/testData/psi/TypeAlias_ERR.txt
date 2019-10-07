@@ -139,8 +139,6 @@ KtFile: TypeAlias_ERR.kt
       TYPE_PARAMETER
         PsiElement(IDENTIFIER)('T')
       PsiElement(COMMA)(',')
-      PsiErrorElement:Type parameter declaration expected
-        <empty list>
       PsiWhiteSpace(' ')
       PsiElement(GT)('>')
     PsiWhiteSpace(' ')

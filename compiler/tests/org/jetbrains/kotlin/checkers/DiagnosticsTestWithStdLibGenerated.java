@@ -3392,6 +3392,84 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/trailingComma")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TrailingComma extends AbstractDiagnosticsTestWithStdLib {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTrailingComma() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/trailingComma"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("multiVariableDeclarationWithDisabledFeature.kt")
+        public void testMultiVariableDeclarationWithDisabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/multiVariableDeclarationWithDisabledFeature.kt");
+        }
+
+        @TestMetadata("multiVariableDeclarationWithEnabledFeature.kt")
+        public void testMultiVariableDeclarationWithEnabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/multiVariableDeclarationWithEnabledFeature.kt");
+        }
+
+        @TestMetadata("noDisambiguation.kt")
+        public void testNoDisambiguation() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/noDisambiguation.kt");
+        }
+
+        @TestMetadata("typeArgumentsWithDisabledFeature.kt")
+        public void testTypeArgumentsWithDisabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/typeArgumentsWithDisabledFeature.kt");
+        }
+
+        @TestMetadata("typeArgumentsWithEnabledFeature.kt")
+        public void testTypeArgumentsWithEnabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/typeArgumentsWithEnabledFeature.kt");
+        }
+
+        @TestMetadata("typeParametersWithDisabledFeature.kt")
+        public void testTypeParametersWithDisabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/typeParametersWithDisabledFeature.kt");
+        }
+
+        @TestMetadata("typeParametersWithEnabledFeature.kt")
+        public void testTypeParametersWithEnabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/typeParametersWithEnabledFeature.kt");
+        }
+
+        @TestMetadata("valueArgumentsWithDisabledFeature.kt")
+        public void testValueArgumentsWithDisabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/valueArgumentsWithDisabledFeature.kt");
+        }
+
+        @TestMetadata("valueArgumentsWithEnabledFeature.kt")
+        public void testValueArgumentsWithEnabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/valueArgumentsWithEnabledFeature.kt");
+        }
+
+        @TestMetadata("valueParametersWithDisabledFeature.kt")
+        public void testValueParametersWithDisabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/valueParametersWithDisabledFeature.kt");
+        }
+
+        @TestMetadata("valueParametersWithEnabledFeature.kt")
+        public void testValueParametersWithEnabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/valueParametersWithEnabledFeature.kt");
+        }
+
+        @TestMetadata("whenEntryWithDisabledFeature.kt")
+        public void testWhenEntryWithDisabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/whenEntryWithDisabledFeature.kt");
+        }
+
+        @TestMetadata("whenEntryWithEnabledFeature.kt")
+        public void testWhenEntryWithEnabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/trailingComma/whenEntryWithEnabledFeature.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/tryCatch")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

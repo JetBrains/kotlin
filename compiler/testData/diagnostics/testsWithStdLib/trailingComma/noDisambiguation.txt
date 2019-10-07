@@ -1,0 +1,5 @@
+package
+
+public fun foo(): kotlin.Boolean
+public fun foo(/*0*/ vararg x: kotlin.Int /*kotlin.IntArray*/): kotlin.Boolean
+public fun main(): kotlin.Unit

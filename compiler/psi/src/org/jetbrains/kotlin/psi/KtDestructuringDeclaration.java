@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 import java.util.List;
 
@@ -77,5 +78,10 @@ public class KtDestructuringDeclaration extends KtDeclarationImpl implements KtV
     @Nullable
     public PsiElement getLPar() {
         return findChildByType(KtTokens.LPAR);
+    }
+
+    @Nullable
+    public PsiElement getTrailingComma() {
+        return KtPsiUtilKt.getTrailingCommaByClosingElement(getRPar());
     }
 }

@@ -681,3 +681,30 @@ KtFile: FunctionTypes.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Unit')
+  PsiWhiteSpace('\n\n')
+  TYPEALIAS
+    PsiElement(typealias)('typealias')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('f')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace('  ')
+    TYPE_REFERENCE
+      FUNCTION_TYPE
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('a')
+          PsiElement(COMMA)(',')
+          PsiWhiteSpace(' ')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(ARROW)('->')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('b')

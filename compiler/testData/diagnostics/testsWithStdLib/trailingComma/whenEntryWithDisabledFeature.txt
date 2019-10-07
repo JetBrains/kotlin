@@ -1,0 +1,9 @@
+package
+
+public fun foo1(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun foo2(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun foo3(/*0*/ x: (kotlin.Any) -> kotlin.Any): kotlin.Unit
+public fun foo4(/*0*/ x: kotlin.Any): kotlin.Unit
+public fun foo5(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.IntArray, /*2*/ z: kotlin.IntArray): kotlin.Unit
+public fun foo6(/*0*/ x: kotlin.Boolean?): kotlin.Unit
+public fun foo7(/*0*/ x: kotlin.Boolean?): kotlin.Unit

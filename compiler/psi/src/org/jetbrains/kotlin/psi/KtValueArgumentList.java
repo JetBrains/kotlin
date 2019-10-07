@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -77,5 +78,9 @@ public class KtValueArgumentList extends KtElementImplStub<KotlinPlaceHolderStub
 
     public void removeArgument(int index) {
         removeArgument(getArguments().get(index));
+    }
+
+    public PsiElement getTrailingComma() {
+        return KtPsiUtilKt.getTrailingCommaByClosingElement(getRightParenthesis());
     }
 }

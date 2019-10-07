@@ -298,8 +298,6 @@ KtFile: MultiVariableDeclarations.kt
         DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
-        PsiErrorElement:Expecting a name
-          <empty list>
         PsiWhiteSpace(' ')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -350,8 +348,6 @@ KtFile: MultiVariableDeclarations.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
-        PsiErrorElement:Expecting a name
-          <empty list>
         PsiWhiteSpace(' ')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')

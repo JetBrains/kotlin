@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.PossiblyBareType.type
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.calls.checkers.checkCoroutinesFeature
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
+import org.jetbrains.kotlin.resolve.checkers.TrailingCommaChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.findImplicitOuterClassArguments
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -289,6 +290,8 @@ class TypeResolver(
                 val returnType = if (returnTypeRef != null) resolveType(c.noBareTypes(), returnTypeRef)
                 else moduleDescriptor.builtIns.unitType
 
+                TrailingCommaChecker.check(type.parameterList?.trailingComma, c.trace, languageVersionSettings)
+
                 result = type(
                     createFunctionType(
                         moduleDescriptor.builtIns, annotations, receiverType,
@@ -448,6 +451,10 @@ class TypeResolver(
         annotations: Annotations
     ): PossiblyBareType {
         val qualifierParts = qualifierResolutionResult.qualifierParts
+
+        if (element is KtUserType) {
+            TrailingCommaChecker.check(element.typeArgumentList?.trailingComma, c.trace, languageVersionSettings)
+        }
 
         return when (descriptor) {
             is TypeParameterDescriptor -> {

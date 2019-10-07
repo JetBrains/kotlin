@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -93,5 +94,15 @@ public class KtParameterList extends KtElementImplStub<KotlinPlaceHolderStub<KtP
     @Nullable
     public PsiElement getFirstComma() {
         return findChildByType(KtTokens.COMMA);
+    }
+
+    @Nullable
+    public PsiElement getTrailingComma() {
+        PsiElement parentElement = getParent();
+        if (parentElement instanceof KtFunctionLiteral || parentElement instanceof KtPropertyAccessor) {
+            return KtPsiUtilKt.getTrailingCommaByElementsList(this);
+        } else {
+            return KtPsiUtilKt.getTrailingCommaByClosingElement(getRightParenthesis());
+        }
     }
 }

@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.getTrailingCommaByClosingElement
 
 class KtCollectionLiteralExpression(node: ASTNode) : KtExpressionImpl(node), KtReferenceExpression {
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
@@ -31,6 +32,9 @@ class KtCollectionLiteralExpression(node: ASTNode) : KtExpressionImpl(node), KtR
 
     val rightBracket: PsiElement?
         get() = findChildByType(KtTokens.RBRACKET)
+
+    val trailingComma: PsiElement?
+        get() = getTrailingCommaByClosingElement(rightBracket)
 
     fun getInnerExpressions(): List<KtExpression> {
         return PsiTreeUtil.getChildrenOfTypeAsList(this, KtExpression::class.java)

@@ -43,7 +43,7 @@ public interface Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     public abstract fun neOk12(/*0*/ i: Inv<out O>): kotlin.Unit
     public abstract fun neOk2(/*0*/ i: In<I>): kotlin.Unit
     public abstract fun neOk3(/*0*/ i: In<In<O>>): kotlin.Unit
-    public abstract fun neOk30(/*0*/ i: Pair<O, [ERROR : No type element]>): kotlin.Unit
+    public abstract fun neOk30(/*0*/ i: [ERROR : Pair]<O>): kotlin.Unit
     public abstract fun neOk31(/*0*/ i: Pair<O, [ERROR : Inv]>): kotlin.Unit
     public abstract fun neOk32(/*0*/ i: [ERROR : Inv]): kotlin.Unit
     public abstract fun neOk33(/*0*/ i: Inv<[ERROR : No type element]>): kotlin.Unit

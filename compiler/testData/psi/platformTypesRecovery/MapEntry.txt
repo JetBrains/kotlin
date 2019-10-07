@@ -95,8 +95,6 @@ KtFile: MapEntry.kt
             PsiErrorElement:Unexpected token
               PsiElement(EXCL)('!')
       PsiElement(COMMA)(',')
-      PsiErrorElement:Expecting a parameter declaration
-        <empty list>
       PsiWhiteSpace('\n')
       PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')

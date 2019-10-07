@@ -1,0 +1,47 @@
+package
+
+public fun foo1(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
+public fun foo2(/*0*/ x: (kotlin.Any, kotlin.Any) -> kotlin.Unit): kotlin.Unit
+public fun foo3(/*0*/ x: kotlin.Any, /*1*/ y: () -> kotlin.Unit): kotlin.Unit
+public fun main1(): kotlin.Unit
+public fun main2(/*0*/ x: A1): kotlin.Unit
+
+public open class A1 {
+    public constructor A1(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun get(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.Any): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class A2 {
+    public constructor A2(/*0*/ x: kotlin.Any, /*1*/ y: () -> kotlin.Unit)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Anno1 : kotlin.Annotation {
+    public constructor Anno1(/*0*/ x: kotlin.IntArray)
+    public final val x: kotlin.IntArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPEALIAS}) public final annotation class Anno2 : kotlin.Annotation {
+    public constructor Anno2(/*0*/ x: kotlin.DoubleArray)
+    public final val x: kotlin.DoubleArray
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B : A1 {
+    public constructor B()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun get(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.Any): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+@Anno2(x = {0.4.toDouble(), 0.1.toDouble()}) public typealias A3 = B

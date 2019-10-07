@@ -672,3 +672,14 @@ fun KtExpression.topParenthesizedParentOrMe(): KtExpression {
     }
     return result
 }
+
+fun getTrailingCommaByClosingElement(closingElement: PsiElement?): PsiElement? {
+    val elementBeforeClosingElement =
+        closingElement?.getPrevSiblingIgnoringWhitespaceAndComments() ?: return null
+
+    return elementBeforeClosingElement.run { if (node.elementType == KtTokens.COMMA) this else null }
+}
+
+fun getTrailingCommaByElementsList(elementList: PsiElement?): PsiElement? {
+    return elementList?.lastChild?.run { if (node.elementType == KtTokens.COMMA) this else null }
+}

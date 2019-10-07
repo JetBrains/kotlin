@@ -782,7 +782,7 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
             """
                 |class A(
                 |		a: Int,
-                |		<caret>
+                |<caret>
                 |)
                 """,
             enableSmartEnterWithTabs()
@@ -800,7 +800,7 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
             """
                 |fun method(
                 |         arg1: String,
-                |         <caret>
+                |<caret>
                 |) {}
                 """,
             enableSmartEnterWithTabs()

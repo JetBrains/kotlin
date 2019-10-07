@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 
 import java.util.Collections;
 import java.util.List;
@@ -74,5 +75,9 @@ public class KtArrayAccessExpression extends KtExpressionImpl implements KtRefer
     @Nullable
     public PsiElement getRightBracket() {
         return getIndicesNode().findChildByType(KtTokens.RBRACKET);
+    }
+
+    public PsiElement getTrailingComma() {
+        return KtPsiUtilKt.getTrailingCommaByClosingElement(getRightBracket());
     }
 }

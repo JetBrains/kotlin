@@ -1,0 +1,17 @@
+package
+
+public fun main(): kotlin.Unit
+
+public final data class Foo1 {
+    public constructor Foo1(/*0*/ x: kotlin.String, /*1*/ y: kotlin.String, /*2*/ z: kotlin.String = ...)
+    public final val x: kotlin.String
+    public final val y: kotlin.String
+    public final val z: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final operator /*synthesized*/ fun component2(): kotlin.String
+    public final operator /*synthesized*/ fun component3(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ..., /*1*/ y: kotlin.String = ..., /*2*/ z: kotlin.String = ...): Foo1
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

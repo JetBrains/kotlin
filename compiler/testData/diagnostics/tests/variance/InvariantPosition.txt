@@ -40,7 +40,7 @@ public interface Test</*0*/ in I, /*1*/ out O, /*2*/ P> {
     public abstract var neOk22: Inv<out O>
     public abstract var neOk23: Inv<out I>
     public abstract var neOk3: In<In<O>>
-    public abstract var neOk30: Pair<I, [ERROR : No type element]>
+    public abstract var neOk30: [ERROR : Pair]<I>
     public abstract var neOk31: Pair<I, [ERROR : Inv]>
     public abstract var neOk32: [ERROR : Inv]
     public abstract var neOk33: Inv<[ERROR : No type element]>

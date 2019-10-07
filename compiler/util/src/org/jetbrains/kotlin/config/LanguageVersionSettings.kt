@@ -111,6 +111,7 @@ enum class LanguageFeature(
     ProhibitTailrecOnVirtualMember(KOTLIN_1_4, kind = BUG_FIX),
     ProperComputationOrderOfTailrecDefaultParameters(KOTLIN_1_4),
     AllowNullableArrayArgsInMain(KOTLIN_1_4),
+    TrailingCommas(KOTLIN_1_4),
 
     ProperVisibilityForCompanionObjectInstanceField(sinceVersion = null, kind = BUG_FIX),
     // Temporarily disabled, see KT-27084/KT-22379

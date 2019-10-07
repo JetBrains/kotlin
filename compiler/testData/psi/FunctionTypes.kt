@@ -20,3 +20,5 @@ typealias f =  T<A, B>.T<x>.() -> Unit
 typealias f = @[a]  T.() -> Unit
 typealias f = @[a]  T.T.() -> Unit
 typealias f = @[a]  T<A, B>.T<x>.() -> Unit
+
+typealias f =  (a, ) -> b

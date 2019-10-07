@@ -380,11 +380,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/FunctionTypes.kt");
         }
 
-        @TestMetadata("FunctionTypes_ERR.kt")
-        public void testFunctionTypes_ERR() throws Exception {
-            runTest("compiler/testData/psi/FunctionTypes_ERR.kt");
-        }
-
         @TestMetadata("Functions.kt")
         public void testFunctions() throws Exception {
             runTest("compiler/testData/psi/Functions.kt");
@@ -643,6 +638,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         @TestMetadata("Super.kt")
         public void testSuper() throws Exception {
             runTest("compiler/testData/psi/Super.kt");
+        }
+
+        @TestMetadata("trailingCommaAllowed.kt")
+        public void testTrailingCommaAllowed() throws Exception {
+            runTest("compiler/testData/psi/trailingCommaAllowed.kt");
+        }
+
+        @TestMetadata("trailingCommaForbidden.kt")
+        public void testTrailingCommaForbidden() throws Exception {
+            runTest("compiler/testData/psi/trailingCommaForbidden.kt");
         }
 
         @TestMetadata("TraitConstructor.kt")

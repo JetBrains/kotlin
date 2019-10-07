@@ -17,8 +17,11 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -46,5 +49,10 @@ public class KtTypeArgumentList extends KtElementImplStub<KotlinPlaceHolderStub<
     @NotNull
     public KtTypeProjection addArgument(@NotNull KtTypeProjection typeArgument) {
         return EditCommaSeparatedListHelper.INSTANCE.addItem(this, getArguments(), typeArgument, KtTokens.LT);
+    }
+
+    @Nullable
+    public PsiElement getTrailingComma() {
+        return KtPsiUtilKt.getTrailingCommaByClosingElement(findChildByType(KtTokens.GT));
     }
 }

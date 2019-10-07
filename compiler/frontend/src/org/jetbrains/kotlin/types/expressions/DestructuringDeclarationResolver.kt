@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.LocalVariableResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
+import org.jetbrains.kotlin.resolve.checkers.TrailingCommaChecker
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -55,6 +56,8 @@ class DestructuringDeclarationResolver(
 
             result.add(variableDescriptor)
         }
+
+        TrailingCommaChecker.check(destructuringDeclaration.trailingComma, context.trace, context.languageVersionSettings)
 
         return result
     }

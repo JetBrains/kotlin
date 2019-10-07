@@ -17,8 +17,11 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -46,5 +49,10 @@ public class KtTypeParameterList extends KtElementImplStub<KotlinPlaceHolderStub
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitTypeParameterList(this, data);
+    }
+
+    @Nullable
+    public PsiElement getTrailingComma() {
+        return KtPsiUtilKt.getTrailingCommaByClosingElement(findChildByType(KtTokens.GT));
     }
 }
