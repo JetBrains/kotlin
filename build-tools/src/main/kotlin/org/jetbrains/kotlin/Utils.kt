@@ -29,6 +29,9 @@ val Project.testTarget
 val Project.verboseTest
     get() = hasProperty("test_verbose")
 
+val Project.testOutputRoot
+    get() = findProperty("testOutputRoot") as String
+
 val Project.testOutputLocal
     get() = (findProperty("testOutputLocal") as File).toString()
 
@@ -218,9 +221,9 @@ fun compileSwift(project: Project, target: KonanTarget, sources: List<String>, o
 
     val swiftTarget = when (target) {
         KonanTarget.IOS_X64   -> "x86_64-apple-ios" + configs.osVersionMin
-        KonanTarget.IOS_ARM64 -> "arm64_64-apple-ios" + configs.osVersionMin
+        KonanTarget.IOS_ARM64 -> "arm64-apple-ios" + configs.osVersionMin
         KonanTarget.TVOS_X64   -> "x86_64-apple-tvos" + configs.osVersionMin
-        KonanTarget.TVOS_ARM64 -> "arm64_64-apple-tvos" + configs.osVersionMin
+        KonanTarget.TVOS_ARM64 -> "arm64-apple-tvos" + configs.osVersionMin
         KonanTarget.MACOS_X64 -> "x86_64-apple-macosx" + configs.osVersionMin
         KonanTarget.WATCHOS_X86 -> "i386-apple-watchos" + configs.osVersionMin
         KonanTarget.WATCHOS_X64 -> "x86_64-apple-watchos" + configs.osVersionMin

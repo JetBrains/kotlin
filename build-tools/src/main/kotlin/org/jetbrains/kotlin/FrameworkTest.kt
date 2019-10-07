@@ -22,7 +22,7 @@ import java.nio.file.Paths
  * @property testName test name
  * @property frameworkNames names of frameworks
  */
-open class FrameworkTest : DefaultTask() {
+open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     @Input
     lateinit var swiftSources: List<String>
 
@@ -35,7 +35,17 @@ open class FrameworkTest : DefaultTask() {
     @Input
     var fullBitcode: Boolean = false
 
-    private val testOutput: String = project.testOutputFramework
+    val testOutput: String = project.testOutputFramework
+
+    override val executable: String
+        get() {
+            check(::testName.isInitialized) { "Test name should be set" }
+            return Paths.get(testOutput, testName, "swiftTestExecutable").toString()
+        }
+
+    override var doBeforeRun: Action<in Task>? = null
+
+    override var doBeforeBuild: Action<in Task>? = null
 
     override fun configure(config: Closure<*>): Task {
         super.configure(config)
@@ -48,15 +58,18 @@ open class FrameworkTest : DefaultTask() {
         check(::testName.isInitialized) { "Test name should be set" }
         check(::frameworkNames.isInitialized) { "Framework names should be set" }
         frameworkNames.forEach { frameworkName ->
-            dependsOn(project.tasks.getByName("compileKonan$frameworkName"))
+            val compileTask = project.tasks.getByName("compileKonan$frameworkName")
+            doBeforeBuild?.let { compileTask.doFirst(it) }
+            dependsOn(compileTask)
         }
+        // Build test executable as a first action of the task before executing the test
+        this.doFirst { buildTestExecutable() }
         return this
     }
 
     private fun setRootDependency(vararg s: String) = s.forEach { dependsOn(project.rootProject.tasks.getByName(it)) }
 
-    @TaskAction
-    fun run() {
+    private fun buildTestExecutable() {
         val frameworkParentDirPath = "$testOutput/$testName/${project.testTarget.name}"
         frameworkNames.forEach { frameworkName ->
             val frameworkPath = "$frameworkParentDirPath/$frameworkName.framework"
@@ -85,14 +98,18 @@ open class FrameworkTest : DefaultTask() {
                 listOf(provider.toString(), swiftMain)
         val options = listOf(
                 "-g",
+                "-Xlinker", "-rpath", "-Xlinker", "@executable_path/Frameworks",
                 "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath,
                 "-F", frameworkParentDirPath,
                 "-Xcc", "-Werror" // To fail compilation on warnings in framework header.
         )
-        val testExecutable = Paths.get(testOutput, testName, "swiftTestExecutable")
-        compileSwift(project, project.testTarget, sources, options, testExecutable, fullBitcode)
+        compileSwift(project, project.testTarget, sources, options, Paths.get(executable), fullBitcode)
+    }
 
-        runTest(testExecutable)
+    @TaskAction
+    fun run() {
+        doBeforeRun?.execute(this)
+        runTest(executorService = project.executor, testExecutable = Paths.get(executable))
     }
 
     /**
@@ -143,11 +160,9 @@ open class FrameworkTest : DefaultTask() {
         )
     }
 
-    private fun runTest(testExecutable: Path, args: List<String> = emptyList()) {
-        val executor = (project.convention.plugins["executor"] as? ExecutorService)
-                ?: throw RuntimeException("Executor wasn't found")
+    private fun runTest(executorService: ExecutorService, testExecutable: Path, args: List<String> = emptyList()) {
         val (stdOut, stdErr, exitCode) = runProcess(
-                executor = executor.add(Action { it.environment = buildEnvironment() })::execute,
+                executor = executorService.add(Action { it.environment = buildEnvironment() })::execute,
                 executable = testExecutable.toString(),
                 args = args)
 
@@ -184,6 +199,7 @@ open class FrameworkTest : DefaultTask() {
             else -> error("Cannot validate bitcode for test target $testTarget")
         }
 
-        runTest(bitcodeBuildTool, args = listOf("--sdk", sdk, "-v", "-t", toolPath, frameworkBinary))
+        runTest(executorService = localExecutorService(project),
+                testExecutable = bitcodeBuildTool, args = listOf("--sdk", sdk, "-v", "-t", toolPath, frameworkBinary))
     }
 }

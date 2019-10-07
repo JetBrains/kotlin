@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin
 
 import groovy.lang.Closure
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.process.ExecResult
@@ -26,14 +28,15 @@ import org.jetbrains.kotlin.konan.target.Architecture
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Xcode
+import java.io.*
 
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 
 /**
  * A replacement of the standard `exec {}`
@@ -77,10 +80,10 @@ fun create(project: Project): ExecutorService {
                     val exe = executable
                     executable = absoluteQemu
                     args = listOf("-L", absoluteTargetSysRoot,
-                        // This is to workaround an endianess issue.
-                        // See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=731082 for details.
-                        "$absoluteTargetSysRoot/lib/ld.so.1", "--inhibit-cache",
-                        exe) + args
+                            // This is to workaround an endianess issue.
+                            // See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=731082 for details.
+                            "$absoluteTargetSysRoot/lib/ld.so.1", "--inhibit-cache",
+                            exe) + args
                 }
             }
         }
@@ -90,11 +93,12 @@ fun create(project: Project): ExecutorService {
         KonanTarget.WATCHOS_X86,
         KonanTarget.WATCHOS_X64 -> simulator(project)
 
+        KonanTarget.IOS_ARM32,
+        KonanTarget.IOS_ARM64 -> deviceLauncher(project)
+
         else -> {
             if (project.hasProperty("remote")) sshExecutor(project)
-            else object : ExecutorService {
-                override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec(action)
-            }
+            else localExecutorService(project)
         }
     }
 }
@@ -109,7 +113,7 @@ data class ProcessOutput(var stdOut: String, var stdErr: String, var exitCode: I
  * @param args arguments for a process
  */
 fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
-               executable: String, args: List<String>) : ProcessOutput {
+               executable: String, args: List<String>): ProcessOutput {
     val outStream = ByteArrayOutputStream()
     val errStream = ByteArrayOutputStream()
 
@@ -141,7 +145,7 @@ fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
  * @param input an input string to be passed through the standard input stream
  */
 fun runProcessWithInput(executor: (Action<in ExecSpec>) -> ExecResult?,
-               executable: String, args: List<String>, input: String) : ProcessOutput {
+                        executable: String, args: List<String>, input: String): ProcessOutput {
     val outStream = ByteArrayOutputStream()
     val errStream = ByteArrayOutputStream()
     val inStream = ByteArrayInputStream(input.toByteArray())
@@ -168,7 +172,8 @@ fun runProcessWithInput(executor: (Action<in ExecSpec>) -> ExecResult?,
  * @throws IllegalStateException if there are no executor in the project.
  */
 val Project.executor: ExecutorService
-    get() = this.convention.plugins["executor"] as? ExecutorService ?: throw IllegalStateException("Executor wasn't found")
+    get() = this.convention.plugins["executor"] as? ExecutorService
+            ?: throw IllegalStateException("Executor wasn't found")
 
 /**
  * Creates a new executor service with additional action [actionParameter] executed after the main one.
@@ -198,7 +203,7 @@ fun Project.executeAndCheck(executable: Path, arguments: List<String> = emptyLis
             |stdout: $stdOut
             |stderr: $stdErr
             """.trimMargin())
-    check(exitCode == 0) { "Execution failed with exit code: $exitCode "}
+    check(exitCode == 0) { "Execution failed with exit code: $exitCode" }
 }
 
 /**
@@ -206,6 +211,10 @@ fun Project.executeAndCheck(executable: Path, arguments: List<String> = emptyLis
  * @see Project.exec
  */
 fun localExecutor(project: Project) = { a: Action<in ExecSpec> -> project.exec(a) }
+
+fun localExecutorService(project: Project): ExecutorService = object : ExecutorService {
+    override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec(action)
+}
 
 /**
  * Executes a given action with iPhone Simulator.
@@ -215,7 +224,7 @@ fun localExecutor(project: Project) = { a: Action<in ExecSpec> -> project.exec(a
  * @param iosDevice an optional project property used to control simulator's device type
  *        Specify -PiosDevice=iPhone X to set it
  */
-private fun simulator(project: Project) : ExecutorService = object : ExecutorService {
+private fun simulator(project: Project): ExecutorService = object : ExecutorService {
 
     private val target = project.testTarget
 
@@ -263,7 +272,7 @@ private fun simulator(project: Project) : ExecutorService = object : ExecutorSer
  * @param remote makes binaries be executed on a remote host
  *        Specify it as -Premote=user@host
  */
-private fun sshExecutor(project: Project) : ExecutorService = object : ExecutorService {
+private fun sshExecutor(project: Project): ExecutorService = object : ExecutorService {
 
     private val remote: String = project.property("remote").toString()
     private val sshArgs: List<String> = System.getenv("SSH_ARGS")?.split(" ") ?: emptyList()
@@ -309,5 +318,233 @@ private fun sshExecutor(project: Project) : ExecutorService = object : ExecutorS
         project.exec {
             it.commandLine = arrayListOf("$sshHome/ssh") + sshArgs + remote + "rm" + fileName
         }
+    }
+}
+
+private fun deviceLauncher(project: Project) = object : ExecutorService {
+    private val xcProject = Paths.get(project.testOutputRoot, "launcher")
+
+    private val idb = project.findProperty("idb_path") as? String ?: "idb"
+
+    private val deviceName = project.findProperty("device_name") as? String
+
+    override fun execute(action: Action<in ExecSpec>): ExecResult? {
+        val udid = targetUDID()
+        println("Found device UDID: $udid")
+        install(udid, xcProject.resolve("build/KonanTestLauncher.ipa").toString())
+        val bundleId = "org.jetbrains.kotlin.KonanTestLauncher"
+        val commands = startDebugServer(udid, bundleId)
+                .split("\n")
+                .filter { it.isNotBlank() }
+                .flatMap { listOf("-o", it) }
+
+        var savedOut: OutputStream? = null
+        val out = ByteArrayOutputStream()
+        val result = project.exec { execSpec: ExecSpec ->
+            action.execute(execSpec)
+            execSpec.executable = "lldb"
+            execSpec.args = commands + "-b" + "-o" + "command script import ${pythonScript()}" +
+                    "-o" + ("process launch" +
+                        (execSpec.args.takeUnless { it.isEmpty() }
+                                ?.let { " -- ${it.joinToString(" ")}" }
+                                ?: "")) +
+                    "-o" + "get_exit_code" +
+                    "-k" + "get_exit_code" +
+                    "-k" + "exit -1"
+            // A test task that uses project.exec { } sets the stdOut to parse the result,
+            // but the test executable is being run under debugger that has its own output mixed with the
+            // output from the test. Save the stdOut from the test to write the parsed output to it.
+            savedOut = execSpec.standardOutput
+            execSpec.standardOutput = out
+        }
+        out.toString()
+                .also { if (project.verboseTest) println(it) }
+                .split("\n")
+                .dropWhile { s -> !s.startsWith("(lldb) process launch") }
+                .drop(1)  // drop 'process launch' also
+                .dropLastWhile { ! it.matches(".*Process [0-9]* exited with status .*".toRegex()) }
+                .joinToString("\n") {
+                    it.replace("Process [0-9]* exited with status .*".toRegex(), "")
+                            .replace("\r", "")   // TODO: investigate: where does the \r comes from
+                }
+                .also {
+                    savedOut?.write(it.toByteArray())
+                }
+
+        uninstall(udid, bundleId)
+        kill()
+        return result
+    }
+
+    /*
+     * This script kills the target process in case it has been stopped,
+     * and exists lldb with the same exit code as a target process.
+     */
+    private fun pythonScript(): String = xcProject.resolve("lldb_cmd.py").toFile().run {
+        writeText( // language=Python
+                """
+                    import lldb
+                          
+                    def exit_code(debugger, command, exe_ctx, result, internal_dict):
+                        process = exe_ctx.GetProcess()
+                        state = process.GetState()
+                        if state == lldb.eStateStopped:
+                            debugger.HandleCommand("bt all")
+                            process.Kill()
+                        code = process.GetExitStatus()
+                        debugger.HandleCommand("exit %d" % code)
+                    
+                    def __lldb_init_module(debugger, _):
+                        debugger.HandleCommand('command script add -f lldb_cmd.exit_code get_exit_code')
+                """.trimIndent())
+        absolutePath
+    }
+
+    private fun kill() = project.exec {
+        it.commandLine(idb, "kill")
+    }
+
+    private fun targetUDID(): String {
+        val out = ByteArrayOutputStream()
+        // idb launches idb_companion but doesn't wait for it and just exits.
+        // So relaunch `list-targets` again.
+        for (i in 1..3) {
+            project.exec {
+                it.commandLine(idb, "list-targets", "--json")
+                it.standardOutput = out
+            }.assertNormalExitValue()
+            if (out.toString().trim().isNotEmpty()) break
+            else TimeUnit.SECONDS.sleep(i.toLong())
+        }
+        return out.toString().run {
+            check(isNotEmpty())
+            @Serializable
+            data class DeviceTarget(val name: String, val udid: String, val state: String, val type: String)
+            split("\n")
+                    .filter { it.isNotEmpty() }
+                    .map { Json(strictMode = false).parse(DeviceTarget.serializer(), it) }
+                    .first {
+                        it.type == "device" && deviceName?.run { this == it.name } ?: true
+                    }
+                    .udid
+        }
+    }
+
+    private fun install(udid: String, bundlePath: String) {
+        val out = ByteArrayOutputStream()
+
+        val result = project.exec {
+            it.workingDir = xcProject.toFile()
+            it.commandLine = listOf(idb, "install", "--udid", udid, bundlePath)
+            it.standardOutput = out
+            it.errorOutput = out
+            it.isIgnoreExitValue = true
+        }
+        println(out.toString())
+        check(result.exitValue == 0) { "Installation of $bundlePath failed: $out" }
+    }
+
+    private fun uninstall(udid: String, bundleId: String) {
+        val out = ByteArrayOutputStream()
+
+        project.exec {
+            it.workingDir = xcProject.toFile()
+            it.commandLine = listOf(idb, "uninstall", "--udid", udid, bundleId)
+            it.standardOutput = out
+            it.errorOutput = out
+            it.isIgnoreExitValue = true
+        }
+        println(out.toString())
+    }
+
+    private fun startDebugServer(udid: String, bundleId: String): String {
+        val out = ByteArrayOutputStream()
+
+        val result = project.exec {
+            it.workingDir = xcProject.toFile()
+            it.commandLine = listOf(idb, "debugserver", "start", "--udid", udid, bundleId)
+            it.standardOutput = out
+            it.errorOutput = out
+            it.isIgnoreExitValue = true
+        }
+        check(result.exitValue == 0) { "Failed to start debug server: $out" }
+        return out.toString()
+    }
+}
+
+fun KonanTestExecutable.configureXcodeBuild() {
+    this.doBeforeRun = Action {
+        val signIdentity = project.findProperty("sign_identity") as? String ?: "iPhone Developer"
+        val developmentTeam = project.findProperty("development_team") as? String
+        requireNotNull(developmentTeam) { "Specify '-Pdevelopment_team=' with the your team id" }
+        val xcProject = Paths.get(project.testOutputRoot, "launcher")
+
+        val shellScript: String = // language=Bash
+                mutableListOf("""
+                        set -x
+                        # Copy executable to the build dir.
+                        COPY_TO="${"$"}TARGET_BUILD_DIR/${"$"}EXECUTABLE_PATH"
+                        cp "${project.file(executable).absolutePath}" "${"$"}COPY_TO"
+                        # copy dSYM if it exists
+                        DSYM_DIR="${project.file("$executable.dSYM").absolutePath}"
+                        if [ -d "${"$"}DSYM_DIR" ]; then
+                            cp -r "${"$"}DSYM_DIR" "${"$"}TARGET_BUILD_DIR/${"$"}EXECUTABLE_FOLDER_PATH/"
+                        fi
+                    """.trimIndent()).also {
+                    if (this is FrameworkTest) {
+                        // Create a Frameworks folder inside the build dir.
+                        it += "mkdir -p \"\$TARGET_BUILD_DIR/\$FRAMEWORKS_FOLDER_PATH\""
+                        // Copy each framework to the Frameworks dir.
+                        it += frameworkNames.map { name ->
+                            "cp -r \"$testOutput/$testName/${project.testTarget.name}/$name.framework\" " +
+                                    "\"\$TARGET_BUILD_DIR/\$FRAMEWORKS_FOLDER_PATH/$name.framework\""
+                        }
+                    }
+                }.joinToString(separator = "\\n") { it.replace("\"", "\\\"") }
+
+        // Copy template xcode project.
+        project.file("iosLauncher").copyRecursively(xcProject.toFile(), overwrite = true)
+
+        xcProject.resolve("KonanTestLauncher.xcodeproj/project.pbxproj")
+                .toFile()
+                .apply {
+                    val text = readLines().joinToString("\n") {
+                        when {
+                            it.contains("CODE_SIGN_IDENTITY") ->
+                                it.replaceAfter("= ", "\"$signIdentity\";")
+                            it.contains("DEVELOPMENT_TEAM") || it.contains("DevelopmentTeam") ->
+                                it.replaceAfter("= ", "$developmentTeam;")
+                            it.contains("shellScript = ") ->
+                                it.replaceAfter("= ", "\"$shellScript\";")
+                            else -> it
+                        }
+                    }
+                    writeText(text)
+                }
+
+        val sdk = when (project.testTarget) {
+            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> Xcode.current.iphoneosSdk
+            else -> error("Unsupported target: ${project.testTarget}")
+        }
+
+        fun xcodebuild(vararg elements: String) {
+            val xcode = listOf("/usr/bin/xcrun", "-sdk", sdk, "xcodebuild")
+            val out = ByteArrayOutputStream()
+            val result = project.exec {
+                it.workingDir = xcProject.toFile()
+                it.commandLine = xcode + elements.toList()
+                it.standardOutput = out
+            }
+            println(out.toString("UTF-8"))
+            result.assertNormalExitValue()
+        }
+        xcodebuild("-workspace", "KonanTestLauncher.xcodeproj/project.xcworkspace",
+                "-scheme", "KonanTestLauncher", "-allowProvisioningUpdates", "-destination",
+                "generic/platform=iOS", "build")
+        val archive = xcProject.resolve("build/KonanTestLauncher.xcarchive").toString()
+        xcodebuild("-workspace", "KonanTestLauncher.xcodeproj/project.xcworkspace",
+                "-scheme", "KonanTestLauncher", "archive", "-archivePath", archive)
+        xcodebuild("-exportArchive", "-archivePath", archive, "-exportOptionsPlist", "KonanTestLauncher/Info.plist",
+                "-exportPath", xcProject.resolve("build").toString())
     }
 }
