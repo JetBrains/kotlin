@@ -194,4 +194,17 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                                " - Declare repository providing the artifact, see the documentation at https://docs.gradle.org/current/userguide/declaring_repositories.html\n" +
                                "\n")
   }
+
+  @Test
+  fun `test startup build script errors`() {
+    importProject("apply plugin: 'java'" +
+                  "dependencies { \n" +
+                  "  testCompile group: 'junit', name: 'junit', version: '4.12\n" +
+                  "}")
+
+    assertSyncViewTreeEquals("-\n" +
+                             " -failed\n" +
+                             "  -build.gradle\n" +
+                             "   expecting ''', found '\\n'")
+  }
 }
