@@ -14,6 +14,7 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.kotlin.asJava.UltraLightClassCodegenSupport
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -267,7 +269,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private fun propertyParameters() = classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() }
 
     private fun ownMethods(): List<KtLightMethod> {
-        val result = arrayListOf<KtLightMethod>()
+        val result = mutableListOf<KtLightMethod>()
 
         for (declaration in this.classOrObject.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
             if (declaration.hasModifier(PRIVATE_KEYWORD) && isInterface) continue
@@ -314,6 +316,14 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         addMethodsFromDataClass(result)
         addDelegatesToInterfaceMethods(result)
+
+        val lazyDescriptor = lazy { getDescriptor() }
+
+        ExpressionCodegenExtension.getInstances(project).forEach {
+            if (it is UltraLightClassCodegenSupport) {
+                it.interceptMethodsBuilding(kotlinOrigin, lazyDescriptor, this, result)
+            }
+        }
 
         return result
     }

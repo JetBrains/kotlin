@@ -72,7 +72,7 @@ abstract class AbstractNoArgExpressionCodegenExtension(val invokeInitializers: B
         })
     }
 
-    private fun createNoArgConstructorDescriptor(containingClass: ClassDescriptor): ConstructorDescriptor {
+    protected fun createNoArgConstructorDescriptor(containingClass: ClassDescriptor): ConstructorDescriptor {
         return ClassConstructorDescriptorImpl.createSynthesized(containingClass, Annotations.EMPTY, false, SourceElement.NO_SOURCE).apply {
             initialize(
                 null, calculateDispatchReceiverParameter(), emptyList(), emptyList(),

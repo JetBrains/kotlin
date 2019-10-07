@@ -241,9 +241,14 @@ fun KtUltraLightClass.createGeneratedMethodFromDescriptor(
         lightMethod.addParameter(KtUltraLightParameterForDescriptor(valueParameter, support, wrapper))
     }
 
-    lightMethod.setMethodReturnType {
-        support.mapType(wrapper) { typeMapper, signatureWriter ->
-            typeMapper.mapReturnType(descriptor, signatureWriter)
+    if (descriptor is ConstructorDescriptor) {
+        lightMethod.isConstructor = true
+        lightMethod.setMethodReturnType(PsiType.VOID)
+    } else {
+        lightMethod.setMethodReturnType {
+            support.mapType(wrapper) { typeMapper, signatureWriter ->
+                typeMapper.mapReturnType(descriptor, signatureWriter)
+            }
         }
     }
 
@@ -253,7 +258,7 @@ fun KtUltraLightClass.createGeneratedMethodFromDescriptor(
 private fun KtUltraLightClass.lightMethod(
     descriptor: FunctionDescriptor
 ): LightMethodBuilder {
-    val name = support.typeMapper.mapFunctionName(descriptor, OwnerKind.IMPLEMENTATION)
+    val name = if (descriptor is ConstructorDescriptor) name else support.typeMapper.mapFunctionName(descriptor, OwnerKind.IMPLEMENTATION)
 
     val accessFlags: Int by lazyPub {
         val asmFlags = AsmUtil.getMethodAsmFlags(descriptor, OwnerKind.IMPLEMENTATION, support.deprecationResolver)

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.noarg
 
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinProjectDescriptorWithFacet
