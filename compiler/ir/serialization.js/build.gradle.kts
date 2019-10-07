@@ -12,7 +12,7 @@ dependencies {
 
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:cli"))
+    testCompile(project(":compiler:cli-js"))
     testCompile(project(":compiler:util"))
 
     testRuntime(project(":kotlin-reflect"))
