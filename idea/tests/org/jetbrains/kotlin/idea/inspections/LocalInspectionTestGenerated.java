@@ -8354,6 +8354,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/innerClass5.kt");
         }
 
+        @TestMetadata("innerClassInGenericOuterClass.kt")
+        public void testInnerClassInGenericOuterClass() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/innerClassInGenericOuterClass.kt");
+        }
+
         @TestMetadata("innerClassWithImport.kt")
         public void testInnerClassWithImport() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/innerClassWithImport.kt");
@@ -8462,6 +8467,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("notApplicableExpression4.kt")
         public void testNotApplicableExpression4() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableExpression4.kt");
+        }
+
+        @TestMetadata("notApplicableInnerClassInGenericOuterClass.kt")
+        public void testNotApplicableInnerClassInGenericOuterClass() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableInnerClassInGenericOuterClass.kt");
+        }
+
+        @TestMetadata("notApplicableInnerClassInGenericOuterClass2.kt")
+        public void testNotApplicableInnerClassInGenericOuterClass2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableInnerClassInGenericOuterClass2.kt");
+        }
+
+        @TestMetadata("notApplicableInnerClassInGenericOuterClass3.kt")
+        public void testNotApplicableInnerClassInGenericOuterClass3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeRedundantQualifierName/notApplicableInnerClassInGenericOuterClass3.kt");
         }
 
         @TestMetadata("notApplicableLocalFun.kt")
