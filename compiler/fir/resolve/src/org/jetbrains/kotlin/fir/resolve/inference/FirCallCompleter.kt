@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 class FirCallCompleter(
     private val transformer: FirBodyResolveTransformer
 ) : BodyResolveComponents by transformer {
+    private val completer = ConstraintSystemCompleter(inferenceComponents)
+
     fun <T : FirResolvable> completeCall(call: T, expectedTypeRef: FirTypeRef?): T {
         val typeRef = typeFromCallee(call)
         if (typeRef.type is ConeKotlinErrorType) {
@@ -58,7 +60,6 @@ class FirCallCompleter(
         }
 
         val completionMode = candidate.computeCompletionMode(inferenceComponents, expectedTypeRef, initialType)
-        val completer = ConstraintSystemCompleter(inferenceComponents)
         val replacements = mutableMapOf<FirExpression, FirExpression>()
 
         val analyzer = PostponedArgumentsAnalyzer(LambdaAnalyzerImpl(replacements), { it.resultType }, inferenceComponents)

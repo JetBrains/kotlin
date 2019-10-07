@@ -22,7 +22,7 @@ enum class TowerDataKind {
 class FirTowerResolver(
     val typeCalculator: ReturnTypeCalculator,
     val components: BodyResolveComponents,
-    private val resolutionStageRunner: ResolutionStageRunner,
+    resolutionStageRunner: ResolutionStageRunner,
     val topLevelScopes: List<FirScope>,
     val localScopes: List<FirLocalScope>
 ) {
@@ -137,7 +137,11 @@ class FirTowerResolver(
         return group
     }
 
-    val collector by lazy { CandidateCollector(components, resolutionStageRunner) }
+    fun reset() {
+        collector.newDataSet()
+    }
+
+    val collector = CandidateCollector(components, resolutionStageRunner)
     private lateinit var towerDataConsumer: TowerDataConsumer
     private lateinit var implicitReceiverValues: List<ImplicitReceiverValue<*>>
 

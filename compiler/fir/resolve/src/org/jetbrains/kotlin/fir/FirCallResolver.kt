@@ -32,11 +32,18 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class FirCallResolver(
     private val transformer: FirBodyResolveTransformer,
-    private val topLevelScopes: List<FirScope>,
-    private val localScopes: List<FirLocalScope>,
+    topLevelScopes: List<FirScope>,
+    localScopes: List<FirLocalScope>,
     override val implicitReceiverStack: ImplicitReceiverStack,
     private val qualifiedResolver: FirQualifiedNameResolver
 ) : BodyResolveComponents by transformer {
+
+    private val towerResolver = FirTowerResolver(
+        returnTypeCalculator, this, resolutionStageRunner,
+        topLevelScopes = topLevelScopes.asReversed(),
+        localScopes = localScopes.asReversed()
+    )
+    private val conflictResolver = ConeOverloadConflictResolver(TypeSpecificityComparator.NONE, inferenceComponents)
 
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?, file: FirFile): FirFunctionCall {
         qualifiedResolver.reset()
@@ -60,11 +67,7 @@ class FirCallResolver(
             file,
             transformer.container
         ) { it.resultType }
-        val towerResolver = FirTowerResolver(
-            returnTypeCalculator, this, resolutionStageRunner,
-            topLevelScopes = topLevelScopes.asReversed(),
-            localScopes = localScopes.asReversed()
-        )
+        towerResolver.reset()
 
         val consumer = createFunctionConsumer(session, name, info, this, towerResolver.collector, towerResolver)
         val result = towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
@@ -72,8 +75,7 @@ class FirCallResolver(
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()
         } else {
-            ConeOverloadConflictResolver(TypeSpecificityComparator.NONE, inferenceComponents)
-                .chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
+            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
         }
 
 
@@ -154,11 +156,7 @@ class FirCallResolver(
             file,
             transformer.container
         ) { it.resultType }
-        val towerResolver = FirTowerResolver(
-            returnTypeCalculator, this, resolutionStageRunner,
-            topLevelScopes = topLevelScopes.asReversed(),
-            localScopes = localScopes.asReversed()
-        )
+        towerResolver.reset()
 
         val consumer = createVariableAndObjectConsumer(
             session,
