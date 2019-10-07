@@ -342,7 +342,7 @@ public class ExecutionHelper {
                                              @NotNull final ExecutionMode mode,
                                              @NotNull final String presentableCmdline) {
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      LOG.warn("Running " + presentableCmdline);
+      LOG.debug("Running " + presentableCmdline);
       processHandler.waitFor();
       return;
     }
