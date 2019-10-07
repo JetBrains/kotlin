@@ -196,7 +196,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
   }
 
   @Test
-  fun `test startup build script errors`() {
+  fun `test startup build script errors with column info`() {
     importProject("apply plugin: 'java'" +
                   "dependencies { \n" +
                   "  testCompile group: 'junit', name: 'junit', version: '4.12\n" +
@@ -206,5 +206,16 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                              " -failed\n" +
                              "  -build.gradle\n" +
                              "   expecting ''', found '\\n'")
+  }
+
+  @Test
+  fun `test startup build script errors without column info`() {
+    importProject("projects {}\n" +
+                  "plugins { id 'java' }")
+
+    assertSyncViewTreeEquals("-\n" +
+                             " -failed\n" +
+                             "  -build.gradle\n" +
+                             "   only buildscript {} and other plugins {} script blocks are allowed before plugins {} blocks, no other statements are allowed")
   }
 }

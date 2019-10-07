@@ -113,9 +113,18 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
     val failedStartupReason = locationLine.substringAfter("'${filter.filteredFileName}': ${filter.filteredLineNumber}: ",
                                                           "").nullize()?.substringBeforeLast('@') ?: return null
     val locationPart = locationLine.substringAfterLast('@')
-    val values = Regex(" line (\\d+), column (\\d+)\\.").matchEntire(locationPart)?.groupValues ?: return null
+    val line: Int
+    val column: Int
 
-    val filePosition = FilePosition(File(filter.filteredFileName), values[1].toInt() - 1, values[2].toInt())
+    val values = Regex(" line (\\d+), column (\\d+)\\.").matchEntire(locationPart)?.groupValues
+    if (values != null) {
+      line = values[1].toInt() - 1
+      column = values[2].toInt()
+    } else {
+      line = filter.filteredLineNumber - 1
+      column = 0
+    }
+    val filePosition = FilePosition(File(filter.filteredFileName), line, column)
     return Pair(failedStartupReason, filePosition)
   }
 
