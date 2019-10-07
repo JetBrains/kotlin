@@ -719,9 +719,8 @@ class JavaToJKTreeBuilder constructor(
             visibility(referenceSearcher) { ast, psi -> ast.withFormattingFrom(psi) }
 
         fun PsiField.toJK(): JKField {
-            val typeElement = typeElement
             return JKField(
-                JKTypeElement(type.toJK(), typeElement.annotationList()).withFormattingFrom(typeElement),
+                typeElement.toJK(),
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 annotationList(this),
@@ -751,6 +750,10 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiTypeElement?.annotationList(): JKAnnotationList {
             return JKAnnotationList(this?.applicableAnnotations?.map { it.toJK() }.orEmpty())
+        }
+
+        fun PsiTypeElement?.toJK(): JKTypeElement {
+            return JKTypeElement(this?.type.toJK(), annotationList()).withFormattingFrom(this)
         }
 
         fun PsiAnnotation.toJK(): JKAnnotation =
@@ -869,9 +872,8 @@ class JavaToJKTreeBuilder constructor(
 
 
         fun PsiLocalVariable.toJK(): JKLocalVariable {
-            val typeElement = typeElement
             return JKLocalVariable(
-                JKTypeElement(type.toJK(), typeElement.annotationList()).withFormattingFrom(typeElement),
+                typeElement.toJK(),
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 JKMutabilityModifierElement(
