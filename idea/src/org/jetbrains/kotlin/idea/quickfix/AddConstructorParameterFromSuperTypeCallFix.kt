@@ -12,19 +12,21 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.renderer.render
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 
 class AddConstructorParameterFromSuperTypeCallFix(
     constructor: KtValueArgumentList,
     private val parameterName: String,
-    private val parameterType: FqName
+    parameterType: KotlinType
 ) : KotlinQuickFixAction<KtValueArgumentList>(constructor) {
+    private val parameterTypeSourceCode = IdeDescriptorRenderers.SOURCE_CODE_TYPES.renderType(parameterType)
+
     override fun getText() = "Add constructor parameter '$parameterName'"
 
     override fun getFamilyName() = text
@@ -33,7 +35,7 @@ class AddConstructorParameterFromSuperTypeCallFix(
         val superTypeCallArgList = element ?: return
         val constructorParamList = superTypeCallArgList.containingClass()?.createPrimaryConstructorIfAbsent()?.valueParameterList ?: return
         val psiFactory = KtPsiFactory(superTypeCallArgList)
-        val constructorParam = constructorParamList.addParameter(psiFactory.createParameter("$parameterName: ${parameterType.render()}"))
+        val constructorParam = constructorParamList.addParameter(psiFactory.createParameter("$parameterName: $parameterTypeSourceCode"))
         val superTypeCallArg = superTypeCallArgList.addArgument(psiFactory.createArgument(parameterName))
         ShortenReferences.DEFAULT.process(constructorParam)
         editor?.caretModel?.moveToOffset(superTypeCallArg.endOffset)
@@ -50,9 +52,8 @@ class AddConstructorParameterFromSuperTypeCallFix(
             val parameterName = parameter.name.render()
             val constructor = containingClass.resolveToDescriptorIfAny(BodyResolveMode.PARTIAL)?.constructors?.firstOrNull() ?: return null
             if (constructor.valueParameters.any { it.name.asString() == parameterName }) return null
-            val parameterType = parameter.type.constructor.declarationDescriptor?.fqNameOrNull() ?: return null
 
-            return AddConstructorParameterFromSuperTypeCallFix(superTypeCallArgList, parameterName, parameterType)
+            return AddConstructorParameterFromSuperTypeCallFix(superTypeCallArgList, parameterName, parameter.type)
         }
     }
 }

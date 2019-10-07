@@ -401,6 +401,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/fewerArguments.kt");
         }
 
+        @TestMetadata("generics.kt")
+        public void testGenerics() throws Exception {
+            runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/generics.kt");
+        }
+
         @TestMetadata("hasDifferentNameParameter.kt")
         public void testHasDifferentNameParameter() throws Exception {
             runTest("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall/hasDifferentNameParameter.kt");
