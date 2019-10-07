@@ -4,6 +4,7 @@ package com.intellij.ide.bookmarks.actions;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.bookmarks.Bookmark;
 import com.intellij.ide.bookmarks.BookmarkManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopup;
@@ -27,7 +28,19 @@ public class ToggleBookmarkWithMnemonicAction extends ToggleBookmarkAction {
   public void update(@NotNull AnActionEvent e) {
     super.update(e);
     e.getPresentation().setEnabled(!myPopupShown);
-    e.getPresentation().setText(IdeBundle.message("action.bookmark.toggle.mnemonic"));
+
+    final BookmarkInContextInfo info = getBookmarkInfo(e);
+    if (ActionPlaces.isPopupPlace(e.getPlace())) {
+      if (info != null && info.getBookmarkAtPlace() != null) {
+        e.getPresentation().setVisible(false);
+      }
+      else {
+        e.getPresentation().setText("Set Bookmark with Mnemonic");
+      }
+    }
+    else {
+      e.getPresentation().setText(IdeBundle.message("action.bookmark.toggle.mnemonic"));
+    }
   }
 
   @Override

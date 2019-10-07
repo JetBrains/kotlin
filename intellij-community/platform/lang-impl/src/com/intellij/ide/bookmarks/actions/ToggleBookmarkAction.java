@@ -38,15 +38,19 @@ public class ToggleBookmarkAction extends BookmarksAction implements DumbAware, 
                                         CommonDataKeys.EDITOR.getData(dataContext) != null ||
                                         CommonDataKeys.VIRTUAL_FILE.getData(dataContext) != null));
 
-    event.getPresentation().setText(IdeBundle.message("action.bookmark.toggle"));
-
     if (ActionPlaces.TOUCHBAR_GENERAL.equals(event.getPlace())) {
       event.getPresentation().setIcon(AllIcons.Actions.Checked);
     }
 
     final BookmarkInContextInfo info = getBookmarkInfo(event);
     final boolean selected = info != null && info.getBookmarkAtPlace() != null;
-    Toggleable.setSelected(event.getPresentation(), selected);
+    if (ActionPlaces.isPopupPlace(event.getPlace())) {
+      event.getPresentation().setText(selected ? "Clear Bookmark" : "Set Bookmark");
+    }
+    else {
+      event.getPresentation().setText(IdeBundle.message("action.bookmark.toggle"));
+      Toggleable.setSelected(event.getPresentation(), selected);
+    }
   }
 
   @Override
@@ -68,7 +72,7 @@ public class ToggleBookmarkAction extends BookmarksAction implements DumbAware, 
     }
   }
 
-  private BookmarkInContextInfo getBookmarkInfo(@NotNull AnActionEvent e) {
+  protected BookmarkInContextInfo getBookmarkInfo(@NotNull AnActionEvent e) {
     Project project = e.getProject();
     if (project == null) return null;
 

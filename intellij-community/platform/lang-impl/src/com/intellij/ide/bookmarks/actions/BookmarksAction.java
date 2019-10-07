@@ -8,6 +8,7 @@ import com.intellij.ide.bookmarks.BookmarksListener;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ex.EditorGutterComponentEx;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -247,8 +248,9 @@ public class BookmarksAction extends AnAction implements DumbAware, MasterDetail
       Editor editor = CommonDataKeys.EDITOR.getData(myDataContext);
       if (editor != null) {
         if (ToolWindowManager.getInstance(myProject).isEditorComponentActive()) {
+          Integer gutterLineAtCursor = EditorGutterComponentEx.LOGICAL_LINE_AT_CURSOR.getData(myDataContext);
           Document document = editor.getDocument();
-          myLine = editor.getCaretModel().getLogicalPosition().line;
+          myLine = gutterLineAtCursor != null ? gutterLineAtCursor : editor.getCaretModel().getLogicalPosition().line;
           myFile = FileDocumentManager.getInstance().getFile(document);
           myBookmarkAtPlace = bookmarkManager.findEditorBookmark(document, myLine);
         }
