@@ -22,6 +22,8 @@ import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -30,6 +32,14 @@ import javax.swing.*;
  * @author konstantin.aleev
  */
 public class FolderDashboardGroupingRule implements RunDashboardGroupingRule {
+  @NonNls private static final String NAME = "FolderDashboardGroupingRule";
+
+  @Override
+  @NotNull
+  public String getName() {
+    return NAME;
+  }
+
   @Nullable
   @Override
   public RunDashboardGroup getGroup(AbstractTreeNode<?> node) {

@@ -22,12 +22,22 @@ import com.intellij.execution.dashboard.RunDashboardRunConfigurationStatus;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author konstantin.aleev
  */
 public class StatusDashboardGroupingRule implements RunDashboardGroupingRule {
+  @NonNls public static final String NAME = "StatusDashboardGroupingRule";
+
+  @Override
+  @NotNull
+  public String getName() {
+    return NAME;
+  }
+
   @Nullable
   @Override
   public RunDashboardGroup getGroup(AbstractTreeNode<?> node) {
