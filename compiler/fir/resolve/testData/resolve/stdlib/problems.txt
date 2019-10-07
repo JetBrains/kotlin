@@ -34,8 +34,8 @@ FILE: problems.kt
         public get(): R|kotlin/String| {
             ^ String(987)
         }
-    public final val t: <ERROR TYPE REF: Ambiguity: bar, [/bar, /bar]> = String().<Ambiguity: bar, [/bar, /bar]>#
-        public get(): <ERROR TYPE REF: Ambiguity: bar, [/bar, /bar]>
+    public final val t: R|kotlin/String| = String().R|/bar|
+        public get(): R|kotlin/String|
     public final val p: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/String|>(Int(0), String())
         public get(): R|kotlin/Pair<kotlin/Int, kotlin/String>|
     public final class Base<T> : R|kotlin/Any| {

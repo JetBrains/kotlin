@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -55,6 +56,7 @@ class ConeOverloadConflictResolver(
         return when (val declaration = call.symbol.fir) {
             is FirNamedFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
+            is FirVariable<*> -> createFlatSignature(call, declaration)
             else -> error("Not supported: $declaration")
         }
     }
@@ -84,11 +86,24 @@ class ConeOverloadConflictResolver(
             call,
             function.typeParameters.map { it.symbol },
             listOfNotNull<ConeKotlinType>(function.receiverTypeRef?.coneTypeUnsafe()) +
-                    call.argumentMapping!!.map { it.value.argumentType() },
+                    call.argumentMapping?.map { it.value.argumentType() }.orEmpty(),
             function.receiverTypeRef != null,
             function.valueParameters.any { it.isVararg },
             function.valueParameters.count { it.defaultValue != null },
             function.isExpect,
+            false // TODO
+        )
+    }
+
+    private fun createFlatSignature(call: Candidate, variable: FirVariable<*>): FlatSignature<Candidate> {
+        return FlatSignature(
+            call,
+            (variable as? FirProperty)?.typeParameters?.map { it.symbol }.orEmpty(),
+            listOfNotNull<ConeKotlinType>(variable.receiverTypeRef?.coneTypeUnsafe()),
+            variable.receiverTypeRef != null,
+            false,
+            0,
+            (variable as? FirProperty)?.isExpect == true,
             false // TODO
         )
     }

@@ -166,15 +166,20 @@ class FirCallResolver(
         )
         val result = towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
 
-        val candidates = result.bestCandidates()
+        val bestCandidates = result.bestCandidates()
+        val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
+            bestCandidates.toSet()
+        } else {
+            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
+        }
         val nameReference = createResolvedNamedReference(
             callee,
-            candidates,
+            reducedCandidates,
             result.currentApplicability
         )
 
         if (qualifiedAccess.explicitReceiver == null &&
-            (candidates.size <= 1 && result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED)
+            (reducedCandidates.size <= 1 && result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED)
         ) {
             qualifiedResolver.tryResolveAsQualifier()?.let { return it }
         }
@@ -196,8 +201,8 @@ class FirCallResolver(
 
         @Suppress("UNCHECKED_CAST")
         var resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference) as T
-        if (candidates.size == 1) {
-            val candidate = candidates.single()
+        if (reducedCandidates.size == 1) {
+            val candidate = reducedCandidates.single()
             resultExpression = resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression()) as T
             resultExpression = resultExpression.transformExtensionReceiver(StoreReceiver, candidate.extensionReceiverExpression()) as T
         }
