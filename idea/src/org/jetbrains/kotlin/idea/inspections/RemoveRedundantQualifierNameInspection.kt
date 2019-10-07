@@ -9,6 +9,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.hasNotReceiver
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -127,6 +129,11 @@ private fun KtUserType.applicableExpression(context: BindingContext): KtUserType
     if (firstChild !is KtUserType) return null
     val referenceExpression = referenceExpression as? KtNameReferenceExpression ?: return null
     val originalDescriptor = referenceExpression.mainReference.resolveToDescriptors(context).firstOrNull() ?: return null
+
+    if (originalDescriptor is ClassDescriptor
+        && originalDescriptor.isInner
+        && (originalDescriptor.containingDeclaration as? ClassDescriptor)?.typeConstructor != null
+    ) return null
 
     val shortName = originalDescriptor.importableFqName?.shortName() ?: return null
     val scope = referenceExpression.getResolutionScope(context) ?: return null
