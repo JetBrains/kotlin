@@ -13,11 +13,11 @@ import com.intellij.openapi.roots.ModifiableModelsProvider;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder;
+import org.jetbrains.plugins.gradle.service.project.wizard.AbstractGradleModuleBuilder;
 
 import javax.swing.*;
 
-import static org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder.getBuildScriptData;
+import static org.jetbrains.plugins.gradle.service.project.wizard.AbstractGradleModuleBuilder.getBuildScriptData;
 
 /**
  * @author Vladislav.Soroka
@@ -65,8 +65,8 @@ public abstract class GradleFrameworkSupportProvider extends FrameworkSupportInM
         final BuildScriptDataBuilder buildScriptData = getBuildScriptData(module);
         if (buildScriptData != null) {
           ModuleBuilder builder = model.getModuleBuilder();
-          ProjectId projectId = builder instanceof GradleModuleBuilder ? ((GradleModuleBuilder)builder).getProjectId()
-                                                                       : new ProjectId(null, module.getName(), null);
+          ProjectId projectId = builder instanceof AbstractGradleModuleBuilder ? ((AbstractGradleModuleBuilder)builder).getProjectId()
+                                                                               : new ProjectId(null, module.getName(), null);
           GradleFrameworkSupportProvider.this.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData);
         }
       }

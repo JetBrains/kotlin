@@ -44,9 +44,9 @@ public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disp
   @SuppressWarnings("unused") private JBLabel myFrameworksLabel;
   private JCheckBox kdslCheckBox;
 
-  private final GradleModuleBuilder builder;
+  private final AbstractGradleModuleBuilder builder;
 
-  public GradleFrameworksWizardStep(WizardContext context, final GradleModuleBuilder builder) {
+  public GradleFrameworksWizardStep(WizardContext context, final AbstractGradleModuleBuilder builder) {
     this.builder = builder;
 
     Project project = context.getProject();

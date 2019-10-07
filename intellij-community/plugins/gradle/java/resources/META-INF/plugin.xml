@@ -58,7 +58,7 @@
         implementation="org.jetbrains.plugins.gradle.execution.build.GradleUpdateResourcesBuildContributor"/>
 
     <attachSourcesProvider implementation="org.jetbrains.plugins.gradle.util.GradleAttachSourcesProvider"/>
-    <moduleBuilder builderClass="org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder"/>
+    <moduleBuilder builderClass="org.jetbrains.plugins.gradle.service.project.wizard.AbstractGradleModuleBuilder"/>
     <projectImportProvider implementation="org.jetbrains.plugins.gradle.service.project.wizard.JavaGradleProjectImportProvider"/>
 
     <!--Gradle Test Runner-->

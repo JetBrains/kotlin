@@ -74,9 +74,9 @@ import static org.jetbrains.plugins.gradle.service.project.open.GradleProjectImp
 /**
  * @author Denis Zhdanov
  */
-public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradleProjectSettings> {
+public class AbstractGradleModuleBuilder extends AbstractExternalModuleBuilder<GradleProjectSettings> {
 
-  private static final Logger LOG = Logger.getInstance(GradleModuleBuilder.class);
+  private static final Logger LOG = Logger.getInstance(AbstractGradleModuleBuilder.class);
 
   private static final String TEMPLATE_GRADLE_SETTINGS = "Gradle Settings.gradle";
   private static final String TEMPLATE_GRADLE_SETTINGS_MERGE = "Gradle Settings merge.gradle";
@@ -107,7 +107,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
   private String rootProjectPath;
   private boolean myUseKotlinDSL;
 
-  public GradleModuleBuilder() {
+  public AbstractGradleModuleBuilder() {
     super(GradleConstants.SYSTEM_ID, new GradleProjectSettings());
   }
 

@@ -38,7 +38,7 @@ public class GradleModuleWizardStep extends ModuleWizardStep {
   @Nullable
   private final Project myProjectOrNull;
   @NotNull
-  private final GradleModuleBuilder myBuilder;
+  private final AbstractGradleModuleBuilder myBuilder;
   @NotNull
   private final WizardContext myContext;
   @NotNull
@@ -56,7 +56,7 @@ public class GradleModuleWizardStep extends ModuleWizardStep {
   private JCheckBox myInheritVersionCheckBox;
   private JPanel myAddToPanel;
 
-  public GradleModuleWizardStep(@NotNull GradleModuleBuilder builder, @NotNull WizardContext context) {
+  public GradleModuleWizardStep(@NotNull AbstractGradleModuleBuilder builder, @NotNull WizardContext context) {
     myProjectOrNull = context.getProject();
     myBuilder = builder;
     myContext = context;

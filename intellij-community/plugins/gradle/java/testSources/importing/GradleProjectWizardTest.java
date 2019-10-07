@@ -43,7 +43,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder;
+import org.jetbrains.plugins.gradle.service.project.wizard.AbstractGradleModuleBuilder;
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleStructureWizardStep;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
@@ -82,8 +82,8 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
         List<ModuleWizardStep> steps = myWizard.getSequence().getSelectedSteps();
         assertEquals(3, steps.size());
         final ProjectBuilder projectBuilder = myWizard.getProjectBuilder();
-        assertInstanceOf(projectBuilder, GradleModuleBuilder.class);
-        GradleModuleBuilder gradleProjectBuilder = (GradleModuleBuilder)projectBuilder;
+        assertInstanceOf(projectBuilder, AbstractGradleModuleBuilder.class);
+        AbstractGradleModuleBuilder gradleProjectBuilder = (AbstractGradleModuleBuilder)projectBuilder;
         gradleProjectBuilder.setName(projectName);
         gradleProjectBuilder.setProjectId(new ProjectId("", null, null));
       }

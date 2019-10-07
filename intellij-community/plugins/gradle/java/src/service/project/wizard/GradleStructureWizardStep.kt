@@ -13,7 +13,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 import javax.swing.Icon
 
 class GradleStructureWizardStep(
-  private val builder: GradleModuleBuilder,
+  private val builder: AbstractGradleModuleBuilder,
   context: WizardContext
 ) : MavenizedStructureWizardStep<ProjectData>(context) {
 
