@@ -956,14 +956,21 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
     }
 }
 
-fun ProjectResolverContext.getMppModel(gradleModule: IdeaModule): KotlinMPPGradleModel? =
-    this.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
-        ?.let { kotlinMppModel ->
-            KotlinMPPGradleProjectResolver.proxyObjectCloningCache[kotlinMppModel] as? KotlinMPPGradleModelImpl ?: KotlinMPPGradleModelImpl(
-                kotlinMppModel,
-                KotlinMPPGradleProjectResolver.proxyObjectCloningCache
-            ).also {
-                KotlinMPPGradleProjectResolver.proxyObjectCloningCache[kotlinMppModel] = it
+fun ProjectResolverContext.getMppModel(gradleModule: IdeaModule): KotlinMPPGradleModel? {
+    val mppModel = this.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
+    return if (mppModel is Proxy) {
+        this.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
+            ?.let { kotlinMppModel ->
+                KotlinMPPGradleProjectResolver.proxyObjectCloningCache[kotlinMppModel] as? KotlinMPPGradleModelImpl
+                    ?: KotlinMPPGradleModelImpl(
+                        kotlinMppModel,
+                        KotlinMPPGradleProjectResolver.proxyObjectCloningCache
+                    ).also {
+                        KotlinMPPGradleProjectResolver.proxyObjectCloningCache[kotlinMppModel] = it
+                    }
             }
-        }
+    } else {
+        mppModel
+    }
+}
 
