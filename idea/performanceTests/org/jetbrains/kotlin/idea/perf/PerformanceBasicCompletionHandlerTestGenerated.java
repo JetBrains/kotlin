@@ -343,6 +343,59 @@ public class PerformanceBasicCompletionHandlerTestGenerated extends AbstractPerf
         }
     }
 
+    @TestMetadata("idea/idea-completion/testData/handlers/basic/extensionMethodInObject")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ExtensionMethodInObject extends AbstractPerformanceBasicCompletionHandlerTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doPerfTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInExtensionMethodInObject() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/extensionMethodInObject"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("CompanionObjectInSameFileExplicitReceiver.kt")
+        public void testCompanionObjectInSameFileExplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/CompanionObjectInSameFileExplicitReceiver.kt");
+        }
+
+        @TestMetadata("CompanionObjectInSameFileImplicitReceiver.kt")
+        public void testCompanionObjectInSameFileImplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/CompanionObjectInSameFileImplicitReceiver.kt");
+        }
+
+        @TestMetadata("NestedCompanionObjectInSameFileExplicitReceiver.kt")
+        public void testNestedCompanionObjectInSameFileExplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/NestedCompanionObjectInSameFileExplicitReceiver.kt");
+        }
+
+        @TestMetadata("NestedCompanionObjectInSameFileImplicitReceiver.kt")
+        public void testNestedCompanionObjectInSameFileImplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/NestedCompanionObjectInSameFileImplicitReceiver.kt");
+        }
+
+        @TestMetadata("NestedObjectInSameFileExplicitReceiver.kt")
+        public void testNestedObjectInSameFileExplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/NestedObjectInSameFileExplicitReceiver.kt");
+        }
+
+        @TestMetadata("NestedObjectInSameFileImplicitReceiver.kt")
+        public void testNestedObjectInSameFileImplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/NestedObjectInSameFileImplicitReceiver.kt");
+        }
+
+        @TestMetadata("ObjectInSameFileExplicitReceiver.kt")
+        public void testObjectInSameFileExplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/ObjectInSameFileExplicitReceiver.kt");
+        }
+
+        @TestMetadata("ObjectInSameFileImplicitReceiver.kt")
+        public void testObjectInSameFileImplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/ObjectInSameFileImplicitReceiver.kt");
+        }
+    }
+
     @TestMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

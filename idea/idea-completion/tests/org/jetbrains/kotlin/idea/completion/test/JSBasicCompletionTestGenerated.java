@@ -1229,6 +1229,59 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/extensionMethodInObject")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ExtensionMethodInObject extends AbstractJSBasicCompletionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInExtensionMethodInObject() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/extensionMethodInObject"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("CompanionObjectExplicitReceiver.kt")
+            public void testCompanionObjectExplicitReceiver() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectExplicitReceiver.kt");
+            }
+
+            @TestMetadata("CompanionObjectImplicitReceiver.kt")
+            public void testCompanionObjectImplicitReceiver() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CompanionObjectImplicitReceiver.kt");
+            }
+
+            @TestMetadata("CorrectTypeExplicitReceiver.kt")
+            public void testCorrectTypeExplicitReceiver() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CorrectTypeExplicitReceiver.kt");
+            }
+
+            @TestMetadata("CorrectTypeImplicitReceiver.kt")
+            public void testCorrectTypeImplicitReceiver() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/CorrectTypeImplicitReceiver.kt");
+            }
+
+            @TestMetadata("MultipleImplicitReceivers.kt")
+            public void testMultipleImplicitReceivers() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/MultipleImplicitReceivers.kt");
+            }
+
+            @TestMetadata("ObjectExplicitReceiver.kt")
+            public void testObjectExplicitReceiver() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/ObjectExplicitReceiver.kt");
+            }
+
+            @TestMetadata("ObjectImplicitReceiver.kt")
+            public void testObjectImplicitReceiver() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/ObjectImplicitReceiver.kt");
+            }
+
+            @TestMetadata("OverridenExtensionsInObject.kt")
+            public void testOverridenExtensionsInObject() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/extensionMethodInObject/OverridenExtensionsInObject.kt");
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/extensions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

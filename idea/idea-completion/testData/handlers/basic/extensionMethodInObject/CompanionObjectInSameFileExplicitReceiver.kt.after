@@ -1,0 +1,14 @@
+import T.Companion.foo
+
+class T {
+    companion object {
+        fun T.foo() {}
+    }
+}
+
+fun usage(t: T) {
+    t.foo()<caret>
+}
+
+// INVOCATION_COUNT: 2
+// ELEMENT: foo
