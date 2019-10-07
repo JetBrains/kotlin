@@ -304,7 +304,8 @@ if (buildProperties.includeCidrPlugins) {
             ":kotlin-ultimate:prepare:cidr-plugin",
             ":kotlin-ultimate:prepare:clion-plugin",
             ":kotlin-ultimate:prepare:appcode-plugin",
-            ":kotlin-ultimate:prepare:mobile-plugin"
+            ":kotlin-ultimate:prepare:mobile-plugin",
+            ":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"
 
     if (projectVersions.contains("versions.androidStudioRelease")) {
         logger.info("Including Mobile MPP modules in settings.gradle")
