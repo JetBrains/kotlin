@@ -37,7 +37,7 @@ class FormattingRangesExtender {
   private TextRange processRange(@NotNull TextRange originalRange) {
     TextRange validRange = ensureRangeIsValid(originalRange);
     ASTNode containingNode = CodeFormatterFacade.findContainingNode(myFile, expandToLine(validRange));
-    if (containingNode != null) {
+    if (containingNode != null && !validRange.isEmpty()) {
       return narrowToMaxExtensionLines(validRange, getRangeWithSiblings(containingNode));
     }
     return validRange;
