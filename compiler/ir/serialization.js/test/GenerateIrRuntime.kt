@@ -13,14 +13,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.KotlinLibrarySearchPathResolver
-import org.jetbrains.kotlin.library.UnresolvedLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
 fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): CompilerConfiguration {
@@ -116,7 +113,16 @@ fun main(args: Array<String>) {
     if (outputPath == null) {
         error("Please set path to .klm file: `-o some/dir/module-name.klm`")
     }
-    val resolvedLibraries = jsResolveLibraries(dependencies)
+
+    val resolvedLibraries = jsResolveLibraries(
+        dependencies,
+        object : Logger {
+            override fun log(message: String) = println(message)
+            override fun error(message: String) = kotlin.error(message)
+            override fun warning(message: String) = println(message)
+            override fun fatal(message: String) = kotlin.error(message)
+        }
+    )
 
     buildKLib(File(outputPath).absolutePath, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))
 }
