@@ -9,7 +9,6 @@ plugins {
 }
 
 val clionVersion: String by rootProject.extra
-val clionCocoaCommonPluginDir: File by rootProject.extra
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
 val isSnapshotIntellij = intellijVersion.endsWith("SNAPSHOT")
 val intellijRepo = "https://www.jetbrains.com/intellij-repository/" + if (isSnapshotIntellij) "snapshots" else "releases"
@@ -20,6 +19,7 @@ version = "0.1-SNAPSHOT-$intellijVersion"
 
 repositories {
     maven(intellijRepo)
+    maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
     google()
 }
@@ -41,8 +41,9 @@ dependencies {
     shadow("com.jetbrains.intellij.platform:util-ex:$intellijVersion")
     shadow("com.jetbrains.intellij.platform:extensions:$intellijVersion")
     shadow("com.jetbrains.intellij.platform:core-impl:$intellijVersion")
+    shadow("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion")
 
-    compile(fileTree(File(clionCocoaCommonPluginDir, "lib")) { include("*-core.jar") })
+    compile(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))
 }
 
 jar.enabled = false

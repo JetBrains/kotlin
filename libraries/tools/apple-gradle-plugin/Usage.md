@@ -29,6 +29,7 @@ buildscript {
     repositories {
         // use `snapshots` instead of `releases` when EAP/SNAPSHOT version was used for `versions.intellijSdk`
         maven("https://www.jetbrains.com/intellij-repository/releases")
+        maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
         maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
     }
 }

@@ -24,14 +24,15 @@ import java.io.*
 import javax.inject.Inject
 
 private class AppleSourceSetFactory(private val project: Project) : NamedDomainObjectFactory<AppleSourceSet> {
-    override fun create(name: String): AppleSourceSet = AppleSourceSet(name, project.objects).apply {
+    override fun create(name: String): AppleSourceSet = DefaultAppleSourceSet(name, project.objects).apply {
         apple.srcDir(File(project.file("src/$name"), "apple"))
     }
 }
 
-class AppleSourceSet(private val name: String, objects: ObjectFactory) : Named {
-    override fun getName(): String = name
-    val apple: SourceDirectorySet = objects.sourceDirectorySet("$name Apple source", name)
+@Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED")
+private class DefaultAppleSourceSet(@Suppress("ACCIDENTAL_OVERRIDE") override val name: String,
+                                    objects: ObjectFactory) : Named, AppleSourceSet {
+    override val apple: SourceDirectorySet = objects.sourceDirectorySet("$name Apple source", name)
 }
 
 private open class AppleBuildTask @Inject constructor(
@@ -121,7 +122,7 @@ private open class AppleBuildTask @Inject constructor(
             val frameworksGroupDir = frameworkDirs.firstOrNull() ?: baseDir.resolve("Frameworks")
             val frameworksGroup = addGroup(null, "Frameworks", frameworksGroupDir.path)
 
-            val targetSettings = mapOf(
+            val targetSettings = mutableMapOf(
                     BuildSettingNames.SDKROOT to ApplePlatform.Type.IOS.platformName,
                     BuildSettingNames.SYMROOT to symRoot.toRelativeString(baseDir),
                     BuildSettingNames.OBJROOT to "build",
@@ -133,10 +134,13 @@ private open class AppleBuildTask @Inject constructor(
                     BuildSettingNames.SWIFT_VERSION to "5.0",
                     BuildSettingNames.ALWAYS_SEARCH_USER_PATHS to "NO",
                     BuildSettingNames.CLANG_ENABLE_MODULES to "YES",
+                    BuildSettingNames.CLANG_ENABLE_OBJC_ARC to "YES",
                     BuildSettingNames.ASSETCATALOG_COMPILER_APPICON_NAME to "AppIcon",
                     // Debug
                     BuildSettingNames.ONLY_ACTIVE_ARCH to "YES"
             )
+            target.bridgingHeader?.let { targetSettings[BuildSettingNames.SWIFT_OBJC_BRIDGING_HEADER] = sourcesGroupDir.resolve(it).toRelativeString(baseDir) }
+
             val pbxTarget = addNativeTarget(target.name, AppleProductType.APPLICATION_TYPE_ID, targetSettings, platform)
             addConfiguration(configName, targetSettings, pbxTarget)
 
@@ -158,7 +162,7 @@ private open class AppleBuildTask @Inject constructor(
             addFile(infoPlistFile.path, emptyArray(), mainGroup, false)
 
             val targetMemberships = arrayOf(pbxTarget)
-            for (file in sourceSet.apple.srcDirs.flatMap { it.listFiles()?.asList() ?: emptyList() }) { // don't flatten
+            for (file in sourceSet.apple.srcDirs.flatMap { it.listFiles()?.apply { sort() }?.asList() ?: emptyList() }) { // don't flatten
                 addFile(file.path, targetMemberships, sourcesGroup, false)
             }
 
@@ -203,7 +207,7 @@ private open class AppleTargetFactory @Inject constructor(
         private val project: Project,
         private val objects: ObjectFactory
 ) : NamedDomainObjectFactory<AppleTarget> {
-    override fun create(name: String): AppleTarget = objects.newInstance(AppleTarget::class.java, name).also { target ->
+    override fun create(name: String): AppleTarget = objects.newInstance(DefaultAppleTarget::class.java, name).also { target ->
         //project.components.add(target)
 
         val sourceSet = project.apple.sourceSets.register("${name}Main") {
@@ -222,27 +226,25 @@ private open class AppleTargetFactory @Inject constructor(
     }
 }
 
-open class AppleTarget @Inject constructor(private val name: String, configurations: ConfigurationContainer) : Named {
-    private val names: Names = Names.of(name)
-    internal val configuration: Configuration = configurations.create(names.withSuffix("implementation"))
-
-    override fun getName(): String = name
-    var launchStoryboard: String? = null
-    var mainStoryboard: String? = null
+@Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED")
+private open class DefaultAppleTarget @Inject constructor(@Suppress("ACCIDENTAL_OVERRIDE") final override val name: String,
+                                                          configurations: ConfigurationContainer) : Named, AppleTarget {
+    override val configuration: Configuration = configurations.create(Names.of(name).withSuffix("implementation"))
+    override var launchStoryboard: String? = null
+    override var mainStoryboard: String? = null
+    override var bridgingHeader: String? = null
 }
 
-open class AppleProjectExtension {
-    lateinit var targets: NamedDomainObjectContainer<AppleTarget>
-        internal set
+private open class AppleProjectExtensionImpl(project: Project) : AppleProjectExtension {
+    override val targets: NamedDomainObjectContainer<AppleTarget> =
+            project.container(AppleTarget::class.java, project.objects.newInstance(AppleTargetFactory::class.java, project))
 
-    lateinit var sourceSets: NamedDomainObjectContainer<AppleSourceSet>
-        internal set
+    override val sourceSets: NamedDomainObjectContainer<AppleSourceSet> =
+            project.container(AppleSourceSet::class.java, AppleSourceSetFactory(project))
 
-    @JvmOverloads
-    fun iosApp(configure: AppleTarget.() -> Unit = { }): AppleTarget = iosApp("iosApp", configure)
+    override fun iosApp(configure: AppleTarget.() -> Unit): AppleTarget = iosApp("iosApp", configure)
 
-    @JvmOverloads
-    fun iosApp(name: String, configure: AppleTarget.() -> Unit = { }): AppleTarget =
+    override fun iosApp(name: String, configure: AppleTarget.() -> Unit): AppleTarget =
             targets.maybeCreate(name).apply { configure() }
 }
 
@@ -254,12 +256,7 @@ open class ApplePlugin @Inject constructor(private val execActionFactory: ExecAc
         XcodeBase.setBaseInstallation(XcodeInstallation(File(xcodePath)))
         CoreXcodeWorkspace.setInstance(XcodeWorkspace.project, XcodeWorkspace)
 
-        val projectExtension = project.extensions.create("apple", AppleProjectExtension::class.java)
-        projectExtension.targets = project.container(
-                AppleTarget::class.java,
-                project.objects.newInstance(AppleTargetFactory::class.java, project)
-        )
-        projectExtension.sourceSets = project.container(AppleSourceSet::class.java, AppleSourceSetFactory(project))
+        project.extensions.create(AppleProjectExtension::class.java, "apple", AppleProjectExtensionImpl::class.java, project)
     }
 
     private fun detectXcodeInstallation(): String {
@@ -276,6 +273,3 @@ open class ApplePlugin @Inject constructor(private val execActionFactory: ExecAc
                         "Consider specifying it manually via the `xcode.base` property.")
     }
 }
-
-val Project.apple: AppleProjectExtension get() = project.extensions.getByType(AppleProjectExtension::class.java)
-fun Project.apple(configure: AppleProjectExtension.() -> Unit = { }) = apple.configure()

@@ -1,3 +1,5 @@
+import kotlin.reflect.full.memberExtensionFunctions
+
 plugins {
     kotlin("jvm")
 }
@@ -28,9 +30,19 @@ dependencies {
     compile("com.jetbrains.intellij.cidr:cidr-xctest:$clionVersion") { isTransitive = false }
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
     compile("com.android.tools.ddms:ddmlib:26.0.0")
+    compile(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))
 
     if (!isStandaloneBuild) {
         compileOnly("org.jetbrains:markdown:${rootProject.extra["versions.markdown"]}")
+        val localDependencies = Class.forName("LocalDependenciesKt")
+        val intellijDep = localDependencies
+            .getMethod("intellijDep", Project::class.java, String::class.java)
+            .invoke(null, project, null) as String
+        compileOnly(intellijDep) {
+            localDependencies
+                .getMethod("includeJars", ModuleDependency::class.java, Array<String>::class.java, Project::class.java)
+                .invoke(null, this, arrayOf("external-system-rt"), null)
+        }
     }
 }
 
