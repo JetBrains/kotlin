@@ -3,7 +3,7 @@ import java.io.IOException
 
 class C {
     @Throws(IOException::class)
-    internal fun foo() {
+    fun foo() {
         ByteArrayInputStream(ByteArray(10)).use { stream ->
             // reading something
             val c = stream.read()

@@ -4,8 +4,8 @@ import java.io.File
 import java.util.ArrayList
 
 
-class JavaClass {
-    internal fun foo(file: File?, target: MutableList<String>?) {
+internal class JavaClass {
+    fun foo(file: File?, target: MutableList<String>?) {
         val list = ArrayList<String>()
         if (file != null) {
             list.add(file.name)

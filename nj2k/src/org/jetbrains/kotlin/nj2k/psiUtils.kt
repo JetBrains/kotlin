@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.nj2k
 
 import com.intellij.codeInsight.generation.GenerateEqualsHelper.getEqualsSignature
+import com.intellij.lang.jvm.JvmClassKind
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.PsiUtil
+import org.jetbrains.kotlin.j2k.ClassKind
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.isNullLiteral
 import org.jetbrains.kotlin.nj2k.tree.*
@@ -79,6 +81,13 @@ fun PsiMember.modality(assignNonCodeElements: ((JKFormattingOwner, PsiElement) -
         }
     }?.firstOrNull() ?: JKModalityModifierElement(Modality.OPEN)
 
+
+fun JvmClassKind.toJk() = when (this) {
+    JvmClassKind.CLASS -> JKClass.ClassKind.CLASS
+    JvmClassKind.INTERFACE ->  JKClass.ClassKind.INTERFACE
+    JvmClassKind.ANNOTATION ->  JKClass.ClassKind.ANNOTATION
+    JvmClassKind.ENUM ->  JKClass.ClassKind.ENUM
+}
 
 private fun PsiMember.handleProtectedVisibility(referenceSearcher: ReferenceSearcher): Visibility {
     val originalClass = containingClass ?: return Visibility.PROTECTED

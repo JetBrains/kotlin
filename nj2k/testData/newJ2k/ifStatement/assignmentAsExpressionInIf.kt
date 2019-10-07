@@ -1,5 +1,5 @@
 class SomeClass {
-    internal fun doSomeIf(i: Int) {
+    fun doSomeIf(i: Int) {
         val a: Int
         val b: Int
         val c: Int

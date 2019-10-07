@@ -1,11 +1,11 @@
 // ERROR: Property must be initialized or be abstract
 class Test {
     private val myName: String
-    internal var a = false
-    internal var b = 0.0
-    internal var c = 0f
-    internal var d: Long = 0
-    internal var e = 0
+    var a = false
+    var b = 0.0
+    var c = 0f
+    var d: Long = 0
+    var e = 0
     protected var f: Short = 0
     protected var g = 0.toChar()
 
@@ -15,7 +15,7 @@ class Test {
     }
 
     companion object {
-        internal fun foo(n: String?): String {
+        fun foo(n: String?): String {
             return ""
         }
     }

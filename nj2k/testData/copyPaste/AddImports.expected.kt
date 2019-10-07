@@ -1,5 +1,5 @@
 import java.io.File
 
-internal fun foo(file: File?): List<String?>? {
+fun foo(file: File?): List<String?>? {
     return emptyList<String>()
 }

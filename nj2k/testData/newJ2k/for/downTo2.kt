@@ -1,5 +1,5 @@
 class A {
-    internal fun foo() {
+    fun foo() {
         for (i in 10 downTo 1) {
             println(i)
         }

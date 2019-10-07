@@ -1,5 +1,5 @@
 class SomeClass {
-    internal fun doSomeFor() {
+    fun doSomeFor() {
         var a: Int
         var b: Int
         for (i in 0..9) {

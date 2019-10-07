@@ -1,10 +1,10 @@
 object Util {
     const val publicStr = ""
     internal const val protectedStr = ""
-    internal const val packageStr = ""
+    const val packageStr = ""
     private const val privateStr = ""
     fun publicMethod() {}
     internal fun protectedMethod() {}
-    internal fun packageMethod() {}
+    fun packageMethod() {}
     private fun privateMethod() {}
 }

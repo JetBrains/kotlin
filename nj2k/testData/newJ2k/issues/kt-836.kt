@@ -10,14 +10,14 @@ class Language(protected var code: String) : Serializable {
 }
 
 internal open class Base {
-    internal open fun test() {}
+    open fun test() {}
     override fun toString(): String {
         return "BASE"
     }
 }
 
 internal class Child : Base() {
-    public override fun test() {}
+    override fun test() {}
     override fun toString(): String {
         return "Child"
     }

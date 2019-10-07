@@ -1,6 +1,6 @@
 internal class A {
     inner class Inner {
-        internal fun foo() {
+        fun foo() {
             privateStatic1()
         }
     }

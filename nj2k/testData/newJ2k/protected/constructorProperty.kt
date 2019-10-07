@@ -11,5 +11,5 @@ class Derived(value: Int) : Base(value) {
 }
 
 internal abstract class View {
-    internal abstract fun click()
+    abstract fun click()
 }

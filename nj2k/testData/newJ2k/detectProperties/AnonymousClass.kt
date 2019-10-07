@@ -1,5 +1,5 @@
 class X {
-    internal fun foo() {
+    fun foo() {
         val runnable: Runnable = object : Runnable {
             var value = 10
 

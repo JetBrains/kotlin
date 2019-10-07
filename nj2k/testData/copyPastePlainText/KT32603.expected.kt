@@ -1,6 +1,6 @@
 class Foo {
     var prop = 0
-    internal fun foo() {
+    fun foo() {
         prop++
     }
 }

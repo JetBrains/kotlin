@@ -2,7 +2,7 @@ import java.io.ByteArrayInputStream
 import java.io.IOException
 
 class C {
-    internal fun foo(): Int {
+    fun foo(): Int {
         try {
             ByteArrayInputStream(ByteArray(10)).use { stream ->
                 // reading something

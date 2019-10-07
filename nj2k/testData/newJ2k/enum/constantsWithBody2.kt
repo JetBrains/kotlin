@@ -9,7 +9,7 @@ enum class E(private val p: Int) {
         override fun bar() {}
     };
 
-    internal fun foo(p: Int) {}
-    internal abstract fun bar()
+    fun foo(p: Int) {}
+    abstract fun bar()
 
 }
