@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -34,7 +34,7 @@ class BuiltInsDeserializationForFirTestCase : AbstractFirResolveWithSessionTestC
 
     private fun checkPackageContent(packageFqName: FqName) {
         val session = createSession(environment, GlobalSearchScope.allScope(project))
-        val provider = session.getService(FirSymbolProvider::class)
+        val provider = session.firSymbolProvider
 
         val builder = StringBuilder()
         val firRenderer = FirRenderer(builder)

@@ -43,7 +43,7 @@ class FirJavaModuleBasedSession(
             FirSymbolProvider::class,
             FirCompositeSymbolProvider(
                 listOf(
-                    service<FirProvider>(),
+                    firProvider,
                     JavaSymbolProvider(this, sessionProvider.project, scope),
                     dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
                 )

@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.impl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
-import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -24,7 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
 
     private val symbolProvider by lazy {
-        session.getService(FirSymbolProvider::class)
+        session.firSymbolProvider
     }
 
     private data class ClassIdInSession(val session: FirSession, val id: ClassId)

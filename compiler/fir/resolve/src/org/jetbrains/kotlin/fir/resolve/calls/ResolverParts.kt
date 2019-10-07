@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -183,7 +182,7 @@ internal object CheckVisibility : CheckerStage() {
                     symbol.packageFqName() == callInfo.containingFile.packageFqName
                 Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
                     if (declaration.session == callInfo.session) {
-                        val provider = callInfo.session.service<FirProvider>()
+                        val provider = callInfo.session.firProvider
                         val candidateFile = when (symbol) {
                             is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
                             is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFile(symbol.classId)

@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -59,7 +58,7 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
         val symbol = declaration.symbol as FirCallableSymbol<*>
         val id = symbol.callableId
 
-        val provider = session.service<FirProvider>()
+        val provider = session.firProvider
 
         val file = provider.getFirCallableContainerFile(symbol)
 

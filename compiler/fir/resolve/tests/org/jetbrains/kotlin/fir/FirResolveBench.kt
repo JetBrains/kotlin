@@ -8,16 +8,13 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
@@ -29,7 +26,7 @@ import kotlin.system.measureNanoTime
 
 fun checkFirProvidersConsistency(firFiles: List<FirFile>) {
     for ((session, files) in firFiles.groupBy { it.fileSession }) {
-        val provider = session.service<FirProvider>() as FirProviderImpl
+        val provider = session.firProvider as FirProviderImpl
         provider.ensureConsistent(files)
     }
 }
@@ -101,7 +98,7 @@ class FirResolveBench(val withProgress: Boolean) {
             var firFile: FirFile? = null
             val time = measureNanoTime {
                 firFile = builder.buildFirFile(file)
-                (builder.session.service<FirProvider>() as FirProviderImpl).recordFile(firFile!!)
+                (builder.session.firProvider as FirProviderImpl).recordFile(firFile!!)
             }
             val after = vmStateSnapshot()
             val diff = after - before

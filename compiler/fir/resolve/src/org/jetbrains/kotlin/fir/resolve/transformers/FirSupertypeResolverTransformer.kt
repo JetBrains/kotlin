@@ -172,11 +172,11 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
                     continue
                 }
 
-                val sessionForSupertype = session.getService(FirSymbolProvider::class).getSessionForClass(superTypeClassId) ?: continue
+                val sessionForSupertype = session.firSymbolProvider.getSessionForClass(superTypeClassId) ?: continue
 
                 val firClassForSupertype =
                     sessionForSupertype
-                        .getService(FirSymbolProvider::class)
+                        .firSymbolProvider
                         .getClassLikeSymbolByFqName(superTypeClassId)
                         ?.fir
 
@@ -185,7 +185,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
                     (firClassForSupertype is FirClass &&
                             firClassForSupertype.superTypeRefs.any { it !is FirResolvedTypeRef })
                 ) {
-                    val provider = sessionForSupertype.getService(FirProvider::class)
+                    val provider = sessionForSupertype.firProvider
                     val firForSuperClassFile = provider.getFirClassifierContainerFile(superTypeClassId)
 
                     ResolveSuperTypesTask(

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -279,7 +280,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
     inner class FirRenderer : FirVisitor<Unit, StringBuilder>() {
         private val session = firFile.session
         private val filePackage = firFile.packageFqName.toString().replace(".", "/")
-        private val symbolProvider = firFile.session.getService(FirSymbolProvider::class)
+        private val symbolProvider = firFile.session.firSymbolProvider
 
         private fun removeCurrentFilePackage(fqName: String): String {
             return if (fqName.startsWith(filePackage) && !fqName.substring(filePackage.length + 1).contains("/")) {

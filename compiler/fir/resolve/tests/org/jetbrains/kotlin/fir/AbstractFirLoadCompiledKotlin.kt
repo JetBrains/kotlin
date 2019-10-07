@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetModule
 import org.jetbrains.kotlin.name.ClassId
@@ -58,7 +58,7 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
         packageFqName: FqName,
         testDataPath: String
     ) {
-        val provider = session.getService(FirSymbolProvider::class)
+        val provider = session.firSymbolProvider
 
         val builder = StringBuilder()
         val firRenderer = FirRenderer(builder)

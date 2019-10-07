@@ -55,10 +55,9 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
-import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -330,7 +329,7 @@ object KotlinToJVMBytecodeCompiler {
             val resolveTransformer = FirTotalResolveTransformer()
             val firFiles = ktFiles.map {
                 val firFile = builder.buildFirFile(it)
-                (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
+                (session.firProvider as FirProviderImpl).recordFile(firFile)
                 firFile
             }.also {
                 try {

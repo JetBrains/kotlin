@@ -23,15 +23,14 @@ import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
-import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
-import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
@@ -103,7 +102,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
             files.forEach {
                 val file = psiManager.findFile(it) as? KtFile ?: return@forEach
                 val firFile = builder.buildFirFile(file)
-                (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
+                (session.firProvider as FirProviderImpl).recordFile(firFile)
                 firFiles += firFile
             }
         }
@@ -132,7 +131,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
         val javaFirDump = StringBuilder().also { builder ->
             val renderer = FirRenderer(builder)
             for (session in sessions) {
-                val symbolProvider = session.service<FirSymbolProvider>() as FirCompositeSymbolProvider
+                val symbolProvider = session.firSymbolProvider as FirCompositeSymbolProvider
                 val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
                 for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
                     if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
@@ -159,7 +158,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
                                 } else {
                                     enhancementScope.processFunctionsByName(declaration.name) { symbol ->
                                         val enhanced = symbol.fir
-                                        if (enhanced != null && enhanced !in renderedDeclarations) {
+                                        if (enhanced !in renderedDeclarations) {
                                             enhanced.accept(renderer, null)
                                             renderer.newLine()
                                             renderedDeclarations += enhanced
