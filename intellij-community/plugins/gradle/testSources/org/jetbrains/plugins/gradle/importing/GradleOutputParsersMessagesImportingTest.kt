@@ -39,6 +39,57 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
   }
 
   @Test
+  fun `test build script plugins errors on Sync`() {
+    createProjectSubFile("buildSrc/src/main/groovy/example/SomePlugin.groovy",
+                         "package example\n" +
+                         "\n" +
+                         "import org.gradle.api.Plugin\n" +
+                         "import org.gradle.api.Project\n" +
+                         "\n" +
+                         "class SomePlugin implements Plugin<Project> {\n" +
+                         "    void apply(Project target) {\n" +
+                         "        throw new IllegalArgumentException(\"Something's wrong!\")\n" +
+                         "    }\n" +
+                         "\n" +
+                         "}\n")
+    importProject("apply plugin: example.SomePlugin")
+
+    var expectedExecutionTree: String = "-\n" +
+                                        " -failed\n"
+    if (currentGradleVersion >= GradleVersion.version("3.3") &&
+        currentGradleVersion < GradleVersion.version("4.5")) {
+      expectedExecutionTree += "  :buildSrc:clean\n"
+    }
+
+    if (currentGradleVersion >= GradleVersion.version("3.3")) {
+      expectedExecutionTree += "  :buildSrc:compileJava\n" +
+                               "  :buildSrc:compileGroovy\n" +
+                               "  :buildSrc:processResources\n" +
+                               "  :buildSrc:classes\n" +
+                               "  :buildSrc:jar\n" +
+                               "  :buildSrc:assemble\n" +
+                               "  :buildSrc:compileTestJava\n" +
+                               "  :buildSrc:compileTestGroovy\n" +
+                               "  :buildSrc:processTestResources\n" +
+                               "  :buildSrc:testClasses\n" +
+                               "  :buildSrc:test\n" +
+                               "  :buildSrc:check\n" +
+                               "  :buildSrc:build\n";
+    }
+
+    expectedExecutionTree += "  -build.gradle\n" +
+                             "   Something's wrong!"
+    assertSyncViewTreeEquals(expectedExecutionTree)
+
+    assertSyncViewSelectedNode("Something's wrong!",
+                               "Build file '${myProjectConfig.path}' line: 1\n" +
+                               "A problem occurred evaluating root project 'project'.\n" +
+                               "> Failed to apply plugin [class 'example.SomePlugin']\n" +
+                               "   > Something's wrong!\n")
+
+  }
+
+  @Test
   fun `test unresolved dependencies errors on Sync`() {
     val buildScript = GradleBuildScriptBuilderEx().withJavaPlugin()
 
