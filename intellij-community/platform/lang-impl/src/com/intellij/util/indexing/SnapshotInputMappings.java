@@ -35,7 +35,8 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
   private static final boolean USE_MANUAL_COMPRESSION = SystemProperties.getBooleanProperty("snapshots.use.manual.compression", false);
 
   private final ID<Key, Value> myIndexId;
-  private final InputMapExternalizer<Key, Value> myMapExternalizer;
+  private final DataExternalizer<Map<Key, Value>> myMapExternalizer;
+  private final DataExternalizer<Value> myValueExternalizer;
   private final DataIndexer<Key, Value, Input> myIndexer;
   private final PersistentMapBasedForwardIndex myContents;
   private volatile PersistentHashMap<Integer, String> myIndexingTrace;
@@ -47,7 +48,11 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
   SnapshotInputMappings(IndexExtension<Key, Value, Input> indexExtension) throws IOException {
     myIndexId = (ID<Key, Value>)indexExtension.getName();
     myIsPsiBackedIndex = FileBasedIndexImpl.isPsiDependentIndex(indexExtension);
-    myMapExternalizer = new InputMapExternalizer<>(indexExtension);
+
+    boolean storeOnlySingleValue = indexExtension instanceof SingleEntryFileBasedIndexExtension;
+    myMapExternalizer = storeOnlySingleValue ? null : new InputMapExternalizer<>(indexExtension);
+    myValueExternalizer = storeOnlySingleValue ? indexExtension.getValueExternalizer() : null;
+
     myIndexer = indexExtension.getIndexer();
     myContents = createContentsIndex();
     myHashIdForwardIndexAccessor = new HashIdForwardIndexAccessor<>(this);
@@ -98,9 +103,31 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
       if (USE_MANUAL_COMPRESSION) {
         byteSequence = decompress(byteSequence);
       }
-      return AbstractForwardIndexAccessor.deserializeFromByteSeq(byteSequence, myMapExternalizer);
+      return deserialize(byteSequence);
     }
     return null;
+  }
+
+  @NotNull
+  private Map<Key, Value> deserialize(@NotNull ByteArraySequence byteSequence) throws IOException {
+    if (myMapExternalizer != null) {
+      return AbstractForwardIndexAccessor.deserializeFromByteSeq(byteSequence, myMapExternalizer);
+    } else {
+      assert myValueExternalizer != null;
+      Value value = AbstractForwardIndexAccessor.deserializeFromByteSeq(byteSequence, myValueExternalizer);
+      //noinspection unchecked
+      return Collections.singletonMap((Key)Long.valueOf(0), value);
+    }
+  }
+
+  @NotNull
+  private ByteArraySequence serializeData(@NotNull Map<Key, Value> data) throws IOException {
+    if (myMapExternalizer != null) {
+      return AbstractForwardIndexAccessor.serializeToByteSeq(data, myMapExternalizer, data.size());
+    } else {
+      assert myValueExternalizer != null;
+      return AbstractForwardIndexAccessor.serializeToByteSeq(data.values().iterator().next(), myValueExternalizer, data.size());
+    }
   }
 
   @Override
@@ -329,10 +356,11 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
     return moreInfo;
   }
 
-  private boolean savePersistentData(Map<Key, Value> data, int id) {
+  private boolean savePersistentData(@NotNull Map<Key, Value> data, int id) {
     try {
       if (myContents != null && myContents.containsMapping(id)) return false;
-      saveContents(id, AbstractForwardIndexAccessor.serializeToByteSeq(data, myMapExternalizer, data.size()));
+      ByteArraySequence bytes = serializeData(data);
+      saveContents(id, bytes);
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
