@@ -73,6 +73,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
 
         val firFiles = mutableListOf<FirFile>()
 
+        // TODO: make module/session/transformer handling like in AbstractFirMultiModuleTest (IDE)
         for ((testModule, testFilesInModule) in groupedByModule) {
             val ktFiles = getKtFiles(testFilesInModule, true)
 
