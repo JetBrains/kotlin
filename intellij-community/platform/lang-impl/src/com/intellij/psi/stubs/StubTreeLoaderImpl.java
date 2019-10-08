@@ -39,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author yole
@@ -108,12 +109,11 @@ public class StubTreeLoaderImpl extends StubTreeLoader {
     Document document = FileDocumentManager.getInstance().getCachedDocument(vFile);
     boolean saved = document == null || !FileDocumentManager.getInstance().isDocumentUnsaved(document);
 
-    final List<SerializedStubTree> datas = FileBasedIndex.getInstance().getValues(StubUpdatingIndex.INDEX_ID, id, GlobalSearchScope
-        .fileScope(project, vFile));
+    final Map<Integer, SerializedStubTree> datas = FileBasedIndex.getInstance().getFileData(StubUpdatingIndex.INDEX_ID, vFile, project);
     final int size = datas.size();
 
     if (size == 1) {
-      SerializedStubTree stubTree = datas.get(0);
+      SerializedStubTree stubTree = datas.values().iterator().next();
 
       if (!checkLengthMatch(project, vFile, wasIndexedAlready, document, saved)) {
         return null;
