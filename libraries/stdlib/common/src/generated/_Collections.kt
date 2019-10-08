@@ -2150,7 +2150,7 @@ public fun <T> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Bo
         val resultCapacity = thisSize / step + if (thisSize % step == 0) 0 else 1
         val result = ArrayList<List<T>>(resultCapacity)
         var index = 0
-        while (index < thisSize) {
+        while (index in 0 until thisSize) {
             val windowSize = size.coerceAtMost(thisSize - index)
             if (windowSize < size && !partialWindows) break
             result.add(List(windowSize) { this[it + index] })
@@ -2187,12 +2187,14 @@ public fun <T, R> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows:
     checkWindowSizeStep(size, step)
     if (this is RandomAccess && this is List) {
         val thisSize = this.size
-        val result = ArrayList<R>((thisSize + step - 1) / step)
+        val resultCapacity = thisSize / step + if (thisSize % step == 0) 0 else 1
+        val result = ArrayList<R>(resultCapacity)
         val window = MovingSubList(this)
         var index = 0
-        while (index < thisSize) {
-            window.move(index, (index + size).coerceAtMost(thisSize))
-            if (!partialWindows && window.size < size) break
+        while (index in 0 until thisSize) {
+            val windowSize = size.coerceAtMost(thisSize - index)
+            if (!partialWindows && windowSize < size) break
+            window.move(index, index + windowSize)
             result.add(transform(window))
             index += step
         }

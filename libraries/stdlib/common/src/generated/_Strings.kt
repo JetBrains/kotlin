@@ -1377,9 +1377,9 @@ public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: B
     val resultCapacity = thisSize / step + if (thisSize % step == 0) 0 else 1
     val result = ArrayList<R>(resultCapacity)
     var index = 0
-    while (index < thisSize) {
+    while (index in 0 until thisSize) {
         val end = index + size
-        val coercedEnd = if (end > thisSize) { if (partialWindows) thisSize else break } else end
+        val coercedEnd = if (end < 0 || end > thisSize) { if (partialWindows) thisSize else break } else end
         result.add(transform(subSequence(index, coercedEnd)))
         index += step
     }
@@ -1427,7 +1427,11 @@ public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindow
 public fun <R> CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): Sequence<R> {
     checkWindowSizeStep(size, step)
     val windows = (if (partialWindows) indices else 0 until length - size + 1) step step
-    return windows.asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
+    return windows.asSequence().map { index ->
+        val end = index + size
+        val coercedEnd = if (end < 0 || end > length) length else end
+        transform(subSequence(index, coercedEnd))
+    }
 }
 
 /**
