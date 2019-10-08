@@ -9,6 +9,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -31,7 +33,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorChecks
 import org.jetbrains.kotlin.idea.references.resolveToDescriptors
@@ -351,4 +355,14 @@ internal fun Sequence<PsiElement>.lastWithPersistedElementOrNull(elementShouldPe
     }
 
     return if (checked) lastElement else null
+}
+
+fun KotlinType.isKFunction(): Boolean {
+    return constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.KFunction
+}
+
+fun KotlinType.reflectToRegularFunctionType(): KotlinType {
+    val isTypeAnnotatedWithExtensionFunctionType = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null
+    val parameterCount = if (isTypeAnnotatedWithExtensionFunctionType) arguments.size - 2 else arguments.size - 1
+    return KotlinTypeFactory.simpleNotNullType(annotations, builtIns.getFunction(parameterCount), arguments)
 }

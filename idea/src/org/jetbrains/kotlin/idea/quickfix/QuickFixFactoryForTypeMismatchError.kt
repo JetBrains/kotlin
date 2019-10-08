@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.intentions.isKFunction
+import org.jetbrains.kotlin.idea.intentions.reflectToRegularFunctionType
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -56,12 +58,6 @@ import java.util.*
 
 //TODO: should use change signature to deal with cases of multiple overridden descriptors
 class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
-
-    private fun KotlinType.reflectToRegularFunctionType(): KotlinType {
-        val isTypeAnnotatedWithExtensionFunctionType = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null
-        val parameterCount = if (isTypeAnnotatedWithExtensionFunctionType) arguments.size - 2 else arguments.size - 1
-        return KotlinTypeFactory.simpleNotNullType(annotations, builtIns.getFunction(parameterCount), arguments)
-    }
 
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val actions = LinkedList<IntentionAction>()
@@ -183,7 +179,7 @@ class QuickFixFactoryForTypeMismatchError : KotlinIntentionActionsFactory() {
         ) {
             val scope = callable.getResolutionScope(context, callable.getResolutionFacade())
             val typeToInsert = expressionType.approximateWithResolvableType(scope, false)
-            if (typeToInsert.constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.KFunction) {
+            if (typeToInsert.isKFunction()) {
                 actions.add(createFix(callable, typeToInsert.reflectToRegularFunctionType()))
             }
             actions.add(createFix(callable, typeToInsert))
