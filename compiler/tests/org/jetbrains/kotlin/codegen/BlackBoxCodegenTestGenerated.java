@@ -8987,6 +8987,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/defaultArguments/superCallCheck.kt");
         }
 
+        @TestMetadata("useNextParamInLambda.kt")
+        public void testUseNextParamInLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/useNextParamInLambda.kt");
+        }
+
         @TestMetadata("useThisInLambda.kt")
         public void testUseThisInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/useThisInLambda.kt");
