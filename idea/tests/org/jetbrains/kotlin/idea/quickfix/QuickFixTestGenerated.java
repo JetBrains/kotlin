@@ -9726,6 +9726,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public void testImportAlias() throws Exception {
             runTest("idea/testData/quickfix/optimizeImports/importAlias.kt");
         }
+
+        @TestMetadata("invoke.kt")
+        public void testInvoke() throws Exception {
+            runTest("idea/testData/quickfix/optimizeImports/invoke.kt");
+        }
+
+        @TestMetadata("invoke2.kt")
+        public void testInvoke2() throws Exception {
+            runTest("idea/testData/quickfix/optimizeImports/invoke2.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/override")
