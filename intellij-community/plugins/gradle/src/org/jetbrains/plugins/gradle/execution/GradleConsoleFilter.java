@@ -50,8 +50,8 @@ public class GradleConsoleFilter implements Filter {
   @Nullable
   @Override
   public Result applyFilter(@NotNull final String line, final int entireLength) {
-    String[] filePrefixes = new String[]{"Build file '", "build file '", "Settings file '"};
-    String[] linePrefixes = new String[]{"' line: ", "': ", "' line: "};
+    String[] filePrefixes = new String[]{"Build file '", "build file '", "Settings file '", "settings file '"};
+    String[] linePrefixes = new String[]{"' line: ", "': ", "' line: ", "': "};
     String filePrefix = null;
     String linePrefix = null;
     for (int i = 0; i < filePrefixes.length; i++) {
