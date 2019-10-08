@@ -377,7 +377,7 @@ fun IrFunction.isFakeOverriddenFromAny(): Boolean {
     return (this as IrSimpleFunction).overriddenSymbols.all { it.owner.isFakeOverriddenFromAny() }
 }
 
-fun IrCall.isSuperToAny() = superQualifier?.let { this.symbol.owner.isFakeOverriddenFromAny() } ?: false
+fun IrCall.isSuperToAny() = superQualifierSymbol?.let { this.symbol.owner.isFakeOverriddenFromAny() } ?: false
 
 fun IrDeclaration.isEffectivelyExternal(): Boolean {
 

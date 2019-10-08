@@ -79,12 +79,6 @@ class IrCallImpl(
         descriptor.valueParameters.size, origin, superQualifierSymbol
     )
 
-    constructor(startOffset: Int, endOffset: Int, type: IrType, symbol: IrFunctionSymbol, superQualifierSymbol : IrClassSymbol? = null) :
-            this(startOffset, endOffset, type, symbol, symbol.descriptor, superQualifierSymbol = superQualifierSymbol)
-
-
-    override val superQualifier: ClassDescriptor? = superQualifierSymbol?.descriptor
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitCall(this, data)
 }

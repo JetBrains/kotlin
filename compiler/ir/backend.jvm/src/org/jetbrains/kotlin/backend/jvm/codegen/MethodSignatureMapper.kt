@@ -306,7 +306,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         val isInterface = calleeParent.isJvmInterface
-        val isSuperCall = (expression as? IrCall)?.superQualifier != null
+        val isSuperCall = (expression as? IrCall)?.superQualifierSymbol != null
 
         val invokeOpcode = when {
             callee.dispatchReceiverParameter == null -> Opcodes.INVOKESTATIC

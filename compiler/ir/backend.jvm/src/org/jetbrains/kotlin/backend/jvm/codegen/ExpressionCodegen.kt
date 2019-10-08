@@ -368,7 +368,7 @@ class ExpressionCodegen(
         }
 
         expression.dispatchReceiver?.let { receiver ->
-            val type = if ((expression as? IrCall)?.superQualifier != null) receiver.asmType else callable.owner
+            val type = if ((expression as? IrCall)?.superQualifierSymbol != null) receiver.asmType else callable.owner
             callGenerator.genValueAndPut(callee.dispatchReceiverParameter!!, receiver, type, this, data)
         }
 

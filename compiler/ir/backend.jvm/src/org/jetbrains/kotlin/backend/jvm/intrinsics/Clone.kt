@@ -27,7 +27,7 @@ object Clone : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo) = with(codegen) {
         val result = expression.dispatchReceiver!!.accept(this, data).materialized
         assert(!AsmUtil.isPrimitive(result.type)) { "clone() of primitive type" }
-        val opcode = if (expression is IrCall && expression.superQualifier != null) Opcodes.INVOKESPECIAL else Opcodes.INVOKEVIRTUAL
+        val opcode = if (expression is IrCall && expression.superQualifierSymbol != null) Opcodes.INVOKESPECIAL else Opcodes.INVOKEVIRTUAL
         mv.visitMethodInsn(opcode, "java/lang/Object", "clone", "()Ljava/lang/Object;", false)
         MaterialValue(codegen, AsmTypes.OBJECT_TYPE, context.irBuiltIns.anyNType)
     }

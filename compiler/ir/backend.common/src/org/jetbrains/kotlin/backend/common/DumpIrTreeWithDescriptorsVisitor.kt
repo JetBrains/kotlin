@@ -91,7 +91,7 @@ class RenderIrElementWithDescriptorsVisitor : IrElementVisitor<String, Nothing?>
                 "type=${expression.type.render()} origin=${expression.origin}"
 
     private fun IrCall.renderSuperQualifier(): String =
-        superQualifier?.let { "superQualifier=${it.name} " } ?: ""
+        superQualifierSymbol?.let { "superQualifier=${it.owner.name} " } ?: ""
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
         "DELEGATING_CONSTRUCTOR_CALL '${expression.descriptor}'"
