@@ -3,74 +3,93 @@
 
 package com.intellij.openapi.externalSystem.util
 
-import com.intellij.lang.cacheBuilder.CacheBuilderRegistry
-import com.intellij.lang.cacheBuilder.WordOccurrence
-import com.intellij.lang.cacheBuilder.WordsScanner
-import com.intellij.lang.findUsages.LanguageFindUsages
+import com.intellij.lang.LanguageParserDefinitions
+import com.intellij.lang.ParserDefinition
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
+import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.tree.TokenSet
 import java.util.zip.CRC32
 
-fun VirtualFile.calculateCrc(): Long {
+fun Document.calculateCrc(project: Project, file: VirtualFile) =
+  when (modificationStamp) {
+    file.modificationStamp -> file.calculateCrc(project)
+    else -> findOrCalculateCrc(modificationStamp) {
+      doCalculateCrc(project, file.fileType)
+    }
+  }
+
+fun VirtualFile.calculateCrc(project: Project) =
+  findOrCalculateCrc(modificationStamp) {
+    doCalculateCrc(project)
+  }
+
+private fun <T : UserDataHolder> T.findOrCalculateCrc(modificationStamp: Long, calculate: () -> Long?): Long {
   ApplicationManager.getApplication().assertReadAccessAllowed()
   val cachedCrc = getCachedCrc(modificationStamp)
   if (cachedCrc != null) return cachedCrc
-  val crc = doCalculateCrc()
-  ProgressManager.checkCanceled()
+  val crc = calculate() ?: modificationStamp
   setCachedCrc(crc, modificationStamp)
   return crc
 }
 
-private fun VirtualFile.doCalculateCrc(): Long {
-  if (isDirectory) {
-    LOG.debug("Cannot calculate CRC for directory '$path'")
-    return modificationStamp
-  }
-
-  val wordsScanner = getScanner(this)
-  if (wordsScanner == null) {
-    LOG.debug("WordsScanner not found for file '$path'")
-    return modificationStamp
-  }
-
+private fun doCalculateCrc(project: Project, charSequence: CharSequence, fileType: FileType): Long? {
+  val parserDefinition = getParserDefinition(fileType) ?: return null
+  val lexer = parserDefinition.createLexer(project)
+  val whiteSpaceTokens = parserDefinition.whitespaceTokens
+  val commentTokens = parserDefinition.commentTokens
+  val ignoredTokens = TokenSet.orSet(commentTokens, whiteSpaceTokens)
   val crc32 = CRC32()
-  wordsScanner.processWords(LoadTextUtil.loadText(this)) {
-    if (it.kind !== WordOccurrence.Kind.COMMENTS) {
-      for (ch in it.baseText.subSequence(it.start, it.end)) {
+  lexer.start(charSequence)
+  ProgressManager.checkCanceled()
+  while (true) {
+    val tokenType = lexer.tokenType ?: break
+    if (!ignoredTokens.contains(tokenType)) {
+      for (ch in charSequence.subSequence(lexer.tokenStart, lexer.tokenEnd)) {
         crc32.update(ch.toInt())
       }
     }
-    true
+    lexer.advance()
+    ProgressManager.checkCanceled()
   }
   return crc32.value
 }
 
-private fun getScanner(file: VirtualFile): WordsScanner? {
-  val fileType = file.fileType
-  val customWordsScanner = CacheBuilderRegistry.getInstance().getCacheBuilder(fileType)
-  if (customWordsScanner != null) {
-    return customWordsScanner
+private fun getParserDefinition(fileType: FileType): ParserDefinition? {
+  return when (fileType) {
+    is LanguageFileType -> LanguageParserDefinitions.INSTANCE.forLanguage(fileType.language)
+    else -> null
   }
-
-  if (fileType is LanguageFileType) {
-    val lang = fileType.language
-    return LanguageFindUsages.getWordsScanner(lang)
-  }
-  return null
 }
 
-private fun VirtualFile.getCachedCrc(modificationStamp: Long): Long? {
+private fun Document.doCalculateCrc(project: Project, fileType: FileType) =
+  when {
+    fileType.isBinary -> null
+    else -> doCalculateCrc(project, immutableCharSequence, fileType)
+  }
+
+private fun VirtualFile.doCalculateCrc(project: Project) =
+  when {
+    isDirectory -> null
+    fileType.isBinary -> null
+    else -> doCalculateCrc(project, LoadTextUtil.loadText(this), fileType)
+  }
+
+private fun UserDataHolder.getCachedCrc(modificationStamp: Long): Long? {
   val (value, stamp) = getUserData(CRC_CACHE) ?: return null
   if (stamp == modificationStamp) return value
   return null
 }
 
-private fun VirtualFile.setCachedCrc(value: Long, modificationStamp: Long) {
+private fun UserDataHolder.setCachedCrc(value: Long, modificationStamp: Long) {
   putUserData(CRC_CACHE, CrcCache(value, modificationStamp))
 }
 

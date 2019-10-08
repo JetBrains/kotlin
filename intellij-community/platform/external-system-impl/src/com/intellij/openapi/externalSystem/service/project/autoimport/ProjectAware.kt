@@ -50,7 +50,6 @@ class ProjectAware(
   }
 
   override fun refreshProject() {
-    LOG.debug("${projectId.readableName}: Refresh project")
     TransactionGuard.getInstance().submitTransactionLater(project, Runnable {
       ExternalSystemUtil.refreshProject(projectPath, ImportSpecBuilder(project, systemId).useDefaultCallback().build())
     })

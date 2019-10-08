@@ -3,6 +3,8 @@ package com.intellij.openapi.externalSystem.service;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.externalSystem.ExternalSystemManager;
+import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectTracker;
+import com.intellij.openapi.externalSystem.autoimport.ProjectTracker;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
 import com.intellij.openapi.externalSystem.service.project.ProjectRenameAware;
@@ -24,14 +26,17 @@ final class ExternalSystemStartupActivity implements StartupActivity.Background 
           ((StartupActivity)manager).runActivity(project);
         }
       });
-      if (project.getUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT) != Boolean.TRUE) {
+      final boolean isNewlyImportedProject = project.getUserData(ExternalSystemDataKeys.NEWLY_IMPORTED_PROJECT) == Boolean.TRUE;
+      final boolean isNewlyCreatedProject = project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == Boolean.TRUE;
+      if (!isNewlyImportedProject && isNewlyCreatedProject) {
         ExternalSystemManager.EP_NAME.forEachExtensionSafe(manager -> {
-          boolean isNewProject = project.getUserData(ExternalSystemDataKeys.NEWLY_CREATED_PROJECT) == Boolean.TRUE;
-          if (isNewProject) {
-            ExternalSystemUtil.refreshProjects(new ImportSpecBuilder(project, manager.getSystemId())
-                                                 .createDirectoriesForEmptyContentRoots());
-          }
+          ExternalSystemUtil.refreshProjects(new ImportSpecBuilder(project, manager.getSystemId())
+                                               .createDirectoriesForEmptyContentRoots());
         });
+      }
+      else {
+        ExternalSystemProjectTracker projectTracker = ExternalSystemProjectTracker.getInstance(project);
+        if (projectTracker instanceof ProjectTracker) ((ProjectTracker)projectTracker).initialize();
       }
       ExternalToolWindowManager.handle(project);
       ProjectRenameAware.beAware(project);

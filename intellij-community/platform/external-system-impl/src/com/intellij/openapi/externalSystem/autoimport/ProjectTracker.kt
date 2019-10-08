@@ -1,11 +1,14 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.autoimport
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
 import com.intellij.ide.file.BatchFileChangeListener
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
+import com.intellij.openapi.components.StoragePathMacros.CACHE_FILE
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.SUCCESS
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
@@ -17,21 +20,20 @@ import com.intellij.util.LocalTimeCounter.currentTime
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.MergingUpdateQueue.ANY_COMPONENT
 import com.intellij.util.ui.update.Update
-import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.TimeUnit
 
-@State(name = "ExternalSystemProjectTracker")
+@State(name = "ExternalSystemProjectTracker", storages = [Storage(CACHE_FILE)])
 class ProjectTracker(private val project: Project) : ExternalSystemProjectTracker, PersistentStateComponent<ProjectTracker.State> {
 
   private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
+  private val AUTO_REPARSE_DELAY get() = DaemonCodeAnalyzerSettings.getInstance().autoReparseDelay
 
   private val projectStates = ConcurrentHashMap<State.Id, State.Project>()
   private val projectDataMap = ConcurrentHashMap<ExternalSystemProjectId, ProjectData>()
   private val initializationProperty = BooleanProperty(false)
   private val projectChangeOperation = CompoundParallelOperationTrace<Nothing?>()
   private val projectRefreshOperation = CompoundParallelOperationTrace<Long>()
-  private val dispatcher = MergingUpdateQueue("project tracker", 500, false, ANY_COMPONENT, this)
+  private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, ANY_COMPONENT, this)
 
   private fun createProjectChangesListener() =
     object : ProjectBatchFileChangeListener(project) {
@@ -48,14 +50,13 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
       override fun beforeProjectRefresh() {
         projectRefreshOperation.startOperation(id)
-        projectData.settingsTracker.applyChanges()
+        projectData.externalSettingsTracker.applyChanges()
+        projectData.internalSettingsTracker.applyChanges()
         projectData.status.markSynchronized(currentTime())
       }
 
       override fun afterProjectRefresh(status: ExternalSystemRefreshStatus) {
-        if (status != SUCCESS || !projectData.status.isSynchronized()) {
-          projectData.status.markDirty(currentTime())
-        }
+        if (status != SUCCESS) projectData.status.markDirty(currentTime())
         projectRefreshOperation.finishTask(id)
       }
     }
@@ -64,13 +65,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     LOG.debug("Schedule project refresh")
     dispatcher.queue(object : Update("update") {
       override fun run() {
-        LOG.debug("Dispatch project refresh")
-        if (!projectChangeOperation.isOperationCompleted()) return
-        for (projectData in projectDataMap.values) {
-          if (!projectData.status.isUpToDate()) {
-            projectData.projectAware.refreshProject()
-          }
-        }
+        refreshProject()
       }
     })
   }
@@ -79,25 +74,71 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     LOG.debug("Schedule notification status update")
     dispatcher.queue(object : Update("notify") {
       override fun run() {
-        LOG.debug("Dispatch notification status update")
-        if (!projectChangeOperation.isOperationCompleted()) return
-        val notificationAware = ProjectNotificationAware.getInstance(project)
-        for ((projectId, data) in projectDataMap) {
-          when (data.status.isUpToDate()) {
-            true -> notificationAware.notificationExpire(projectId)
-            else -> notificationAware.notificationNotify(data.projectAware)
-          }
+        updateProjectNotification()
+      }
+    })
+  }
+
+  fun scheduleChangeProcessing() {
+    LOG.debug("Schedule change processing")
+    dispatcher.queue(object : Update("notify") {
+      override fun run() {
+        when (getModificationType()) {
+          ModificationType.INTERNAL -> updateProjectNotification()
+          ModificationType.EXTERNAL -> refreshProject()
+          null -> updateProjectNotification()
         }
       }
     })
   }
 
+  private fun refreshProject() {
+    LOG.debug("Incremental project refresh")
+    if (!projectChangeOperation.isOperationCompleted()) return
+    for (projectData in projectDataMap.values) {
+      val projectId = projectData.projectAware.projectId.readableName
+      if (!projectData.isUpToDate()) {
+        LOG.debug("$projectId: Project refresh")
+        projectData.projectAware.refreshProject()
+      }
+      else {
+        LOG.debug("$projectId: Skip project refresh")
+      }
+    }
+  }
+
+  private fun updateProjectNotification() {
+    LOG.debug("Notification status update")
+    val notificationAware = ProjectNotificationAware.getInstance(project)
+    for ((projectId, data) in projectDataMap) {
+      if (!projectRefreshOperation.isOperationCompleted()) {
+        if (!data.isUpToDate()) data.status.markDirty(currentTime())
+      }
+      when (data.isUpToDate()) {
+        true -> notificationAware.notificationExpire(projectId)
+        else -> notificationAware.notificationNotify(data.projectAware)
+      }
+    }
+  }
+
+  private fun getModificationType(): ModificationType? {
+    val owners = projectDataMap.values
+      .mapNotNull { it.getModificationType() }
+      .toSet()
+    return when {
+      ModificationType.INTERNAL in owners -> ModificationType.INTERNAL
+      ModificationType.EXTERNAL in owners -> ModificationType.EXTERNAL
+      else -> null
+    }
+  }
+
   override fun register(projectAware: ExternalSystemProjectAware) {
     val projectId = projectAware.projectId
     val projectStatus = ProjectStatus(debugName = projectId.readableName)
-    val parentDisposable = Disposer.newDisposable(projectId.toString())
-    val settingsTracker = ProjectSettingsTracker(this, projectStatus, projectAware, parentDisposable)
-    val projectData = ProjectData(projectStatus, projectAware, settingsTracker, parentDisposable)
+    val parentDisposable = Disposer.newDisposable(projectId.readableName)
+    val externalSettingsTracker = ProjectExternalSettingsTracker(project, this, projectAware, parentDisposable)
+    val internalSettingsTracker = ProjectInternalSettingsTracker(project, this, projectAware, parentDisposable)
+    val projectData = ProjectData(projectStatus, projectAware, externalSettingsTracker, internalSettingsTracker, parentDisposable)
     val notificationAware = ProjectNotificationAware.getInstance(project)
 
     projectDataMap[projectId] = projectData
@@ -141,22 +182,26 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   override fun loadState(state: State) {
     projectStates.putAll(state.projectSettingsTrackerStates)
     projectDataMap.forEach { (id, data) -> loadState(id, data) }
-    initializationProperty.set()
   }
 
   private fun loadState(projectId: ExternalSystemProjectId, projectData: ProjectData) {
     val projectState = projectStates.remove(projectId.getState())
-    val settingsTrackerState = projectState?.settingsTracker
-    when (settingsTrackerState == null || projectState.isDirty) {
-      true -> {
-        projectData.status.markDirty(currentTime())
-        scheduleProjectRefresh()
-      }
-      else -> projectData.settingsTracker.loadState(settingsTrackerState)
+    val internalSettingsTrackerState = projectState?.externalSettingsTracker
+    val externalSettingsTrackerState = projectState?.internalSettingsTracker
+    if (internalSettingsTrackerState == null || externalSettingsTrackerState == null || projectState.isDirty) {
+      projectData.status.markDirty(currentTime())
+      scheduleProjectRefresh()
+      return
     }
+    projectData.externalSettingsTracker.loadState(internalSettingsTrackerState)
+    projectData.internalSettingsTracker.loadState(externalSettingsTrackerState)
+    projectData.externalSettingsTracker.refreshChanges()
+    projectData.internalSettingsTracker.refreshChanges()
   }
 
-  private fun initialize() {
+  fun initialize() = initializationProperty.set()
+
+  private fun init() {
     LOG.debug("Project tracker initialization")
     val connections = ApplicationManager.getApplication().messageBus.connect(this)
     connections.subscribe(BatchFileChangeListener.TOPIC, createProjectChangesListener())
@@ -166,18 +211,9 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   private fun reset() {
     LOG.debug("Reset project tracker")
     projectDataMap.values.forEach {
-      it.settingsTracker.applyChanges()
+      it.externalSettingsTracker.applyChanges()
+      it.internalSettingsTracker.applyChanges()
       it.status.markSynchronized(currentTime())
-    }
-  }
-
-  @TestOnly
-  fun isInitialized() = initializationProperty.get()
-
-  @TestOnly
-  fun waitForAsyncTasksCompletion(timeout: Long, timeUnit: TimeUnit) {
-    for (data in projectDataMap.values) {
-      data.settingsTracker.waitForAsyncTasksCompletion(timeout, timeUnit)
     }
   }
 
@@ -190,30 +226,52 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     projectRefreshOperation.afterOperation { LOG.debug("Project refresh finished") }
     projectChangeOperation.beforeOperation { LOG.debug("Project change started") }
     projectChangeOperation.beforeOperation { notificationAware.notificationExpire() }
-    projectChangeOperation.afterOperation { scheduleProjectRefresh() }
+    projectChangeOperation.afterOperation { scheduleChangeProcessing() }
     projectChangeOperation.afterOperation { LOG.debug("Project change finished") }
-    initializationProperty.afterSet { initialize() }
+    initializationProperty.afterSet { init() }
     projectRefreshOperation.afterOperation {
       initializationProperty.afterSet { reset() }
       initializationProperty.set()
     }
   }
 
-  private fun ProjectData.getState() = State.Project(status.isDirty(), settingsTracker.getState())
+  private fun ProjectData.getState() = State.Project(
+    status.isDirty(),
+    externalSettingsTracker.getState(),
+    internalSettingsTracker.getState()
+  )
 
   private fun ExternalSystemProjectId.getState() = State.Id(systemId.id, externalProjectPath)
 
   private data class ProjectData(
     val status: ProjectStatus,
     val projectAware: ExternalSystemProjectAware,
-    val settingsTracker: ProjectSettingsTracker,
+    val externalSettingsTracker: ProjectExternalSettingsTracker,
+    val internalSettingsTracker: ProjectInternalSettingsTracker,
     val parentDisposable: Disposable
-  )
+  ) {
+    fun isUpToDate() =
+      status.isUpToDate() &&
+      internalSettingsTracker.isUpToDate() &&
+      externalSettingsTracker.isUpToDate()
+
+    fun getModificationType() = when {
+      !internalSettingsTracker.isUpToDate() -> ModificationType.INTERNAL
+      !externalSettingsTracker.isUpToDate() -> ModificationType.EXTERNAL
+      else -> null
+    }
+  }
 
   data class State(var projectSettingsTrackerStates: Map<Id, Project> = emptyMap()) {
     data class Id(var systemId: String? = null, var externalProjectPath: String? = null)
-    data class Project(var isDirty: Boolean = false, var settingsTracker: ProjectSettingsTracker.State? = null)
+    data class Project(
+      var isDirty: Boolean = false,
+      var externalSettingsTracker: ProjectSettingsTracker.State? = null,
+      var internalSettingsTracker: ProjectSettingsTracker.State? = null
+    )
   }
+
+  enum class ModificationType { EXTERNAL, INTERNAL }
 
   companion object {
     private fun <Id> CompoundParallelOperationTrace<Id>.startOperation(taskId: Id) {

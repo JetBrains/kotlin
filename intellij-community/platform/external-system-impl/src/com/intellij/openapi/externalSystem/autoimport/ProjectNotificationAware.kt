@@ -3,34 +3,36 @@ package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.notification.*
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 
 class ProjectNotificationAware(private val project: Project) : Disposable {
 
   private var notification: Notification? = null
 
-  private val projectsWithNotification = LinkedHashSet<ExternalSystemProjectId>()
+  private val projectsWithNotification = THashSet<ExternalSystemProjectId>()
 
   private val content: String
     get() = projectsWithNotification.map { it.systemId.readableName }.toSet().joinToString() + " project need to be imported"
 
-  fun notificationNotify(projectAware: ExternalSystemProjectAware) {
+  fun notificationNotify(projectAware: ExternalSystemProjectAware) = runInEdt {
     val projectId = projectAware.projectId
     LOG.debug("${projectId.readableName}: Notify notification")
     projectsWithNotification.add(projectId)
     notificationUpdate()
   }
 
-  fun notificationExpire(projectId: ExternalSystemProjectId) {
+  fun notificationExpire(projectId: ExternalSystemProjectId) = runInEdt {
     LOG.debug("${projectId.readableName}: Expire notification")
     projectsWithNotification.remove(projectId)
     notificationUpdate()
   }
 
-  fun notificationExpire() {
+  fun notificationExpire() = runInEdt {
     LOG.debug("Expire notification")
     projectsWithNotification.clear()
     notificationUpdate()
@@ -46,7 +48,7 @@ class ProjectNotificationAware(private val project: Project) : Disposable {
 
   private fun notificationUpdate() {
     when {
-      projectsWithNotification.isEmpty() -> {
+      projectsWithNotification.isEmpty -> {
         notification?.expire()
         notification = null
         LOG.debug("Notification expired")

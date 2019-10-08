@@ -13,8 +13,6 @@ class ProjectStatus(private val debugName: String? = null) {
 
   private var state = AtomicReference(Synchronized(-1) as ProjectState)
 
-  fun isSynchronized() = state.get() is Synchronized
-
   fun isDirty() = state.get() is Dirty
 
   fun isUpToDate() = when (state.get()) {
@@ -41,7 +39,10 @@ class ProjectStatus(private val debugName: String? = null) {
   fun update(event: ProjectEvent): ProjectState {
     if (LOG.isDebugEnabled) {
       val debugPrefix = if (debugName == null) "" else "$debugName: "
-      LOG.debug("${debugPrefix}Event ${event::class.simpleName} is happened at ${event.stamp}")
+      val eventName = event::class.simpleName
+      val state = state.get()
+      val stateName = state::class.java.simpleName
+      LOG.debug("${debugPrefix}Event $eventName is happened at ${event.stamp}. Current state $stateName is changed at ${state.stamp}")
     }
     return state.updateAndGet { currentState ->
       when (currentState) {

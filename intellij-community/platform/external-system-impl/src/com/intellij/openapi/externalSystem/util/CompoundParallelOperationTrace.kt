@@ -1,23 +1,24 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.util
 
+import java.util.concurrent.CopyOnWriteArrayList
+
 class CompoundParallelOperationTrace<Id> {
 
   private val traces = LinkedHashMap<Id, Int>()
   private var waitForFirstTaskInOperation = false
   private var isOperationCompleted = true
 
-  private val beforeOperationListeners = ArrayList<() -> Unit>()
-  private val afterOperationListeners = ArrayList<() -> Unit>()
+  private val beforeOperationListeners = CopyOnWriteArrayList<() -> Unit>()
+  private val afterOperationListeners = CopyOnWriteArrayList<() -> Unit>()
 
   fun startOperation() {
     synchronized(this) {
-      if (isOperationCompleted) {
-        beforeOperationListeners.forEach { it() }
-      }
       waitForFirstTaskInOperation = true
+      if (!isOperationCompleted) return
       isOperationCompleted = false
     }
+    beforeOperationListeners.forEach { it() }
   }
 
   fun isOperationCompleted(): Boolean {
@@ -39,8 +40,8 @@ class CompoundParallelOperationTrace<Id> {
       if (traces.isNotEmpty()) return
       if (waitForFirstTaskInOperation) return
       isOperationCompleted = true
-      afterOperationListeners.forEach { it() }
     }
+    afterOperationListeners.forEach { it() }
   }
 
   private fun addTask(taskId: Id) {
@@ -62,9 +63,7 @@ class CompoundParallelOperationTrace<Id> {
   }
 
   fun beforeOperation(listener: () -> Unit) {
-    synchronized(this) {
-      beforeOperationListeners.add(listener)
-    }
+    beforeOperationListeners.add(listener)
   }
 
   fun afterOperation(listener: Listener) {
@@ -72,9 +71,7 @@ class CompoundParallelOperationTrace<Id> {
   }
 
   fun afterOperation(listener: () -> Unit) {
-    synchronized(this) {
-      afterOperationListeners.add(listener)
-    }
+    afterOperationListeners.add(listener)
   }
 
   interface Listener {

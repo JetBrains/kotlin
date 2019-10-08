@@ -103,7 +103,7 @@ class CompoundParallelOperationTraceTest : CompoundParallelOperationTraceTestCas
 
   @Test
   fun `test parallel execution`() = testTrace<Int> {
-    generate(1000) {
+    repeat(1000) {
       val latch = CountDownLatch(1)
       val startedOperations = AtomicInteger(0)
       val completedOperations = AtomicInteger(0)
@@ -134,7 +134,7 @@ class CompoundParallelOperationTraceTest : CompoundParallelOperationTraceTestCas
   @Test
   fun `test super compound parallel execution`() {
     val trace = CompoundParallelOperationTrace<Int>()
-    generate(1000) {
+    repeat(1000) {
       val latch = CountDownLatch(1)
       val startedOperations = AtomicInteger(0)
       val completedOperations = AtomicInteger(0)

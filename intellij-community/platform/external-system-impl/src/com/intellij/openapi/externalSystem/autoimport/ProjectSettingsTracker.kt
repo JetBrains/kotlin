@@ -2,38 +2,42 @@
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.service.project.autoimport.AsyncFileChangeListenerBase
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
-import com.intellij.openapi.externalSystem.util.calculateCrc
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.util.LocalTimeCounter.currentTime
 import com.intellij.util.concurrency.AppExecutorUtil
-import com.intellij.util.concurrency.Semaphore
-import com.intellij.util.ui.UIUtil
-import org.jetbrains.annotations.TestOnly
+import org.jetbrains.annotations.ApiStatus
 import java.io.File
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
-class ProjectSettingsTracker(
+@ApiStatus.Internal
+abstract class ProjectSettingsTracker(
   private val projectTracker: ProjectTracker,
-  private val projectStatus: ProjectStatus,
   private val projectAware: ExternalSystemProjectAware,
   private val parentDisposable: Disposable
 ) {
 
   private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
 
-  private var settingsFilesCRC: Map<String, Long> = LinkedHashMap()
+  private val status = ProjectStatus(debugName = "${this::class.java.simpleName} (${projectAware.projectId.readableName})")
 
-  fun hasChanges(): Boolean {
+  @Volatile
+  private var settingsFilesCRC: Map<String, Long> = emptyMap()
+
+  protected val cachedSettingsFilesCRC get() = settingsFilesCRC
+
+  protected abstract fun calculateSettingsFilesCRC(): Map<String, Long>
+
+  fun isUpToDate() = status.isUpToDate()
+
+  private fun hasChanges(): Boolean {
     val oldSettingsFilesCRC = settingsFilesCRC
-    val newSettingsFilesCRC = getSettingsFilesCRC()
+    val newSettingsFilesCRC = calculateSettingsFilesCRC()
     if (newSettingsFilesCRC.size != oldSettingsFilesCRC.size) return true
     return newSettingsFilesCRC.any { it.value != oldSettingsFilesCRC[it.key] }
   }
@@ -44,44 +48,52 @@ class ProjectSettingsTracker(
    *  => collisions is a rare thing
    */
   fun applyChanges() {
-    afterSettingsFilesRefresh {
-      runNonBlocking {
-        settingsFilesCRC = getSettingsFilesCRC()
+    submitSettingsFilesRefresh {
+      submitNonBlockingReadAction {
+        settingsFilesCRC = calculateSettingsFilesCRC()
+        status.markSynchronized(currentTime())
+        projectTracker.scheduleProjectNotificationUpdate()
       }
     }
   }
 
-  fun getState() = State(settingsFilesCRC.toMap())
-
-  fun loadState(state: State) {
-    settingsFilesCRC = state.settingsFiles.toMap()
-    afterSettingsFilesRefresh {
-      runNonBlocking {
+  fun refreshChanges() {
+    submitSettingsFilesRefresh {
+      submitNonBlockingReadAction {
         when (hasChanges()) {
-          true -> projectStatus.markDirty(currentTime())
-          else -> projectStatus.markReverted(currentTime())
+          true -> status.markDirty(currentTime())
+          else -> status.markReverted(currentTime())
         }
         projectTracker.scheduleProjectRefresh()
       }
     }
   }
 
-  private fun afterSettingsFilesRefresh(action: () -> Unit) {
-    val localFileSystem = LocalFileSystem.getInstance()
-    val settingsFiles = projectAware.settingsFiles.map { File(it) }
-    localFileSystem.refreshIoFiles(settingsFiles, true, false, makeAsyncAction(action))
+
+  fun getState() = State(settingsFilesCRC.toMap())
+
+  fun loadState(state: State) {
+    settingsFilesCRC = state.settingsFiles.toMap()
   }
 
-  private fun getSettingsFilesCRC(): Map<String, Long> {
-    val localFileSystem = LocalFileSystem.getInstance()
-    return projectAware.settingsFiles
-      .mapNotNull { localFileSystem.findFileByPath(it) }
-      .map { it.path to it.calculateCrc() }
-      .toMap()
+  private fun isAsyncAllowed() = !ApplicationManager.getApplication().isUnitTestMode
+
+  private fun submitSettingsFilesRefresh(callback: () -> Unit = {}) {
+    invokeLater {
+      val fileDocumentManager = FileDocumentManager.getInstance()
+      fileDocumentManager.saveAllDocuments()
+      val localFileSystem = LocalFileSystem.getInstance()
+      val settingsFiles = projectAware.settingsFiles.map { File(it) }
+      localFileSystem.refreshIoFiles(settingsFiles, isAsyncAllowed(), false, callback)
+    }
   }
 
-  private fun runNonBlocking(action: () -> Unit) {
-    ReadAction.nonBlocking(makeAsyncAction(action))
+  private fun submitNonBlockingReadAction(action: () -> Unit) {
+    if (!isAsyncAllowed()) {
+      action()
+      return
+    }
+    ReadAction.nonBlocking(action)
       .expireWith(parentDisposable)
       .submit(AppExecutorUtil.getAppExecutorService())
   }
@@ -96,45 +108,46 @@ class ProjectSettingsTracker(
     }
   }
 
-  init {
-    val settingsListener = ProjectSettingsListener()
-    val fileManager = VirtualFileManager.getInstance()
-    fileManager.addAsyncFileListener(settingsListener, parentDisposable)
-  }
-
   data class State(var settingsFiles: Map<String, Long> = emptyMap())
 
-  private inner class ProjectSettingsListener : AsyncFileChangeListenerBase() {
-    private var hasRelevantChanges: Boolean = false
+  protected inner class ProjectSettingsListener {
+    @Volatile
+    private var hasRelevantChanges = false
+
+    @Volatile
     private var settingsFilesSnapshot: Set<String> = emptySet()
 
-    override fun isRelevant(path: String) = path in settingsFilesSnapshot
+    fun isRelevant(path: String): Boolean {
+      val isRelevant = path in settingsFilesSnapshot
+      hasRelevantChanges = hasRelevantChanges || isRelevant
+      return isRelevant
+    }
 
-    override fun updateFile(file: VirtualFile) {
+    fun updateFile(path: String, modificationStamp: Long) {
       hasRelevantChanges = true
-      logModificationAsDebug(file)
-      projectStatus.markModified(currentTime())
+      logModificationAsDebug(path, modificationStamp)
+      status.markModified(currentTime())
     }
 
-    override fun init() {
+    fun init() {
       hasRelevantChanges = false
-      settingsFilesSnapshot = projectAware.settingsFiles + settingsFilesCRC.keys
+      settingsFilesSnapshot = projectAware.settingsFiles + cachedSettingsFilesCRC.keys
     }
 
-    override fun apply() {
+    fun apply() {
       if (hasRelevantChanges) {
-        runNonBlocking {
-          if (!hasChanges()) projectStatus.markReverted(currentTime())
-          projectTracker.scheduleProjectNotificationUpdate()
+        submitNonBlockingReadAction {
+          if (!hasChanges()) status.markReverted(currentTime())
+          projectTracker.scheduleChangeProcessing()
         }
       }
     }
 
-    private fun logModificationAsDebug(file: VirtualFile) {
+    private fun logModificationAsDebug(path: String, modificationStamp: Long) {
       if (LOG.isDebugEnabled) {
         val projectPath = projectAware.projectId.externalProjectPath
-        val relativePath = FileUtil.getRelativePath(projectPath, file.path, '/') ?: file.path
-        LOG.debug("File $relativePath is modified at ${file.modificationStamp}")
+        val relativePath = FileUtil.getRelativePath(projectPath, path, '/') ?: path
+        LOG.debug("File $relativePath is modified at ${modificationStamp}")
       }
     }
   }

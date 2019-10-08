@@ -11,11 +11,14 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.progress.util.BackgroundTaskUtil
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsBundle
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.replaceService
 import java.io.File
-import java.util.concurrent.TimeUnit
+import java.io.IOException
 
 abstract class AutoImportTestCase : ExternalSystemTestCase() {
   override fun getTestsTempDir() = "tmp${System.currentTimeMillis()}"
@@ -25,87 +28,129 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   private val notificationAware get() = ProjectNotificationAware.getInstance(myProject)
   private val projectTracker get() = ExternalSystemProjectTracker.getInstance(myProject) as ProjectTracker
 
-  private fun <R> traceableAction(action: () -> R): R {
-    val result = action()
-    projectTracker.waitForAsyncTasksCompletion(1, TimeUnit.MINUTES)
-    return result
-  }
-
-  protected fun findOrCreateFile(relativePath: String, content: String? = null) = traceableAction {
-    when (content) {
-      null -> createProjectSubFile(relativePath)!!
-      else -> createProjectSubFile(relativePath, content)!!
+  private fun doRecursive(relativePath: String, stepInto: VirtualFile.(String) -> VirtualFile) = runWriteAction {
+    var file = myProjectRoot!!
+    for (part in relativePath.split("/")) {
+      file = file.stepInto(part)
     }
+    file
   }
 
-  protected fun findOrCreateDirectory(relativePath: String) = traceableAction {
-    createProjectSubDir(relativePath)!!
+  protected fun createVirtualFile(relativePath: String) =
+    doRecursive(relativePath) { createChildData(null, it) }
+
+  private fun findOrCreateVirtualFile(relativePath: String) =
+    doRecursive(relativePath) { findOrCreateChildData(null, it) }
+
+
+  protected fun createIoFile(relativePath: String): VirtualFile {
+    val file = File(projectPath, relativePath)
+    FileUtil.ensureExists(file.parentFile)
+    FileUtil.ensureCanCreateFile(file)
+    if (!file.createNewFile()) {
+      throw IOException(VfsBundle.message("file.create.already.exists.error", parentPath, relativePath))
+    }
+    return LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file)!!
   }
 
-  private fun <R> update(update: () -> R): R = traceableAction {
+  protected fun findOrCreateDirectory(relativePath: String) = createProjectSubDir(relativePath)!!
+
+  private fun <R> runWriteAction(update: () -> R): R =
     WriteCommandAction.runWriteCommandAction(myProject, Computable { update() })
-  }
 
   private fun getPath(relativePath: String) = "$projectPath/$relativePath"
 
   private fun getFile(relativePath: String) = File(projectPath, relativePath)
 
+  private fun VirtualFile.updateIoFile(action: File.() -> Unit) {
+    File(path).apply(action)
+    refreshIoFiles(path)
+  }
+
+  private fun refreshIoFiles(vararg paths: String) {
+    val localFileSystem = LocalFileSystem.getInstance()
+    localFileSystem.refreshIoFiles(paths.map { File(it) }, false, true, null)
+  }
+
+  protected fun VirtualFile.replaceContentInIoFile(content: String) =
+    updateIoFile { writeText(content) }
+
+  protected fun VirtualFile.replaceStringInIoFile(old: String, new: String) =
+    updateIoFile { writeText(readText().replace(old, new)) }
+
+  protected fun VirtualFile.deleteIoFile() =
+    updateIoFile { delete() }
+
   protected fun VirtualFile.rename(name: String) =
-    update { rename(null, name) }
+    runWriteAction { rename(null, name) }
 
   protected fun VirtualFile.copy(relativePath: String) =
-    update {
+    runWriteAction {
       val newFile = getFile(relativePath)
       val parent = VfsUtil.findFileByIoFile(newFile.parentFile, true)!!
       copy(null, parent, newFile.name)
     }
 
   protected fun VirtualFile.move(parent: VirtualFile) =
-    update { move(null, parent) }
+    runWriteAction { move(null, parent) }
 
   protected fun VirtualFile.removeContent() =
-    update { VfsUtil.saveText(this, "") }
+    runWriteAction { VfsUtil.saveText(this, "") }
 
   protected fun VirtualFile.replaceContent(content: String) =
-    update { VfsUtil.saveText(this, content) }
+    runWriteAction { VfsUtil.saveText(this, content) }
+
+  protected fun VirtualFile.insertString(offset: Int, string: String) =
+    runWriteAction {
+      val text = VfsUtil.loadText(this)
+      val before = text.substring(0, offset)
+      val after = text.substring(offset, text.length)
+      VfsUtil.saveText(this, before + string + after)
+    }
+
+  protected fun VirtualFile.insertStringAfter(prefix: String, string: String) =
+    runWriteAction {
+      val text = VfsUtil.loadText(this)
+      val after = text.removePrefix(prefix)
+      VfsUtil.saveText(this, prefix + string + after)
+    }
 
   protected fun VirtualFile.appendString(string: String) =
-    update { VfsUtil.saveText(this, VfsUtil.loadText(this) + string) }
+    runWriteAction { VfsUtil.saveText(this, VfsUtil.loadText(this) + string) }
 
   protected fun VirtualFile.replaceString(old: String, new: String) =
-    update { VfsUtil.saveText(this, VfsUtil.loadText(this).replace(old, new)) }
+    runWriteAction { VfsUtil.saveText(this, VfsUtil.loadText(this).replace(old, new)) }
 
   protected fun VirtualFile.delete() =
-    update { delete(null) }
+    runWriteAction { delete(null) }
+
+  protected fun VirtualFile.asDocument(): Document {
+    val fileDocumentManager = FileDocumentManager.getInstance()
+    return fileDocumentManager.getDocument(this)!!
+  }
 
   protected fun Document.save() =
-    update { FileDocumentManager.getInstance().saveDocument(this) }
+    runWriteAction { FileDocumentManager.getInstance().saveDocument(this) }
 
   protected fun Document.replaceContent(content: String) =
-    update { replaceString(0, text.length, content) }
+    runWriteAction { replaceString(0, text.length, content) }
 
   protected fun Document.replaceString(old: String, new: String) =
-    update {
+    runWriteAction {
       val startOffset = text.indexOf(old)
       val endOffset = startOffset + old.length
       replaceString(startOffset, endOffset, new)
     }
 
-  protected fun register(projectAware: ExternalSystemProjectAware) = traceableAction {
-    projectTracker.register(projectAware)
-  }
+  protected fun register(projectAware: ExternalSystemProjectAware) = projectTracker.register(projectAware)
 
-  protected fun remove(projectId: ExternalSystemProjectId) = traceableAction {
-    projectTracker.remove(projectId)
-  }
+  protected fun remove(projectId: ExternalSystemProjectId) = projectTracker.remove(projectId)
 
-  protected fun refreshProject() = traceableAction {
-    projectTracker.scheduleProjectRefresh()
-  }
+  protected fun refreshProject() = projectTracker.scheduleProjectRefresh()
 
-  protected fun loadState(state: ProjectTracker.State) = traceableAction {
-    projectTracker.loadState(state)
-  }
+  private fun loadState(state: ProjectTracker.State) = projectTracker.loadState(state)
+
+  protected fun initialize() = projectTracker.initialize()
 
   protected fun getState() = projectTracker.state
 
@@ -137,7 +182,7 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
     assertEquals("$message on $event", notified, notificationAware.isNotificationNotified(*projects))
   }
 
-  protected fun modification(action: () -> Unit) = traceableAction {
+  protected fun modification(action: () -> Unit) {
     BackgroundTaskUtil.syncPublisher(BatchFileChangeListener.TOPIC).batchChangeStarted(myProject, "modification")
     action()
     BackgroundTaskUtil.syncPublisher(BatchFileChangeListener.TOPIC).batchChangeCompleted(myProject)
@@ -163,8 +208,9 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
       val projectId = ExternalSystemProjectId(systemId, projectPath)
       val projectAware = MockProjectAware(projectId)
       loadState(state)
-      assertTrue(projectTracker.isInitialized())
-      val file = findOrCreateFile(fileRelativePath, content)
+      initialize()
+      val file = findOrCreateVirtualFile(fileRelativePath)
+      content?.let { file.replaceContent(it) }
       projectAware.settingsFiles.add(file.path)
       register(projectAware)
       SimpleTestBench(projectAware).test(file)
@@ -183,6 +229,10 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
     fun registerSettingsFile(file: VirtualFile) = projectAware.settingsFiles.add(file.path)
 
     fun registerSettingsFile(relativePath: String) = projectAware.settingsFiles.add(getPath(relativePath))
+
+    fun setRefreshStatus(status: ExternalSystemRefreshStatus) {
+      projectAware.refreshStatus = status
+    }
 
     fun assertState(refresh: Int? = null,
                     subscribe: Int? = null,

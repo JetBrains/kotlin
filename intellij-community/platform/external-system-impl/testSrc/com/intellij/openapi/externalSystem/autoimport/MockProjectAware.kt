@@ -12,6 +12,8 @@ class MockProjectAware(override val projectId: ExternalSystemProjectId) : Extern
   val unsubscribeCounter = AtomicInteger(0)
   val refreshCounter = AtomicInteger(0)
 
+  var refreshStatus = ExternalSystemRefreshStatus.SUCCESS
+
   private val listeners = CopyOnWriteArrayList<ExternalSystemProjectRefreshListener>()
 
   override val settingsFiles = LinkedHashSet<String>()
@@ -30,6 +32,6 @@ class MockProjectAware(override val projectId: ExternalSystemProjectId) : Extern
   override fun refreshProject() {
     listeners.forEach { it.beforeProjectRefresh() }
     refreshCounter.incrementAndGet()
-    listeners.forEach { it.afterProjectRefresh(ExternalSystemRefreshStatus.SUCCESS) }
+    listeners.forEach { it.afterProjectRefresh(refreshStatus) }
   }
 }
