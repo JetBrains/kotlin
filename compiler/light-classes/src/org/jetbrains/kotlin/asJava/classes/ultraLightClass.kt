@@ -75,6 +75,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private val _deprecated by lazyPub { classOrObject.isDeprecated(support) }
 
+    private val descriptor = lazyPub { getDescriptor() }
+
     override fun isFinal(isFinalByPsi: Boolean) = if (tooComplex) super.isFinal(isFinalByPsi) else isFinalByPsi
 
     @Volatile
@@ -216,7 +218,18 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             }
         }
 
-        if (isAnnotationType) return@lazyPub result
+        fun ArrayList<KtLightField>.updateWithCompilerPlugins() = also {
+            applyCompilerPlugins {
+                it.interceptFieldsBuilding(
+                    declaration = kotlinOrigin,
+                    descriptor = descriptor,
+                    containingDeclaration = this@KtUltraLightClass,
+                    fieldsList = result
+                )
+            }
+        }
+
+        if (isAnnotationType) return@lazyPub result.updateWithCompilerPlugins()
 
         for (parameter in propertyParameters()) {
             membersBuilder.createPropertyField(parameter, usedNames, forceStatic = false)?.let(result::add)
@@ -259,7 +272,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             }
         }
 
-        result
+        result.updateWithCompilerPlugins()
     }
 
     private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.isCompanion()
@@ -317,15 +330,22 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         addMethodsFromDataClass(result)
         addDelegatesToInterfaceMethods(result)
 
-        val lazyDescriptor = lazy { getDescriptor() }
-
-        ExpressionCodegenExtension.getInstances(project).forEach {
-            if (it is UltraLightClassCodegenSupport) {
-                it.interceptMethodsBuilding(kotlinOrigin, lazyDescriptor, this, result)
-            }
+        applyCompilerPlugins {
+            it.interceptMethodsBuilding(
+                declaration = kotlinOrigin,
+                descriptor = descriptor,
+                containingDeclaration = this,
+                methodsList = result
+            )
         }
 
         return result
+    }
+
+    private inline fun applyCompilerPlugins(body: (UltraLightClassCodegenSupport) -> Unit) {
+        ExpressionCodegenExtension.getInstances(project)
+            .filterIsInstance<UltraLightClassCodegenSupport>()
+            .forEach { body(it) }
     }
 
     private val _ownMethods: CachedValue<List<KtLightMethod>> = CachedValuesManager.getManager(project).createCachedValue(

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.asJava
 
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
+import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -16,5 +17,12 @@ interface UltraLightClassCodegenSupport {
         descriptor: Lazy<DeclarationDescriptor?>,
         containingDeclaration: KtUltraLightClass,
         methodsList: MutableList<KtLightMethod>
+    ) = Unit
+
+    fun interceptFieldsBuilding(
+        declaration: KtDeclaration,
+        descriptor: Lazy<DeclarationDescriptor?>,
+        containingDeclaration: KtUltraLightClass,
+        methodsList: MutableList<KtLightField>
     ) = Unit
 }

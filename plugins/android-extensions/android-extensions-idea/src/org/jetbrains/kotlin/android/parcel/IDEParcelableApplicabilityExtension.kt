@@ -19,14 +19,15 @@ class IDEParcelableApplicabilityExtension : LightClassApplicabilityCheckExtensio
 
     override fun checkApplicabilityType(declaration: KtDeclaration, descriptor: Lazy<DeclarationDescriptor?>): LightClassApplicabilityType {
 
-        if (!declaration.isOrdinaryClass || !declaration.isAnnotated) return UltraLightClass
-
-        val descriptorValue = descriptor.value ?: return UltraLightClass
-
-        val classDescriptor = (descriptorValue as? ClassDescriptor)
-            ?: descriptorValue.containingDeclaration as? ClassDescriptor
-            ?: return UltraLightClass
-
-        return if (classDescriptor.isParcelize) LightClass else UltraLightClass
+        return UltraLightClass
+//        if (!declaration.isOrdinaryClass || !declaration.isAnnotated) return UltraLightClass
+//
+//        val descriptorValue = descriptor.value ?: return UltraLightClass
+//
+//        val classDescriptor = (descriptorValue as? ClassDescriptor)
+//            ?: descriptorValue.containingDeclaration as? ClassDescriptor
+//            ?: return UltraLightClass
+//
+//        return if (classDescriptor.isParcelize) LightClass else UltraLightClass
     }
 }
