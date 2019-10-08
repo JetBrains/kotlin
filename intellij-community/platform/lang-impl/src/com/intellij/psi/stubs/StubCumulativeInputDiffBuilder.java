@@ -27,8 +27,8 @@ class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, Seria
                                @NotNull KeyValueUpdateProcessor<? super Integer, ? super SerializedStubTree> addProcessor,
                                @NotNull KeyValueUpdateProcessor<? super Integer, ? super SerializedStubTree> updateProcessor,
                                @NotNull RemovedKeyProcessor<? super Integer> removeProcessor) throws StorageException {
-    if (newData.containsKey(myInputId)) {
-      SerializedStubTree newSerializedStubTree = newData.get(myInputId);
+    if (!newData.isEmpty()) {
+      SerializedStubTree newSerializedStubTree = newData.values().iterator().next();
       if (myCurrentTree != null) {
         if (treesAreEqual(newSerializedStubTree, myCurrentTree)) return false;
         removeProcessor.process(myInputId, myInputId);
