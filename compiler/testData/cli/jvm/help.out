@@ -2,7 +2,7 @@ Usage: kotlinc-jvm <options> <source files>
 where possible options include:
   -classpath (-cp) <path>    Paths where to find user class files
   -d <directory|jar>         Destination for generated class files
-  -include-runtime           Include Kotlin runtime in to resulting .jar
+  -include-runtime           Include Kotlin runtime into the resulting .jar
   -java-parameters           Generate metadata for Java 1.8 reflection on method parameters
   -jdk-home <path>           Path to JDK home directory to include into classpath, if differs from default JAVA_HOME
   -jvm-target <version>      Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11 or 12), default is 1.6

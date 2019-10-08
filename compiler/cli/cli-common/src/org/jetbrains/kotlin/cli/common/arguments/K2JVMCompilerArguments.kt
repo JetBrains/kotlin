@@ -22,7 +22,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var classpath: String? by NullableStringFreezableVar(null)
 
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
-    @Argument(value = "-include-runtime", description = "Include Kotlin runtime in to resulting .jar")
+    @Argument(value = "-include-runtime", description = "Include Kotlin runtime into the resulting .jar")
     var includeRuntime: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.StringNullDefault::class)
