@@ -30,9 +30,9 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
-import kotlin.reflect.jvm.internal.structure.createArrayType
-import kotlin.reflect.jvm.internal.structure.parameterizedTypeArguments
-import kotlin.reflect.jvm.internal.structure.primitiveByWrapper
+import org.jetbrains.kotlin.descriptors.runtime.structure.createArrayType
+import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
+import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
 import kotlin.reflect.jvm.jvmErasure
 
 internal class KTypeImpl(

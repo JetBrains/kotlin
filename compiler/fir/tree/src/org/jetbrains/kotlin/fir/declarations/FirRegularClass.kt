@@ -36,6 +36,7 @@ interface FirRegularClass : FirClass, @VisitedSupertype FirClassLikeDeclaration<
     }
 
     fun replaceSupertypes(newSupertypes: List<FirTypeRef>): FirRegularClass
+
 }
 
 val FirRegularClass.classId get() = symbol.classId

@@ -188,7 +188,7 @@ class InlineAnalyzerExtension(
         if (reasonableInlineRules.any { it.isInlineReasonable(functionDescriptor, function, trace.bindingContext) }) return
 
         val reportOn = function.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?: function
-        trace.report(Errors.NOTHING_TO_INLINE.on(reportOn, functionDescriptor))
+        trace.report(Errors.NOTHING_TO_INLINE.on(reportOn))
     }
 
     private fun checkInlinableParameter(

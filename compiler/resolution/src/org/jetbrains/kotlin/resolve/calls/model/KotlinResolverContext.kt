@@ -196,8 +196,6 @@ class SimpleCandidateFactory(
 enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
     VARIABLE(
         CheckVisibility,
-        CheckInfixResolutionPart,
-        CheckOperatorResolutionPart,
         CheckSuperExpressionCallPart,
         NoTypeArguments,
         NoArguments,
@@ -210,6 +208,7 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CheckInstantiationOfAbstractClass,
         CheckVisibility,
         CheckInfixResolutionPart,
+        CheckOperatorResolutionPart,
         CheckSuperExpressionCallPart,
         MapTypeArguments,
         MapArguments,

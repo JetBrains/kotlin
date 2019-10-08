@@ -40,4 +40,39 @@ class A {
             entry.setValue(value + 1);
         }
     }
+
+    void kt21504() {
+        byte b = Byte.parseByte("1");
+        short s = Short.parseShort("1");
+        int i  = Integer.parseInt("1");
+        long l = Long.parseLong("1");
+        float f = Float.parseFloat("1");
+        double d = Double.parseDouble("1");
+
+        byte b2 = Byte.parseByte("1", 10);
+        short s2 = Short.parseShort("1", 10);
+        int i2  = Integer.parseInt("1", 10);
+        long l2 = Long.parseLong("1", 10);
+    }
+
+    void kt7940() {
+        byte b1 = Byte.MIN_VALUE;
+        byte b2 = Byte.MAX_VALUE;
+        short s1 = Short.MIN_VALUE;
+        short s2 = Short.MAX_VALUE;
+        int i1 = Integer.MIN_VALUE;
+        int i2 = Integer.MAX_VALUE;
+        long l1 = Long.MIN_VALUE;
+        long l2 = Long.MAX_VALUE;
+        float f1 = Float.MIN_VALUE;
+        float f2 = Float.MAX_VALUE;
+        float f3 = Float.POSITIVE_INFINITY;
+        float f4 = Float.NEGATIVE_INFINITY;
+        float f5 = Float.NaN;
+        double d1 = Double.MIN_VALUE;
+        double d2 = Double.MAX_VALUE;
+        double d3 = Double.POSITIVE_INFINITY;
+        double d4 = Double.NEGATIVE_INFINITY;
+        double d5 = Double.NaN;
+    }
 }

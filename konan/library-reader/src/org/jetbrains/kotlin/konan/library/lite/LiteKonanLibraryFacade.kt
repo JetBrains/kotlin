@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.library.lite
 
 import org.jetbrains.kotlin.konan.library.*
+import org.jetbrains.kotlin.library.*
 import java.io.File
 import java.io.IOException
 import java.nio.file.Path
@@ -63,7 +64,7 @@ private class FromDistributionLiteKonanLibraryProvider(customKonanHomeDir: File?
     private val konanHomeDir: Path? by lazy {
         customKonanHomeDir?.takeIf {
             // small sanity check to ensure that it's a valid Kotlin/Native home directory
-            customKonanHomeDir.resolve(KLIB_DIR_NAME).isDirectory
+            customKonanHomeDir.resolve(KONAN_DISTRIBUTION_KLIB_DIR).isDirectory
         }?.toPath()
     }
 
@@ -104,11 +105,11 @@ private class FromDistributionLiteKonanLibraryProvider(customKonanHomeDir: File?
         fun getDataDir(platformDir: File): File = platformDir.parentFile.parentFile
 
         return when (parentDirName) {
-            KONAN_COMMON_LIBS_DIR_NAME -> null to getDataDir(parentDir)
+            KONAN_DISTRIBUTION_COMMON_LIBS_DIR -> null to getDataDir(parentDir)
             else -> {
                 val grandParentDir = parentDir.parentFile ?: return null
                 when {
-                    grandParentDir.name == KONAN_PLATFORM_LIBS_DIR_NAME -> parentDirName to getDataDir(grandParentDir)
+                    grandParentDir.name == KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR -> parentDirName to getDataDir(grandParentDir)
                     else -> return null
                 }
             }
@@ -116,7 +117,7 @@ private class FromDistributionLiteKonanLibraryProvider(customKonanHomeDir: File?
     }
 
     private fun getStdlibSources(dataDir: File): Collection<File> {
-        val sourcesDir = dataDir.resolve(KONAN_SOURCES_DIR_NAME).takeIf { it.isDirectory } ?: return emptyList()
+        val sourcesDir = dataDir.resolve(KONAN_DISTRIBUTION_SOURCES_DIR).takeIf { it.isDirectory } ?: return emptyList()
 
         return sourcesDir.walkTopDown().maxDepth(1)
             .filter { it.isFile }

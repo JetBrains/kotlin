@@ -1,5 +1,6 @@
 //FILE: 1.kt
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 package test
 inline fun annotatedWith2(crossinline predicate: () -> Boolean) =
         { any { predicate() } }()
@@ -48,8 +49,8 @@ _2Kt
 test/_1Kt
 *L
 1#1,18:1
-9#2:19
-5#2:20
+10#2:19
+6#2:20
 *E
 *S KotlinDebug
 *F
@@ -72,8 +73,8 @@ test/_1Kt
 + 3 2.kt
 _2Kt
 *L
-1#1,17:1
-13#2,2:18
-9#2:20
-7#3:21
+1#1,18:1
+14#2,2:19
+10#2:21
+7#3:22
 *E

@@ -19,6 +19,8 @@ abstract class FirQualifiedAccessExpression(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         calleeReference.accept(visitor, data)
         explicitReceiver?.accept(visitor, data)
+        dispatchReceiver.accept(visitor, data)
+        extensionReceiver.accept(visitor, data)
         super<FirUnknownTypeExpression>.acceptChildren(visitor, data)
     }
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -22,14 +23,14 @@ class JsKlibMetadataPackageFragment(
     storageManager: StorageManager,
     module: ModuleDescriptor,
     proto: ProtoBuf.PackageFragment,
-    header: JsKlibMetadataProtoBuf.Header,
+    header: KlibMetadataProtoBuf.Header,
     metadataVersion: JsKlibMetadataVersion,
     configuration: DeserializationConfiguration
 ) : DeserializedPackageFragmentImpl(
     fqName, storageManager, module, proto, metadataVersion, JsContainerSource(fqName, header, configuration)
 ) {
     val fileMap: Map<Int, FileHolder> =
-        proto.getExtension(JsKlibMetadataProtoBuf.packageFragmentFiles).fileList.withIndex().associate { (index, file) ->
+        proto.getExtension(KlibMetadataProtoBuf.packageFragmentFiles).fileList.withIndex().associate { (index, file) ->
             (if (file.hasId()) file.id else index) to FileHolder(file.annotationList)
         }
 
@@ -48,7 +49,7 @@ class JsKlibMetadataPackageFragment(
 
     class JsContainerSource(
         private val fqName: FqName,
-        header: JsKlibMetadataProtoBuf.Header,
+        header: KlibMetadataProtoBuf.Header,
         configuration: DeserializationConfiguration
     ) : DeserializedContainerSource {
         val annotations: List<ClassId> =

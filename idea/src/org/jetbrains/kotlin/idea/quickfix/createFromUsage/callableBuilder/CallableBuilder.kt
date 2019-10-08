@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 import kotlin.math.max
 
@@ -217,7 +218,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     fun build(onFinish: () -> Unit = {}) {
         try {
             assert(config.currentEditor != null) { "Can't run build() without editor" }
-            if (finished) throw IllegalStateException("Current builder has already finished")
+            check(!finished) { "Current builder has already finished" }
             buildNext(config.callableInfos.iterator())
         } finally {
             finished = true
@@ -940,12 +941,13 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             // it.
             val expression = setupTypeParameterListTemplate(builder, declaration)
 
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(containingFileEditor.document)
             // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
             val templateImpl = builder.buildInlineTemplate() as TemplateImpl
             val variables = templateImpl.variables!!
             if (variables.isNotEmpty()) {
                 val typeParametersVar = if (expression != null) variables.removeAt(0) else null
-                for (i in 0..(callableInfo.parameterInfos.size - 1)) {
+                for (i in callableInfo.parameterInfos.indices) {
                     Collections.swap(variables, i * 2, i * 2 + 1)
                 }
                 typeParametersVar?.let { variables.add(it) }
@@ -1144,13 +1146,22 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
         else -> throw AssertionError("Invalid containing element: ${container.text}")
     }
 
-    if (declaration !is KtPrimaryConstructor) {
-        val parent = declarationInPlace.parent
-        calcNecessaryEmptyLines(declarationInPlace, false).let {
-            if (it > 0) parent.addBefore(psiFactory.createNewLine(it), declarationInPlace)
+    when (declaration) {
+        is KtEnumEntry -> {
+            val prevEnumEntry = declarationInPlace.siblings(forward = false, withItself = false).firstIsInstanceOrNull<KtEnumEntry>()
+            if ((prevEnumEntry?.prevSibling as? PsiWhiteSpace)?.text?.contains('\n') == true) {
+                val parent = declarationInPlace.parent
+                parent.addBefore(psiFactory.createNewLine(), declarationInPlace)
+            }
         }
-        calcNecessaryEmptyLines(declarationInPlace, true).let {
-            if (it > 0) parent.addAfter(psiFactory.createNewLine(it), declarationInPlace)
+        !is KtPrimaryConstructor -> {
+            val parent = declarationInPlace.parent
+            calcNecessaryEmptyLines(declarationInPlace, false).let {
+                if (it > 0) parent.addBefore(psiFactory.createNewLine(it), declarationInPlace)
+            }
+            calcNecessaryEmptyLines(declarationInPlace, true).let {
+                if (it > 0) parent.addAfter(psiFactory.createNewLine(it), declarationInPlace)
+            }
         }
     }
     return declarationInPlace

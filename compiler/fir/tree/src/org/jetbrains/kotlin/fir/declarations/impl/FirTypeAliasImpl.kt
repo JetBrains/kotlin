@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.transformSingle
@@ -42,4 +43,6 @@ class FirTypeAliasImpl(
 
         return super<FirAbstractMemberDeclaration>.transformChildren(transformer, data)
     }
+
+    override var supertypesComputationStatus = FirClassLikeDeclaration.SupertypesComputationStatus.NOT_COMPUTED
 }

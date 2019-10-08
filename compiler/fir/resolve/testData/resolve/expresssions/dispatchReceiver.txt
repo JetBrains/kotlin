@@ -13,7 +13,7 @@ FILE: dispatchReceiver.kt
             public set(value: R|Base|): R|kotlin/Unit|
 
         public final fun check(): R|kotlin/Unit| {
-            ^check R|/My.delegate|.R|/Base.check|()
+            ^check this@R|/My|.R|/My.delegate|.R|/Base.check|()
         }
 
     }

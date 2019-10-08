@@ -19,12 +19,13 @@ object InlineClassDescriptorResolver {
     @JvmField
     val UNBOX_METHOD_NAME = Name.identifier("unbox")
 
-    private val SPECIALIZED_EQUALS_NAME = Name.identifier("equals-impl0")
+    @JvmField
+    val SPECIALIZED_EQUALS_NAME = Name.identifier("equals-impl0")
 
-    private val BOXING_VALUE_PARAMETER_NAME = Name.identifier("v")
+    val BOXING_VALUE_PARAMETER_NAME = Name.identifier("v")
 
-    private val SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME = Name.identifier("p1")
-    private val SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME = Name.identifier("p2")
+    val SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME = Name.identifier("p1")
+    val SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME = Name.identifier("p2")
 
     @JvmStatic
     fun createBoxFunctionDescriptor(owner: ClassDescriptor): SimpleFunctionDescriptor? =

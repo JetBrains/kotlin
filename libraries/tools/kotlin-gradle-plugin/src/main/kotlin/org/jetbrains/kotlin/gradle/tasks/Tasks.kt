@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -28,11 +29,12 @@ import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.*
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformPluginBase
-import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
@@ -43,7 +45,6 @@ import org.jetbrains.kotlin.utils.LibraryUtils
 import java.io.File
 import java.util.*
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_JVM_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JVM incremental compilation"
@@ -141,15 +142,19 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal var buildReportMode: BuildReportMode? = null
 
     @get:Internal
-    internal val buildHistoryFile: File
-        get() = File(taskBuildDirectory, "build-history.bin")
+    internal val taskData: KotlinCompileTaskData
+        get() = KotlinCompileTaskData.get(project, name)
 
     @get:Input
-    internal open var useModuleDetection: Boolean = false
+    internal open var useModuleDetection: Boolean
+        get() = taskData.useModuleDetection.get()
+        set(value) {
+            taskData.useModuleDetection.set(value)
+        }
 
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings
-        get() = MultiModuleICSettings(buildHistoryFile, useModuleDetection)
+        get() = MultiModuleICSettings(taskData.buildHistoryFile, useModuleDetection)
 
     @get:Classpath
     @get:InputFiles
@@ -181,18 +186,19 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     private val kotlinExt: KotlinProjectExtension
         get() = project.extensions.findByType(KotlinProjectExtension::class.java)!!
 
-    private lateinit var destinationDirProvider: Lazy<File>
+    override fun getDestinationDir(): File =
+        taskData.destinationDir.get()
 
-    override fun getDestinationDir(): File {
-        return destinationDirProvider.value
+    override fun setDestinationDir(provider: Provider<File>) {
+        taskData.destinationDir.set(provider)
     }
 
     fun setDestinationDir(provider: () -> File) {
-        destinationDirProvider = lazy(provider)
+        taskData.destinationDir.set(project.provider(provider))
     }
 
     override fun setDestinationDir(destinationDir: File) {
-        destinationDirProvider = lazyOf(destinationDir)
+        taskData.destinationDir.set(destinationDir)
     }
 
     @get:Internal
@@ -208,13 +214,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             ?: Coroutines.DEFAULT
 
     @get:Internal
-    internal var friendTaskName: String? = null
+    internal var javaOutputDir: File?
+        get() = taskData.javaOutputDir
+        set(value) { taskData.javaOutputDir = value }
 
     @get:Internal
-    internal var javaOutputDir: File? = null
-
-    @get:Internal
-    internal var sourceSetName: String by Delegates.notNull()
+    internal val sourceSetName: String
+        get() = taskData.compilation.name
 
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -222,42 +228,16 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     @get:Input
     internal val moduleName: String
-        get() {
-            val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
-                ?: project.name
-            val suffix = if (sourceSetName == "main") "" else "_$sourceSetName"
-            return filterModuleName("${baseName}$suffix")
-        }
-
-    @Suppress("UNCHECKED_CAST")
-    @get:Internal
-    internal val friendTask: AbstractKotlinCompile<T>?
-        get() = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractKotlinCompile<T>
-
-    /** Classes directories that are not produced by this task but should be consumed by
-     * other tasks that have this one as a [friendTask]. */
-    private val attachedClassesDirs: MutableList<Lazy<File?>> = mutableListOf()
-
-    /** Registers the directory provided by the [provider] as attached, meaning that the directory should
-     * be consumed as a friend classes directory by other tasks that have this task as a [friendTask]. */
-    internal fun attachClassesDir(provider: () -> File?) {
-        attachedClassesDirs += lazy(provider)
-    }
+        get() = taskData.compilation.moduleName
 
     @get:Internal // takes part in the compiler arguments
-    var friendPaths: Lazy<Array<String>?> = lazy {
-        friendTask?.let { friendTask ->
-            val possibleFriendDirs = ArrayList<File?>().apply {
-                add(friendTask.javaOutputDir)
-                add(friendTask.destinationDir)
-                addAll(friendTask.attachedClassesDirs.map { it.value })
-            }
-
-            possibleFriendDirs.filterNotNullTo(HashSet())
-                .map { it.absolutePath }
-                .toTypedArray()
+    val friendPaths: Array<String>
+        get() = taskData.compilation.run {
+            associateWithTransitiveClosure
+                .flatMap { it.output.classesDirs }
+                .plus(friendArtifacts)
+                .map { it.canonicalPath }.toTypedArray()
         }
-    }
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
@@ -397,10 +377,10 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
-        args.moduleName = friendTask?.moduleName ?: moduleName
+        args.moduleName = taskData.compilation.moduleName
         logger.kotlinDebug { "args.moduleName = ${args.moduleName}" }
 
-        args.friendPaths = friendPaths.value
+        args.friendPaths = friendPaths
         logger.kotlinDebug { "args.friendPaths = ${args.friendPaths?.joinToString() ?: "[]"}" }
 
         if (defaultsOnly) return
@@ -459,14 +439,27 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     private fun disableMultiModuleIC(): Boolean {
         if (!incremental || javaOutputDir == null) return false
 
-        val illegalTask = project.tasks.matching {
-            it is AbstractCompile &&
-                    it !is JavaCompile &&
-                    it !is AbstractKotlinCompile<*> &&
-                    javaOutputDir!!.isParentOf(it.destinationDir)
-        }.firstOrNull() as? AbstractCompile
+        fun forEachTask(fn: (Task) -> Unit) {
+            if (isGradleVersionAtLeast(4, 10)) {
+                project.tasks.configureEach(fn)
+            } else {
+                project.tasks.forEach(fn)
+            }
+        }
 
-        if (illegalTask != null) {
+        var illegalTaskOrNull: AbstractCompile? = null
+
+        forEachTask {
+            if (it is AbstractCompile &&
+                it !is JavaCompile &&
+                it !is AbstractKotlinCompile<*> &&
+                javaOutputDir!!.isParentOf(it.destinationDir)
+            ) {
+                illegalTaskOrNull = illegalTaskOrNull ?: it
+            }
+        }
+
+        illegalTaskOrNull?.let { illegalTask ->
             logger.info(
                 "Kotlin inter-project IC is disabled: " +
                         "unknown task '$illegalTask' destination dir ${illegalTask.destinationDir} " +
@@ -493,21 +486,21 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
 @CacheableTask
 internal open class KotlinCompileWithWorkers @Inject constructor(
-    @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
+    private val workerExecutor: WorkerExecutor
 ) : KotlinCompile() {
     override fun compilerRunner() = GradleCompilerRunnerWithWorkers(this, workerExecutor)
 }
 
 @CacheableTask
 internal open class Kotlin2JsCompileWithWorkers @Inject constructor(
-    @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
+    private val workerExecutor: WorkerExecutor
 ) : Kotlin2JsCompile() {
     override fun compilerRunner() = GradleCompilerRunnerWithWorkers(this, workerExecutor)
 }
 
 @CacheableTask
 internal open class KotlinCompileCommonWithWorkers @Inject constructor(
-    @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
+    private val workerExecutor: WorkerExecutor
 ) : KotlinCompileCommon() {
     override fun compilerRunner() = GradleCompilerRunnerWithWorkers(this, workerExecutor)
 }
@@ -525,7 +518,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         get() = kotlinOptionsImpl
 
     private val defaultOutputFile: File
-        get() = File(destinationDir, "$moduleName.js")
+        get() = File(destinationDir, "${taskData.compilation.ownModuleName}.js")
 
     @Suppress("unused")
     @get:OutputFile
@@ -554,12 +547,11 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     @get:InputFiles
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal val friendDependency
-        get() = friendTaskName
-            ?.let { project.getTasksByName(it, false).singleOrNull() as? Kotlin2JsCompile }
-            ?.outputFile?.parentFile
-            ?.let { if (libraryFilter(it)) it else null }
-            ?.absolutePath
+    internal val friendDependencies: List<String>
+        get() {
+            val filter = libraryFilter
+            return friendPaths.filter { filter(File(it)) }
+        }
 
     private val libraryFilter: (File) -> Boolean
         get() = if ("-Xir" in kotlinOptions.freeCompilerArgs) {
@@ -584,13 +576,13 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
             .filter(libraryFilter)
             .map { it.canonicalPath }
 
-        args.libraries = (dependencies + listOfNotNull(friendDependency)).distinct().let {
+        args.libraries = (dependencies + friendDependencies).distinct().let {
             if (it.isNotEmpty())
                 it.joinToString(File.pathSeparator) else
                 null
         }
 
-        args.friendModules = friendDependency
+        args.friendModules = friendDependencies.joinToString(File.pathSeparator)
 
         if (args.sourceMapBaseDirs == null && !args.sourceMapPrefix.isNullOrEmpty()) {
             args.sourceMapBaseDirs = project.projectDir.absolutePath
@@ -620,8 +612,3 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         compilerRunner.runJsCompilerAsync(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)
     }
 }
-
-private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
-
-private fun filterModuleName(moduleName: String): String =
-    moduleName.replace(invalidModuleNameCharactersRegex, "_")

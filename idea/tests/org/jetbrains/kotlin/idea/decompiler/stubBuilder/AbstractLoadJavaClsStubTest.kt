@@ -9,10 +9,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.BinaryLightVirtualFile
 import com.intellij.testFramework.LightVirtualFile
+import com.intellij.testFramework.registerServiceInstance
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClsStubBuilder
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
@@ -41,6 +43,11 @@ abstract class AbstractLoadJavaClsStubTest : TestCaseWithTmpdir() {
             configuration.put(JVMConfigurationKeys.USE_TYPE_TABLE, true)
         }
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        environment.projectEnvironment.environment.application.registerService(
+            IDEKotlinBinaryClassCache::class.java,
+            IDEKotlinBinaryClassCache()
+        )
+
         LoadDescriptorUtil.compileKotlinToDirAndGetModule(listOf(ktFile), tmpdir, environment)
 
         val classFiles = tmpdir.walk().filter { it.extension == "class" }.toList()

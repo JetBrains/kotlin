@@ -99,13 +99,13 @@ public final class IrConst extends
             break;
           }
           case 82: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
             if (valueCase_ == 10) {
-              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.String) value_).toBuilder();
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) value_).toBuilder();
             }
-            value_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.String.PARSER, extensionRegistry);
+            value_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
             if (subBuilder != null) {
-              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.String) value_);
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) value_);
               value_ = subBuilder.buildPartial();
             }
             valueCase_ = 10;
@@ -347,19 +347,19 @@ public final class IrConst extends
 
   public static final int STRING_FIELD_NUMBER = 10;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String string = 10;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex string = 10;</code>
    */
   public boolean hasString() {
     return valueCase_ == 10;
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String string = 10;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex string = 10;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.String getString() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getString() {
     if (valueCase_ == 10) {
-       return (org.jetbrains.kotlin.backend.common.serialization.proto.String) value_;
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) value_;
     }
-    return org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
   }
 
   private void initFields() {
@@ -420,7 +420,7 @@ public final class IrConst extends
           9, (double)((java.lang.Double) value_));
     }
     if (valueCase_ == 10) {
-      output.writeMessage(10, (org.jetbrains.kotlin.backend.common.serialization.proto.String) value_);
+      output.writeMessage(10, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) value_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -478,7 +478,7 @@ public final class IrConst extends
     }
     if (valueCase_ == 10) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(10, (org.jetbrains.kotlin.backend.common.serialization.proto.String) value_);
+        .computeMessageSize(10, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) value_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -1054,24 +1054,24 @@ public final class IrConst extends
     }
 
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String string = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex string = 10;</code>
      */
     public boolean hasString() {
       return valueCase_ == 10;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String string = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex string = 10;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.String getString() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getString() {
       if (valueCase_ == 10) {
-        return (org.jetbrains.kotlin.backend.common.serialization.proto.String) value_;
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) value_;
       }
-      return org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String string = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex string = 10;</code>
      */
-    public Builder setString(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder setString(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -1081,22 +1081,22 @@ public final class IrConst extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String string = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex string = 10;</code>
      */
     public Builder setString(
-        org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       value_ = builderForValue.build();
 
       valueCase_ = 10;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String string = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex string = 10;</code>
      */
-    public Builder mergeString(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder mergeString(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (valueCase_ == 10 &&
-          value_ != org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance()) {
-        value_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.String) value_)
+          value_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
+        value_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex) value_)
             .mergeFrom(value).buildPartial();
       } else {
         value_ = value;
@@ -1106,7 +1106,7 @@ public final class IrConst extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String string = 10;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex string = 10;</code>
      */
     public Builder clearString() {
       if (valueCase_ == 10) {

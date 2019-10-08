@@ -34,7 +34,7 @@ class FunctionConstraintsCollector(
         val classDescriptor = ktClass.resolveToDescriptorIfAny(resolutionFacade) ?: return
 
         val superFunctions = superFunctionsProvider.provideSuperFunctionDescriptors(element) ?: return
-        val substitutor = inferenceContext.classSubstitutions[classDescriptor] ?: return
+        val substitutor = inferenceContext.superTypesSubstitutions[classDescriptor] ?: return
 
         for (superFunction in superFunctions) {
             val superClass = superFunction.containingDeclaration as? ClassDescriptor ?: continue
@@ -68,7 +68,7 @@ class FunctionConstraintsCollector(
         typeElement: KtTypeElement,
         superType: KotlinType,
         superTypeElement: KtTypeElement?,
-        substitutor: ClassSubstitutor,
+        substitutor: SuperTypesSubstitutor,
         superClass: ClassDescriptor,
         inferenceContext: InferenceContext
     ) {

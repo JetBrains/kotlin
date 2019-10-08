@@ -16,7 +16,7 @@ import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -102,14 +102,14 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
 
     @Input
     @Optional
-    var devServer: KotlinWebpackConfigWriter.DevServer? = null
+    var devServer: KotlinWebpackConfig.DevServer? = null
 
     private fun createRunner() = KotlinWebpackRunner(
         compilation.npmProject,
         configFile,
         execHandleFactory,
         bin,
-        KotlinWebpackConfigWriter(
+        KotlinWebpackConfig(
             entry = entry,
             reportEvaluatedConfigFile = if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
             outputPath = destinationDirectory,
@@ -117,32 +117,15 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             configDirectory = configDirectory,
             bundleAnalyzerReportDir = if (report) reportDir else null,
             devServer = devServer,
-            sourceMaps = sourceMaps,
-            sourceMapsRuntime = sourceMaps
+            sourceMaps = sourceMaps
         )
     )
 
     override val nodeModulesRequired: Boolean
         @Internal get() = true
 
-    override val requiredNpmDependencies: Collection<NpmPackageVersion>
-        @Internal get() = mutableListOf<NpmPackageVersion>().also {
-            it.add(versions.webpack)
-            it.add(versions.webpackCli)
-
-            if (report) {
-                it.add(versions.webpackBundleAnalyzer)
-            }
-
-            if (sourceMaps) {
-                it.add(versions.sourceMapLoader)
-                it.add(versions.sourceMapSupport)
-            }
-
-            if (devServer != null) {
-                it.add(versions.webpackDevServer)
-            }
-        }
+    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
+        @Internal get() = createRunner().config.getRequiredDependencies(versions)
 
     @TaskAction
     fun doExecute() {
@@ -160,7 +143,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             }
         } else {
             runner.copy(
-                configWriter = runner.configWriter.copy(
+                config = runner.config.copy(
                     progressReporter = true,
                     progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
                 )

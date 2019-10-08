@@ -31,13 +31,14 @@ class HistoryUpdater(private val runner: KotlinConsoleRunner) {
         val historyEditor = consoleView.historyViewer
         addLineBreakIfNeeded(historyEditor)
         val startOffset = historyEditor.document.textLength
-        val endOffset = startOffset + trimmedCommandText.length
 
         addCommandTextToHistoryEditor(trimmedCommandText)
+        val endOffset = historyEditor.document.textLength
+
         addFoldingRegion(historyEditor, startOffset, endOffset, trimmedCommandText)
 
         historyEditor.markupModel.addRangeHighlighter(
-                startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
+            startOffset, endOffset, HighlighterLayer.LAST, null, HighlighterTargetArea.EXACT_RANGE
         ).apply {
             val historyMarker = if (runner.isReadLineMode) ReplIcons.READLINE_MARKER else ReplIcons.COMMAND_MARKER
             gutterIconRenderer = ConsoleIndicatorRenderer(historyMarker)
@@ -82,7 +83,7 @@ class HistoryUpdater(private val runner: KotlinConsoleRunner) {
         val linesCount = cmdLines.size
         if (linesCount < 2) return
 
-        val foldingModel =  historyEditor.foldingModel
+        val foldingModel = historyEditor.foldingModel
         foldingModel.runBatchFoldingOperation {
             foldingModel.addFoldRegion(startOffset, endOffset, "${cmdLines[0]} ...")
         }

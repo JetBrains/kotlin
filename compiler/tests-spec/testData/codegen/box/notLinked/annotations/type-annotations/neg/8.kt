@@ -4,7 +4,6 @@
  * SECTIONS: annotations, type-annotations
  * NUMBER: 8
  * DESCRIPTION: Type annotations on a receiver type (for an extension property only), with unresolved reference in parameters.
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28424
  */
 

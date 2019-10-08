@@ -75,11 +75,11 @@ public final class IrFile extends
             break;
           }
           case 26: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder subBuilder = null;
             if (((bitField0_ & 0x00000002) == 0x00000002)) {
               subBuilder = fqName_.toBuilder();
             }
-            fqName_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.String.PARSER, extensionRegistry);
+            fqName_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FqName.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(fqName_);
               fqName_ = subBuilder.buildPartial();
@@ -102,10 +102,10 @@ public final class IrFile extends
           }
           case 42: {
             if (!((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
-              explicitlyExportedToCompiler_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol>();
+              explicitlyExportedToCompiler_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>();
               mutable_bitField0_ |= 0x00000010;
             }
-            explicitlyExportedToCompiler_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.PARSER, extensionRegistry));
+            explicitlyExportedToCompiler_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry));
             break;
           }
         }
@@ -199,17 +199,17 @@ public final class IrFile extends
   }
 
   public static final int FQ_NAME_FIELD_NUMBER = 3;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.String fqName_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqName_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String fq_name = 3;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
    */
   public boolean hasFqName() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String fq_name = 3;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.String getFqName() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqName() {
     return fqName_;
   }
 
@@ -229,36 +229,36 @@ public final class IrFile extends
   }
 
   public static final int EXPLICITLY_EXPORTED_TO_COMPILER_FIELD_NUMBER = 5;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol> explicitlyExportedToCompiler_;
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> explicitlyExportedToCompiler_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
    */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol> getExplicitlyExportedToCompilerList() {
+  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getExplicitlyExportedToCompilerList() {
     return explicitlyExportedToCompiler_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
    */
-  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolOrBuilder> 
+  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder> 
       getExplicitlyExportedToCompilerOrBuilderList() {
     return explicitlyExportedToCompiler_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
    */
   public int getExplicitlyExportedToCompilerCount() {
     return explicitlyExportedToCompiler_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getExplicitlyExportedToCompiler(int index) {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getExplicitlyExportedToCompiler(int index) {
     return explicitlyExportedToCompiler_.get(index);
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolOrBuilder getExplicitlyExportedToCompilerOrBuilder(
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder getExplicitlyExportedToCompilerOrBuilder(
       int index) {
     return explicitlyExportedToCompiler_.get(index);
   }
@@ -266,7 +266,7 @@ public final class IrFile extends
   private void initFields() {
     declarationId_ = java.util.Collections.emptyList();
     fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
-    fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
     annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
     explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
   }
@@ -461,7 +461,7 @@ public final class IrFile extends
       bitField0_ = (bitField0_ & ~0x00000001);
       fileEntry_ = org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
-      fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
       annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -796,23 +796,23 @@ public final class IrFile extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.String fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.FqName fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String fq_name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
      */
     public boolean hasFqName() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String fq_name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.String getFqName() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqName() {
       return fqName_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String fq_name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
      */
-    public Builder setFqName(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder setFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -822,23 +822,23 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String fq_name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
      */
     public Builder setFqName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder builderForValue) {
       fqName_ = builderForValue.build();
 
       bitField0_ |= 0x00000004;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String fq_name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
      */
-    public Builder mergeFqName(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder mergeFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
       if (((bitField0_ & 0x00000004) == 0x00000004) &&
-          fqName_ != org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance()) {
+          fqName_ != org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance()) {
         fqName_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.String.newBuilder(fqName_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.FqName.newBuilder(fqName_).mergeFrom(value).buildPartial();
       } else {
         fqName_ = value;
       }
@@ -847,10 +847,10 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String fq_name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
      */
     public Builder clearFqName() {
-      fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      fqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000004);
       return this;
@@ -916,38 +916,38 @@ public final class IrFile extends
       return this;
     }
 
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol> explicitlyExportedToCompiler_ =
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> explicitlyExportedToCompiler_ =
       java.util.Collections.emptyList();
     private void ensureExplicitlyExportedToCompilerIsMutable() {
       if (!((bitField0_ & 0x00000010) == 0x00000010)) {
-        explicitlyExportedToCompiler_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol>(explicitlyExportedToCompiler_);
+        explicitlyExportedToCompiler_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>(explicitlyExportedToCompiler_);
         bitField0_ |= 0x00000010;
        }
     }
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol> getExplicitlyExportedToCompilerList() {
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getExplicitlyExportedToCompilerList() {
       return java.util.Collections.unmodifiableList(explicitlyExportedToCompiler_);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
     public int getExplicitlyExportedToCompilerCount() {
       return explicitlyExportedToCompiler_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getExplicitlyExportedToCompiler(int index) {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getExplicitlyExportedToCompiler(int index) {
       return explicitlyExportedToCompiler_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
     public Builder setExplicitlyExportedToCompiler(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -957,19 +957,19 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
     public Builder setExplicitlyExportedToCompiler(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder builderForValue) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       ensureExplicitlyExportedToCompilerIsMutable();
       explicitlyExportedToCompiler_.set(index, builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
-    public Builder addExplicitlyExportedToCompiler(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+    public Builder addExplicitlyExportedToCompiler(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -979,10 +979,10 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
     public Builder addExplicitlyExportedToCompiler(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -992,30 +992,30 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
     public Builder addExplicitlyExportedToCompiler(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       ensureExplicitlyExportedToCompilerIsMutable();
       explicitlyExportedToCompiler_.add(builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
     public Builder addExplicitlyExportedToCompiler(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder builderForValue) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       ensureExplicitlyExportedToCompilerIsMutable();
       explicitlyExportedToCompiler_.add(index, builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
     public Builder addAllExplicitlyExportedToCompiler(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol> values) {
+        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> values) {
       ensureExplicitlyExportedToCompilerIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
           values, explicitlyExportedToCompiler_);
@@ -1023,7 +1023,7 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
     public Builder clearExplicitlyExportedToCompiler() {
       explicitlyExportedToCompiler_ = java.util.Collections.emptyList();
@@ -1032,7 +1032,7 @@ public final class IrFile extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
      */
     public Builder removeExplicitlyExportedToCompiler(int index) {
       ensureExplicitlyExportedToCompilerIsMutable();

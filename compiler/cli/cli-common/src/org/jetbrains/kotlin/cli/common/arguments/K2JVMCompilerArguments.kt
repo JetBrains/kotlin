@@ -75,6 +75,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xuse-ir", description = "Use the IR backend")
     var useIR: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xir-check-local-names",
+        description = "Check that names of local classes and anonymous objects are the same in the IR backend as in the old backend"
+    )
+    var irCheckLocalNames: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by NullableStringFreezableVar(null)
 
@@ -298,6 +304,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
+        result[JvmAnalysisFlags.irCheckLocalNames] = irCheckLocalNames
         return result
     }
 

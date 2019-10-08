@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -39,11 +40,11 @@ class ConstantValueGenerator(
         constantValue: ConstantValue<*>,
         varargElementType: KotlinType? = null
     ): IrExpression =
-        // Assertion is safe here because annotation calls are not allowed in constant initializers
+        // Assertion is safe here because annotation calls and class literals are not allowed in constant initializers
         generateConstantOrAnnotationValueAsExpression(startOffset, endOffset, constantValue, varargElementType)!!
 
     /**
-     * @return null if the constant value is an unresolved annotation
+     * @return null if the constant value is an unresolved annotation or an unresolved class literal
      */
     private fun generateConstantOrAnnotationValueAsExpression(
         startOffset: Int,
@@ -100,15 +101,18 @@ class ConstantValueGenerator(
 
             is KClassValue -> {
                 val classifierKtType = constantValue.getArgumentType(moduleDescriptor)
-                val classifierDescriptor = classifierKtType.constructor.declarationDescriptor
-                    ?: throw AssertionError("Unexpected KClassValue: $classifierKtType")
+                if (classifierKtType.isError) null
+                else {
+                    val classifierDescriptor = classifierKtType.constructor.declarationDescriptor
+                        ?: throw AssertionError("Unexpected KClassValue: $classifierKtType")
 
-                IrClassReferenceImpl(
-                    startOffset, endOffset,
-                    constantValue.getType(moduleDescriptor).toIrType(),
-                    classifierDescriptor.defaultType.toIrType().classifierOrFail,
-                    classifierKtType.toIrType()
-                )
+                    IrClassReferenceImpl(
+                        startOffset, endOffset,
+                        constantValue.getType(moduleDescriptor).toIrType(),
+                        classifierDescriptor.defaultType.toIrType().classifierOrFail,
+                        classifierKtType.toIrType()
+                    )
+                }
             }
 
             else -> TODO("Unexpected constant value: ${constantValue.javaClass.simpleName} $constantValue")
@@ -143,13 +147,15 @@ class ConstantValueGenerator(
         for (valueParameter in primaryConstructorDescriptor.valueParameters) {
             val argumentIndex = valueParameter.index
             val argumentValue = annotationDescriptor.allValueArguments[valueParameter.name] ?: continue
-            val irArgument = generateConstantValueAsExpression(
+            val irArgument = generateConstantOrAnnotationValueAsExpression(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 argumentValue,
                 valueParameter.varargElementType
             )
-            irCall.putValueArgument(argumentIndex, irArgument)
+            if (irArgument != null) {
+                irCall.putValueArgument(argumentIndex, irArgument)
+            }
         }
 
         return irCall

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.api.dependencies
-import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.jdkHome
@@ -186,7 +185,7 @@ private fun createInitialCompilerConfiguration(
         scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]?.let { dependencies ->
             addJvmClasspathRoots(
                 dependencies.flatMap {
-                    (it as JvmDependency).classpath
+                    (it as? JvmDependency)?.classpath ?: emptyList()
                 }
             )
         }
@@ -226,8 +225,6 @@ internal fun collectRefinedSourcesAndUpdateEnvironment(
             sourceFiles
         )
 
-    // TODO: consider removing, it is probably redundant: the actual index update is performed with environment.updateClasspath
-    context.environment.configuration.addJvmClasspathRoots(classpath)
     context.environment.updateClasspath(classpath.map(::JvmClasspathRoot))
 
     sourceFiles.addAll(newSources)
@@ -244,7 +241,7 @@ private fun CompilerConfiguration.updateWithRefinedConfigurations(
 ) {
     val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
     val updatedCompilerOptions = sourceFiles.flatMap {
-        dependenciesProvider?.getScriptConfigurationResult(it)?.valueOrNull()?.configuration?.get(
+        dependenciesProvider?.getScriptConfiguration(it)?.configuration?.get(
             ScriptCompilationConfiguration.compilerOptions
         ) ?: emptyList()
     }

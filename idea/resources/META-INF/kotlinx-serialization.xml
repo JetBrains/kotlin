@@ -5,5 +5,6 @@
         <jsSyntheticTranslateExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIDEJsExtension"/>
         <irGenerationExtension implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIDEIrExtension"/>
         <storageComponentContainerContributor implementation="org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIDEContainerContributor"/>
+        <lightClassApplicabilityCheckExtension implementation="org.jetbrains.kotlinx.serialization.idea.IdeSerializationPluginApplicabilityExtension"/>
     </extensions>
 </idea-plugin>

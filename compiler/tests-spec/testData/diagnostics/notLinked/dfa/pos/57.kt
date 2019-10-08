@@ -13,7 +13,6 @@
 
 /*
  * TESTCASE NUMBER: 1
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656
  */
 fun case_1(x: Any?) {
@@ -27,7 +26,6 @@ fun case_1(x: Any?) {
 
 /*
  * TESTCASE NUMBER: 2
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656, KT-17386
  */
 fun case_2(x: Any?, b: Boolean?) {
@@ -44,7 +42,6 @@ fun case_2(x: Any?, b: Boolean?) {
 
 /*
  * TESTCASE NUMBER: 3
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656
  */
 fun case_3(x: Any?, b: Boolean?) {
@@ -70,7 +67,6 @@ fun case_4(x: Any?, b: Boolean?) {
 
 /*
  * TESTCASE NUMBER: 5
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656
  */
 fun case_5(x: Any?, b: Class) {
@@ -83,7 +79,6 @@ fun case_5(x: Any?, b: Class) {
 
 /*
  * TESTCASE NUMBER: 6
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656
  */
 fun case_6(x: Any?, b: Class) {
@@ -98,7 +93,6 @@ fun case_6(x: Any?, b: Class) {
 
 /*
  * TESTCASE NUMBER: 7
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656
  */
 fun case_7_1() {}

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.internal
 
 import org.jetbrains.kotlin.gradle.internal.testing.ParsedStackTrace
-import java.lang.StringBuilder
 
 data class NodeJsStackTrace(
     val message: String?,
@@ -57,10 +56,14 @@ fun parseNodeJsStackTrace(stackTrace: String): NodeJsStackTrace {
         var colNumber: Int? = null
 
         fun parsePos(fileAndPos: String) {
-            val fileAndPosComponents = fileAndPos.split(":")
-            fileName = fileAndPosComponents[0]
-            if (fileAndPosComponents.size > 1) lineNumber = fileAndPosComponents[1].toIntOrNull()
-            if (fileAndPosComponents.size > 2) colNumber = fileAndPosComponents[2].toIntOrNull()
+            val components = fileAndPos.split(":").toMutableList()
+            if (components.size > 2) {
+                colNumber = components.removeAt(components.size - 1).toIntOrNull()
+            }
+            if (components.size > 1) {
+                lineNumber = components.removeAt(components.size - 1).toIntOrNull()
+            }
+            fileName = components.joinToString(":")
         }
 
         if (srcLine.startsWith("at ")) {

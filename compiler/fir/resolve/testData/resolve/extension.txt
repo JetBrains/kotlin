@@ -2,7 +2,7 @@ FILE: extension.kt
     public final fun R|kotlin/String|.foo(): R|kotlin/Unit| {
     }
     public final fun R|kotlin/String|.bar(): R|kotlin/Unit| {
-        R|/foo|()
+        this@R|/bar|.R|/foo|()
     }
     public final class My : R|kotlin/Any| {
         public constructor(): R|My| {
@@ -10,7 +10,7 @@ FILE: extension.kt
         }
 
         public final fun bar(): R|kotlin/Unit| {
-            R|/foo|()
+            this@R|/My|.R|/foo|()
         }
 
     }

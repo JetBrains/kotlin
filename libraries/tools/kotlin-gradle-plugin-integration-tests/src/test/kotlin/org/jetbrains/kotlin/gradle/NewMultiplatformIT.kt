@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import java.util.jar.JarFile
 import java.util.zip.ZipFile
@@ -51,7 +52,7 @@ fun configure(): NativeTargets {
 }
 
 class NewMultiplatformIT : BaseGradleIT() {
-    val gradleVersion = GradleVersionRequired.AtLeast("4.7")
+    val gradleVersion = GradleVersionRequired.None
 
     val nativeHostTargetName = configure().current
     val supportedNativeTargets = configure().supported
@@ -69,17 +70,15 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testLibAndAppWithGradleKotlinDsl() = doTestLibAndApp(
         "sample-lib-gradle-kotlin-dsl",
-        "sample-app-gradle-kotlin-dsl",
-        GradleVersionRequired.AtLeast("4.9") // earlier Gradle versions fail at accessors codegen
+        "sample-app-gradle-kotlin-dsl"
     )
 
     private fun doTestLibAndApp(
-        libProjectName: String, appProjectName: String,
-        gradleVersionRequired: GradleVersionRequired = gradleVersion
+        libProjectName: String, appProjectName: String
     ) {
-        val libProject = transformProjectWithPluginsDsl(libProjectName, gradleVersionRequired, "new-mpp-lib-and-app")
-        val appProject = transformProjectWithPluginsDsl(appProjectName, gradleVersionRequired, "new-mpp-lib-and-app")
-        val oldStyleAppProject = Project("sample-old-style-app", gradleVersionRequired, "new-mpp-lib-and-app")
+        val libProject = transformProjectWithPluginsDsl(libProjectName, directoryPrefix = "new-mpp-lib-and-app")
+        val appProject = transformProjectWithPluginsDsl(appProjectName, directoryPrefix = "new-mpp-lib-and-app")
+        val oldStyleAppProject = Project("sample-old-style-app", directoryPrefix = "new-mpp-lib-and-app")
 
         val compileTasksNames =
             listOf("Jvm6", "NodeJs", "Metadata", "Wasm32", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" }
@@ -284,6 +283,8 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     private fun doTestJvmWithJava(testJavaSupportInJvmTargets: Boolean) =
         with(Project("sample-lib", GradleVersionRequired.AtLeast("5.0"), "new-mpp-lib-and-app")) {
+            embedProject(Project("sample-lib-gradle-kotlin-dsl", directoryPrefix = "new-mpp-lib-and-app"))
+
             lateinit var classesWithoutJava: Set<String>
 
             fun getFilePathsSet(inDirectory: String): Set<String> {
@@ -316,11 +317,36 @@ class NewMultiplatformIT : BaseGradleIT() {
                     
                     apply plugin: 'com.github.johnrengelman.shadow'
                     apply plugin: 'application'
+                    apply plugin: 'kotlin-kapt' // Check that Kapts works, generates and compiles sources
                     
                     mainClassName = 'com.example.lib.CommonKt'
+                    
+                    dependencies {
+                        jvm6MainImplementation("com.google.dagger:dagger:2.24")
+                        kapt("com.google.dagger:dagger-compiler:2.24")
+                        kapt(project(":sample-lib-gradle-kotlin-dsl"))
+                        
+                        // also check incremental Kapt class structure configurations, KT-33105
+                        jvm6MainImplementation(project(":sample-lib-gradle-kotlin-dsl")) 
+                    }
                     """.trimIndent()
                 )
             }
+            // also check incremental Kapt class structure configurations, KT-33105
+            projectDir.resolve("gradle.properties").appendText("\nkapt.incremental.apt=true")
+
+            // Check Kapt:
+            projectDir.resolve("src/jvm6Main/kotlin/Main.kt").appendText(
+                "\n" + """
+                interface Iface
+                
+                @dagger.Module
+                object Module {
+                    @JvmStatic @dagger.Provides
+                    fun provideHeater(): Iface = object : Iface { }
+                }
+            """.trimIndent()
+            )
 
             fun javaSourceRootForCompilation(compilationName: String) =
                 if (testJavaSupportInJvmTargets) "src/jvm6${compilationName.capitalize()}/java" else "src/$compilationName/java"
@@ -373,6 +399,12 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 val expectedMainClasses =
                     classesWithoutJava + setOf(
+                        // classes for Kapt test:
+                        "java/main/com/example/lib/Module_ProvideHeaterFactory.class",
+                        "kotlin/jvm6/main/com/example/lib/Module\$provideHeater\$1.class",
+                        "kotlin/jvm6/main/com/example/lib/Iface.class",
+                        "kotlin/jvm6/main/com/example/lib/Module.class",
+                        // other added classes:
                         "kotlin/jvm6/main/com/example/lib/KotlinClassInJava.class",
                         "java/main/com/example/lib/JavaClassInJava.class",
                         "java/test/com/example/lib/JavaTest.class"
@@ -382,7 +414,10 @@ class NewMultiplatformIT : BaseGradleIT() {
 
                 val jvmTestTaskName = if (testJavaSupportInJvmTargets) "jvm6Test" else "test"
                 assertTasksExecuted(":$jvmTestTaskName")
-                assertFileExists("build/reports/tests/allTests/classes/com.example.lib.JavaTest.html")
+
+                if (testJavaSupportInJvmTargets) {
+                    assertFileExists("build/reports/tests/allTests/classes/com.example.lib.JavaTest.html")
+                }
 
                 if (testJavaSupportInJvmTargets) {
                     assertNotContains(KotlinJvmWithJavaTargetPreset.DEPRECATION_WARNING)
@@ -691,6 +726,25 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testEndorsedLibsController() {
+        with(
+            transformProjectWithPluginsDsl("new-mpp-native-endorsed", gradleVersion)
+        ) {
+            setupWorkingDir()
+
+            build("build") {
+                assertSuccessful()
+            }
+            gradleBuildScript().modify {
+                it.replace("enableEndorsedLibs = true", "")
+            }
+            build("build") {
+                assertFailed()
+            }
+        }
+    }
+
+    @Test
     fun testDependenciesOnMppLibraryPartsWithNoMetadata() {
         val repoDir = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
             setupWorkingDir()
@@ -911,7 +965,6 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         // Remove outputs and check that they are rebuilt.
         assertTrue(projectDir.resolve(headerPaths[0]).delete())
-        assertTrue(projectDir.resolve(klibPath).delete())
         if (HostManager.hostIsMac) {
             assertTrue(projectDir.resolve(frameworkPaths[0]).deleteRecursively())
         }
@@ -919,8 +972,8 @@ class NewMultiplatformIT : BaseGradleIT() {
         build("assemble") {
             assertSuccessful()
             assertTasksUpToDate(linkTasks.drop(1))
+            assertTasksUpToDate(klibTask)
             assertTasksExecuted(linkTasks[0])
-            assertTasksExecuted(klibTask)
 
             if (HostManager.hostIsMac) {
                 assertTasksUpToDate(frameworkTasks.drop(1))
@@ -935,10 +988,20 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testNativeBinaryGroovyDSL() = doTestNativeBinaryDSL("groovy-dsl")
 
+    private fun CompiledProject.checkNativeCommandLineFor(vararg taskPaths: String, check: (String) -> Unit) = taskPaths.forEach { taskPath ->
+        val commandLine = output.lineSequence().dropWhile {
+            !it.contains("Executing actions for task '$taskPath'")
+        }.first {
+            it.contains("Run tool: konanc")
+        }
+        check(commandLine)
+    }
+
     private fun doTestNativeBinaryDSL(
         projectName: String,
         gradleVersionRequired: GradleVersionRequired = gradleVersion
     ) = with(transformProjectWithPluginsDsl(projectName, gradleVersionRequired, "new-mpp-native-binaries")) {
+
         val hostSuffix = nativeHostTargetName.capitalize()
         val binaries = mutableListOf(
             "debugExecutable" to "native-binary",
@@ -973,10 +1036,14 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         val binariesTasks = arrayOf("${nativeHostTargetName}MainBinaries", "${nativeHostTargetName}TestBinaries")
 
+        val compileTask = "compileKotlin$hostSuffix"
+        val compileTestTask = "compileTestKotlin$hostSuffix"
+
         // Check that all link and run tasks are generated.
         build(*binariesTasks) {
             assertSuccessful()
             assertTasksExecuted(linkTasks.map { ":$it" })
+            assertTasksExecuted(":$compileTask", ":$compileTestTask")
             outputFiles.forEach {
                 assertFileExists(it)
             }
@@ -997,6 +1064,14 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
         }
 
+        // Check that kotlinOptions work fine for a compilation.
+        build(compileTask) {
+            assertSuccessful()
+            checkNativeCommandLineFor(":$compileTask") {
+                assertTrue(it.contains("-verbose"))
+            }
+        }
+
         // Check that run tasks work fine and an entry point can be specified.
         build("runDebugExecutable$hostSuffix") {
             assertSuccessful()
@@ -1010,6 +1085,16 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         build("runTest2ReleaseExecutable$hostSuffix") {
             assertSuccessful()
+            assertTasksExecuted(":$compileTestTask")
+            checkNativeCommandLineFor(":linkTest2ReleaseExecutable$hostSuffix") {
+                assertTrue(it.contains("-tr"))
+                assertTrue(it.contains("-Xtime"))
+                // Check that kotlinOptions of the compilation don't affect the binary.
+                assertFalse(it.contains("-verbose"))
+                // Check that free args are still propagated to the binary (unlike other kotlinOptions, see KT-33717).
+                // TODO: Reverse this check when the args are fully separated.
+                assertTrue(it.contains("-nowarn"))
+            }
             assertTrue(output.contains("tests.foo"))
         }
 
@@ -1019,13 +1104,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertTrue(output.contains("tests.foo"))
         }
 
-        fun CompiledProject.checkFrameworkCompilationCommandLine(check: (String) -> Unit) {
-            output.lineSequence().filter {
-                it.contains("Run tool: konanc") && it.contains("-p framework")
-            }.toList().also {
-                assertTrue(it.isNotEmpty())
-            }.forEach(check)
-        }
         if (HostManager.hostIsMac) {
 
             // Check dependency exporting and bitcode embedding in frameworks.
@@ -1036,7 +1114,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 fileInWorkingDir("build/bin/ios/releaseFramework/native_binary.framework/Headers/native_binary.h")
                     .readText().contains("+ (int32_t)exported")
                 // Check that by default release frameworks have bitcode embedded.
-                checkFrameworkCompilationCommandLine {
+                checkNativeCommandLineFor(":linkReleaseFrameworkIos") {
                     assertTrue(it.contains("-Xembed-bitcode"))
                     assertTrue(it.contains("-opt"))
                 }
@@ -1049,7 +1127,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 fileInWorkingDir("build/bin/ios/debugFramework/native_binary.framework/Headers/native_binary.h")
                     .readText().contains("+ (int32_t)exported")
                 // Check that by default debug frameworks have bitcode marker embedded.
-                checkFrameworkCompilationCommandLine {
+                checkNativeCommandLineFor(":linkDebugFrameworkIos") {
                     assertTrue(it.contains("-Xembed-bitcode-marker"))
                     assertTrue(it.contains("-g"))
                 }
@@ -1058,7 +1136,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             // Check manual disabling bitcode embedding, custom command line args and building a static framework.
             build("linkCustomReleaseFrameworkIos") {
                 assertSuccessful()
-                checkFrameworkCompilationCommandLine {
+                checkNativeCommandLineFor(":linkCustomReleaseFrameworkIos") {
                     assertTrue(it.contains("-linker-option -L."))
                     assertTrue(it.contains("-Xtime"))
                     assertTrue(it.contains("-Xstatic-framework"))
@@ -1072,17 +1150,20 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 assertFileExists("build/bin/iosSim/releaseFramework/native_binary.framework")
                 assertFileExists("build/bin/iosSim/debugFramework/native_binary.framework")
-                checkFrameworkCompilationCommandLine {
+                checkNativeCommandLineFor(":linkReleaseFrameworkIosSim", ":linkDebugFrameworkIosSim") {
                     assertFalse(it.contains("-Xembed-bitcode"))
                     assertFalse(it.contains("-Xembed-bitcode-marker"))
                 }
             }
 
-
             // Check that plugin doesn't allow exporting dependencies not added in the API configuration.
             val buildFile = listOf("build.gradle", "build.gradle.kts").map { projectDir.resolve(it) }.single { it.exists() }
             buildFile.modify {
                 it.replace("api(project(\":exported\"))", "")
+            }
+            projectDir.resolve("src/commonMain/kotlin/PackageMain.kt").modify {
+                // Remove usages of the ":exported" dependency to be able to compile the sources.
+                it.checkedReplace("import com.example.exported", "").checkedReplace("val exp = exported()", "val exp = 42")
             }
             build("linkReleaseFrameworkIos") {
                 assertFailed()
@@ -1090,6 +1171,68 @@ class NewMultiplatformIT : BaseGradleIT() {
                         "are not specified as API-dependencies of a corresponding source set"
                 assertTrue(output.contains(failureMsg))
             }
+        }
+    }
+
+    // Check that we still can build binaries from sources if the corresponding property is specified.
+    // TODO: Drop in 1.3.70.
+    @Test
+    fun testLinkNativeBinaryFromSources() = with(
+        transformProjectWithPluginsDsl("groovy-dsl", gradleVersion, "new-mpp-native-binaries")
+    ) {
+        val linkTask = ":linkDebugExecutable${nativeHostTargetName.capitalize()}"
+
+        val prefix = CompilerOutputKind.PROGRAM.prefix(HostManager.host)
+        val suffix = CompilerOutputKind.PROGRAM.suffix(HostManager.host)
+        val fileName = "${prefix}native-binary$suffix"
+        val outputFile = "build/bin/$nativeHostTargetName/debugExecutable/$fileName"
+
+        build(linkTask, "-Pkotlin.native.linkFromSources") {
+            assertSuccessful()
+            assertTasksExecuted(linkTask)
+            assertFileExists(outputFile)
+            checkNativeCommandLineFor(linkTask) {
+                assertTrue(it.contains("-Xcommon-sources="))
+                assertTrue(it.contains(projectDir.resolve("src/commonMain/kotlin/RootMain.kt").absolutePath))
+            }
+        }
+    }
+
+    // We propagate compilation args to link tasks for now (see KT-33717).
+    // TODO: Reenable the test when the args are separated.
+    @Ignore
+    @Test
+    fun testNativeFreeArgsWarning() = with(transformProjectWithPluginsDsl("kotlin-dsl", gradleVersion, "new-mpp-native-binaries")) {
+        gradleBuildScript().appendText(
+            """kotlin.targets["macos64"].compilations["main"].kotlinOptions.freeCompilerArgs += "-opt""""
+        )
+        gradleBuildScript("exported").appendText(
+            """
+                kotlin.targets["macos64"].compilations["main"].kotlinOptions.freeCompilerArgs += "-opt"
+                kotlin.targets["macos64"].compilations["test"].kotlinOptions.freeCompilerArgs += "-g"
+                kotlin.targets["linux64"].compilations["main"].kotlinOptions.freeCompilerArgs +=
+                    listOf("-g", "-Xdisable-phases=Devirtualization,BuildDFG")
+            """.trimIndent()
+        )
+        build("tasks") {
+            assertSuccessful()
+            assertContains(
+                """
+                The following free compiler arguments must be specified for a binary instead of a compilation:
+                    * In project ':':
+                        * In target 'macos64':
+                            * Compilation: 'main', arguments: [-opt]
+                    * In project ':exported':
+                        * In target 'linux64':
+                            * Compilation: 'main', arguments: [-g, -Xdisable-phases=Devirtualization,BuildDFG]
+                        * In target 'macos64':
+                            * Compilation: 'main', arguments: [-opt]
+                            * Compilation: 'test', arguments: [-g]
+
+                Please move them into final binary declarations. E.g. binaries.executable { freeCompilerArgs += "..." }
+                See more about final binaries: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#building-final-native-binaries.
+                """.trimIndent()
+            )
         }
     }
 
@@ -1218,6 +1361,19 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun kt33750() {
+        // Check that build fails if a test executable crashes.
+        with(Project("new-mpp-native-tests", gradleVersion)) {
+            setupWorkingDir()
+            projectDir.resolve("src/commonTest/kotlin/test.kt").appendText("\nval fail: Int = error(\"\")\n")
+            build("check") {
+                assertFailed()
+                output.contains("exited with errors \\(exit code: \\d+\\)".toRegex())
+            }
+        }
+    }
+
+    @Test
     fun testCinterop() {
         val libProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
         libProject.build("publish") {
@@ -1283,7 +1439,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTasksUpToDate(hostLibraryTasks)
             }
 
-            build(*hostLibraryTasks.toTypedArray(), "-Porg.jetbrains.kotlin.native.version=1.1.0") {
+            build(*hostLibraryTasks.toTypedArray(), "-Porg.jetbrains.kotlin.native.version=1.3.60-dev-12430") {
                 assertSuccessful()
                 assertTasksExecuted(hostLibraryTasks)
             }
@@ -1303,6 +1459,8 @@ class NewMultiplatformIT : BaseGradleIT() {
             build("tasks") {
                 assertSuccessful()
                 assertTrue(output.contains("Kotlin/Native distribution: "))
+                // Check for KT-30258.
+                assertFalse(output.contains("Deprecated Gradle features were used in this build, making it incompatible with Gradle 6.0."))
             }
 
             build("tasks", "-Pkotlin.native.restrictedDistribution=true") {
@@ -1346,6 +1504,17 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)-1\\.3-eap-10779".toRegex())
                 assertContains("Project property 'org.jetbrains.kotlin.native.version' is deprecated")
+            }
+        }
+
+        // Gradle 5.0 introduced a new API for Ivy repository layouts.
+        // MPP plugin uses this API to download K/N if Gradle version is >= 5.0.
+        // Check this too (see KT-30258).
+        with(Project("new-mpp-native-libraries", GradleVersionRequired.AtLeast("5.0"))) {
+            build("tasks", "-Pkotlin.native.version=1.3.50-eap-11606") {
+                assertSuccessful()
+                assertTrue(output.contains("Kotlin/Native distribution: "))
+                assertFalse(output.contains("Deprecated Gradle features were used in this build, making it incompatible with Gradle 6.0."))
             }
         }
     }
@@ -1882,7 +2051,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testSuggestionToEnableMetadata() = with(Project("sample-lib", GradleVersionRequired.AtLeast("4.7"), "new-mpp-lib-and-app")) {
+    fun testSuggestionToEnableMetadata() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
         build {
             assertNotContains(GRADLE_NO_METADATA_WARNING)
 
@@ -1906,6 +2075,76 @@ class NewMultiplatformIT : BaseGradleIT() {
         build("-P$DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME=true") {
             assertSuccessful()
             assertNotContains(DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX)
+        }
+    }
+
+    @Test
+    fun testAssociateCompilations() = with(Project("new-mpp-associate-compilations", GradleVersionRequired.AtLeast("5.0"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        val tasks = listOf("jvm", "js", nativeHostTargetName).map { ":compileIntegrationTestKotlin${it.capitalize()}" }
+
+        build(*tasks.toTypedArray()) {
+            assertSuccessful()
+            assertTasksExecuted(*tasks.toTypedArray())
+
+            // JVM:
+            checkBytecodeContains(
+                projectDir.resolve("build/classes/kotlin/jvm/integrationTest/com/example/HelloIntegrationTest.class"),
+                "Hello.internalFun\$new_mpp_associate_compilations",
+                "HelloTest.internalTestFun\$new_mpp_associate_compilations"
+            )
+            assertFileExists("build/classes/kotlin/jvm/integrationTest/META-INF/new-mpp-associate-compilations.kotlin_module")
+
+            // JS:
+            assertFileExists("build/classes/kotlin/js/integrationTest/new-mpp-associate-compilations_integrationTest.js")
+
+            // Native:
+            assertFileExists("build/classes/kotlin/$nativeHostTargetName/integrationTest/integrationTest.klib")
+        }
+    }
+
+    @Test
+    fun testTestRunsApi() = with(Project("new-mpp-associate-compilations", GradleVersionRequired.AtLeast("5.0"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        // TOOD: add Kotlin/JS tests once they can be tested without much performance overhead
+        val testTasks =
+            arrayOf(":jvmTest", ":${nativeHostTargetName}Test", ":jvmIntegrationTest", ":${nativeHostTargetName}IntegrationTest")
+
+        build(*testTasks) {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                *testTasks,
+                ":compileIntegrationTestKotlinJvm",
+                ":linkIntegrationDebugTest${nativeHostTargetName.capitalize()}"
+            )
+
+            fun checkUnitTestOutput(targetName: String) {
+                val classReportHtml = projectDir
+                    .resolve("build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html")
+                    .readText()
+
+                if (targetName != nativeHostTargetName) // TODO: fix exclude patterns for the Kotlin/Native test tasks
+                    assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
+            }
+            checkUnitTestOutput("jvm")
+            checkUnitTestOutput(nativeHostTargetName)
+
+            fun checkIntegrationTestOutput(targetName: String) {
+                val classReportHtml = projectDir
+                    .resolve("build/reports/tests/${targetName}IntegrationTest/classes/com.example.HelloIntegrationTest.html")
+                    .readText()
+
+                assertTrue("test[$targetName]" in classReportHtml, "Test report should contain 'test[$targetName]':\n$classReportHtml")
+                assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
+                assertTrue("thirdTest" !in classReportHtml, "Test report should not contain 'thirdTest':\n$classReportHtml")
+            }
+            checkIntegrationTestOutput("jvm")
+            checkIntegrationTestOutput(nativeHostTargetName)
         }
     }
 }

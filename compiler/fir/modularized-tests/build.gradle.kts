@@ -19,6 +19,7 @@ dependencies {
 
     Platform[192].orHigher {
         testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
+        testRuntimeOnly(intellijPluginDep("java"))
     }
 
     testRuntime(intellijDep())
@@ -41,9 +42,19 @@ sourceSets {
 }
 
 projectTest {
+    systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
     jvmArgs!!.removeIf { it.contains("-Xmx") }
-    maxHeapSize = "3g"
+    maxHeapSize = "8g"
+    dependsOn(":dist")
+
+    run {
+        val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
+        if (argsExt != null) {
+            val paramRegex = "([^\"]\\S*|\".+?\")\\s*".toRegex()
+            jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
+        }
+    }
 }
 
 testsJar()

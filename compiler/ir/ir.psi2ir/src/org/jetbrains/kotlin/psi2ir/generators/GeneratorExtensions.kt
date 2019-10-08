@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -26,9 +27,11 @@ open class GeneratorExtensions {
 
         open fun isSamType(type: KotlinType): Boolean = false
 
-        open fun getFunctionTypeForSAMClass(descriptor: ClassDescriptor): KotlinType =
-            throw UnsupportedOperationException("SAM conversion is not supported in this configuration (class=$descriptor)")
+        open fun getSubstitutedFunctionTypeForSamType(samType: KotlinType): KotlinType =
+            throw UnsupportedOperationException("SAM conversion is not supported in this configuration (samType=$samType)")
 
         companion object Instance : SamConversion()
     }
+
+    open fun computeFieldVisibility(descriptor: PropertyDescriptor): Visibility? = null
 }

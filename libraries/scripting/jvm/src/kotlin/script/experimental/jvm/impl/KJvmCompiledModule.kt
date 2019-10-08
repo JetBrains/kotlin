@@ -28,10 +28,10 @@ class KJvmCompiledModuleFromClassLoader(val moduleClassLoader: ClassLoader) : KJ
         else DualClassLoader(moduleClassLoader, baseClassLoader)
 }
 
-private class DualClassLoader(fallbackLoader: ClassLoader, parentLoader: ClassLoader?) :
+internal class DualClassLoader(fallbackLoader: ClassLoader, parentLoader: ClassLoader?) :
     ClassLoader(singleClassLoader(fallbackLoader, parentLoader) ?: parentLoader) {
 
-    private class Wrapper(parent: ClassLoader) : ClassLoader(parent) {
+    internal class Wrapper(parent: ClassLoader) : ClassLoader(parent) {
         fun openFindResources(name: String): Enumeration<URL> = super.findResources(name)
         fun openFindResource(name: String): URL? = super.findResource(name)
     }
@@ -53,7 +53,7 @@ private class DualClassLoader(fallbackLoader: ClassLoader, parentLoader: ClassLo
         }
     }
 
-    private val fallbackClassLoader: Wrapper? =
+    internal val fallbackClassLoader: Wrapper? =
         if (/* optimization */ parentLoader == null || singleClassLoader(fallbackLoader, parentLoader) != null) null
         else Wrapper(fallbackLoader)
 

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.shouldNotConvertToProperty
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -131,7 +132,10 @@ class UsePropertyAccessSyntaxIntention :
     }
 
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
-        applyTo(element, detectPropertyNameToUse(element)!!, reformat = true)
+        val propertyName = detectPropertyNameToUse(element) ?: return
+        runWriteAction {
+            applyTo(element, propertyName, reformat = true)
+        }
     }
 
     fun applyTo(element: KtCallExpression, propertyName: Name, reformat: Boolean): KtExpression {

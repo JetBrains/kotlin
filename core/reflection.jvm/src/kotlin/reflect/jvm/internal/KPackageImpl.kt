@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import kotlin.reflect.KCallable
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
-import kotlin.reflect.jvm.internal.components.ReflectKotlinClass
-import kotlin.reflect.jvm.internal.structure.classId
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 
 internal class KPackageImpl(
     override val jClass: Class<*>,

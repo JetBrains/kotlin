@@ -100,11 +100,11 @@ public final class InTextDirectivesUtils {
 
     @NotNull
     public static List<String> findLinesWithPrefixesRemoved(String fileText, String... prefixes) {
-        return findLinesWithPrefixesRemoved(fileText, true, prefixes);
+        return findLinesWithPrefixesRemoved(fileText, true, true, prefixes);
     }
 
     @NotNull
-    public static List<String> findLinesWithPrefixesRemoved(String fileText, boolean trim, String... prefixes) {
+    public static List<String> findLinesWithPrefixesRemoved(String fileText, boolean trim, boolean strict, String... prefixes) {
         if (prefixes.length == 0) {
             throw new IllegalArgumentException("Please specify the prefixes to check");
         }
@@ -121,7 +121,7 @@ public final class InTextDirectivesUtils {
                             Character.isWhitespace(prefix.charAt(prefix.length() - 1))) {
                         result.add(trim ? noPrefixLine.trim() : StringUtil.trimTrailing(StringsKt.drop(noPrefixLine, 1)));
                         break;
-                    } else {
+                    } else if (strict) {
                         throw new AssertionError(
                                 "Line starts with prefix \"" + prefix + "\", but doesn't have space symbol after it: " + line);
                     }
@@ -229,11 +229,15 @@ public final class InTextDirectivesUtils {
         return backends.isEmpty() || backends.contains(targetBackend.name()) || backends.contains(targetBackend.getCompatibleWith().name());
     }
 
-    public static boolean isIgnoredTarget(TargetBackend targetBackend, File file) {
+    public static boolean isIgnoredTarget(TargetBackend targetBackend, File file, String ignoreBackendDirectivePrefix) {
         if (targetBackend == TargetBackend.ANY) return false;
 
-        List<String> ignoredBackends = findListWithPrefixes(textWithDirectives(file), IGNORE_BACKEND_DIRECTIVE_PREFIX);
+        List<String> ignoredBackends = findListWithPrefixes(textWithDirectives(file), ignoreBackendDirectivePrefix);
         return ignoredBackends.contains(targetBackend.name());
+    }
+
+    public static boolean isIgnoredTarget(TargetBackend targetBackend, File file) {
+        return isIgnoredTarget(targetBackend, file, IGNORE_BACKEND_DIRECTIVE_PREFIX);
     }
 
     public static boolean dontRunGeneratedCode(TargetBackend targetBackend, File file) {

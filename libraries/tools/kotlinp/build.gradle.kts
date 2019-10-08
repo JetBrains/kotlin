@@ -64,7 +64,7 @@ tasks {
     }
     "test" {
         // These dependencies are needed because ForTestCompileRuntime loads jars from dist
-        dependsOn(":dist")
+        dependsOn(rootProject.tasks.named("dist"))
     }
 }
 

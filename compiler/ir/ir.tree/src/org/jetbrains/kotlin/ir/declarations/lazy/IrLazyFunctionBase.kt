@@ -32,6 +32,10 @@ abstract class IrLazyFunctionBase(
     IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
     IrFunction {
 
+    val initialSignatureFunction: IrFunction? by lazyVar {
+        descriptor.initialSignatureDescriptor?.takeIf { it != descriptor }?.original?.let(stubGenerator::generateFunctionStub)
+    }
+
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar {
         typeTranslator.buildWithScope(this) {
             descriptor.dispatchReceiverParameter?.generateReceiverParameterStub()?.also { it.parent = this@IrLazyFunctionBase }

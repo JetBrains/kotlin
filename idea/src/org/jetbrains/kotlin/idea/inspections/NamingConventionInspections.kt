@@ -28,7 +28,6 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.quickfix.RenameIdentifierFix
 import org.jetbrains.kotlin.idea.refactoring.isInjectedFragment
-import org.jetbrains.kotlin.idea.util.compat.psiFile
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
@@ -407,7 +406,7 @@ class PackageNameInspection : BaseGlobalInspection() {
     ): Array<CommonProblemDescriptor>? {
         when (refEntity) {
             is RefFile -> {
-                val psiFile = refEntity.psiFile
+                val psiFile = refEntity.psiElement
                 if (psiFile is KtFile && !psiFile.isInjectedFragment && !psiFile.packageMatchesDirectoryOrImplicit()) {
                     val packageDirective = psiFile.packageDirective
                     if (packageDirective != null) {

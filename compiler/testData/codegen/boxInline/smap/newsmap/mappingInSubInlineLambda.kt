@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 package test
@@ -48,7 +49,7 @@ _2Kt
 test/_1Kt
 *L
 1#1,20:1
-6#2,4:21
+7#2,4:21
 *E
 *S KotlinDebug
 *F
@@ -69,7 +70,7 @@ _2Kt$box$1$1
 test/_1Kt
 *L
 1#1,20:1
-12#2,3:21
+13#2,3:21
 *E
 *S KotlinDebug
 *F

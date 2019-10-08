@@ -21,16 +21,20 @@ import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
 
 object DescriptorEquivalenceForOverrides {
 
-    fun areEquivalent(a: DeclarationDescriptor?, b: DeclarationDescriptor?): Boolean {
+    fun areEquivalent(
+        a: DeclarationDescriptor?,
+        b: DeclarationDescriptor?,
+        allowCopiesFromTheSameDeclaration: Boolean
+    ): Boolean {
         return when {
             a is ClassDescriptor &&
                     b is ClassDescriptor -> areClassesEquivalent(a, b)
 
             a is TypeParameterDescriptor &&
-                    b is TypeParameterDescriptor -> areTypeParametersEquivalent(a, b)
+                    b is TypeParameterDescriptor -> areTypeParametersEquivalent(a, b, allowCopiesFromTheSameDeclaration)
 
             a is CallableDescriptor &&
-                    b is CallableDescriptor -> areCallableDescriptorsEquivalent(a, b)
+                    b is CallableDescriptor -> areCallableDescriptorsEquivalent(a, b, allowCopiesFromTheSameDeclaration)
 
             a is PackageFragmentDescriptor &&
                     b is PackageFragmentDescriptor -> (a).fqName == (b).fqName
@@ -47,12 +51,13 @@ object DescriptorEquivalenceForOverrides {
     private fun areTypeParametersEquivalent(
         a: TypeParameterDescriptor,
         b: TypeParameterDescriptor,
+        allowCopiesFromTheSameDeclaration: Boolean,
         equivalentCallables: (DeclarationDescriptor?, DeclarationDescriptor?) -> Boolean = { _, _ -> false }
     ): Boolean {
         if (a == b) return true
         if (a.containingDeclaration == b.containingDeclaration) return false
 
-        if (!ownersEquivalent(a, b, equivalentCallables)) return false
+        if (!ownersEquivalent(a, b, equivalentCallables, allowCopiesFromTheSameDeclaration)) return false
 
         return a.index == b.index // We ignore type parameter names
     }
@@ -66,11 +71,13 @@ object DescriptorEquivalenceForOverrides {
     fun areCallableDescriptorsEquivalent(
         a: CallableDescriptor,
         b: CallableDescriptor,
+        allowCopiesFromTheSameDeclaration: Boolean,
         ignoreReturnType: Boolean = false
     ): Boolean {
         if (a == b) return true
         if (a.name != b.name) return false
         if (a.containingDeclaration == b.containingDeclaration) {
+            if (!allowCopiesFromTheSameDeclaration) return false
             if (a.singleSource() != b.singleSource()) return false
             if (a is MemberDescriptor && b is MemberDescriptor && a.isExpect != b.isExpect) return false
         }
@@ -78,7 +85,7 @@ object DescriptorEquivalenceForOverrides {
         // Distinct locals are not equivalent
         if (DescriptorUtils.isLocal(a) || DescriptorUtils.isLocal(b)) return false
 
-        if (!ownersEquivalent(a, b, { _, _ -> false })) return false
+        if (!ownersEquivalent(a, b, { _, _ -> false }, allowCopiesFromTheSameDeclaration)) return false
 
         val overridingUtil = OverridingUtil.createWithEqualityAxioms eq@{ c1, c2 ->
             if (c1 == c2) return@eq true
@@ -88,7 +95,7 @@ object DescriptorEquivalenceForOverrides {
 
             if (d1 !is TypeParameterDescriptor || d2 !is TypeParameterDescriptor) return@eq false
 
-            areTypeParametersEquivalent(d1, d2, { x, y -> x == a && y == b })
+            areTypeParametersEquivalent(d1, d2, allowCopiesFromTheSameDeclaration) { x, y -> x == a && y == b }
         }
 
         return overridingUtil.isOverridableBy(a, b, null, !ignoreReturnType).result == OverrideCompatibilityInfo.Result.OVERRIDABLE
@@ -99,7 +106,8 @@ object DescriptorEquivalenceForOverrides {
     private fun ownersEquivalent(
         a: DeclarationDescriptor,
         b: DeclarationDescriptor,
-        equivalentCallables: (DeclarationDescriptor?, DeclarationDescriptor?) -> Boolean
+        equivalentCallables: (DeclarationDescriptor?, DeclarationDescriptor?) -> Boolean,
+        allowCopiesFromTheSameDeclaration: Boolean
     ): Boolean {
         val aOwner = a.containingDeclaration
         val bOwner = b.containingDeclaration
@@ -109,7 +117,7 @@ object DescriptorEquivalenceForOverrides {
         return if (aOwner is CallableMemberDescriptor || bOwner is CallableMemberDescriptor) {
             equivalentCallables(aOwner, bOwner)
         } else {
-            areEquivalent(aOwner, bOwner)
+            areEquivalent(aOwner, bOwner, allowCopiesFromTheSameDeclaration)
         }
     }
 

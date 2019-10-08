@@ -57,3 +57,4 @@ projectTest {
 val generateTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator")
 
 generateTests.workingDir = rootDir
+generateTests.dependsOn(rootProject.tasks.named("dist"))

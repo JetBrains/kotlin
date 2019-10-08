@@ -14,55 +14,65 @@ import java.net.URI
  *  Repositories in `buildscript` blocks are *NOT* substituted by this script and should be handled manually
  */
 val mirroredUrls = listOf(
+    "https://cdn.azul.com/zulu/bin",
+    "https://clojars.org/repo",
+    "https://dl.bintray.com/d10xa/maven",
     "https://dl.bintray.com/groovy/maven",
+    "https://dl.bintray.com/jetbrains/maven-patched",
+    "https://dl.bintray.com/jetbrains/scala-plugin-deps",
+    "https://dl.bintray.com/kodein-framework/Kodein-DI",
+    "https://dl.bintray.com/konsoletyper/teavm",
     "https://dl.bintray.com/kotlin/kotlin-dev",
     "https://dl.bintray.com/kotlin/kotlin-eap",
+    "https://dl.bintray.com/kotlin/kotlinx.html",
+    "https://dl.bintray.com/kotlin/kotlinx",
+    "https://dl.bintray.com/kotlin/ktor",
+    "https://dl.bintray.com/scalacenter/releases",
+    "https://dl.bintray.com/scalamacros/maven",
+    "https://dl.bintray.com/kotlin/exposed",
+    "https://dl.bintray.com/cy6ergn0m/maven",
+    "https://dl.bintray.com/kotlin/kotlin-js-wrappers",
+    "https://dl.google.com/android/repository",
     "https://dl.google.com/dl/android/maven2",
+    "https://dl.google.com/dl/android/studio/ide-zips",
     "https://dl.google.com/go",
     "https://download.jetbrains.com",
     "https://jcenter.bintray.com",
     "https://jetbrains.bintray.com/dekaf",
-    "https://jetbrains.bintray.com/intellij-jdk",
     "https://jetbrains.bintray.com/intellij-jbr",
+    "https://jetbrains.bintray.com/intellij-jdk",
     "https://jetbrains.bintray.com/intellij-plugin-service",
+    "https://jetbrains.bintray.com/intellij-terraform",
     "https://jetbrains.bintray.com/intellij-third-party-dependencies",
+    "https://jetbrains.bintray.com/jediterm",
+    "https://jetbrains.bintray.com/kotlin-native-dependencies",
     "https://jetbrains.bintray.com/markdown",
     "https://jetbrains.bintray.com/teamcity-rest-client",
     "https://jetbrains.bintray.com/test-discovery",
-    "https://jetbrains.bintray.com/jediterm",
+    "https://jetbrains.bintray.com/wormhole",
     "https://jitpack.io",
-    "https://www.exasol.com/artifactory/exasol-releases",
-    "https://plugins.gradle.org/m2",
-    "https://plugins.jetbrains.com/maven",
-    "https://repo.grails.org/grails/core",
-    "https://repo.jenkins-ci.org/releases",
-    "https://repo.spring.io/milestone",
-    "https://repo1.maven.org/maven2",
-    "https://repo.maven.apache.org/maven2",
-    "https://services.gradle.org",
-    "https://www.jetbrains.com/intellij-repository",
-    "https://www.jetbrains.com/intellij-repository/nightly",
-    "https://www.myget.org/F/intellij-go-snapshots/maven",
-    "https://www.myget.org/F/rd-snapshots/maven",
-    "https://www.myget.org/F/rd-model-snapshots/maven",
-    "https://www.python.org/ftp",
-    "https://dl.google.com/dl/android/studio/ide-zips",
-    "https://dl.bintray.com/kotlin/ktor",
-    "https://cdn.azul.com/zulu/bin",
-    "https://repo.typesafe.com/typesafe/ivy-releases",
-    "https://dl.bintray.com/jetbrains/scala-plugin-deps",
-    "https://dl.bintray.com/jetbrains/maven-patched",
-    "https://dl.bintray.com/scalamacros/maven",
-    "https://dl.bintray.com/scalacenter/releases",
+    "https://kotlin.bintray.com/kotlin-dependencies",
     "https://oss.sonatype.org/content/repositories/releases",
     "https://oss.sonatype.org/content/repositories/snapshots",
     "https://oss.sonatype.org/content/repositories/staging",
-    "https://jetbrains.bintray.com/wormhole",
-    "https://jetbrains.bintray.com/kotlin-native-dependencies",
-    "https://kotlin.bintray.com/kotlin-dependencies",
-    "https://dl.bintray.com/kotlin/kotlinx",
-    "https://dl.bintray.com/kotlin/kotlinx.html",
-    "https://dl.google.com/android/repository"
+    "https://packages.confluent.io/maven/",
+    "https://plugins.gradle.org/m2",
+    "https://plugins.jetbrains.com/maven",
+    "https://repo1.maven.org/maven2",
+    "https://repo.grails.org/grails/core",
+    "https://repo.jenkins-ci.org/releases",
+    "https://repo.maven.apache.org/maven2",
+    "https://repo.spring.io/milestone",
+    "https://repo.typesafe.com/typesafe/ivy-releases",
+    "https://services.gradle.org",
+    "https://www.exasol.com/artifactory/exasol-releases",
+    "https://www.myget.org/F/intellij-go-snapshots/maven",
+    "https://www.myget.org/F/rd-model-snapshots/maven",
+    "https://www.myget.org/F/rd-snapshots/maven",
+    "https://www.python.org/ftp",
+    "https://www.jetbrains.com/intellij-repository/nightly",
+    "https://www.jetbrains.com/intellij-repository/releases",
+    "https://www.jetbrains.com/intellij-repository/snapshots"
 )
 
 val aliases = mapOf(
@@ -158,17 +168,17 @@ val checkRepositories: TaskProvider<Task> = tasks.register("checkRepositories") 
             testStarted(testName)
         }
 
-        repositories.filterIsInstance<IvyArtifactRepository>().forEach {
+        project.repositories.filterIsInstance<IvyArtifactRepository>().forEach {
             if (it.url == null) {
                 logInvalidIvyRepo(testName)
             }
         }
 
-        repositories.findNonCachedRepositories().forEach {
+        project.repositories.findNonCachedRepositories().forEach {
             logNonCachedRepo(testName, it)
         }
 
-        buildscript.repositories.findNonCachedRepositories().forEach {
+        project.buildscript.repositories.findNonCachedRepositories().forEach {
             logNonCachedRepo(testName, it)
         }
 
@@ -178,7 +188,9 @@ val checkRepositories: TaskProvider<Task> = tasks.register("checkRepositories") 
     }
 }
 
-tasks.findByName("checkBuild")?.dependsOn(checkRepositories)
+tasks.named("checkBuild").configure {
+    dependsOn(checkRepositories)
+}
 
 if (cacheRedirectorEnabled()) {
     logger.info("Redirecting repositories for $displayName")

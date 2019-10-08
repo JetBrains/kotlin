@@ -48,10 +48,11 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
             GET_VAR 'x: <root>.I1 declared in <root>.test' type=<root>.I1 origin=null
           then: RETURN type=kotlin.Nothing from='public final fun test (x: <root>.I1): kotlin.Unit declared in <root>'
             GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      VAR name:<destruct> type:<root>.I1 [val]
-        GET_VAR 'x: <root>.I1 declared in <root>.test' type=<root>.I1 origin=null
+      VAR name:<destruct> type:<root>.I2 [val]
+        GET_VAR 'x: <root>.I1 declared in <root>.test' type=<root>.I2 origin=null
       VAR name:c1 type:kotlin.Int [val]
         CALL 'public final fun component1 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          $receiver: GET_VAR 'val <destruct>: <root>.I1 [val] declared in <root>.test' type=<root>.I1 origin=null
-      VAR name:c2 type:IrErrorType [val]
-        ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [/component2]>#' type=IrErrorType
+          $receiver: GET_VAR 'val <destruct>: <root>.I2 [val] declared in <root>.test' type=<root>.I2 origin=null
+      VAR name:c2 type:kotlin.String [val]
+        CALL 'public final fun component2 (): kotlin.String declared in <root>' type=kotlin.String origin=null
+          $receiver: GET_VAR 'val <destruct>: <root>.I2 [val] declared in <root>.test' type=<root>.I2 origin=null

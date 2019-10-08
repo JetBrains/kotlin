@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.scriptRelatedModuleName
 import org.jetbrains.kotlin.idea.highlighter.OutsidersPsiFileSupportUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.util.isKotlinBinary
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
-import org.jetbrains.kotlin.types.typeUtil.lazyClosure
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.sure
@@ -241,7 +240,7 @@ private inline fun <T> collectInfosByVirtualFile(
     }
 
     val isBinary = virtualFile.fileType.isKotlinBinary()
-    val scriptConfigurationManager = ScriptDependenciesManager.getInstance(project)
+    val scriptConfigurationManager = ScriptConfigurationManager.getInstance(project)
     if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsDependenciesClassFilesScope()) {
         if (treatAsLibrarySource) {
             onOccurrence(ScriptDependenciesSourceInfo.ForProject(project))
@@ -309,4 +308,28 @@ private fun OrderEntry.toIdeaModuleInfo(
         else -> return emptyList()
     }
     return emptyList()
+}
+
+/**
+ * @see [org.jetbrains.kotlin.types.typeUtil.closure].
+ */
+fun <T> Collection<T>.lazyClosure(f: (T) -> Collection<T>): Sequence<T> = sequence {
+    if (size == 0) return@sequence
+    var sizeBeforeIteration = 0
+
+    yieldAll(this@lazyClosure)
+    var yieldedCount = size
+    var elementsToCheck = this@lazyClosure
+
+    while (yieldedCount > sizeBeforeIteration) {
+        val toAdd = hashSetOf<T>()
+        elementsToCheck.forEach {
+            val neighbours = f(it)
+            yieldAll(neighbours)
+            yieldedCount += neighbours.size
+            toAdd.addAll(neighbours)
+        }
+        elementsToCheck = toAdd
+        sizeBeforeIteration = yieldedCount
+    }
 }

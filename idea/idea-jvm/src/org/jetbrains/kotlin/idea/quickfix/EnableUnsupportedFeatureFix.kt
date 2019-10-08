@@ -48,8 +48,8 @@ sealed class EnableUnsupportedFeatureFix(
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val module = ModuleUtilCore.findModuleForPsiElement(file) ?: return
 
-            val facetSettings = KotlinFacetSettingsProvider.getInstance(project).getInitializedSettings(module)
-            val targetApiLevel = facetSettings.apiLevel?.let { apiLevel ->
+            val facetSettings = KotlinFacetSettingsProvider.getInstance(project)?.getInitializedSettings(module)
+            val targetApiLevel = facetSettings?.apiLevel?.let { apiLevel ->
                 if (ApiVersion.createByLanguageVersion(apiLevel) < feature.sinceApiVersion)
                     feature.sinceApiVersion.versionString
                 else

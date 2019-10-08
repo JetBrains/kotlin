@@ -1,0 +1,5 @@
+class A {
+    constructor()
+
+    val a<selection>: Int</selection><caret> = 1
+}

@@ -41,9 +41,10 @@ val KEY = Key.create<IsKotlinBinary>(KOTLIN_COMPILED_FILE_ATTRIBUTE)
  * Checks if this file is a compiled Kotlin class file ABI-compatible with the current plugin
  */
 fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
-    if (!IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file)) return false
+    val ideKotlinBinaryClassCache = IDEKotlinBinaryClassCache.getInstance()
+    if (!ideKotlinBinaryClassCache.isKotlinJvmCompiledFile(file)) return false
 
-    val kotlinClass = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file)
+    val kotlinClass = ideKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file)
     return kotlinClass != null && kotlinClass.metadataVersion.isCompatible()
 }
 
@@ -57,7 +58,9 @@ fun isKotlinInternalCompiledFile(file: VirtualFile, fileContent: ByteArray? = nu
         return false
     }
 
-    if (!IDEKotlinBinaryClassCache.isKotlinJvmCompiledFile(file, fileContent)) {
+    val ideKotlinBinaryClassCache = IDEKotlinBinaryClassCache.getInstance()
+
+    if (!ideKotlinBinaryClassCache.isKotlinJvmCompiledFile(file, fileContent)) {
         return false
     }
 
@@ -80,7 +83,7 @@ fun isKotlinInternalCompiledFile(file: VirtualFile, fileContent: ByteArray? = nu
         return true
     }
 
-    val header = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file, fileContent) ?: return false
+    val header = ideKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file, fileContent) ?: return false
     if (header.classId.isLocal) return true
 
     return header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS ||

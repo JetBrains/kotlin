@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -109,31 +109,6 @@ public class BindingContextUtils {
             throw new IllegalStateException(messageIfNull);
         }
         return value;
-    }
-
-    @NotNull
-    public static DeclarationDescriptor getEnclosingDescriptor(@NotNull BindingContext context, @NotNull KtElement element) {
-        KtNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, KtNamedDeclaration.class);
-        if (declaration instanceof KtFunctionLiteral) {
-            return getEnclosingDescriptor(context, declaration);
-        }
-        DeclarationDescriptor descriptor = context.get(DECLARATION_TO_DESCRIPTOR, declaration);
-        assert descriptor != null : "No descriptor for named declaration: " + declaration.getText() + "\n(of type " + declaration.getClass() + ")";
-        return descriptor;
-    }
-
-    @Nullable
-    public static FunctionDescriptor getEnclosingFunctionDescriptor(@NotNull BindingContext context, @NotNull KtElement element) {
-        KtElement functionOrClass = PsiTreeUtil.getParentOfType(element, KtFunction.class, KtClassOrObject.class);
-        DeclarationDescriptor descriptor = context.get(DECLARATION_TO_DESCRIPTOR, functionOrClass);
-        if (functionOrClass instanceof KtFunction) {
-            if (descriptor instanceof FunctionDescriptor) return (FunctionDescriptor) descriptor;
-            return null;
-        }
-        else {
-            if (descriptor instanceof ClassDescriptor) return ((ClassDescriptor) descriptor).getUnsubstitutedPrimaryConstructor();
-            return null;
-        }
     }
 
     public static void reportAmbiguousLabel(

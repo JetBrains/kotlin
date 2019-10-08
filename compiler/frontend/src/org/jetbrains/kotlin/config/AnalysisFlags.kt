@@ -35,4 +35,7 @@ object AnalysisFlags {
 
     @JvmStatic
     val useTypeRefinement by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val ideMode by AnalysisFlag.Delegates.Boolean
 }

@@ -32,19 +32,17 @@ import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.JavaPsiFacade
-import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.ScalarIndexExtension
 import com.intellij.util.text.VersionComparatorUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.idea.framework.JavaRuntimeDetectionUtil
 import org.jetbrains.kotlin.idea.framework.isExternalLibrary
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
@@ -233,10 +231,6 @@ fun getDefaultJvmTarget(sdk: Sdk?, version: String): JvmTarget? {
         sdkVersion.isAtLeast(JavaSdkVersion.JDK_1_6) -> JvmTarget.JVM_1_6
         else -> null
     }
-}
-
-fun isSnapshot(version: String): Boolean {
-    return version.contains("SNAPSHOT", ignoreCase = true)
 }
 
 fun hasJdkLikeUpdatedRuntime(version: String): Boolean =

@@ -29,6 +29,6 @@ abstract class AbstractBytecodeListingTestForNoArg : AbstractBytecodeListingTest
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         val project = environment.project
         StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(NOARG_ANNOTATIONS))
-        ExpressionCodegenExtension.registerExtension(project, NoArgExpressionCodegenExtension(false))
+        ExpressionCodegenExtension.registerExtension(project, CliNoArgExpressionCodegenExtension(NOARG_ANNOTATIONS, false))
     }
 }

@@ -26,6 +26,11 @@ open class KotlinNpmInstallTask : DefaultTask() {
     val packageJsonFiles: Collection<File>
         get() = resolutionManager.packageJsonFiles
 
+    // avoid using node_modules as output directory, as it is significantly slows down build
+    @get:OutputFile
+    val nodeModulesState: File
+        get() = nodeJs.rootNodeModulesStateFile
+
     @get:OutputFile
     val yarnLock: File
         get() = nodeJs.rootPackageDir.resolve("yarn.lock")

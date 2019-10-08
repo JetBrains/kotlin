@@ -710,12 +710,16 @@ fun case_35(a: DeepObject.A.B.C.D.E.F.G.J?) {
     }
 }
 
-// TESTCASE NUMBER: 36
+/*
+ * TESTCASE NUMBER: 36
+ * UNEXPECTED BEHAVIOUR
+ */
 fun case_36(x: Any) {
     var z = null
 
     if (x == <!DEBUG_INFO_CONSTANT!>z<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>x<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, UNREACHABLE_CODE!>java<!>
     }
 }
 
@@ -727,13 +731,17 @@ fun case_37(x: Nothing?, y: Nothing?) {
     }
 }
 
-// TESTCASE NUMBER: 38
+/*
+ * TESTCASE NUMBER: 38
+ * UNEXPECTED BEHAVIOUR
+ */
 fun case_38() {
     val z = null
 
     if (Object.prop_2 != <!DEBUG_INFO_CONSTANT!>z<!>)
     else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing & kotlin.Number")!>Object.prop_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>Object.prop_2<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, UNREACHABLE_CODE!>java<!>
     }
 }
 
@@ -982,22 +990,30 @@ fun case_56() {
     }
 }
 
-// TESTCASE NUMBER: 57
+/*
+ * TESTCASE NUMBER: 57
+ * UNEXPECTED BEHAVIOUR
+ */
 fun case_57(a: (() -> Unit)) {
     var z = null
 
     if (a == <!DEBUG_INFO_CONSTANT!>z<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit & kotlin.Nothing")!>a<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("() -> kotlin.Unit & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, UNREACHABLE_CODE!>java<!>
     }
 }
 
-// TESTCASE NUMBER: 58
+/*
+ * TESTCASE NUMBER: 58
+ * UNEXPECTED BEHAVIOUR
+ */
 fun case_58(a: ((Float) -> Int?)?, b: Float?, z: Nothing?) {
     if (a === <!DEBUG_INFO_CONSTANT!>z<!> && b == <!DEBUG_INFO_CONSTANT!>z<!> || <!DEBUG_INFO_CONSTANT!>z<!> == a && <!DEBUG_INFO_CONSTANT!>z<!> === b) {
         <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("((kotlin.Float) -> kotlin.Int?)? & kotlin.Nothing?")!>a<!>
         <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Nothing?")!>b<!>
         if (<!DEBUG_INFO_CONSTANT!>a<!> != <!DEBUG_INFO_CONSTANT!>z<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("((kotlin.Float) -> kotlin.Int?)? & (kotlin.Float) -> kotlin.Int? & kotlin.Nothing")!>a<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("((kotlin.Float) -> kotlin.Int?)? & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>a<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, UNREACHABLE_CODE!>java<!>
         }
     }
 }
@@ -1281,7 +1297,7 @@ fun case_71(t: Any?) {
                 <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any & kotlin.Any?")!>t<!>
                 <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest1()
                 <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest2()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
 
                 <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("{Any & Interface1 & Interface2}")!>it<!>.itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("{Any & Interface1 & Interface2}")!>it<!>.itest2() }
             }
@@ -1302,7 +1318,7 @@ fun case_72(t: Any?, z1: Nothing?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any & kotlin.Any?")!>t<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest1()
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest2()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
 
         <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.let { <!DEBUG_INFO_EXPRESSION_TYPE("{Any & Interface1 & Interface2}")!>it<!>.itest1(); <!DEBUG_INFO_EXPRESSION_TYPE("{Any & Interface1 & Interface2}")!>it<!>.itest2() }
     }
@@ -1324,7 +1340,7 @@ fun case_73(t: Any?) {
                     if (t != <!DEBUG_INFO_CONSTANT!>`null`<!>) {
                         <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest2()
                         <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest1()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
                         <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.test1()
                         <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.test2()
                         <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1 & ClassLevel2 & Interface1 & Interface2 & Interface3 & kotlin.Any & kotlin.Any?")!>t<!>
@@ -1349,7 +1365,7 @@ fun case_74(t: Any?) {
                     if (t is Interface3?) {
                         <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest2()
                         <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest1()
-                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
+                        <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
                         <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.test1()
                         <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.test2()
                         <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1 & ClassLevel2 & Interface1 & Interface2 & Interface3 & kotlin.Any & kotlin.Any?")!>t<!>
@@ -1372,7 +1388,7 @@ fun case_75(t: Any?, z: Nothing?) {
             if (t !is Interface2? || t !is Interface3?) {} else {
                 <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest2()
                 <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest1()
-                <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
+                <!DEBUG_INFO_EXPRESSION_TYPE("Interface3 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.itest()
                 <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.test1()
                 <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>.test2()
                 <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & kotlin.Any?"), DEBUG_INFO_SMARTCAST!>t<!>

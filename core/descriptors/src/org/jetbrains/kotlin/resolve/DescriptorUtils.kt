@@ -209,7 +209,9 @@ fun Annotated.getAnnotationRetention(): KotlinRetention? {
     val retentionArgumentValue =
         annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention)?.allValueArguments?.get(RETENTION_PARAMETER_NAME)
                 as? EnumValue ?: return null
-    return KotlinRetention.valueOf(retentionArgumentValue.enumEntryName.asString())
+
+    val retentionArgumentValueName = retentionArgumentValue.enumEntryName.asString()
+    return KotlinRetention.values().firstOrNull { it.name == retentionArgumentValueName }
 }
 
 val Annotated.nonSourceAnnotations: List<AnnotationDescriptor>
@@ -447,3 +449,6 @@ fun DeclarationDescriptor.isPrimaryConstructorOfInlineClass(): Boolean =
 
 @TypeRefinement
 fun ModuleDescriptor.getKotlinTypeRefiner(): KotlinTypeRefiner = getCapability(REFINER_CAPABILITY)?.value ?: KotlinTypeRefiner.Default
+
+@UseExperimental(TypeRefinement::class)
+fun ModuleDescriptor.isTypeRefinementEnabled(): Boolean = getCapability(REFINER_CAPABILITY)?.value != null

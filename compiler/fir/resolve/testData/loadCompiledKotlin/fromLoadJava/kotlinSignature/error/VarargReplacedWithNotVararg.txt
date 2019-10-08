@@ -1,5 +1,5 @@
 public open class VarargReplacedWithNotVararg : R|kotlin/Any| {
-    public open fun foo(vararg p0: R|kotlin/Array<out kotlin/String>|): R|kotlin/Unit|
+    public open fun foo(vararg p0: R|kotlin/Array<out kotlin/String?>|): R|kotlin/Unit|
 
     public constructor(): R|test/VarargReplacedWithNotVararg|
 

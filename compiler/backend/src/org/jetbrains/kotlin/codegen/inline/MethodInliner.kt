@@ -52,7 +52,6 @@ class MethodInliner(
     private val inlineOnlySmapSkipper: InlineOnlySmapSkipper?, //non null only for root
     private val shouldPreprocessApiVersionCalls: Boolean = false
 ) {
-    private val typeMapper = inliningContext.state.typeMapper
     private val languageVersionSettings = inliningContext.state.languageVersionSettings
     private val invokeCalls = ArrayList<InvokeCall>()
     //keeps order
@@ -237,16 +236,16 @@ class MethodInliner(
                     var coroutineDesc = desc
                     val actualInvokeDescriptor: FunctionDescriptor
                     if (info.invokeMethodDescriptor.isSuspend) {
-                        val coroutineInvokeMethodDescriptor = getOrCreateJvmSuspendFunctionView(
-                            info.invokeMethodDescriptor,
-                            inliningContext.state
-                        )
-                        actualInvokeDescriptor = coroutineInvokeMethodDescriptor
-                        val coroutineInvokeDesc = typeMapper.mapAsmMethod(coroutineInvokeMethodDescriptor).descriptor
+                        actualInvokeDescriptor = (info as ExpressionLambda).getInlineSuspendLambdaViewDescriptor()
+                        val parametersSize = actualInvokeDescriptor.valueParameters.size +
+                                (if (actualInvokeDescriptor.extensionReceiverParameter != null) 1 else 0)
                         // And here we expect invoke(...Ljava/lang/Object;) be replaced with invoke(...Lkotlin/coroutines/Continuation;)
                         // if this does not happen, insert fake continuation, since we could not have one yet.
                         val argumentTypes = Type.getArgumentTypes(desc)
-                        if (Type.getArgumentTypes(coroutineInvokeDesc).size != argumentTypes.size) {
+                        if (argumentTypes.size != parametersSize &&
+                            // But do not add it in IR. In IR we already have lowered lambdas with additional parameter, while in Old BE we don't.
+                            !inliningContext.root.state.isIrBackend
+                        ) {
                             addFakeContinuationMarker(this)
                             coroutineDesc = Type.getMethodDescriptor(Type.getReturnType(desc), *argumentTypes, AsmTypes.OBJECT_TYPE)
                         }
@@ -303,10 +302,9 @@ class MethodInliner(
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
 
-                    val bridge = typeMapper.mapAsmMethod(erasedInvokeFunction)
                     StackValue
                         .onStack(info.invokeMethod.returnType, info.invokeMethodDescriptor.returnType)
-                        .put(bridge.returnType, erasedInvokeFunction.returnType, this)
+                        .put(OBJECT_TYPE, erasedInvokeFunction.returnType, this)
                     setLambdaInlining(false)
                     addInlineMarker(this, false)
                     childSourceMapper.endMapping()
@@ -1071,15 +1069,17 @@ class MethodInliner(
         //remove next template:
         //      aload x
         //      LDC paramName
-        //      INTRINSICS_CLASS_NAME.checkParameterIsNotNull(...)
+        //      INTRINSICS_CLASS_NAME.checkParameterIsNotNull/checkNotNullParameter(...)
         private fun removeClosureAssertions(node: MethodNode) {
             val toDelete = arrayListOf<AbstractInsnNode>()
             InsnSequence(node.instructions).filterIsInstance<MethodInsnNode>().forEach { methodInsnNode ->
-                if (methodInsnNode.name == "checkParameterIsNotNull" && methodInsnNode.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME) {
+                if (methodInsnNode.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
+                    (methodInsnNode.name == "checkParameterIsNotNull" || methodInsnNode.name == "checkNotNullParameter")
+                ) {
                     val prev = methodInsnNode.previous
-                    assert(Opcodes.LDC == prev?.opcode) { "'checkParameterIsNotNull' should go after LDC but $prev" }
+                    assert(Opcodes.LDC == prev?.opcode) { "'${methodInsnNode.name}' should go after LDC but $prev" }
                     val prevPev = methodInsnNode.previous.previous
-                    assert(Opcodes.ALOAD == prevPev?.opcode) { "'checkParameterIsNotNull' should be invoked on local var, but $prev" }
+                    assert(Opcodes.ALOAD == prevPev?.opcode) { "'${methodInsnNode.name}' should be invoked on local var, but $prev" }
 
                     toDelete.add(prevPev)
                     toDelete.add(prev)

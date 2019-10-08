@@ -30,7 +30,7 @@ abstract class AbstractCompletionIncrementalResolveTest : KotlinLightCodeInsight
         try {
             val file = File(testPath)
             val hasCaretMarker = FileUtil.loadFile(file, true).contains("<caret>")
-            myFixture.configureByFile(testPath)
+            myFixture.configureByFile(fileName())
 
             val document = myFixture.editor.document
             val beforeMarkerOffset = document.text.indexOf(BEFORE_MARKER)

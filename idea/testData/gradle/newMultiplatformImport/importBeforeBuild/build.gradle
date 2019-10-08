@@ -10,26 +10,6 @@ allprojects {
     }
 }
 
-project('library1') {
-    apply plugin: 'kotlin-multiplatform'
-
-    kotlin { targets { fromPreset(presets.jvm, 'jvm') } }
-}
-project('library2') {
-    apply plugin: 'kotlin-multiplatform'
-
-    kotlin {
-        targets { fromPreset(presets.jvm, 'jvm') }
-
-        sourceSets {
-            jvmMain {
-                dependencies {
-                    implementation project(':library1')
-                }
-            }
-        }
-    }
-}
 project('java-project') {
     apply plugin: 'java'
 

@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/objectWithInitializers.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Test modality:FINAL visibility:public superTypes:[<root>.Base]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test) returnType:kotlin.Int
@@ -33,20 +33,20 @@ FILE fqName:<root> fileName:/objectWithInitializers.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-x>' type=<root>.Test origin=null
     PROPERTY name:y visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Test) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Test
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.Test'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-y>' type=<root>.Test origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test origin=null
           value: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Test declared in <root>.Test' type=<root>.Test origin=null

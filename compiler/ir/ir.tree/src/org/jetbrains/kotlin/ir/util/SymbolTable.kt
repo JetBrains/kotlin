@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
@@ -27,8 +29,11 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 
-interface IrDeserializer {
-    fun findDeserializedDeclaration(symbol: IrSymbol): IrDeclaration?
+interface IrProvider {
+    fun getDeclaration(symbol: IrSymbol): IrDeclaration?
+}
+
+interface IrDeserializer : IrProvider {
     fun declareForwardDeclarations()
 }
 
@@ -48,6 +53,8 @@ interface ReferenceSymbolTable {
     fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol
     fun referenceVariable(descriptor: VariableDescriptor): IrVariableSymbol
 
+    fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol
+
     fun enterScope(owner: DeclarationDescriptor)
 
     fun leaveScope(owner: DeclarationDescriptor)
@@ -55,6 +62,7 @@ interface ReferenceSymbolTable {
 
 open class SymbolTable : ReferenceSymbolTable {
 
+    @Suppress("LeakingThis")
     val lazyWrapper = IrLazySymbolTable(this)
 
     private abstract class SymbolTableBase<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> {
@@ -191,6 +199,7 @@ open class SymbolTable : ReferenceSymbolTable {
     private val fieldSymbolTable = FlatSymbolTable<PropertyDescriptor, IrField, IrFieldSymbol>()
     private val simpleFunctionSymbolTable = FlatSymbolTable<FunctionDescriptor, IrSimpleFunction, IrSimpleFunctionSymbol>()
     private val propertySymbolTable = FlatSymbolTable<PropertyDescriptor, IrProperty, IrPropertySymbol>()
+    private val typeAliasSymbolTable = FlatSymbolTable<TypeAliasDescriptor, IrTypeAlias, IrTypeAliasSymbol>()
 
     private val globalTypeParameterSymbolTable = FlatSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
     private val scopedTypeParameterSymbolTable = ScopedSymbolTable<TypeParameterDescriptor, IrTypeParameter, IrTypeParameterSymbol>()
@@ -285,8 +294,9 @@ open class SymbolTable : ReferenceSymbolTable {
         origin: IrDeclarationOrigin,
         descriptor: PropertyDescriptor,
         type: IrType,
+        visibility: Visibility? = null,
         fieldFactory: (IrFieldSymbol) -> IrField = {
-            IrFieldImpl(startOffset, endOffset, origin, it, type).apply {
+            IrFieldImpl(startOffset, endOffset, origin, it, type, visibility ?: it.descriptor.visibility).apply {
                 metadata = MetadataSource.Property(it.descriptor)
             }
         }
@@ -342,6 +352,14 @@ open class SymbolTable : ReferenceSymbolTable {
         propertySymbolTable.referenced(descriptor) { IrPropertySymbolImpl(descriptor) }
 
     val unboundProperties: Set<IrPropertySymbol> get() = propertySymbolTable.unboundSymbols
+
+    override fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol =
+        typeAliasSymbolTable.referenced(descriptor) { IrTypeAliasSymbolImpl(descriptor) }
+
+    fun declareTypeAlias(descriptor: TypeAliasDescriptor, factory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias =
+        typeAliasSymbolTable.declare(descriptor, { IrTypeAliasSymbolImpl(descriptor) }, factory)
+
+    val unboundTypeAliases: Set<IrTypeAliasSymbol> get() = typeAliasSymbolTable.unboundSymbols
 
     fun declareSimpleFunction(
         startOffset: Int,

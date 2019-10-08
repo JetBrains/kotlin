@@ -105,4 +105,13 @@ public interface IrDeclarationOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty ir_local_delegated_property = 11;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty getIrLocalDelegatedProperty();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias ir_type_alias = 12;</code>
+   */
+  boolean hasIrTypeAlias();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias ir_type_alias = 12;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias getIrTypeAlias();
 }

@@ -2,4 +2,4 @@
 import java.util.ArrayList
 
 
-fun foo() = ArrayList<String?>()
+fun foo() = ArrayList<String>()

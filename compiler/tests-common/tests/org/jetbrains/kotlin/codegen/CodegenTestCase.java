@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider;
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.clientserver.TestProxy;
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -434,7 +431,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         if (externalImportsProvider != null) {
             myEnvironment.getSourceFiles().forEach(
                     file -> {
-                        ScriptCompilationConfigurationWrapper refinedConfiguration = ErrorHandlingKt.valueOrNull(externalImportsProvider.getScriptConfigurationResult(file));
+                        ScriptCompilationConfigurationWrapper refinedConfiguration = externalImportsProvider.getScriptConfiguration(file);
                         if (refinedConfiguration != null) {
                             files.addAll(refinedConfiguration.getDependenciesClassPath());
                         }
@@ -644,10 +641,10 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
     }
 
     protected void compile(@NotNull List<TestFile> files) {
-        compile(files, true);
+        compile(files, true, false);
     }
 
-    protected void compile(@NotNull List<TestFile> files, boolean reportProblems) {
+    protected void compile(@NotNull List<TestFile> files, boolean reportProblems, boolean dumpKotlinFiles) {
         File javaSourceDir = writeJavaFiles(files);
 
         configurationKind = extractConfigurationKind(files);
@@ -679,18 +676,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         generateClassesInFile(reportProblems);
 
-        if (javaSourceDir != null && javaClassesOutputDirectory == null) {
-            // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
-            File kotlinOut;
-            try {
-                kotlinOut = KotlinTestUtils.tmpDir(toString());
-            }
-            catch (IOException e) {
-                throw ExceptionUtilsKt.rethrow(e);
-            }
+        boolean compileJavaFiles = javaSourceDir != null && javaClassesOutputDirectory == null;
+        File kotlinOut = null;
 
+        // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
+        if (dumpKotlinFiles || compileJavaFiles) {
+            kotlinOut = getKotlinClassesOutputDirectory();
             OutputUtilsKt.writeAllTo(classFileFactory, kotlinOut);
+        }
 
+        if (compileJavaFiles) {
             List<String> javaClasspath = new ArrayList<>();
             javaClasspath.add(kotlinOut.getPath());
 
@@ -698,9 +693,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 javaClasspath.add(ForTestCompileRuntime.androidAnnotationsForTests().getPath());
             }
 
-            javaClassesOutputDirectory = CodegenTestUtil.compileJava(
-                    findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions
-            );
+            javaClassesOutputDirectory = getJavaClassesOutputDirectory();
+            compileJava(findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions, javaClassesOutputDirectory);
         }
     }
 
@@ -739,6 +733,10 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
             javacOptions.add("-target");
             javacOptions.add(JAVA_COMPILATION_TARGET);
         }
+    }
+
+    protected TargetBackend getBackend() {
+        return TargetBackend.JVM;
     }
 
     public static class TestFile implements Comparable<TestFile> {
@@ -800,18 +798,35 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         }, coroutinesPackage);
     }
 
+    @NotNull
+    protected File getJavaSourcesOutputDirectory() {
+        return createTempDirectory("java-files");
+    }
+
+    @NotNull
+    protected File getJavaClassesOutputDirectory() {
+        return createTempDirectory("java-classes");
+    }
+
+    protected File getKotlinClassesOutputDirectory() {
+        return createTempDirectory(toString());
+    }
+
+    @NotNull
+    private static File createTempDirectory(String prefix) {
+        try {
+            return KotlinTestUtils.tmpDir(prefix);
+        } catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+    }
+
     @Nullable
-    protected static File writeJavaFiles(@NotNull List<TestFile> files) {
+    protected File writeJavaFiles(@NotNull List<TestFile> files) {
         List<TestFile> javaFiles = CollectionsKt.filter(files, file -> file.name.endsWith(".java"));
         if (javaFiles.isEmpty()) return null;
 
-        File dir;
-        try {
-            dir = KotlinTestUtils.tmpDir("java-files");
-        }
-        catch (IOException e) {
-            throw ExceptionUtilsKt.rethrow(e);
-        }
+        File dir = getJavaSourcesOutputDirectory();
 
         for (TestFile testFile : javaFiles) {
             File file = new File(dir, testFile.name);
@@ -837,8 +852,17 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         callBoxMethodAndCheckResult(classLoader, aClass, method);
     }
 
-    protected void callBoxMethodAndCheckResult(URLClassLoader classLoader, Class<?> aClass, Method method)
+    private void callBoxMethodAndCheckResult(URLClassLoader classLoader, Class<?> aClass, Method method)
             throws IOException, IllegalAccessException, InvocationTargetException {
+        callBoxMethodAndCheckResult(classLoader, aClass, method, false);
+    }
+
+    protected void callBoxMethodAndCheckResult(
+            URLClassLoader classLoader,
+            Class<?> aClass,
+            Method method,
+            boolean unexpectedBehaviour
+    ) throws IOException, IllegalAccessException, InvocationTargetException {
         String result;
         if (BOX_IN_SEPARATE_PROCESS_PORT != null) {
             result = invokeBoxInSeparateProcess(classLoader, aClass);
@@ -858,7 +882,11 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
                 }
             }
         }
-        assertEquals("OK", result);
+        if (unexpectedBehaviour) {
+            assertNotSame("OK", result);
+        } else {
+            assertEquals("OK", result);
+        }
     }
 
     @NotNull
@@ -873,5 +901,16 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         }
 
         return new TestProxy(Integer.valueOf(BOX_IN_SEPARATE_PROCESS_PORT), aClass.getCanonicalName(), classPath).runTest();
+    }
+
+    protected void printReport(File wholeFile) {
+        boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile, getIgnoreBackendDirectivePrefix());
+        if (!isIgnored) {
+            System.out.println(generateToText());
+        }
+    }
+
+    protected String getIgnoreBackendDirectivePrefix() {
+        return InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX;
     }
 }

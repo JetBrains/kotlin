@@ -16,9 +16,6 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class KotlinProjectIT : BaseGradleIT() {
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.4")
-
     override fun defaultBuildOptions(): BuildOptions {
         return super.defaultBuildOptions().copy(
             androidGradlePluginVersion = AGPVersion.v3_1_0,

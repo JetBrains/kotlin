@@ -124,6 +124,11 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         runTest("idea/testData/shortenRefs/PackagesToUseStarImports.kt");
     }
 
+    @TestMetadata("PropertyFunctionConflict.kt")
+    public void testPropertyFunctionConflict() throws Exception {
+        runTest("idea/testData/shortenRefs/PropertyFunctionConflict.kt");
+    }
+
     @TestMetadata("removeCompanionRefInCalleeExpression.kt")
     public void testRemoveCompanionRefInCalleeExpression() throws Exception {
         runTest("idea/testData/shortenRefs/removeCompanionRefInCalleeExpression.kt");

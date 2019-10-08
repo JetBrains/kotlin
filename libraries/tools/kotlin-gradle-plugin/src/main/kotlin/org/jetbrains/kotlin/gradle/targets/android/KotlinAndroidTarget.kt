@@ -6,6 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
@@ -61,8 +62,7 @@ open class KotlinAndroidTarget(
     var publishLibraryVariantsGroupedByFlavor = false
 
     private fun checkPublishLibraryVariantsExist() {
-        // Capture type parameter T
-        fun <T> AbstractAndroidProjectHandler<T>.getLibraryVariantNames() =
+        fun AbstractAndroidProjectHandler.getLibraryVariantNames() =
             mutableSetOf<String>().apply {
                 forEachVariant(project) {
                     if (getLibraryOutputTask(it) != null)
@@ -92,12 +92,8 @@ open class KotlinAndroidTarget(
         KotlinAndroidPlugin.androidTargetHandler(project.getKotlinPluginVersion()!!, this).doCreateComponents()
     }
 
-    // Capture the type parameter T for `AbstractAndroidProjectHandler`
-    private fun <T> AbstractAndroidProjectHandler<T>.doCreateComponents(): Set<KotlinTargetComponent> {
-        if (!isGradleVersionAtLeast(4, 7))
-            return emptySet()
-
-        val publishableVariants = mutableListOf<T>()
+    private fun AbstractAndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
+        val publishableVariants = mutableListOf<BaseVariant>()
             .apply { forEachVariant(project) { add(it) } }
             .toList() // Defensive copy against unlikely modification by the lambda that captures the list above in forEachVariant { }
             .filter { getLibraryOutputTask(it) != null && publishLibraryVariants?.contains(getVariantName(it)) ?: true }
@@ -164,8 +160,8 @@ open class KotlinAndroidTarget(
         }.toSet()
     }
 
-    private fun <T> AbstractAndroidProjectHandler<T>.createAndroidUsageContexts(
-        variant: T,
+    private fun AbstractAndroidProjectHandler.createAndroidUsageContexts(
+        variant: BaseVariant,
         compilation: KotlinCompilation<*>,
         artifactClassifier: String?
     ): Set<DefaultKotlinUsageContext> {

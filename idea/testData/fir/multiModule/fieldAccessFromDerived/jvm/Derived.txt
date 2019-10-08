@@ -1,0 +1,15 @@
+FILE: Derived.kt
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public final fun getValue(): <ERROR TYPE REF: cycle> {
+            ^getValue this@R|/Base|.R|/Base.value|
+        }
+
+        public final fun foo(): R|kotlin/Int| {
+            ^foo this@R|/Base|.R|/Base.value|
+        }
+
+    }

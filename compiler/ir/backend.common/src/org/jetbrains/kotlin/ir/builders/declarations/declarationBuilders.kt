@@ -157,7 +157,7 @@ inline fun buildFun(builder: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
         buildFun()
     }
 
-inline fun IrDeclarationContainer.addFunction(builder: IrFunctionBuilder.() -> Unit): IrSimpleFunction =
+inline fun IrDeclarationContainer.addFunction(builder: IrFunctionBuilder.() -> Unit): IrFunctionImpl =
     buildFun(builder).also { function ->
         declarations.add(function)
         function.parent = this@addFunction

@@ -9,7 +9,7 @@ import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
-import org.jetbrains.kotlin.idea.scratch.getScratchPanelFromSelectedEditor
+import org.jetbrains.kotlin.idea.scratch.getScratchFileFromSelectedEditor
 
 class RunScratchFromHereAction : ScratchAction(
     KotlinBundle.message("scratch.run.from.here.button"),
@@ -18,9 +18,9 @@ class RunScratchFromHereAction : ScratchAction(
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val scratchPanel = getScratchPanelFromSelectedEditor(project) ?: return
+        val scratchFile = getScratchFileFromSelectedEditor(project) ?: return
 
-        doAction(scratchPanel.scratchFile)
+        doAction(scratchFile)
     }
 
     companion object {

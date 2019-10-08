@@ -24,6 +24,7 @@ import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
@@ -35,7 +36,6 @@ import com.intellij.openapi.projectRoots.ex.PathUtilEx
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.ui.EditorNotifications
 import com.intellij.util.containers.SLRUMap
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
@@ -190,19 +190,14 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         scriptDefinitionsCacheLock.write { scriptDefinitionsCache.clear() }
 
         // TODO: clear by script type/definition
-        ServiceManager.getService(project, ScriptsCompilationConfigurationCache::class.java).clear()
-
-        ApplicationManager.getApplication().invokeLater {
-            if (!project.isDisposed) {
-                EditorNotifications.getInstance(project).updateAllNotifications()
-            }
-        }
+        ScriptConfigurationManager.getInstance(project).clearConfigurationCachesAndRehighlight()
     }
 
     private fun ScriptDefinitionsSource.safeGetDefinitions(): List<ScriptDefinition> {
         if (!failedContributorsHashes.contains(this@safeGetDefinitions.hashCode())) try {
             return definitions.toList()
         } catch (t: Throwable) {
+            if (t is ControlFlowException) throw t
             // reporting failed loading only once
             LOG.error("[kts] cannot load script definitions using $this", t)
             failedContributorsHashes.add(this@safeGetDefinitions.hashCode())
@@ -210,23 +205,11 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         return emptyList()
     }
 
-    @Suppress("unused") // used in the 182/as33 bunches
-    fun getDefinitionsBy(source: ScriptDefinitionsSource): List<ScriptDefinition> = lock.write {
-        if (definitions == null) return emptyList() // not loaded yet
-
-        if (source !in definitionsBySource) error("Unknown source: ${source::class.java.name}")
-
-        return definitionsBySource[source] ?: emptyList()
-    }
-
     companion object {
         fun getInstance(project: Project): ScriptDefinitionsManager =
             ServiceManager.getService(project, ScriptDefinitionProvider::class.java) as ScriptDefinitionsManager
     }
 }
-
-
-private val LOG = Logger.getInstance("ScriptTemplatesProviders")
 
 // TODO: consider rewriting to return sequence
 fun loadDefinitionsFromTemplates(

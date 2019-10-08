@@ -6,7 +6,6 @@ internal object Library {
 
 internal class User {
     fun main() {
-
         Library.ourOut!!.print(1)
     }
 }

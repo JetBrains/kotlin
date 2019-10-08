@@ -6,48 +6,106 @@
 package org.jetbrains.kotlin.idea.perf
 
 import org.jetbrains.kotlin.idea.perf.WholeProjectPerformanceTest.Companion.nsToMs
+import org.jetbrains.kotlin.idea.perf.profilers.*
+import org.jetbrains.kotlin.idea.testFramework.logMessage
+import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.*
-import kotlin.math.pow
-import kotlin.math.sqrt
 import kotlin.system.measureNanoTime
 import java.lang.ref.WeakReference
-import kotlin.math.exp
-import kotlin.math.ln
+import kotlin.math.*
+import kotlin.system.measureTimeMillis
+import kotlin.test.assertEquals
 
-class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "ValueMS", "StdDev")) : Closeable {
+typealias StatInfos = Map<String, Any>?
+
+class Stats(
+    val name: String = "",
+    val header: Array<String> = arrayOf("Name", "ValueMS", "StdDev"),
+    val acceptanceStabilityLevel: Int = 25
+) : Closeable {
+
     private val perfTestRawDataMs = mutableListOf<Long>()
 
-    private val statsFile: File =
-        File("build/stats${if (name.isNotEmpty()) "-${name.toLowerCase().replace(' ', '-')}" else ""}.csv")
-            .absoluteFile
+    private val statsFile: File = File(pathToResource("stats${statFilePrefix()}.csv")).absoluteFile
+
     private val statsOutput: BufferedWriter
 
     init {
         statsOutput = statsFile.bufferedWriter()
 
         statsOutput.appendln(header.joinToString())
+
+        PerformanceCounter.setTimeCounterEnabled(true)
     }
 
-    private fun append(id: String, timingsNs: LongArray) {
-        val meanNs = timingsNs.average()
-        val meanMs = meanNs.toLong().nsToMs
+    private fun statFilePrefix() = if (name.isNotEmpty()) "-${plainname()}" else ""
 
-        val stdDivMs = (sqrt(
-            timingsNs.fold(0.0,
-                           { accumulator, next -> accumulator + (1.0 * (next - meanMs)).pow(2.0) })
-        ) / timingsNs.size).toLong().nsToMs
+    private fun plainname() = name.toLowerCase().replace(' ', '-').replace('/', '_')
 
-        println("##teamcity[buildStatisticValue key='$id' value='$meanMs']")
-        println("##teamcity[buildStatisticValue key='$id stdDev' value='$stdDivMs']")
+    private fun pathToResource(resource: String) = "build/$resource"
 
-        perfTestRawDataMs.addAll(timingsNs.map { it.nsToMs }.toList())
-        append(arrayOf(id, meanMs, stdDivMs))
+    private fun append(id: String, statInfosArray: Array<StatInfos>) {
+        val timingsMs = toTimingsMs(statInfosArray)
+
+        val calcMean = calcMean(timingsMs)
+
+        for (v in listOf(
+            Triple("mean", "", calcMean.mean.toLong()),
+            Triple("stdDev", " stdDev", calcMean.stdDev.toLong()),
+            Triple("geomMean", " geomMean", calcMean.geomMean.toLong())
+        )) {
+            val n = "$id : ${v.first}"
+
+            printTestStarted(n)
+            printStatValue("$id${v.second}", v.third)
+            printTestFinished(n, v.third, includeStatValue = false)
+        }
+
+        statInfosArray.filterNotNull()
+            .map { it.keys }
+            .fold(mutableSetOf<String>(), { acc, keys -> acc.addAll(keys); acc })
+            .filter { it != TEST_KEY && it != ERROR_KEY }
+            .sorted().forEach { perfCounterName ->
+                val values = statInfosArray.map { (it?.get(perfCounterName) as? Long) ?: 0L }.toLongArray()
+                val statInfoMean = calcMean(values)
+
+                val n = "$id : $perfCounterName"
+                val mean = statInfoMean.mean.toLong()
+
+                val shortName = if (perfCounterName.endsWith(": time")) n.removeSuffix(": time") else null
+
+                shortName?.let { printTestStarted(it) }
+                printStatValue(n, mean)
+                shortName?.let { printTestFinished(it, mean, includeStatValue = false) }
+            }
+
+        perfTestRawDataMs.addAll(timingsMs.toList())
+        append(arrayOf(id, calcMean.mean, calcMean.stdDev))
     }
+
+    private fun toTimingsMs(statInfosArray: Array<StatInfos>) =
+        statInfosArray.map { info -> info?.let { it[TEST_KEY] as? Long }?.nsToMs ?: 0L }.toLongArray()
+
+    private fun calcMean(statInfosArray: Array<StatInfos>): Mean = calcMean(toTimingsMs(statInfosArray))
+
+    private fun calcMean(values: LongArray): Mean {
+        val mean = values.average()
+
+        val stdDev = if (values.size > 1) (sqrt(
+            values.fold(0.0,
+                        { accumulator, next -> accumulator + (1.0 * (next - mean)).pow(2) })
+        ) / (values.size - 1))
+        else 0.0
+
+        val geomMean = geomMean(values.toList())
+
+        return Mean(mean, stdDev, geomMean)
+    }
+
+    data class Mean(val mean: Double, val stdDev: Double, val geomMean: Double)
 
     private fun append(values: Array<Any>) {
-        if (values.size != header.size) {
-            throw IllegalArgumentException("Expected ${header.size} values, actual ${values.size} values")
-        }
+        require(values.size == header.size) { "Expected ${header.size} values, actual ${values.size} values" }
         with(statsOutput) {
             appendln(values.joinToString { it.toString() })
             flush()
@@ -59,118 +117,180 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
         append(arrayOf(file, id, ms))
     }
 
-    fun <K, T> perfTest(
+    fun <SV, TV> perfTest(
         testName: String,
-        warmUpIterations: Int = 3,
-        iterations: Int = 10,
-        setUp: (TestData<K, T>) -> Unit = { null },
-        test: (TestData<K, T>) -> Unit,
-        tearDown: (TestData<K, T>) -> Unit = { null }
+        warmUpIterations: Int = 5,
+        iterations: Int = 20,
+        setUp: (TestData<SV, TV>) -> Unit = { },
+        test: (TestData<SV, TV>) -> Unit,
+        tearDown: (TestData<SV, TV>) -> Unit = { },
+        profileEnabled: Boolean = false
     ) {
-        val namePrefix = "$name: $testName"
-        val timingsNs = LongArray(iterations)
-        val errors = Array<Throwable?>(iterations, init = { null })
 
-        tcSuite(namePrefix) {
-            warmUpPhase(warmUpIterations, namePrefix, setUp, test, tearDown)
+        val warmPhaseData = PhaseData(
+            iterations = warmUpIterations,
+            testName = testName,
+            setUp = setUp,
+            test = test,
+            tearDown = tearDown,
+            profileEnabled = profileEnabled
+        )
+        val mainPhaseData = PhaseData(
+            iterations = iterations,
+            testName = testName,
+            setUp = setUp,
+            test = test,
+            tearDown = tearDown,
+            profileEnabled = profileEnabled
+        )
+        val block = {
+            warmUpPhase(warmPhaseData)
+            val statInfoArray = mainPhase(mainPhaseData)
 
-            mainPhase(iterations, setUp, test, tearDown, timingsNs, namePrefix, errors)
+            assertEquals(iterations, statInfoArray.size)
+            if (testName != WARM_UP) {
+                appendTimings(testName, statInfoArray)
 
-            for (attempt in 0 until iterations) {
-                for (n in listOf("$namePrefix #$attempt", "performance test: $namePrefix #$attempt")) {
-                    println("##teamcity[testStarted name='$n' captureStandardOutput='true']")
-                    if (errors[attempt] != null) {
-                        tcPrintErrors(n, listOf(errors[attempt]!!))
+                // do not estimate stability for warm-up
+                if (!testName.contains(WARM_UP)) {
+                    val calcMean = calcMean(statInfoArray)
+                    val stabilityPercentage = round(calcMean.stdDev * 100.0 / calcMean.mean).toInt()
+                    logMessage { "$testName stability is $stabilityPercentage %" }
+                    val stabilityName = "$name: $testName stability"
+
+                    val stable = stabilityPercentage <= acceptanceStabilityLevel
+                    printTestStarted(stabilityName)
+                    printStatValue(stabilityName, stabilityPercentage)
+                    if (stable) {
+                        printTestFinished(stabilityName)
+                    } else {
+                        printTestFailed(stabilityName, "stability above $stabilityPercentage %")
                     }
-                    val spentMs = timingsNs[attempt].nsToMs
-                    println("##teamcity[buildStatisticValue key='$n' value='$spentMs']")
-                    println("##teamcity[testFinished name='$n' duration='$spentMs']")
                 }
             }
+        }
 
-            append(namePrefix, timingsNs)
+        if (testName != WARM_UP) {
+            tcSuite(testName, block)
+        } else {
+            block()
         }
     }
 
-    private fun <K, T> mainPhase(
-        iterations: Int,
-        setUp: (TestData<K, T>) -> Unit,
-        test: (TestData<K, T>) -> Unit,
-        tearDown: (TestData<K, T>) -> Unit,
-        timingsNs: LongArray,
-        namePrefix: String,
-        errors: Array<Throwable?>
+    private fun printTimings(
+        prefix: String,
+        statInfoArray: Array<StatInfos>,
+        attemptFn: (Int) -> String = { attempt -> "#$attempt" }
     ) {
-        val testData = TestData<K, T>(null, null)
+        for (statInfoIndex in statInfoArray.withIndex()) {
+            val attempt = statInfoIndex.index
+            val statInfo = statInfoIndex.value ?: continue
+            val n = "$name: $prefix ${attemptFn(attempt)}"
+            printTestStarted(n)
+            val t = statInfo[ERROR_KEY] as? Throwable
+            if (t != null) printTestFinished(n, t) else {
+                for ((k, v) in statInfo) {
+                    if (k == TEST_KEY) continue
+                    printStatValue("$n $k", v)
+                }
+
+                printTestFinished(n, (statInfo[TEST_KEY] as Long).nsToMs)
+            }
+        }
+    }
+
+    fun printWarmUpTimings(
+        prefix: String,
+        warmUpStatInfosArray: Array<StatInfos>
+    ) = printTimings(prefix, warmUpStatInfosArray) { attempt -> "warm-up #$attempt" }
+
+    fun appendTimings(
+        prefix: String,
+        statInfosArray: Array<StatInfos>
+    ) {
+        printTimings(prefix, statInfosArray)
+        append("$name: $prefix", statInfosArray)
+    }
+
+    private fun <SV, TV> warmUpPhase(phaseData: PhaseData<SV, TV>) {
+        val warmUpStatInfosArray = phase(phaseData, WARM_UP)
+
+        if (phaseData.testName != WARM_UP) {
+            printWarmUpTimings(phaseData.testName, warmUpStatInfosArray)
+        }
+
+        warmUpStatInfosArray.filterNotNull().map { it[ERROR_KEY] as? Exception }.firstOrNull()?.let { throw it }
+    }
+
+    private fun <SV, TV> mainPhase(phaseData: PhaseData<SV, TV>): Array<StatInfos> =
+        phase(phaseData, "")
+
+    private fun <SV, TV> phase(phaseData: PhaseData<SV, TV>, phaseName: String): Array<StatInfos> {
+        val statInfosArray = Array<StatInfos>(phaseData.iterations) { null }
+        val testData = TestData<SV, TV>(null, null)
+
         try {
-            for (attempt in 0 until iterations) {
+            for (attempt in 0 until phaseData.iterations) {
                 testData.reset()
                 triggerGC(attempt)
 
-                setUp(testData)
+                val phaseProfiler = createPhaseProfiler(phaseData, phaseName, attempt)
+
+                val setUpMillis = measureTimeMillis { phaseData.setUp(testData) }
+                logMessage { "setup took $setUpMillis ms" }
+
+                val valueMap = HashMap<String, Any>(2 * PerformanceCounter.numberOfCounters + 1)
+                statInfosArray[attempt] = valueMap
                 try {
-                    val spentNs = measureNanoTime {
-                        test(testData)
+
+                    phaseProfiler.start()
+                    valueMap[TEST_KEY] = measureNanoTime {
+                        phaseData.test(testData)
                     }
-                    timingsNs[attempt] = spentNs
+                    phaseProfiler.stop()
+
+                    PerformanceCounter.report { name, counter, nanos ->
+                        valueMap["counter \"$name\": count"] = counter.toLong()
+                        valueMap["counter \"$name\": time"] = nanos.nsToMs
+                    }
+
                 } catch (t: Throwable) {
-                    println("error at $namePrefix #$attempt:")
+                    println("# error at ${phaseData.testName} #$attempt:")
                     t.printStackTrace()
-                    errors[attempt] = t
+                    valueMap[ERROR_KEY] = t
                 } finally {
-                    tearDown(testData)
+                    try {
+                        val tearDownMillis = measureTimeMillis {
+                            phaseData.tearDown(testData)
+                        }
+                        logMessage { "tearDown took $tearDownMillis ms" }
+                    } finally {
+                        PerformanceCounter.resetAllCounters()
+                    }
                 }
             }
         } catch (t: Throwable) {
-            println("error at $namePrefix:")
-            tcPrintErrors(namePrefix, listOf(t))
+            println("error at ${phaseData.testName}:")
+            tcPrintErrors(phaseData.testName, listOf(t))
         }
+        return statInfosArray
     }
 
-    private fun <K, T> warmUpPhase(
-        warmUpIterations: Int,
-        namePrefix: String,
-        setUp: (TestData<K, T>) -> Unit,
-        test: (TestData<K, T>) -> Unit,
-        tearDown: (TestData<K, T>) -> Unit
-    ) {
-        val testData = TestData<K, T>(null, null)
-        for (attempt in 0 until warmUpIterations) {
-            testData.reset()
+    private fun <K, T> createPhaseProfiler(
+        phaseData: PhaseData<K, T>,
+        phaseName: String,
+        attempt: Int
+    ): PhaseProfiler {
+        val profilerHandler = if (phaseData.profileEnabled) ProfilerHandler.getInstance() else DummyProfilerHandler
 
-            triggerGC(attempt)
+        return if (profilerHandler != DummyProfilerHandler) {
+            val profilerPath = pathToResource("profile/${plainname()}")
+            check(with(File(profilerPath)) { exists() || mkdirs() }) { "unable to mkdirs $profilerPath for ${phaseData.testName}" }
+            val activityName = "${phaseData.testName}-${if (phaseName.isEmpty()) "" else "$phaseName-"}$attempt"
 
-            val n = "$namePrefix warm-up #$attempt"
-            println("##teamcity[testStarted name='$n' captureStandardOutput='true']")
-
-            try {
-                setUp(testData)
-                var spentNs: Long = 0
-                try {
-                    spentNs = measureNanoTime {
-                        test(testData)
-                    }
-                } catch (t: Throwable) {
-                    println("error at $n:\n")
-
-                    t.printStackTrace()
-
-                    println("\n")
-
-                    tcPrintErrors(n, listOf(t))
-                    throw t
-                } finally {
-                    tearDown(testData)
-                }
-                val spentMs = spentNs.nsToMs
-                println("##teamcity[buildStatisticValue key='$n' value='$spentMs']")
-                println("##teamcity[testFinished name='$n' duration='$spentMs']")
-            } catch (t: Throwable) {
-                println("##teamcity[testFinished name='$n']")
-                println("error at $n:")
-                tcPrintErrors(n, listOf(t))
-                throw t
-            }
+            ActualPhaseProfiler(activityName, profilerPath, profilerHandler)
+        } else {
+            DummyPhaseProfiler
         }
     }
 
@@ -184,59 +304,113 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
         }
     }
 
-    private fun geomMean(data: List<Long>) = exp(data.fold(0.0, { mul, next -> mul + ln(1.0 * next) }) / data.size).toLong()
+    private fun geomMean(data: List<Long>) = exp(data.fold(0.0, { mul, next -> mul + ln(1.0 * next) }) / data.size)
 
     override fun close() {
         if (perfTestRawDataMs.isNotEmpty()) {
-            val geomMeanMs = geomMean(perfTestRawDataMs.toList())
-            println("##teamcity[buildStatisticValue key='$name geomMean' value='$geomMeanMs']")
+            val geomMeanMs = geomMean(perfTestRawDataMs.toList()).toLong()
+            printStatValue("$name geomMean", geomMeanMs)
             append(arrayOf("$name geomMean", geomMeanMs, 0))
         }
         statsOutput.flush()
         statsOutput.close()
     }
+
+    companion object {
+        const val TEST_KEY = "test"
+        const val ERROR_KEY = "error"
+
+        const val WARM_UP = "warm-up"
+
+        inline fun runAndMeasure(note: String, block: () -> Unit) {
+            val openProjectMillis = measureTimeMillis {
+                block()
+            }
+            logMessage { "$note took $openProjectMillis ms" }
+        }
+
+        fun printTestStarted(testName: String) {
+            println("##teamcity[testStarted name='$testName' captureStandardOutput='true']")
+        }
+
+        fun printStatValue(name: String, value: Any) {
+            println("##teamcity[buildStatisticValue key='$name' value='$value']")
+        }
+
+        private fun printTestFinished(testName: String) {
+            println("##teamcity[testFinished name='$testName']")
+        }
+
+        fun printTestFinished(testName: String, spentMs: Long, includeStatValue: Boolean = true) {
+            if (includeStatValue) {
+                printStatValue(testName, spentMs)
+            }
+            println("##teamcity[testFinished name='$testName' duration='$spentMs']")
+        }
+
+        fun printTestFinished(testName: String, error: Throwable) {
+            println("error at $testName:")
+            printStatValue(testName, -1)
+            tcPrintErrors(testName, listOf(error))
+            //printTestFinished(testName)
+        }
+
+        private fun printTestFailed(testName: String, details: String) {
+            println("##teamcity[testFailed name='$testName' message='Exceptions reported' details='${tcEscape(details)}']")
+        }
+
+        inline fun tcSuite(name: String, block: () -> Unit) {
+            println("##teamcity[testSuiteStarted name='$name']")
+            try {
+                block()
+            } finally {
+                println("##teamcity[testSuiteFinished name='$name']")
+            }
+        }
+
+        inline fun tcTest(name: String, block: () -> Pair<Long, List<Throwable>>) {
+            printTestStarted(name)
+            val (time, errors) = block()
+            tcPrintErrors(name, errors)
+            //printTestFinished(name, time, includeStatValue = false)
+        }
+
+        private fun tcEscape(s: String) = s.replace("|", "||")
+            .replace("[", "|[")
+            .replace("]", "|]")
+            .replace("\r", "|r")
+            .replace("\n", "|n")
+            .replace("'", "|'")
+
+        fun tcPrintErrors(name: String, errors: List<Throwable>) {
+            if (errors.isNotEmpty()) {
+                val detailsWriter = StringWriter()
+                val errorDetailsPrintWriter = PrintWriter(detailsWriter)
+                errors.forEach {
+                    it.printStackTrace(errorDetailsPrintWriter)
+                    errorDetailsPrintWriter.println()
+                }
+                errorDetailsPrintWriter.close()
+                val details = detailsWriter.toString()
+                printTestFailed(name, details)
+            }
+        }
+    }
+
 }
 
-data class TestData<SV, V>(var setUpValue: SV?, var value: V?) {
+data class PhaseData<SV, TV>(
+    val iterations: Int,
+    val testName: String,
+    val setUp: (TestData<SV, TV>) -> Unit,
+    val test: (TestData<SV, TV>) -> Unit,
+    val tearDown: (TestData<SV, TV>) -> Unit,
+    val profileEnabled: Boolean = false
+)
+
+data class TestData<SV, TV>(var setUpValue: SV?, var value: TV?) {
     fun reset() {
         setUpValue = null
         value = null
     }
-}
-
-inline fun tcSuite(name: String, block: () -> Unit) {
-    println("##teamcity[testSuiteStarted name='$name']")
-    block()
-    println("##teamcity[testSuiteFinished name='$name']")
-}
-
-inline fun tcTest(name: String, block: () -> Pair<Long, List<Throwable>>) {
-    println("##teamcity[testStarted name='$name' captureStandardOutput='true']")
-    val (time, errors) = block()
-    tcPrintErrors(name, errors)
-    println("##teamcity[testFinished name='$name' duration='$time']")
-}
-
-fun tcPrintErrors(name: String, errors: List<Throwable>) {
-    if (errors.isNotEmpty()) {
-        val detailsWriter = StringWriter()
-        val errorDetailsPrintWriter = PrintWriter(detailsWriter)
-        errors.forEach {
-            it.printStackTrace(errorDetailsPrintWriter)
-            errorDetailsPrintWriter.println()
-        }
-        errorDetailsPrintWriter.close()
-        val details = detailsWriter.toString()
-        println("##teamcity[testFailed name='$name' message='Exceptions reported' details='${details.tcEscape()}']")
-    }
-}
-
-fun String.tcEscape(): String {
-    return this
-        .replace("|", "||")
-        .replace("[", "|[")
-        .replace("]", "|]")
-        .replace("\r", "|r")
-        .replace("\n", "|n")
-        .replace("'", "|'")
 }

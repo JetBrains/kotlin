@@ -17,28 +17,45 @@
 package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDocumentManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.util.messages.Topic
+import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.scratch.ui.scratchFileOptions
 
-abstract class ScratchFile(val project: Project, val editor: TextEditor) {
+abstract class ScratchFile(val project: Project, val file: VirtualFile) {
     var replScratchExecutor: SequentialScratchExecutor? = null
     var compilingScratchExecutor: ScratchExecutor? = null
+
+    private val moduleListeners: MutableList<() -> Unit> = mutableListOf()
+    var module: Module? = null
+        private set
 
     fun getExpressions(): List<ScratchExpression> = runReadAction {
         getPsiFile()?.let { getExpressions(it) } ?: emptyList()
     }
 
     fun getPsiFile(): PsiFile? = runReadAction {
-        PsiDocumentManager.getInstance(project).getPsiFile(editor.editor.document)
+        file.toPsiFile(project)
     }
 
-    fun getModule(): Module? {
-        return editor.getScratchPanel()?.getModule()
+    fun setModule(value: Module?) {
+        module = value
+        moduleListeners.forEach { it() }
+    }
+
+    fun addModuleListener(f: (PsiFile, Module?) -> Unit) {
+        moduleListeners.add {
+            val selectedModule = module
+
+            val psiFile = getPsiFile()
+            if (psiFile != null) {
+                f(psiFile, selectedModule)
+            }
+        }
     }
 
     val options: ScratchFileOptions
@@ -67,3 +84,14 @@ data class ScratchFileOptions(
     val isMakeBeforeRun: Boolean = false,
     val isInteractiveMode: Boolean = true
 )
+
+interface ScratchFileListener {
+    fun fileCreated(file: ScratchFile)
+
+    companion object {
+        val TOPIC = Topic.create(
+            "ScratchFileListener",
+            ScratchFileListener::class.java
+        )
+    }
+}

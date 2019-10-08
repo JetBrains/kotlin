@@ -1,6 +1,6 @@
 public abstract interface ReadOnlyExtendsWildcard : R|kotlin/Any| {
     public abstract operator fun bar(): R|kotlin/Unit|
 
-    public abstract operator fun foo(@R|kotlin/annotations/jvm/ReadOnly|() x: R|ft<kotlin/collections/List<out kotlin/CharSequence>, kotlin/collections/List<out kotlin/CharSequence>?>|!, @R|org/jetbrains/annotations/NotNull|() y: R|kotlin/Comparable<in kotlin/String>|): R|kotlin/Unit|
+    public abstract operator fun foo(@R|kotlin/annotations/jvm/ReadOnly|() x: R|ft<kotlin/collections/List<out kotlin/CharSequence>, kotlin/collections/List<out kotlin/CharSequence>?>!|, @R|org/jetbrains/annotations/NotNull|() y: R|kotlin/Comparable<in kotlin/String>|): R|kotlin/Unit|
 
 }

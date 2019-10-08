@@ -230,6 +230,11 @@ public class SequenceTest {
         seq.toList().let { expectedSingleChunk ->
             assertEquals(expectedSingleChunk, seq.chunked(size).single())
             assertEquals(expectedSingleChunk, seq.chunked(size + 3).single())
+            assertEquals(expectedSingleChunk, seq.chunked(Int.MAX_VALUE).single())
+        }
+
+        infiniteSeq.take(2).let { seq2 ->
+            assertEquals(seq2.toList(), seq2.chunked(Int.MAX_VALUE).single())
         }
 
         assertTrue(emptySequence<String>().chunked(3).none())
@@ -249,6 +254,16 @@ public class SequenceTest {
         result.take(10).forEachIndexed { windowIndex, window ->
             val startElement = windowIndex * 3
             assertEquals((startElement until startElement + 5).toList(), window)
+        }
+
+        infiniteSeq.take(3500).windowed(2000, 1000, partialWindows = true).forEachIndexed { windowIndex, window ->
+            val startElement = windowIndex * 1000
+            val elementCount = when (windowIndex) {
+                3 -> 500
+                2 -> 1500
+                else -> 2000
+            }
+            assertEquals((startElement until startElement + elementCount).toList(), window)
         }
 
         val size = 7

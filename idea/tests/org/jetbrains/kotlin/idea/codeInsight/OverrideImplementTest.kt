@@ -289,4 +289,44 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testUnresolvedType() {
         doOverrideFileTest()
     }
+
+    fun testImplementFromClassName() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementFromClassName2() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementFromClassName3() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementFromClassName4() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementFromClassName5() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementFromClassName6() {
+        doMultiImplementFileTest()
+    }
+
+    fun testEnumClass() {
+        doOverrideFileTest("toString")
+    }
+
+    fun testEnumClass2() {
+        doOverrideFileTest("toString")
+    }
+
+    fun testEnumClass3() {
+        doOverrideFileTest("toString")
+    }
+
+    fun testEnumClass4() {
+        doOverrideFileTest("toString")
+    }
 }

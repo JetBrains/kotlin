@@ -14,11 +14,12 @@ import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.config.ExternalSystemTestTask
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.facet.externalSystemTestTasks
 import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.presentableDescription
 
@@ -42,7 +43,8 @@ class ProjectInfo(
     internal val projectPath: String,
     internal val exhaustiveModuleList: Boolean,
     internal val exhaustiveSourceSourceRootList: Boolean,
-    internal val exhaustiveDependencyList: Boolean
+    internal val exhaustiveDependencyList: Boolean,
+    internal val exhaustiveTestsList: Boolean
 ) {
     internal val messageCollector = MessageCollector()
     private val moduleManager = ModuleManager.getInstance(project)
@@ -88,6 +90,8 @@ class ModuleInfo(
     private val rootModel = module.rootManager
     private val expectedDependencyNames = HashSet<String>()
     private val expectedSourceRoots = HashSet<String>()
+    private val expectedExternalSystemTestTasks = ArrayList<ExternalSystemTestTask>()
+
     private val sourceFolderByPath by lazy {
         rootModel.contentEntries.asSequence()
             .flatMap { it.sourceFolders.asSequence() }
@@ -154,6 +158,10 @@ class ModuleInfo(
                 "Module '${module.name}': expected additional arguments '$arguments' but found '$actualArguments'"
             )
         }
+    }
+
+    fun externalSystemTestTask(taskName: String, projectId: String, targetName: String) {
+        expectedExternalSystemTestTasks.add(ExternalSystemTestTask(taskName, projectId, targetName))
     }
 
     fun libraryDependency(libraryName: String, scope: DependencyScope) {
@@ -271,6 +279,12 @@ class ModuleInfo(
             }
         }
 
+        if ((!module.externalSystemTestTasks().containsAll(expectedExternalSystemTestTasks)) || (projectInfo.exhaustiveTestsList && (module.externalSystemTestTasks() != expectedExternalSystemTestTasks))) {
+            projectInfo.messageCollector.report(
+                "Module '${module.name}': Expected tests list $expectedExternalSystemTestTasks doesn't match the actual one: ${module.externalSystemTestTasks()}"
+            )
+        }
+
         if (projectInfo.exhaustiveSourceSourceRootList) {
             val actualSourceRoots = sourceFolderByPath.keys.sorted()
             val expectedSourceRoots = expectedSourceRoots.sorted()
@@ -319,6 +333,7 @@ fun checkProjectStructure(
     exhaustiveModuleList: Boolean,
     exhaustiveSourceSourceRootList: Boolean,
     exhaustiveDependencyList: Boolean,
+    exhaustiveTestsList: Boolean,
     body: ProjectInfo.() -> Unit = {}
 ) {
     ProjectInfo(
@@ -326,6 +341,7 @@ fun checkProjectStructure(
         projectPath,
         exhaustiveModuleList,
         exhaustiveSourceSourceRootList,
-        exhaustiveDependencyList
+        exhaustiveDependencyList,
+        exhaustiveTestsList
     ).run(body)
 }

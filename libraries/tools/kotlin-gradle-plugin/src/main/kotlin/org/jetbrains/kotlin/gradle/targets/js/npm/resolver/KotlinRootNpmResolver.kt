@@ -98,6 +98,8 @@ internal class KotlinRootNpmResolver internal constructor(
             }
         }
 
+        nodeJs.rootNodeModulesStateFile.writeText(System.currentTimeMillis().toString())
+
         upToDateChecks.forEach { it.commit() }
 
         return KotlinRootNpmResolution(rootProject, projectResolutions)

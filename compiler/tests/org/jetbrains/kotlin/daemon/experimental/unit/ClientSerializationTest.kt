@@ -31,7 +31,7 @@ class TestServer(val serverPort: Int = 6999) {
         log.info("accepting clientSocket...")
         val client = serverSocket.accept()
         log.info("client accepted! (${client.remoteAddress})")
-        val (input, output) = client.openIO(log)
+        client.openIO(log)
 
         true
     }
@@ -77,7 +77,7 @@ class ClientSerializationTest : KotlinIntegrationTestBase() {
     fun ignore_testDefaultClient() = abstractSerializationTest(
         { DefaultClient<ServerBase>(testServer.serverPort) },
         { client, client2 -> assert(client.serverPort == client2.serverPort) },
-        { client, client2 ->
+        { _, client2 ->
             client2.log.info("abacaba (2)")
             log.info("test passed")
         }

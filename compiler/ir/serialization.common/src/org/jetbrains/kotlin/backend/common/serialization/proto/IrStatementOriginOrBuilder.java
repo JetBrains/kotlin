@@ -8,11 +8,11 @@ public interface IrStatementOriginOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 1;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getName();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
 }

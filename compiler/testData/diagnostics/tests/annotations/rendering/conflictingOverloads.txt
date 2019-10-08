@@ -1,0 +1,19 @@
+package
+
+@An public final data class A {
+    public constructor A(/*0*/ @An x: @An kotlin.Int)
+    public final val x: @An kotlin.Int
+    public final operator /*synthesized*/ fun component1(): @An kotlin.Int
+    @An public final fun copy(/*0*/ @An x: @An kotlin.Int): @An kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ @An x: @An kotlin.Int = ...): A
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER}) public final annotation class An : kotlin.Annotation {
+    public constructor An()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

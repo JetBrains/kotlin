@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
@@ -59,6 +60,9 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
             IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, target.symbol, target.descriptor)
         else
             IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
+        for (arg in wrapperIrFunction.typeParameters) {
+            call.putTypeArgument(arg.index, arg.defaultType)
+        }
         call.dispatchReceiver = wrapperIrFunction.dispatchReceiverParameter?.let { dispatchReceiver ->
             IrGetValueImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,

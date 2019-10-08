@@ -66,11 +66,11 @@ public final class IrTypeProjection extends
             break;
           }
           case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
             if (((bitField0_ & 0x00000002) == 0x00000002)) {
               subBuilder = type_.toBuilder();
             }
-            type_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.PARSER, extensionRegistry);
+            type_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(type_);
               type_ = subBuilder.buildPartial();
@@ -128,23 +128,23 @@ public final class IrTypeProjection extends
   }
 
   public static final int TYPE_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
    */
   public boolean hasType() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex getType() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getType() {
     return type_;
   }
 
   private void initFields() {
     variance_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance.IN;
-    type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.getDefaultInstance();
+    type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -290,7 +290,7 @@ public final class IrTypeProjection extends
       super.clear();
       variance_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance.IN;
       bitField0_ = (bitField0_ & ~0x00000001);
-      type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.getDefaultInstance();
+      type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
@@ -410,23 +410,23 @@ public final class IrTypeProjection extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
      */
     public boolean hasType() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex getType() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getType() {
       return type_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
      */
-    public Builder setType(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex value) {
+    public Builder setType(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -436,23 +436,23 @@ public final class IrTypeProjection extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
      */
     public Builder setType(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       type_ = builderForValue.build();
 
       bitField0_ |= 0x00000002;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
      */
-    public Builder mergeType(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex value) {
+    public Builder mergeType(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          type_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.getDefaultInstance()) {
+          type_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
         type_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.newBuilder(type_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(type_).mergeFrom(value).buildPartial();
       } else {
         type_ = value;
       }
@@ -461,10 +461,10 @@ public final class IrTypeProjection extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
      */
     public Builder clearType() {
-      type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.getDefaultInstance();
+      type_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;

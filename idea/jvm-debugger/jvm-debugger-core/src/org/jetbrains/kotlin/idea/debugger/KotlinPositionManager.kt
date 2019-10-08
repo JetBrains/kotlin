@@ -204,10 +204,8 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val methodName = location.method().name()
         return when {
             JvmAbi.isGetterName(methodName) -> {
-                val parameterForGetter = contextElement.primaryConstructor?.valueParameters?.firstOrNull {
-                    it.hasValOrVar() && it.name != null && JvmAbi.getterName(it.name!!) == methodName
-                } ?: return null
-                parameterForGetter
+                val valueParameters = contextElement.primaryConstructor?.valueParameters ?: emptyList()
+                valueParameters.find { it.hasValOrVar() && it.name != null && JvmAbi.getterName(it.name!!) == methodName }
             }
             methodName == "<init>" -> contextElement.primaryConstructor
             else -> null
@@ -239,7 +237,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             }
 
             val internalClassNames = DebuggerClassNameProvider(myDebugProcess, alwaysReturnLambdaParentClass = false)
-                    .getOuterClassNamesForElement(literal.firstChild)
+                    .getOuterClassNamesForElement(literal.firstChild, emptySet())
                     .classNames
 
             if (internalClassNames.any { it == currentLocationClassName }) {
@@ -284,7 +282,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val psiFile = sourcePosition.file
         if (psiFile is KtFile) {
             if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return emptyList()
-            return DebuggerClassNameProvider(myDebugProcess).getClassesForPosition(sourcePosition)
+            return hopelessAware { DebuggerClassNameProvider(myDebugProcess).getClassesForPosition(sourcePosition) } ?: emptyList()
         }
 
         if (psiFile is ClsFileImpl) {

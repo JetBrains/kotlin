@@ -1,2 +1,1 @@
-internal class C @Deprecated("")
-constructor()
+internal class C @Deprecated("") constructor()

@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 class FirExplicitSimpleImportingScope(
     imports: List<FirImport>,
-    session: FirSession
-) : FirAbstractSimpleImportingScope(session) {
+    session: FirSession,
+    scopeSession: ScopeSession
+) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
     override val simpleImports =
         imports.filterIsInstance<FirResolvedImportImpl>()

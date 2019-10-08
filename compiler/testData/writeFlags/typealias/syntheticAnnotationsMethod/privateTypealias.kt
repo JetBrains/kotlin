@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 @Target(AnnotationTarget.TYPEALIAS)
 annotation class Anno
 

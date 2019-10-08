@@ -40,7 +40,11 @@ object DescriptorsToIrRemapper : DescriptorsRemapper {
         WrappedFieldDescriptor(descriptor.annotations, descriptor.source)
 
     override fun remapDeclaredSimpleFunction(descriptor: FunctionDescriptor) =
-        WrappedSimpleFunctionDescriptor(descriptor.annotations, descriptor.source)
+        when (descriptor) {
+            is PropertyGetterDescriptor -> WrappedPropertyGetterDescriptor(descriptor.annotations, descriptor.source)
+            is PropertySetterDescriptor -> WrappedPropertySetterDescriptor(descriptor.annotations, descriptor.source)
+            else -> WrappedSimpleFunctionDescriptor(descriptor.annotations, descriptor.source)
+        }
 
     override fun remapDeclaredProperty(descriptor: PropertyDescriptor) =
         WrappedPropertyDescriptor(descriptor.annotations, descriptor.source)

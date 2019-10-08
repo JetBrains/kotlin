@@ -63,7 +63,7 @@ class BuiltInDecompilerConsistencyTest : KotlinLightCodeInsightFixtureTestCase()
         for (className in classFiles) {
             val classFile = dir.findChild(className + "." + JavaClassFileType.INSTANCE.defaultExtension)!!
             val fileContent = FileContentImpl.createByFile(classFile)
-            if (IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(fileContent.file) == null) continue
+            if (IDEKotlinBinaryClassCache.getInstance().getKotlinBinaryClassHeaderData(fileContent.file) == null) continue
             val fileStub = classFileDecompiler.stubBuilder.buildFileStub(fileContent) ?: continue
             val classStub = fileStub.findChildStubByType(KtClassElementType.getStubType(false)) ?: continue
             val classFqName = classStub.getFqName()!!

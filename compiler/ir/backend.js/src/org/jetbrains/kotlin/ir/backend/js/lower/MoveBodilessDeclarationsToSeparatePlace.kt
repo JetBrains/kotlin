@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.transformFlat
@@ -54,6 +56,22 @@ private class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFra
     }
 }
 
+private class DescriptorlessIrFileSymbol : IrFileSymbol {
+    override fun bind(owner: IrFile) {
+        _owner = owner
+    }
+
+    override val descriptor: PackageFragmentDescriptor
+        get() = error("Operation is unsupported")
+
+    private var _owner: IrFile? = null
+    override val owner get() = _owner!!
+
+    override val isBound get() = _owner != null
+
+}
+
+
 fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module: IrModuleFragment) {
 
     val bodilessBuiltInsPackageFragment = IrExternalPackageFragmentImpl(
@@ -81,11 +99,10 @@ fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, module:
 
     fun lowerFile(irFile: IrFile): IrFile? {
         val externalPackageFragment by lazy {
-            context.externalPackageFragment.getOrPut(irFile.fqName) {
-                IrExternalPackageFragmentImpl(
-                    DescriptorlessExternalPackageFragmentSymbol(),
-                    irFile.fqName
-                )
+            context.externalPackageFragment.getOrPut(irFile.symbol) {
+                IrFileImpl(fileEntry = irFile.fileEntry, fqName = irFile.fqName, symbol = DescriptorlessIrFileSymbol()).also {
+                    it.annotations += irFile.annotations
+                }
             }
         }
 

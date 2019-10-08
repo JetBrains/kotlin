@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.toKtDeclarationWrapperAware
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
+import org.jetbrains.kotlin.idea.util.hasComments
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -502,6 +503,9 @@ class KotlinPullUpHelper(
                 movedMember = doAddCallableMember(memberCopy, clashingSuper, classToAddTo)
                 if (member.typeReference == null) {
                     movedMember.typeReference?.addToShorteningWaitSet()
+                }
+                if (movedMember.nextSibling.hasComments()) {
+                    movedMember.parent.addAfter(psiFactory.createNewLine(), movedMember)
                 }
 
                 removeOriginalMemberOrAddOverride(member)

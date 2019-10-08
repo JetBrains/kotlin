@@ -18,11 +18,14 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.concurrent.Callable
 
 class KotlinNativeCompilation(
     override val target: KotlinNativeTarget,
+    val konanTarget: KonanTarget,
     name: String
 ) : AbstractKotlinCompilation<KotlinCommonOptions>(target, name), KotlinCompilationWithResources<KotlinCommonOptions> {
 
@@ -44,17 +47,51 @@ class KotlinNativeCompilation(
     // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
     internal val commonSources: ConfigurableFileCollection = project.files()
 
+    @Deprecated("Use associateWith(...) to add a friend compilation and associateWith to get all of them.")
     var friendCompilationName: String? = null
+        set(value) {
+            SingleWarningPerBuild.show(
+                project,
+                "Property `friendCompilationName` of `KotlinNativeCompilation` has been deprecated and will be removed. " +
+                        "Use `associateWith(...)` instead."
+            )
+            field = value
+        }
 
-    internal val friendCompilation: KotlinNativeCompilation?
-        get() = friendCompilationName?.let {
-            target.compilations.getByName(it)
+    internal val friendCompilations: List<KotlinNativeCompilation>
+        get() = mutableListOf<KotlinNativeCompilation>().apply {
+            @Suppress("DEPRECATION")
+            friendCompilationName?.let {
+                add(target.compilations.getByName(it))
+            }
+            addAll(associateWithTransitiveClosure.filterIsInstance<KotlinNativeCompilation>())
         }
 
     // Native-specific DSL.
-    var extraOpts = mutableListOf<String>()
+    private fun showDeprecationWarning() = SingleWarningPerBuild.show(
+        project,
+        "The compilation.extraOpts method used in this build is deprecated. Use compilation.kotlinOptions.freeCompilerArgs instead."
+    )
 
+    internal var extraOptsNoWarn: MutableList<String> = mutableListOf()
+
+    @Deprecated("Use kotlinOptions.freeCompilerArgs instead", ReplaceWith("kotlinOptions.freeCompilerArgs"))
+    var extraOpts: MutableList<String>
+        get() {
+            showDeprecationWarning()
+            return extraOptsNoWarn
+        }
+        set(value) {
+            showDeprecationWarning()
+            extraOptsNoWarn = value
+        }
+
+    @Deprecated("Use kotlinOptions.freeCompilerArgs instead", ReplaceWith("kotlinOptions.freeCompilerArgs += values as Array<String>"))
+    @Suppress("Deprecation")
     fun extraOpts(vararg values: Any) = extraOpts(values.toList())
+
+    @Deprecated("Use kotlinOptions.freeCompilerArgs instead", ReplaceWith("kotlinOptions.freeCompilerArgs += values as List<String>"))
+    @Suppress("Deprecation")
     fun extraOpts(values: List<Any>) {
         extraOpts.addAll(values.map { it.toString() })
     }
@@ -63,6 +100,9 @@ class KotlinNativeCompilation(
     val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
         DefaultCInteropSettings(project, cinteropName, this)
     }
+
+    // Endorsed library controller.
+    var enableEndorsedLibs = false
 
     fun cinterops(action: Closure<Unit>) = cinterops(ConfigureUtil.configureUsing(action))
     fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)

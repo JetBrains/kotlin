@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.*
 
@@ -18,7 +19,17 @@ sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
 }
 
 enum class ProjectionKind {
-    STAR, IN, OUT, INVARIANT
+    STAR, IN, OUT, INVARIANT;
+
+    operator fun plus(other: ProjectionKind): ProjectionKind {
+        return when {
+            this == other -> this
+            this == STAR || other == STAR -> STAR
+            this == INVARIANT -> other
+            other == INVARIANT -> this
+            else -> STAR
+        }
+    }
 }
 
 object ConeStarProjection : ConeKotlinTypeProjection() {
@@ -76,9 +87,11 @@ val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullabil
 
 typealias ConeKotlinErrorType = ConeClassErrorType
 
+class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLikeLookupTag()
+
 class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     override val lookupTag: ConeClassLikeLookupTag
-        get() = ConeClassLikeLookupTagImpl(ClassId.fromString("<error>"))
+        get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = EMPTY_ARRAY
@@ -91,7 +104,7 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     }
 }
 
-sealed class ConeLookupTagBasedType : ConeKotlinType(), SimpleTypeMarker {
+abstract class ConeLookupTagBasedType : ConeKotlinType(), SimpleTypeMarker {
     abstract val lookupTag: ConeClassifierLookupTag
 }
 
@@ -103,10 +116,6 @@ abstract class ConeClassType : ConeClassLikeType()
 
 abstract class ConeAbbreviatedType : ConeClassLikeType() {
     abstract val abbreviationLookupTag: ConeClassLikeLookupTag
-}
-
-abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
-    abstract override val lookupTag: ConeTypeParameterLookupTag
 }
 
 data class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),
@@ -163,4 +172,24 @@ class ConeDefinitelyNotNullType(val original: ConeKotlinType): ConeKotlinType(),
         get() = original.typeArguments
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
+}
+
+/*
+ * Contract of the intersection type: it is flat. It means that
+ *   intersection type can not contains another intersection types
+ *   inside it. To keep this contract construct new intersection types
+ *   only via ConeTypeIntersector
+ */
+class ConeIntersectionType(
+    val intersectedTypes: Collection<ConeKotlinType>
+) : ConeKotlinType(), SimpleTypeMarker, TypeConstructorMarker {
+    override val typeArguments: Array<out ConeKotlinTypeProjection>
+        get() = emptyArray()
+
+    override val nullability: ConeNullability
+        get() = ConeNullability.NOT_NULL
+}
+
+fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes.map(func))
 }

@@ -38,14 +38,14 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.containsError
 
 data class TypeParameterInfo(
-        val name: String,
-        val upperBoundType: KotlinType?,
-        val fakeTypeParameter: TypeParameterDescriptor
+    val name: String,
+    val upperBoundType: KotlinType?,
+    val fakeTypeParameter: TypeParameterDescriptor
 )
 
 data class CreateTypeParameterData(
-        val declaration: KtTypeParameterListOwner,
-        val typeParameters: List<TypeParameterInfo>
+    val declaration: KtTypeParameterListOwner,
+    val typeParameters: List<TypeParameterInfo>
 )
 
 object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFactoryWithDelegate<KtUserType, CreateTypeParameterData>() {
@@ -77,17 +77,18 @@ object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFa
     }
 
     override fun createFixes(
-            originalElementPointer: SmartPsiElementPointer<KtUserType>,
-            diagnostic: Diagnostic,
-            quickFixDataFactory: () -> CreateTypeParameterData?
+        originalElementPointer: SmartPsiElementPointer<KtUserType>,
+        diagnostic: Diagnostic,
+        quickFixDataFactory: () -> CreateTypeParameterData?
     ): List<QuickFixWithDelegateFactory> {
         val ktUserType = originalElementPointer.element ?: return emptyList()
         val name = ktUserType.referencedName ?: return emptyList()
         return getPossibleTypeParameterContainers(ktUserType)
             .asSequence()
-            .filter { it.typeParameters.all { it.name != name } }
-            .map {
-                QuickFixWithDelegateFactory factory@ {
+            .filter { declaration ->
+                declaration.isWritable && declaration.typeParameters.all { it.name != name }
+            }.map {
+                QuickFixWithDelegateFactory factory@{
                     val originalElement = originalElementPointer.element ?: return@factory null
                     val data = quickFixDataFactory()?.copy(declaration = it) ?: return@factory null
                     CreateTypeParameterFromUsageFix(originalElement, data, presentTypeParameterNames = true)
@@ -99,18 +100,18 @@ object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFa
 
 fun createFakeTypeParameterDescriptor(containingDescriptor: DeclarationDescriptor, name: String): TypeParameterDescriptor {
     return TypeParameterDescriptorImpl
-            .createWithDefaultBound(containingDescriptor, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier(name), -1)
+        .createWithDefaultBound(containingDescriptor, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier(name), -1)
 }
 
 fun getPossibleTypeParameterContainers(startFrom: PsiElement): List<KtTypeParameterListOwner> {
     val stopAt = startFrom.parents.firstOrNull(::isObjectOrNonInnerClass)?.parent
     return (if (stopAt != null) startFrom.parents.takeWhile { it != stopAt } else startFrom.parents)
-            .filterIsInstance<KtTypeParameterListOwner>()
-            .filter {
-                ((it is KtClass && !it.isInterface() && it !is KtEnumEntry) ||
-                 it is KtNamedFunction ||
-                 (it is KtProperty && !it.isLocal) ||
-                 it is KtTypeAlias) && it.nameIdentifier != null
-            }
-            .toList()
+        .filterIsInstance<KtTypeParameterListOwner>()
+        .filter {
+            ((it is KtClass && !it.isInterface() && it !is KtEnumEntry) ||
+                    it is KtNamedFunction ||
+                    (it is KtProperty && !it.isLocal && it.receiverTypeReference != null) ||
+                    it is KtTypeAlias) && it.nameIdentifier != null
+        }
+        .toList()
 }

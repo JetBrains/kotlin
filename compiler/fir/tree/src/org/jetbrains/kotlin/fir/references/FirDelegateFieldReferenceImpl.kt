@@ -12,5 +12,5 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 
 class FirDelegateFieldReferenceImpl(
     psi: PsiElement?,
-    override val coneSymbol: FirDelegateFieldSymbol<*>
+    override val resolvedSymbol: FirDelegateFieldSymbol<*>
 ) : FirAbstractElement(psi), FirDelegateFieldReference

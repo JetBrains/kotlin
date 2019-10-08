@@ -1,60 +1,60 @@
 FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
   PROPERTY name:testSimpleUIntLiteral visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testSimpleUIntLiteral type:kotlin.UInt visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testSimpleUIntLiteral type:kotlin.UInt visibility:private [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.UInt value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testSimpleUIntLiteral> visibility:public modality:FINAL <> () returnType:kotlin.UInt
       correspondingProperty: PROPERTY name:testSimpleUIntLiteral visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testSimpleUIntLiteral> (): kotlin.UInt declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimpleUIntLiteral type:kotlin.UInt visibility:public [final,static]' type=kotlin.UInt origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimpleUIntLiteral type:kotlin.UInt visibility:private [final,static]' type=kotlin.UInt origin=null
   PROPERTY name:testSimpleUIntLiteralWithOverflow visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testSimpleUIntLiteralWithOverflow type:kotlin.UInt visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testSimpleUIntLiteralWithOverflow type:kotlin.UInt visibility:private [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.UInt value=-1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testSimpleUIntLiteralWithOverflow> visibility:public modality:FINAL <> () returnType:kotlin.UInt
       correspondingProperty: PROPERTY name:testSimpleUIntLiteralWithOverflow visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testSimpleUIntLiteralWithOverflow> (): kotlin.UInt declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimpleUIntLiteralWithOverflow type:kotlin.UInt visibility:public [final,static]' type=kotlin.UInt origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimpleUIntLiteralWithOverflow type:kotlin.UInt visibility:private [final,static]' type=kotlin.UInt origin=null
   PROPERTY name:testUByteWithExpectedType visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testUByteWithExpectedType type:kotlin.UByte visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testUByteWithExpectedType type:kotlin.UByte visibility:private [final,static]
       EXPRESSION_BODY
         CONST Byte type=kotlin.UByte value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testUByteWithExpectedType> visibility:public modality:FINAL <> () returnType:kotlin.UByte
       correspondingProperty: PROPERTY name:testUByteWithExpectedType visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testUByteWithExpectedType> (): kotlin.UByte declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testUByteWithExpectedType type:kotlin.UByte visibility:public [final,static]' type=kotlin.UByte origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testUByteWithExpectedType type:kotlin.UByte visibility:private [final,static]' type=kotlin.UByte origin=null
   PROPERTY name:testUShortWithExpectedType visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testUShortWithExpectedType type:kotlin.UShort visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testUShortWithExpectedType type:kotlin.UShort visibility:private [final,static]
       EXPRESSION_BODY
         CONST Short type=kotlin.UShort value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testUShortWithExpectedType> visibility:public modality:FINAL <> () returnType:kotlin.UShort
       correspondingProperty: PROPERTY name:testUShortWithExpectedType visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testUShortWithExpectedType> (): kotlin.UShort declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testUShortWithExpectedType type:kotlin.UShort visibility:public [final,static]' type=kotlin.UShort origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testUShortWithExpectedType type:kotlin.UShort visibility:private [final,static]' type=kotlin.UShort origin=null
   PROPERTY name:testUIntWithExpectedType visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testUIntWithExpectedType type:kotlin.UInt visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testUIntWithExpectedType type:kotlin.UInt visibility:private [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.UInt value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testUIntWithExpectedType> visibility:public modality:FINAL <> () returnType:kotlin.UInt
       correspondingProperty: PROPERTY name:testUIntWithExpectedType visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testUIntWithExpectedType> (): kotlin.UInt declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testUIntWithExpectedType type:kotlin.UInt visibility:public [final,static]' type=kotlin.UInt origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testUIntWithExpectedType type:kotlin.UInt visibility:private [final,static]' type=kotlin.UInt origin=null
   PROPERTY name:testULongWithExpectedType visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testULongWithExpectedType type:kotlin.ULong visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testULongWithExpectedType type:kotlin.ULong visibility:private [final,static]
       EXPRESSION_BODY
         CONST Long type=kotlin.ULong value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testULongWithExpectedType> visibility:public modality:FINAL <> () returnType:kotlin.ULong
       correspondingProperty: PROPERTY name:testULongWithExpectedType visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testULongWithExpectedType> (): kotlin.ULong declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testULongWithExpectedType type:kotlin.ULong visibility:public [final,static]' type=kotlin.ULong origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testULongWithExpectedType type:kotlin.ULong visibility:private [final,static]' type=kotlin.ULong origin=null
   PROPERTY name:testToUByte visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testToUByte type:kotlin.UByte visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testToUByte type:kotlin.UByte visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin' type=kotlin.UByte origin=null
           $receiver: CONST Int type=kotlin.Int value=1
@@ -62,9 +62,9 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
       correspondingProperty: PROPERTY name:testToUByte visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testToUByte> (): kotlin.UByte declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUByte type:kotlin.UByte visibility:public [final,static]' type=kotlin.UByte origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUByte type:kotlin.UByte visibility:private [final,static]' type=kotlin.UByte origin=null
   PROPERTY name:testToUShort visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testToUShort type:kotlin.UShort visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testToUShort type:kotlin.UShort visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun toUShort (): kotlin.UShort [inline] declared in kotlin' type=kotlin.UShort origin=null
           $receiver: CONST Int type=kotlin.Int value=1
@@ -72,9 +72,9 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
       correspondingProperty: PROPERTY name:testToUShort visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testToUShort> (): kotlin.UShort declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUShort type:kotlin.UShort visibility:public [final,static]' type=kotlin.UShort origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUShort type:kotlin.UShort visibility:private [final,static]' type=kotlin.UShort origin=null
   PROPERTY name:testToUInt visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testToUInt type:kotlin.UInt visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testToUInt type:kotlin.UInt visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin' type=kotlin.UInt origin=null
           $receiver: CONST Int type=kotlin.Int value=1
@@ -82,9 +82,9 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
       correspondingProperty: PROPERTY name:testToUInt visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testToUInt> (): kotlin.UInt declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUInt type:kotlin.UInt visibility:public [final,static]' type=kotlin.UInt origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToUInt type:kotlin.UInt visibility:private [final,static]' type=kotlin.UInt origin=null
   PROPERTY name:testToULong visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testToULong type:kotlin.ULong visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testToULong type:kotlin.ULong visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin' type=kotlin.ULong origin=null
           $receiver: CONST Int type=kotlin.Int value=1
@@ -92,4 +92,4 @@ FILE fqName:<root> fileName:/unsignedIntegerLiterals.kt
       correspondingProperty: PROPERTY name:testToULong visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testToULong> (): kotlin.ULong declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToULong type:kotlin.ULong visibility:public [final,static]' type=kotlin.ULong origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testToULong type:kotlin.ULong visibility:private [final,static]' type=kotlin.ULong origin=null

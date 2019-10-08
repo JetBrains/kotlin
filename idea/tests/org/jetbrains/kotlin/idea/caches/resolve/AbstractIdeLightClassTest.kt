@@ -44,41 +44,47 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase() {
-    fun doTest(testDataPath: String) {
+    fun doTest(unused: String) {
         forceUsingOldLightClassesForTest()
+        val fileName = fileName()
         val extraFilePath = when {
-            testDataPath.endsWith(".kt") -> testDataPath.replace(".kt", ".extra.kt")
-            testDataPath.endsWith(".kts") -> testDataPath.replace(".kts", ".extra.kts")
+            fileName.endsWith(fileExtension) -> fileName.replace(fileExtension, ".extra" + fileExtension)
             else -> error("Invalid test data extension")
         }
 
-        val testFiles = if (File(extraFilePath).isFile) listOf(testDataPath, extraFilePath) else listOf(testDataPath)
+        val testFiles = if (File(testDataPath, extraFilePath).isFile) listOf(fileName, extraFilePath) else listOf(fileName)
 
-        val lazinessMode = lazinessModeByFileText(testDataPath)
+        val lazinessMode = lazinessModeByFileText()
         myFixture.configureByFiles(*testFiles.toTypedArray())
 
         val ktFile = myFixture.file as KtFile
-        val testData = File(testDataPath)
-        testLightClass(KotlinTestUtils.replaceExtension(testData, "java"), testData, { LightClassTestCommon.removeEmptyDefaultImpls(it) }, { fqName ->
-            val tracker = LightClassLazinessChecker.Tracker(fqName)
-            project.withServiceRegistered<StubComputationTracker, PsiClass?>(tracker) {
-                findClass(fqName, ktFile, project)?.apply {
-                    LightClassLazinessChecker.check(this as KtLightClass, tracker, lazinessMode)
-                    tracker.allowLevel(EXACT)
-                    PsiElementChecker.checkPsiElementStructure(this)
+        val testData = testDataFile()
+        testLightClass(
+            KotlinTestUtils.replaceExtension(testData, "java"),
+            testData,
+            { LightClassTestCommon.removeEmptyDefaultImpls(it) },
+            { fqName ->
+                val tracker = LightClassLazinessChecker.Tracker(fqName)
+                project.withServiceRegistered<StubComputationTracker, PsiClass?>(tracker) {
+                    findClass(fqName, ktFile, project)?.apply {
+                        LightClassLazinessChecker.check(this as KtLightClass, tracker, lazinessMode)
+                        tracker.allowLevel(EXACT)
+                        PsiElementChecker.checkPsiElementStructure(this)
+                    }
                 }
-            }
-        })
+            })
     }
 
-    private fun lazinessModeByFileText(testDataPath: String): LightClassLazinessChecker.Mode {
-        return File(testDataPath).readText().run {
+    private fun lazinessModeByFileText(): LightClassLazinessChecker.Mode {
+        return testDataFile().readText().run {
             val argument = substringAfter("LAZINESS:", "").substringBefore(" ")
             LightClassLazinessChecker.Mode.values().firstOrNull { it.name == argument } ?: LightClassLazinessChecker.Mode.AllChecks
         }
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+
+    open val fileExtension = ".kt"
 }
 
 abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase() {

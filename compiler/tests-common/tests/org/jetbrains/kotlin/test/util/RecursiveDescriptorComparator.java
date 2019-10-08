@@ -414,6 +414,13 @@ public class RecursiveDescriptorComparator {
                                      renderDeclarationsFromOtherModules, checkFunctionContracts, recursiveFilter, validationStrategy, renderer);
         }
 
+        public Configuration withRendererOptions(@NotNull Consumer<DescriptorRendererOptions> configure) {
+            return new Configuration(
+                    checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
+                    renderDeclarationsFromOtherModules, checkFunctionContracts, recursiveFilter, validationStrategy,
+                    newRenderer(renderer, configure));
+        }
+
         @NotNull
         private static DescriptorRenderer rendererWithPropertyAccessors(
                 @NotNull DescriptorRenderer renderer, boolean checkPropertyAccessors

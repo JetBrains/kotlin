@@ -9,11 +9,12 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil.createConcurrentWeakValueMap
-import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
-import org.jetbrains.kotlin.konan.library.KLIB_MODULE_METADATA_FILE_NAME
-import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
-import org.jetbrains.kotlin.serialization.konan.parseModuleHeader
-import org.jetbrains.kotlin.serialization.konan.parsePackageFragment
+import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KLIB_MODULE_METADATA_FILE_NAME
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.parseModuleHeader
+import org.jetbrains.kotlin.library.metadata.parsePackageFragment
+import org.jetbrains.kotlin.metadata.ProtoBuf
 
 class KotlinNativeLoadingMetadataCache : BaseComponent {
 
@@ -32,15 +33,15 @@ class KotlinNativeLoadingMetadataCache : BaseComponent {
         constructor(virtualFile: VirtualFile) : this(virtualFile.url, virtualFile.modificationStamp)
     }
 
-    private val packageFragmentCache = createConcurrentWeakValueMap<CacheKey, KonanProtoBuf.LinkDataPackageFragment>()
-    private val moduleHeaderCache = createConcurrentWeakValueMap<CacheKey, KonanProtoBuf.LinkDataLibrary>()
+    private val packageFragmentCache = createConcurrentWeakValueMap<CacheKey, ProtoBuf.PackageFragment>()
+    private val moduleHeaderCache = createConcurrentWeakValueMap<CacheKey, KlibMetadataProtoBuf.Header>()
 
-    fun getCachedPackageFragment(virtualFile: VirtualFile): KonanProtoBuf.LinkDataPackageFragment =
+    fun getCachedPackageFragment(virtualFile: VirtualFile): ProtoBuf.PackageFragment =
         packageFragmentCache.computeIfAbsent(CacheKey(virtualFile.ensurePackageMetadataFile)) {
             virtualFile.createPackageFragmentCacheEntry
         }
 
-    fun getCachedModuleHeader(virtualFile: VirtualFile): KonanProtoBuf.LinkDataLibrary =
+    fun getCachedModuleHeader(virtualFile: VirtualFile): KlibMetadataProtoBuf.Header =
         moduleHeaderCache.computeIfAbsent(CacheKey(virtualFile.ensureModuleHeaderFile)) {
             virtualFile.createModuleHeaderCacheEntry
         }

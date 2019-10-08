@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (x:<root>.En) returnType:<root>.TestAnn [primary]
       VALUE_PARAMETER name:x index:0 type:<root>.En
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:<root>.En visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:<root>.En visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: <root>.En declared in <root>.TestAnn.<init>' type=<root>.En origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestAnn) returnType:<root>.En
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/enumsInAnnotationArguments.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestAnn
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): <root>.En declared in <root>.TestAnn'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.En visibility:public [final]' type=<root>.En origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.En visibility:private [final]' type=<root>.En origin=null
               receiver: GET_VAR '<this>: <root>.TestAnn declared in <root>.TestAnn.<get-x>' type=<root>.TestAnn origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

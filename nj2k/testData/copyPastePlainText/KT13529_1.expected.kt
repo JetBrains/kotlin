@@ -3,5 +3,5 @@ import java.util.ArrayList
 
 
 fun foo() {
-    bar(/*comment*/ArrayList<String?>())
+    bar(/*comment*/ArrayList<String>())
 }

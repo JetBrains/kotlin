@@ -1,7 +1,7 @@
 class Test {
-    fun foo1(r: /*T2@*/Function1</*T0@*/Int, /*T1@*/String?>) {}
+    fun foo1(r: /*T2@*/Function1</*T0@*/Int, /*T1@*/String?>?) {}
     fun foo() {
-        foo1({ x: /*T3@*/Int -> ""/*LIT*/ }/*Function1<T3@Int, T5@String>!!L*/)
+        foo1({ x: /*T3@*/Int? -> ""/*LIT*/ }/*Function1<T3@Int, T5@String>!!L*/)
         foo1({ i: /*T4@*/Int ->
                  if (i/*T4@Int*/ > 1/*LIT*//*LIT*/) {
                      return@foo1 null/*NULL!!U*/

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.cli
 
-import junit.framework.Assert
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.junit.Assert
 import java.io.File
 import java.util.jar.JarFile
 

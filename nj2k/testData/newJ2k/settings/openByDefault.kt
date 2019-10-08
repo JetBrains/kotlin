@@ -1,5 +1,4 @@
 // !openByDefault: true
-
 internal open class A {
     internal open fun foo1() {}
     private fun foo2() {}

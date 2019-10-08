@@ -14,5 +14,5 @@ import org.jetbrains.kotlin.name.Name
 class FirPropertyFromParameterCallableReference(
     psi: PsiElement?,
     override val name: Name,
-    override val coneSymbol: FirVariableSymbol<*>
+    override val resolvedSymbol: FirVariableSymbol<*>
 ) : FirAbstractElement(psi), FirResolvedCallableReference

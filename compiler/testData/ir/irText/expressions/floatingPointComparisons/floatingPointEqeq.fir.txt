@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/floatingPointEqeq.kt
               GET_VAR 'y: kotlin.Any declared in <root>.test5d' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: kotlin.Double declared in <root>.test5d' type=kotlin.Double origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test5d' type=kotlin.Any origin=null
+              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test5d' type=kotlin.Double origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -63,8 +63,8 @@ FILE fqName:<root> fileName:/floatingPointEqeq.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test6d' type=kotlin.Any origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test6d' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test6d' type=kotlin.Double origin=null
+              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test6d' type=kotlin.Double origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -111,7 +111,7 @@ FILE fqName:<root> fileName:/floatingPointEqeq.kt
               GET_VAR 'y: kotlin.Any declared in <root>.test5f' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'x: kotlin.Float declared in <root>.test5f' type=kotlin.Float origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test5f' type=kotlin.Any origin=null
+              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test5f' type=kotlin.Float origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -132,8 +132,8 @@ FILE fqName:<root> fileName:/floatingPointEqeq.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test6f' type=kotlin.Any origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test6f' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test6f' type=kotlin.Float origin=null
+              arg1: GET_VAR 'y: kotlin.Any declared in <root>.test6f' type=kotlin.Float origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -154,8 +154,8 @@ FILE fqName:<root> fileName:/floatingPointEqeq.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.testFD' type=kotlin.Float origin=null
+              arg1: GET_VAR 'y: kotlin.Any declared in <root>.testFD' type=kotlin.Double origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -176,8 +176,8 @@ FILE fqName:<root> fileName:/floatingPointEqeq.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
-              arg1: GET_VAR 'y: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.testDF' type=kotlin.Double origin=null
+              arg1: GET_VAR 'y: kotlin.Any declared in <root>.testDF' type=kotlin.Float origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false

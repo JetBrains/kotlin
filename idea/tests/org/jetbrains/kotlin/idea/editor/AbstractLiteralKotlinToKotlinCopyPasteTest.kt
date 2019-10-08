@@ -8,29 +8,25 @@ package org.jetbrains.kotlin.idea.conversion.copy
 import com.intellij.openapi.actionSystem.IdeActions
 import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractLiteralKotlinToKotlinCopyPasteTest : AbstractCopyPasteTest() {
-    private val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/literal"
-
-
-    override fun getTestDataPath() = BASE_PATH
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
+    fun doTest(unused: String) {
+        val fileName = fileName()
+        val testPath = testPath()
+        val expectedPath = File(testPath.replace(".kt", ".expected.kt"))
 
-    fun doTest(path: String) {
-        myFixture.testDataPath = BASE_PATH
-        val testName = getTestName(false)
-        myFixture.configureByFiles(testName + ".kt")
+        myFixture.configureByFile(fileName)
 
         myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
-        configureTargetFile(testName + ".to.kt")
+        configureTargetFile(fileName.replace(".kt", ".to.kt"))
 
         myFixture.performEditorAction(IdeActions.ACTION_PASTE)
-        KotlinTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.kt")), myFixture.file.text)
+        KotlinTestUtils.assertEqualsToFile(expectedPath, myFixture.file.text)
     }
 }

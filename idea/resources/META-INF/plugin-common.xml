@@ -112,6 +112,12 @@
       <action id="DumbModeTremble" class="org.jetbrains.kotlin.idea.actions.internal.DumbModeTrembleAction"
               text="Tremble Dumb Mode"/>
 
+    <group id="KotlinRefactoringTesting" text="Kotlin refactoring testing" popup="true">
+      <action id="TestMoveRefactiringAction"
+              class="org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.MoveRefactoringAction"
+              text="Test move refactoring on opened project"/>
+    </group>
+
       <group id="KotlinInternalGroup" text="Kotlin" popup="true">
         <group id="KotlinCompletionBenchmarkGroup" popup="true" text="Benchmark completion">
           <action id="TopLevelCompletionBenchmarkAction"
@@ -142,6 +148,9 @@
 
         <action id="StoredExceptionsThrowToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.StoredExceptionsThrowToggleAction"
                 text="Throw cached PCE"/>
+
+        <action id="MultiplatformCompositeAnalysisToggleAction" class="org.jetbrains.kotlin.idea.actions.internal.MultiplatformCompositeAnalysisToggleAction"
+                text="Toggle Composite Analysis"/>
 
         <action id="CopyAsDiagnosticTest" class="org.jetbrains.kotlin.idea.actions.internal.CopyAsDiagnosticTestAction"
                 text="Copy Current File As Diagnostic Test"/>
@@ -245,11 +254,19 @@
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.KotlinPluginUpdater"
                         serviceImplementation="org.jetbrains.kotlin.idea.KotlinPluginUpdater"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
-                    serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
-
     <applicationService serviceInterface="org.jetbrains.kotlin.psi.KotlinDeclarationNavigationPolicy"
                         serviceImplementation="org.jetbrains.kotlin.idea.decompiler.navigation.KotlinDeclarationNavigationPolicyImpl"/>
+
+    <!-- since 192 use light service @Service instead of this declaration -->
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"
+                        serviceImplementation="org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache"/>
+
+    <!-- since 192 use light service @Service instead of this declaration -->
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"
+                        serviceImplementation="org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings$KotlinCodeStyleSettingsHolder"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
+                    serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.trackers.KotlinIDEModificationTrackerService"/>
@@ -290,14 +307,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptDependenciesProvider"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager"/>
-
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationCache"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationCache"/>
-
-    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationUpdater"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationUpdater"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager"
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManagerImpl"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.scripting.resolve.ScriptReportSink"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink"/>
@@ -375,7 +386,7 @@
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
     <registryKey
-        key="kotlin.write.resolve.check"
+        key="kotlin.dispatch.thread.resolve.check"
         description="Whether to enable the check for resolve activated from the write action"
         defaultValue="false"
         restartRequired="false"/>
@@ -487,7 +498,7 @@
                          parentId="project.propCompiler"/>
 
     <applicationConfigurable groupId="language" displayName="Kotlin" id="preferences.language.Kotlin"
-                             instance="org.jetbrains.kotlin.idea.configuration.KotlinUpdatesSettingsConfigurable"/>
+                             instance="org.jetbrains.kotlin.idea.configuration.KotlinLanguageConfiguration"/>
 
     <projectConfigurable groupId="language" displayName="Kotlin Scripting" id="preferences.language.Kotlin.scripting"
                          instance="org.jetbrains.kotlin.idea.script.configuration.KotlinScriptingSettingsConfigurable"
@@ -508,6 +519,8 @@
                                                   implementationClass="org.jetbrains.kotlin.idea.codeInsight.postfix.KtPostfixTemplateProvider"/>
 
     <codeInsight.linkHandler prefix="#kotlinClass/" handlerClass="org.jetbrains.kotlin.idea.highlighter.markers.KotlinClassTooltipLinkHandler"/>
+
+    <codeInsight.nonBlockingContextChecker implementation="org.jetbrains.kotlin.idea.inspections.blockingCallsDetection.CoroutineNonBlockingContextChecker"/>
 
     <defaultHighlightingSettingProvider language="kotlin" implementation="org.jetbrains.kotlin.idea.highlighter.KotlinDefaultHighlightingSettingsProvider"/>
 
@@ -776,6 +789,7 @@
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"
                         serviceImplementation="org.jetbrains.kotlin.idea.editor.KotlinEditorOptions"/>
+
     <editorSmartKeysConfigurable instance="org.jetbrains.kotlin.idea.editor.KotlinEditorOptionsConfigurable"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings"
@@ -1651,6 +1665,11 @@
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.AddUnderscoresToNumericLiteralIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceMapGetOrDefaultIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -3436,11 +3455,14 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="WEAK WARNING"
+                     level="INFORMATION"
                      language="kotlin"
     />
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"
+                    serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"/>
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
+    <autoImportOptionsProvider instance="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettingsProvider"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
     <filetype.stubBuilder filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
@@ -3462,9 +3484,6 @@
     <resolveScopeProvider implementation="org.jetbrains.kotlin.idea.core.script.dependencies.ScriptDependenciesResolveScopeProvider"/>
 
     <checkinHandlerFactory implementation="org.jetbrains.kotlin.idea.vcs.BunchFileCheckInHandlerFactory"/>
-
-    <postStartupActivity implementation="org.jetbrains.kotlin.idea.framework.TargetRetrieveActivity"/>
-
     <stripTrailingSpacesFilterFactory implementation="org.jetbrains.kotlin.idea.editor.KotlinStripTrailingSpacesFilterFactory"/>
 
     <navbar implementation="org.jetbrains.kotlin.idea.navigationToolbar.KotlinNavBarModelExtension" order="first"/>

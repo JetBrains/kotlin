@@ -4,12 +4,10 @@ fun foo() {
             val x = 1
             println(x)
         }
-
         2 -> {
             val x = 2
             println(x)
         }
-
         3 -> {
             println(3)
         }

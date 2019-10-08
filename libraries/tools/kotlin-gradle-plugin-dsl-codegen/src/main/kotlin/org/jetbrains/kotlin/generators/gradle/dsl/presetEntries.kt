@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.gradle.dsl
 
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
 internal class KotlinPresetEntry(
@@ -20,6 +21,9 @@ internal const val MPP_PACKAGE = "org.jetbrains.kotlin.gradle.plugin.mpp"
 
 internal const val KOTLIN_NATIVE_TARGET_PRESET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTargetPreset"
 internal const val KOTLIN_NATIVE_TARGET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTarget"
+
+internal const val KOTLIN_NATIVE_TARGET_WITH_TESTS_PRESET_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTargetWithTestsPreset"
+internal const val KOTLIN_NATIVE_TARGET_WITH_TESTS_CLASS_FQNAME = "$MPP_PACKAGE.KotlinNativeTargetWithTests"
 
 internal val jvmPresetEntry = KotlinPresetEntry(
     "jvm",
@@ -39,11 +43,24 @@ internal val androidPresetEntry = KotlinPresetEntry(
     typeName("$MPP_PACKAGE.KotlinAndroidTarget")
 )
 
+// Note: modifying this set should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
+private val testableNativeTargets = setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
+
 internal val nativePresetEntries = HostManager().targets.map { (_, target) ->
     KotlinPresetEntry(
         target.presetName,
-        typeName(KOTLIN_NATIVE_TARGET_PRESET_CLASS_FQNAME),
-        typeName(KOTLIN_NATIVE_TARGET_CLASS_FQNAME)
+        typeName(
+            if (target in testableNativeTargets)
+                KOTLIN_NATIVE_TARGET_WITH_TESTS_PRESET_CLASS_FQNAME
+            else
+                KOTLIN_NATIVE_TARGET_PRESET_CLASS_FQNAME
+        ),
+        typeName(
+            if (target in testableNativeTargets)
+                KOTLIN_NATIVE_TARGET_WITH_TESTS_CLASS_FQNAME
+            else
+                KOTLIN_NATIVE_TARGET_CLASS_FQNAME
+        )
     )
 }
 

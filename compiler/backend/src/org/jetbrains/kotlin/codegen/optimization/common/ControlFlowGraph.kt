@@ -22,7 +22,7 @@ class ControlFlowGraph private constructor(private val insns: InsnList) {
 
     companion object {
         @JvmStatic
-        fun build(node: MethodNode): ControlFlowGraph {
+        fun build(node: MethodNode, followExceptions: Boolean = true): ControlFlowGraph {
             val graph = ControlFlowGraph(node.instructions)
 
             fun addEdge(from: Int, to: Int) {
@@ -37,7 +37,9 @@ class ControlFlowGraph private constructor(private val insns: InsnList) {
                 }
 
                 override fun visitControlFlowExceptionEdge(insn: Int, successor: Int): Boolean {
-                    addEdge(insn, successor)
+                    if (followExceptions) {
+                        addEdge(insn, successor)
+                    }
                     return true
                 }
             }.analyze()

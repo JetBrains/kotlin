@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.*
@@ -52,6 +54,10 @@ class FirJavaModuleBasedSession(
             FirCorrespondingSupertypesCache::class,
             FirCorrespondingSupertypesCache(this)
         )
+
+        Extensions.getArea(sessionProvider.project)
+            .getExtensionPoint(PsiElementFinder.EP_NAME)
+            .registerExtension(FirJavaElementFinder(this, sessionProvider.project))
     }
 }
 

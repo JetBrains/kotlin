@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipEntry
@@ -63,6 +62,55 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
                 ),
                 getProcessedSources(output)
             )
+        }
+    }
+
+    @Test
+    fun testChangingAnnotationProcessorClasspath() {
+        val project = getProject()
+
+        project.build("clean", "build") {
+            assertSuccessful()
+        }
+
+        project.gradleBuildScript().appendText(
+            """
+            
+            dependencies {
+                kapt 'com.google.guava:guava:12.0'
+            }
+        """.trimIndent()
+        )
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Unable to use existing data, re-initializing classpath information for KAPT.")
+        }
+    }
+
+    @Test
+    fun testNonIncrementalWithUnrecognizedInputs() {
+        val project = getProject()
+
+        val additionalInputs = project.projectDir.resolve("additionalInputs").also { it.mkdirs() }
+        project.gradleBuildScript().appendText(
+            """
+            
+            tasks.whenTaskAdded {
+                if (it.name == "kaptKotlin") {
+                  it.getInputs().files("${additionalInputs.invariantSeparatorsPath}")
+                }
+            }
+        """.trimIndent()
+        )
+
+        project.build("clean", "build") {
+            assertSuccessful()
+        }
+
+        additionalInputs.resolve("layout.xml").createNewFile()
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Incremental annotation processing (apt mode): false")
         }
     }
 }

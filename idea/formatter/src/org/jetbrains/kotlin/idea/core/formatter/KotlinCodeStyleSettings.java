@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.core.formatter;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
@@ -33,8 +34,6 @@ import org.jetbrains.kotlin.idea.util.ReflectionUtil;
 import static com.intellij.util.ReflectionUtil.copyFields;
 
 public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
-    public static final KotlinCodeStyleSettings DEFAULT = new KotlinCodeStyleSettings(new CodeStyleSettings());
-
     public final PackageEntryTable PACKAGES_TO_USE_STAR_IMPORTS = new PackageEntryTable();
     public boolean SPACE_AROUND_RANGE = false;
     public boolean SPACE_BEFORE_TYPE_COLON = false;
@@ -179,5 +178,13 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         if (settingsAgainstPreviousDefaults != null) {
             copyFrom(settingsAgainstPreviousDefaults);
         }
+    }
+
+    public static KotlinCodeStyleSettings defaultSettings() {
+        return ServiceManager.getService(KotlinCodeStyleSettingsHolder.class).defaultSettings;
+    }
+
+    public static final class KotlinCodeStyleSettingsHolder {
+        private final KotlinCodeStyleSettings defaultSettings = new KotlinCodeStyleSettings(new CodeStyleSettings());
     }
 }

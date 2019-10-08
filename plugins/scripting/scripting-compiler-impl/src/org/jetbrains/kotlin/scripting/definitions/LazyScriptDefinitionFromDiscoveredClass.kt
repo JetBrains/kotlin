@@ -71,7 +71,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     override val evaluationConfiguration: ScriptEvaluationConfiguration get() = configurations.second
 
     override val fileExtension: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        annotationsFromAsm.find { it.name == KotlinScript::class.simpleName }?.args
+        annotationsFromAsm.find { it.name == KotlinScript::class.java.simpleName }?.args
             ?.find { it.name == "fileExtension" }?.value
             ?: compilationConfiguration.let {
                 it[ScriptCompilationConfiguration.fileExtension] ?: super.fileExtension
@@ -79,7 +79,7 @@ class LazyScriptDefinitionFromDiscoveredClass internal constructor(
     }
 
     override val name: String by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        annotationsFromAsm.find { it.name == KotlinScript::class.simpleName!! }?.args?.find { it.name == "name" }?.value
+        annotationsFromAsm.find { it.name == KotlinScript::class.java.simpleName!! }?.args?.find { it.name == "name" }?.value
             ?: super.name
     }
 }

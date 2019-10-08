@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.jvm
 
 import org.gradle.api.InvalidUserCodeException
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.plugins.JavaPlugin
@@ -18,14 +19,18 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import java.util.concurrent.Callable
+import javax.inject.Inject
 
-class KotlinJvmTarget(
+open class KotlinJvmTarget @Inject constructor(
     project: Project
-) : KotlinOnlyTarget<KotlinJvmCompilation>(
-    project, KotlinPlatformType.jvm
-) {
+) : KotlinOnlyTarget<KotlinJvmCompilation>(project, KotlinPlatformType.jvm),
+    KotlinTargetWithTests<JvmClasspathTestRunSource, KotlinJvmTestRun> {
+
+    override lateinit var testRuns: NamedDomainObjectContainer<KotlinJvmTestRun>
+
     var withJavaEnabled = false
         private set
 
@@ -57,7 +62,6 @@ class KotlinJvmTarget(
         javaPluginConvention.sourceSets.all { javaSourceSet ->
             val compilation = compilations.getByName(javaSourceSet.name)
             val compileJavaTask = project.tasks.getByName(javaSourceSet.compileJavaTaskName) as AbstractCompile
-            configureJavaTask(compilation.compileKotlinTask, compileJavaTask, project.logger)
 
             setupJavaSourceSetSourcesAndResources(javaSourceSet, compilation)
 
@@ -163,3 +167,4 @@ class KotlinJvmTarget(
         }
     }
 }
+

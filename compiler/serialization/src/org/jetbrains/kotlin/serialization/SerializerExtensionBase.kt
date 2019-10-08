@@ -55,6 +55,7 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
     override fun serializeFunction(
         descriptor: FunctionDescriptor,
         proto: ProtoBuf.Function.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer
     ) {
         for (annotation in descriptor.nonSourceAnnotations) {
@@ -106,4 +107,10 @@ abstract class KotlinSerializerExtensionBase(private val protocol: SerializerExt
             proto.addExtension(protocol.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
     }
+
+    override fun serializeTypeAlias(typeAlias: TypeAliasDescriptor, proto: ProtoBuf.TypeAlias.Builder) {
+        // TODO serialize annotations on type aliases?
+        // (this requires more extensive protobuf scheme modifications)
+    }
+
 }

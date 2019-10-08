@@ -824,6 +824,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/lineBreaksAndComments.kt");
             }
 
+            @TestMetadata("qualified.kt")
+            public void testQualified() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/qualified.kt");
+            }
+
+            @TestMetadata("qualified2.kt")
+            public void testQualified2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/qualified2.kt");
+            }
+
+            @TestMetadata("qualified3.kt")
+            public void testQualified3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/qualified3.kt");
+            }
+
+            @TestMetadata("qualified4.kt")
+            public void testQualified4() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/qualified4.kt");
+            }
+
             @TestMetadata("this.kt")
             public void testThis() throws Exception {
                 runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/this.kt");
@@ -1472,9 +1492,29 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/simplifiableCall"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("arrayFlatMap.kt")
+            public void testArrayFlatMap() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/arrayFlatMap.kt");
+            }
+
+            @TestMetadata("arrayFlatMap2.kt")
+            public void testArrayFlatMap2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/arrayFlatMap2.kt");
+            }
+
+            @TestMetadata("arrayFlatMap3.kt")
+            public void testArrayFlatMap3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/arrayFlatMap3.kt");
+            }
+
             @TestMetadata("explicitLambdaParameter.kt")
             public void testExplicitLambdaParameter() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/explicitLambdaParameter.kt");
+            }
+
+            @TestMetadata("filterIsInstanceDisjointHierarchy.kt")
+            public void testFilterIsInstanceDisjointHierarchy() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterIsInstanceDisjointHierarchy.kt");
             }
 
             @TestMetadata("filterIsInstanceReceiver.kt")
@@ -1485,6 +1525,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("filterIsInstanceSimple.kt")
             public void testFilterIsInstanceSimple() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterIsInstanceSimple.kt");
+            }
+
+            @TestMetadata("filterIsInstanceSupertype.kt")
+            public void testFilterIsInstanceSupertype() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/filterIsInstanceSupertype.kt");
             }
 
             @TestMetadata("filterIsNotInstance.kt")
@@ -1535,6 +1580,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("notOnlyReference.kt")
             public void testNotOnlyReference() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/notOnlyReference.kt");
+            }
+
+            @TestMetadata("primitiveArrayFlatMap.kt")
+            public void testPrimitiveArrayFlatMap() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/primitiveArrayFlatMap.kt");
             }
 
             @TestMetadata("set.kt")
@@ -4166,6 +4216,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/explicitThis/functionReference.kt");
         }
 
+        @TestMetadata("functionWithSameNameInvocableVariable.kt")
+        public void testFunctionWithSameNameInvocableVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/explicitThis/functionWithSameNameInvocableVariable.kt");
+        }
+
+        @TestMetadata("functionWithSameNameVariable.kt")
+        public void testFunctionWithSameNameVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/explicitThis/functionWithSameNameVariable.kt");
+        }
+
         @TestMetadata("multipleReceivers.kt")
         public void testMultipleReceivers() throws Exception {
             runTest("idea/testData/inspectionsLocal/explicitThis/multipleReceivers.kt");
@@ -4234,6 +4294,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("variableWithSameName.kt")
         public void testVariableWithSameName() throws Exception {
             runTest("idea/testData/inspectionsLocal/explicitThis/variableWithSameName.kt");
+        }
+
+        @TestMetadata("variableWithSameNameFunction.kt")
+        public void testVariableWithSameNameFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/explicitThis/variableWithSameNameFunction.kt");
         }
     }
 
@@ -5111,11 +5176,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("typeMismatch2.kt")
             public void testTypeMismatch2() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch2.kt");
-            }
-
-            @TestMetadata("typeMismatch2_ni.kt")
-            public void testTypeMismatch2_ni() throws Exception {
-                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch2_ni.kt");
             }
 
             @TestMetadata("typeMismatch3.kt")
@@ -6046,6 +6106,36 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
         public void testAllFilesPresentInMoveVariableDeclarationIntoWhen() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("hasBreak.kt")
+        public void testHasBreak() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasBreak.kt");
+        }
+
+        @TestMetadata("hasContinue.kt")
+        public void testHasContinue() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasContinue.kt");
+        }
+
+        @TestMetadata("hasReturn.kt")
+        public void testHasReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasReturn.kt");
+        }
+
+        @TestMetadata("hasReturn2.kt")
+        public void testHasReturn2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasReturn2.kt");
+        }
+
+        @TestMetadata("hasThrow.kt")
+        public void testHasThrow() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasThrow.kt");
+        }
+
+        @TestMetadata("hasThrow2.kt")
+        public void testHasThrow2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasThrow2.kt");
         }
 
         @TestMetadata("inBinaryExpression.kt")
@@ -7190,6 +7280,31 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantOverride/delegatedMemberHidesSuperTypeOverride4.kt");
         }
 
+        @TestMetadata("getterWithDerivedProperty.kt")
+        public void testGetterWithDerivedProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/getterWithDerivedProperty.kt");
+        }
+
+        @TestMetadata("getterWithDerivedProperty2.kt")
+        public void testGetterWithDerivedProperty2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/getterWithDerivedProperty2.kt");
+        }
+
+        @TestMetadata("getterWithDerivedProperty3.kt")
+        public void testGetterWithDerivedProperty3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/getterWithDerivedProperty3.kt");
+        }
+
+        @TestMetadata("getterWithDerivedProperty4.kt")
+        public void testGetterWithDerivedProperty4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/getterWithDerivedProperty4.kt");
+        }
+
+        @TestMetadata("javaPackagePrivate.kt")
+        public void testJavaPackagePrivate() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/javaPackagePrivate.kt");
+        }
+
         @TestMetadata("notCallSuper.kt")
         public void testNotCallSuper() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantOverride/notCallSuper.kt");
@@ -7203,6 +7318,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("overrideModifireVisibility.kt")
         public void testOverrideModifireVisibility() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantOverride/overrideModifireVisibility.kt");
+        }
+
+        @TestMetadata("setterWithDerivedProperty.kt")
+        public void testSetterWithDerivedProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/setterWithDerivedProperty.kt");
+        }
+
+        @TestMetadata("setterWithDerivedProperty2.kt")
+        public void testSetterWithDerivedProperty2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/setterWithDerivedProperty2.kt");
+        }
+
+        @TestMetadata("setterWithDerivedProperty3.kt")
+        public void testSetterWithDerivedProperty3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/setterWithDerivedProperty3.kt");
+        }
+
+        @TestMetadata("setterWithDerivedProperty4.kt")
+        public void testSetterWithDerivedProperty4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/setterWithDerivedProperty4.kt");
         }
 
         @TestMetadata("singleExpressionFunction.kt")
@@ -7860,6 +7995,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/necessaryBrackets6.kt");
         }
 
+        @TestMetadata("necessaryBrackets7.kt")
+        public void testNecessaryBrackets7() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/necessaryBrackets7.kt");
+        }
+
         @TestMetadata("unnecessaryBrackets1.kt")
         public void testUnnecessaryBrackets1() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/unnecessaryBrackets1.kt");
@@ -7898,6 +8038,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("unnecessaryBrackets8.kt")
         public void testUnnecessaryBrackets8() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/unnecessaryBrackets8.kt");
+        }
+
+        @TestMetadata("unnecessaryBrackets9.kt")
+        public void testUnnecessaryBrackets9() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/unnecessaryBrackets9.kt");
         }
     }
 

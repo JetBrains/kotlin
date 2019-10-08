@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 
 open class ConeClassTypeImpl(
@@ -49,32 +48,3 @@ class ConeAbbreviatedTypeImpl(
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
 }
 
-class ConeTypeParameterTypeImpl(
-    override val lookupTag: ConeTypeParameterLookupTag,
-    isNullable: Boolean
-) : ConeTypeParameterType() {
-    override val typeArguments: Array<out ConeKotlinTypeProjection>
-        get() = EMPTY_ARRAY
-
-    override val nullability: ConeNullability = ConeNullability.create(isNullable)
-
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ConeTypeParameterTypeImpl
-
-        if (lookupTag != other.lookupTag) return false
-        if (nullability != other.nullability) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = lookupTag.hashCode()
-        result = 31 * result + nullability.hashCode()
-        return result
-    }
-
-}

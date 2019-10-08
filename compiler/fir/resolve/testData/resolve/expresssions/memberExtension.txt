@@ -20,7 +20,7 @@ FILE: memberExtension.kt
         }
 
         public final fun bar(arg: R|Foo|): R|kotlin/Unit| {
-            R|<local>/arg|.R|/Bar.foo|()
+            (this@R|/Bar|, R|<local>/arg|).R|/Bar.foo|()
         }
 
     }

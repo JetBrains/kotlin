@@ -41,6 +41,16 @@ abstract class PerformanceCounter protected constructor(val name: String) {
             countersCopy.forEach { it.report(consumer) }
         }
 
+        fun report(consumer: (String, Int, Long) -> Unit) {
+            val countersCopy = synchronized(allCounters) {
+                allCounters.toTypedArray()
+            }
+            countersCopy.forEach { it.report(consumer) }
+        }
+
+        val numberOfCounters: Int
+            get() = synchronized(allCounters) { allCounters.size }
+
         fun setTimeCounterEnabled(enable: Boolean) {
             enabled = enable
         }
@@ -117,6 +127,9 @@ abstract class PerformanceCounter protected constructor(val name: String) {
             consumer("$name performed $count times, total time $millis ms")
         }
     }
+
+    fun report(consumer: (String, Int, Long) -> Unit) =
+        consumer(name, count, totalTimeNanos)
 }
 
 private class SimpleCounter(name: String) : PerformanceCounter(name) {

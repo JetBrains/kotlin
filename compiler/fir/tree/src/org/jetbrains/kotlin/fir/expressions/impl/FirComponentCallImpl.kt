@@ -27,6 +27,14 @@ class FirComponentCallImpl(
         return this
     }
 
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        return this
+    }
+
+    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
+        return this
+    }
+
     override var calleeReference: FirNamedReference =
         FirSimpleNamedReference(psi, Name.identifier("component$componentIndex"))
 

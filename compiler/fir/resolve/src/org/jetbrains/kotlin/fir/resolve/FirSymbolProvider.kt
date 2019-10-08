@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.declarations.toFirClassLike
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -22,17 +23,19 @@ abstract class FirSymbolProvider : FirSessionComponent {
 
     abstract fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?
 
-    fun getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): ConeClassifierSymbol? {
-        return when (lookupTag) {
-            is ConeClassLikeLookupTag -> {
-                (lookupTag as? ConeClassLikeLookupTagImpl)
-                    ?.boundSymbol?.takeIf { it.first === this }?.let { return it.second }
+    fun getSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): FirClassLikeSymbol<*>? {
+        (lookupTag as? ConeClassLikeLookupTagImpl)
+            ?.boundSymbol?.takeIf { it.first === this }?.let { return it.second }
 
-                getClassLikeSymbolByFqName(lookupTag.classId).also {
-                    (lookupTag as? ConeClassLikeLookupTagImpl)
-                        ?.boundSymbol = Pair(this, it)
-                }
-            }
+        return getClassLikeSymbolByFqName(lookupTag.classId).also {
+            (lookupTag as? ConeClassLikeLookupTagImpl)
+                ?.boundSymbol = Pair(this, it)
+        }
+    }
+
+    fun getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): FirClassifierSymbol<*>? {
+        return when (lookupTag) {
+            is ConeClassLikeLookupTag -> getSymbolByLookupTag(lookupTag)
             is ConeClassifierLookupTagWithFixedSymbol -> lookupTag.symbol
             else -> error("Unknown lookupTag type: ${lookupTag::class}")
         }
@@ -56,17 +59,17 @@ abstract class FirSymbolProvider : FirSessionComponent {
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 
     // TODO: should not retrieve session through the FirElement::session
-    fun getSessionForClass(classId: ClassId): FirSession? = getClassLikeSymbolByFqName(classId)?.toFirClassLike()?.session
+    fun getSessionForClass(classId: ClassId): FirSession? = getClassLikeSymbolByFqName(classId)?.fir?.session
 
     companion object {
         fun getInstance(session: FirSession) = session.service<FirSymbolProvider>()
     }
 }
 
-fun FirSymbolProvider.getClassDeclaredCallableSymbols(classId: ClassId, name: Name): List<ConeCallableSymbol> {
+fun FirSymbolProvider.getClassDeclaredCallableSymbols(classId: ClassId, name: Name): List<FirCallableSymbol<*>> {
     val declaredMemberScope = getClassDeclaredMemberScope(classId) ?: return emptyList()
-    val result = mutableListOf<ConeCallableSymbol>()
-    val processor: (ConeCallableSymbol) -> ProcessorAction = {
+    val result = mutableListOf<FirCallableSymbol<*>>()
+    val processor: (FirCallableSymbol<*>) -> ProcessorAction = {
         result.add(it)
         ProcessorAction.NEXT
     }

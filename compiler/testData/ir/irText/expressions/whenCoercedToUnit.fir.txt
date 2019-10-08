@@ -2,11 +2,11 @@ FILE fqName:<root> fileName:/whenCoercedToUnit.kt
   FUN name:foo visibility:public modality:FINAL <> (x:kotlin.Int) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
-      BLOCK type=kotlin.Unit origin=WHEN
+      BLOCK type=kotlin.Int origin=WHEN
         VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int [val]
-        WHEN type=kotlin.Unit origin=WHEN
+        WHEN type=kotlin.Int origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: GET_VAR 'val tmp0_subject: kotlin.Int [val] declared in <root>.foo' type=kotlin.Int origin=null
-              arg1: CONST Int type=kotlin.Unit value=0
-            then: CONST Int type=kotlin.Unit value=0
+              arg1: CONST Int type=kotlin.Int value=0
+            then: CONST Int type=kotlin.Int value=0

@@ -23,23 +23,23 @@ private abstract class DummyScriptTemplate
 /**
  * Creates compilation configuration from annotated script base class
  * @param baseClassType the annotated script base class to construct the configuration from
- * @param hostConfiguration scripting host configuration properties
+ * @param baseHostConfiguration scripting host configuration properties
  * @param contextClass optional context class to extract classloading strategy from
  * @param body optional configuration function to add more properties to the compilation configuration
  */
 fun createCompilationConfigurationFromTemplate(
     baseClassType: KotlinType,
-    hostConfiguration: ScriptingHostConfiguration,
+    baseHostConfiguration: ScriptingHostConfiguration,
     contextClass: KClass<*> = ScriptCompilationConfiguration::class,
     body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
 ): ScriptCompilationConfiguration {
 
-    val templateClass: KClass<*> = baseClassType.getTemplateClass(hostConfiguration, contextClass)
+    val templateClass: KClass<*> = baseClassType.getTemplateClass(baseHostConfiguration, contextClass)
 
     val mainAnnotation: KotlinScript = templateClass.kotlinScriptAnnotation
 
     return ScriptCompilationConfiguration(scriptConfigInstance(mainAnnotation.compilationConfiguration)) {
-        hostConfiguration(hostConfiguration)
+        hostConfiguration.update { it.withDefaultsFrom(baseHostConfiguration) }
         propertiesFromTemplate(templateClass, baseClassType, mainAnnotation)
         body()
     }
@@ -48,23 +48,23 @@ fun createCompilationConfigurationFromTemplate(
 /**
  * Creates evaluation configuration from annotated script base class
  * @param baseClassType the annotated script base class to construct the configuration from
- * @param hostConfiguration scripting host configuration properties
+ * @param baseHostConfiguration scripting host configuration properties
  * @param contextClass optional context class to extract classloading strategy from
  * @param body optional configuration function to add more properties to the evaluation configuration
  */
 fun createEvaluationConfigurationFromTemplate(
     baseClassType: KotlinType,
-    hostConfiguration: ScriptingHostConfiguration,
+    baseHostConfiguration: ScriptingHostConfiguration,
     contextClass: KClass<*> = ScriptEvaluationConfiguration::class,
     body: ScriptEvaluationConfiguration.Builder.() -> Unit = {}
 ): ScriptEvaluationConfiguration {
 
-    val templateClass: KClass<*> = baseClassType.getTemplateClass(hostConfiguration, contextClass)
+    val templateClass: KClass<*> = baseClassType.getTemplateClass(baseHostConfiguration, contextClass)
 
     val mainAnnotation = templateClass.kotlinScriptAnnotation
 
     return ScriptEvaluationConfiguration(scriptConfigInstance(mainAnnotation.evaluationConfiguration)) {
-        hostConfiguration(hostConfiguration)
+        hostConfiguration.update { it.withDefaultsFrom(baseHostConfiguration) }
         body()
     }
 }

@@ -48,7 +48,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
 
         val (firstProject, secondProject) = (0..1).map { id ->
             workingDir = workingDirs[id]
-            Project(projectName, GradleVersionRequired.AtLeast("4.4"), projectDirectoryPrefix).apply {
+            Project(projectName, directoryPrefix = projectDirectoryPrefix).apply {
                 setupWorkingDir()
                 initProject()
                 prepareLocalBuildCache(localBuildCacheDirectory)

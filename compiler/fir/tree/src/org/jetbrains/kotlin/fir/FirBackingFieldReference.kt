@@ -14,7 +14,7 @@ interface FirBackingFieldReference : FirResolvedCallableReference {
     override val name: Name
         get() = NAME
 
-    override val coneSymbol: FirBackingFieldSymbol
+    override val resolvedSymbol: FirBackingFieldSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
         return visitor.visitBackingFieldReference(this, data)

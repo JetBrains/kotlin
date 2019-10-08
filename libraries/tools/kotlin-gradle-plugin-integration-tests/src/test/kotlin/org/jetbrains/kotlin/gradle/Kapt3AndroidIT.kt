@@ -14,9 +14,6 @@ class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
 open class Kapt3Android32IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_2_0
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.6")
 }
 
 open class Kapt3Android33IT : Kapt3AndroidIT() {
@@ -81,7 +78,7 @@ class Kapt3Android31IT : Kapt3AndroidIT() {
 
     // there is a weird validation exception in testICWithAnonymousClasses with 5.0 todo: fix it
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.InRange("4.4", "4.10.2")
+        get() = GradleVersionRequired.Until("4.10.2")
 }
 
 open class Kapt3AndroidIT : Kapt3BaseIT() {

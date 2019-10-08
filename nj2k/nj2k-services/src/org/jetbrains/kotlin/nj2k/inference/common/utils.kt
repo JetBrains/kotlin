@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.nj2k.inference.common
 
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.nj2k.JKElementInfo
-import org.jetbrains.kotlin.nj2k.JKElementInfoLabel
-import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.asLabel
+import org.jetbrains.kotlin.nj2k.*
+import org.jetbrains.kotlin.psi.KtTypeElement
 import org.jetbrains.kotlin.psi.KtTypeProjection
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun PsiElement.getLabel(): JKElementInfoLabel? =
@@ -28,3 +27,14 @@ fun PsiElement.elementInfo(converterContext: NewJ2kConverterContext): List<JKEle
     getLabel()?.let { label ->
         converterContext.elementsInfoStorage.getInfoForLabel(label)
     }
+
+
+inline fun KtTypeReference.hasUnknownLabel(context: NewJ2kConverterContext, isUnknownLabel: (JKTypeInfo) -> Boolean) =
+    getLabel()?.let { label ->
+        context.elementsInfoStorage.getInfoForLabel(label)?.any { it.safeAs<JKTypeInfo>()?.let(isUnknownLabel) == true }
+    } ?: false
+
+inline fun KtTypeElement.hasUnknownLabel(context: NewJ2kConverterContext, isUnknownLabel: (JKTypeInfo) -> Boolean) =
+    parent
+        ?.safeAs<KtTypeReference>()
+        ?.hasUnknownLabel(context, isUnknownLabel) == true

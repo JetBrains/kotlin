@@ -79,9 +79,24 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
         runTest("compiler/fir/resolve/testData/resolve/stdlib/helloWorld.kt");
     }
 
+    @TestMetadata("implicitReceiverOrder.kt")
+    public void testImplicitReceiverOrder() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/implicitReceiverOrder.kt");
+    }
+
     @TestMetadata("mapList.kt")
     public void testMapList() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/mapList.kt");
+    }
+
+    @TestMetadata("multipleImplicitReceivers.kt")
+    public void testMultipleImplicitReceivers() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/multipleImplicitReceivers.kt");
+    }
+
+    @TestMetadata("problems.kt")
+    public void testProblems() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/problems.kt");
     }
 
     @TestMetadata("recursiveBug.kt")
@@ -117,6 +132,11 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
     @TestMetadata("typeAliasDeserialization.kt")
     public void testTypeAliasDeserialization() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/typeAliasDeserialization.kt");
+    }
+
+    @TestMetadata("typeParameterDerived.kt")
+    public void testTypeParameterDerived() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/typeParameterDerived.kt");
     }
 
     @TestMetadata("unaryOperators.kt")

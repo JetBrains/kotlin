@@ -1,5 +1,5 @@
 public open class WrongProjectionKind : R|kotlin/Any| {
-    public open fun copy(p0: R|kotlin/Array<out kotlin/Number>|?, p1: R|kotlin/Array<out kotlin/Number>|?): R|kotlin/collections/MutableList<kotlin/Number>|?
+    public open fun copy(p0: R|kotlin/Array<out kotlin/Number>?|, p1: R|kotlin/Array<out kotlin/Number>?|): R|kotlin/collections/MutableList<kotlin/Number>?|
 
     public constructor(): R|test/WrongProjectionKind|
 

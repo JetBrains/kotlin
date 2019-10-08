@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirResolvedCallableReference
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirResolvedCallableReferenceImpl(
     psi: PsiElement?,
     override val name: Name,
-    override val coneSymbol: ConeSymbol
+    override val resolvedSymbol: AbstractFirBasedSymbol<*>
 ) : FirAbstractElement(psi), FirResolvedCallableReference

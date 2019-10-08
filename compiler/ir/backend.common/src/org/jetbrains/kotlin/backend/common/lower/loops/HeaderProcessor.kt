@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -21,7 +22,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
  * Contains the loop and expression to replace the old loop.
@@ -39,16 +44,18 @@ internal data class LoopReplacement(
 internal sealed class ForLoopHeader(
     protected open val headerInfo: HeaderInfo,
     val inductionVariable: IrVariable,
-    val last: IrVariable,
+    lastExpression: IrExpression,
     val step: IrVariable,
     var loopVariable: IrVariable? = null,
-    val isLastInclusive: Boolean
+    val isLastInclusive: Boolean,
+    val declarations: List<IrVariable>
 ) {
+    val lastExpression: IrExpression = lastExpression
+        // Always copy `lastExpression` is it may be used in multiple conditions.
+        get() = field.deepCopyWithSymbols()
+
     /** Expression used to initialize the loop variable at the beginning of the loop. */
     abstract fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder): IrExpression
-
-    /** Declarations used in the loop condition and body (e.g., induction variable). */
-    abstract val declarations: List<IrStatement>
 
     /** Builds a new loop from the old loop. */
     abstract fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement
@@ -84,38 +91,38 @@ internal sealed class ForLoopHeader(
                 ProgressionDirection.DECREASING ->
                     // last <= inductionVar (use `<` if last is exclusive)
                     irCall(compFun).apply {
-                        putValueArgument(0, irGet(last))
+                        putValueArgument(0, lastExpression)
                         putValueArgument(1, irGet(inductionVariable))
                     }
                 ProgressionDirection.INCREASING ->
                     // inductionVar <= last (use `<` if last is exclusive)
                     irCall(compFun).apply {
                         putValueArgument(0, irGet(inductionVariable))
-                        putValueArgument(1, irGet(last))
+                        putValueArgument(1, lastExpression)
                     }
                 ProgressionDirection.UNKNOWN -> {
                     // If the direction is unknown, we check depending on the "step" value:
                     //   // (use `<` if last is exclusive)
                     //   (step > 0 && inductionVar <= last) || (step < 0 || last <= inductionVar)
                     val stepKotlinType = progressionType.stepType(builtIns).toKotlinType()
-                    val zero = if (progressionType == ProgressionType.LONG_PROGRESSION) irLong(0) else irInt(0)
+                    val isLong = progressionType == ProgressionType.LONG_PROGRESSION
                     context.oror(
                         context.andand(
                             irCall(builtIns.greaterFunByOperandType[stepKotlinType]!!).apply {
                                 putValueArgument(0, irGet(step))
-                                putValueArgument(1, zero)
+                                putValueArgument(1, if (isLong) irLong(0) else irInt(0))
                             },
                             irCall(compFun).apply {
                                 putValueArgument(0, irGet(inductionVariable))
-                                putValueArgument(1, irGet(last))
+                                putValueArgument(1, lastExpression)
                             }),
                         context.andand(
                             irCall(builtIns.lessFunByOperandType[stepKotlinType]!!).apply {
                                 putValueArgument(0, irGet(step))
-                                putValueArgument(1, zero)
+                                putValueArgument(1, if (isLong) irLong(0) else irInt(0))
                             },
                             irCall(compFun).apply {
-                                putValueArgument(0, irGet(last))
+                                putValueArgument(0, lastExpression)
                                 putValueArgument(1, irGet(inductionVariable))
                             })
                     )
@@ -127,28 +134,21 @@ internal sealed class ForLoopHeader(
 internal class ProgressionLoopHeader(
     override val headerInfo: ProgressionHeaderInfo,
     inductionVariable: IrVariable,
-    last: IrVariable,
-    step: IrVariable
-) : ForLoopHeader(headerInfo, inductionVariable, last, step, isLastInclusive = true) {
+    lastExpression: IrExpression,
+    step: IrVariable,
+    declarations: List<IrVariable>
+) : ForLoopHeader(
+    headerInfo, inductionVariable,
+    lastExpression = lastExpression,
+    step = step,
+    isLastInclusive = true,
+    declarations = declarations
+) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         // loopVariable = inductionVariable
         irGet(inductionVariable)
     }
-
-    // For this loop:
-    //
-    //   for (i in first()..last() step step())
-    //
-    // ...the functions may have side-effects so we need to call them in the following order: first() (inductionVariable), last(), step().
-    // Additional variables come first as they may be needed to the subsequent variables.
-    //
-    // In the case of a reversed range, the `inductionVariable` and `last` variables are swapped, therefore the declaration order must be
-    // swapped to preserve the correct evaluation order.
-    override val declarations: List<IrStatement>
-        get() = headerInfo.additionalVariables +
-                (if (headerInfo.isReversed) listOf(last, inductionVariable) else listOf(inductionVariable, last)) +
-                step
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?) =
         with(builder) {
@@ -165,7 +165,7 @@ internal class ProgressionLoopHeader(
                 //   }
                 IrDoWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
                     label = oldLoop.label
-                    condition = irNotEquals(irGet(loopVariable!!), irGet(last))
+                    condition = irNotEquals(irGet(loopVariable!!), lastExpression)
                     body = newBody
                 }
             } else {
@@ -196,32 +196,34 @@ internal class ProgressionLoopHeader(
         }
 }
 
-internal class ArrayLoopHeader(
-    override val headerInfo: ArrayHeaderInfo,
+internal class IndexedGetLoopHeader(
+    override val headerInfo: IndexedGetHeaderInfo,
     inductionVariable: IrVariable,
-    last: IrVariable,
-    step: IrVariable
-) : ForLoopHeader(headerInfo, inductionVariable, last, step, isLastInclusive = false) {
+    lastExpression: IrExpression,
+    step: IrVariable,
+    declarations: List<IrVariable>
+) : ForLoopHeader(
+    headerInfo, inductionVariable, lastExpression, step,
+    isLastInclusive = false,
+    declarations = declarations
+) {
 
     override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
         // inductionVar = loopVar[inductionVariable]
-        val arrayGetFun = headerInfo.arrayVariable.type.getClass()!!.functions.first { it.name.asString() == "get" }
-        irCall(arrayGetFun).apply {
-            dispatchReceiver = irGet(headerInfo.arrayVariable)
+        val indexedGetFun = with(headerInfo.expressionHandler) { headerInfo.objectVariable.type.getFunction }
+        irCall(indexedGetFun).apply {
+            dispatchReceiver = irGet(headerInfo.objectVariable)
             putValueArgument(0, irGet(inductionVariable))
         }
     }
-
-    override val declarations: List<IrStatement>
-        get() = listOf(headerInfo.arrayVariable, inductionVariable, last, step)
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {
         // Loop is lowered into something like:
         //
         //   var inductionVar = 0
-        //   var last = array.size
+        //   var last = objectVariable.size
         //   while (inductionVar < last) {
-        //       val loopVar = array[inductionVar]
+        //       val loopVar = objectVariable.get(inductionVar)
         //       inductionVar++
         //       // Loop body
         //   }
@@ -261,72 +263,113 @@ internal class HeaderProcessor(
         }
 
         // Get the iterable expression, e.g., `someIterable` in the following loop variable declaration:
+        //
         //   val it = someIterable.iterator()
-        val iterable = (variable.initializer as? IrCall)?.dispatchReceiver
+        //
+        // If the `iterator` method is an extension method, make sure that we are calling a known extension
+        // method in the library such as `kotlin.text.StringsKt.iterator` with no value arguments. Other
+        // extension methods could return user-defined iterators.
+        val iterable = (variable.initializer as? IrCall)?.let {
+            val extensionReceiver = it.extensionReceiver
+            if (extensionReceiver != null) {
+                val function = it.symbol.owner
+                if (it.valueArgumentsCount == 0
+                    && function.isTopLevel
+                    && function.getPackageFragment()?.fqName == FqName("kotlin.text")
+                    && function.name == OperatorNameConventions.ITERATOR
+                ) {
+                    extensionReceiver
+                } else {
+                    null
+                }
+            } else {
+                it.dispatchReceiver
+            }
+        }
+
         // Collect loop information from the iterable expression.
         val headerInfo = iterable?.accept(headerInfoBuilder, null)
             ?: return null  // If the iterable is not supported.
 
         val builder = context.createIrBuilder(scopeOwnerSymbol(), variable.startOffset, variable.endOffset)
-        with(builder) builder@{
-            with(headerInfo) {
-                // For this loop:
-                //
-                //   for (i in first()..last() step step())
-                //
-                // We need to cast first(), last(). and step() to conform to the progression type so
-                // that operations on the induction variable within the loop are more efficient.
-                //
-                // In the above example, if first() is a Long and last() is an Int, this creates a
-                // LongProgression so last() should be cast to a Long.
-                val inductionVariable = scope.createTemporaryVariable(
-                    first.castIfNecessary(
-                        progressionType.elementType(context.irBuiltIns),
-                        progressionType.elementCastFunctionName
-                    ),
-                    nameHint = "inductionVariable",
-                    isMutable = true,
-                    origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
-                )
+        with(builder) {
+            // For this loop:
+            //
+            //   for (i in first()..last() step step())
+            //
+            // We need to cast first(), last(). and step() to conform to the progression type so
+            // that operations on the induction variable within the loop are more efficient.
+            //
+            // In the above example, if first() is a Long and last() is an Int, this creates a
+            // LongProgression so last() should be cast to a Long.
+            val inductionVariable = scope.createTemporaryVariable(
+                headerInfo.first.castIfNecessary(
+                    headerInfo.progressionType.elementType(context.irBuiltIns),
+                    headerInfo.progressionType.elementCastFunctionName
+                ),
+                nameHint = "inductionVariable",
+                isMutable = true
+            )
 
-                // Due to features of PSI2IR we can obtain nullable arguments here while actually
-                // they are non-nullable (the frontend takes care about this). So we need to cast
-                // them to non-nullable.
-                // TODO: Confirm if casting to non-nullable is still necessary
-                val lastValue = scope.createTemporaryVariable(
-                    ensureNotNullable(
-                        last.castIfNecessary(
-                            progressionType.elementType(context.irBuiltIns),
-                            progressionType.elementCastFunctionName
-                        )
-                    ),
-                    nameHint = "last",
-                    origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
+            // Due to features of PSI2IR we can obtain nullable arguments here while actually
+            // they are non-nullable (the frontend takes care about this). So we need to cast
+            // them to non-nullable.
+            // TODO: Confirm if casting to non-nullable is still necessary
+            val lastExpression = ensureNotNullable(
+                headerInfo.last.castIfNecessary(
+                    headerInfo.progressionType.elementType(context.irBuiltIns),
+                    headerInfo.progressionType.elementCastFunctionName
                 )
+            )
 
-                val stepValue = scope.createTemporaryVariable(
-                    ensureNotNullable(
-                        step.castIfNecessary(
-                            progressionType.stepType(context.irBuiltIns),
-                            progressionType.stepCastFunctionName
-                        )
-                    ),
-                    nameHint = "step",
-                    origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE
+            val lastVariableIfCanCacheLast = if (headerInfo.canCacheLast) {
+                scope.createTemporaryVariable(
+                    lastExpression,
+                    nameHint = "last"
                 )
+            } else null
 
-                return when (headerInfo) {
-                    is ArrayHeaderInfo -> ArrayLoopHeader(
-                        headerInfo,
-                        inductionVariable,
-                        lastValue,
-                        stepValue
+            val stepVariable = scope.createTemporaryVariable(
+                ensureNotNullable(
+                    headerInfo.step.castIfNecessary(
+                        headerInfo.progressionType.stepType(context.irBuiltIns),
+                        headerInfo.progressionType.stepCastFunctionName
                     )
-                    is ProgressionHeaderInfo -> ProgressionLoopHeader(
+                ),
+                nameHint = "step"
+            )
+
+            return when (headerInfo) {
+                is IndexedGetHeaderInfo -> IndexedGetLoopHeader(
+                    headerInfo,
+                    inductionVariable,
+                    if (headerInfo.canCacheLast) irGet(lastVariableIfCanCacheLast!!) else lastExpression,
+                    stepVariable,
+                    listOfNotNull(headerInfo.objectVariable, inductionVariable, lastVariableIfCanCacheLast, stepVariable)
+                )
+                is ProgressionHeaderInfo -> {
+                    // For this loop:
+                    //
+                    //   for (i in first()..last() step step())
+                    //
+                    // ...the functions may have side-effects so we need to call them in the following order: first() (inductionVariable), last(), step().
+                    // Additional variables come first as they may be needed to the subsequent variables.
+                    //
+                    // In the case of a reversed range, the `inductionVariable` and `last` variables are swapped, therefore the declaration order must be
+                    // swapped to preserve the correct evaluation order.
+                    val declarations = headerInfo.additionalVariables + (
+                            if (headerInfo.isReversed)
+                                listOfNotNull(lastVariableIfCanCacheLast, inductionVariable)
+                            else
+                                listOfNotNull(inductionVariable, lastVariableIfCanCacheLast)
+                            ) +
+                            stepVariable
+                    ProgressionLoopHeader(
                         headerInfo,
                         inductionVariable,
-                        lastValue,
-                        stepValue
+                        if (headerInfo.canCacheLast) irGet(lastVariableIfCanCacheLast!!) else lastExpression,
+                        stepVariable,
+                        declarations
                     )
                 }
             }

@@ -237,5 +237,5 @@ class InlineClassLowering(val context: BackendContext) {
     }
 
     private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction =
-        createStaticFunctionWithReceivers(function.parent, function.name.toInlineClassImplementationName(), function, copyBody = false)
+        createStaticFunctionWithReceivers(function.parent, function.name.toInlineClassImplementationName(), function)
 }

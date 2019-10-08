@@ -1,4 +1,4 @@
 public abstract interface SelfAsParameter : R|kotlin/Any| {
-    public abstract operator fun foo(p: R|ft<test/SelfAsParameter, test/SelfAsParameter?>|!): R|kotlin/Unit|
+    public abstract operator fun foo(p: R|ft<test/SelfAsParameter, test/SelfAsParameter?>!|): R|kotlin/Unit|
 
 }

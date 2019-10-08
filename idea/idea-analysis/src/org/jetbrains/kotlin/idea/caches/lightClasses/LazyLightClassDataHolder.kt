@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.lightClasses
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 typealias ExactLightClassContextProvider = () -> LightClassConstructionContext
 typealias DummyLightClassContextProvider = (() -> LightClassConstructionContext?)?
@@ -43,7 +43,9 @@ sealed class LazyLightClassDataHolder(
             cache.computeIfAbsent(lazyLightClassDataHolder, diagnostics)
     }
 
-    private val exactResultLazyValue = lazyPub { builder(exactContextProvider()).stub }
+    private val _builderExactContextProvider: LightClassBuilderResult by lazyPub { builder(exactContextProvider()) }
+
+    private val exactResultLazyValue = lazyPub { _builderExactContextProvider.stub }
 
     private val lazyInexactStub by lazyPub {
         dummyContextProvider?.let { provider -> provider()?.let { context -> builder.invoke(context).stub } }
@@ -56,10 +58,9 @@ sealed class LazyLightClassDataHolder(
 
     override val extraDiagnostics: Diagnostics
         get() = diagnosticsHolderProvider().getOrCompute(this) {
-            builder(exactContextProvider()).diagnostics
-                // Force lazy diagnostics computation because otherwise a lot of memory is retained by computation.
-                // NB: Laziness here is not crucial anyway since somebody already has requested diagnostics and we hope one will use them
-                .takeUnless { it.isEmpty() } ?: Diagnostics.EMPTY
+            // Force lazy diagnostics computation because otherwise a lot of memory is retained by computation.
+            // NB: Laziness here is not crucial anyway since somebody already has requested diagnostics and we hope one will use them
+            _builderExactContextProvider.diagnostics.takeUnless { it.isEmpty() } ?: Diagnostics.EMPTY
         }
 
     // for facade or defaultImpls
@@ -112,7 +113,14 @@ sealed class LazyLightClassDataHolder(
 
                 val fieldName = dummyField.name
                 KtLightFieldImpl.lazy(dummyField, fieldOrigin, containingClass) {
-                    clsDelegate.findFieldByName(fieldName, false).assertMatches(dummyField, containingClass)
+                    val findFieldByName = clsDelegate.findFieldByName(fieldName, false)
+                    findFieldByName.checkMatches(dummyField, containingClass) ?:
+                    // fallback in case of non-matched (like synthetic) fields
+                    //
+                    // it costs some performance and has to happen in rare and odd cases
+                    KtLightFieldImpl.create(
+                        KtLightFieldImpl.getOrigin(dummyField), dummyField, containingClass
+                    )
                 }
             }
         }
@@ -129,47 +137,50 @@ sealed class LazyLightClassDataHolder(
                     val byMemberIndex: (PsiMethod) -> Boolean = { it.memberIndex == dummyIndex }
 
                     /* Searching all methods may be necessary in some cases where we failed to rollback optimization:
-                            Overriding internal member that was final
+                       Overriding internal member that was final
 
                        Resulting light member is not consistent in this case, so this should happen only for erroneous code
                     */
-                    val exactDelegateMethod = clsDelegate.findMethodsByName(dummyMethod.name, false).firstOrNull(byMemberIndex)
-                            ?: clsDelegate.methods.firstOrNull(byMemberIndex)
-                    exactDelegateMethod.assertMatches(dummyMethod, containingClass)
+                    val findMethodsByName = clsDelegate.findMethodsByName(dummyMethod.name, false)
+
+                    val candidateDelegateMethod = findMethodsByName.firstOrNull(byMemberIndex)
+                        ?: clsDelegate.methods.firstOrNull(byMemberIndex)
+
+                    candidateDelegateMethod.checkMatches(dummyMethod, containingClass) ?:
+                    // fallback if unable to find method for a dummy method (e.g. synthetic methods marked explicit or implicit) are
+                    // not visible as own methods.
+                    //
+                    // it costs some performance and has to happen in rare and odd cases
+                    KtLightMethodImpl.create(dummyMethod, KtLightMethodImpl.getOrigin(dummyMethod), containingClass)
                 }
             }
         }
     }
 
-    private fun <T : PsiMember> T?.assertMatches(dummyMember: T, containingClass: KtLightClass): T {
-        if (this == null)
-            throw LazyLightClassMemberMatchingError.NoMatch(dummyMember, containingClass)
+    private fun <T : PsiMember> T?.checkMatches(dummyMember: T, containingClass: KtLightClass): T? {
+        if (this == null) {
+            logMismatch("Couldn't match ${dummyMember.debugName}", containingClass)
+            return null
+        }
 
         val parameterCountMatches = (this as? PsiMethod)?.parameterList?.parametersCount ?: 0 ==
                 (dummyMember as? PsiMethod)?.parameterList?.parametersCount ?: 0
         if (this.memberIndex != dummyMember.memberIndex || !parameterCountMatches) {
-            throw LazyLightClassMemberMatchingError.WrongMatch(this, dummyMember, containingClass)
+            logMismatch("Wrongly matched ${dummyMember.debugName} to ${this.debugName}", containingClass)
+            return null
         }
 
         return this
     }
-}
 
-private sealed class LazyLightClassMemberMatchingError(message: String, containingClass: KtLightClass) :
-    KotlinExceptionWithAttachments(message) {
+    companion object {
+        private val LOG = Logger.getInstance(LazyLightClassDataHolder::class.java)
 
-    init {
-        containingClass.kotlinOrigin?.hasLightClassMatchingErrors = true
-        withAttachment("class.kt", (containingClass.kotlinOrigin)?.getDebugText())
+        private fun logMismatch(message: String, containingClass: KtLightClass) {
+            containingClass.kotlinOrigin?.hasLightClassMatchingErrors = true
+            LOG.warn("$message, class.kt: ${(containingClass.kotlinOrigin)?.getDebugText()}")
+        }
     }
-
-    class NoMatch(dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(
-        "Couldn't match ${dummyMember.debugName}", containingClass
-    )
-
-    class WrongMatch(realMember: PsiMember, dummyMember: PsiMember, containingClass: KtLightClass) : LazyLightClassMemberMatchingError(
-        "Matched ${dummyMember.debugName} to ${realMember.debugName}", containingClass
-    )
 }
 
 private val PsiMember.debugName

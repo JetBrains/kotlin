@@ -31,35 +31,45 @@ class ExternalDependenciesGenerator(
     val irBuiltIns: IrBuiltIns,
     externalDeclarationOrigin: ((DeclarationDescriptor) -> IrDeclarationOrigin)? = null,
     private val deserializer: IrDeserializer? = null,
+    irProviders: List<IrProvider> = emptyList(),
     facadeClassGenerator: (DeserializedContainerSource) -> IrClass? = { null }
 ) {
     private val stubGenerator = DeclarationStubGenerator(
-        moduleDescriptor, symbolTable, irBuiltIns.languageVersionSettings, externalDeclarationOrigin, deserializer, facadeClassGenerator
+        moduleDescriptor, symbolTable, irBuiltIns.languageVersionSettings, externalDeclarationOrigin,
+            listOfNotNull(deserializer) + irProviders, facadeClassGenerator
     )
 
     fun generateUnboundSymbolsAsDependencies() {
         stubGenerator.unboundSymbolGeneration = true
-        ArrayList(symbolTable.unboundClasses).forEach {
-            stubGenerator.generateClassStub(it.descriptor)
-        }
-        ArrayList(symbolTable.unboundConstructors).forEach {
-            stubGenerator.generateConstructorStub(it.descriptor)
-        }
-        ArrayList(symbolTable.unboundEnumEntries).forEach {
-            stubGenerator.generateEnumEntryStub(it.descriptor)
-        }
-        ArrayList(symbolTable.unboundFields).forEach {
-            stubGenerator.generateFieldStub(it.descriptor)
-        }
-        ArrayList(symbolTable.unboundSimpleFunctions).forEach {
-            stubGenerator.generateFunctionStub(it.descriptor)
-        }
-        ArrayList(symbolTable.unboundProperties).forEach {
-            stubGenerator.generatePropertyStub(it.descriptor)
-        }
-        ArrayList(symbolTable.unboundTypeParameters).forEach {
-            stubGenerator.generateOrGetTypeParameterStub(it.descriptor)
-        }
+        do {
+            fun <T> haveNotStabilized(prev: ArrayList<T>, cur: Set<T>) =
+                    cur.isNotEmpty() && (prev.size != cur.size || prev.any { !cur.contains(it) })
+
+            val unboundClasses = ArrayList(symbolTable.unboundClasses)
+            val unboundConstructors = ArrayList(symbolTable.unboundConstructors)
+            val unboundEnumEntries = ArrayList(symbolTable.unboundEnumEntries)
+            val unboundFields = ArrayList(symbolTable.unboundFields)
+            val unboundSimpleFunctions = ArrayList(symbolTable.unboundSimpleFunctions)
+            val unboundProperties = ArrayList(symbolTable.unboundProperties)
+            val unboundTypeParameters = ArrayList(symbolTable.unboundTypeParameters)
+            val unboundTypeAliases = ArrayList(symbolTable.unboundTypeAliases)
+            unboundClasses.forEach { stubGenerator.generateClassStub(it.descriptor) }
+            unboundConstructors.forEach { stubGenerator.generateConstructorStub(it.descriptor) }
+            unboundEnumEntries.forEach { stubGenerator.generateEnumEntryStub(it.descriptor) }
+            unboundFields.forEach { stubGenerator.generateFieldStub(it.descriptor) }
+            unboundSimpleFunctions.forEach { stubGenerator.generateFunctionStub(it.descriptor) }
+            unboundProperties.forEach { stubGenerator.generatePropertyStub(it.descriptor) }
+            unboundTypeParameters.forEach { stubGenerator.generateOrGetTypeParameterStub(it.descriptor) }
+            unboundTypeAliases.forEach { stubGenerator.generateTypeAliasStub(it.descriptor) }
+        } while (haveNotStabilized(unboundClasses, symbolTable.unboundClasses)
+                || haveNotStabilized(unboundConstructors, symbolTable.unboundConstructors)
+                || haveNotStabilized(unboundEnumEntries, symbolTable.unboundEnumEntries)
+                || haveNotStabilized(unboundFields, symbolTable.unboundFields)
+                || haveNotStabilized(unboundSimpleFunctions, symbolTable.unboundSimpleFunctions)
+                || haveNotStabilized(unboundProperties, symbolTable.unboundProperties)
+                || haveNotStabilized(unboundTypeParameters, symbolTable.unboundTypeParameters)
+                || haveNotStabilized(unboundTypeAliases, symbolTable.unboundTypeAliases)
+        )
 
         deserializer?.declareForwardDeclarations()
 
@@ -70,6 +80,7 @@ class ExternalDependenciesGenerator(
         assertEmpty(symbolTable.unboundSimpleFunctions, "simple functions")
         assertEmpty(symbolTable.unboundProperties, "properties")
         assertEmpty(symbolTable.unboundTypeParameters, "type parameters")
+        assertEmpty(symbolTable.unboundTypeAliases, "type aliases")
     }
 
     private fun assertEmpty(s: Set<IrSymbol>, marker: String) {

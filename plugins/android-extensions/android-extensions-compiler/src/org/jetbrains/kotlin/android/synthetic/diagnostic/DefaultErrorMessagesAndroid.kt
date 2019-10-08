@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE_WITH_ANNOTATIONS
 
 object DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
     private val MAP = DiagnosticFactoryToRendererMap("Android")
@@ -89,7 +90,7 @@ object DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
 
         MAP.put(ErrorsAndroid.PARCELER_TYPE_INCOMPATIBLE,
                 "Parceler type {0} is incompatible with {1}",
-                RENDER_TYPE, RENDER_TYPE)
+                RENDER_TYPE_WITH_ANNOTATIONS, RENDER_TYPE_WITH_ANNOTATIONS)
 
         MAP.put(ErrorsAndroid.DUPLICATING_TYPE_PARCELERS,
                 "Duplicating ''TypeParceler'' annotations")

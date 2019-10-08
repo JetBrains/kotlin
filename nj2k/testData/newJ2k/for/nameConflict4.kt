@@ -5,7 +5,6 @@ internal class A {
             println(i)
             i *= 2
         }
-
         if (p) {
             val i = 10
         }

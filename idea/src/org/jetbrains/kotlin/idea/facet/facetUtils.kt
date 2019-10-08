@@ -144,13 +144,24 @@ fun Module.getOrCreateFacet(
     return facet
 }
 
+//method used for non-mpp modules
+fun KotlinFacet.configureFacet(
+    compilerVersion: String?,
+    coroutineSupport: LanguageFeature.State,
+    platform: TargetPlatform?,
+    modelsProvider: IdeModifiableModelsProvider
+) {
+    configureFacet(compilerVersion, coroutineSupport, platform, modelsProvider, false, emptyList(), emptyList())
+}
+
 fun KotlinFacet.configureFacet(
     compilerVersion: String?,
     coroutineSupport: LanguageFeature.State,
     platform: TargetPlatform?, // if null, detect by module dependencies
     modelsProvider: IdeModifiableModelsProvider,
     hmppEnabled: Boolean,
-    pureKotlinSourceFolders: List<String>
+    pureKotlinSourceFolders: List<String>,
+    dependsOnList: List<String>
 ) {
     val module = module
     with(configuration.settings) {
@@ -158,6 +169,7 @@ fun KotlinFacet.configureFacet(
         targetPlatform = null
         compilerSettings = null
         isHmppEnabled = hmppEnabled
+        dependsOnModuleNames = dependsOnList
         initializeIfNeeded(
             module,
             modelsProvider.getModifiableRootModel(module),
@@ -176,6 +188,11 @@ fun KotlinFacet.configureFacet(
     module.externalCompilerVersion = compilerVersion
 }
 
+fun Module.externalSystemTestTasks(): List<ExternalSystemTestTask> {
+    val settingsProvider = KotlinFacetSettingsProvider.getInstance(project) ?: return emptyList()
+    return settingsProvider.getInitializedSettings(this).externalSystemTestTasks
+}
+
 @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
 @Deprecated(
     message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
@@ -187,7 +204,7 @@ fun KotlinFacet.configureFacet(
     platform: IdePlatform<*, *>,
     modelsProvider: IdeModifiableModelsProvider
 ) {
-    configureFacet(compilerVersion, coroutineSupport, platform.toNewPlatform(), modelsProvider, false, emptyList()) //TODO(auskov): passed isHmpp = false
+    configureFacet(compilerVersion, coroutineSupport, platform.toNewPlatform(), modelsProvider)
 }
 
 

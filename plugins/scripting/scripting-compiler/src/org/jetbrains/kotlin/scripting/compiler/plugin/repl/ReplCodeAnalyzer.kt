@@ -103,7 +103,9 @@ class ReplCodeAnalyzer(environment: KotlinCoreEnvironment) {
     }
 
     private fun doAnalyze(linePsi: KtFile, importedScripts: List<KtFile>, codeLine: ReplCodeLine): ReplLineAnalysisResult {
-        scriptDeclarationFactory.setDelegateFactory(FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(linePsi)))
+        scriptDeclarationFactory.setDelegateFactory(
+            FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(linePsi) + importedScripts)
+        )
         replState.submitLine(linePsi, codeLine)
 
         val context = topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi) + importedScripts)

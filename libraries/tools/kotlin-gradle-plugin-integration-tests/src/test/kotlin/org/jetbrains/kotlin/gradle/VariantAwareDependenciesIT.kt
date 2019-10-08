@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.Test
 
 class VariantAwareDependenciesIT : BaseGradleIT() {
-    private val gradleVersion = GradleVersionRequired.AtLeast("4.8")
+    private val gradleVersion = GradleVersionRequired.None
 
     @Test
     fun testJvmKtAppResolvesMppLib() {
@@ -245,7 +245,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
 
     @Test
     fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations() =
-        with(Project("new-mpp-jvm-with-java-multi-module", GradleVersionRequired.AtLeast("4.7"))) {
+        with(Project("new-mpp-jvm-with-java-multi-module")) {
             testResolveAllConfigurations("app")
         }
 
@@ -290,10 +290,17 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             }
         }
 
-    private fun Project.embedProject(other: Project) {
-        setupWorkingDir()
-        other.setupWorkingDir()
-        other.projectDir.copyRecursively(projectDir.resolve(other.projectName))
-        projectDir.resolve("settings.gradle").appendText("\ninclude '${other.projectName}'")
+}
+
+internal fun BaseGradleIT.Project.embedProject(other: BaseGradleIT.Project) {
+    setupWorkingDir()
+    other.setupWorkingDir()
+    other.testCase.apply {
+        val gradleBuildScript = other.gradleBuildScript()
+        if (gradleBuildScript.extension == "kts") {
+            gradleBuildScript.modify { it.replace(".version(\"$PLUGIN_MARKER_VERSION_PLACEHOLDER\")", "") }
+        }
     }
+    other.projectDir.copyRecursively(projectDir.resolve(other.projectName))
+    projectDir.resolve("settings.gradle").appendText("\ninclude '${other.projectName}'")
 }

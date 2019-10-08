@@ -123,7 +123,7 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
         if (header != null) {
             register(
                 IncrementalDataProvider::class.java,
-                IncrementalDataProviderImpl(header!!, packageParts, JsMetadataVersion.INSTANCE.toArray(), emptyMap()) // TODO pass correct metadata
+                IncrementalDataProviderImpl(header!!, packageParts, JsMetadataVersion.INSTANCE.toArray(), emptyMap(), emptyMap()) // TODO pass correct metadata
             )
         }
 

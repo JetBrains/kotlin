@@ -1,0 +1,12 @@
+public abstract interface Diagnostic : R|kotlin/Any| {
+}
+public abstract interface DiagnosticWithParameters1<E, A> : R|jvm/Diagnostic| {
+    public abstract operator fun getA(): R|ft<A, A?>!|
+
+}
+public abstract interface DiagnosticWithParameters2<E, A, B> : R|jvm/Diagnostic| {
+    public abstract operator fun getA(): R|ft<A, A?>!|
+
+    public abstract operator fun getB(): R|ft<B, B?>!|
+
+}

@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.debugger.breakpoints
 
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -30,17 +32,48 @@ import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.XSourcePosition
 import com.intellij.xdebugger.impl.XSourcePositionImpl
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.util.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.core.util.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.findElementAtLine
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
-fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass: Class<*>): Boolean {
+interface KotlinBreakpointType
+
+private val LOG = Logger.getInstance("BreakpointTypeUtilsKt")
+
+class ApplicabilityResult(val isApplicable: Boolean, val shouldStop: Boolean) {
+    companion object {
+        @JvmStatic
+        fun definitely(result: Boolean) = ApplicabilityResult(result, shouldStop = true)
+
+        @JvmStatic
+        fun maybe(result: Boolean) = ApplicabilityResult(result, shouldStop = false)
+
+        @JvmField
+        val UNKNOWN = ApplicabilityResult(isApplicable = false, shouldStop = false)
+
+        @JvmField
+        val DEFINITELY_YES = ApplicabilityResult(isApplicable = true, shouldStop = true)
+
+        @JvmField
+        val DEFINITELY_NO = ApplicabilityResult(isApplicable = false, shouldStop = true)
+
+        @JvmField
+        val MAYBE_YES = ApplicabilityResult(isApplicable = true, shouldStop = false)
+    }
+}
+
+fun isBreakpointApplicable(file: VirtualFile, line: Int, project: Project, checker: (PsiElement) -> ApplicabilityResult): Boolean {
     val psiFile = PsiManager.getInstance(project).findFile(file)
 
     if (psiFile == null || psiFile.virtualFile?.fileType != KotlinFileType.INSTANCE) {
@@ -49,43 +82,56 @@ fun canPutAt(file: VirtualFile, line: Int, project: Project, breakpointTypeClass
 
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return false
 
-    var result: Class<*>? = null
-    XDebuggerUtil.getInstance().iterateLine(project, document, line, fun (el: PsiElement): Boolean {
-        // avoid comments
-        if (el is PsiWhiteSpace || PsiTreeUtil.getParentOfType(el, PsiComment::class.java, false) != null) {
-            return true
-        }
+    return runReadAction {
+        var isApplicable = false
+        val checked = HashSet<PsiElement>()
 
-        var element = el
-        var parent = element.parent
-        while (parent != null) {
-            val offset = parent.textOffset
-            if (offset >= 0 && document.getLineNumber(offset) != line) break
-
-            element = parent
-            parent = element.parent
-        }
-
-        if (element is KtProperty || element is KtParameter) {
-            result = if ((element is KtParameter && element.hasValOrVar()) || (element is KtProperty && !element.isLocal)) {
-                KotlinFieldBreakpointType::class.java
+        XDebuggerUtil.getInstance().iterateLine(project, document, line, fun(element: PsiElement): Boolean {
+            if (element is PsiWhiteSpace || element.getParentOfType<PsiComment>(false) != null || !element.isValid) {
+                return true
             }
-            else {
-                KotlinLineBreakpointType::class.java
+
+            val parent = getTopmostParentOnLineOrSelf(element, document, line)
+            if (!checked.add(parent)) {
+                return true
             }
-            return false
-        }
-        else {
-            result = KotlinLineBreakpointType::class.java
-        }
 
-        return true
-    })
+            val result = checker(parent)
 
-    return result == breakpointTypeClass
+            if (result.shouldStop && !result.isApplicable) {
+                isApplicable = false
+                return false
+            }
+
+            isApplicable = isApplicable or result.isApplicable
+            return !result.shouldStop
+        })
+
+        return@runReadAction isApplicable
+    }
 }
 
-fun computeVariants(
+private fun getTopmostParentOnLineOrSelf(element: PsiElement, document: Document, line: Int): PsiElement {
+    var current = element
+    var parent = current.parent
+    while (parent != null) {
+        val offset = parent.textOffset
+        if (offset > document.textLength) {
+            val containingFile = element.containingFile
+            val attachments = if (containingFile != null) arrayOf(attachmentByPsiFile(containingFile)) else emptyArray()
+            LOG.error("Wrong offset: $offset for line $line. Should be in range: [0, ${document.textLength}].", *attachments)
+            break
+        }
+        if (offset >= 0 && document.getLineNumber(offset) != line) break
+
+        current = parent
+        parent = current.parent
+    }
+
+    return current
+}
+
+fun computeLineBreakpointVariants(
     project: Project,
     position: XSourcePosition,
     kotlinBreakpointType: KotlinLineBreakpointType
@@ -99,15 +145,19 @@ fun computeVariants(
     val result = LinkedList<JavaLineBreakpointType.JavaBreakpointVariant>()
 
     val elementAt = pos.elementAt.parentsWithSelf.firstIsInstance<KtElement>()
-    val mainMethod = KotlinLineBreakpointType.getContainingMethod(elementAt)
+    val mainMethod = PsiTreeUtil.getParentOfType(elementAt, KtFunction::class.java, false)
+
+    var mainMethodAdded = false
+
     if (mainMethod != null) {
-        result.add(
-            kotlinBreakpointType.LineJavaBreakpointVariant(
-                position,
-                CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset),
-                -1
-            )
-        )
+        val bodyExpression = mainMethod.bodyExpression
+        val isLambdaResult = bodyExpression is KtLambdaExpression && bodyExpression.functionLiteral in lambdas
+
+        if (!isLambdaResult) {
+            val variantElement = CodeInsightUtils.getTopmostElementAtOffset(elementAt, pos.offset)
+            result.add(kotlinBreakpointType.LineKotlinBreakpointVariant(position, variantElement, -1))
+            mainMethodAdded = true
+        }
     }
 
     lambdas.forEachIndexed { ordinal, lambda ->
@@ -118,7 +168,9 @@ fun computeVariants(
         }
     }
 
-    result.add(kotlinBreakpointType.JavaBreakpointVariant(position))
+    if (mainMethodAdded && result.size > 1) {
+        result.add(kotlinBreakpointType.KotlinBreakpointVariant(position, lambdas.size))
+    }
 
     return result
 }
@@ -148,3 +200,18 @@ fun getLambdasAtLineIfAny(file: KtFile, line: Int): List<KtFunction> {
     }
 }
 
+internal fun KtCallableDeclaration.isInlineOnly(): Boolean {
+    if (!hasModifier(KtTokens.INLINE_KEYWORD)) {
+        return false
+    }
+
+    val inlineOnlyAnnotation = annotationEntries
+        .firstOrNull { it.shortName == INLINE_ONLY_ANNOTATION_FQ_NAME.shortName() }
+        ?: return false
+
+    return runReadAction f@{
+        val bindingContext = inlineOnlyAnnotation.analyze(BodyResolveMode.PARTIAL)
+        val annotationDescriptor = bindingContext[BindingContext.ANNOTATION, inlineOnlyAnnotation] ?: return@f false
+        return@f annotationDescriptor.fqName == INLINE_ONLY_ANNOTATION_FQ_NAME
+    }
+}

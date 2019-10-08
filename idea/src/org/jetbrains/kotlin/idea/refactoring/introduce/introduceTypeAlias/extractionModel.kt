@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceTypeAlias
@@ -33,12 +22,12 @@ import org.jetbrains.kotlin.types.KotlinType
 
 class TypeReferenceInfo(val reference: KtTypeReference, val type: KotlinType)
 
-internal var KtTypeReference.resolveInfo : TypeReferenceInfo? by CopyablePsiUserDataProperty(Key.create("RESOLVE_INFO"))
+internal var KtTypeReference.resolveInfo: TypeReferenceInfo? by CopyablePsiUserDataProperty(Key.create("RESOLVE_INFO"))
 
 class IntroduceTypeAliasData(
-        val originalTypeElement: KtElement,
-        val targetSibling: PsiElement,
-        val extractTypeConstructor: Boolean = false
+    val originalTypeElement: KtElement,
+    val targetSibling: PsiElement,
+    val extractTypeConstructor: Boolean = false
 ) : Disposable {
     val resolutionFacade = originalTypeElement.getResolutionFacade()
     val bindingContext = resolutionFacade.analyze(originalTypeElement, BodyResolveMode.PARTIAL)
@@ -52,12 +41,12 @@ class IntroduceTypeAliasData(
             override fun visitTypeReference(typeReference: KtTypeReference) {
                 val typeElement = typeReference.typeElement ?: return
 
-                val kotlinType = bindingContext[BindingContext.ABBREVIATED_TYPE, typeReference] ?:
-                                 bindingContext[BindingContext.TYPE, typeReference] ?:
-                                 return
+                val kotlinType = bindingContext[BindingContext.ABBREVIATED_TYPE, typeReference]
+                    ?: bindingContext[BindingContext.TYPE, typeReference]
+                    ?: return
                 typeReference.resolveInfo = TypeReferenceInfo(typeReference, kotlinType)
 
-                typeElement.typeArgumentsAsTypes.forEach { it.accept(this) }
+                typeElement.typeArgumentsAsTypes.forEach { it?.accept(this) }
             }
         }
         (originalTypeElement.parent as? KtTypeReference ?: originalTypeElement).accept(visitor)
@@ -72,13 +61,13 @@ class IntroduceTypeAliasData(
 data class TypeParameter(val name: String, val typeReferenceInfos: Collection<TypeReferenceInfo>)
 
 data class IntroduceTypeAliasDescriptor(
-        val originalData: IntroduceTypeAliasData,
-        val name: String,
-        val visibility: KtModifierKeywordToken?,
-        val typeParameters: List<TypeParameter>
+    val originalData: IntroduceTypeAliasData,
+    val name: String,
+    val visibility: KtModifierKeywordToken?,
+    val typeParameters: List<TypeParameter>
 )
 
 data class IntroduceTypeAliasDescriptorWithConflicts(
-        val descriptor: IntroduceTypeAliasDescriptor,
-        val conflicts: MultiMap<PsiElement, String>
+    val descriptor: IntroduceTypeAliasDescriptor,
+    val conflicts: MultiMap<PsiElement, String>
 )

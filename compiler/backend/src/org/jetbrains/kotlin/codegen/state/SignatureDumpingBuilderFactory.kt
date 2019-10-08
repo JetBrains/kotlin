@@ -101,7 +101,7 @@ class SignatureDumpingBuilderFactory(
             origin.descriptor?.let {
                 outputStream.append("\t\t").appendNameValue("declaration", TYPE_RENDERER.render(it)).append(",\n")
                 (it as? DeclarationDescriptorWithVisibility)?.visibility?.let {
-                    outputStream.append("\t\t").appendNameValue("visibility", it.displayName).append(",\n")
+                    outputStream.append("\t\t").appendNameValue("visibility", it.internalDisplayName).append(",\n")
                 }
             }
             outputStream.append("\t\t").appendNameValue("class", javaClassName).append(",\n")
@@ -112,7 +112,7 @@ class SignatureDumpingBuilderFactory(
                 append("\t\t\t{")
                 descriptor?.let {
                     (it as? DeclarationDescriptorWithVisibility)?.visibility?.let {
-                        appendNameValue("visibility", it.displayName).append(",\t")
+                        appendNameValue("visibility", it.internalDisplayName).append(",\t")
                     }
                     appendNameValue("declaration", MEMBER_RENDERER.render(it)).append(", ")
 

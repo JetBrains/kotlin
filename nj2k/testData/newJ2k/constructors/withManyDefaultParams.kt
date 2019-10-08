@@ -10,14 +10,12 @@ class Test {
     protected var g = 0.toChar()
 
     constructor() {}
-
-    constructor(name: String) {
+    constructor(name: String?) {
         myName = foo(name)
     }
 
     companion object {
-
-        internal fun foo(n: String): String {
+        internal fun foo(n: String?): String {
             return ""
         }
     }

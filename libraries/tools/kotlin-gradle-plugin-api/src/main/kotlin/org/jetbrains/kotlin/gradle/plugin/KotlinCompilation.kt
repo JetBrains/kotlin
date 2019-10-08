@@ -67,10 +67,16 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
 
     fun source(sourceSet: KotlinSourceSet)
 
+    fun associateWith(other: KotlinCompilation<*>)
+
+    val associateWith: List<KotlinCompilation<*>>
+
     override fun getName(): String = compilationName
 
     override val relatedConfigurationNames: List<String>
         get() = super.relatedConfigurationNames + compileDependencyConfigurationName
+
+    val moduleName: String
 }
 
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptions> : KotlinCompilation<T> {

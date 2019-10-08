@@ -21,7 +21,7 @@ import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.compiled.*
 import com.intellij.psi.util.MethodSignatureUtil
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 
 class ScriptDependencySourceNavigationPolicyForJavaClasses : ClsCustomNavigationPolicyEx() {
     override fun getNavigationElement(clsClass: ClsClassImpl): PsiClass? {
@@ -49,7 +49,7 @@ class ScriptDependencySourceNavigationPolicyForJavaClasses : ClsCustomNavigation
         val virtualFile = file.virtualFile
         val project = file.project
 
-        val kotlinScriptConfigurationManager = ScriptDependenciesManager.getInstance(project)
+        val kotlinScriptConfigurationManager = ScriptConfigurationManager.getInstance(project)
         if (virtualFile !in kotlinScriptConfigurationManager.getAllScriptsDependenciesClassFilesScope()) return null
 
         val sourceFileName = (file.classes.first() as ClsClassImpl).sourceFileName

@@ -40,6 +40,6 @@ abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
         loadFileByFullPath(fileName)
         val expected = readExpectedOccurrences(fileName)
         val actual = generateToText()
-        checkGeneratedTextAgainstExpectedOccurrences(actual, expected, TargetBackend.ANY)
+        checkGeneratedTextAgainstExpectedOccurrences(actual, expected, TargetBackend.ANY, true)
     }
 }

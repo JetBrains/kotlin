@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.KotlinTypeKt;
@@ -92,7 +93,11 @@ public class OverridingUtil {
      */
     @NotNull
     public static <D extends CallableDescriptor> Set<D> filterOutOverridden(@NotNull Set<D> candidateSet) {
-        return filterOverrides(candidateSet, new Function2<D, D, Pair<CallableDescriptor, CallableDescriptor>>() {
+        boolean allowDescriptorCopies = !candidateSet.isEmpty() &&
+                                        DescriptorUtilsKt
+                                                .isTypeRefinementEnabled(DescriptorUtilsKt.getModule(candidateSet.iterator().next()));
+
+        return filterOverrides(candidateSet, allowDescriptorCopies, new Function2<D, D, Pair<CallableDescriptor, CallableDescriptor>>() {
             @Override
             public Pair<CallableDescriptor, CallableDescriptor> invoke(D a, D b) {
                 return new Pair<CallableDescriptor, CallableDescriptor>(a, b);
@@ -103,6 +108,7 @@ public class OverridingUtil {
     @NotNull
     public static <D> Set<D> filterOverrides(
             @NotNull Set<D> candidateSet,
+            boolean allowDescriptorCopies,
             @NotNull Function2<? super D, ? super D, Pair<CallableDescriptor, CallableDescriptor>> transformFirst
     ) {
         if (candidateSet.size() <= 1) return candidateSet;
@@ -115,10 +121,10 @@ public class OverridingUtil {
                 Pair<CallableDescriptor, CallableDescriptor> meAndOther = transformFirst.invoke(meD, otherD);
                 CallableDescriptor me = meAndOther.component1();
                 CallableDescriptor other = meAndOther.component2();
-                if (overrides(me, other)) {
+                if (overrides(me, other, allowDescriptorCopies)) {
                     iterator.remove();
                 }
-                else if (overrides(other, me)) {
+                else if (overrides(other, me, allowDescriptorCopies)) {
                     continue outerLoop;
                 }
             }
@@ -133,7 +139,9 @@ public class OverridingUtil {
     /**
      * @return whether f overrides g
      */
-    public static <D extends CallableDescriptor> boolean overrides(@NotNull D f, @NotNull D g) {
+    public static <D extends CallableDescriptor> boolean overrides(
+            @NotNull D f, @NotNull D g, boolean allowDeclarationCopies
+    ) {
         // In a multi-module project different "copies" of the same class may be present in different libraries,
         // that's why we use structural equivalence for members (DescriptorEquivalenceForOverrides).
 
@@ -142,11 +150,11 @@ public class OverridingUtil {
         // we'll be getting sets of members that do not override each other, but are structurally equivalent.
         // As other code relies on no equal descriptors passed here, we guard against f == g, but this may not be necessary
         // Note that this is needed for the usage of this function in the IDE code
-        if (!f.equals(g) && DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(f.getOriginal(), g.getOriginal())) return true;
+        if (!f.equals(g) && DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(f.getOriginal(), g.getOriginal(), allowDeclarationCopies)) return true;
 
         CallableDescriptor originalG = g.getOriginal();
         for (D overriddenFunction : DescriptorUtils.getAllOverriddenDescriptors(f)) {
-            if (DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(originalG, overriddenFunction)) return true;
+            if (DescriptorEquivalenceForOverrides.INSTANCE.areEquivalent(originalG, overriddenFunction, allowDeclarationCopies)) return true;
         }
         return false;
     }

@@ -14,14 +14,16 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
-interface SyntheticSymbol : ConeSymbol
+interface SyntheticSymbol
 
 class SyntheticPropertySymbol(callableId: CallableId) : FirPropertySymbol(callableId), SyntheticSymbol
+
+class FirSyntheticFunctionSymbol(
+    callableId: CallableId
+) : FirNamedFunctionSymbol(callableId), SyntheticSymbol
 
 class FirSyntheticPropertiesScope(
     val session: FirSession,
@@ -29,7 +31,7 @@ class FirSyntheticPropertiesScope(
     private val typeCalculator: ReturnTypeCalculator
 ) : FirScope() {
 
-    val synthetic: MutableMap<ConeCallableSymbol, ConeVariableSymbol> = mutableMapOf()
+    val synthetic: MutableMap<FirCallableSymbol<*>, FirVariableSymbol<*>> = mutableMapOf()
 
 
     private fun checkGetAndCreateSynthetic(

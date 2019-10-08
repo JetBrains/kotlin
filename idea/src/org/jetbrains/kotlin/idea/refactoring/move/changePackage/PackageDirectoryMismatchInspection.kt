@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 class PackageDirectoryMismatchInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = packageDirectiveVisitor(fun(directive: KtPackageDirective) {
         val file = directive.containingKtFile
-        if (file.isInjectedFragment || file.packageMatchesDirectoryOrImplicit()) return
+        if (file.textLength == 0 || file.isInjectedFragment || file.packageMatchesDirectoryOrImplicit()) return
 
         val fixes = mutableListOf<LocalQuickFix>()
         val qualifiedName = directive.qualifiedName

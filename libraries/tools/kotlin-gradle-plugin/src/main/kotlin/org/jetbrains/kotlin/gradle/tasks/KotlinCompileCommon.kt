@@ -50,12 +50,11 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
-        args.moduleName = friendTask?.moduleName ?: this@KotlinCompileCommon.moduleName
+        args.moduleName = this@KotlinCompileCommon.moduleName
 
         if (defaultsOnly) return
 
         val classpathList = classpath.files.toMutableList()
-        friendTask?.let { classpathList.add(it.destinationDir) }
 
         with(args) {
             classpath = classpathList.joinToString(File.pathSeparator)

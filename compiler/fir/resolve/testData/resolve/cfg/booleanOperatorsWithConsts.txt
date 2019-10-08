@@ -1,0 +1,81 @@
+FILE: booleanOperatorsWithConsts.kt
+    public final fun test_1(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b| || Boolean(false) ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_2(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            Boolean(false) || R|<local>/b| ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_3(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b| || Boolean(true) ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_4(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            Boolean(true) || R|<local>/b| ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_5(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b| && Boolean(false) ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_6(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            Boolean(false) && R|<local>/b| ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_7(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b| && Boolean(true) ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_8(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            Boolean(true) && R|<local>/b| ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }

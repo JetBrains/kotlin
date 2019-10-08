@@ -104,7 +104,11 @@ val nodeJSPlugin by configurations.creating
  */
 val intellijRuntimeAnnotations = "intellij-runtime-annotations"
 
-val customDepsRepoDir = rootProject.rootDir.parentFile.resolve("dependencies/repo")
+val dependenciesDir = (findProperty("kotlin.build.dependencies.dir") as String?)?.let(::File)
+    ?: rootProject.rootDir.parentFile.resolve("dependencies")
+
+val customDepsRepoDir = dependenciesDir.resolve("repo")
+
 val customDepsOrg: String by rootProject.extra
 val customDepsRevision = intellijVersion
 val repoDir = File(customDepsRepoDir, customDepsOrg)
@@ -141,7 +145,7 @@ dependencies {
 
 val makeIntellijCore = buildIvyRepositoryTask(intellijCore, customDepsOrg, customDepsRepoDir)
 
-val makeIntellijAnnotations by tasks.creating(Copy::class.java) {
+val makeIntellijAnnotations by tasks.registering(Copy::class) {
     dependsOn(makeIntellijCore)
 
     from(repoDir.resolve("intellij-core/$intellijVersion/artifacts/annotations.jar"))
@@ -218,7 +222,7 @@ tasks.named("build") {
 }
 
 // Task to delete legacy repo locations
-tasks.create("cleanLegacy", Delete::class.java) {
+tasks.register<Delete>("cleanLegacy") {
     delete("$projectDir/android-dx")
     delete("$projectDir/intellij-sdk")
 }

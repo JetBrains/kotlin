@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.codegen.AsmUtil.BOUND_REFERENCE_RECEIVER
+import org.jetbrains.kotlin.codegen.IrExpressionLambda
+import org.jetbrains.kotlin.codegen.JvmKotlinType
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -19,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getArguments
-import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -27,10 +30,14 @@ class IrInlineCodegen(
     codegen: ExpressionCodegen,
     state: GenerationState,
     function: FunctionDescriptor,
-    typeParameterMappings: IrTypeParameterMappings,
-    sourceCompiler: SourceCompilerForInline
-) : InlineCodegen<ExpressionCodegen>(codegen, state, function, typeParameterMappings.toTypeParameterMappings(), sourceCompiler),
-    IrCallGenerator {
+    methodOwner: Type,
+    signature: JvmMethodSignature,
+    typeParameterMappings: TypeParameterMappings<IrType>,
+    sourceCompiler: SourceCompilerForInline,
+    reifiedTypeInliner: ReifiedTypeInliner<IrType>
+) : InlineCodegen<ExpressionCodegen>(
+    codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
+), IrCallGenerator {
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
         // TODO: JVM assertions are not implemented yet in IR backend
     }
@@ -98,15 +105,14 @@ class IrInlineCodegen(
     }
 
     override fun genCall(
-        callableMethod: Callable,
+        callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,
         expression: IrFunctionAccessExpression
     ) {
-        val typeArguments = expression.descriptor.typeParameters.keysToMap { expression.getTypeArgumentOrDefault(it) }
         // TODO port inlining cycle detection to IrFunctionAccessExpression & pass it
         state.globalInlineContext.enterIntoInlining(null)
         try {
-            performInline(typeArguments, false, codegen)
+            performInline(expression.symbol.owner.typeParameters.map { it.symbol }, false, codegen.typeMapper.typeSystem, codegen)
         } finally {
             state.globalInlineContext.exitFromInliningOf(null)
         }
@@ -120,8 +126,8 @@ class IrInlineCodegen(
     ): LambdaInfo {
         val referencedFunction = irReference.symbol.owner
         return IrExpressionLambdaImpl(
-            irReference, referencedFunction, codegen.typeMapper, parameter.isCrossinline, boundReceiver != null,
-            parameter.type.isExtensionFunctionType
+            irReference, referencedFunction, codegen.typeMapper, codegen.methodSignatureMapper, codegen.context, parameter.isCrossinline,
+            boundReceiver != null, parameter.type.isExtensionFunctionType
         ).also { lambda ->
             val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
             closureInfo.functionalArgument = lambda
@@ -134,6 +140,8 @@ class IrExpressionLambdaImpl(
     val reference: IrFunctionReference,
     val function: IrFunction,
     private val typeMapper: IrTypeMapper,
+    methodSignatureMapper: MethodSignatureMapper,
+    private val context: JvmBackendContext,
     isCrossInline: Boolean,
     override val isBoundCallableReference: Boolean,
     override val isExtensionLambda: Boolean
@@ -163,7 +171,7 @@ class IrExpressionLambdaImpl(
             }
         }
 
-    private val loweredMethod = typeMapper.mapAsmMethod(function)
+    private val loweredMethod = methodSignatureMapper.mapAsmMethod(function.getOrCreateSuspendFunctionViewIfNeeded(context))
 
     val capturedParamsInDesc: List<Type> =
         loweredMethod.argumentTypes.drop(if (isExtensionLambda) 1 else 0).take(capturedVars.size)
@@ -172,21 +180,23 @@ class IrExpressionLambdaImpl(
         Method(
             it.name,
             it.returnType,
-            (
-                    (if (isExtensionLambda) it.argumentTypes.take(1) else emptyList()) +
-                            it.argumentTypes.drop((if (isExtensionLambda) 1 else 0) + capturedVars.size)
-                    ).toTypedArray()
+            ((if (isExtensionLambda) it.argumentTypes.take(1) else emptyList()) +
+                    it.argumentTypes.drop((if (isExtensionLambda) 1 else 0) + capturedVars.size)).toTypedArray()
         )
     }
 
     override val invokeMethodDescriptor: FunctionDescriptor = function.descriptor
 
     override val hasDispatchReceiver: Boolean = false
+
+    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor {
+        return function.getOrCreateSuspendFunctionViewIfNeeded(context).descriptor
+    }
 }
 
 fun isInlineIrExpression(argumentExpression: IrExpression) =
     when (argumentExpression) {
-        is IrBlock -> (argumentExpression.origin == IrStatementOrigin.LAMBDA || argumentExpression.origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
+        is IrBlock -> argumentExpression.isInlineIrBlock()
         is IrCallableReference -> true.also {
             assert((0 until argumentExpression.valueArgumentsCount).count { argumentExpression.getValueArgument(it) != null } == 0) {
                 "Expecting 0 value arguments for bounded callable reference: ${argumentExpression.dump()}"
@@ -194,6 +204,8 @@ fun isInlineIrExpression(argumentExpression: IrExpression) =
         }
         else -> false
     }
+
+fun IrBlock.isInlineIrBlock(): Boolean = origin == IrStatementOrigin.LAMBDA || origin == IrStatementOrigin.ANONYMOUS_FUNCTION
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
     (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && isInline

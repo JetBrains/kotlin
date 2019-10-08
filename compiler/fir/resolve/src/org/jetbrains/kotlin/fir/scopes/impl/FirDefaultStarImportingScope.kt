@@ -9,18 +9,27 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
-class FirDefaultStarImportingScope(session: FirSession, lookupInFir: Boolean = false) :
-    FirAbstractStarImportingScope(session, lookupInFir) {
+class FirDefaultStarImportingScope(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    priority: DefaultImportPriority,
+    lookupInFir: Boolean = false
+) : FirAbstractStarImportingScope(session, scopeSession, lookupInFir) {
 
     // TODO: put languageVersionSettings into FirSession?
-    override val starImports = session.moduleInfo?.analyzerServices?.getDefaultImports(LanguageVersionSettingsImpl.DEFAULT, true)
-        ?.filter { it.isAllUnder }
-        ?.map {
-            FirResolvedImportImpl(
-                FirImportImpl(null, it.fqName, isAllUnder = true, aliasName = null),
-                it.fqName,
-                null
-            )
-        } ?: emptyList()
+    override val starImports = run {
+        val analyzerServices = session.moduleInfo?.analyzerServices
+        val allDefaultImports = priority.getAllDefaultImports(analyzerServices, LanguageVersionSettingsImpl.DEFAULT)
+        allDefaultImports
+            ?.filter { it.isAllUnder }
+            ?.map {
+                FirResolvedImportImpl(
+                    FirImportImpl(null, it.fqName, isAllUnder = true, aliasName = null),
+                    it.fqName,
+                    null
+                )
+            } ?: emptyList()
+    }
 }

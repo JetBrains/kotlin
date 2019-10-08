@@ -23,10 +23,14 @@ import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
-private fun Project.kotlinBuildLocalRepoDir() = File("${project.rootDir.absoluteFile}/dependencies/repo")
+private fun Project.kotlinBuildLocalDependenciesDir(): File =
+    (findProperty("kotlin.build.dependencies.dir") as String?)?.let(::File) ?: project.rootDir.absoluteFile.resolve("dependencies")
+
+private fun Project.kotlinBuildLocalRepoDir(): File = kotlinBuildLocalDependenciesDir().resolve("repo")
 
 private fun Project.ideModuleName() = when (IdeVersionConfigurator.currentIde.kind) {
     Ide.Kind.AndroidStudio -> "android-studio-ide"
@@ -151,9 +155,9 @@ fun DependencyHandlerScope.excludeInAndroidStudio(rootProject: Project, block: D
     }
 }
 
-fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, body: JavaExec.() -> Unit): JavaExec {
+fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, body: JavaExec.() -> Unit): TaskProvider<JavaExec> {
 
-    return task<JavaExec>(name) {
+    return tasks.register<JavaExec>(name) {
         val ideaSandboxConfigDir = File(ideaSandboxDir, "config")
 
         classpath = mainSourceSet.runtimeClasspath

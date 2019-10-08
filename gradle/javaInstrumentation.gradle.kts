@@ -25,16 +25,22 @@ fun Project.configureJavaInstrumentation() {
             }
         }
 
-        tasks.withType<JavaCompile> {
-            doLast {
-                instrumentClasses(javaInstrumentator.asPath)
+        listOf(mainSourceSet, testSourceSet).forEach { sourceSet ->
+             tasks.named<JavaCompile>(sourceSet.compileJavaTaskName) javaCompile@ {
+                doLast {
+                    instrumentClasses(javaInstrumentator.asPath, this@javaCompile, sourceSet)
+                }
             }
         }
     }
 }
 
-fun JavaCompile.instrumentClasses(instrumentatorClasspath: String) {
-    ant.withGroovyBuilder {
+fun instrumentClasses(
+    instrumentatorClasspath: String,
+    javaCompile: JavaCompile,
+    sourceSet: SourceSet
+) {
+    javaCompile.ant.withGroovyBuilder {
         "taskdef"(
             "name" to "instrumentIdeaExtensions",
             "classpath" to instrumentatorClasspath,
@@ -43,16 +49,14 @@ fun JavaCompile.instrumentClasses(instrumentatorClasspath: String) {
         )
     }
 
-    val sourceSet = project.sourceSets.single { it.compileJavaTaskName == name }
-
     val javaSourceDirectories = sourceSet.allJava.sourceDirectories.filter { it.exists() }
 
-    ant.withGroovyBuilder {
+    javaCompile.ant.withGroovyBuilder {
         javaSourceDirectories.forEach { directory ->
             "instrumentIdeaExtensions"(
                 "srcdir" to directory,
-                "destdir" to destinationDir,
-                "classpath" to classpath.asPath,
+                "destdir" to javaCompile.destinationDir,
+                "classpath" to javaCompile.classpath.asPath,
                 "includeantruntime" to false,
                 "instrumentNotNull" to true
             )

@@ -1,0 +1,21 @@
+FILE: companionExtension.kt
+    public final class My : R|kotlin/Any| {
+        public constructor(): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|My.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun R|My|.foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            (this@R|/My.Companion|, this@R|/My|).R|/My.Companion.foo|()
+        }
+
+    }

@@ -5,8 +5,8 @@ FILE: inner.kt
         }
 
         public final fun foo(): R|kotlin/Unit| {
-            R|/Owner.bar|()
-            this#.R|/Owner.bar|()
+            this@R|/Owner|.R|/Owner.bar|()
+            this@R|/Owner|.R|/Owner.bar|()
         }
 
         public final fun bar(): R|kotlin/Unit| {
@@ -23,16 +23,16 @@ FILE: inner.kt
             }
 
             public final fun baz(): R|kotlin/Unit| {
-                R|/Owner.Inner.gau|()
-                this#.R|/Owner.Inner.gau|()
+                this@R|/Owner.Inner|.R|/Owner.Inner.gau|()
+                this@R|/Owner.Inner|.R|/Owner.Inner.gau|()
             }
 
             public final fun gau(): R|kotlin/Unit| {
                 lval o: R|Owner| = R|/Owner.Owner|()
                 R|<local>/o|.R|/Owner.foo|()
-                R|/Owner.foo|()
-                this@Owner.R|/Owner.foo|()
-                this#.<Unresolved name: err>#()
+                this@R|/Owner|.R|/Owner.foo|()
+                this@R|/Owner|.R|/Owner.foo|()
+                this@R|/Owner.Inner|.<Unresolved name: err>#()
             }
 
         }

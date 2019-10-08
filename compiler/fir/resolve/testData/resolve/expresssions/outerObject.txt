@@ -1,0 +1,27 @@
+FILE: outerObject.kt
+    public final object Outer : R|kotlin/Any| {
+        private constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = Int(0)
+            public get(): R|kotlin/Int|
+
+        public final fun R|Outer.Nested|.foo(): R|kotlin/Unit| {
+        }
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|Outer.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val y: R|kotlin/Int| = this@R|/Outer|.R|/Outer.x|
+                public get(): R|kotlin/Int|
+
+            public final fun test(): R|kotlin/Unit| {
+                (this@R|/Outer|, this@R|/Outer.Nested|).R|/Outer.foo|()
+            }
+
+        }
+
+    }

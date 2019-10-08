@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
+@BaseTransformedType
 interface FirWhenBranch : FirElement {
     // NB: we can represent subject, if it's inside, as a special kind of expression
     // when (mySubject) {
@@ -24,4 +27,8 @@ interface FirWhenBranch : FirElement {
         condition.accept(visitor, data)
         result.accept(visitor, data)
     }
+
+    fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch
+
+    fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranch
 }

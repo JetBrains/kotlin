@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
+import java.util.*
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -178,17 +179,23 @@ fun IrMemberAccessExpression.usesDefaultArguments(): Boolean =
 val DeclarationDescriptorWithSource.startOffset: Int? get() = (this.source as? PsiSourceElement)?.psi?.startOffset
 val DeclarationDescriptorWithSource.endOffset: Int? get() = (this.source as? PsiSourceElement)?.psi?.endOffset
 
-val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
-    get() = this.owner.declarations.asSequence().filterIsInstance<IrSimpleFunction>().map { it.symbol }
-
 val IrClass.functions: Sequence<IrSimpleFunction>
-    get() = this.declarations.asSequence().filterIsInstance<IrSimpleFunction>()
+    get() = declarations.asSequence().filterIsInstance<IrSimpleFunction>()
 
-val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
-    get() = this.owner.declarations.asSequence().filterIsInstance<IrConstructor>().map { it.symbol }
+val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
+    get() = owner.functions.map { it.symbol }
 
 val IrClass.constructors: Sequence<IrConstructor>
-    get() = this.declarations.asSequence().filterIsInstance<IrConstructor>()
+    get() = declarations.asSequence().filterIsInstance<IrConstructor>()
+
+val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
+    get() = owner.constructors.map { it.symbol }
+
+val IrClass.fields: Sequence<IrField>
+    get() = declarations.asSequence().filterIsInstance<IrField>()
+
+val IrClassSymbol.fields: Sequence<IrFieldSymbol>
+    get() = owner.fields.map { it.symbol }
 
 val IrClass.primaryConstructor: IrConstructor?
     get() = this.declarations.singleOrNull { it is IrConstructor && it.isPrimary } as IrConstructor?
@@ -203,18 +210,18 @@ val IrBody.statements: List<IrStatement>
     get() = when (this) {
         is IrBlockBody -> statements
         is IrExpressionBody -> listOf(expression)
-        is IrSyntheticBody -> error("Synthetic body contains no statements $this")
-        else -> error("Unknown subclass of IrBody")
+        is IrSyntheticBody -> error("Synthetic body contains no statements: $this")
+        else -> error("Unknown subclass of IrBody: $this")
     }
 
 val IrClass.defaultType: IrSimpleType
     get() = this.thisReceiver!!.type as IrSimpleType
 
-val IrSimpleFunction.isReal: Boolean get() = descriptor.kind.isReal
-
 val IrSimpleFunction.isSynthesized: Boolean get() = descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
 
-val IrSimpleFunction.isFakeOverride: Boolean get() = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+val IrDeclaration.isReal: Boolean get() = !isFakeOverride
+
+val IrDeclaration.isFakeOverride: Boolean get() = origin == IrDeclarationOrigin.FAKE_OVERRIDE
 
 fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
 
@@ -311,7 +318,8 @@ val IrDeclarationWithName.fqNameWhenAvailable: FqName?
         else -> null
     }
 
-val IrDeclaration.parentAsClass get() = parent as IrClass
+val IrDeclaration.parentAsClass: IrClass
+    get() = parent as? IrClass ?: error("Parent of this declaration is not a class: ${render()}")
 
 fun IrClass.isLocalClass(): Boolean {
     var current: IrDeclarationParent? = this
@@ -590,3 +598,20 @@ val IrDeclaration.file: IrFile
             else -> TODO("Unexpected declaration parent")
         }
     }
+
+val IrFunction.allTypeParameters: List<IrTypeParameter>
+    get() = if (this is IrConstructor)
+        parentAsClass.typeParameters + typeParameters
+    else
+        typeParameters
+
+fun IrMemberAccessExpression.getTypeSubstitutionMap(irFunction: IrFunction): Map<IrTypeParameterSymbol, IrType> =
+    irFunction.allTypeParameters.withIndex().associate {
+        it.value.symbol to getTypeArgument(it.index)!!
+    }
+
+val IrFunctionReference.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
+    get() = getTypeSubstitutionMap(symbol.owner)
+
+val IrFunctionAccessExpression.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
+    get() = getTypeSubstitutionMap(symbol.owner)

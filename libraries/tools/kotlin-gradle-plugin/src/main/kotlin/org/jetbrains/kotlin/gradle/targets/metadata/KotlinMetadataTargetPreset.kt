@@ -9,17 +9,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 
 class KotlinMetadataTargetPreset(
     project: Project,
     kotlinPluginVersion: String
-) : KotlinOnlyTargetPreset<KotlinOnlyTarget<KotlinCommonCompilation>, KotlinCommonCompilation>(
+) : KotlinOnlyTargetPreset<KotlinMetadataTarget, KotlinCommonCompilation>(
     project,
     kotlinPluginVersion
 ) {
@@ -37,21 +34,23 @@ class KotlinMetadataTargetPreset(
         const val PRESET_NAME = "metadata"
     }
 
-    override fun createKotlinTargetConfigurator(): KotlinTargetConfigurator<KotlinCommonCompilation> =
+    override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinCommonCompilation, KotlinMetadataTarget> =
         KotlinMetadataTargetConfigurator(kotlinPluginVersion)
 
-    override fun instantiateTarget(): KotlinOnlyTarget<KotlinCommonCompilation> = KotlinMetadataTarget(project)
+    override fun instantiateTarget(): KotlinMetadataTarget {
+        return project.objects.newInstance(KotlinMetadataTarget::class.java, project)
+    }
 
-    override fun createTarget(name: String): KotlinOnlyTarget<KotlinCommonCompilation> =
+    override fun createTarget(name: String): KotlinMetadataTarget =
         super.createTarget(name).apply {
             val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
             val commonMainSourceSet = project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
 
             mainCompilation.source(commonMainSourceSet)
 
-            project.afterEvaluate {
+            project.whenEvaluated {
                 // Since there's no default source set, apply language settings from commonMain:
-                val compileKotlinMetadata = project.tasks.getByName(mainCompilation.compileKotlinTaskName) as KotlinCompile<*>
+                val compileKotlinMetadata = mainCompilation.compileKotlinTask
                 applyLanguageSettingsToKotlinTask(commonMainSourceSet.languageSettings, compileKotlinMetadata)
             }
         }

@@ -6,15 +6,17 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.declarationList
 import org.jetbrains.kotlin.nj2k.findUsages
+import org.jetbrains.kotlin.nj2k.modality
 import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKBooleanLiteral
-import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaLiteralExpressionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKJavaPrimitiveTypeImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKNullLiteral
 
-class ImplicitInitializerConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+import org.jetbrains.kotlin.nj2k.types.JKClassType
+import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
+import org.jetbrains.kotlin.nj2k.types.JKTypeParameterType
+
+class ImplicitInitializerConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
 
     enum class InitializationState {
         INITIALIZED_IN_ALL_CONSTRUCTORS,
@@ -23,7 +25,7 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
     }
 
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKJavaField) return recurse(element)
+        if (element !is JKField) return recurse(element)
         if (element.initializer !is JKStubExpression) return recurse(element)
 
         val initializationState = element.initializationState()
@@ -37,7 +39,7 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
         }
 
         val newInitializer = when (val fieldType = element.type.type) {
-            is JKClassType, is JKTypeParameterType -> JKNullLiteral()
+            is JKClassType, is JKTypeParameterType -> JKLiteralExpression("null", JKLiteralExpression.LiteralType.NULL)
             is JKJavaPrimitiveType -> createPrimitiveTypeInitializer(fieldType)
             else -> null
         }
@@ -47,12 +49,12 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
         return element
     }
 
-    private fun JKJavaField.initializationState(): InitializationState {
-        val fieldSymbol = context.symbolProvider.provideUniverseSymbol(this)
+    private fun JKField.initializationState(): InitializationState {
+        val fieldSymbol = symbolProvider.provideUniverseSymbol(this)
         val containingClass = parentOfType<JKClass>() ?: return InitializationState.NON_INITIALIZED
         val symbolToConstructor = containingClass.declarationList
-            .filterIsInstance<JKKtConstructor>()
-            .map { context.symbolProvider.provideUniverseSymbol(it) to it }
+            .filterIsInstance<JKConstructor>()
+            .map { symbolProvider.provideUniverseSymbol(it) to it }
             .toMap()
 
         fun JKMethodSymbol.parentConstructor(): JKMethodSymbol? =
@@ -60,22 +62,22 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
                 ?.identifier
 
         val constructors = containingClass.declarationList
-            .filterIsInstance<JKKtConstructor>()
-            .map { context.symbolProvider.provideUniverseSymbol(it) to false }
+            .filterIsInstance<JKConstructor>()
+            .map { symbolProvider.provideUniverseSymbol(it) to false }
             .toMap()
             .toMutableMap()
 
-        val constructorsWithInitializers = findUsages(parentOfType<JKClass>()!!, context).mapNotNull { usage ->
+        val constructorsWithInitializers = findUsages(containingClass, context).mapNotNull { usage ->
             val parent = usage.parent
             val assignmentStatement =
                 when {
                     parent is JKKtAssignmentStatement -> parent
                     parent is JKQualifiedExpression && parent.receiver is JKThisExpression ->
-                        parent.parent  as? JKKtAssignmentStatement
+                        parent.parent as? JKKtAssignmentStatement
                     else -> null
                 } ?: return@mapNotNull null
             val constructor =
-                (assignmentStatement.parent as? JKBlock)?.parent as? JKKtConstructor ?: return@mapNotNull null
+                (assignmentStatement.parent as? JKBlock)?.parent as? JKConstructor ?: return@mapNotNull null
 
             val isInitializer = when (parent) {
                 is JKKtAssignmentStatement -> (parent.field as? JKFieldAccessExpression)?.identifier == fieldSymbol
@@ -87,7 +89,7 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
         }
 
         for (constructor in constructorsWithInitializers) {
-            constructors[context.symbolProvider.provideUniverseSymbol(constructor)] = true
+            constructors[symbolProvider.provideUniverseSymbol(constructor)] = true
         }
 
         val constructorsToInitialize = mutableListOf<JKMethodSymbol>()
@@ -115,9 +117,9 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
 
     private fun createPrimitiveTypeInitializer(primitiveType: JKJavaPrimitiveType): JKLiteralExpression =
         when (primitiveType) {
-            JKJavaPrimitiveTypeImpl.BOOLEAN ->
-                JKBooleanLiteral(false)
+            JKJavaPrimitiveType.BOOLEAN ->
+                JKLiteralExpression("false", JKLiteralExpression.LiteralType.STRING)
             else ->
-                JKJavaLiteralExpressionImpl("0", JKLiteralExpression.LiteralType.INT)
+                JKLiteralExpression("0", JKLiteralExpression.LiteralType.INT)
         }
 }

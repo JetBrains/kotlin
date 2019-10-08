@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -14,39 +13,34 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.core.implicitModality
-import org.jetbrains.kotlin.idea.core.implicitVisibility
-import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.core.setVisibility
-import org.jetbrains.kotlin.idea.inspections.RedundantExplicitTypeInspection
-import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
-import org.jetbrains.kotlin.idea.inspections.UseExpressionBodyInspection
-import org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention
+import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.callName
+import org.jetbrains.kotlin.idea.inspections.*
+import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
-import org.jetbrains.kotlin.idea.intentions.UsePropertyAccessSyntaxIntention
+import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeIntention
 import org.jetbrains.kotlin.idea.intentions.addUseSiteTarget
-import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
+import org.jetbrains.kotlin.idea.quickfix.AddConstModifierFix
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
+import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.nj2k.parentOfType
-import org.jetbrains.kotlin.nj2k.postProcessing.ApplicabilityBasedInspectionLikeProcessing
-import org.jetbrains.kotlin.nj2k.postProcessing.InspectionLikeProcessing
-import org.jetbrains.kotlin.nj2k.postProcessing.generalInspectionBasedProcessing
-import org.jetbrains.kotlin.nj2k.postProcessing.resolve
+import org.jetbrains.kotlin.nj2k.postProcessing.InspectionLikeProcessingForElement
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isNullable
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-class RemoveExplicitPropertyTypeProcessing : ApplicabilityBasedInspectionLikeProcessing<KtProperty>(KtProperty::class) {
+class RemoveExplicitPropertyTypeProcessing : InspectionLikeProcessingForElement<KtProperty>(KtProperty::class.java) {
     override fun isApplicableTo(element: KtProperty, settings: ConverterSettings?): Boolean {
         val needFieldTypes = settings?.specifyFieldTypeByDefault == true
         val needLocalVariablesTypes = settings?.specifyLocalVariableTypeByDefault == true
@@ -56,8 +50,8 @@ class RemoveExplicitPropertyTypeProcessing : ApplicabilityBasedInspectionLikePro
         val initializer = element.initializer ?: return false
         val withoutExpectedType =
             initializer.analyzeInContext(initializer.getResolutionScope()).getType(initializer) ?: return false
-        val descriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return false
-        return withoutExpectedType == descriptor.returnType
+        val typeBeDescriptor = element.resolveToDescriptorIfAny().safeAs<CallableDescriptor>()?.returnType ?: return false
+        return KotlinTypeChecker.DEFAULT.equalTypes(withoutExpectedType, typeBeDescriptor)
     }
 
     override fun apply(element: KtProperty) {
@@ -65,7 +59,7 @@ class RemoveExplicitPropertyTypeProcessing : ApplicabilityBasedInspectionLikePro
     }
 }
 
-class RemoveRedundantNullabilityProcessing : ApplicabilityBasedInspectionLikeProcessing<KtProperty>(KtProperty::class) {
+class RemoveRedundantNullabilityProcessing : InspectionLikeProcessingForElement<KtProperty>(KtProperty::class.java) {
     override fun isApplicableTo(element: KtProperty, settings: ConverterSettings?): Boolean {
         if (!element.isLocal) return false
         val typeReference = element.typeReference
@@ -87,11 +81,11 @@ class RemoveRedundantNullabilityProcessing : ApplicabilityBasedInspectionLikePro
 
     override fun apply(element: KtProperty) {
         val typeElement = element.typeReference?.typeElement
-        typeElement?.replace(typeElement.cast<KtNullableType>().innerType!!)
+        typeElement?.replace(typeElement.safeAs<KtNullableType>()?.innerType ?: return)
     }
 }
 
-class RemoveExplicitTypeArgumentsProcessing : ApplicabilityBasedInspectionLikeProcessing<KtTypeArgumentList>(KtTypeArgumentList::class) {
+class RemoveExplicitTypeArgumentsProcessing : InspectionLikeProcessingForElement<KtTypeArgumentList>(KtTypeArgumentList::class.java) {
     override fun isApplicableTo(element: KtTypeArgumentList, settings: ConverterSettings?): Boolean =
         RemoveExplicitTypeArgumentsIntention.isApplicableTo(element, approximateFlexible = true)
 
@@ -103,11 +97,11 @@ class RemoveExplicitTypeArgumentsProcessing : ApplicabilityBasedInspectionLikePr
 // the types arguments for Stream.collect calls cannot be explicitly specified in Kotlin
 // but we need them in nullability inference, so we remove it here
 class RemoveJavaStreamsCollectCallTypeArgumentsProcessing :
-    ApplicabilityBasedInspectionLikeProcessing<KtCallExpression>(KtCallExpression::class) {
+    InspectionLikeProcessingForElement<KtCallExpression>(KtCallExpression::class.java) {
     override fun isApplicableTo(element: KtCallExpression, settings: ConverterSettings?): Boolean {
         if (element.typeArgumentList == null) return false
-        val resolved = element.calleeExpression?.mainReference?.resolve() as? PsiMethod ?: return false
-        return resolved.getKotlinFqName()?.asString() == COLLECT_FQ_NAME
+        if (element.callName() != COLLECT_FQ_NAME.shortName().identifier) return false
+        return element.isCalling(COLLECT_FQ_NAME)
     }
 
     override fun apply(element: KtCallExpression) {
@@ -115,152 +109,128 @@ class RemoveJavaStreamsCollectCallTypeArgumentsProcessing :
     }
 
     companion object {
-        private const val COLLECT_FQ_NAME = "java.util.stream.Stream.collect"
+        private val COLLECT_FQ_NAME = FqName("java.util.stream.Stream.collect")
     }
 }
 
 
-class RemoveRedundantOverrideVisibilityProcessing : InspectionLikeProcessing {
-    override val writeActionNeeded = true
+class RemoveRedundantOverrideVisibilityProcessing :
+    InspectionLikeProcessingForElement<KtCallableDeclaration>(KtCallableDeclaration::class.java) {
 
-    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtCallableDeclaration || !element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
-        val modifier = element.visibilityModifierType() ?: return null
-        return { element.setVisibility(modifier) }
+    override fun isApplicableTo(element: KtCallableDeclaration, settings: ConverterSettings?): Boolean {
+        if (!element.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return false
+        return element.visibilityModifier() != null
+    }
+
+    override fun apply(element: KtCallableDeclaration) {
+        val modifier = element.visibilityModifierType() ?: return
+        element.setVisibility(modifier)
     }
 }
 
-class ConvertToStringTemplateProcessing : InspectionLikeProcessing {
-    override val writeActionNeeded = true
+class ReplaceGetterBodyWithSingleReturnStatementWithExpressionBody :
+    InspectionLikeProcessingForElement<KtPropertyAccessor>(KtPropertyAccessor::class.java) {
 
-    val intention = ConvertToStringTemplateIntention()
+    private fun KtPropertyAccessor.singleBodyStatementExpression() =
+        bodyBlockExpression?.statements
+            ?.singleOrNull()
+            ?.safeAs<KtReturnExpression>()
+            ?.takeIf { it.labeledExpression == null }
+            ?.returnedExpression
 
-    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element is KtBinaryExpression && intention.isApplicableTo(element) && ConvertToStringTemplateIntention.shouldSuggestToConvert(
-                element
-            )
-        ) {
-            return { intention.applyTo(element, null) }
-        } else {
-            return null
-        }
+    override fun isApplicableTo(element: KtPropertyAccessor, settings: ConverterSettings?): Boolean {
+        if (!element.isGetter) return false
+        return element.singleBodyStatementExpression() != null
+    }
+
+    override fun apply(element: KtPropertyAccessor) {
+        val body = element.bodyExpression ?: return
+        val returnedExpression = element.singleBodyStatementExpression() ?: return
+
+        val commentSaver = CommentSaver(body)
+        element.addBefore(KtPsiFactory(element).createEQ(), body)
+        val newBody = body.replaced(returnedExpression)
+        commentSaver.restore(newBody)
     }
 }
 
-class UsePropertyAccessSyntaxProcessing : InspectionLikeProcessing {
-    override val writeActionNeeded = true
+class RemoveRedundantCastToNullableProcessing :
+    InspectionLikeProcessingForElement<KtBinaryExpressionWithTypeRHS>(KtBinaryExpressionWithTypeRHS::class.java) {
 
-    val intention = UsePropertyAccessSyntaxIntention()
-
-    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtCallExpression) return null
-        val propertyName = intention.detectPropertyNameToUse(element) ?: return null
-        return { intention.applyTo(element, propertyName, reformat = true) }
-    }
-}
-
-class RemoveRedundantSamAdaptersProcessing : InspectionLikeProcessing {
-    override val writeActionNeeded = true
-
-    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtCallExpression) return null
-
-        val expressions = RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
-        if (expressions.isEmpty()) return null
-
-        return {
-            RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
-                .forEach { RedundantSamConstructorInspection.replaceSamConstructorCall(it) }
-        }
-    }
-}
-
-class UseExpressionBodyProcessing : InspectionLikeProcessing {
-    override val writeActionNeeded = true
-
-    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtPropertyAccessor) return null
-
-        val inspection = UseExpressionBodyInspection(convertEmptyToUnit = false)
-        if (!inspection.isActiveFor(element)) return null
-
-        return {
-            if (inspection.isActiveFor(element)) {
-                inspection.simplify(element, false)
-            }
-        }
-    }
-}
-
-class RemoveRedundantCastToNullableProcessing : InspectionLikeProcessing {
-    override val writeActionNeeded = true
-
-    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtBinaryExpressionWithTypeRHS) return null
-
+    override fun isApplicableTo(element: KtBinaryExpressionWithTypeRHS, settings: ConverterSettings?): Boolean {
+        if (element.right?.typeElement !is KtNullableType) return false
         val context = element.analyze()
-        val leftType = context.getType(element.left) ?: return null
-        val rightType = context.get(BindingContext.TYPE, element.right) ?: return null
+        val leftType = context.getType(element.left) ?: return false
+        val rightType = context.get(BindingContext.TYPE, element.right) ?: return false
+        return !leftType.isMarkedNullable && rightType.isMarkedNullable
+    }
 
-        if (!leftType.isMarkedNullable && rightType.isMarkedNullable) {
-            return {
-                val type = element.right?.typeElement as? KtNullableType
-                type?.replace(type.innerType!!)
+    override fun apply(element: KtBinaryExpressionWithTypeRHS) {
+        val type = element.right?.typeElement as? KtNullableType ?: return
+        type.replace(type.innerType ?: return)
+    }
+}
+
+class RemoveRedundantSamAdaptersProcessing :
+    InspectionLikeProcessingForElement<KtCallExpression>(KtCallExpression::class.java) {
+    override val writeActionNeeded = false
+
+    override fun isApplicableTo(element: KtCallExpression, settings: ConverterSettings?): Boolean =
+        RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element).isNotEmpty()
+
+    override fun apply(element: KtCallExpression) {
+        val callsToBeConverted = RedundantSamConstructorInspection.samConstructorCallsToBeConverted(element)
+        runWriteAction {
+            for (call in callsToBeConverted) {
+                RedundantSamConstructorInspection.replaceSamConstructorCall(call)
             }
         }
-
-        return null
     }
 }
 
 class UninitializedVariableReferenceFromInitializerToThisReferenceProcessing :
-    InspectionLikeProcessing {
-    override val writeActionNeeded = true
+    InspectionLikeProcessingForElement<KtSimpleNameExpression>(KtSimpleNameExpression::class.java) {
 
-    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtSimpleNameExpression) return null
-        val anonymousObject = element.getParentOfType<KtClassOrObject>(true)?.takeIf { it.name == null } ?: return null
-
-        val resolved = element.mainReference.resolve() ?: return null
+    override fun isApplicableTo(element: KtSimpleNameExpression, settings: ConverterSettings?): Boolean {
+        val anonymousObject = element.getStrictParentOfType<KtClassOrObject>()?.takeIf { it.name == null } ?: return false
+        val resolved = element.mainReference.resolve() ?: return false
         if (resolved.isAncestor(element, strict = true)) {
             if (resolved is KtVariableDeclaration && resolved.hasInitializer()) {
-                if (resolved.initializer!!.getChildOfType<KtClassOrObject>() == anonymousObject) {
-                    return { element.replaced(KtPsiFactory(element).createThisExpression()) }
+                if (resolved.initializer?.getChildOfType<KtClassOrObject>() == anonymousObject) {
+                    return true
                 }
             }
         }
+        return false
+    }
 
-        return null
+    override fun apply(element: KtSimpleNameExpression) {
+        element.replaced(KtPsiFactory(element).createThisExpression())
     }
 }
 
 class UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing :
-    InspectionLikeProcessing {
-    override val writeActionNeeded = true
+    InspectionLikeProcessingForElement<KtSimpleNameExpression>(KtSimpleNameExpression::class.java) {
 
-    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtSimpleNameExpression || element.mainReference.resolve() != null) return null
+    override fun isApplicableTo(element: KtSimpleNameExpression, settings: ConverterSettings?): Boolean {
+        val anonymousObject = element.getStrictParentOfType<KtClassOrObject>() ?: return false
+        val variable = anonymousObject.getStrictParentOfType<KtVariableDeclaration>() ?: return false
+        if (variable.nameAsName != element.getReferencedNameAsName()) return false
+        if (variable.initializer?.getChildOfType<KtClassOrObject>() != anonymousObject) return false
+        return element.mainReference.resolve() == null
+    }
 
-        val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
-
-        val variable = anonymousObject.getParentOfType<KtVariableDeclaration>(true) ?: return null
-
-        if (variable.nameAsName == element.getReferencedNameAsName() &&
-            variable.initializer?.getChildOfType<KtClassOrObject>() == anonymousObject
-        ) {
-            return { element.replaced(KtPsiFactory(element).createThisExpression()) }
-        }
-
-        return null
+    override fun apply(element: KtSimpleNameExpression) {
+        element.replaced(KtPsiFactory(element).createThisExpression())
     }
 }
 
-class VarToValProcessing : ApplicabilityBasedInspectionLikeProcessing<KtProperty>(KtProperty::class) {
+class VarToValProcessing : InspectionLikeProcessingForElement<KtProperty>(KtProperty::class.java) {
     private fun KtProperty.hasWriteUsages(): Boolean =
         ReferencesSearch.search(this, useScope).any { usage ->
             (usage as? KtSimpleNameReference)?.element?.let { nameReference ->
                 val receiver = nameReference.parent?.safeAs<KtDotQualifiedExpression>()?.receiverExpression
-                if (nameReference.parentOfType<KtAnonymousInitializer>() != null
+                if (nameReference.getStrictParentOfType<KtAnonymousInitializer>() != null
                     && (receiver == null || receiver is KtThisExpression)
                 ) return@let false
                 nameReference.readWriteAccess(useResolveForReadWrite = true).isWrite
@@ -281,19 +251,16 @@ class VarToValProcessing : ApplicabilityBasedInspectionLikeProcessing<KtProperty
     }
 }
 
-class JavaObjectEqualsToEqOperatorProcessing : ApplicabilityBasedInspectionLikeProcessing<KtCallExpression>(KtCallExpression::class) {
+class JavaObjectEqualsToEqOperatorProcessing : InspectionLikeProcessingForElement<KtCallExpression>(KtCallExpression::class.java) {
     companion object {
         val CALL_FQ_NAME = FqName("java.util.Objects.equals")
     }
 
     override fun isApplicableTo(element: KtCallExpression, settings: ConverterSettings?): Boolean {
+        if (element.callName() != CALL_FQ_NAME.shortName().identifier) return false
         if (element.valueArguments.size != 2) return false
         if (element.valueArguments.any { it.getArgumentExpression() == null }) return false
-        val target = element.calleeExpression
-            .safeAs<KtReferenceExpression>()
-            ?.resolve()
-            ?: return false
-        return target.getKotlinFqName() == CALL_FQ_NAME
+        return element.isCalling(CALL_FQ_NAME)
     }
 
     override fun apply(element: KtCallExpression) {
@@ -301,8 +268,8 @@ class JavaObjectEqualsToEqOperatorProcessing : ApplicabilityBasedInspectionLikeP
         element.getQualifiedExpressionForSelectorOrThis().replace(
             factory.createExpressionByPattern(
                 "($0 == $1)",
-                element.valueArguments[0].getArgumentExpression()!!,
-                element.valueArguments[1].getArgumentExpression()!!
+                element.valueArguments[0].getArgumentExpression() ?: return,
+                element.valueArguments[1].getArgumentExpression() ?: return
             )
         )
     }
@@ -310,7 +277,7 @@ class JavaObjectEqualsToEqOperatorProcessing : ApplicabilityBasedInspectionLikeP
 
 
 class RemoveForExpressionLoopParameterTypeProcessing :
-    ApplicabilityBasedInspectionLikeProcessing<KtForExpression>(KtForExpression::class) {
+    InspectionLikeProcessingForElement<KtForExpression>(KtForExpression::class.java) {
     override fun isApplicableTo(element: KtForExpression, settings: ConverterSettings?): Boolean =
         element.loopParameter?.typeReference?.typeElement != null
                 && settings?.specifyLocalVariableTypeByDefault != true
@@ -321,7 +288,7 @@ class RemoveForExpressionLoopParameterTypeProcessing :
 }
 
 class RemoveRedundantConstructorKeywordProcessing :
-    ApplicabilityBasedInspectionLikeProcessing<KtPrimaryConstructor>(KtPrimaryConstructor::class) {
+    InspectionLikeProcessingForElement<KtPrimaryConstructor>(KtPrimaryConstructor::class.java) {
     override fun isApplicableTo(element: KtPrimaryConstructor, settings: ConverterSettings?): Boolean =
         element.containingClassOrObject is KtClass
                 && element.getConstructorKeyword() != null
@@ -334,7 +301,7 @@ class RemoveRedundantConstructorKeywordProcessing :
     }
 }
 
-class RemoveRedundantModalityModifierProcessing : ApplicabilityBasedInspectionLikeProcessing<KtDeclaration>(KtDeclaration::class) {
+class RemoveRedundantModalityModifierProcessing : InspectionLikeProcessingForElement<KtDeclaration>(KtDeclaration::class.java) {
     override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?): Boolean {
         if (element.hasModifier(KtTokens.FINAL_KEYWORD)) {
             return !element.hasModifier(KtTokens.OVERRIDE_KEYWORD)
@@ -344,12 +311,12 @@ class RemoveRedundantModalityModifierProcessing : ApplicabilityBasedInspectionLi
     }
 
     override fun apply(element: KtDeclaration) {
-        element.removeModifier(element.modalityModifierType()!!)
+        element.removeModifier(element.modalityModifierType() ?: return)
     }
 }
 
 
-class RemoveRedundantVisibilityModifierProcessing : ApplicabilityBasedInspectionLikeProcessing<KtDeclaration>(KtDeclaration::class) {
+class RemoveRedundantVisibilityModifierProcessing : InspectionLikeProcessingForElement<KtDeclaration>(KtDeclaration::class.java) {
     override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?) = when {
         element.hasModifier(KtTokens.PUBLIC_KEYWORD) && element.hasModifier(KtTokens.OVERRIDE_KEYWORD) ->
             false
@@ -361,24 +328,11 @@ class RemoveRedundantVisibilityModifierProcessing : ApplicabilityBasedInspection
     }
 
     override fun apply(element: KtDeclaration) {
-        element.removeModifier(element.visibilityModifierType()!!)
+        element.removeModifier(element.visibilityModifierType() ?: return)
     }
 }
 
-class RemoveExplicitPropertyTypeWithInspectionProcessing :
-    InspectionLikeProcessing {
-    override val writeActionNeeded: Boolean = true
-    private val processing =
-        generalInspectionBasedProcessing(RedundantExplicitTypeInspection())
-
-    override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (settings?.specifyLocalVariableTypeByDefault == true) return null
-
-        return processing.createAction(element, settings)
-    }
-}
-
-class RemoveExplicitOpenInInterfaceProcessing : ApplicabilityBasedInspectionLikeProcessing<KtClass>(KtClass::class) {
+class RemoveExplicitOpenInInterfaceProcessing : InspectionLikeProcessingForElement<KtClass>(KtClass::class.java) {
     override fun isApplicableTo(element: KtClass, settings: ConverterSettings?): Boolean =
         element.isValid
                 && element.isInterface()
@@ -389,7 +343,7 @@ class RemoveExplicitOpenInInterfaceProcessing : ApplicabilityBasedInspectionLike
     }
 }
 
-class MoveGetterAndSetterAnnotationsToPropertyProcessing : ApplicabilityBasedInspectionLikeProcessing<KtProperty>(KtProperty::class) {
+class MoveGetterAndSetterAnnotationsToPropertyProcessing : InspectionLikeProcessingForElement<KtProperty>(KtProperty::class.java) {
     override fun isApplicableTo(element: KtProperty, settings: ConverterSettings?): Boolean =
         element.accessors.isNotEmpty()
 
@@ -406,5 +360,132 @@ class MoveGetterAndSetterAnnotationsToPropertyProcessing : ApplicabilityBasedIns
             }
             accessor.annotationEntries.forEach { it.delete() }
         }
+    }
+}
+
+class RedundantExplicitTypeInspectionBasedProcessing : InspectionLikeProcessingForElement<KtProperty>(KtProperty::class.java) {
+    override fun isApplicableTo(element: KtProperty, settings: ConverterSettings?): Boolean =
+        RedundantExplicitTypeInspection.hasRedundantType(element)
+
+    override fun apply(element: KtProperty) {
+        element.typeReference = null
+        RemoveExplicitTypeIntention.removeExplicitType(element)
+    }
+}
+
+class CanBeValInspectionBasedProcessing : InspectionLikeProcessingForElement<KtDeclaration>(KtDeclaration::class.java) {
+    override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?): Boolean =
+        CanBeValInspection.canBeVal(element, ignoreNotUsedVals = false)
+
+    override fun apply(element: KtDeclaration) {
+        if (element !is KtValVarKeywordOwner) return
+        element.valOrVarKeyword?.replace(KtPsiFactory(element).createValKeyword())
+    }
+}
+
+
+class MayBeConstantInspectionBasedProcessing : InspectionLikeProcessingForElement<KtProperty>(KtProperty::class.java) {
+    override fun isApplicableTo(element: KtProperty, settings: ConverterSettings?): Boolean =
+        with(MayBeConstantInspection) {
+            val status = element.getStatus()
+            status == MayBeConstantInspection.Status.MIGHT_BE_CONST
+                    || status == MayBeConstantInspection.Status.JVM_FIELD_MIGHT_BE_CONST
+        }
+
+    override fun apply(element: KtProperty) {
+        AddConstModifierFix.addConstModifier(element)
+    }
+}
+
+class RemoveExplicitUnitTypeProcessing : InspectionLikeProcessingForElement<KtNamedFunction>(KtNamedFunction::class.java) {
+    override fun isApplicableTo(element: KtNamedFunction, settings: ConverterSettings?): Boolean {
+        val typeReference = element.typeReference?.typeElement ?: return false
+        if (!typeReference.textMatches("Unit")) return false
+        return RedundantUnitReturnTypeInspection.hasRedundantUnitReturnType(element)
+    }
+
+    override fun apply(element: KtNamedFunction) {
+        element.typeReference = null
+    }
+}
+
+
+class RemoveExplicitGetterInspectionBasedProcessing :
+    InspectionLikeProcessingForElement<KtPropertyAccessor>(KtPropertyAccessor::class.java) {
+    override fun isApplicableTo(element: KtPropertyAccessor, settings: ConverterSettings?): Boolean =
+        element.isRedundantGetter()
+
+    override fun apply(element: KtPropertyAccessor) {
+        RemoveRedundantGetterFix.removeRedundantGetter(element)
+    }
+}
+
+class RemoveExplicitSetterInspectionBasedProcessing :
+    InspectionLikeProcessingForElement<KtPropertyAccessor>(KtPropertyAccessor::class.java) {
+    override fun isApplicableTo(element: KtPropertyAccessor, settings: ConverterSettings?): Boolean =
+        element.isRedundantSetter()
+
+    override fun apply(element: KtPropertyAccessor) {
+        RemoveRedundantSetterFix.removeRedundantSetter(element)
+    }
+}
+
+
+class RedundantSemicolonInspectionBasedProcessing :
+    InspectionLikeProcessingForElement<PsiElement>(PsiElement::class.java) {
+    override fun isApplicableTo(element: PsiElement, settings: ConverterSettings?): Boolean =
+        element.node.elementType == KtTokens.SEMICOLON
+                && RedundantSemicolonInspection.isRedundantSemicolon(element)
+
+    override fun apply(element: PsiElement) {
+        element.delete()
+    }
+}
+
+class ExplicitThisInspectionBasedProcessing :
+    InspectionLikeProcessingForElement<KtExpression>(KtExpression::class.java) {
+    override fun isApplicableTo(element: KtExpression, settings: ConverterSettings?): Boolean =
+        ExplicitThisInspection.hasExplicitThis(element)
+
+    override fun apply(element: KtExpression) {
+        ExplicitThisExpressionFix.removeExplicitThisExpression(
+            with(ExplicitThisInspection) {
+                element.thisAsReceiverOrNull() ?: return
+            }
+        )
+    }
+}
+
+class LiftReturnInspectionBasedProcessing :
+    InspectionLikeProcessingForElement<KtExpression>(KtExpression::class.java) {
+    override fun isApplicableTo(element: KtExpression, settings: ConverterSettings?): Boolean =
+        LiftReturnOrAssignmentInspection.getState(element, false)?.any {
+            it.liftType == LiftReturnOrAssignmentInspection.Companion.LiftType.LIFT_RETURN_OUT
+        } ?: false
+
+    override fun apply(element: KtExpression) {
+        BranchedFoldingUtils.foldToReturn(element)
+    }
+}
+
+class LiftAssignmentInspectionBasedProcessing :
+    InspectionLikeProcessingForElement<KtExpression>(KtExpression::class.java) {
+    override fun isApplicableTo(element: KtExpression, settings: ConverterSettings?): Boolean =
+        LiftReturnOrAssignmentInspection.getState(element, false)?.any {
+            it.liftType == LiftReturnOrAssignmentInspection.Companion.LiftType.LIFT_ASSIGNMENT_OUT
+        } ?: false
+
+    override fun apply(element: KtExpression) {
+        BranchedFoldingUtils.foldToAssignment(element)
+    }
+}
+
+class MoveLambdaOutsideParenthesesProcessing :
+    InspectionLikeProcessingForElement<KtCallExpression>(KtCallExpression::class.java) {
+    override fun isApplicableTo(element: KtCallExpression, settings: ConverterSettings?): Boolean =
+        element.canMoveLambdaOutsideParentheses()
+
+    override fun apply(element: KtCallExpression) {
+        element.moveFunctionLiteralOutsideParentheses()
     }
 }

@@ -1,5 +1,5 @@
 public open class WrongValueParameterStructure1 : R|kotlin/Any| {
-    public open fun foo(p0: R|kotlin/String|?, p1: R|kotlin/collections/List<kotlin/collections/Map.Entry<kotlin/String, kotlin/String>>|?): R|kotlin/String|?
+    public open fun foo(p0: R|kotlin/String?|, p1: R|kotlin/collections/List<kotlin/collections/Map.Entry<kotlin/String, kotlin/String>>?|): R|kotlin/String?|
 
     public constructor(): R|test/WrongValueParameterStructure1|
 

@@ -94,7 +94,9 @@ private class StaticDefaultCallLowering(
 
     override fun visitCall(expression: IrCall): IrExpression {
         val callee = expression.symbol.owner
-        if (callee.origin !== IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || callee.dispatchReceiverParameter == null) {
+        if (callee.origin !== IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+                expression.dispatchReceiver == null
+        ) {
             return super.visitCall(expression)
         }
 
@@ -107,6 +109,6 @@ private class StaticDefaultCallLowering(
 
 private fun JvmBackendContext.getStaticFunctionWithReceivers(function: IrFunction) =
     staticDefaultStubs.getOrPut(function.symbol) {
-        createStaticFunctionWithReceivers(function.parent, function.name, function, copyBody = false)
+        createStaticFunctionWithReceivers(function.parent, function.name, function)
     }
 

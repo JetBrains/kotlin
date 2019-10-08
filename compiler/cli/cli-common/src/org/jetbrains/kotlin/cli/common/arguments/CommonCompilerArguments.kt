@@ -336,6 +336,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             if (newInference) {
                 put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
                 put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
+                put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
             }
 
             if (inlineClasses) {
@@ -382,19 +383,30 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
 
         var standaloneSamConversionFeaturePassedExplicitly = false
+        var functionReferenceWithDefaultValueFeaturePassedExplicitly = false
         for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature
             }
 
-            if (feature == LanguageFeature.SamConversionPerArgument) {
-                standaloneSamConversionFeaturePassedExplicitly = true
+            when (feature) {
+                LanguageFeature.SamConversionPerArgument ->
+                    standaloneSamConversionFeaturePassedExplicitly = true
+
+                LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType ->
+                    functionReferenceWithDefaultValueFeaturePassedExplicitly = true
+
+                else -> {}
             }
         }
 
-        if (!standaloneSamConversionFeaturePassedExplicitly && this[LanguageFeature.NewInference] == LanguageFeature.State.ENABLED) {
-            put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
+        if (this[LanguageFeature.NewInference] == LanguageFeature.State.ENABLED) {
+            if (!standaloneSamConversionFeaturePassedExplicitly)
+                put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
+
+            if (!functionReferenceWithDefaultValueFeaturePassedExplicitly)
+                put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {

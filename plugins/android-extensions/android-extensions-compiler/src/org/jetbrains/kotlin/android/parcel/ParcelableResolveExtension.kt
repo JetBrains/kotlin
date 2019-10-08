@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
@@ -78,6 +77,11 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
         }
     }
 
+    @Deprecated(
+        "@Parcelize is now available in non-experimental setups as well.",
+        replaceWith = ReplaceWith("true"),
+        level = DeprecationLevel.ERROR
+    )
     protected open fun isExperimental(element: KtElement) = true
 
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor) = null
@@ -89,21 +93,14 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
         fromSupertypes: List<SimpleFunctionDescriptor>,
         result: MutableCollection<SimpleFunctionDescriptor>
     ) {
-        fun isExperimental(): Boolean {
-            val sourceElement = (thisDescriptor.source as? PsiSourceElement)?.psi as? KtElement ?: return false
-            return isExperimental(sourceElement)
-        }
-
         if (name.asString() == DESCRIBE_CONTENTS.methodName
             && thisDescriptor.isParcelize
-            && isExperimental()
             && result.none { it.isDescribeContents() }
             && fromSupertypes.none { it.isDescribeContents() }
         ) {
             result += createMethod(thisDescriptor, DESCRIBE_CONTENTS, Modality.OPEN, thisDescriptor.builtIns.intType)
         } else if (name.asString() == WRITE_TO_PARCEL.methodName
             && thisDescriptor.isParcelize
-            && isExperimental()
             && result.none { it.isWriteToParcel() }
         ) {
             val builtIns = thisDescriptor.builtIns

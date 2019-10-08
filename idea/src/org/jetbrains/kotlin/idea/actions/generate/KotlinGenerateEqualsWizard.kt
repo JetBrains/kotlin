@@ -88,11 +88,11 @@ class KotlinGenerateEqualsWizard(
 
         override fun getNonNullPanel() = null
 
-        override fun updateHashCodeMemberInfos(equalsMemberInfos: MutableCollection<KotlinMemberInfo>) {
+        override fun updateHashCodeMemberInfos(equalsMemberInfos: MutableCollection<out KotlinMemberInfo>) {
             hashCodePanel?.table?.setMemberInfos(equalsMemberInfos.map { membersToHashCode[it.member] })
         }
 
-        override fun updateNonNullMemberInfos(equalsMemberInfos: MutableCollection<KotlinMemberInfo>?) {
+        override fun updateNonNullMemberInfos(equalsMemberInfos: MutableCollection<out KotlinMemberInfo>?) {
 
         }
     }

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.jetbrains.kotlin.idea.configuration.ui.KotlinLanguageConfigurationForm">
+  <grid id="27dc6" binding="mainPanel" layout-manager="GridLayoutManager" row-count="8" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="5">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="500" height="400"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="2505b" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="4ec56" class="javax.swing.JLabel" binding="updateStatusLabel">
+            <constraints/>
+            <properties>
+              <text value=" "/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="b171" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="97" height="21"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="65662" class="javax.swing.JButton" binding="installButton" default-binding="true">
+            <constraints/>
+            <properties>
+              <actionCommand value="Install"/>
+              <label value="Install"/>
+              <text value="&amp;Install"/>
+              <visible value="true"/>
+            </properties>
+          </component>
+          <grid id="5d5c6" layout-manager="FlowLayout" hgap="0" vgap="5" flow-align="1">
+            <constraints/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="6d2f7" class="javax.swing.JLabel" binding="installStatusLabel">
+                <constraints/>
+                <properties>
+                  <text value=" "/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+      <grid id="6a5b2" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="290b2" class="javax.swing.JLabel" binding="verifierDisabledText">
+            <constraints/>
+            <properties>
+              <foreground color="-65536"/>
+              <text value="(status)"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="cf404" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="8d277" class="javax.swing.JLabel">
+            <constraints/>
+            <properties>
+              <labelFor value="ca1a9"/>
+              <text value="Update &amp;channel:"/>
+            </properties>
+          </component>
+          <component id="ca1a9" class="javax.swing.JComboBox" binding="channelCombo">
+            <constraints/>
+            <properties/>
+          </component>
+          <component id="c7546" class="javax.swing.JButton" binding="reCheckButton">
+            <constraints/>
+            <properties>
+              <text value="Chec&amp;k again"/>
+            </properties>
+          </component>
+          <component id="3b585" class="com.intellij.util.ui.AsyncProcessIcon" binding="updateCheckProgressIcon" custom-create="true">
+            <constraints/>
+            <properties/>
+          </component>
+        </children>
+      </grid>
+      <grid id="e3af8" binding="pluginVersionPanel" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="335" height="24"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="f62d1" class="javax.swing.JLabel">
+            <constraints/>
+            <properties>
+              <text value="Current Kotlin plugin version:"/>
+            </properties>
+          </component>
+          <component id="e71d" class="javax.swing.JTextPane" binding="currentVersion">
+            <constraints/>
+            <properties>
+              <editable value="false"/>
+              <text value="{version}"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="4a454" binding="bundledCompilerVersionPanel" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="335" height="24"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="a5e8c" class="javax.swing.JLabel">
+            <constraints/>
+            <properties>
+              <text value="Build number (internal mode):"/>
+            </properties>
+          </component>
+          <component id="d11da" class="javax.swing.JTextPane" binding="compilerVersion">
+            <constraints/>
+            <properties>
+              <editable value="false"/>
+              <text value="{version}"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="15a75" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <clientProperties>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithoutIndent"/>
+        </clientProperties>
+        <border type="etched" title="Experimental Features"/>
+        <children>
+          <component id="d2573" class="javax.swing.JCheckBox" binding="useNewJ2kCheckBox" default-binding="true">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="1" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Use New Java to Kotlin Converter"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <vspacer id="73440">
+        <constraints>
+          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+        </constraints>
+      </vspacer>
+    </children>
+  </grid>
+</form>

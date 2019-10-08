@@ -27,12 +27,11 @@ dependencies {
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm-host")) { isTransitive = false }
     embedded(project(":kotlin-script-util")) { isTransitive = false }
-    embedded(project(":kotlin-script-runtime")) { isTransitive = false }
     embedded("org.apache.ivy:ivy:2.4.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     proguardLibraryJars(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
                               firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar"),
-                              toolsJar()))
+                              toolsJarFile()))
     proguardLibraryJars(kotlinStdlib())
     proguardLibraryJars(project(":kotlin-reflect"))
     proguardLibraryJars(project(":kotlin-compiler"))
@@ -73,24 +72,24 @@ val proguard by task<ProGuardTask> {
     dependsOn(packJar)
     configuration("main-kts.pro")
 
-    injars(mapOf("filter" to "!META-INF/versions/**"), packJar.outputs.files)
+    injars(mapOf("filter" to "!META-INF/versions/**"), packJar.get().outputs.files)
 
     val outputJar = fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar")
 
     outjars(outputJar)
 
-    inputs.files(packJar.outputs.files.singleFile)
+    inputs.files(packJar.get().outputs.files.singleFile)
     outputs.file(outputJar)
 
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraryJars)
 }
 
-val resultJar = tasks.register<Jar>("resultJar") {
+val resultJar by task<Jar> {
     val pack = if (kotlinBuildProperties.proguard) proguard else packJar
     dependsOn(pack)
     setupPublicJar(jarBaseName)
     from {
-        zipTree(pack.outputs.files.singleFile)
+        zipTree(pack.get().outputs.files.singleFile)
     }
 }
 

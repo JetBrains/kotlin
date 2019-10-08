@@ -9,8 +9,8 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
           then: RETURN type=kotlin.Nothing from='public final fun testScalar (a: kotlin.Any): kotlin.IntArray declared in <root>'
             CALL 'public final fun intArrayOf (elements: kotlin.IntArray): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
       RETURN type=kotlin.Nothing from='public final fun testScalar (a: kotlin.Any): kotlin.IntArray declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/intArrayOf]>#' type=IrErrorType
-          GET_VAR 'a: kotlin.Any declared in <root>.testScalar' type=kotlin.Any origin=null
+        CALL 'public final fun intArrayOf (elements: kotlin.IntArray): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: GET_VAR 'a: kotlin.Any declared in <root>.testScalar' type=kotlin.Int origin=null
   FUN name:testSpread visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.IntArray
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
@@ -21,5 +21,5 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
           then: RETURN type=kotlin.Nothing from='public final fun testSpread (a: kotlin.Any): kotlin.IntArray declared in <root>'
             CALL 'public final fun intArrayOf (elements: kotlin.IntArray): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
       RETURN type=kotlin.Nothing from='public final fun testSpread (a: kotlin.Any): kotlin.IntArray declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/intArrayOf]>#' type=IrErrorType
-          GET_VAR 'a: kotlin.Any declared in <root>.testSpread' type=kotlin.Any origin=null
+        CALL 'public final fun intArrayOf (elements: kotlin.IntArray): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
+          elements: GET_VAR 'a: kotlin.Any declared in <root>.testSpread' type=kotlin.IntArray origin=null

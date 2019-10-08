@@ -157,8 +157,7 @@ internal class UltraLightMembersCreator(
     ): KtLightMethod {
         val isConstructor = ktFunction is KtConstructor<*>
         val name =
-            if (isConstructor)
-                containingClass.name
+            if (isConstructor) containingClass.name
             else computeMethodName(ktFunction, ktFunction.name ?: SpecialNames.NO_NAME_PROVIDED.asString(), MethodType.REGULAR)
 
         val method = lightMethod(name.orEmpty(), ktFunction, forceStatic, forcePrivate)

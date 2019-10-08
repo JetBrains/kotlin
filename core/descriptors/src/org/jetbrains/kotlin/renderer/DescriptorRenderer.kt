@@ -142,6 +142,11 @@ abstract class DescriptorRenderer {
 
         @JvmField
         val FQ_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
+            modifiers = DescriptorRendererModifier.ALL_EXCEPT_ANNOTATIONS
+        }
+
+        @JvmField
+        val FQ_NAMES_IN_TYPES_WITH_ANNOTATIONS: DescriptorRenderer = withOptions {
             modifiers = DescriptorRendererModifier.ALL
         }
 
@@ -301,7 +306,7 @@ enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
 
     companion object {
         @JvmField
-        val DEFAULTS = values().filter { it.includeByDefault }.toSet()
+        val ALL_EXCEPT_ANNOTATIONS = values().filter { it.includeByDefault }.toSet()
 
         @JvmField
         val ALL = values().toSet()

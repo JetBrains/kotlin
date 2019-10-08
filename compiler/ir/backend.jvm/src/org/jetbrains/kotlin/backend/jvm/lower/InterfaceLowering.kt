@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.copyBodyToStatic
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering.Companion.clinitName
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isInterface
@@ -55,7 +57,10 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
                         removedFunctions[function.symbol] = it.symbol
                 }
                 members.add(element)
-                element.body = function.body?.patchDeclarationParents(element)
+
+                copyBodyToStatic(function, element)
+                element.body = element.body?.patchDeclarationParents(element)
+
                 if (function.hasJvmDefault() &&
                     function.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
                 ) {
@@ -73,6 +78,23 @@ private class InterfaceLowering(val context: JvmBackendContext) : IrElementTrans
 
         irClass.declarations.removeAll {
             it is IrFunction && removedFunctions.containsKey(it.symbol)
+        }
+
+        // Move metadata for local delegated properties from the interface to DefaultImpls, since this is where kotlin-reflect looks for it.
+        val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId as IrClass]
+        if (localDelegatedProperties != null) {
+            context.localDelegatedProperties[defaultImplsIrClass.attributeOwnerId as IrClass] = localDelegatedProperties
+            context.localDelegatedProperties[irClass.attributeOwnerId as IrClass] = emptyList<IrLocalDelegatedPropertySymbol>()
+        }
+
+        // Move $$delegatedProperties array
+        val delegatedPropertyArray = irClass.declarations.filterIsInstance<IrField>()
+            .singleOrNull { it.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE }
+        if (delegatedPropertyArray != null) {
+            irClass.declarations.remove(delegatedPropertyArray)
+            defaultImplsIrClass.declarations.add(0, delegatedPropertyArray)
+            delegatedPropertyArray.parent = defaultImplsIrClass
+            delegatedPropertyArray.initializer?.patchDeclarationParents(defaultImplsIrClass)
         }
     }
 

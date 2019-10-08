@@ -124,35 +124,22 @@ class CommonResolverForModuleFactory(
                     else languageVersionSettings.getFeatureSupport(feature)
             }
 
+            val resolverForModuleFactory = CommonResolverForModuleFactory(
+                CommonAnalysisParameters(metadataPartProviderFactory),
+                CompilerEnvironment,
+                CommonPlatforms.defaultCommonPlatform,
+                shouldCheckExpectActual = false
+            )
+
             @Suppress("NAME_SHADOWING")
-            val resolver = ResolverForProjectImpl(
+            val resolver = ResolverForSingleModuleProject(
                 "sources for metadata serializer",
                 ProjectContext(project, "metadata serializer"),
-                listOf(moduleInfo),
-                invalidateOnOOCB = false,
-                modulesContent = { ModuleContent(it, files, GlobalSearchScope.allScope(project)) },
-                moduleLanguageSettingsProvider = object : LanguageSettingsProvider {
-                    override fun getLanguageVersionSettings(
-                        moduleInfo: ModuleInfo,
-                        project: Project,
-                        isReleaseCoroutines: Boolean?
-                    ) = multiplatformLanguageSettings
-
-                    override fun getTargetPlatform(
-                        moduleInfo: ModuleInfo,
-                        project: Project
-                    ) = TargetPlatformVersion.NoVersion
-                },
-                resolverForModuleFactoryByPlatform = {
-                    CommonResolverForModuleFactory(
-                        CommonAnalysisParameters(metadataPartProviderFactory),
-                        CompilerEnvironment,
-                        CommonPlatforms.defaultCommonPlatform,
-                        shouldCheckExpectActual = false
-                    )
-                },
-                builtInsProvider = { DefaultBuiltIns.Instance },
-                sdkDependency = { null }
+                moduleInfo,
+                resolverForModuleFactory,
+                GlobalSearchScope.allScope(project),
+                languageVersionSettings = multiplatformLanguageSettings,
+                syntheticFiles = files
             )
 
             val moduleDescriptor = resolver.descriptorForModule(moduleInfo)

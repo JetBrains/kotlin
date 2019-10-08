@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -340,7 +339,8 @@ open class WrappedVariableDescriptor(
     }
 }
 
-open class WrappedVariableDescriptorWithAccessor() : VariableDescriptorWithAccessors, WrappedCallableDescriptor<IrLocalDelegatedProperty>(Annotations.EMPTY, SourceElement.NO_SOURCE) {
+open class WrappedVariableDescriptorWithAccessor() : VariableDescriptorWithAccessors,
+    WrappedCallableDescriptor<IrLocalDelegatedProperty>(Annotations.EMPTY, SourceElement.NO_SOURCE) {
     override fun getName(): Name = owner.name
 
     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor {
@@ -434,7 +434,7 @@ open class WrappedSimpleFunctionDescriptor(
         visibility: Visibility?,
         kind: CallableMemberDescriptor.Kind?,
         copyOverrides: Boolean
-    ): SimpleFunctionDescriptor {
+    ): Nothing {
         TODO("not implemented")
     }
 
@@ -661,7 +661,6 @@ class LazyTypeConstructor(
 
     override val supertypeLoopChecker: SupertypeLoopChecker
         get() = SupertypeLoopChecker.EMPTY
-
 }
 
 open class WrappedEnumEntryDescriptor(
@@ -797,12 +796,9 @@ open class WrappedPropertyDescriptor(
         TODO("not implemented")
     }
 
-    override fun getAccessors(): MutableList<PropertyAccessorDescriptor> = listOfNotNull(
-        owner.getter?.descriptor as? PropertyAccessorDescriptor,
-        owner.setter?.descriptor as? PropertyAccessorDescriptor
-    ).toMutableList()
+    override fun getAccessors(): List<PropertyAccessorDescriptor> = listOfNotNull(getter, setter)
 
-    override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
+    override fun getTypeParameters(): List<TypeParameterDescriptor> = getter?.typeParameters.orEmpty()
 
     override fun getVisibility() = owner.visibility
 
@@ -866,6 +862,89 @@ open class WrappedPropertyDescriptor(
 class WrappedPropertyDescriptorWithContainerSource(
     override var containerSource: DeserializedContainerSource
 ) : WrappedPropertyDescriptor(), DescriptorWithContainerSource
+
+abstract class WrappedPropertyAccessorDescriptor(annotations: Annotations, sourceElement: SourceElement) :
+    WrappedSimpleFunctionDescriptor(annotations, sourceElement), PropertyAccessorDescriptor {
+    override fun isDefault(): Boolean = false
+
+    override fun getOriginal(): WrappedPropertyAccessorDescriptor = this
+
+    override fun getOverriddenDescriptors() = super.getOverriddenDescriptors().map { it as PropertyAccessorDescriptor }
+
+    override fun getCorrespondingProperty(): PropertyDescriptor = owner.correspondingPropertySymbol!!.descriptor
+
+    override val correspondingVariable: VariableDescriptorWithAccessors get() = correspondingProperty
+}
+
+class WrappedPropertyGetterDescriptor(annotations: Annotations, sourceElement: SourceElement) :
+    WrappedPropertyAccessorDescriptor(annotations, sourceElement), PropertyGetterDescriptor {
+    override fun getOverriddenDescriptors() = super.getOverriddenDescriptors().map { it as PropertyGetterDescriptor }
+
+    override fun getOriginal(): WrappedPropertyGetterDescriptor = this
+}
+
+class WrappedPropertySetterDescriptor(annotations: Annotations, sourceElement: SourceElement) :
+    WrappedPropertyAccessorDescriptor(annotations, sourceElement), PropertySetterDescriptor {
+    override fun getOverriddenDescriptors() = super.getOverriddenDescriptors().map { it as PropertySetterDescriptor }
+
+    override fun getOriginal(): WrappedPropertySetterDescriptor = this
+}
+
+open class WrappedTypeAliasDescriptor(
+    annotations: Annotations = Annotations.EMPTY,
+    private val sourceElement: SourceElement = SourceElement.NO_SOURCE
+) : WrappedDeclarationDescriptor<IrTypeAlias>(annotations), TypeAliasDescriptor {
+
+    override val underlyingType: SimpleType
+        get() = throw UnsupportedOperationException("Unexpected use of WrappedTypeAliasDescriptor $this")
+
+    override val constructors: Collection<TypeAliasConstructorDescriptor>
+        get() = throw UnsupportedOperationException("Unexpected use of WrappedTypeAliasDescriptor $this")
+
+    override fun substitute(substitutor: TypeSubstitutor): ClassifierDescriptorWithTypeParameters =
+        throw UnsupportedOperationException("Wrapped descriptors should not be substituted")
+
+    override fun getDefaultType(): SimpleType =
+        throw UnsupportedOperationException("Unexpected use of WrappedTypeAliasDescriptor $this")
+
+    override fun getTypeConstructor(): TypeConstructor =
+        throw UnsupportedOperationException("Unexpected use of WrappedTypeAliasDescriptor $this")
+
+    override val expandedType: SimpleType
+        get() = owner.expandedType.toKotlinType() as SimpleType
+
+    override val classDescriptor: ClassDescriptor?
+        get() = expandedType.constructor.declarationDescriptor as ClassDescriptor?
+
+    override fun getOriginal(): TypeAliasDescriptor = this
+
+    override fun isInner(): Boolean = false
+
+    override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> = owner.typeParameters.map { it.descriptor }
+
+    override fun getContainingDeclaration(): DeclarationDescriptor = getContainingDeclaration(owner)
+
+    override fun getName(): Name = owner.name
+
+    override fun getModality(): Modality = Modality.FINAL
+
+    override fun getSource(): SourceElement = sourceElement
+
+    override fun getVisibility(): Visibility = owner.visibility
+
+    override fun isExpect(): Boolean = false
+
+    override fun isActual(): Boolean = owner.isActual
+
+    override fun isExternal(): Boolean = false
+
+    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
+        visitor.visitTypeAliasDescriptor(this, data)
+
+    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>) {
+        visitor.visitTypeAliasDescriptor(this, null)
+    }
+}
 
 open class WrappedFieldDescriptor(
     annotations: Annotations = Annotations.EMPTY,
@@ -942,10 +1021,10 @@ open class WrappedFieldDescriptor(
 
     override fun getContainingDeclaration() = (owner.parent as IrSymbolOwner).symbol.descriptor
 
-    override fun isLateInit() = owner.correspondingProperty?.isLateinit ?: false
+    override fun isLateInit() = owner.correspondingPropertySymbol?.owner?.isLateinit ?: false
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? =
-        owner.correspondingProperty?.descriptor?.extensionReceiverParameter
+        owner.correspondingPropertySymbol?.owner?.descriptor?.extensionReceiverParameter
 
     override fun isExternal() = owner.isExternal
 
@@ -974,13 +1053,6 @@ open class WrappedFieldDescriptor(
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
-
-fun wrappedSimpleFunctionDescriptorBasedOn(descriptor: SimpleFunctionDescriptor) =
-    if (descriptor is DescriptorWithContainerSource)
-        // TODO: Do we ever need annotations and source for these?
-        WrappedFunctionDescriptorWithContainerSource(descriptor.containerSource)
-    else
-        WrappedSimpleFunctionDescriptor(descriptor.annotations, descriptor.source)
 
 private fun getContainingDeclaration(declaration: IrDeclarationWithName): DeclarationDescriptor {
     val parent = declaration.parent

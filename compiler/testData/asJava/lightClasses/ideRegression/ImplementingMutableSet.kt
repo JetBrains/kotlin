@@ -25,11 +25,4 @@ class SmartSet<T> private constructor() : AbstractSet<T>(), MutableSet<T> {
         data = null
         size = 0
     }
-
-    override fun contains(element: T): Boolean = when {
-        size == 0 -> false
-        size == 1 -> data == element
-        size < ARRAY_THRESHOLD -> element in data as Array<T>
-        else -> element in data as Set<T>
-    }
 }

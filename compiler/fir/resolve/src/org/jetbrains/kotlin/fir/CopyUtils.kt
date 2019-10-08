@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirTryExpressionImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirWhenExpressionImpl
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -27,6 +28,8 @@ fun FirFunctionCall.copy(
     arguments: List<FirExpression> = this.arguments,
     calleeReference: FirNamedReference = this.calleeReference,
     explicitReceiver: FirExpression? = this.explicitReceiver,
+    dispatchReceiver: FirExpression = this.dispatchReceiver,
+    extensionReceiver: FirExpression = this.extensionReceiver,
     psi: PsiElement? = this.psi,
     safe: Boolean = this.safe,
     typeArguments: List<FirTypeProjection> = this.typeArguments,
@@ -37,6 +40,8 @@ fun FirFunctionCall.copy(
         this.arguments.addAll(arguments)
         this.calleeReference = calleeReference
         this.explicitReceiver = explicitReceiver
+        this.dispatchReceiver = dispatchReceiver
+        this.extensionReceiver = extensionReceiver
         this.typeArguments.addAll(typeArguments)
         this.typeRef = resultType
     }
@@ -51,14 +56,18 @@ fun FirAnonymousFunction.copy(
     body: FirBlock? = this.body,
     annotations: List<FirAnnotationCall> = this.annotations,
     typeRef: FirTypeRef = this.typeRef,
-    label: FirLabel? = this.label
+    label: FirLabel? = this.label,
+    controlFlowGraphReference: FirControlFlowGraphReference = this.controlFlowGraphReference,
+    invocationKind: InvocationKind? = this.invocationKind
 ): FirAnonymousFunction {
-    return FirAnonymousFunctionImpl(session, psi, returnTypeRef, receiverTypeRef).apply {
+    return FirAnonymousFunctionImpl(session, psi, returnTypeRef, receiverTypeRef, symbol).apply {
         this.valueParameters.addAll(valueParameters)
         this.body = body
         this.annotations.addAll(annotations)
         this.typeRef = typeRef
         this.label = label
+        this.controlFlowGraphReference = controlFlowGraphReference
+        this.invocationKind = invocationKind
     }
 }
 
@@ -79,4 +88,21 @@ fun FirTypeParameter.copy(
         this.bounds += bounds
         this.annotations += annotations
     }
+}
+
+fun FirWhenExpression.copy(
+    resultType: FirTypeRef = this.typeRef,
+    calleeReference: FirReference = this.calleeReference
+): FirWhenExpressionImpl = FirWhenExpressionImpl(psi, subject, subjectVariable, calleeReference).apply {
+    this@apply.branches.addAll(this@copy.branches)
+    this.typeRef = resultType
+    this.calleeReference = calleeReference
+}
+
+fun FirTryExpression.copy(
+    resultType: FirTypeRef = this.typeRef,
+    calleeReference: FirReference = this.calleeReference
+): FirTryExpressionImpl = FirTryExpressionImpl(psi, tryBlock, finallyBlock, calleeReference).apply {
+    this@apply.catches.addAll(this@copy.catches)
+    this.typeRef = resultType
 }

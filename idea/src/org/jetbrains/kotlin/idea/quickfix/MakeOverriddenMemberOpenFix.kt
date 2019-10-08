@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -24,12 +13,16 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
+import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.isOverridable
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.util.CachedValue
 import org.jetbrains.kotlin.idea.core.util.getValue
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_KEYWORD
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -63,9 +56,21 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
             assert(overriddenDescriptor.kind == DECLARATION) { "Can only be applied to declarations." }
             val overriddenMember = DescriptorToSourceUtils.descriptorToDeclaration(overriddenDescriptor)
             if (overriddenMember == null || !overriddenMember.canRefactor() || overriddenMember !is KtCallableDeclaration ||
-                overriddenMember.modifierList?.hasModifier(OPEN_KEYWORD) == true) {
+                overriddenMember.modifierList?.hasModifier(OPEN_KEYWORD) == true
+            ) {
                 return QUICKFIX_UNAVAILABLE
             }
+
+            overriddenDescriptor.takeIf { overriddenMember.isExpectDeclaration() }?.actualsForExpected()?.forEach {
+                if (it is MemberDescriptor && it.modality < Modality.OPEN) {
+                    val member = DescriptorToSourceUtils.descriptorToDeclaration(it)
+                    if (member == null || !member.canRefactor() || member !is KtCallableDeclaration) {
+                        return QUICKFIX_UNAVAILABLE
+                    }
+                    overriddenNonOverridableMembers.add(member.createSmartPointer())
+                }
+            }
+
             val containingDeclarationName = overriddenDescriptor.containingDeclaration.name.asString()
             overriddenNonOverridableMembers.add(overriddenMember.createSmartPointer())
             containingDeclarationsNames.add(containingDeclarationName)
@@ -79,13 +84,13 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
 
     override fun getText(): String {
         val element = element ?: return ""
-        if (overriddenNonOverridableMembers.size == 1) {
+        if (containingDeclarationsNames.size == 1) {
             val name = containingDeclarationsNames[0] + "." + element.name
             return "Make $name $OPEN_KEYWORD"
         }
         val sortedDeclarationNames = containingDeclarationsNames.sorted()
         val declarations = sortedDeclarationNames.subList(0, sortedDeclarationNames.size - 1).joinToString(", ") + " and " +
-                           sortedDeclarationNames.last()
+                sortedDeclarationNames.last()
         return "Make '${element.name}' in $declarations open"
     }
 
@@ -103,7 +108,8 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
         private val QUICKFIX_UNAVAILABLE = QuickFixInfo(emptyList(), emptyList())
 
         private fun getAllDeclaredNonOverridableOverriddenDescriptors(
-                callableMemberDescriptor: CallableMemberDescriptor): Collection<CallableMemberDescriptor> {
+            callableMemberDescriptor: CallableMemberDescriptor
+        ): Collection<CallableMemberDescriptor> {
             val result = hashSetOf<CallableMemberDescriptor>()
             val nonOverridableOverriddenDescriptors = retainNonOverridableMembers(callableMemberDescriptor.overriddenDescriptors)
             for (overriddenDescriptor in nonOverridableOverriddenDescriptors) {
@@ -124,7 +130,8 @@ class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAc
         }
 
         private fun retainNonOverridableMembers(
-                callableMemberDescriptors: Collection<CallableMemberDescriptor>): Collection<CallableMemberDescriptor> {
+            callableMemberDescriptors: Collection<CallableMemberDescriptor>
+        ): Collection<CallableMemberDescriptor> {
             return callableMemberDescriptors.filter { !it.isOverridable }
         }
 

@@ -9,25 +9,22 @@ import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForCoroutineContext
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForIntercepted
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForSuspendCoroutineUninterceptedOrReturn
-import org.jetbrains.kotlin.codegen.coroutines.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm
 import org.jetbrains.kotlin.codegen.createMethodNodeForAlwaysEnabledAssert
 import org.jetbrains.kotlin.codegen.isBuiltinAlwaysEnabledAssert
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.checkers.TypeOfChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeArgumentMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import org.jetbrains.kotlin.types.model.TypeVariance
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -36,23 +33,24 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 internal fun generateInlineIntrinsic(
     state: GenerationState,
     descriptor: FunctionDescriptor,
-    typeArguments: Map<TypeParameterDescriptor, KotlinType>?
+    typeParameters: List<TypeParameterMarker>?,
+    typeSystem: TypeSystemCommonBackendContext
 ): MethodNode? {
     val languageVersionSettings = state.languageVersionSettings
-    val typeMapper = state.typeMapper
+
     return when {
         isSpecialEnumMethod(descriptor) ->
-            createSpecialEnumMethodBody(descriptor.name.asString(), typeArguments!!.keys.single().defaultType, typeMapper)
+            createSpecialEnumMethodBody(descriptor.name.asString(), typeParameters!!.single(), typeSystem)
         TypeOfChecker.isTypeOf(descriptor) ->
-            createTypeOfMethodBody(typeArguments!!.keys.single().defaultType)
+            typeSystem.createTypeOfMethodBody(typeParameters!!.single())
         descriptor.isBuiltInIntercepted(languageVersionSettings) ->
-            createMethodNodeForIntercepted(descriptor, typeMapper, languageVersionSettings)
+            createMethodNodeForIntercepted(languageVersionSettings)
         descriptor.isBuiltInCoroutineContext(languageVersionSettings) ->
             createMethodNodeForCoroutineContext(descriptor, languageVersionSettings)
         descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings) ->
-            createMethodNodeForSuspendCoroutineUninterceptedOrReturn(descriptor, typeMapper, languageVersionSettings)
+            createMethodNodeForSuspendCoroutineUninterceptedOrReturn(languageVersionSettings)
         descriptor.isBuiltinAlwaysEnabledAssert() ->
-            createMethodNodeForAlwaysEnabledAssert(descriptor, typeMapper)
+            createMethodNodeForAlwaysEnabledAssert(descriptor)
         else -> null
     }
 }
@@ -71,15 +69,14 @@ private fun isSpecialEnumMethod(descriptor: FunctionDescriptor): Boolean {
             (name == "enumValueOf" && parameters.size == 1 && KotlinBuiltIns.isString(parameters[0].type))
 }
 
-private fun createSpecialEnumMethodBody(name: String, type: KotlinType, typeMapper: KotlinTypeMapper): MethodNode {
+private fun createSpecialEnumMethodBody(
+    name: String, typeParameter: TypeParameterMarker, typeSystem: TypeSystemCommonBackendContext
+): MethodNode {
     val isValueOf = "enumValueOf" == name
-    val invokeType = typeMapper.mapType(type)
-    val desc = getSpecialEnumFunDescriptor(invokeType, isValueOf)
+    val desc = getSpecialEnumFunDescriptor(ENUM_TYPE, isValueOf)
     val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", desc, null, null)
-    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(
-        type,
-        ReifiedTypeInliner.OperationKind.ENUM_REIFIED,
-        InstructionAdapter(node)
+    ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(
+        typeParameter, false, ReifiedTypeInliner.OperationKind.ENUM_REIFIED, InstructionAdapter(node), typeSystem
     )
     if (isValueOf) {
         node.visitInsn(Opcodes.ACONST_NULL)
@@ -102,11 +99,11 @@ internal fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String
     if (isValueOf) Type.getMethodDescriptor(type, JAVA_STRING_TYPE)
     else Type.getMethodDescriptor(AsmUtil.getArrayType(type))
 
-private fun createTypeOfMethodBody(type: KotlinType): MethodNode {
+private fun TypeSystemCommonBackendContext.createTypeOfMethodBody(typeParameter: TypeParameterMarker): MethodNode {
     val node = MethodNode(Opcodes.API_VERSION, Opcodes.ACC_STATIC, "fake", Type.getMethodDescriptor(K_TYPE), null, null)
     val v = InstructionAdapter(node)
 
-    putTypeOfReifiedTypeParameter(v, type)
+    putTypeOfReifiedTypeParameter(v, typeParameter, false)
     v.areturn(K_TYPE)
 
     v.visitMaxs(2, 0)
@@ -114,33 +111,36 @@ private fun createTypeOfMethodBody(type: KotlinType): MethodNode {
     return node
 }
 
-private fun putTypeOfReifiedTypeParameter(v: InstructionAdapter, type: KotlinType) {
-    ExpressionCodegen.putReifiedOperationMarkerIfTypeIsReifiedParameterWithoutPropagation(type, ReifiedTypeInliner.OperationKind.TYPE_OF, v)
+private fun TypeSystemCommonBackendContext.putTypeOfReifiedTypeParameter(
+    v: InstructionAdapter, typeParameter: TypeParameterMarker, isNullable: Boolean
+) {
+    ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(typeParameter, isNullable, ReifiedTypeInliner.OperationKind.TYPE_OF, v, this)
     v.aconst(null)
 }
 
 // Returns some upper bound on maximum stack size
-internal fun generateTypeOf(v: InstructionAdapter, kotlinType: KotlinType, typeMapper: KotlinTypeMapper): Int {
-    val asmType = typeMapper.mapType(kotlinType)
-    AsmUtil.putJavaLangClassInstance(v, asmType, kotlinType, typeMapper)
+internal fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
+    v: InstructionAdapter, type: KT, intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>
+): Int {
+    intrinsicsSupport.putClassInstance(v, type)
 
-    val arguments = kotlinType.arguments
-    val useArray = arguments.size >= 3
+    val argumentsSize = type.argumentsCount()
+    val useArray = argumentsSize >= 3
 
     if (useArray) {
-        v.iconst(arguments.size)
+        v.iconst(argumentsSize)
         v.newarray(K_TYPE_PROJECTION)
     }
 
     var maxStackSize = 3
 
-    for (i in 0 until arguments.size) {
+    for (i in 0 until argumentsSize) {
         if (useArray) {
             v.dup()
             v.iconst(i)
         }
 
-        val stackSize = doGenerateTypeProjection(v, arguments[i], typeMapper)
+        val stackSize = doGenerateTypeProjection(v, type.getArgument(i), intrinsicsSupport)
         maxStackSize = maxOf(maxStackSize, stackSize + i + 5)
 
         if (useArray) {
@@ -148,9 +148,9 @@ internal fun generateTypeOf(v: InstructionAdapter, kotlinType: KotlinType, typeM
         }
     }
 
-    val methodName = if (kotlinType.isMarkedNullable) "nullableTypeOf" else "typeOf"
+    val methodName = if (type.isMarkedNullable()) "nullableTypeOf" else "typeOf"
 
-    val projections = when (arguments.size) {
+    val projections = when (argumentsSize) {
         0 -> emptyArray()
         1 -> arrayOf(K_TYPE_PROJECTION)
         2 -> arrayOf(K_TYPE_PROJECTION, K_TYPE_PROJECTION)
@@ -163,37 +163,39 @@ internal fun generateTypeOf(v: InstructionAdapter, kotlinType: KotlinType, typeM
     return maxStackSize
 }
 
-private fun doGenerateTypeProjection(
+private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.doGenerateTypeProjection(
     v: InstructionAdapter,
-    projection: TypeProjection,
-    typeMapper: KotlinTypeMapper
+    projection: TypeArgumentMarker,
+    intrinsicsSupport: ReifiedTypeInliner.IntrinsicsSupport<KT>
 ): Int {
     // KTypeProjection members could be static, see KT-30083 and KT-30084
     v.getstatic(K_TYPE_PROJECTION.internalName, "Companion", K_TYPE_PROJECTION_COMPANION.descriptor)
 
-    if (projection.isStarProjection) {
+    if (projection.isStarProjection()) {
         v.invokevirtual(K_TYPE_PROJECTION_COMPANION.internalName, "getSTAR", Type.getMethodDescriptor(K_TYPE_PROJECTION), false)
         return 1
     }
 
-    val type = projection.type
-    val descriptor = type.constructor.declarationDescriptor
-    val stackSize = if (descriptor is TypeParameterDescriptor) {
-        if (descriptor.isReified) {
-            putTypeOfReifiedTypeParameter(v, type)
+    @Suppress("UNCHECKED_CAST")
+    val type = projection.getType() as KT
+    val typeParameterClassifier = type.typeConstructor().getTypeParameterClassifier()
+    val stackSize = if (typeParameterClassifier != null) {
+        if (typeParameterClassifier.isReified()) {
+            putTypeOfReifiedTypeParameter(v, typeParameterClassifier, type.isMarkedNullable())
             2
         } else {
             // TODO: support non-reified type parameters in typeOf
-            generateTypeOf(v, type.builtIns.nullableAnyType, typeMapper)
+            @Suppress("UNCHECKED_CAST")
+            generateTypeOf(v, nullableAnyType() as KT, intrinsicsSupport)
         }
     } else {
-        generateTypeOf(v, type, typeMapper)
+        generateTypeOf(v, type, intrinsicsSupport)
     }
 
-    val methodName = when (projection.projectionKind) {
-        Variance.INVARIANT -> "invariant"
-        Variance.IN_VARIANCE -> "contravariant"
-        Variance.OUT_VARIANCE -> "covariant"
+    val methodName = when (projection.getVariance()) {
+        TypeVariance.INV -> "invariant"
+        TypeVariance.IN -> "contravariant"
+        TypeVariance.OUT -> "covariant"
     }
     v.invokevirtual(K_TYPE_PROJECTION_COMPANION.internalName, methodName, Type.getMethodDescriptor(K_TYPE_PROJECTION, K_TYPE), false)
 

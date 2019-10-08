@@ -13,26 +13,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 val IrBuilderWithScope.parent get() = scope.getLocalDeclarationParent()
-
-inline fun IrBuilderWithScope.irLet(
-    value: IrExpression,
-    origin: IrStatementOrigin? = null,
-    nameHint: String? = null,
-    body: (VariableDescriptor) -> IrExpression
-): IrExpression {
-    val irTemporary = scope.createTemporaryVariable(value, nameHint)
-    val irResult = body(irTemporary.descriptor)
-    val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
-    irBlock.statements.add(irTemporary)
-    irBlock.statements.add(irResult)
-    return irBlock
-}
 
 inline fun IrBuilderWithScope.irLetS(
     value: IrExpression,
@@ -159,17 +144,6 @@ fun IrBuilderWithScope.irIfThenMaybeElse(
 fun IrBuilderWithScope.irIfNull(type: IrType, subject: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
     irIfThenElse(type, irEqualsNull(subject), thenPart, elsePart)
 
-fun IrBuilderWithScope.irThrowNpe(origin: IrStatementOrigin? = null) =
-    IrCallImpl(
-        startOffset, endOffset,
-        context.irBuiltIns.nothingType,
-        context.irBuiltIns.throwNpeSymbol,
-        context.irBuiltIns.throwNpeSymbol.descriptor,
-        typeArgumentsCount = 0,
-        valueArgumentsCount = 0,
-        origin = origin
-    )
-
 fun IrBuilderWithScope.irIfThenReturnTrue(condition: IrExpression) =
     irIfThen(context.irBuiltIns.unitType, condition, irReturnTrue())
 
@@ -197,13 +171,13 @@ fun IrBuilderWithScope.irEqeqeq(arg1: IrExpression, arg2: IrExpression) =
     context.eqeqeq(startOffset, endOffset, arg1, arg2)
 
 fun IrBuilderWithScope.irNull() =
-    IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
+    irNull(context.irBuiltIns.nothingNType)
+
+fun IrBuilderWithScope.irNull(irType: IrType) =
+    IrConstImpl.constNull(startOffset, endOffset, irType)
 
 fun IrBuilderWithScope.irEqualsNull(argument: IrExpression) =
-    primitiveOp2(
-        startOffset, endOffset, context.irBuiltIns.eqeqSymbol, context.irBuiltIns.booleanType, IrStatementOrigin.EQEQ,
-        argument, irNull()
-    )
+    irEquals(argument, irNull())
 
 fun IrBuilderWithScope.irEquals(arg1: IrExpression, arg2: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.EQEQ) =
     primitiveOp2(
@@ -404,3 +378,15 @@ inline fun IrBuilderWithScope.irBlockBody(
         startOffset,
         endOffset
     ).blockBody(body)
+
+fun IrBuilderWithScope.irThrowIse(origin: IrStatementOrigin? = null) =
+    IrCallImpl(
+        startOffset, endOffset,
+        context.irBuiltIns.nothingType,
+        context.irBuiltIns.throwIseSymbol,
+        context.irBuiltIns.throwIseSymbol.descriptor,
+        typeArgumentsCount = 0,
+        valueArgumentsCount = 0,
+        origin = origin
+    )
+

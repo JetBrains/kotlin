@@ -1,5 +1,7 @@
 package demo
 
+import demo.One
+
 internal class Container {
     var myInt = 1
 }
@@ -9,7 +11,6 @@ internal object One {
 }
 
 internal class IntContainer(i: Int)
-
 internal class Test {
     fun putInt(i: Int) {}
     fun test() {

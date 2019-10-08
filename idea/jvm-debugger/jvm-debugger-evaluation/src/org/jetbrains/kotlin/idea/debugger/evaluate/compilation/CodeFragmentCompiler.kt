@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilation
 
 import org.jetbrains.kotlin.backend.common.output.OutputFile
-import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.CodeFragmentCodegen.Companion.getSharedTypeIfApplicable
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension.Context as InCo
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -43,9 +41,8 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.org.objectweb.asm.Type
 
-class CodeFragmentCompiler(private val executionContext: ExecutionContext) {
+class CodeFragmentCompiler(private val executionContext: ExecutionContext, private val status: EvaluationStatus) {
     data class CompilationResult(
         val classes: List<ClassToLoad>,
         val parameterInfo: CodeFragmentParameterInfo,
@@ -80,7 +77,7 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext) {
             bindingContext, listOf(codeFragment), compilerConfiguration
         ).build()
 
-        val parameterInfo = CodeFragmentParameterAnalyzer(executionContext, codeFragment, bindingContext).analyze()
+        val parameterInfo = CodeFragmentParameterAnalyzer(executionContext, codeFragment, bindingContext, status).analyze()
         val (classDescriptor, methodDescriptor) = createDescriptorsForCodeFragment(
             codeFragment, Name.identifier(GENERATED_CLASS_NAME), Name.identifier(GENERATED_FUNCTION_NAME),
             parameterInfo, returnType, moduleDescriptorWrapper.packageFragmentForEvaluator
@@ -206,8 +203,6 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext) {
         return Pair(classDescriptor, methodDescriptor)
     }
 }
-
-
 
 private class EvaluatorMemberScopeForMethod(private val methodDescriptor: SimpleFunctionDescriptor) : MemberScopeImpl() {
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {

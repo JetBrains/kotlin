@@ -31,6 +31,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     abstract fun isScript(file: File): Boolean
     abstract val fileExtension: String
     abstract val name: String
+    open val defaultClassName: String = "Script"
     // TODO: used in settings, find out the reason and refactor accordingly
     abstract val definitionId: String
 
@@ -137,6 +138,9 @@ abstract class ScriptDefinition : UserDataHolderBase() {
             get() =
                 compilationConfiguration[ScriptCompilationConfiguration.displayName]?.takeIf { it.isNotBlank() }
                     ?: compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!.typeName.substringAfterLast('.')
+
+        override val defaultClassName: String
+            get() = compilationConfiguration[ScriptCompilationConfiguration.defaultIdentifier] ?: super.defaultClassName
 
         override val definitionId: String get() = compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!.typeName
 

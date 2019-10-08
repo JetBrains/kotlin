@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
@@ -172,7 +174,13 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                             // this is the actual member of delegateExpressionType that we are delegating to
                             (scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_OVERRIDES) +
                                     scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_OVERRIDES))
-                                .firstOrNull { it == overriddenDescriptor || OverridingUtil.overrides(it, overriddenDescriptor) }
+                                .firstOrNull {
+                                    it == overriddenDescriptor || OverridingUtil.overrides(
+                                        it,
+                                        overriddenDescriptor,
+                                        it.module.isTypeRefinementEnabled()
+                                    )
+                                }
                         }
 
                     actualDelegates.firstOrNull()

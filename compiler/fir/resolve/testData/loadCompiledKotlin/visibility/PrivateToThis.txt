@@ -15,6 +15,6 @@ public final class A<in I> : R|kotlin/Any| {
         private/*private to this*/ get(): R|I|
         private/*private to this*/ set(value: R|I|): kotlin/Unit
 
-    public constructor<I>(): R|test/A<I>|
+    public constructor<in I>(): R|test/A<I>|
 
 }

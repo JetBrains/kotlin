@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirComputingImplicitTypeRef
@@ -56,7 +56,7 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
         require(declaration is FirCallableMemberDeclaration<*>) { "${declaration::class}: ${declaration.render()}" }
 
 
-        val symbol = declaration.symbol as ConeCallableSymbol
+        val symbol = declaration.symbol as FirCallableSymbol<*>
         val id = symbol.callableId
 
         val provider = session.service<FirProvider>()

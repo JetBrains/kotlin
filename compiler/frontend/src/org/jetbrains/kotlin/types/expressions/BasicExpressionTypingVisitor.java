@@ -797,7 +797,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     context.trace.record(BindingContext.VARIABLE_REASSIGNMENT, expression);
                     KtExpression stubExpression = ExpressionTypingUtils.createFakeExpressionOfType(
                             baseExpression.getProject(), context.trace, "e", type);
-                    checkLValue(context.trace, context, baseExpression, stubExpression, expression);
+                    checkLValue(context.trace, context, baseExpression, stubExpression, expression, false);
                 }
                 // x++ type is x type, but ++x type is x.inc() type
                 DataFlowValue receiverValue = components.dataFlowValueFactory.createDataFlowValue(
@@ -930,7 +930,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context,
             @NotNull KtExpression expressionWithParenthesis,
             @Nullable KtExpression rightHandSide,
-            @NotNull KtOperationExpression operationExpression
+            @NotNull KtOperationExpression operationExpression,
+            boolean arraySetMethodAlreadyResolved
     ) {
         KtExpression expression = KtPsiUtil.deparenthesize(expressionWithParenthesis);
         if (expression instanceof KtArrayAccessExpression) {
@@ -938,14 +939,24 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             KtExpression arrayExpression = arrayAccessExpression.getArrayExpression();
             if (arrayExpression == null || rightHandSide == null) return false;
 
-            TemporaryBindingTrace ignoreReportsTrace = TemporaryBindingTrace.create(trace, "Trace for checking set function");
-            ExpressionTypingContext findSetterContext = context.replaceBindingTrace(ignoreReportsTrace);
-            KotlinTypeInfo info = resolveArrayAccessSetMethod(arrayAccessExpression, rightHandSide, findSetterContext, ignoreReportsTrace);
+            BindingTrace traceWithIndexedLValue;
+            boolean methodSetIsResolved;
+            if (!arraySetMethodAlreadyResolved) {
+                TemporaryBindingTrace ignoreReportsTrace = TemporaryBindingTrace.create(trace, "Trace for checking set function");
+                ExpressionTypingContext findSetterContext = context.replaceBindingTrace(ignoreReportsTrace);
+                KotlinTypeInfo info = resolveArrayAccessSetMethod(arrayAccessExpression, rightHandSide, findSetterContext, ignoreReportsTrace);
+
+                traceWithIndexedLValue = ignoreReportsTrace;
+                methodSetIsResolved = info.getType() != null;
+            } else {
+                traceWithIndexedLValue = trace;
+                methodSetIsResolved = true;
+            }
 
             IElementType operationType = operationExpression.getOperationReference().getReferencedNameElementType();
             if (KtTokens.AUGMENTED_ASSIGNMENTS.contains(operationType)
                     || operationType == KtTokens.PLUSPLUS || operationType == KtTokens.MINUSMINUS) {
-                ResolvedCall<?> resolvedCall = ignoreReportsTrace.get(INDEXED_LVALUE_SET, expression);
+                ResolvedCall<?> resolvedCall = traceWithIndexedLValue.get(INDEXED_LVALUE_SET, expression);
                 if (resolvedCall != null && trace.wantsDiagnostics()) {
                     // Call must be validated with the actual, not temporary trace in order to report operator diagnostic
                     // Only unary assignment expressions (++, --) and +=/... must be checked, normal assignments have the proper trace
@@ -957,7 +968,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
 
-            return info.getType() != null;
+            return methodSetIsResolved;
         }
 
         VariableDescriptor variable = BindingContextUtils.extractVariableDescriptorFromReference(trace.getBindingContext(), expression);

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// This test depends on line numbers
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FULL_JDK

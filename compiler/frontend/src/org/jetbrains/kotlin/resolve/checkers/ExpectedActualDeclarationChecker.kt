@@ -144,8 +144,8 @@ class ExpectedActualDeclarationChecker(
                 reportOn,
                 descriptor,
                 atLeastWeaklyCompatibleActuals
-                    .map { DescriptorUtils.getContainingSourceFile(it).let { it.name ?: it.toString() } }
-                    .sorted()
+                    .map { it.module }
+                    .sortedBy { it.name.asString() }
             ))
         }
     }
@@ -305,8 +305,8 @@ class ExpectedActualDeclarationChecker(
             }
             .map { (_, members) -> members }
             .flatten()
-            .map { DescriptorUtils.getContainingSourceFile(it).let { it.name ?: it.toString() } }
-            .sorted()
+            .map { it.module }
+            .sortedBy { it.name.asString() }
             .toList()
 
         if (filesWithAtLeastWeaklyCompatibleExpects.size > 1) {

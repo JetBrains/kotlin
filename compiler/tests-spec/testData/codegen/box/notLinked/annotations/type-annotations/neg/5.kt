@@ -4,7 +4,6 @@
  * SECTIONS: annotations, type-annotations
  * NUMBER: 5
  * DESCRIPTION: Type annotations on upper bounds with unresolved reference in parameters.
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28424
  */
 

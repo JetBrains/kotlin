@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
-import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilder
@@ -118,7 +117,7 @@ class CoroutineTransformerMethodVisitor(
             )
             if (examiner.allSuspensionPointsAreTailCalls(suspensionPoints)) {
                 examiner.replacePopsBeforeSafeUnitInstancesWithCoroutineSuspendedChecks()
-                dropSuspensionMarkers(methodNode, suspensionPoints)
+                dropSuspensionMarkers(methodNode)
                 return
             }
 
@@ -137,10 +136,6 @@ class CoroutineTransformerMethodVisitor(
 
         // Actual max stack might be increased during the previous phases
         updateMaxStack(methodNode)
-
-        // Remove unreachable suspension points
-        // If we don't do this, then relevant frames will not be analyzed, that is unexpected from point of view of next steps (e.g. variable spilling)
-        removeUnreachableSuspensionPointsAndExitPoints(methodNode, suspensionPoints)
 
         UninitializedStoresProcessor(methodNode, shouldPreserveClassInitialization).run()
 
@@ -191,7 +186,7 @@ class CoroutineTransformerMethodVisitor(
             })
         }
 
-        dropSuspensionMarkers(methodNode, suspensionPoints)
+        dropSuspensionMarkers(methodNode)
         methodNode.removeEmptyCatchBlocks()
 
         // The parameters (and 'this') shall live throughout the method, otherwise, d8 emits warning about invalid debug info
@@ -498,48 +493,65 @@ class CoroutineTransformerMethodVisitor(
         })
     }
 
-    private fun removeUnreachableSuspensionPointsAndExitPoints(methodNode: MethodNode, suspensionPoints: MutableList<SuspensionPoint>) {
-        val dceResult = DeadCodeEliminationMethodTransformer().transformWithResult(containingClassInternalName, methodNode)
+    /*
+     * Every suspension point should be surrounded by two markers: before suspension point marker (start marker)
+     * and after suspension point marker (end marker)
+     *
+     * However, if suspension point comes from inline function and its end marker is unreachable, the end marker is removed by
+     * either inliner or bytecode optimization.
+     *
+     * If this happens, we should restore end marker.
+     *
+     * Since in both cases (when end marker is reachable and when it is not) all paths should lead to
+     * either a single end marker or to ATHROWs and ARETURNs, we just compute all paths from start marker until they reach
+     * these instructions.
+     */
+    private fun collectSuspensionPoints(methodNode: MethodNode): List<SuspensionPoint> {
+        // Exception paths lead outside suspension points, thus we should ignore them
+        val cfg = ControlFlowGraph.build(methodNode, followExceptions = false)
 
-        // If the suspension call begin is alive and suspension call end is dead
-        // (e.g., an inlined suspend function call ends with throwing a exception -- see KT-15017),
-        // this is an exit point for the corresponding coroutine.
-        // It doesn't introduce an additional state to the corresponding coroutine's FSM.
-        suspensionPoints.forEach {
-            if (dceResult.isAlive(it.suspensionCallBegin) && dceResult.isRemoved(it.suspensionCallEnd)) {
-                it.removeBeforeSuspendMarker(methodNode)
+        // DFS until end marker or ATHROW or ARETURN.
+        // return true if it contains nested suspension points, which happens when we inline suspend lambda
+        // with multiple suspension points via several inlines. See boxInline/state/stateMachine/passLambda.kt as an example.
+        // In this case we simply ignore them.
+        fun collectSuspensionPointEnds(
+            insn: AbstractInsnNode,
+            visited: MutableSet<AbstractInsnNode>,
+            ends: MutableSet<AbstractInsnNode>
+        ): Boolean {
+            if (!visited.add(insn)) return false
+            if (insn.opcode == Opcodes.ARETURN || insn.opcode == Opcodes.ATHROW || isAfterSuspendMarker(insn)) {
+                ends.add(insn)
+            } else {
+                for (index in cfg.getSuccessorsIndices(insn)) {
+                    val succ = methodNode.instructions[index]
+                    if (isBeforeSuspendMarker(succ)) return true
+                    if (collectSuspensionPointEnds(succ, visited, ends)) return true
+                }
             }
+            return false
         }
 
-        suspensionPoints.removeAll { dceResult.isRemoved(it.suspensionCallBegin) || dceResult.isRemoved(it.suspensionCallEnd) }
-    }
-
-    private fun collectSuspensionPoints(methodNode: MethodNode): MutableList<SuspensionPoint> {
-        val suspensionPoints = mutableListOf<SuspensionPoint>()
-        val beforeSuspensionPointMarkerStack = Stack<AbstractInsnNode>()
-
-        for (methodInsn in methodNode.instructions.toArray().filterIsInstance<MethodInsnNode>()) {
-            when {
-                isBeforeSuspendMarker(methodInsn) -> {
-                    beforeSuspensionPointMarkerStack.add(methodInsn.previous)
-                }
-
-                isAfterSuspendMarker(methodInsn) -> {
-                    suspensionPoints.add(SuspensionPoint(beforeSuspensionPointMarkerStack.pop(), methodInsn))
-                }
-            }
+        val starts = methodNode.instructions.asSequence().filter {
+            isBeforeSuspendMarker(it) &&
+                    cfg.getPredecessorsIndices(it).isNotEmpty() // Ignore unreachable start markers
+        }.toList()
+        return starts.mapNotNull { start ->
+            val ends = mutableSetOf<AbstractInsnNode>()
+            if (collectSuspensionPointEnds(start, mutableSetOf(), ends)) return@mapNotNull null
+            // Ignore suspension points, if the suspension call begin is alive and suspension call end is dead
+            // (e.g., an inlined suspend function call ends with throwing a exception -- see KT-15017),
+            // (also see boxInline/suspend/stateMachine/unreachableSuspendMarker.kt)
+            // this is an exit point for the corresponding coroutine.
+            val end = ends.find { isAfterSuspendMarker(it) } ?: return@mapNotNull null
+            SuspensionPoint(start.previous, end)
         }
-
-        assert(beforeSuspensionPointMarkerStack.isEmpty()) { "Unbalanced suspension markers stack" }
-
-        return suspensionPoints
     }
 
-    private fun dropSuspensionMarkers(methodNode: MethodNode, suspensionPoints: List<SuspensionPoint>) {
-        // Drop markers
-        suspensionPoints.forEach {
-            it.removeBeforeSuspendMarker(methodNode)
-            it.removeAfterSuspendMarker(methodNode)
+    private fun dropSuspensionMarkers(methodNode: MethodNode) {
+        // Drop markers, including ones, which we ignored in recognizing phase
+        for (marker in methodNode.instructions.asSequence().filter { isBeforeSuspendMarker(it) || isAfterSuspendMarker(it) }.toList()) {
+            methodNode.instructions.removeAll(listOf(marker.previous, marker))
         }
     }
 
@@ -796,21 +808,22 @@ class CoroutineTransformerMethodVisitor(
         instructions.insert(firstLabel.next, secondLabel)
 
         methodNode.tryCatchBlocks =
-                methodNode.tryCatchBlocks.flatMap {
-                    val isContainingSuspensionPoint =
-                        instructions.indexOf(it.start) < beginIndex && beginIndex < instructions.indexOf(it.end)
+            methodNode.tryCatchBlocks.flatMap {
+                val isContainingSuspensionPoint =
+                    instructions.indexOf(it.start) < beginIndex && beginIndex < instructions.indexOf(it.end)
 
-                    if (isContainingSuspensionPoint) {
-                        assert(instructions.indexOf(it.start) < endIndex && endIndex < instructions.indexOf(it.end)) {
-                            "Try catch block containing marker before suspension point should also contain the marker after suspension point"
-                        }
-                        listOf(
-                            TryCatchBlockNode(it.start, firstLabel, it.handler, it.type),
-                            TryCatchBlockNode(secondLabel, it.end, it.handler, it.type)
-                        )
-                    } else
-                        listOf(it)
-                }
+                if (isContainingSuspensionPoint) {
+                    assert(instructions.indexOf(it.start) < endIndex && endIndex < instructions.indexOf(it.end)) {
+                        "Try catch block ${instructions.indexOf(it.start)}:${instructions.indexOf(it.end)} containing marker before " +
+                                "suspension point $beginIndex should also contain the marker after suspension point $endIndex"
+                    }
+                    listOf(
+                        TryCatchBlockNode(it.start, firstLabel, it.handler, it.type),
+                        TryCatchBlockNode(secondLabel, it.end, it.handler, it.type)
+                    )
+                } else
+                    listOf(it)
+            }
 
         suspensionPoint.tryCatchBlocksContinuationLabel = secondLabel
 
@@ -1095,16 +1108,6 @@ private class SuspensionPoint(
     val suspensionCallEnd: AbstractInsnNode
 ) {
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
-
-    fun removeBeforeSuspendMarker(methodNode: MethodNode) {
-        methodNode.instructions.remove(suspensionCallBegin.next)
-        methodNode.instructions.remove(suspensionCallBegin)
-    }
-
-    fun removeAfterSuspendMarker(methodNode: MethodNode) {
-        methodNode.instructions.remove(suspensionCallEnd.previous)
-        methodNode.instructions.remove(suspensionCallEnd)
-    }
 }
 
 internal fun getLastParameterIndex(desc: String, access: Int) =
@@ -1142,7 +1145,7 @@ internal class IgnoringCopyOperationSourceInterpreter : SourceInterpreter(Opcode
 }
 
 // Check whether this instruction is unreachable, i.e. there is no path leading to this instruction
-internal fun isUnreachable(index: Int, sourceFrames: Array<Frame<SourceValue>?>): Boolean =
+internal fun <T : Value> isUnreachable(index: Int, sourceFrames: Array<out Frame<out T>?>): Boolean =
     sourceFrames.size <= index || sourceFrames[index] == null
 
 private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode): Boolean {

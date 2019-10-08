@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
 
 fun foo(x: String, y: String = "K"): String = x + y
 

@@ -6,6 +6,7 @@ class Language(protected var code: String) : Serializable {
     override fun toString(): String {
         return code
     }
+
 }
 
 internal open class Base {

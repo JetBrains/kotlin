@@ -10,8 +10,7 @@ class C {
                 val c = stream.read()
                 println(c)
             }
-        } finally {
-            // dispose something else
+        } finally { // dispose something else
         }
     }
 }

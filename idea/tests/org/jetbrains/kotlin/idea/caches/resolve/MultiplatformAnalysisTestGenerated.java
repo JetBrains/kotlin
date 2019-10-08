@@ -44,6 +44,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/constructorsOfExpect/");
     }
 
+    @TestMetadata("correctOverloadResolutionAmbiguity")
+    public void testCorrectOverloadResolutionAmbiguity() throws Exception {
+        runTest("idea/testData/multiplatform/correctOverloadResolutionAmbiguity/");
+    }
+
     @TestMetadata("diamondModuleDependency1")
     public void testDiamondModuleDependency1() throws Exception {
         runTest("idea/testData/multiplatform/diamondModuleDependency1/");
@@ -92,6 +97,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
     @TestMetadata("multilevelParents")
     public void testMultilevelParents() throws Exception {
         runTest("idea/testData/multiplatform/multilevelParents/");
+    }
+
+    @TestMetadata("platformSpecificChecksInCommon")
+    public void testPlatformSpecificChecksInCommon() throws Exception {
+        runTest("idea/testData/multiplatform/platformSpecificChecksInCommon/");
     }
 
     @TestMetadata("qualifiedReceiver")

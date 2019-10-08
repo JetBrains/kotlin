@@ -4,6 +4,7 @@ import com.intellij.testFramework.TestDataFile
 import org.gradle.api.logging.LogLevel
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
+import org.intellij.lang.annotations.Language
 import org.jdom.Element
 import org.jdom.input.SAXBuilder
 import org.jdom.output.Format
@@ -166,9 +167,17 @@ abstract class BaseGradleIT {
             assert(version != runnerGradleVersion) { "Not stopping Gradle daemon v$version as it matches the runner version" }
             println("Stopping gradle daemon v$version")
 
+            val envVariables = if (GradleVersion.version(version) < GradleVersion.version("5.0")) {
+                // Gradle versions below 5.0 do not support running on JDK11, and some of the tests
+                // set JAVA_HOME to JDK11. This makes sure we are using JDK8 when stopping those daemons.
+                environmentVariables + mapOf("JAVA_HOME" to System.getenv()["JDK_18"]!!)
+            } else {
+                environmentVariables
+            }
+
             val wrapperDir = gradleWrappers[version] ?: error("Was asked to stop unknown daemon $version")
             val cmd = createGradleCommand(wrapperDir, arrayListOf("-stop"))
-            val result = runProcess(cmd, wrapperDir, environmentVariables)
+            val result = runProcess(cmd, wrapperDir, envVariables)
             assert(result.isSuccessful) { "Could not stop daemon: $result" }
             DaemonRegistry.unregister(version)
         }
@@ -529,11 +538,18 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.getOutputForTask(taskName: String): String {
-        val taskOutputRegex = ("(?:\\[LIFECYCLE] \\[class org\\.gradle(?:\\.internal\\.buildevents)?\\.TaskExecutionLogger] :$taskName|" +
-                "\\[org\\.gradle\\.execution\\.plan\\.DefaultPlanExecutor\\] :$taskName.*?started)" +
-                "([\\s\\S]+?)" +
-                "(?:Finished executing task ':$taskName'|" +
-                "\\[org\\.gradle\\.execution\\.plan\\.DefaultPlanExecutor\\] :$taskName.*?completed)").toRegex()
+        @Language("RegExp")
+        val taskOutputRegex = """
+(?:
+\[LIFECYCLE] \[class org\.gradle(?:\.internal\.buildevents)?\.TaskExecutionLogger] :$taskName|
+\[org\.gradle\.execution\.(?:plan|taskgraph)\.Default(?:Task)?PlanExecutor] :$taskName.*?started
+)
+([\s\S]+?)
+(?:
+Finished executing task ':$taskName'|
+\[org\.gradle\.execution\.(?:plan|taskgraph)\.Default(?:Task)?PlanExecutor] :$taskName.*?completed
+)
+""".trimIndent().replace("\n", "").toRegex()
 
         return taskOutputRegex.find(output)?.run { groupValues[1] } ?: error("Cannot find output for task $taskName")
     }

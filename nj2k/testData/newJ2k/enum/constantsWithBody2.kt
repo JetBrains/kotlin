@@ -5,12 +5,11 @@ enum class E(private val p: Int) {
             foo(p)
         }
     },
-
     B(2) {
         override fun bar() {}
     };
 
     internal fun foo(p: Int) {}
-
     internal abstract fun bar()
+
 }

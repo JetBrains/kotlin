@@ -1,0 +1,15 @@
+package
+
+public val someProperty0: kotlin.Int
+public val someProperty1: kotlin.String
+public val subject: kotlin.String = ""
+public fun </*0*/ R> property(/*0*/ property: kotlin.reflect.KProperty0<R>): kotlin.Int
+public fun </*0*/ T, /*1*/ R> property(/*0*/ property: kotlin.reflect.KProperty1<T, R>): kotlin.String
+
+public final class O {
+    public constructor O()
+    public final val subject: kotlin.String = ""
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

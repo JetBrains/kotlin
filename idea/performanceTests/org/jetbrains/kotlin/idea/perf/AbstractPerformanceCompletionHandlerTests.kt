@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
+import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.io.File
@@ -58,7 +59,8 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         super.tearDown()
     }
 
-    protected open fun doPerfTest(testPath: String) {
+    protected open fun doPerfTest(unused: String) {
+        val testPath = testPath()
         setUpFixture(testPath)
 
         val tempSettings = CodeStyle.getSettings(project).clone()

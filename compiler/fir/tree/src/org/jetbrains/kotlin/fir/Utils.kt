@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
@@ -35,3 +37,6 @@ fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: 
 }
 
 fun ModuleInfo.dependenciesWithoutSelf(): Sequence<ModuleInfo> = dependencies().asSequence().filter { it != this }
+
+// TODO: rewrite
+fun FirBlock.returnExpressions(): List<FirExpression> = listOfNotNull(statements.lastOrNull() as? FirExpression)

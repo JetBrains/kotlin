@@ -10,7 +10,7 @@ FILE: when.kt
         }
 
     }
-    public final fun bar(arg: R|kotlin/Any|?): R|kotlin/Int| {
+    public final fun bar(arg: R|kotlin/Any?|): R|kotlin/Int| {
         ^bar when (R|<local>/arg|) {
             ($subj$ is R|kotlin/Int|) ->  {
                 (R|<local>/arg| as R|kotlin/Int|)

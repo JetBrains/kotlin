@@ -179,6 +179,7 @@ class NewConstraintSystemImpl(
     // ResultTypeResolver.Context, ConstraintSystemBuilder
     override fun isProperType(type: KotlinTypeMarker): Boolean {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        if (storage.allTypeVariables.isEmpty()) return true
         return !type.contains {
             val capturedType = it.asSimpleType()?.asCapturedType()
             // TODO: change NewCapturedType to markered one for FE-IR

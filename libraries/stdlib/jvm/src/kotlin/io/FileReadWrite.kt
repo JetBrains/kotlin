@@ -72,7 +72,31 @@ public fun File.readBytes(): ByteArray = inputStream().use { input ->
         remaining -= read
         offset += read
     }
-    if (remaining == 0) result else result.copyOf(offset)
+    if (remaining > 0) return@use result.copyOf(offset)
+
+    val extraByte = input.read()
+    if (extraByte == -1) return@use result
+
+    // allocation estimate: (RS + DBS + max(ES, DBS + 1)) + (RS + ES),
+    // where RS = result.size, ES = extra.size, DBS = DEFAULT_BUFFER_SIZE
+    // when RS = 0, ES >> DBS   => DBS + DBS + 1 + ES + ES = 2DBS + 2ES
+    // when RS >> ES, ES << DBS => RS + DBS + DBS+1 + RS + ES = 2RS + 2DBS + ES
+    val extra = ExposingBufferByteArrayOutputStream(DEFAULT_BUFFER_SIZE + 1)
+    extra.write(extraByte)
+    input.copyTo(extra)
+
+    val resultingSize = result.size + extra.size()
+    if (resultingSize < 0) throw OutOfMemoryError("File $this is too big to fit in memory.")
+
+    return@use extra.buffer.copyInto(
+        destination = result.copyOf(resultingSize),
+        destinationOffset = result.size,
+        startIndex = 0, endIndex = extra.size()
+    )
+}
+
+private class ExposingBufferByteArrayOutputStream(size: Int) : ByteArrayOutputStream(size) {
+    val buffer: ByteArray get() = buf
 }
 
 /**
@@ -98,7 +122,7 @@ public fun File.appendBytes(array: ByteArray): Unit = FileOutputStream(this, tru
  * @param charset character set to use.
  * @return the entire content of this file as a String.
  */
-public fun File.readText(charset: Charset = Charsets.UTF_8): String = readBytes().toString(charset)
+public fun File.readText(charset: Charset = Charsets.UTF_8): String = reader(charset).use { it.readText() }
 
 /**
  * Sets the content of this file as [text] encoded using UTF-8 or specified [charset].

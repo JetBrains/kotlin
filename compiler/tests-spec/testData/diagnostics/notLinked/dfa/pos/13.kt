@@ -768,7 +768,6 @@ fun <T> case_13(x: T) where T : Out<*>?, T: Comparable<T?> {
 
 /*
  * TESTCASE NUMBER: 14
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T: Out<*>?> case_14(x: T) {
@@ -844,7 +843,6 @@ fun <T: Out<*>?> case_14(x: T) {
 
 /*
  * TESTCASE NUMBER: 15
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T: InterfaceWithFiveTypeParameters1<*, *, *, *, *>?> case_15(x: T) {
@@ -920,7 +918,6 @@ fun <T: InterfaceWithFiveTypeParameters1<*, *, *, *, *>?> case_15(x: T) {
 
 /*
  * TESTCASE NUMBER: 16
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T: InterfaceWithTypeParameter1<out T>?> case_16(x: T) {
@@ -996,7 +993,6 @@ fun <T: InterfaceWithTypeParameter1<out T>?> case_16(x: T) {
 
 /*
  * TESTCASE NUMBER: 17
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T: InterfaceWithTypeParameter1<in T>?> case_17(x: T) {
@@ -1072,7 +1068,6 @@ fun <T: InterfaceWithTypeParameter1<in T>?> case_17(x: T) {
 
 /*
  * TESTCASE NUMBER: 18
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T: InterfaceWithTypeParameter1<in T>?> case_18(x: T) {
@@ -1150,7 +1145,6 @@ fun <T: InterfaceWithTypeParameter1<in T>?> case_18(x: T) {
 
 /*
  * TESTCASE NUMBER: 19
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T: InterfaceWithTypeParameter1<out T>?> case_19(x: T) {
@@ -1226,7 +1220,6 @@ fun <T: InterfaceWithTypeParameter1<out T>?> case_19(x: T) {
 
 /*
  * TESTCASE NUMBER: 20
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T> case_20(x: T) where T: InterfaceWithTypeParameter1<in T>?, T: InterfaceWithTypeParameter2<out T>? {
@@ -1307,7 +1300,6 @@ fun <T> case_20(x: T) where T: InterfaceWithTypeParameter1<in T>?, T: InterfaceW
 
 /*
  * TESTCASE NUMBER: 21
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T> case_21(x: T) where T: InterfaceWithTypeParameter1<in T>?, T: InterfaceWithTypeParameter2<out T>?, T: InterfaceWithTypeParameter3<T>? {
@@ -3196,7 +3188,6 @@ fun <T> case_46(x: T) where T : CharSequence?, T: Comparable<T>?, T: Iterable<*>
 
 /*
  * TESTCASE NUMBER: 47
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T> case_47(x: T?) where T : Inv<T>, T: Comparable<*>?, T: InterfaceWithTypeParameter1<out T>? {
@@ -3289,7 +3280,6 @@ fun <T> case_47(x: T?) where T : Inv<T>, T: Comparable<*>?, T: InterfaceWithType
 
 /*
  * TESTCASE NUMBER: 48
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T> case_48(x: T?) where T : Inv<out T>, T: InterfaceWithTypeParameter1<in T>? {
@@ -3370,7 +3360,6 @@ fun <T> case_48(x: T?) where T : Inv<out T>, T: InterfaceWithTypeParameter1<in T
 
 /*
  * TESTCASE NUMBER: 49
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T> case_49(x: T?) where T : Inv<in T>, T: InterfaceWithTypeParameter1<in T>? {
@@ -3451,7 +3440,6 @@ fun <T> case_49(x: T?) where T : Inv<in T>, T: InterfaceWithTypeParameter1<in T>
 
 /*
  * TESTCASE NUMBER: 50
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T> case_50(x: T?) where T : Inv<out T>, T: InterfaceWithTypeParameter1<out T>? {
@@ -3532,7 +3520,6 @@ fun <T> case_50(x: T?) where T : Inv<out T>, T: InterfaceWithTypeParameter1<out 
 
 /*
  * TESTCASE NUMBER: 51
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T> case_51(x: T?) where T : Inv<T>, T: InterfaceWithTypeParameter1<out T>? {
@@ -3690,7 +3677,6 @@ fun <T> case_52(x: T?) where T : Inv<in T>, T: InterfaceWithTypeParameter1<T>? {
 
 /*
  * TESTCASE NUMBER: 53
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T> case_53(x: T?) where T : Inv<in T>, T: InterfaceWithTypeParameter1<*>? {
@@ -3771,7 +3757,6 @@ fun <T> case_53(x: T?) where T : Inv<in T>, T: InterfaceWithTypeParameter1<*>? {
 
 /*
  * TESTCASE NUMBER: 54
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T> case_54(x: T?) where T : Inv<*>, T: InterfaceWithTypeParameter1<out T?>? {
@@ -4159,7 +4144,6 @@ fun <T : InterfaceWithTypeParameter1<InterfaceWithTypeParameter1<InterfaceWithTy
 
 /*
  * TESTCASE NUMBER: 59
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T> case_59(x: T) where T: InterfaceWithFiveTypeParameters1<in T, *, out T?, Nothing?, T>?, T: InterfaceWithFiveTypeParameters2<out T, in T?, T, *, Unit?>?, T: InterfaceWithFiveTypeParameters3<out Nothing, in T, T, in Int?, Number>? {
@@ -4245,7 +4229,6 @@ fun <T> case_59(x: T) where T: InterfaceWithFiveTypeParameters1<in T, *, out T?,
 
 /*
  * TESTCASE NUMBER: 60
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28785
  */
 fun <T: InterfaceWithTypeParameter1<out T>?> case_60(x: T) {

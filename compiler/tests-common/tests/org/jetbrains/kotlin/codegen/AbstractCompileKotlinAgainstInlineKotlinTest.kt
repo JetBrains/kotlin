@@ -16,19 +16,28 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
 abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
-        val (factory1, factory2) = doTwoFileTest(files.filter { it.name.endsWith(".kt") })
+        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(backend, wholeFile, ignoreBackendDirectivePrefix)
+        val (factory1, factory2) = doTwoFileTest(
+            files.filter { it.name.endsWith(".kt") },
+            !isIgnored
+        )
         try {
             val allGeneratedFiles = factory1.asList() + factory2.asList()
             val sourceFiles = factory1.inputFiles + factory2.inputFiles
             InlineTestUtil.checkNoCallsToInline(allGeneratedFiles.filterClassFiles(), sourceFiles)
             SMAPTestUtil.checkSMAP(files, allGeneratedFiles.filterClassFiles(), true)
         } catch (e: Throwable) {
-            println("FIRST:\n\n${factory1.createText()}\n\nSECOND:\n\n${factory2.createText()}")
+            if (!isIgnored) {
+                println("FIRST:\n\n${factory1.createText()}\n\nSECOND:\n\n${factory2.createText()}")
+            }
             throw e
         }
     }
+
+    override fun getIgnoreBackendDirectivePrefix(): String = "// IGNORE_BACKEND_MULTI_MODULE: "
 }

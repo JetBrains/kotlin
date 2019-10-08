@@ -26,12 +26,11 @@ import java.io.File
 
 abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTestCase() {
 
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     protected abstract fun stats(): Stats
 
-    protected fun doPerfTest(testPath: String) {
+    protected fun doPerfTest(unused: String) {
         val testName = getTestName(false)
 
         CodeStyle.setTemporarySettings(project, CodeStyle.getSettings(project).clone())
@@ -41,13 +40,13 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
             val fixture = myFixture
             val dependencySuffixes = listOf(".dependency.kt", ".dependency.java", ".dependency1.kt", ".dependency2.kt")
             for (suffix in dependencySuffixes) {
-                val dependencyPath = testPath.replace(".kt", suffix)
-                if (File(dependencyPath).exists()) {
+                val dependencyPath = fileName().replace(".kt", suffix)
+                if (File(testDataPath, dependencyPath).exists()) {
                     fixture.configureByFile(dependencyPath)
                 }
             }
 
-            fixture.configureByFile(testPath)
+            fixture.configureByFile(fileName())
 
             var file = fixture.file as KtFile
 
@@ -84,7 +83,7 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
             stats().perfTest<Unit, String>(
                 testName = testName,
                 setUp = {
-                    fixture.configureByFile(testPath)
+                    fixture.configureByFile(fileName())
                     file = fixture.file as KtFile
 
                     fileText = file.text
@@ -96,7 +95,9 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
                 },
                 tearDown = {
                     val log = it.value
-                    KotlinTestUtils.assertEqualsToFile(File("$testPath.after"), fixture.file.text)
+                    val testPath = testPath()
+                    val afterFile = File("$testPath.after")
+                    KotlinTestUtils.assertEqualsToFile(afterFile, fixture.file.text)
                     if (log != null) {
                         val logFile = File("$testPath.log")
                         if (log.isNotEmpty()) {

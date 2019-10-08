@@ -8,7 +8,7 @@ inline fun <reified X> Any?.foo4() = foo2<X?>()
 
 inline fun <reified A> Any?.foo5() = foo<A>()
 
-// 1 LDC "T"
+// 1 ICONST_1\s*LDC "T"\s*INVOKESTATIC kotlin/jvm/internal/Intrinsics.reifiedOperationMarker
 // 1 LDC "Y\?"
 // 1 LDC "Z\?"
 // 1 LDC "X\?"

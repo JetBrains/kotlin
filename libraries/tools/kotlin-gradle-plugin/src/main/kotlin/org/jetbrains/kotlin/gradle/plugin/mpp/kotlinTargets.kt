@@ -67,11 +67,7 @@ abstract class AbstractKotlinTarget(
                 targetName
             else PRIMARY_SINGLE_COMPONENT_NAME
 
-        val result = if (isGradleVersionAtLeast(4, 7)) {
-            createKotlinVariant(componentName, mainCompilation, usageContexts)
-        } else {
-            KotlinVariant(mainCompilation, usageContexts)
-        }
+        val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
         result.sourcesArtifacts = setOf(
             sourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
@@ -254,7 +250,7 @@ internal fun javaApiUsageForMavenScoping() =
         JAVA_API
     }
 
-open class KotlinOnlyTarget<T : KotlinCompilation<*>>(
+abstract class KotlinOnlyTarget<T : KotlinCompilation<*>>(
     project: Project,
     override val platformType: KotlinPlatformType
 ) : AbstractKotlinTarget(project) {
@@ -268,4 +264,3 @@ open class KotlinOnlyTarget<T : KotlinCompilation<*>>(
     override var disambiguationClassifier: String? = null
         internal set
 }
-

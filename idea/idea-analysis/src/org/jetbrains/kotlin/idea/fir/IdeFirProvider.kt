@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -77,7 +76,7 @@ class IdeFirProvider(
         return cacheProvider.getFirClassifierContainerFile(fqName)
     }
 
-    override fun getFirCallableContainerFile(symbol: ConeCallableSymbol): FirFile? {
+    override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
         return cacheProvider.getFirCallableContainerFile(symbol)
     }
 

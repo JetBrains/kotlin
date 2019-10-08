@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.compat.toIdePlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.DescriptionAware
 
@@ -133,8 +134,36 @@ enum class KotlinModuleKind {
     SOURCE_SET_HOLDER,
     COMPILATION_AND_SOURCE_SET_HOLDER;
 
+    @Deprecated("Use KotlinFacetSettings.mppVersion.isNewMpp")
     val isNewMPP: Boolean
         get() = this != DEFAULT
+}
+
+enum class KotlinMultiplatformVersion(val version: Int) {
+    M1(1), // the first implementation of MPP. Aka 1.2.0 MPP
+    M2(2), // the "New" MPP. Aka 1.3.0 MPP
+    M3(3) // the "Hierarchical" MPP.
+}
+
+val KotlinMultiplatformVersion?.isOldMpp: Boolean
+    get() = this == KotlinMultiplatformVersion.M1
+
+val KotlinMultiplatformVersion?.isNewMPP: Boolean
+    get() = this == KotlinMultiplatformVersion.M2
+
+val KotlinMultiplatformVersion?.isHmpp: Boolean
+    get() = this == KotlinMultiplatformVersion.M3
+
+data class ExternalSystemTestTask(val testName: String, val externalSystemProjectId: String, val targetName: String?) {
+
+    fun toStringRepresentation() = "$testName|$externalSystemProjectId|$targetName"
+
+    companion object {
+        fun fromStringRepresentation(line: String) =
+            line.split("|").let { if (it.size == 3) ExternalSystemTestTask(it[0], it[1], it[2]) else null }
+    }
+
+    override fun toString() = "$testName@$externalSystemProjectId [$targetName]"
 }
 
 class KotlinFacetSettings {
@@ -203,6 +232,7 @@ class KotlinFacetSettings {
             return field
         }
 
+    var externalSystemTestTasks: List<ExternalSystemTestTask> = emptyList()
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
@@ -229,7 +259,8 @@ class KotlinFacetSettings {
             }
         }
 
-    var implementedModuleNames: List<String> = emptyList()
+    var implementedModuleNames: List<String> = emptyList() // used for first implementation of MPP, aka 'old' MPP
+    var dependsOnModuleNames: List<String> = emptyList() // used for New MPP and later implementations
 
     var productionOutputPath: String? = null
     var testOutputPath: String? = null
@@ -239,7 +270,17 @@ class KotlinFacetSettings {
     var isTestModule: Boolean = false
 
     var externalProjectId: String = ""
+
+    @Deprecated(message = "Use mppVersion.isHmppEnabled")
     var isHmppEnabled: Boolean = false
+
+    val mppVersion: KotlinMultiplatformVersion?
+        get() = when {
+            isHmppEnabled -> KotlinMultiplatformVersion.M3
+            kind.isNewMPP -> KotlinMultiplatformVersion.M2
+            targetPlatform.isCommon() || implementedModuleNames.isNotEmpty() -> KotlinMultiplatformVersion.M1
+            else -> null
+        }
 
     var pureKotlinSourceFolders: List<String> = emptyList()
 }
@@ -249,6 +290,8 @@ interface KotlinFacetSettingsProvider {
     fun getInitializedSettings(module: Module): KotlinFacetSettings
 
     companion object {
-        fun getInstance(project: Project) = ServiceManager.getService(project, KotlinFacetSettingsProvider::class.java)!!
+        fun getInstance(project: Project): KotlinFacetSettingsProvider? {
+            return ServiceManager.getService(project, KotlinFacetSettingsProvider::class.java)
+        }
     }
 }

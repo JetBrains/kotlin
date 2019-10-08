@@ -14,18 +14,18 @@ FILE: destructuring.kt
             public? get(): String
 
         public final fun component1(): <implicit> {
-            ^component1 R|/Some.first|
+            ^component1 this@R|/Some|.R|/Some.first|
         }
 
         public final fun component2(): <implicit> {
-            ^component2 R|/Some.second|
+            ^component2 this@R|/Some|.R|/Some.second|
         }
 
         public final fun component3(): <implicit> {
-            ^component3 R|/Some.third|
+            ^component3 this@R|/Some|.R|/Some.third|
         }
 
-        public final fun copy(first: Int = R|/Some.first|, second: Double = R|/Some.second|, third: String = R|/Some.third|): R|Some| {
+        public final fun copy(first: Int = this@R|/Some|.R|/Some.first|, second: Double = this@R|/Some|.R|/Some.second|, third: String = this@R|/Some|.R|/Some.third|): R|Some| {
         }
 
     }

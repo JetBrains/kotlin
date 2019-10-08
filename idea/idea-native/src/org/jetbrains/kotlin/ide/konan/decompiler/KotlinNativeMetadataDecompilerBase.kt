@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.idea.decompiler.common.createIncompatibleAbiVersionD
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
@@ -99,14 +99,14 @@ sealed class FileWithMetadata {
     class Incompatible(val version: BinaryVersion) : FileWithMetadata()
 
     open class Compatible(
-        val proto: KonanProtoBuf.LinkDataPackageFragment,
+        val proto: ProtoBuf.PackageFragment,
         serializerProtocol: SerializerExtensionProtocol // TODO: Is it required?
     ) : FileWithMetadata() {
-        val nameResolver = NameResolverImpl(proto.stringTable, proto.nameTable)
-        val packageFqName = FqName(proto.fqName)
+        val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
+        val packageFqName = FqName(proto.getExtension(KlibMetadataProtoBuf.fqName))
 
         open val classesToDecompile: List<ProtoBuf.Class> =
-            proto.classes.classesList.filter { proto ->
+            proto.class_List.filter { proto ->
                 val classId = nameResolver.getClassId(proto.fqName)
                 !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
             }

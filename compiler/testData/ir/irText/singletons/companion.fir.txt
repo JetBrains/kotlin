@@ -9,6 +9,7 @@ FILE fqName:<root> fileName:/companion.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Z
       BLOCK_BODY
         CALL 'public final fun test (): kotlin.Unit declared in <root>.Z.Companion' type=kotlin.Unit origin=null
+          $this: GET_VAR '<this>: <root>.Z.Companion declared in <root>.Z.Companion' type=<root>.Z.Companion origin=null
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.Companion
       CONSTRUCTOR visibility:private <> () returnType:<root>.Z.Companion [primary]

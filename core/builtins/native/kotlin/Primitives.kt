@@ -1160,7 +1160,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
     /**
      * Converts this [Float] value to [Int].
      *
-     * The fractional part, if any, is rounded down.
+     * The fractional part, if any, is rounded down towards zero.
      * Returns zero if this `Float` value is `NaN`, [Int.MIN_VALUE] if it's less than `Int.MIN_VALUE`,
      * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
      */
@@ -1168,7 +1168,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
     /**
      * Converts this [Float] value to [Long].
      *
-     * The fractional part, if any, is rounded down.
+     * The fractional part, if any, is rounded down towards zero.
      * Returns zero if this `Float` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
      * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
      */
@@ -1378,7 +1378,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
     /**
      * Converts this [Double] value to [Int].
      *
-     * The fractional part, if any, is rounded down.
+     * The fractional part, if any, is rounded down towards zero.
      * Returns zero if this `Double` value is `NaN`, [Int.MIN_VALUE] if it's less than `Int.MIN_VALUE`,
      * [Int.MAX_VALUE] if it's bigger than `Int.MAX_VALUE`.
      */
@@ -1386,7 +1386,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
     /**
      * Converts this [Double] value to [Long].
      *
-     * The fractional part, if any, is rounded down.
+     * The fractional part, if any, is rounded down towards zero.
      * Returns zero if this `Double` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
      * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
      */

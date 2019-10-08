@@ -1,5 +1,4 @@
 internal open class Base
-
 internal class X : Base(), Cloneable {
     override fun hashCode(): Int {
         return super.hashCode()

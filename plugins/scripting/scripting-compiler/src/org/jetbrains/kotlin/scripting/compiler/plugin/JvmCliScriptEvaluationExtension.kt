@@ -27,6 +27,8 @@ import java.io.PrintStream
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
+import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.jvm
 
 class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
     override fun isAccepted(arguments: CommonCompilerArguments): Boolean =
@@ -69,6 +71,9 @@ class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
 
         val evaluationConfiguration = definition.evaluationConfiguration.with {
             constructorArgs(scriptArgs.toTypedArray())
+            jvm {
+                baseClassLoader(null)
+            }
         }
         val scriptCompilationConfiguration = definition.compilationConfiguration
 

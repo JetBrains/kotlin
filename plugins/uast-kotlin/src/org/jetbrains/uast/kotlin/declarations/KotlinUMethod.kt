@@ -105,9 +105,6 @@ open class KotlinUMethod(
         wrapExpressionBody(this, bodyExpression)
     }
 
-    override val isOverride: Boolean
-        get() = (kotlinOrigin as? KtCallableDeclaration)?.hasModifier(KtTokens.OVERRIDE_KEYWORD) ?: false
-
     override fun getBody(): PsiCodeBlock? = super<UAnnotationMethod>.getBody()
 
     override fun getOriginalElement(): PsiElement? = super<UAnnotationMethod>.getOriginalElement()

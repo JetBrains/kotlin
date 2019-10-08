@@ -22,13 +22,12 @@ import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.File
 import java.util.concurrent.Callable
 
 class Android25ProjectHandler(
     kotlinConfigurationTools: KotlinConfigurationTools
-) : AbstractAndroidProjectHandler<BaseVariant>(kotlinConfigurationTools) {
+) : AbstractAndroidProjectHandler(kotlinConfigurationTools) {
 
     override fun forEachVariant(project: Project, action: (BaseVariant) -> Unit) {
         val androidExtension = project.extensions.getByName("android")
@@ -76,13 +75,18 @@ class Android25ProjectHandler(
         }
 
         // Find the classpath entries that comes from the tested variant and register it as the friend path, lazily
-        kotlinTask.friendPaths = lazy {
+        compilation.testedVariantArtifacts.set(project.files(project.provider {
             variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
                 .filter { it.id.componentIdentifier is TestedComponentIdentifier }
-                .map { it.file.absolutePath }
-                .toTypedArray()
-        }
+                .map { it.file }
+        }))
+
         kotlinTask.javaOutputDir = javaTask.destinationDir
+
+        compilation.output.classesDirs.run {
+            from(project.files(kotlinTask.taskData.destinationDir).builtBy(kotlinTask))
+            from(project.files(project.provider { javaTask.destinationDir }).builtBy(javaTask))
+        }
     }
 
     override fun getSourceProviders(variantData: BaseVariant): Iterable<SourceProvider> =
@@ -91,17 +95,9 @@ class Android25ProjectHandler(
     override fun getAllJavaSources(variantData: BaseVariant): Iterable<File> =
         variantData.getSourceFolders(SourceKind.JAVA).map { it.dir }
 
-    override fun getVariantName(variant: BaseVariant): String = variant.name
-
     override fun getFlavorNames(variant: BaseVariant): List<String> = variant.productFlavors.map { it.name }
 
     override fun getBuildTypeName(variant: BaseVariant): String = variant.buildType.name
-
-    override fun getTestedVariantData(variantData: BaseVariant): BaseVariant? = when (variantData) {
-        is TestVariant -> variantData.testedVariant
-        is UnitTestVariant -> variantData.testedVariant as? BaseVariant
-        else -> null
-    }
 
     override fun getJavaTask(variantData: BaseVariant): AbstractCompile? {
         @Suppress("DEPRECATION") // There is always a Java compile task -- the deprecation was for Jack
@@ -129,12 +125,12 @@ class Android25ProjectHandler(
     }
 
     // TODO the return type is actually `AbstractArchiveTask | TaskProvider<out AbstractArchiveTask>`;
-    //      change the signature once the Gradle versions that don't support task providers (< 4.8) are dropped
+    //      change the signature once the Android Gradle plugin versions that don't support task providers are dropped
     override fun getLibraryOutputTask(variant: BaseVariant): Any? {
         val getPackageLibraryProvider = variant.javaClass.methods
             .find { it.name == "getPackageLibraryProvider" && it.parameterCount == 0 }
 
-        return if (getPackageLibraryProvider != null && isGradleVersionAtLeast(4, 8)) {
+        return if (getPackageLibraryProvider != null) {
             @Suppress("UNCHECKED_CAST")
             getPackageLibraryProvider(variant) as TaskProvider<out AbstractArchiveTask>
         } else {
@@ -241,3 +237,11 @@ class Android25ProjectHandler(
     override fun wrapVariantDataForKapt(variantData: BaseVariant): KaptVariantData<BaseVariant> =
         KaptVariant(variantData)
 }
+
+internal fun getTestedVariantData(variantData: BaseVariant): BaseVariant? = when (variantData) {
+    is TestVariant -> variantData.testedVariant
+    is UnitTestVariant -> variantData.testedVariant as? BaseVariant
+    else -> null
+}
+
+internal fun getVariantName(variant: BaseVariant): String = variant.name

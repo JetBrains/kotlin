@@ -17,13 +17,13 @@ public interface IrClassOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getName();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.ClassKind kind = 3;</code>
@@ -133,16 +133,16 @@ public interface IrClassOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationContainer getDeclarationContainer();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex super_type = 14;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 14;</code>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex> 
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> 
       getSuperTypeList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex super_type = 14;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 14;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex getSuperType(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSuperType(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex super_type = 14;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 14;</code>
    */
   int getSuperTypeCount();
 }

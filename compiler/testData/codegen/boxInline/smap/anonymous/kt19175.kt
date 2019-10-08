@@ -1,5 +1,6 @@
 // FILE: 1.kt
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 package test
 abstract class Introspector {
     abstract inner class SchemaRetriever(val transaction: String) {
@@ -38,7 +39,7 @@ Kotlin
 + 1 1.kt
 test/Introspector$SchemaRetriever$inSchema$1
 *L
-1#1,11:1
+1#1,12:1
 *E
 
 // FILE: 2.smap
@@ -54,7 +55,7 @@ IntrospectorImpl$SchemaRetriever
 test/Introspector$SchemaRetriever
 *L
 1#1,21:1
-7#2:22
+8#2:22
 *E
 *S KotlinDebug
 *F
@@ -74,6 +75,6 @@ test/Introspector$SchemaRetriever$inSchema$1
 + 2 2.kt
 IntrospectorImpl$SchemaRetriever
 *L
-1#1,11:1
-9#2:12
+1#1,12:1
+9#2:13
 *E

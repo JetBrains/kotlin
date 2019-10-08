@@ -27,7 +27,7 @@ final class DeepNoinlineWithLabels_afterKt$foo$1$1 : kotlin/jvm/internal/Lambda,
 
     public java.lang.Object invoke(java.lang.Object p0)
 
-    public final void invoke(long this) {
+    public final void invoke(long $this$b2) {
         Local variables:
             3 z: Z
             0 this: LDeepNoinlineWithLabels_afterKt$foo$1$1;
@@ -46,7 +46,7 @@ final class DeepNoinlineWithLabels_afterKt$foo$1 : kotlin/jvm/internal/Lambda, k
 
     public java.lang.Object invoke(java.lang.Object p0)
 
-    public final void invoke(long this) {
+    public final void invoke(long $this$b1) {
         Local variables:
             3 y: Z
             0 this: LDeepNoinlineWithLabels_afterKt$foo$1;
@@ -60,7 +60,7 @@ public final class DeepNoinlineWithLabels_afterKt : java/lang/Object {
             0 block: Lkotlin/jvm/functions/Function1;
     }
 
-    public final static void foo(java.lang.String x, int $this$foo) {
+    public final static void foo(java.lang.String $this$foo, int count) {
         Local variables:
             2 x: Z
             0 $this$foo: Ljava/lang/String;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -98,10 +98,13 @@ class TestExceptionsComparator(wholeFile: File) {
         }
     }
 
+    fun run(expectedException: TestsExceptionType?, runnable: () -> Unit) =
+        run(expectedException, mapOf(), null, runnable)
+
     fun run(
         expectedException: TestsExceptionType?,
-        exceptionByCases: Map<Int, TestsExceptionType?> = mapOf(),
-        computeExceptionPoint: ((Matcher?) -> Set<Int>?)? = null,
+        exceptionByCases: Map<Int, TestsExceptionType?>,
+        computeExceptionPoint: ((Matcher?) -> Set<Int>?)?,
         runnable: () -> Unit
     ) {
         try {

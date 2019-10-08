@@ -13,29 +13,26 @@ import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.processConstructors
-import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boolean) : FirAbstractProviderBasedScope(session, lookupInFir) {
-
-
-    protected val scopeCache = ScopeSession()
-
+abstract class FirAbstractImportingScope(
+    session: FirSession,
+    protected val scopeSession: ScopeSession,
+    lookupInFir: Boolean
+) : FirAbstractProviderBasedScope(session, lookupInFir) {
 
     private fun getStaticsScope(classId: ClassId): FirScope? {
-        provider.getClassUseSiteMemberScope(classId, session, scopeCache)?.let { return it }
+        provider.getClassUseSiteMemberScope(classId, session, scopeSession)?.let { return it }
 
 
         val symbol = provider.getClassLikeSymbolByFqName(classId) ?: error("No scope/symbol for $classId")
         if (symbol is FirTypeAliasSymbol) {
             val expansionSymbol = symbol.fir.expandedConeType?.lookupTag?.toSymbol(session)
-            if (expansionSymbol is ConeClassLikeSymbol) {
+            if (expansionSymbol != null) {
                 return getStaticsScope(expansionSymbol.classId)
             }
         }
@@ -71,20 +68,10 @@ abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boole
                 return ProcessorAction.STOP
             }
         } else if (name.isSpecial || name.identifier.isNotEmpty()) {
-            val matchedClass = provider.getClassLikeSymbolByFqName(ClassId(import.packageFqName, name))
-            if (processConstructors(
-                    matchedClass,
-                    processor,
-                    session,
-                    scopeCache,
-                    name
-                ).stop()
-            ) {
-                return ProcessorAction.STOP
-            }
-
-
             val symbols = provider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
+            if (symbols.isEmpty()) {
+                return ProcessorAction.NONE
+            }
 
             for (symbol in symbols) {
                 if (processor(symbol).stop()) {
@@ -113,7 +100,7 @@ abstract class FirAbstractImportingScope(session: FirSession, lookupInFir: Boole
         return processCallables(
             name,
             TowerScopeLevel.Token.Properties
-        ) { if (it is ConeVariableSymbol) processor(it) else ProcessorAction.NEXT }
+        ) { if (it is FirVariableSymbol<*>) processor(it) else ProcessorAction.NEXT }
     }
 
 }

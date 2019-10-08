@@ -1,33 +1,33 @@
 FILE fqName:<root> fileName:/field.kt
   PROPERTY name:testSimple visibility:public modality:FINAL [var]
-    FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public [static]
+    FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:private [static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testSimple> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:testSimple visibility:public modality:FINAL [var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testSimple> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public [static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
     FUN name:<set-testSimple> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:testSimple visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:public [static]' type=kotlin.Unit origin=EQ
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testSimple type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=EQ
           value: GET_VAR 'value: kotlin.Int declared in <root>.<set-testSimple>' type=kotlin.Int origin=null
   PROPERTY name:testAugmented visibility:public modality:FINAL [var]
-    FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public [static]
+    FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:private [static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testAugmented> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:testAugmented visibility:public modality:FINAL [var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testAugmented> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public [static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
     FUN name:<set-testAugmented> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:testAugmented visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public [static]' type=kotlin.Unit origin=PLUSEQ
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=PLUSEQ
           value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:public [static]' type=kotlin.Int origin=PLUSEQ
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testAugmented type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=PLUSEQ
             other: GET_VAR 'value: kotlin.Int declared in <root>.<set-testAugmented>' type=kotlin.Int origin=null

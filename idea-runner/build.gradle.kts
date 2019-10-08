@@ -12,7 +12,7 @@ dependencies {
 
     runtimeOnly(intellijDep())
     runtimeOnly(intellijRuntimeAnnotations())
-    runtimeOnly(files(toolsJar()))
+    runtimeOnly(toolsJar())
 }
 
 val ideaPluginDir: File by rootProject.extra

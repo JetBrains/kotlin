@@ -1,0 +1,57 @@
+FILE: complex.kt
+    @R|kotlin/jvm/Throws|(<getClass>(<Unresolved name: IOException>#), <getClass>(<Unresolved name: ResponseParseException>#)) public final fun fetchPluginReleaseDate(pluginId: R|class error: Symbol not found, for `PluginId`|, version: R|kotlin/String|, channel: R|kotlin/String?|): R|class error: Symbol not found, for `LocalDate?`| {
+        lval url: R|kotlin/String| = <strcat>(String(https://plugins.jetbrains.com/api/plugins/), R|<local>/pluginId|.<Unresolved name: idString>#, String(/updates?version=), R|<local>/version|)
+        lval pluginDTOs: R|kotlin/Array<class error: Symbol not found, for `PluginDTO`>| = try {
+            <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
+                GsonBuilder#().create#().fromJson#(it#.inputStream#.reader#(), <getClass>(Array#<R|class error: Symbol not found, for `PluginDTO`|>()).java#)
+            }
+            )
+        }
+        catch (ioException: R|class error: Symbol not found, for `JsonIOException`|) {
+            throw <Unresolved name: IOException>#(R|<local>/ioException|)
+        }
+        catch (syntaxException: R|class error: Symbol not found, for `JsonSyntaxException`|) {
+            throw <Unresolved name: ResponseParseException>#(String(Can't parse json response), R|<local>/syntaxException|)
+        }
+
+    }
+    public abstract interface AutoCloseable : R|kotlin/Any| {
+        public abstract fun close(): R|kotlin/Unit|
+
+    }
+    internal final fun R|AutoCloseable?|.closeFinally(cause: R|kotlin/Throwable?|): R|kotlin/Unit| {
+        ^closeFinally when () {
+            ==(this@R|/closeFinally|, Null(null)) ->  {
+            }
+            ==(R|<local>/cause|, Null(null)) ->  {
+                this@R|/AutoCloseable|.R|/AutoCloseable.close|()
+            }
+            else ->  {
+                try {
+                    this@R|/AutoCloseable|.R|/AutoCloseable.close|()
+                }
+                catch (closeException: R|kotlin/Throwable|) {
+                    R|<local>/cause|.R|kotlin/addSuppressed|(R|<local>/closeException|)
+                }
+
+            }
+        }
+
+    }
+    public final inline fun <reified T : R|kotlin/Any|> R|kotlin/sequences/Sequence<*>|.firstIsInstanceOrNull(): R|T?| {
+        lval <range>: R|kotlin/sequences/Sequence<*>| = this@R|/firstIsInstanceOrNull|
+        lval <iterator>: R|kotlin/collections/Iterator<T>| = R|<local>/<range>|.R|kotlin/sequences/Sequence.iterator|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval element: R|T| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|T|>|()
+            when () {
+                (R|<local>/element| is R|T|) ->  {
+                    ^firstIsInstanceOrNull R|<local>/element|
+                }
+                else ->  {
+                }
+            }
+
+        }
+
+        ^firstIsInstanceOrNull Null(null)
+    }

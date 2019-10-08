@@ -1,0 +1,134 @@
+{
+  "6": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with type checking operator and non-type value.",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 with bound value and type test condition, but missed type in \u0027when condition\u0027.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with range expression, but without contains operator.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "8": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 with bound value and not allowed spread operator in \u0027when condition\u0027.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "11": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 with invalid else condition.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "1": {
+    "neg": {
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Empty \u0027when\u0027 with missed bound value.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Empty \u0027when\u0027 with missed \u0027when entries\u0027 section.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Empty \u0027when\u0027 with bound value.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Empty \u0027when\u0027 without bound value.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 without bound value and with invalid \u0027else\u0027 branch.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 without bound value and with invalid list of the boolean conditions in \u0027when entry\u0027.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 without bound value and missed \u0027when condition\u0027.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 without bound value and missed control structure body.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 with bound value and empty \u0027when condition\u0027.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 with bound value and with invalid list of the conditions in \u0027when entry\u0027.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 with bound value and empty control structure body.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

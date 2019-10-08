@@ -7,8 +7,11 @@
       <w>hacky</w>
       <w>impls</w>
       <w>kapt</w>
+      <w>kotlinc</w>
+      <w>mutators</w>
       <w>parceler</w>
       <w>repl</w>
+      <w>testdata</w>
       <w>uast</w>
       <w>unbox</w>
       <w>unboxed</w>

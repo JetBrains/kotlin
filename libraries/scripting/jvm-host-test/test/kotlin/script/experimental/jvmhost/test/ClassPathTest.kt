@@ -15,6 +15,7 @@ import java.util.jar.JarEntry
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.script.experimental.jvm.util.classPathFromTypicalResourceUrls
+import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvm.util.classpathFromClassloader
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
 
@@ -51,7 +52,7 @@ class ClassPathTest : TestCase() {
                     + jar.toURI().toURL()).toTypedArray(),
             null
         )
-        val cp = cl.classPathFromTypicalResourceUrls().toList()
+        val cp = cl.classPathFromTypicalResourceUrls().toList().map { it.canonicalFile }
 
         Assert.assertTrue(cp.contains(jar.canonicalFile))
         for (el in emulatedClasspath) {
@@ -79,6 +80,16 @@ class ClassPathTest : TestCase() {
         } finally {
             tempDir.deleteRecursively()
         }
+    }
+
+    @Test
+    fun testClasspathFromClass() {
+        val cpFromThis = classpathFromClass(this::class)
+        val expectedSuffix = File("classes/kotlin/test").path
+        assertTrue(
+            "Path should end with $expectedSuffix, got: $cpFromThis",
+            cpFromThis!!.first().absoluteFile.path.endsWith(expectedSuffix)
+        )
     }
 }
 

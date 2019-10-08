@@ -20,8 +20,6 @@ import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
@@ -40,9 +38,10 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension
+import org.jetbrains.kotlin.extensions.LightClassApplicabilityType
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassContexts
 import org.jetbrains.kotlin.idea.caches.lightClasses.LazyLightClassDataHolder
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -53,45 +52,48 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.keysToMap
 import java.util.concurrent.ConcurrentMap
 
 class IDELightClassGenerationSupport(private val project: Project) : LightClassGenerationSupport() {
 
-    private inner class KtUltraLightSupportImpl(private val element: KtElement, private val module: Module) : KtUltraLightSupport {
+    private inner class KtUltraLightSupportImpl(private val element: KtElement) : KtUltraLightSupport {
 
-        private fun KtDeclaration.forLogString(): String? = when (this) {
-            is KtClassOrObject -> this.fqName?.asString()
-            is KtFile -> this.packageFqNameByTree.asString()
-            else -> this.text
-        }
+        private val module = ModuleUtilCore.findModuleForPsiElement(element)
 
         override val isReleasedCoroutine
-            get() = module.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+            get() = module?.languageVersionSettings?.supportsFeature(LanguageFeature.ReleaseCoroutines) ?: true
 
-        override fun isTooComplexForUltraLightGeneration(element: KtDeclaration): Boolean {
-            val facet = KotlinFacet.get(module)
-            val pluginClasspaths = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
-            if (!pluginClasspaths.isNullOrEmpty()) {
-                val stringifiedClasspaths = pluginClasspaths.joinToString()
-                LOG.debug { "Using heavy light classes for ${element.forLogString()} because of compiler plugins $stringifiedClasspaths" }
-                return true
+        private fun KtDeclaration.mayBeModifiedByCompilerPlugins(): Boolean {
+
+            module?.let {
+                val facet = KotlinFacet.get(it)
+                val pluginClasspaths = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
+                if (pluginClasspaths.isNullOrEmpty()) return false
             }
 
-            val problem = findTooComplexDeclaration(element)
-            if (problem != null) {
-                LOG.debug {
-                    "Using heavy light classes for ${element.forLogString()} because of ${StringUtil.trimLog(problem.text, 100)}"
-                }
+            val resolvedDescriptor = lazy(LazyThreadSafetyMode.NONE) {
+                resolveToDescriptorIfAny(
+                    getResolutionFacade(),
+                    bodyResolveMode = BodyResolveMode.PARTIAL
+                )
+            }
+
+            return LightClassApplicabilityCheckExtension.getInstances(project).any {
+                it.checkApplicabilityType(this, resolvedDescriptor) == LightClassApplicabilityType.LightClass
+            }
+        }
+
+        override fun isTooComplexForUltraLightGeneration(element: KtDeclaration): Boolean {
+
+            val codegenExtensionsEnabled = element.mayBeModifiedByCompilerPlugins()
+            if (codegenExtensionsEnabled) {
+                LOG.debug { "Using heavy light classes because of compiler plugins" }
                 return true
             }
             return false
@@ -143,33 +145,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES,
                 moduleName, KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
                 jvmTarget = JvmTarget.JVM_1_8,
-                typePreprocessor = KotlinType::cleanFromAnonymousTypes
+                typePreprocessor = KotlinType::cleanFromAnonymousTypes,
+                namePreprocessor = ::tryGetPredefinedName
             )
-        }
-
-        private fun findTooComplexDeclaration(declaration: KtDeclaration): PsiElement? {
-
-            if (declaration is KtClassOrObject) {
-                declaration.primaryConstructor?.let { findTooComplexDeclaration(it) }?.let { return it }
-
-                for (d in declaration.declarations) {
-                    if (d is KtClassOrObject && !(d is KtObjectDeclaration && d.isCompanion())) continue
-
-                    findTooComplexDeclaration(d)?.let { return it }
-                }
-
-                if (implementsKotlinCollection(declaration)) {
-                    return declaration.getSuperTypeList()
-                }
-            }
-            if (declaration is KtCallableDeclaration) {
-                declaration.valueParameters.mapNotNull { findTooComplexDeclaration(it) }.firstOrNull()?.let { return it }
-            }
-            if (declaration is KtProperty) {
-                declaration.accessors.mapNotNull { findTooComplexDeclaration(it) }.firstOrNull()?.let { return it }
-            }
-
-            return null
         }
     }
 
@@ -183,8 +161,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         if (files.any { it.isScript() }) return null
 
         val filesToSupports: List<Pair<KtFile, KtUltraLightSupport>> = files.map {
-            val module = ModuleUtilCore.findModuleForPsiElement(it) ?: return null
-            it to KtUltraLightSupportImpl(it, module)
+            it to KtUltraLightSupportImpl(it)
         }
 
         return KtUltraLightClassForFacade(
@@ -198,28 +175,26 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     override fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
         if (element.shouldNotBeVisibleAsLightClass() ||
-            element is KtObjectDeclaration && element.isObjectLiteral() ||
-            element.isLocal ||
             element is KtEnumEntry ||
             element.containingKtFile.isScript()
         ) {
             return null
         }
 
-        val module = ModuleUtilCore.findModuleForPsiElement(element) ?: return null
+        return KtUltraLightSupportImpl(element).let { support ->
+            when {
+                element is KtObjectDeclaration && element.isObjectLiteral() ->
+                    KtUltraLightClassForAnonymousDeclaration(element, support)
 
-        return KtUltraLightSupportImpl(element, module).let {
-            if (element.hasModifier(KtTokens.INLINE_KEYWORD)) KtUltraLightInlineClass(element, it)
-            else KtUltraLightClass(element, it)
+                element.isLocal ->
+                    KtUltraLightClassForLocalDeclaration(element, support)
+
+                (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
+                    KtUltraLightInlineClass(element, support)
+
+                else -> KtUltraLightClass(element, support)
+            }
         }
-    }
-
-    private fun implementsKotlinCollection(classOrObject: KtClassOrObject): Boolean {
-        if (classOrObject.superTypeListEntries.isEmpty()) return false
-
-        return (resolveToDescriptor(classOrObject) as? ClassifierDescriptor)?.getAllSuperClassifiers()?.any {
-            it.fqNameSafe.asString().startsWith("kotlin.collections.")
-        } == true
     }
 
     private fun KtFile.hasAlias(shortName: Name?): Boolean {
@@ -281,10 +256,10 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         getResolutionFacade().frontendService<LazyLightClassDataHolder.DiagnosticsHolder>()
 
     override fun resolveToDescriptor(declaration: KtDeclaration): DeclarationDescriptor? {
-        try {
-            return declaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
+        return try {
+            declaration.resolveToDescriptorIfAny(BodyResolveMode.FULL)
         } catch (e: NoDescriptorForDeclarationException) {
-            return null
+            null
         }
     }
 

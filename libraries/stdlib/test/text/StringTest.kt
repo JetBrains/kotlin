@@ -1068,6 +1068,11 @@ class StringTest {
         data.toString().let { expectedSingleChunk ->
             assertEquals(expectedSingleChunk, data.chunked(size).single())
             assertEquals(expectedSingleChunk, data.chunked(size + 3).single())
+            assertEquals(expectedSingleChunk, data.chunked(Int.MAX_VALUE).single())
+        }
+
+        arg1("ab").let {
+            assertEquals(it.toString(), it.chunked(Int.MAX_VALUE).single())
         }
 
         assertTrue(arg1("").chunked(3).isEmpty())

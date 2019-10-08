@@ -55,16 +55,21 @@ class ChangeSuperTypeListEntryTypeArgumentFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val casted = when (diagnostic.factory) {
-                Errors.RETURN_TYPE_MISMATCH_ON_OVERRIDE -> Errors.RETURN_TYPE_MISMATCH_ON_OVERRIDE.cast(diagnostic)
-                Errors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE -> Errors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.cast(diagnostic)
+            val (casted, declaration) = when (diagnostic.factory) {
+                Errors.RETURN_TYPE_MISMATCH_ON_OVERRIDE -> {
+                    val casted = Errors.RETURN_TYPE_MISMATCH_ON_OVERRIDE.cast(diagnostic)
+                    casted to casted.b.declaration
+                }
+                Errors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE -> {
+                    val casted = Errors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.cast(diagnostic)
+                    casted to casted.b
+                }
                 else -> null
             } ?: return null
 
             val type = casted.a.returnType?.toString() ?: return null
-
-            val superClassDescriptor = casted.b.containingDeclaration as? ClassDescriptor ?: return null
-            val superDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(casted.b) as? KtNamedDeclaration ?: return null
+            val superClassDescriptor = declaration.containingDeclaration as? ClassDescriptor ?: return null
+            val superDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(declaration) as? KtNamedDeclaration ?: return null
             val superTypeReference = superDeclaration.getReturnTypeReference()?.text ?: return null
             val typeParameterIndex = superClassDescriptor.declaredTypeParameters.map { it.name.asString() }.indexOf(superTypeReference)
             if (typeParameterIndex < 0) return null

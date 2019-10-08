@@ -37,8 +37,8 @@ class EvaluationStatus {
             return
         }
 
-        val statusName = error?.name ?: "Success"
-        KotlinFUSLogger.log(FUSEventGroups.DebugEval, statusName, values)
+        values["status"] = error?.name ?: "Success"
+        KotlinFUSLogger.log(FUSEventGroups.Debug, "Evaluation", values)
     }
 
     enum class EvaluatorType {
@@ -51,6 +51,8 @@ class EvaluationStatus {
 }
 
 enum class EvaluationError {
+    DebuggerNotAttached,
+    DumbMode,
     NoFrameProxy,
     ThreadNotAvailable,
     ThreadNotSuspended,
@@ -60,7 +62,20 @@ enum class EvaluationError {
     EvaluateException,
     SpecialException,
     GenericException,
+    CannotFindVariable,
 
+    CoroutineContextUnavailable,
+    ParameterNotCaptured,
+    InsideDefaultMethod,
+    BackingFieldNotFound,
+    SuspendCall,
+    CrossInlineLambda,
+
+    Eval4JAbnormalTermination,
+    Eval4JUnknownException,
+
+    ExceptionFromEvaluatedCode,
+    ErrorElementOccurred,
     FrontendException,
     BackendException,
     ErrorsInCode

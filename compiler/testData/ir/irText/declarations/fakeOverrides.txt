@@ -68,7 +68,7 @@ FILE fqName:<root> fileName:/fakeOverrides.kt
           <T>: kotlin.String
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.CFoo<kotlin.String>; <root>.IFooStr; <root>.IBar]'
     PROPERTY name:bar visibility:public modality:OPEN [val]
-      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.Test1) returnType:kotlin.Int
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/fakeOverrides.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-bar> (): kotlin.Int declared in <root>.Test1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-bar>' type=<root>.Test1 origin=null
     FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.CFoo<kotlin.String>, x:kotlin.String) returnType:kotlin.Unit
       overridden:

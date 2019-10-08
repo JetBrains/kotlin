@@ -164,7 +164,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         androidProjectHandler: Any?
     ): List<SubpluginOption> {
         @Suppress("UNCHECKED_CAST")
-        androidProjectHandler as? AbstractAndroidProjectHandler<Any?> ?: return emptyList()
+        androidProjectHandler as? AbstractAndroidProjectHandler ?: return emptyList()
 
         val pluginOptions = arrayListOf<SubpluginOption>()
         pluginOptions += SubpluginOption("features",
@@ -209,7 +209,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val resDirectoriesForAllVariants = mutableListOf<FileCollection>()
 
         androidProjectHandler.forEachVariant(project) { variant ->
-            if (androidProjectHandler.getTestedVariantData(variant) != null) return@forEachVariant
+            if (getTestedVariantData(variant) != null) return@forEachVariant
             resDirectoriesForAllVariants += androidProjectHandler.getResDirectories(variant)
         }
 

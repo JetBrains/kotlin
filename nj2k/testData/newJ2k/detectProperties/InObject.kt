@@ -5,6 +5,7 @@ object AAA {
         set(z) {
             Other.z = z
         }
+
 }
 
 internal object Other {

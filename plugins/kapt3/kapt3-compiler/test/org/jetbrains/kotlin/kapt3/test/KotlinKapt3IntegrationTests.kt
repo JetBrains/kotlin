@@ -30,7 +30,7 @@ import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import kotlin.system.exitProcess
 
-class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9TestLauncher {
+class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), CustomJdkTestLauncher {
     override fun test(
         name: String,
         vararg supportedAnnotations: String,

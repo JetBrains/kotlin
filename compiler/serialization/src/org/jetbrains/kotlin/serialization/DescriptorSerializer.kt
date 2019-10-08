@@ -353,7 +353,7 @@ class DescriptorSerializer private constructor(
 
         contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
 
-        extension.serializeFunction(descriptor, builder, local)
+        extension.serializeFunction(descriptor, builder, versionRequirementTable, local)
 
         return builder
     }
@@ -451,6 +451,8 @@ class DescriptorSerializer private constructor(
         for (annotation in descriptor.nonSourceAnnotations) {
             builder.addAnnotation(extension.annotationSerializer.serializeAnnotation(annotation))
         }
+
+        extension.serializeTypeAlias(descriptor, builder)
 
         return builder
     }

@@ -1,0 +1,25 @@
+package
+
+public fun test(/*0*/ m: MenuItemBase<*, *, *>): kotlin.Unit
+
+public open class ContextMenuBase</*0*/ C : ContextMenuBase<C!, I!, S!>!, /*1*/ I : MenuItemBase<C!, I!, S!>!, /*2*/ S : SubMenuBase<C!, I!, S!>!> {
+    public constructor ContextMenuBase</*0*/ C : ContextMenuBase<C!, I!, S!>!, /*1*/ I : MenuItemBase<C!, I!, S!>!, /*2*/ S : SubMenuBase<C!, I!, S!>!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class MenuItemBase</*0*/ C : ContextMenuBase<C!, I!, S!>!, /*1*/ I : MenuItemBase<C!, I!, S!>!, /*2*/ S : SubMenuBase<C!, I!, S!>!> {
+    public constructor MenuItemBase</*0*/ C : ContextMenuBase<C!, I!, S!>!, /*1*/ I : MenuItemBase<C!, I!, S!>!, /*2*/ S : SubMenuBase<C!, I!, S!>!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getText(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class SubMenuBase</*0*/ C : ContextMenuBase<C!, I!, S!>!, /*1*/ I : MenuItemBase<C!, I!, S!>!, /*2*/ S : SubMenuBase<C!, I!, S!>!> {
+    public constructor SubMenuBase</*0*/ C : ContextMenuBase<C!, I!, S!>!, /*1*/ I : MenuItemBase<C!, I!, S!>!, /*2*/ S : SubMenuBase<C!, I!, S!>!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

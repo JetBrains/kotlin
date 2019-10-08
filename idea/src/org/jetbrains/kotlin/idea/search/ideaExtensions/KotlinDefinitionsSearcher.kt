@@ -127,7 +127,8 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
             val globalScope = GlobalSearchScope.filesScope(psiClass.project, virtualFiles)
             return ContainerUtil.process(ClassInheritorsSearch.search(psiClass, globalScope, true)) { candidate ->
                 val candidateOrigin = candidate.unwrapped ?: candidate
-                if (candidateOrigin in searchScope) {
+                val inScope = runReadAction { candidateOrigin in searchScope }
+                if (inScope) {
                     consumer.process(candidate)
                 } else {
                     true

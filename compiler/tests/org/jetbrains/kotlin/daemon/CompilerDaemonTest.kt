@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.daemon
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
-import junit.framework.Assert
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -49,7 +48,6 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.asSuccess
 import kotlin.script.templates.ScriptTemplateDefinition
 import kotlin.test.fail
-
 
 val TIMEOUT_DAEMON_RUNNER_EXIT_MS = 10000L
 
@@ -204,12 +202,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
         for (assertArgValue in allAssetionsArgs) {
             withDaemonJvmOptionsSetTo(assertArgValue) {
-                Assert.assertEquals(assertArgValue, assertionsJvmArgs())
+                assertEquals(assertArgValue, assertionsJvmArgs())
             }
         }
 
         withDaemonJvmOptionsSetTo(null) {
-            Assert.assertEquals("-ea", assertionsJvmArgs())
+            assertEquals("-ea", assertionsJvmArgs())
         }
     }
 
@@ -757,6 +755,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                     }
                 }, port = SOCKET_ANY_FREE_PORT)
                 val strm = ByteArrayOutputStream()
+                @Suppress("DEPRECATION")
                 val code = daemon!!.remoteCompile(CompileService.NO_SESSION,
                                                   CompileService.TargetPlatform.JVM,
                                                   arrayOf("-include-runtime", file.absolutePath, "-d", jar),

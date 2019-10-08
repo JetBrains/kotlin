@@ -23,6 +23,5 @@ abstract class FirArraySetCall(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         super<FirCall>.acceptChildren(visitor, data)
         calleeReference.accept(visitor, data)
-        rValue.accept(visitor, data)
     }
 }

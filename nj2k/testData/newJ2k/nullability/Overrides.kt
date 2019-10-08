@@ -11,14 +11,14 @@ internal open class Base {
         return ""
     }
 
-    open fun nya(s: String): String {
+    open fun nya(s: String?): String? {
         return s
     }
 }
 
 internal interface I {
     fun zoo(o: Any?): String?
-    fun nya(s: String): String {
+    fun nya(s: String?): String? {
         return ""
     }
 }
@@ -36,7 +36,7 @@ internal class C : Base(), I {
         return ""
     }
 
-    override fun nya(s: String): String {
+    override fun nya(s: String?): String? {
         return ""
     }
 }

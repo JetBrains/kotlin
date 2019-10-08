@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internals
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.DisabledNativeTargetsReporter
+import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.w3c.dom.Document
 

@@ -1,4 +1,4 @@
 public open class ConstructorWithParentTypeParams<T> : R|kotlin/Any| {
-    public constructor<T>(first: R|ft<T, T?>|!): R|test/ConstructorWithParentTypeParams<T>|
+    public constructor<T>(first: R|ft<T, T?>!|): R|test/ConstructorWithParentTypeParams<T>|
 
 }

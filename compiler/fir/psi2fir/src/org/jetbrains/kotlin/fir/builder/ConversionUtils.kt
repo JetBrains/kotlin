@@ -7,25 +7,30 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFunctionTarget
-import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirWhenSubject
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableAccessorsOwner
+import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirVariableImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
-import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.FirDelegateFieldReferenceImpl
+import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitKPropertyTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -128,12 +133,6 @@ fun IElementType.toFirOperation(): FirOperation =
         else -> throw AssertionError(this.toString())
     }
 
-fun FirTypeParameterImpl.addDefaultBoundIfNecessary() {
-    if (bounds.isEmpty()) {
-        bounds += FirImplicitNullableAnyTypeRef(null)
-    }
-}
-
 fun FirExpression.generateNotNullOrOther(
     session: FirSession, other: FirExpression, caseId: String, basePsi: KtElement?
 ): FirWhenExpression {
@@ -156,7 +155,7 @@ fun FirExpression.generateNotNullOrOther(
         branches += FirWhenBranchImpl(
             other.psi, FirElseIfTrueCondition(basePsi),
             FirSingleExpressionBlock(
-                FirUncheckedNotNullCastImpl(basePsi, generateResolvedAccessExpression(basePsi, subjectVariable))
+                generateResolvedAccessExpression(basePsi, subjectVariable)
             )
         )
     }
@@ -164,21 +163,12 @@ fun FirExpression.generateNotNullOrOther(
 
 fun FirExpression.generateLazyLogicalOperation(
     other: FirExpression, isAnd: Boolean, basePsi: KtElement?
-): FirWhenExpression {
-    val terminalExpression = FirConstExpressionImpl(psi, IrConstKind.Boolean, !isAnd)
-    val terminalBlock = FirSingleExpressionBlock(terminalExpression)
-    val otherBlock = FirSingleExpressionBlock(other)
-    return FirWhenExpressionImpl(basePsi).apply {
-        branches += FirWhenBranchImpl(
-            psi, this@generateLazyLogicalOperation,
-            if (isAnd) otherBlock else terminalBlock
-        )
-        branches += FirWhenBranchImpl(
-            other.psi, FirElseIfTrueCondition(psi),
-            if (isAnd) terminalBlock else otherBlock
-        )
-        typeRef = FirImplicitBooleanTypeRef(basePsi)
-    }
+): FirBinaryLogicExpression {
+    val kind = if (isAnd)
+        FirBinaryLogicExpression.OperationKind.AND
+    else
+        FirBinaryLogicExpression.OperationKind.OR
+    return FirBinaryLogicExpressionImpl(basePsi, this, other, kind)
 }
 
 internal fun KtWhenCondition.toFirWhenCondition(
@@ -327,7 +317,7 @@ fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession,
     }
     if (stubMode) return
     getter = (getter as? FirPropertyAccessorImpl)
-        ?: FirPropertyAccessorImpl(session, null, true, Visibilities.UNKNOWN, FirImplicitTypeRefImpl(null)).apply Accessor@{
+        ?: FirPropertyAccessorImpl(session, null, true, Visibilities.UNKNOWN, FirImplicitTypeRefImpl(null), FirPropertyAccessorSymbol()).apply Accessor@{
             body = FirSingleExpressionBlock(
                 FirReturnExpressionImpl(
                     null,
@@ -344,7 +334,7 @@ fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession,
             )
         }
     setter = (setter as? FirPropertyAccessorImpl)
-        ?: FirPropertyAccessorImpl(session, null, false, Visibilities.UNKNOWN, FirImplicitUnitTypeRef(null)).apply {
+        ?: FirPropertyAccessorImpl(session, null, false, Visibilities.UNKNOWN, session.builtinTypes.unitType, FirPropertyAccessorSymbol()).apply {
             val parameter = FirValueParameterImpl(
                 session, null, DELEGATED_SETTER_PARAM,
                 FirImplicitTypeRefImpl(null),

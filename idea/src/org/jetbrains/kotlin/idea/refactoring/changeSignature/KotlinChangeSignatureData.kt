@@ -28,22 +28,18 @@ import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.actualsForExpected
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.utils.SmartList
-import java.util.*
 
 class KotlinChangeSignatureData(
-        override val baseDescriptor: CallableDescriptor,
-        override val baseDeclaration: PsiElement,
-        private val descriptorsForSignatureChange: Collection<CallableDescriptor>
+    override val baseDescriptor: CallableDescriptor,
+    override val baseDeclaration: PsiElement,
+    private val descriptorsForSignatureChange: Collection<CallableDescriptor>
 ) : KotlinMethodDescriptor {
     private val parameters: List<KotlinParameterInfo>
     override val receiver: KotlinParameterInfo?
@@ -57,30 +53,32 @@ class KotlinChangeSignatureData(
             else -> null
         }
         parameters = baseDescriptor.valueParameters
-                .mapTo(receiver?.let{ arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
-                    val jetParameter = valueParameters?.get(parameterDescriptor.index)
-                    val parameterType = parameterDescriptor.type
-                    val parameterTypeText = jetParameter?.typeReference?.text
-                                            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(parameterType)
-                    KotlinParameterInfo(
-                            callableDescriptor = baseDescriptor,
-                            originalIndex = parameterDescriptor.index,
-                            name = parameterDescriptor.name.asString().quoteIfNeeded(),
-                            originalTypeInfo = KotlinTypeInfo(false, parameterType, parameterTypeText),
-                            defaultValueForParameter = jetParameter?.defaultValue,
-                            valOrVar = jetParameter?.valOrVarKeyword.toValVar()
-                    )
-                }
+            .mapTo(receiver?.let { arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
+                val jetParameter = valueParameters?.get(parameterDescriptor.index)
+                val parameterType = parameterDescriptor.type
+                val parameterTypeText = jetParameter?.typeReference?.text
+                    ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(parameterType)
+                KotlinParameterInfo(
+                    callableDescriptor = baseDescriptor,
+                    originalIndex = parameterDescriptor.index,
+                    name = parameterDescriptor.name.asString().quoteIfNeeded(),
+                    originalTypeInfo = KotlinTypeInfo(false, parameterType, parameterTypeText),
+                    defaultValueForParameter = jetParameter?.defaultValue,
+                    valOrVar = jetParameter?.valOrVarKeyword.toValVar()
+                )
+            }
     }
 
     private fun createReceiverInfoIfNeeded(): KotlinParameterInfo? {
         val receiverType = baseDescriptor.extensionReceiverParameter?.type ?: return null
         val receiverName = suggestReceiverNames(baseDeclaration.project, baseDescriptor).first()
         val receiverTypeText = (baseDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.text
-                               ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType)
-        return KotlinParameterInfo(callableDescriptor = baseDescriptor,
-                                   name = receiverName,
-                                   originalTypeInfo = KotlinTypeInfo(false, receiverType, receiverTypeText))
+            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(receiverType)
+        return KotlinParameterInfo(
+            callableDescriptor = baseDescriptor,
+            name = receiverName,
+            originalTypeInfo = KotlinTypeInfo(false, receiverType, receiverTypeText)
+        )
     }
 
     override val original: KotlinMethodDescriptor
@@ -89,7 +87,7 @@ class KotlinChangeSignatureData(
     override val primaryCallables: Collection<KotlinCallableDefinitionUsage<PsiElement>> by lazy {
         descriptorsForSignatureChange.map {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.project, it)
-            assert(declaration != null) { "No declaration found for " + baseDescriptor }
+            assert(declaration != null) { "No declaration found for $baseDescriptor" }
             KotlinCallableDefinitionUsage(declaration!!, it, null, null)
         }
     }
@@ -99,46 +97,76 @@ class KotlinChangeSignatureData(
     }
 
     override val affectedCallables: Collection<UsageInfo> by lazy {
-        primaryCallables + primaryCallables.flatMapTo(HashSet<UsageInfo>()) { primaryFunction ->
-            val primaryDeclaration = primaryFunction.declaration as? KtDeclaration ?: return@flatMapTo emptyList()
+        val results = hashSetOf<UsageInfo>()
 
-            if (primaryDeclaration.isExpectDeclaration()) {
-                return@flatMapTo primaryDeclaration.actualsForExpected().mapNotNull {
-                    val descriptor = it.unsafeResolveToDescriptor()
-                    val callableDescriptor = when (descriptor) {
-                        is CallableDescriptor -> descriptor
-                        is ClassDescriptor -> descriptor.unsubstitutedPrimaryConstructor ?: return@mapNotNull null
-                        else -> return@mapNotNull null
-                    }
-                    KotlinCallableDefinitionUsage<PsiElement>(it, callableDescriptor, primaryFunction, null)
-                }
-            }
-
-            if (primaryDeclaration !is KtCallableDeclaration) return@flatMapTo emptyList()
-
-            val results = SmartList<UsageInfo>()
-
-            primaryDeclaration.forEachOverridingElement { baseElement, overridingElement ->
-                val currentDeclaration = overridingElement.namedUnwrappedElement
-                results += when (currentDeclaration) {
-                    is KtDeclaration -> {
-                        val overridingDescriptor = currentDeclaration.unsafeResolveToDescriptor() as CallableDescriptor
-                        KotlinCallableDefinitionUsage(currentDeclaration, overridingDescriptor, primaryFunction, null)
-                    }
-
-                    is PsiMethod -> {
-                        val baseMethod = baseElement as? PsiMethod ?: return@forEachOverridingElement true
-                        OverriderUsageInfo(currentDeclaration, baseMethod, true, true, true)
-                    }
-
-                    else -> return@forEachOverridingElement true
-                }
-
-                true
-            }
-
-            results
+        results += primaryCallables
+        for (primaryCallable in primaryCallables) {
+            val primaryDeclaration = primaryCallable.declaration as? KtDeclaration ?: continue
+            collectMembers(primaryDeclaration, primaryCallable, results)
         }
+
+        results
+    }
+
+    private fun collectMembers(
+        declaration: KtDeclaration,
+        primaryFunction: KotlinCallableDefinitionUsage<PsiElement>,
+        results: MutableCollection<UsageInfo>
+    ) {
+        if (declaration.isEffectivelyActual()) {
+            declaration.liftToExpected()?.let { collectExpectActualMembers(it, primaryFunction, results) }
+        }
+
+        if (declaration.isExpectDeclaration()) for (it in declaration.actualsForExpected()) collectExpectActualMembers(it, primaryFunction, results)
+
+        if (declaration !is KtCallableDeclaration) return
+
+        declaration.forEachOverridingElement { baseElement, overridingElement ->
+            val currentDeclaration = overridingElement.namedUnwrappedElement
+            results += when (currentDeclaration) {
+                is KtDeclaration -> {
+                    val overridingDescriptor = currentDeclaration.unsafeResolveToDescriptor() as CallableDescriptor
+                    KotlinCallableDefinitionUsage(
+                        currentDeclaration,
+                        overridingDescriptor,
+                        primaryFunction,
+                        null,
+                        canDropOverride = false
+                    )
+                }
+
+                is PsiMethod -> {
+                    val baseMethod = baseElement as? PsiMethod ?: return@forEachOverridingElement true
+                    OverriderUsageInfo(currentDeclaration, baseMethod, true, true, true)
+                }
+
+                else -> return@forEachOverridingElement true
+            }
+
+            true
+        }
+    }
+
+    private fun collectExpectActualMembers(
+        it: KtDeclaration,
+        primaryFunction: KotlinCallableDefinitionUsage<PsiElement>,
+        results: MutableCollection<UsageInfo>
+    ) {
+        val callableDescriptor = when (val descriptor = it.unsafeResolveToDescriptor()) {
+            is CallableDescriptor -> descriptor
+            is ClassDescriptor -> descriptor.unsubstitutedPrimaryConstructor ?: return
+            else -> return
+        }
+
+        val usage = KotlinCallableDefinitionUsage<PsiElement>(
+            it,
+            callableDescriptor,
+            primaryFunction,
+            null,
+            canDropOverride = false
+        )
+
+        if (results.add(usage)) collectMembers(it, primaryFunction, results)
     }
 
     override fun getParameters(): List<KotlinParameterInfo> = parameters
@@ -166,5 +194,5 @@ class KotlinChangeSignatureData(
     override fun canChangeName() = !(baseDescriptor is ConstructorDescriptor || baseDescriptor is AnonymousFunctionDescriptor)
 
     override fun canChangeReturnType(): MethodDescriptor.ReadWriteOption =
-            if (baseDescriptor is ConstructorDescriptor) MethodDescriptor.ReadWriteOption.None else MethodDescriptor.ReadWriteOption.ReadWrite
+        if (baseDescriptor is ConstructorDescriptor) MethodDescriptor.ReadWriteOption.None else MethodDescriptor.ReadWriteOption.ReadWrite
 }

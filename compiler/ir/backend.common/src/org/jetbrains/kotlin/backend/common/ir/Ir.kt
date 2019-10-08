@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 // This is what Context collects about IR.
 abstract class Ir<out T : CommonBackendContext>(val context: T, val irModule: IrModuleFragment) {
@@ -88,6 +90,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     val iterator = getClass(Name.identifier("Iterator"), "kotlin", "collections")
 
+    val charSequence = getClass(Name.identifier("CharSequence"), "kotlin")
+
     val primitiveIteratorsByType = PrimitiveType.values().associate { type ->
         val iteratorClass = getClass(Name.identifier(type.typeName.asString() + "Iterator"), "kotlin", "collections")
         type to iteratorClass
@@ -124,7 +128,7 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     }
 
     val primitiveArrayOfByType = PrimitiveType.values().associate { type ->
-        val function = getSimpleFunction(Name.identifier(type.name.toLowerCase() + "ArrayOf")) {
+        val function = getSimpleFunction(Name.identifier(type.name.toLowerCaseAsciiOnly() + "ArrayOf")) {
             it.extensionReceiverParameter == null && it.dispatchReceiverParameter == null && it.valueParameters.size == 1 &&
                     it.valueParameters[0].isVararg
         }
@@ -222,8 +226,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     val intAnd = getBinaryOperator(OperatorNameConventions.AND, builtIns.intType, builtIns.intType)
     val intPlusInt = getBinaryOperator(OperatorNameConventions.PLUS, builtIns.intType, builtIns.intType)
 
-    fun functionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getFunction(n))
-    fun suspendFunctionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getSuspendFunction(n))
+    open fun functionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getFunction(n))
+    open fun suspendFunctionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getSuspendFunction(n))
 
     val extensionToString = getSimpleFunction(Name.identifier("toString")) {
         it.dispatchReceiverParameter == null && it.extensionReceiverParameter != null &&
@@ -240,12 +244,19 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
                 function.name.asString() == "<get-isInitialized>" &&
-                        function.parent is IrPackageFragment &&
+                        function.isTopLevel &&
                         function.getPackageFragment()!!.fqName.asString() == "kotlin" &&
                         function.valueParameters.isEmpty() &&
                         symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner.let { receiverClass ->
                             receiverClass?.fqNameWhenAvailable?.toUnsafe() == KotlinBuiltIns.FQ_NAMES.kProperty0
                         }
+            }
+
+        fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean =
+            symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
+                function.name.asString() == "typeOf" &&
+                        function.valueParameters.isEmpty() &&
+                        (function.parent as? IrPackageFragment)?.fqName == KOTLIN_REFLECT_FQ_NAME
             }
     }
 }

@@ -75,7 +75,7 @@ fun yield(yield: Int) {
     val foo = yield + yield
     val foo2 = yield
 
-    bar(yield = 5)
+    // bar(yield = 5) //this is different in old and new inference, should be tested in compiler
 
     yield(4)
     yield {}
@@ -112,3 +112,12 @@ object X {
 header class Expected
 
 impl class Actual
+
+// KT-33060
+interface AA {
+    fun foo(key: Any)
+}
+
+class A1 : AA {
+    override final fun foo(key: Any) {}
+}

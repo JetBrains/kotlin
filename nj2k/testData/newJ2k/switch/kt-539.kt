@@ -3,7 +3,6 @@ package switch_demo
 object SwitchDemo {
     @JvmStatic
     fun main(args: Array<String>) {
-
         val month = 8
         val monthString: String
         monthString = when (month) {

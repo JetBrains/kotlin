@@ -57,6 +57,9 @@ abstract class AbstractRunner : Runner {
             )
         }
 
+        Thread.currentThread().contextClassLoader = classLoader
+        val savedClasspathProperty = System.setProperty("java.class.path", classpath.joinToString(File.pathSeparator))
+
         try {
             main.invoke(null, arguments.toTypedArray())
         }
@@ -65,6 +68,10 @@ abstract class AbstractRunner : Runner {
         }
         catch (e: InvocationTargetException) {
             throw e.targetException
+        }
+        finally {
+            if (savedClasspathProperty == null) System.clearProperty("java.class.path")
+            else System.setProperty("java.class.path", savedClasspathProperty)
         }
     }
 }

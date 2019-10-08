@@ -9,7 +9,7 @@ import java.util.HashMap
 class Target {
     var listOfPlatformType: List<String> = ArrayList()
 
-    var unresolved: UnresolvedInterface<UnresolvedGeneric?> = UnresolvedImplementation() // Should not add import
+    var unresolved: UnresolvedInterface<UnresolvedGeneric> = UnresolvedImplementation() // Should not add import
 
 
     var hashMapOfNotImported: Map<ToBeImportedJava, ToBeImportedKotlin> = HashMap()
@@ -22,7 +22,7 @@ class Target {
 
     var ambiguous: IAmbiguous = Ambiguous() // Should not add import in case of ambiguous declarations in Kotlin and in Java
 
-    var ambiguousJava: IAmbiguousJava = AmbiguousJava()  // Should not add import in case of 2 declarations in Java
+    var ambiguousJava: IAmbiguousJava = AmbiguousJava() // Should not add import in case of 2 declarations in Java
 
 
     internal fun workWithStatics() {

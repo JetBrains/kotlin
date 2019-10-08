@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -181,9 +179,7 @@ open class InsertImplicitCasts(
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression =
         when (expression.operator) {
             IrTypeOperator.SAM_CONVERSION -> expression.transformPostfix {
-                val targetClassDescriptor = typeOperandClassifier.descriptor as? ClassDescriptor
-                    ?: throw AssertionError("Target type of $operator should be a class: ${render()}")
-                argument = argument.cast(samConversion.getFunctionTypeForSAMClass(targetClassDescriptor))
+                argument = argument.cast(samConversion.getSubstitutedFunctionTypeForSamType(typeOperand.originalKotlinType!!))
             }
 
             IrTypeOperator.IMPLICIT_CAST -> {
@@ -248,9 +244,6 @@ open class InsertImplicitCasts(
 
             KotlinBuiltIns.isInt(valueType) && notNullableExpectedType.isBuiltInIntegerType() ->
                 implicitCast(notNullableExpectedType, IrTypeOperator.IMPLICIT_INTEGER_COERCION)
-
-            KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType) ->
-                this
 
             else -> {
                 val targetType = if (!valueType.containsNull()) notNullableExpectedType else expectedType

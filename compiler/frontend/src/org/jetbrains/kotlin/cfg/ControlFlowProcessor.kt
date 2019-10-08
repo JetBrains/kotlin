@@ -47,9 +47,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getEnclosingFunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -878,12 +878,14 @@ class ControlFlowProcessor(
                 if (loop == null) {
                     trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression))
                 } else {
-                    val whenExpression = PsiTreeUtil.getParentOfType(
-                        expression, KtWhenExpression::class.java, true,
-                        KtLoopExpression::class.java
-                    )
-                    if (whenExpression != null) {
-                        trace.report(BREAK_OR_CONTINUE_IN_WHEN.on(expression))
+                    if (true != languageVersionSettings?.supportsFeature(LanguageFeature.AllowBreakAndContinueInsideWhen)) {
+                        val whenExpression = PsiTreeUtil.getParentOfType(
+                            expression, KtWhenExpression::class.java, true,
+                            KtLoopExpression::class.java
+                        )
+                        if (whenExpression != null) {
+                            trace.report(BREAK_OR_CONTINUE_IN_WHEN.on(expression))
+                        }
                     }
                 }
             }
@@ -916,8 +918,8 @@ class ControlFlowProcessor(
         private fun jumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtLoopExpression): Boolean {
             val bindingContext = trace.bindingContext
 
-            val labelExprEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpExpression)
-            val labelTargetEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpTarget)
+            val labelExprEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpExpression)
+            val labelTargetEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpTarget)
             return if (labelExprEnclosingFunc !== labelTargetEnclosingFunc) {
                 // Check to report only once
                 if (builder.getLoopExitPoint(jumpTarget) != null ||

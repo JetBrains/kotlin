@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.idea.util.projectStructure.version
 import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
 import org.jetbrains.kotlin.idea.versions.hasKotlinJsKjsmFile
-import org.jetbrains.kotlin.idea.versions.isSnapshot
+import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.vfilefinder.IDEVirtualFileFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.utils.ifEmpty

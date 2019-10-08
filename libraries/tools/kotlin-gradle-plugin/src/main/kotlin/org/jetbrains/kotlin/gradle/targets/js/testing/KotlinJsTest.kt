@@ -42,6 +42,10 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
         @InputFiles get() = compilation.runtimeDependencyFiles
 
     @Suppress("unused")
+    internal val compilationOutputs: FileCollection
+        @InputFiles get() = compilation.output.allOutputs
+
+    @Suppress("unused")
     val compilationId: String
         @Input get() = compilation.let {
             val target = it.target

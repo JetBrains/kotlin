@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
@@ -17,11 +18,14 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptJvmCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.compilationCache
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
@@ -96,8 +100,22 @@ private fun compileImpl(
 
     val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
     val getScriptConfiguration = { ktFile: KtFile ->
-        dependenciesProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration
-            ?: context.baseScriptCompilationConfiguration
+        (dependenciesProvider?.getScriptConfiguration(ktFile)?.configuration ?: context.baseScriptCompilationConfiguration)
+            .with {
+                // Adjust definitions so all compiler dependencies are saved in the resulting compilation configuration, so evaluation
+                // performed with the expected classpath
+                // TODO: make this logic obsolete by injecting classpath earlier in the pipeline
+                val depsFromConfiguration = get(dependencies)?.flatMapTo(HashSet()) { (it as? JvmDependency)?.classpath ?: emptyList() }
+                val depsFromCompiler = context.environment.configuration.jvmClasspathRoots
+                if (!depsFromConfiguration.isNullOrEmpty()) {
+                    val missingDeps = depsFromCompiler.filter { !depsFromConfiguration.contains(it) }
+                    if (missingDeps.isNotEmpty()) {
+                        dependencies.append(JvmDependency(missingDeps))
+                    }
+                } else {
+                    dependencies.append(JvmDependency(depsFromCompiler))
+                }
+            }
     }
 
     val refinedConfiguration = getScriptConfiguration(mainKtFile)
@@ -122,6 +140,16 @@ private fun doCompile(
     messageCollector: ScriptDiagnosticsMessageCollector,
     getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
 ): ResultWithDiagnostics<KJvmCompiledScript<Any>> {
+
+    context.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies]?.forEach { dependency ->
+        if (dependency is JvmDependencyFromClassLoader) {
+            PackageFragmentProviderExtension.registerExtension(
+                context.environment.project,
+                PackageFragmentFromClassLoaderProviderExtension(dependency.classLoaderGetter, context.baseScriptCompilationConfiguration)
+            )
+        }
+    }
+
     val analysisResult = analyze(sourceFiles, context.environment)
 
     if (!analysisResult.shouldGenerateCode) return failure(

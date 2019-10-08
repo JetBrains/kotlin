@@ -198,14 +198,26 @@ public fun String.toUIntOrNull(radix: Int): UInt? {
         start = 0
     }
 
+    val limitForMaxRadix = 119304647u  //  limit / 36
+
+    var limitBeforeMul = limitForMaxRadix
     val uradix = radix.toUInt()
-    val limitBeforeMul = limit / uradix
     var result = 0u
     for (i in start until length) {
         val digit = digitOf(this[i], radix)
 
         if (digit < 0) return null
-        if (result > limitBeforeMul) return null
+        if (result > limitBeforeMul) {
+            if (limitBeforeMul == limitForMaxRadix) {
+                limitBeforeMul = limit / uradix
+
+                if (result > limitBeforeMul) {
+                    return null
+                }
+            } else {
+                return null
+            }
+        }
 
         result *= uradix
 
@@ -251,14 +263,26 @@ public fun String.toULongOrNull(radix: Int): ULong? {
     }
 
 
-    val uradix = radix.toUInt()
-    val limitBeforeMul = limit / uradix
+    val limitForMaxRadix = 512409557603043100uL  //  limit / 36
+
+    var limitBeforeMul = limitForMaxRadix
+    val uradix = radix.toULong()
     var result = 0uL
     for (i in start until length) {
         val digit = digitOf(this[i], radix)
 
         if (digit < 0) return null
-        if (result > limitBeforeMul) return null
+        if (result > limitBeforeMul) {
+            if (limitBeforeMul == limitForMaxRadix) {
+                limitBeforeMul = limit / uradix
+
+                if (result > limitBeforeMul) {
+                    return null
+                }
+            } else {
+                return null
+            }
+        }
 
         result *= uradix
 

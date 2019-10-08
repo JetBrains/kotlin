@@ -123,6 +123,10 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
             }
         }
 
+        fun <T> PropertiesCollection.Key<T>.update(body: (T?) -> T?) {
+            putIfNotNull(body(data[this]?.let { it as T }))
+        }
+
         // generic for lists
 
         fun <T> PropertiesCollection.Key<in List<T>>.putIfAny(vals: Iterable<T>?) {

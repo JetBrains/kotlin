@@ -384,16 +384,64 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             assertFileExists("build/js/node_modules/kotlin/kotlin.js.map")
             assertFileExists("build/js/node_modules/kotlin-test/kotlin-test.js")
             assertFileExists("build/js/node_modules/kotlin-test/kotlin-test.js.map")
-            assertFileExists("build/js/node_modules/kotlin-test-nodejs-runner/kotlin-test-nodejs-runner.js")
-            assertFileExists("build/js/node_modules/kotlin-test-nodejs-runner/kotlin-test-nodejs-runner.js.map")
-            assertFileExists("build/js/node_modules/kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support.js")
-            assertFileExists("build/js/node_modules/kotlin-test-nodejs-runner/kotlin-nodejs-source-map-support.js.map")
+            assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-test-nodejs-runner.js")
+            assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-test-nodejs-runner.js.map")
+            assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-nodejs-source-map-support.js")
+            assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-nodejs-source-map-support.js.map")
             assertFileExists("build/js/node_modules/kotlin-js-plugin/kotlin/kotlin-js-plugin.js")
             assertFileExists("build/js/node_modules/kotlin-js-plugin/kotlin/kotlin-js-plugin.js.map")
             assertFileExists("build/js/node_modules/kotlin-js-plugin-test/kotlin/kotlin-js-plugin-test.js")
             assertFileExists("build/js/node_modules/kotlin-js-plugin-test/kotlin/kotlin-js-plugin-test.js.map")
 
             assertTestResults("testProject/kotlin-js-plugin-project/tests.xml", "nodeTest")
+        }
+    }
+
+    @Test
+    fun testKotlinJsKarmaDownloadChrome() = with(Project("kotlin-js-karma-download-chrome", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("test") {
+            assertTasksExecuted(
+                ":kotlinNpmInstall",
+                ":compileKotlinJs",
+                ":compileTestKotlinJs"
+            )
+
+            assertFileExists("build/js/node_modules/puppeteer/.local-chromium")
+        }
+    }
+
+    @Test
+    fun testYarnSetup() = with(Project("yarn-setup", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+        gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("yarnFolderRemove") {
+            assertSuccessful()
+        }
+
+        build("kotlinYarnSetup", "yarnFolderCheck") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":kotlinYarnSetup",
+                ":yarnFolderCheck"
+            )
+        }
+
+        gradleBuildScript().appendText("\nyarn.version = \"1.9.3\"")
+
+        build("yarnConcreteVersionFolderChecker") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":kotlinYarnSetup",
+                ":yarnConcreteVersionFolderChecker"
+            )
         }
     }
 }

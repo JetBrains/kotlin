@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import com.intellij.psi.PsiMember
-import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.psi
-import org.jetbrains.kotlin.nj2k.visibility
 
-class InternalDeclarationConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class InternalDeclarationConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKVisibilityOwner || element !is JKModalityOwner) return recurse(element)
         val containingClass = element.parentOfType<JKClass>()

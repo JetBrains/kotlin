@@ -88,6 +88,15 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
                 return
             }
 
+            // We explicitly skip temporary variables (such as a for loop iterator, or a temporary value for an elvis operator)
+            // because they are not present in the original source code and their names should not affect names of local entities.
+            if (declaration.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR ||
+                declaration.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+            ) {
+                declaration.acceptChildren(this, data)
+                return
+            }
+
             val enclosingName = data.enclosingName
             val simpleName = declaration.name.asString()
 
@@ -97,6 +106,12 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
                         // We save the name of the lambda to reuse it in the reference to it (produced by the closure conversion) later.
                         localFunctionNames[(declaration as IrFunction).symbol] = name
                     }
+                }
+                declaration is IrFunction && declaration.parent !is IrClass -> {
+                    // In the old backend, only names of non-local functions are stored in names of anonymous classes. All other names
+                    // are replaced with indices. For example, a local class `L` in a top-level function `f` will have the name `...$f$L`,
+                    // but inside a local function `g` (which is in `f`) it will have the name `...$f$1$L` (_not_ `...$f$g$L`).
+                    inventName(null, data)
                 }
                 enclosingName != null -> "$enclosingName$$simpleName"
                 else -> simpleName
@@ -158,27 +173,6 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             // IrAnonymousInitializer is not an IrDeclaration, so we need to manually make all its children aware that they're local
             // and might need new invented names.
             declaration.acceptChildren(this, data.makeLocal())
-        }
-
-        override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Data) {
-            if (expression.operator == IrTypeOperator.SAM_CONVERSION) {
-                val invokable = expression.argument
-                // Function references (even those that are transformed into SAM wrappers) are handled in visitFunctionReference.
-                if (invokable !is IrFunctionReference && !(invokable is IrBlock && invokable.statements.last() is IrFunctionReference)) {
-                    val superClass = expression.typeOperandClassifier.owner as IrClass
-                    val superClassName = superClass.fqNameWhenAvailable!!.pathSegments().joinToString("_") { it.toString() }
-
-                    // TODO: consider dropping "sam\$$superClassName$0" from the name here.
-                    // It's only here to give resemblance of the name generated for SAM wrappers by the old backend. The exact logic
-                    // of the old backend is somewhat difficult to emulate consistently, see `SamWrapperCodegen.getWrapperName`.
-                    val internalName = inventName(Name.identifier("sam\$$superClassName$0"), data)
-                    context.putLocalClassInfo(expression, JvmBackendContext.LocalClassInfo(internalName))
-                    invokable.accept(this, data.withName(internalName))
-                    return
-                }
-            }
-
-            expression.acceptChildren(this, data)
         }
 
         override fun visitElement(element: IrElement, data: Data) {

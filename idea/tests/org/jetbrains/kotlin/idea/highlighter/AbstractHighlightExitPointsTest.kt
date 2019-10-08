@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.idea.highlighter
 import com.intellij.codeInsight.highlighting.HighlightUsagesHandler
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
-abstract class AbstractHighlightExitPointsTest : LightCodeInsightFixtureTestCase() {
-    fun doTest(testDataPath: String) {
-        myFixture.configureByFile(testDataPath)
+abstract class AbstractHighlightExitPointsTest : KotlinLightCodeInsightFixtureTestCase() {
+    fun doTest(unused: String) {
+        myFixture.configureByFile(fileName())
         HighlightUsagesHandler.invoke(myFixture.project, myFixture.editor, myFixture.file)
 
         val text = myFixture.file.text

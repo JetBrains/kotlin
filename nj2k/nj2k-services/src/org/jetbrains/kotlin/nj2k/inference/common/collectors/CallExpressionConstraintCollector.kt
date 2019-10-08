@@ -96,10 +96,10 @@ class CallExpressionConstraintCollector : ConstraintsCollector() {
                             BoundTypeImpl(
                                 GenericLabel(NoClassReference),//not important as it just a primitive type
                                 emptyList()
-                            ) else parameterBoundType.typeParameters[0].boundType
+                            ) else parameterBoundType.typeParameters.getOrNull(0)?.boundType
                     } else parameterBoundType
-                arguments.arguments.map { argument ->
-                    parameterBoundTypeConsideringVararg to argument
+                arguments.arguments.mapNotNull { argument ->
+                    parameterBoundTypeConsideringVararg?.let { it to argument }
                 }
             }
         }.flatten()

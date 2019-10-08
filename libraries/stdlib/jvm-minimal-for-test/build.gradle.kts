@@ -75,7 +75,7 @@ publishing {
     publications {
         create<MavenPublication>("internal") {
             artifactId = "kotlin-stdlib-minimal-for-test"
-            artifact(jar)
+            artifact(jar.get())
         }
     }
 

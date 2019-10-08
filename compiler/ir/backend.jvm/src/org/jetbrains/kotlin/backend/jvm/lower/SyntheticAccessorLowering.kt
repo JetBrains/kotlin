@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -46,8 +45,10 @@ internal val syntheticAccessorPhase = makeIrFilePhase(
 
 private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     private val pendingTransformations = mutableListOf<Function0<Unit>>()
+    private val inlineLambdaToCallSite = mutableMapOf<IrFunction, IrDeclaration?>()
 
     override fun lower(irFile: IrFile) {
+        inlineLambdaToCallSite.putAll(InlineReferenceLocator.scan(context, irFile).lambdaToCallSite)
         irFile.transformChildrenVoid(this)
         pendingTransformations.forEach { it() }
     }
@@ -156,7 +157,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.accessorName()
             visibility = Visibilities.PUBLIC
-            isSuspend = false // do not generate state-machine for synthetic accessors
+            isSuspend = source.isSuspend // synthetic accessors of suspend functions are handled in codegen
         }.also { accessor ->
             // Find the right container to insert the accessor. Simply put, when we call a function on a class A,
             // we also need to put its accessor into A. However, due to the way that calls are implemented in the
@@ -416,10 +417,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
     private var nameCounter = 0
 
     private fun IrFunction.accessorName(): Name {
-        val jvmName = context.state.typeMapper.mapFunctionName(
-            descriptor,
-            OwnerKind.getMemberOwnerKind(parentAsClass.descriptor)
-        )
+        val jvmName = context.methodSignatureMapper.mapFunctionName(this)
         return Name.identifier("access\$$jvmName\$${nameCounter++}")
     }
 
@@ -441,6 +439,16 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
                 this == JavaVisibilities.PROTECTED_AND_PACKAGE ||
                 this == JavaVisibilities.PROTECTED_STATIC_VISIBILITY
 
+    private fun IrDeclaration.getAccessContext(withSuper: Boolean): IrDeclarationContainer? = when {
+        this is IrDeclarationContainer -> this
+        // Accesses from public inline functions can actually be anywhere. For protected inline functions
+        // calling methods on `super` we need an accessor to satisfy INVOKESPECIAL constraints.
+        this is IrFunction && isInline && !visibility.isPrivate && (withSuper || !visibility.isProtected) -> null
+        // For inline lambdas, we can navigate to the only call site directly.
+        this in inlineLambdaToCallSite -> inlineLambdaToCallSite[this]?.getAccessContext(withSuper)
+        else -> (parent as? IrDeclaration)?.getAccessContext(withSuper)
+    }
+
     private fun IrSymbol.isAccessible(withSuper: Boolean, thisObjReference: IrClassSymbol?): Boolean {
         /// We assume that IR code that reaches us has been checked for correctness at the frontend.
         /// This function needs to single out those cases where Java accessibility rules differ from Kotlin's.
@@ -458,15 +466,9 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val symbolDeclarationContainer = (declaration.parent as? IrDeclarationContainer) as? IrElement ?: return true
+        val contextDeclarationContainer = (currentScope!!.irElement as IrDeclaration).getAccessContext(withSuper) ?: return false
 
-        // Within inline functions, we have to assume the worst.
-        val function = currentFunction?.irElement as IrFunction?
-        if (function?.isInline == true && !function.visibility.isPrivate && (withSuper || !function.visibility.isProtected))
-            return false
-
-        val contextDeclarationContainer = allScopes.lastOrNull { it.irElement is IrDeclarationContainer }?.irElement
-
-        val samePackage = declaration.getPackageFragment()?.fqName == contextDeclarationContainer?.getPackageFragment()?.fqName
+        val samePackage = declaration.getPackageFragment()?.fqName == contextDeclarationContainer.getPackageFragment()?.fqName
         return when {
             declaration.visibility.isPrivate && symbolDeclarationContainer != contextDeclarationContainer -> false
             declaration.visibility.isProtected && !samePackage &&

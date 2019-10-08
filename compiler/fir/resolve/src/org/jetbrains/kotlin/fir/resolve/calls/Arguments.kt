@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.withNullability
+import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
@@ -38,7 +39,18 @@ fun resolveArgumentExpression(
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
     return when (argument) {
-        is FirFunctionCall -> resolveSubCallArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
+        is FirFunctionCall, is FirCallLikeControlFlowExpression -> resolveSubCallArgument(
+            csBuilder,
+            argument as FirResolvable,
+            expectedType,
+            sink,
+            isReceiver,
+            isSafeCall,
+            typeProvider
+        )
+        // TODO:!
+        is FirCallableReferenceAccess -> Unit
+        // NB: FirCallableReferenceAccess should be checked earlier
         is FirQualifiedAccessExpression -> resolvePlainExpressionArgument(
             csBuilder,
             argument,
@@ -50,8 +62,6 @@ fun resolveArgumentExpression(
         )
         // TODO:!
         is FirAnonymousFunction -> preprocessLambdaArgument(csBuilder, argument, expectedType, expectedTypeRef, acceptLambdaAtoms)
-        // TODO:!
-        is FirCallableReferenceAccess -> Unit
         // TODO:!
         //TODO: Collection literal
         is FirWrappedArgumentExpression -> resolveArgumentExpression(
@@ -65,20 +75,78 @@ fun resolveArgumentExpression(
             acceptLambdaAtoms,
             typeProvider
         )
+        is FirBlock -> resolveBlockArgument(
+            csBuilder,
+            argument,
+            expectedType,
+            expectedTypeRef,
+            sink,
+            isReceiver,
+            isSafeCall,
+            acceptLambdaAtoms,
+            typeProvider
+        )
         else -> resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
+    }
+}
+
+private fun resolveBlockArgument(
+    csBuilder: ConstraintSystemBuilder,
+    block: FirBlock,
+    expectedType: ConeKotlinType,
+    expectedTypeRef: FirTypeRef,
+    sink: CheckerSink,
+    isReceiver: Boolean,
+    isSafeCall: Boolean,
+    acceptLambdaAtoms: (PostponedResolvedAtomMarker) -> Unit,
+    typeProvider: (FirExpression) -> FirTypeRef?
+) {
+    val returnArguments = block.returnExpressions()
+    if (returnArguments.isEmpty()) {
+        checkApplicabilityForArgumentType(
+            csBuilder,
+            block.typeRef.coneTypeUnsafe(),
+            expectedType.type,
+            SimpleConstraintSystemConstraintPosition,
+            false,
+            expectedType.type.withNullability(ConeNullability.NULLABLE),
+            sink
+        )
+        return
+    }
+    for (argument in returnArguments) {
+        resolveArgumentExpression(
+            csBuilder,
+            argument,
+            expectedType,
+            expectedTypeRef,
+            sink,
+            isReceiver,
+            isSafeCall,
+            acceptLambdaAtoms,
+            typeProvider
+        )
     }
 }
 
 fun resolveSubCallArgument(
     csBuilder: ConstraintSystemBuilder,
-    argument: FirFunctionCall,
+    argument: FirResolvable,
     expectedType: ConeKotlinType,
     sink: CheckerSink,
     isReceiver: Boolean,
     isSafeCall: Boolean,
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
-    val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
+    val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(
+        csBuilder,
+        argument as FirExpression,
+        expectedType,
+        sink,
+        isReceiver,
+        isSafeCall,
+        typeProvider
+    )
     val type = sink.components.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).coneTypeUnsafe<ConeKotlinType>()
     val argumentType = candidate.substitutor.substituteOrSelf(type)
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isSafeCall)
@@ -116,12 +184,23 @@ fun resolvePlainArgumentType(
         return
     }
 
+    checkApplicabilityForArgumentType(csBuilder, argumentType, expectedType, position, isReceiver, nullableExpectedType, sink)
+}
+
+private fun checkApplicabilityForArgumentType(
+    csBuilder: ConstraintSystemBuilder,
+    argumentType: ConeKotlinType,
+    expectedType: ConeKotlinType,
+    position: SimpleConstraintSystemConstraintPosition,
+    isReceiver: Boolean,
+    nullableExpectedType: ConeKotlinType,
+    sink: CheckerSink
+) {
     if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedType, position)) {
         if (!isReceiver) {
             if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
                 csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
             }
-
             return
         }
         if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, nullableExpectedType, position)) {
@@ -130,7 +209,6 @@ fun resolvePlainArgumentType(
             csBuilder.addSubtypeConstraint(argumentType, expectedType, position)
             sink.reportApplicability(CandidateApplicability.WRONG_RECEIVER)
         }
-
     }
 }
 
@@ -158,8 +236,30 @@ internal fun Candidate.resolveArgument(
 }
 
 private fun Candidate.prepareExpectedType(session: FirSession, argument: FirExpression, parameter: FirValueParameter): ConeKotlinType {
-    val expectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
+    val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
+    val expectedType = getExpectedTypeWithSAMConversion(session, argument, basicExpectedType) ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
+}
+
+private fun Candidate.getExpectedTypeWithSAMConversion(
+    session: FirSession,
+    argument: FirExpression,
+    candidateExpectedType: ConeKotlinType
+): ConeKotlinType? {
+    if (candidateExpectedType.isBuiltinFunctionalType) return null
+    // TODO: if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)) return null
+    val firNamedFunction = symbol.fir as? FirNamedFunction ?: return null
+    if (!samResolver.shouldRunSamConversionForFunction(firNamedFunction)) return null
+
+    val argumentIsFunctional = when ((argument as? FirWrappedArgumentExpression)?.expression ?: argument) {
+        is FirAnonymousFunction, is FirCallableReferenceAccess -> true
+        else -> argument.typeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType == true
+    }
+    if (!argumentIsFunctional) return null
+
+    // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
+
+    return samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType) ?: return null
 }
 
 internal fun FirExpression.getExpectedType(

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 
-open class KotlinSoftwareComponent(
+abstract class KotlinSoftwareComponent(
     private val name: String,
     protected val kotlinTargets: Iterable<KotlinTarget>
 ) : SoftwareComponentInternal, ComponentWithVariants {

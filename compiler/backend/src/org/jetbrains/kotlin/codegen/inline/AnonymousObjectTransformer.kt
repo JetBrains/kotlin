@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.coroutines.isResumeImplMethodName
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.serialization.JvmCodegenStringTable
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -45,6 +46,9 @@ class AnonymousObjectTransformer(
     private var debugInfo: String? = null
     private lateinit var sourceMapper: SourceMapper
     private val languageVersionSettings = inliningContext.state.languageVersionSettings
+
+    // TODO: use IrTypeMapper in the IR backend
+    private val typeMapper: KotlinTypeMapperBase = state.typeMapper
 
     override fun doTransform(parentRemapper: FieldRemapper): InlineResult {
         val innerClassNodes = ArrayList<InnerClassNode>()
@@ -226,7 +230,7 @@ class AnonymousObjectTransformer(
         when (header.kind) {
             KotlinClassHeader.Kind.CLASS -> {
                 val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
-                val newStringTable = JvmCodegenStringTable(state.typeMapper, nameResolver)
+                val newStringTable = JvmCodegenStringTable(typeMapper, nameResolver)
                 val newProto = classProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.anonymousObjectOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
                 }.build()
@@ -234,7 +238,7 @@ class AnonymousObjectTransformer(
             }
             KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
                 val (nameResolver, functionProto) = JvmProtoBufUtil.readFunctionDataFrom(data, strings)
-                val newStringTable = JvmCodegenStringTable(state.typeMapper, nameResolver)
+                val newStringTable = JvmCodegenStringTable(typeMapper, nameResolver)
                 val newProto = functionProto.toBuilder().apply {
                     setExtension(JvmProtoBuf.lambdaClassOriginName, newStringTable.getStringIndex(oldObjectType.internalName))
                 }.build()

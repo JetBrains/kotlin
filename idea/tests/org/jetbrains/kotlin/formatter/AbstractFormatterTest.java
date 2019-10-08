@@ -131,7 +131,7 @@ public abstract class AbstractFormatterTest extends LightIdeaTestCase {
         String testFileExtension = expectedFileNameWithExtension.substring(expectedFileNameWithExtension.lastIndexOf("."));
         String originalFileText = FileUtil.loadFile(new File(testFileName + testFileExtension), true);
 
-        CodeStyleSettings codeStyleSettings = FormatSettingsUtil.getSettings();
+        CodeStyleSettings codeStyleSettings = FormatSettingsUtil.getSettings(getProject());
         try {
             Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
             if (rightMargin != null) {

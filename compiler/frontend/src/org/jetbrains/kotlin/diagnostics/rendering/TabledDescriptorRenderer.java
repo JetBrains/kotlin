@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.Table
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TextRenderer.TextElement;
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeProjection;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -155,6 +156,11 @@ public class TabledDescriptorRenderer {
     @NotNull
     public DiagnosticParameterRenderer<KotlinType> getTypeRenderer() {
         return Renderers.RENDER_TYPE;
+    }
+
+    @NotNull
+    public DiagnosticParameterRenderer<TypeProjection> getTypeProjectionRenderer() {
+        return Renderers.TYPE_PROJECTION;
     }
 
     protected void renderText(TextRenderer textRenderer, StringBuilder result) {

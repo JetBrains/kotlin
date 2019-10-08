@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/annotationClasses.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test1 [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.Test1.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/annotationClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-x>' type=<root>.Test1 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -34,7 +34,7 @@ FILE fqName:<root> fileName:/annotationClasses.kt
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.Test2.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Int
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/annotationClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test2'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/annotationClasses.kt
     CONSTRUCTOR visibility:public <> (x:<root>.Test1) returnType:<root>.Test3 [primary]
       VALUE_PARAMETER name:x index:0 type:<root>.Test1
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:<root>.Test1 visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:<root>.Test1 visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: <root>.Test1 declared in <root>.Test3.<init>' type=<root>.Test1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:<root>.Test1
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/annotationClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test3
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): <root>.Test1 declared in <root>.Test3'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.Test1 visibility:public [final]' type=<root>.Test1 origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.Test1 visibility:private [final]' type=<root>.Test1 origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-x>' type=<root>.Test3 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/annotationClasses.kt
     CONSTRUCTOR visibility:public <> (xs:kotlin.IntArray) returnType:<root>.Test4 [primary]
       VALUE_PARAMETER name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
     PROPERTY name:xs visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'xs: kotlin.IntArray [vararg] declared in <root>.Test4.<init>' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xs> visibility:public modality:FINAL <> ($this:<root>.Test4) returnType:kotlin.IntArray
@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/annotationClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test4
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-xs> (): kotlin.IntArray declared in <root>.Test4'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:public [final]' type=kotlin.IntArray origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
               receiver: GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.<get-xs>' type=<root>.Test4 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

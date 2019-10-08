@@ -13,7 +13,7 @@ internal object FileRead {
             val fstream = FileInputStream(File("file.txt"))
             val `in` = DataInputStream(fstream)
             val br = BufferedReader(InputStreamReader(`in`))
-            var strLine: String
+            var strLine: String?
             while (br.readLine().also { strLine = it } != null) {
                 println(strLine)
             }
@@ -21,6 +21,5 @@ internal object FileRead {
         } catch (e: Exception) {
             System.err.println("Error: " + e.message)
         }
-
     }
 }

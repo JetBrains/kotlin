@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.J]'
     PROPERTY name:test visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:private [final]
         EXPRESSION_BODY
           ERROR_CALL 'Unresolved reference: <Unresolved name: JInner>#' type=IrErrorType
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:IrErrorType
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/javaInnerClass.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test> (): IrErrorType declared in <root>.Test1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:public [final]' type=IrErrorType origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:IrErrorType visibility:private [final]' type=IrErrorType origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-test>' type=<root>.Test1 origin=null
     FUN FAKE_OVERRIDE name:bar visibility:public modality:OPEN <> ($this:<root>.J) returnType:kotlin.Unit
       overridden:

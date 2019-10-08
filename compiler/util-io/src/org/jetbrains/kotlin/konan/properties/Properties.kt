@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.konan.properties
 
 import org.jetbrains.kotlin.konan.file.*
-import org.jetbrains.kotlin.konan.util.parseSpaceSeparatedArgs
+import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
+import java.io.ByteArrayOutputStream
 
 typealias Properties = java.util.Properties
 
@@ -21,8 +22,14 @@ fun File.loadProperties(): Properties {
 fun loadProperties(path: String): Properties = File(path).loadProperties()
 
 fun File.saveProperties(properties: Properties) {
-    this.outputStream().use {
+    val byteStream = ByteArrayOutputStream()
+    byteStream.use {
         properties.store(it, null)
+    }
+
+    // TODO: don't act like this
+    outputStream().use {
+        it.write(String(byteStream.toByteArray()).split("\n").drop(1).joinToString("\n").toByteArray())
     }
 }
 

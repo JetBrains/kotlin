@@ -1,7 +1,7 @@
 package demo
 
 object SwitchDemo {
-    fun print(o: Any) {
+    fun print(o: Any?) {
         println(o)
     }
 
@@ -78,7 +78,6 @@ object SwitchDemo {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        for (i in 1..12)
-            test(i)
+        for (i in 1..12) test(i)
     }
 }

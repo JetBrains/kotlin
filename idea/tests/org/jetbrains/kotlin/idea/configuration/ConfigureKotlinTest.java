@@ -350,9 +350,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
                     "1.1",
                     LanguageFeature.State.ENABLED,
                     platform,
-                    modelsProvider,
-                    false,
-                    emptyList()
+                    modelsProvider
             );
             assertEquals(platform, facet.getConfiguration().getSettings().getTargetPlatform());
             assertEquals(jvmTarget.getDescription(),

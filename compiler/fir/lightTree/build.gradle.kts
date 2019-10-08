@@ -23,6 +23,11 @@ dependencies {
     compile("org.openjdk.jmh", "jmh-core", jmhVersion)
     compile("org.openjdk.jmh", "jmh-generator-bytecode", jmhVersion)
     compile("org.openjdk.jmh", "jmh-generator-annprocess", jmhVersion)
+
+    Platform[192].orHigher {
+        testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+        testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    }
 }
 
 sourceSets {
@@ -35,7 +40,7 @@ projectTest {
     exclude("**/benchmark/**")
 }
 
-val compactClasspath by tasks.creating(Jar::class) {
+val compactClasspath by tasks.registering(Jar::class) {
     archiveAppendix.set("classpath")
     inputs.files(sourceSets["main"].runtimeClasspath + sourceSets["test"].runtimeClasspath)
     doFirst {
@@ -46,7 +51,7 @@ val compactClasspath by tasks.creating(Jar::class) {
     }
 }
 
-val jmhBytecode by tasks.creating(JavaExec::class) {
+val jmhBytecode by tasks.registering(JavaExec::class) {
     tasks["classes"].mustRunAfter(tasks["clean"])
     tasks["compactClasspath"].mustRunAfter(tasks["classes"])
     dependsOn(tasks["clean"])
@@ -68,14 +73,14 @@ tasks {
     }
 }
 
-val jmhCompile by tasks.creating(JavaCompile::class) {
+val jmhCompile by tasks.registering(JavaCompile::class) {
     /*classpath = sourceSets["test"].runtimeClasspath + files("${project.buildDir}/generated-sources/jmh/")
 
     source(fileTree("${project.buildDir}/generated-sources/jmh/"))
     destinationDir = file("${project.buildDir}/generated-classes/jmh/")*/
 }
 
-val jmhExec by tasks.creating(JavaExec::class) {
+val jmhExec by tasks.registering(JavaExec::class) {
     dependsOn(tasks["compileTestJava"])
     doFirst {
         classpath = files(

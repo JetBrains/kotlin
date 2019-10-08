@@ -1,5 +1,5 @@
 package to
 
-fun foo(): String {
+fun foo(): String? {
     return ""
 }

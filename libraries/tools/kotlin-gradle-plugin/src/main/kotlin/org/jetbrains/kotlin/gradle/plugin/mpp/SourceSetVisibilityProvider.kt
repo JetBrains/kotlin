@@ -31,7 +31,6 @@ internal class SourceSetVisibilityProvider(
      * If the [resolvedMppDependency] is a project dependency, its project should be passed as [resolvedToOtherProject], as
      * the Gradle API for dependency variants behaves differently for project dependencies and published ones.
      */
-    @Suppress("UnstableApiUsage")
     fun getVisibleSourceSetNames(
         visibleFrom: KotlinSourceSet,
         dependencyScopes: Iterable<KotlinDependencyScope>,

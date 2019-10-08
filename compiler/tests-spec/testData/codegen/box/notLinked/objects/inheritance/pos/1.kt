@@ -4,7 +4,6 @@
  * SECTIONS: objects, inheritance
  * NUMBER: 1
  * DESCRIPTION: Access to class members in the super constructor call of an object.
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-25289
  */
 

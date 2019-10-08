@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -48,8 +51,11 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor.CoroutinesCompatibilityMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -98,16 +104,16 @@ fun generateAsCast(
     kotlinType: KotlinType,
     asmType: Type,
     isSafe: Boolean,
-    isReleaseCoroutines: Boolean
+    languageVersionSettings: LanguageVersionSettings
 ) {
     if (!isSafe) {
         if (!TypeUtils.isNullableType(kotlinType)) {
-            generateNullCheckForNonSafeAs(v, kotlinType)
+            generateNullCheckForNonSafeAs(v, kotlinType, languageVersionSettings)
         }
     } else {
         with(v) {
             dup()
-            TypeIntrinsics.instanceOf(v, kotlinType, asmType, isReleaseCoroutines)
+            TypeIntrinsics.instanceOf(v, kotlinType, asmType, languageVersionSettings.isReleaseCoroutines())
             val ok = Label()
             ifne(ok)
             pop()
@@ -121,15 +127,19 @@ fun generateAsCast(
 
 private fun generateNullCheckForNonSafeAs(
     v: InstructionAdapter,
-    type: KotlinType
+    type: KotlinType,
+    languageVersionSettings: LanguageVersionSettings
 ) {
     with(v) {
         dup()
         val nonnull = Label()
         ifnonnull(nonnull)
+        val exceptionClass =
+            if (languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) "java/lang/NullPointerException"
+            else "kotlin/TypeCastException"
         AsmUtil.genThrow(
             v,
-            "kotlin/TypeCastException",
+            exceptionClass,
             "null cannot be cast to non-null type " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
         )
         mark(nonnull)
@@ -313,7 +323,7 @@ fun MemberDescriptor.isToArrayFromCollection(): Boolean {
 fun FqName.topLevelClassInternalName() = JvmClassName.byClassId(ClassId(parent(), shortName())).internalName
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
 
-fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>, endLabel: Label? = null) {
+fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>, endLabel: Label?) {
     // Do not write line numbers until destructuring happens
     // (otherwise destructuring variables will be uninitialized in the beginning of lambda)
     codegen.runWithShouldMarkLineNumbers(false) {
@@ -374,18 +384,21 @@ fun InstructionAdapter.generateNewInstanceDupAndPlaceBeforeStackTop(
     }
 }
 
-fun extractReificationArgument(initialType: KotlinType): Pair<TypeParameterDescriptor, ReificationArgument>? {
+fun TypeSystemCommonBackendContext.extractReificationArgument(initialType: KotlinTypeMarker): Pair<TypeParameterMarker, ReificationArgument>? {
     var type = initialType
     var arrayDepth = 0
-    val isNullable = type.isMarkedNullable
-    while (KotlinBuiltIns.isArray(type)) {
+    val isNullable = type.isMarkedNullable()
+    while (type.isArrayOrNullableArray()) {
         arrayDepth++
-        type = type.arguments[0].type
+        val argument = type.getArgument(0)
+        type =
+            if (argument.isStarProjection()) nullableAnyType()
+            else argument.getType()
     }
 
-    val parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type) ?: return null
+    val typeParameter = type.typeConstructor().getTypeParameterClassifier() ?: return null
 
-    return Pair(parameterDescriptor, ReificationArgument(parameterDescriptor.name.asString(), isNullable, arrayDepth))
+    return Pair(typeParameter, ReificationArgument(typeParameter.getName().asString(), isNullable, arrayDepth))
 }
 
 fun unwrapInitialSignatureDescriptor(function: FunctionDescriptor): FunctionDescriptor =

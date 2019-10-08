@@ -27,11 +27,13 @@ import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil.createDirectoryIfMissing
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
@@ -155,7 +157,7 @@ abstract class GradleKotlinFrameworkSupportProvider(
         KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
     }
 
-    protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder, specifyPluginVersionIfNeeded: Boolean) {}
+    protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder<out PsiFile>, specifyPluginVersionIfNeeded: Boolean) {}
 
     protected abstract fun getDependencies(sdk: Sdk?): List<String>
     protected open fun getTestDependencies(): List<String> = listOf()

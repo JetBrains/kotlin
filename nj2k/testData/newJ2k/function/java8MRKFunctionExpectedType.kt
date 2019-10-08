@@ -23,7 +23,6 @@ internal class Test {
 
 internal class Java8Class {
     private val field = Java8Class()
-
     fun testStaticFunction() {
         val staticFunFromSameClass: Function0<*> = { staticFun() }
         staticFunFromSameClass.invoke()
@@ -40,7 +39,6 @@ internal class Java8Class {
         val obj = Java8Class()
         val memberFunFromSameClass: Function0<*> = { obj.memberFun() }
         memberFunFromSameClass.invoke()
-
         val anotherObj = Test()
         val memFunFromAnotherClass: Function0<*> = { anotherObj.memberFun() }
         memFunFromAnotherClass.invoke()
@@ -71,7 +69,6 @@ internal class Java8Class {
     fun testOverloads() {
         val constructorWithoutParams = { Test.testOverloads() }
         constructorWithoutParams.invoke()
-
         val constructorWithParam = { i: Int -> Test.testOverloads(i) }
         constructorWithParam.invoke(2) + 42
     }
@@ -87,7 +84,6 @@ internal class Java8Class {
     }
 
     companion object {
-
         fun staticFun(): Int {
             return 1
         }

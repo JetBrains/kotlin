@@ -26,6 +26,11 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File runtimeJarForTestsWithJdk8() {
+        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-jdk8.jar"));
+    }
+
+    @NotNull
     public static File minimalRuntimeJarForTests() {
         return assertExists(new File("dist/kotlin-stdlib-minimal-for-test.jar"));
     }

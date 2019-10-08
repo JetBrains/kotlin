@@ -7,11 +7,19 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.TaskState
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -46,7 +54,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val compileKotlinTask: KotlinCompile<T>
         get() = (target.project.tasks.getByName(compileKotlinTaskName) as KotlinCompile<T>)
 
-    val compileKotlinTaskHolder: TaskHolder<KotlinCompile<T>>
+    val compileKotlinTaskHolder: TaskProvider<KotlinCompile<T>>
         get() = target.project.locateTask(compileKotlinTaskName)!!
 
     // Don't declare this property in the constructor to avoid NPE
@@ -182,7 +190,69 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
 
     override fun toString(): String = "compilation '$compilationName' ($target)"
+
+    /** If a compilation is aware of its associate compilations' outputs being added to the classpath in a transformed or packaged way,
+     * it should point to those friend artifact files via this property.
+     * This is a workaround for Android variants that are compiled against
+     * JARs of each other, which is not exposed in the API in any other way than in the consumer's classpath. */
+    internal open val friendArtifacts: FileCollection
+        get() = target.project.files()
+
+    override val moduleName: String
+        get() = KotlinCompilationsModuleGroups.getModuleLeaderCompilation(this).takeIf { it != this }?.ownModuleName ?: ownModuleName
+
+    override fun associateWith(other: KotlinCompilation<*>) {
+        require(other.target == target) { "Only associations between compilations of a single target are supported" }
+        other as AbstractKotlinCompilation<*>
+
+        _associateWith += other
+
+        addAssociateCompilationDependencies(other)
+        KotlinCompilationsModuleGroups.unionModules(this, other)
+    }
+
+    protected open fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
+        target.project.dependencies.run {
+            val project = target.project
+
+            add(
+                compileDependencyConfigurationName,
+                project.files(Callable { other.output.classesDirs }, Callable { other.compileDependencyFiles })
+            )
+
+            if (this@AbstractKotlinCompilation is KotlinCompilationToRunnableFiles<*>) {
+                add(runtimeDependencyConfigurationName, project.files(Callable { other.output.allOutputs }))
+                if (other is KotlinCompilationToRunnableFiles<*>) {
+                    add(runtimeDependencyConfigurationName, project.files(Callable { other.runtimeDependencyFiles }))
+                }
+            }
+        }
+    }
+
+    private val _associateWith: MutableSet<AbstractKotlinCompilation<*>> = mutableSetOf()
+
+    override val associateWith: List<KotlinCompilation<*>>
+        get() = Collections.unmodifiableList(_associateWith.toList())
 }
+
+ internal val KotlinCompilation<*>.ownModuleName: String
+     get() {
+         val project = target.project
+         val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
+             ?: project.name
+         val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) "" else "_$compilationName"
+         return filterModuleName("$baseName$suffix")
+     }
+
+ internal val KotlinCompilation<*>.associateWithTransitiveClosure: Iterable<KotlinCompilation<*>>
+     get() = mutableSetOf<KotlinCompilation<*>>().apply {
+         fun visit(other: KotlinCompilation<*>) {
+             if (add(other)) {
+                 other.associateWith.forEach(::visit)
+             }
+         }
+         associateWith.forEach(::visit)
+     }
 
 abstract class AbstractKotlinCompilationToRunnableFiles<T : KotlinCommonOptions>(
     target: KotlinTarget,
@@ -206,55 +276,64 @@ internal fun KotlinCompilation<*>.disambiguateName(simpleName: String): String {
     )
 }
 
-internal object CompilationSourceSetUtil {
-    // Store only names in the cache to avoid memory leak through indirect references to the project
-    private data class TargetCompilationName(val targetName: String, val compilationName: String) {
-        fun toCompilation(project: Project): KotlinCompilation<*>? {
-            val kotlinExtension = project.kotlinExtension
-            val target = when (kotlinExtension) {
-                is KotlinMultiplatformExtension -> kotlinExtension.targets.findByName(targetName)
-                is KotlinSingleTargetExtension -> kotlinExtension.target.takeIf { it.name == targetName }
-                else -> null
-            }
-            return target?.compilations?.getByName(compilationName)
-        }
+ private typealias CompilationsBySourceSet = Map<KotlinSourceSet, Set<KotlinCompilation<*>>>
 
-        companion object {
-            fun from(compilation: KotlinCompilation<*>) = TargetCompilationName(compilation.target.name, compilation.name)
+internal object CompilationSourceSetUtil {
+    private const val EXT_NAME = "kotlin.compilations.bySourceSets"
+
+    @Suppress("UNCHECKED_CAST")
+    private fun getOrCreateProperty(
+        project: Project,
+        initialize: Property<CompilationsBySourceSet>.() -> Unit
+    ): Property<CompilationsBySourceSet> {
+        val ext = project.extensions.getByType(ExtraPropertiesExtension::class.java)
+        if (!ext.has(EXT_NAME)) {
+            ext.set(EXT_NAME, project.objects.property(Any::class.java as Class<CompilationsBySourceSet>).also(initialize))
         }
+        return ext.get(EXT_NAME) as Property<CompilationsBySourceSet>
     }
 
-    private val compilationsBySourceSetCache = WeakHashMap<Project, Map<String, Set<TargetCompilationName>>>()
+    fun compilationsBySourceSets(project: Project): CompilationsBySourceSet {
+        val compilationNamesBySourceSetName = getOrCreateProperty(project) {
+            var shouldFinalizeValue = false
 
-    /** Evaluates once per project. Don't access until all source set dependsOn relationships are built and all source sets are added
-     * to the relevant compilations. */
-    fun compilationsBySourceSets(project: Project): Map<KotlinSourceSet, Set<KotlinCompilation<*>>> {
-        val compilationNamesBySourceSetName = compilationsBySourceSetCache.computeIfAbsent(project) { _ ->
-            check(project.state.executed) { "Should only be computed after the project is evaluated" }
+            set(project.provider {
+                val kotlinExtension = project.kotlinExtension
+                val targets = when (kotlinExtension) {
+                    is KotlinMultiplatformExtension -> kotlinExtension.targets
+                    is KotlinSingleTargetExtension -> listOf(kotlinExtension.target)
+                    else -> emptyList()
+                }
 
-            val kotlinExtension = project.kotlinExtension
-            val targets = when (kotlinExtension) {
-                is KotlinMultiplatformExtension -> kotlinExtension.targets
-                is KotlinSingleTargetExtension -> listOf(kotlinExtension.target)
-                else -> emptyList()
+                val compilations = targets.flatMap { it.compilations }
+
+                val result = compilations
+                    .flatMap { compilation -> compilation.allKotlinSourceSets.map { sourceSet -> compilation to sourceSet } }
+                    .groupBy(
+                        { (_, sourceSet) -> sourceSet },
+                        valueTransform = { (compilation, _) -> compilation }
+                    )
+                    .mapValues { (_, compilations) -> compilations.toSet() }
+
+                if (shouldFinalizeValue) {
+                    set(result)
+                }
+
+                return@provider result
+            })
+
+            project.gradle.taskGraph.whenReady { shouldFinalizeValue = true }
+
+            // In case the value is first queried after the task graph has been calculated, finalize the value as soon as a task executes:
+            object : TaskExecutionListener {
+                override fun beforeExecute(task: Task) = Unit
+                override fun afterExecute(task: Task, state: TaskState) {
+                    shouldFinalizeValue = true
+                }
             }
-
-            val compilations = targets.flatMap { it.compilations }
-
-            compilations
-                .flatMap { compilation -> compilation.allKotlinSourceSets.map { sourceSet -> compilation to sourceSet } }
-                .groupBy(
-                    { (_, sourceSet) -> sourceSet.name },
-                    valueTransform = { (compilation, _) -> TargetCompilationName.from(compilation) }
-                )
-                .mapValues { (_, compilations) -> compilations.toSet() }
         }
 
-        return compilationNamesBySourceSetName.entries.associate { (sourceSetName, compilationNames) ->
-            project.kotlinExtension.sourceSets.getByName(sourceSetName).to(
-                compilationNames.map { checkNotNull(it.toCompilation(project)) }.toSet()
-            )
-        }
+        return compilationNamesBySourceSetName.get()
     }
 
     fun sourceSetsInMultipleCompilations(project: Project) =
@@ -262,3 +341,8 @@ internal object CompilationSourceSetUtil {
             sourceSet.name.takeIf { compilations.size > 1 }
         }
 }
+
+private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
+
+private fun filterModuleName(moduleName: String): String =
+    moduleName.replace(invalidModuleNameCharactersRegex, "_")

@@ -1,4 +1,4 @@
-internal annotation class Anon(val stringArray: Array<String>, val intArray: IntArray, // string
+internal annotation class Anon(val stringArray: Array<String>, val intArray: IntArray,  // string
                                val string: String)
 
 @Anon(string = "a", stringArray = ["a", "b"], intArray = [1, 2])
@@ -9,4 +9,4 @@ internal annotation class I
 internal annotation class J
 
 @Target
-internal annotation class K
+internal annotation class K 

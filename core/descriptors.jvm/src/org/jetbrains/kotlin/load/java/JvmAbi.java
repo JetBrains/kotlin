@@ -50,9 +50,12 @@ public final class JvmAbi {
 
     public static final String IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS = "-impl";
 
+    /**
+     * @param baseName JVM name of the property getter since Kotlin 1.4, or Kotlin name of the property otherwise.
+     */
     @NotNull
-    public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
-        return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;
+    public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull String baseName) {
+        return baseName + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;
     }
 
     @NotNull

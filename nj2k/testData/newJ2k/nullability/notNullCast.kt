@@ -1,6 +1,5 @@
 class Passenger {
     open class PassParent
-
     class PassChild : PassParent()
 
     fun provideNullable(p: Int): PassParent? {
@@ -22,6 +21,5 @@ class Passenger {
     }
 
     fun accept1(p: PassChild?) {}
-
     fun accept2(p: PassChild?) {}
 }

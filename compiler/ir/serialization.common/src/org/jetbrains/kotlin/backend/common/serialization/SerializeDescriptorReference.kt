@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.String as ProtoString
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoString
+import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isAccessor
 import org.jetbrains.kotlin.ir.util.isGetter
 import org.jetbrains.kotlin.ir.util.isSetter
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
@@ -20,7 +22,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 open class DescriptorReferenceSerializer(
     val declarationTable: DeclarationTable,
     val serializeString: (String) -> ProtoString,
-    mangler: KotlinMangler): KotlinMangler by mangler {
+    val serializeFqName: (FqName) -> ProtoFqName
+) {
 
     private fun isEnumSpecialMember(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor !is SimpleFunctionDescriptor) return false
@@ -28,14 +31,14 @@ open class DescriptorReferenceSerializer(
         return DescriptorFactory.isEnumValueOfMethod(descriptor) || DescriptorFactory.isEnumValuesMethod(descriptor)
     }
 
-    fun extractPackageAndClassFqns(descriptor: DeclarationDescriptor): Pair<String, String>? {
+    fun extractPackageAndClassFqns(descriptor: DeclarationDescriptor): Pair<FqName, FqName>? {
         val containingDeclaration = descriptor.containingDeclaration
         return when (containingDeclaration) {
             is ClassDescriptor -> {
                 val classId = containingDeclaration.classId ?: return null
-                Pair(classId.packageFqName.toString(), classId.relativeClassName.toString())
+                Pair(classId.packageFqName, classId.relativeClassName)
             }
-            is PackageFragmentDescriptor -> Pair(containingDeclaration.fqName.toString(), "")
+            is PackageFragmentDescriptor -> Pair(containingDeclaration.fqName, FqName.ROOT)
             is PropertyDescriptor -> if (descriptor !is TypeParameterDescriptor) null else {
                 extractPackageAndClassFqns(containingDeclaration)
             }
@@ -51,7 +54,7 @@ open class DescriptorReferenceSerializer(
 
         val descriptor = declaration.descriptor
 
-        if (!declaration.isExported() &&
+        if (!declarationTable.isExportedDeclaration(declaration) &&
             !((declaration as? IrDeclarationWithVisibility)?.visibility == Visibilities.INVISIBLE_FAKE)) {
             return null
         }
@@ -78,7 +81,7 @@ open class DescriptorReferenceSerializer(
         val realDeclaration = if (isFakeOverride) {
             when (declaration) {
                 is IrSimpleFunction -> declaration.resolveFakeOverrideMaybeAbstract()
-                is IrField -> declaration.resolveFakeOverrideMaybeAbstract()
+                is IrField -> declaration.resolveFakeOverride()
                 is IrProperty -> declaration.resolveFakeOverrideMaybeAbstract()
                 else -> error("Unexpected fake override declaration")
             }
@@ -108,11 +111,10 @@ open class DescriptorReferenceSerializer(
         } else descriptor.name.toString()
 
         val uniqId = discoverableDescriptorsDeclaration?.let { declarationTable.uniqIdByDeclaration(it) }
-        uniqId?.let { declarationTable.descriptors.put(discoverableDescriptorsDeclaration.descriptor, it) }
 
         val proto = ProtoDescriptorReference.newBuilder()
-            .setPackageFqName(serializeString(packageFqName))
-            .setClassFqName(serializeString(classFqName))
+            .setPackageFqName(serializeFqName(packageFqName))
+            .setClassFqName(serializeFqName(classFqName))
             .setName(serializeString(nameString))
 
         if (uniqId != null) proto.setUniqId(protoUniqId(uniqId))

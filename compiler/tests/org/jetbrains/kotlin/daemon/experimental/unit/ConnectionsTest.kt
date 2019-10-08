@@ -241,7 +241,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         { daemons -> daemons[0].daemon },
         { d -> d.getDaemonInfo() },
         { d -> d.registerClient(generateClient()) },
-        { d -> -1 },
+        { _ -> -1 },
         1.takeIf { shouldCheckNumber },
         extraAction
     )
@@ -351,6 +351,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                 val servicesClient = services.clientSide
                 val compResultsClient = kotlinCompilerClient.createCompResults().clientSide
                 val threadCount = 10
+                @UseExperimental(ObsoleteCoroutinesApi::class)
                 fun runThread(i: Int) =
                     async(newSingleThreadContext("thread_$i")) {
                         val jar = tmpdir.absolutePath + File.separator + "hello.$i.jar"

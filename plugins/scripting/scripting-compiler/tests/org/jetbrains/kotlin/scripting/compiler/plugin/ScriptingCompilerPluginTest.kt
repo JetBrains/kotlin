@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
+import com.intellij.openapi.Disposable
 import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.scripting.definitions.discoverScriptTemplatesInClass
 import org.jetbrains.kotlin.scripting.definitions.loadScriptTemplatesFromClasspath
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -37,7 +37,7 @@ import org.junit.Assert
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
-class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
+class ScriptingCompilerPluginTest : TestCase() {
 
     companion object {
         const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData"
@@ -54,7 +54,11 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
     val scriptingClasspath = listOf("kotlin-scripting-common.jar").map { File(kotlinPaths.libPath, it) }
 
     private fun createEnvironment(
-        sources: List<String>, destDir: File, messageCollector: MessageCollector, confBody: CompilerConfiguration.() -> Unit
+        sources: List<String>,
+        destDir: File,
+        messageCollector: MessageCollector,
+        disposable: Disposable,
+        confBody: CompilerConfiguration.() -> Unit
     ): KotlinCoreEnvironment {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
             put<MessageCollector>(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
@@ -64,7 +68,7 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
         }
         configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, ScriptingCompilerConfigurationComponentRegistrar())
 
-        return KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     fun testScriptResolverEnvironmentArgsParsing() {
@@ -90,138 +94,150 @@ class ScriptingCompilerPluginTest : TestCaseWithTmpdir() {
 
     fun testLazyScriptDefinitionDiscovery() {
 
-        // Three tests in one function: the direct loading, the discovery code separately, and as a part of regular compilation
-        // tests are combined to avoid multiple compilation of script definition modules
+        withTempDir { tmpdir ->
+            withDisposable { disposable ->
+                // Three tests in one function: the direct loading, the discovery code separately, and as a part of regular compilation
+                // tests are combined to avoid multiple compilation of script definition modules
 
-        val defsOut = File(tmpdir, "testLazyScriptDefinition/out/defs")
-        val defsSrc = File(TEST_DATA_DIR, "lazyDefinitions/definitions")
-        val scriptsOut = File(tmpdir, "testLazyScriptDefinition/out/scripts")
-        val scriptsSrc = File(TEST_DATA_DIR, "lazyDefinitions/scripts")
-        val scriptsOut2 = File(tmpdir, "testLazyScriptDefinition/out/scripts2")
-        val defClasses = listOf("TestScriptWithReceivers", "TestScriptWithSimpleEnvVars")
+                val defsOut = File(tmpdir, "testLazyScriptDefinition/out/defs")
+                val defsSrc = File(TEST_DATA_DIR, "lazyDefinitions/definitions")
+                val scriptsOut = File(tmpdir, "testLazyScriptDefinition/out/scripts")
+                val scriptsSrc = File(TEST_DATA_DIR, "lazyDefinitions/scripts")
+                val scriptsOut2 = File(tmpdir, "testLazyScriptDefinition/out/scripts2")
+                val defClasses = listOf("TestScriptWithReceivers", "TestScriptWithSimpleEnvVars")
 
-        val messageCollector = TestMessageCollector()
+                val messageCollector = TestMessageCollector()
 
-        val definitionsCompileResult = KotlinToJVMBytecodeCompiler.compileBunchOfSources(
-            createEnvironment(defClasses.map { File(defsSrc, "$it.kt").canonicalPath }, defsOut, messageCollector) {
-                addJvmClasspathRoots(runtimeClasspath)
-                addJvmClasspathRoots(scriptingClasspath)
+                val definitionsCompileResult = KotlinToJVMBytecodeCompiler.compileBunchOfSources(
+                    createEnvironment(defClasses.map { File(defsSrc, "$it.kt").canonicalPath }, defsOut, messageCollector, disposable) {
+                        addJvmClasspathRoots(runtimeClasspath)
+                        addJvmClasspathRoots(scriptingClasspath)
+                    }
+                )
+
+                assertTrue(definitionsCompileResult) {
+                    "Compilation of script definitions failed: $messageCollector"
+                }
+
+                messageCollector.clear()
+
+                loadScriptTemplatesFromClasspath(
+                    listOf("TestScriptWithReceivers", "TestScriptWithSimpleEnvVars"),
+                    listOf(defsOut),
+                    emptyList(),
+                    this::class.java.classLoader,
+                    defaultJvmScriptingHostConfiguration,
+                    messageCollector.reporter
+                ).toList()
+
+                for (def in defClasses) {
+                    assertTrue(messageCollector.messages.any { it.message.contains("Configure scripting: Added template $def") }) {
+                        "Missing messages from loading sequence (should contain \"Added template $def\"):\n$messageCollector"
+                    }
+                    assertTrue(messageCollector.messages.none { it.message.contains("Configure scripting: loading script definition class $def") }) {
+                        "Unexpected messages from loading sequence (should not contain \"loading script definition class $def\"):\n$messageCollector"
+                    }
+                }
+
+                messageCollector.clear()
+
+                // chacking lazy discovery
+
+                val templatesDir = File(defsOut, SCRIPT_DEFINITION_MARKERS_PATH).also { it.mkdirs() }
+                for (def in defClasses) {
+                    File(templatesDir, def).createNewFile()
+                }
+
+                val lazyDefsSeq =
+                    discoverScriptTemplatesInClasspath(
+                        listOf(defsOut),
+                        this::class.java.classLoader,
+                        defaultJvmScriptingHostConfiguration,
+                        messageCollector.reporter
+                    )
+
+                assertTrue(messageCollector.messages.isEmpty()) {
+                    "Unexpected messages from discovery sequence (should be empty):\n$messageCollector"
+                }
+
+                val lazyDefs = lazyDefsSeq.toList()
+
+                for (def in defClasses) {
+                    assertTrue(messageCollector.messages.any { it.message.contains("Configure scripting: Added template $def") }) {
+                        "Missing messages from discovery sequence (should contain \"Added template $def\"):\n$messageCollector"
+                    }
+                    assertTrue(messageCollector.messages.none { it.message.contains("Configure scripting: loading script definition class $def") }) {
+                        "Unexpected messages from discovery sequence (should not contain \"loading script definition class $def\"):\n$messageCollector"
+                    }
+                }
+
+                messageCollector.clear()
+
+                val scriptFiles = scriptsSrc.listFiles { file: File -> file.extension == "kts" }.map { it.canonicalPath }
+
+                val scriptsCompileEnv = createEnvironment(scriptFiles, scriptsOut, messageCollector, disposable) {
+                    addJvmClasspathRoots(runtimeClasspath)
+                    addJvmClasspathRoots(scriptingClasspath)
+                    addJvmClasspathRoot(defsOut)
+                    addAll(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, lazyDefs)
+                }
+
+                val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(scriptsCompileEnv)
+
+                assertTrue(res) {
+                    "Failed to compile scripts:\n$messageCollector"
+                }
+
+                val cp = (runtimeClasspath + scriptingClasspath + defsOut).joinToString(File.pathSeparator)
+                val exitCode = K2JVMCompiler().exec(System.err, "-cp", cp, *(scriptFiles.toTypedArray()), "-d", scriptsOut2.canonicalPath)
+
+                Assert.assertEquals(ExitCode.OK, exitCode)
             }
-        )
-
-        assertTrue(definitionsCompileResult) {
-            "Compilation of script definitions failed: $messageCollector"
         }
-
-        messageCollector.clear()
-
-        loadScriptTemplatesFromClasspath(
-            listOf("TestScriptWithReceivers", "TestScriptWithSimpleEnvVars"),
-            listOf(defsOut), emptyList(), this::class.java.classLoader, defaultJvmScriptingHostConfiguration, messageCollector.reporter
-        ).toList()
-
-        for (def in defClasses) {
-            assertTrue(messageCollector.messages.any { it.message.contains("Configure scripting: Added template $def") }) {
-                "Missing messages from loading sequence (should contain \"Added template $def\"):\n$messageCollector"
-            }
-            assertTrue(messageCollector.messages.none { it.message.contains("Configure scripting: loading script definition class $def") }) {
-                "Unexpected messages from loading sequence (should not contain \"loading script definition class $def\"):\n$messageCollector"
-            }
-        }
-
-        messageCollector.clear()
-
-        // chacking lazy discovery
-
-        val templatesDir = File(defsOut, SCRIPT_DEFINITION_MARKERS_PATH).also { it.mkdirs() }
-        for (def in defClasses) {
-            File(templatesDir, def).createNewFile()
-        }
-
-        val lazyDefsSeq =
-            discoverScriptTemplatesInClasspath(
-                listOf(defsOut),
-                this::class.java.classLoader,
-                defaultJvmScriptingHostConfiguration,
-                messageCollector.reporter
-            )
-
-        assertTrue(messageCollector.messages.isEmpty()) {
-            "Unexpected messages from discovery sequence (should be empty):\n$messageCollector"
-        }
-
-        val lazyDefs = lazyDefsSeq.toList()
-
-        for (def in defClasses) {
-            assertTrue(messageCollector.messages.any { it.message.contains("Configure scripting: Added template $def") }) {
-                "Missing messages from discovery sequence (should contain \"Added template $def\"):\n$messageCollector"
-            }
-            assertTrue(messageCollector.messages.none { it.message.contains("Configure scripting: loading script definition class $def") }) {
-                "Unexpected messages from discovery sequence (should not contain \"loading script definition class $def\"):\n$messageCollector"
-            }
-        }
-
-        messageCollector.clear()
-
-        val scriptFiles = scriptsSrc.listFiles { file: File -> file.extension == "kts" }.map { it.canonicalPath}
-
-        val scriptsCompileEnv = createEnvironment(scriptFiles, scriptsOut, messageCollector) {
-            addJvmClasspathRoots(runtimeClasspath)
-            addJvmClasspathRoots(scriptingClasspath)
-            addJvmClasspathRoot(defsOut)
-            addAll(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, lazyDefs)
-        }
-
-        val res = KotlinToJVMBytecodeCompiler.compileBunchOfSources(scriptsCompileEnv)
-
-        assertTrue(res) {
-            "Failed to compile scripts:\n$messageCollector"
-        }
-
-        val cp = (runtimeClasspath + scriptingClasspath + defsOut).joinToString(File.pathSeparator)
-        val exitCode = K2JVMCompiler().exec(System.err, "-cp", cp, *(scriptFiles.toTypedArray()), "-d", scriptsOut2.canonicalPath)
-
-        Assert.assertEquals(ExitCode.OK, exitCode)
     }
 
     fun testLazyScriptDefinitionOtherAnnotation() {
 
-        val defsOut = File(tmpdir, "testLazyScriptDefinition/out/otherAnn")
-        val defsSrc = File(TEST_DATA_DIR, "lazyDefinitions/definitions")
-        val defClasses = listOf("TestScriptWithOtherAnnotation")
+        withTempDir { tmpdir ->
+            withDisposable { disposable ->
+                val defsOut = File(tmpdir, "testLazyScriptDefinition/out/otherAnn")
+                val defsSrc = File(TEST_DATA_DIR, "lazyDefinitions/definitions")
+                val defClasses = listOf("TestScriptWithOtherAnnotation")
 
-        val messageCollector = TestMessageCollector()
+                val messageCollector = TestMessageCollector()
 
-        val definitionsCompileResult = KotlinToJVMBytecodeCompiler.compileBunchOfSources(
-            createEnvironment(defClasses.map { File(defsSrc, "$it.kt").canonicalPath }, defsOut, messageCollector) {
-                addJvmClasspathRoots(runtimeClasspath)
-                addJvmClasspathRoots(scriptingClasspath)
+                val definitionsCompileResult = KotlinToJVMBytecodeCompiler.compileBunchOfSources(
+                    createEnvironment(defClasses.map { File(defsSrc, "$it.kt").canonicalPath }, defsOut, messageCollector, disposable) {
+                        addJvmClasspathRoots(runtimeClasspath)
+                        addJvmClasspathRoots(scriptingClasspath)
+                    }
+                )
+
+                assertTrue(definitionsCompileResult) {
+                    "Compilation of script definitions failed: $messageCollector"
+                }
+
+                val templatesDir = File(defsOut, SCRIPT_DEFINITION_MARKERS_PATH).also { it.mkdirs() }
+                for (def in defClasses) {
+                    File(templatesDir, def).createNewFile()
+                }
+
+                messageCollector.clear()
+
+                discoverScriptTemplatesInClasspath(
+                    listOf(defsOut),
+                    this::class.java.classLoader,
+                    defaultJvmScriptingHostConfiguration,
+                    messageCollector.reporter
+                ).toList()
+
+                assertTrue(
+                    messageCollector.messages.isNotEmpty()
+                            && messageCollector.messages.all { it.message.contains("s not marked with any known kotlin script annotation") }
+                ) {
+                    "Unexpected messages from discovery sequence:\n$messageCollector"
+                }
             }
-        )
-
-        assertTrue(definitionsCompileResult) {
-            "Compilation of script definitions failed: $messageCollector"
-        }
-
-        val templatesDir = File(defsOut, SCRIPT_DEFINITION_MARKERS_PATH).also { it.mkdirs() }
-        for (def in defClasses) {
-            File(templatesDir, def).createNewFile()
-        }
-
-        messageCollector.clear()
-
-        discoverScriptTemplatesInClasspath(
-            listOf(defsOut),
-            this::class.java.classLoader,
-            defaultJvmScriptingHostConfiguration,
-            messageCollector.reporter
-        ).toList()
-
-        assertTrue(
-            messageCollector.messages.isNotEmpty()
-                    && messageCollector.messages.all { it.message.contains("s not marked with any known kotlin script annotation") }
-        ) {
-            "Unexpected messages from discovery sequence:\n$messageCollector"
         }
     }
 }

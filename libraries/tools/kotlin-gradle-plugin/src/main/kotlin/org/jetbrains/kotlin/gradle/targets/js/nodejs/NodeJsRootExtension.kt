@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
@@ -36,9 +37,14 @@ open class NodeJsRootExtension(val rootProject: Project) {
 
     var packageManager: NpmApi = Yarn
 
-    class Experimental {
-        var generateKotlinExternals: Boolean = false
-        var discoverTypes: Boolean = false
+    private val projectProperties = PropertiesProvider(rootProject)
+
+    inner class Experimental {
+        val generateKotlinExternals: Boolean
+            get() = projectProperties.jsGenerateExternals == true
+
+        val discoverTypes: Boolean
+            get() = projectProperties.jsDiscoverTypes == true
     }
 
     val experimental = Experimental()
@@ -51,6 +57,9 @@ open class NodeJsRootExtension(val rootProject: Project) {
 
     val rootPackageDir: File
         get() = rootProject.buildDir.resolve("js")
+
+    internal val rootNodeModulesStateFile: File
+        get() = rootPackageDir.resolve("node_modules.state")
 
     val projectPackagesDir: File
         get() = rootPackageDir.resolve("packages")

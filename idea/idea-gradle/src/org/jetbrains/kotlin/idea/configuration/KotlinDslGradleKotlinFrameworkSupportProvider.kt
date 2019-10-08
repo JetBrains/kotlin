@@ -24,6 +24,7 @@ import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.GSK_KOTLIN_VERSION_PROPERTY_NAME
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getKotlinGradlePluginClassPathSnippet
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
+import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinDslGradleFrameworkSupportProvider
@@ -137,13 +139,33 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
         super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
         val jvmTarget = getDefaultJvmTarget(rootModel.sdk, bundledRuntimeVersion())
         if (jvmTarget != null) {
+            addJvmTargetTask(buildScriptData)
+        }
+
+        val artifactId = getStdlibArtifactId(rootModel.sdk, bundledRuntimeVersion())
+        buildScriptData.addDependencyNotation(composeDependency(buildScriptData, artifactId))
+    }
+
+    private fun addJvmTargetTask(buildScriptData: BuildScriptDataBuilder) {
+        val minGradleVersion = GradleVersion.version("5.0")
+        if (buildScriptData.gradleVersion >= minGradleVersion)
+            buildScriptData
+                .addOther("""
+                    tasks {
+                        compileKotlin {
+                            kotlinOptions.jvmTarget = "1.8"
+                        }
+                        compileTestKotlin {
+                            kotlinOptions.jvmTarget = "1.8"
+                        }
+                    }""".trimIndent()
+                )
+        else {
             buildScriptData
                 .addImport("import org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
                 .addOther("tasks.withType<KotlinCompile> {\n    kotlinOptions.jvmTarget = \"1.8\"\n}\n")
         }
 
-        val artifactId = getStdlibArtifactId(rootModel.sdk, bundledRuntimeVersion())
-        buildScriptData.addDependencyNotation(composeDependency(buildScriptData, artifactId))
     }
 }
 

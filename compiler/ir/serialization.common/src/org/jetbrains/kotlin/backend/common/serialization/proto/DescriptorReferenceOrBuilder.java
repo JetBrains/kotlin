@@ -8,31 +8,31 @@ public interface DescriptorReferenceOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String package_fq_name = 1;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
    */
   boolean hasPackageFqName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String package_fq_name = 1;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getPackageFqName();
+  org.jetbrains.kotlin.backend.common.serialization.proto.FqName getPackageFqName();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String class_fq_name = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
    */
   boolean hasClassFqName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String class_fq_name = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getClassFqName();
+  org.jetbrains.kotlin.backend.common.serialization.proto.FqName getClassFqName();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getName();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>

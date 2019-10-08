@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
@@ -32,6 +33,8 @@ import org.jetbrains.kotlin.ir.types.isPrimitiveType as irTypePredicates_isPrimi
 interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesContext, TypeSystemCommonBackendContext {
 
     val irBuiltIns: IrBuiltIns
+
+    override val isErrorTypeAllowed: Boolean get() = true
 
     override fun KotlinTypeMarker.asSimpleType() = this as? SimpleTypeMarker
 
@@ -236,6 +239,14 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return maxInArguments + 1
     }
 
+    override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
+        throw IllegalStateException("Should not be called")
+    }
+
+    override fun TypeConstructorMarker.isError(): Boolean {
+        throw IllegalStateException("Should not be called")
+    }
+
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? =
         irBuiltIns.intType as IrSimpleType
 
@@ -255,6 +266,15 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker =
         TODO("IrTypeSystemContext doesn't support constraint system resolution")
+
+    override fun nullableAnyType(): SimpleTypeMarker =
+        irBuiltIns.anyNType as IrSimpleType
+
+    override fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker =
+        irBuiltIns.arrayClass.typeWith(componentType as IrType)
+
+    override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean =
+        (this as IrType).isArray() || isNullableArray()
 
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val symbol = this as IrClassifierSymbol
@@ -288,9 +308,18 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         } ?: owner.superTypes.first()
 
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
-        // Code in inlineClassesUtils.kt loads the property with the same name and takes its type. This should have the same effect.
-        val irClass = (this as? IrType)?.classOrNull?.owner ?: return null
-        return irClass.primaryConstructor?.valueParameters?.singleOrNull()?.type
+        // Code in inlineClassesUtils.kt loads the property with the same name from the scope of the substituted type and takes its type.
+        // This code below should have the same effect.
+        val irClass = (this as? IrType)?.classOrNull?.owner?.takeIf { it.isInline } ?: return null
+        val inlineClassParameter = irClass.primaryConstructor?.valueParameters?.singleOrNull()
+        return inlineClassParameter?.let { parameter ->
+            // Taking only the type parameters of the class (and not its outer classes) is OK since inner classes are always top level
+            IrTypeSubstitutor(
+                irClass.typeParameters.map { it.symbol },
+                (this as? IrSimpleType)?.arguments.orEmpty(),
+                irBuiltIns
+            ).substitute(parameter.type)
+        }
     }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
@@ -316,6 +345,17 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? =
         (this as IrClassSymbol).owner.fqNameWhenAvailable?.toUnsafe()
+
+    override fun TypeParameterMarker.getName(): Name =
+        (this as IrTypeParameterSymbol).owner.name
+
+    override fun TypeParameterMarker.isReified(): Boolean =
+        (this as IrTypeParameterSymbol).owner.isReified
+
+    override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {
+        val irClass = (this as IrType).classOrNull?.owner
+        return irClass != null && (irClass.isInterface || irClass.isAnnotationClass)
+    }
 }
 
 fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {

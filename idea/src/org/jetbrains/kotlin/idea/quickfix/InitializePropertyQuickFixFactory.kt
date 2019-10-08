@@ -58,7 +58,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
             val element = element ?: return
             val descriptor = element.resolveToDescriptorIfAny() as? PropertyDescriptor ?: return
-            val initializerText = CodeInsightUtils.defaultInitializer(descriptor.type) ?: "null"
+            val initializerText = CodeInsightUtils.defaultInitializer(descriptor.type) ?: "TODO()"
             val initializer = element.setInitializer(KtPsiFactory(project).createExpression(initializerText))!!
             if (editor != null) {
                 PsiDocumentManager.getInstance(project).commitDocument(editor.document)

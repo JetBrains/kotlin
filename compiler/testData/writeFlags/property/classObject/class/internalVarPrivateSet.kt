@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class Test {
   companion object {
     var prop: Int = 0

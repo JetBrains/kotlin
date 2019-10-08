@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.getEnvironment
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
-import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
@@ -81,8 +80,6 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             }
         }
         project.messageBus.connect(project).subscribe(GradleSettingsListener.TOPIC, listener)
-
-        initializeScriptModificationListener(project)
     }
 
     // NOTE: control flow here depends on suppressing exceptions from loadGradleTemplates calls

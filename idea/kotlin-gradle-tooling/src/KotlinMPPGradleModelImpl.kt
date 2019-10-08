@@ -82,6 +82,12 @@ data class KotlinCompilationArgumentsImpl(
     )
 }
 
+data class KotlinNativeCompilationExtensionsImpl(
+    override val konanTarget: String? = null
+) : KotlinNativeCompilationExtensions {
+    constructor(extensions: KotlinNativeCompilationExtensions) : this(extensions.konanTarget)
+}
+
 data class KotlinCompilationImpl(
     override val name: String,
     override val sourceSets: Collection<KotlinSourceSet>,
@@ -89,7 +95,8 @@ data class KotlinCompilationImpl(
     override val output: KotlinCompilationOutput,
     override val arguments: KotlinCompilationArguments,
     override val dependencyClasspath: Array<String>,
-    override val kotlinTaskProperties: KotlinTaskProperties
+    override val kotlinTaskProperties: KotlinTaskProperties,
+    override val nativeExtensions: KotlinNativeCompilationExtensions
 ) : KotlinCompilation {
 
     // create deep copy
@@ -104,7 +111,8 @@ data class KotlinCompilationImpl(
         KotlinCompilationOutputImpl(kotlinCompilation.output),
         KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
         kotlinCompilation.dependencyClasspath,
-        KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties)
+        KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties),
+        KotlinNativeCompilationExtensionsImpl(kotlinCompilation.nativeExtensions)
     ) {
         disambiguationClassifier = kotlinCompilation.disambiguationClassifier
         platform = kotlinCompilation.platform
@@ -150,7 +158,7 @@ data class KotlinTargetImpl(
             }
         }.toList(),
         target.testTasks.map { initialTestTask ->
-            (cloningCache[initialTestTask] as? KotlinTestTask) ?: KotlinTestTaskImpl(initialTestTask.taskName).also {
+            (cloningCache[initialTestTask] as? KotlinTestTask) ?: KotlinTestTaskImpl(initialTestTask.taskName, initialTestTask.compilationName).also {
                 cloningCache[initialTestTask] = it
             }
         },
@@ -160,12 +168,14 @@ data class KotlinTargetImpl(
 }
 
 data class KotlinTestTaskImpl(
-    override val taskName: String
+    override val taskName: String,
+    override val compilationName: String
 ) : KotlinTestTask
 
 data class ExtraFeaturesImpl(
     override val coroutinesState: String?,
-    override val isHMPPEnabled: Boolean
+    override val isHMPPEnabled: Boolean,
+    override val isNativeDependencyPropagationEnabled: Boolean
 ) : ExtraFeatures
 
 data class KotlinMPPGradleModelImpl(
@@ -188,7 +198,11 @@ data class KotlinMPPGradleModelImpl(
                 cloningCache[initialTarget] = it
             }
         }.toList(),
-        ExtraFeaturesImpl(mppModel.extraFeatures.coroutinesState, mppModel.extraFeatures.isHMPPEnabled),
+        ExtraFeaturesImpl(
+            mppModel.extraFeatures.coroutinesState,
+            mppModel.extraFeatures.isHMPPEnabled,
+            mppModel.extraFeatures.isNativeDependencyPropagationEnabled
+        ),
         mppModel.kotlinNativeHome,
         mppModel.dependencyMap.map { it.key to it.value.deepCopy(cloningCache) }.toMap()
     )

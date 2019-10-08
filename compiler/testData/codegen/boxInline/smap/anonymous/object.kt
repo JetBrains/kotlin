@@ -1,5 +1,6 @@
 // FILE: 1.kt
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 package builders
 
 inline fun call(crossinline init: () -> Unit) {
@@ -41,7 +42,7 @@ Kotlin
 + 1 1.kt
 builders/_1Kt$call$1
 *L
-1#1,13:1
+1#1,14:1
 *E
 
 // FILE: 2.smap
@@ -57,7 +58,7 @@ _2Kt
 builders/_1Kt
 *L
 1#1,22:1
-6#2,5:23
+7#2,5:23
 *E
 *S KotlinDebug
 *F
@@ -77,6 +78,6 @@ builders/_1Kt$call$1
 + 2 2.kt
 _2Kt
 *L
-1#1,13:1
-10#2,2:14
+1#1,14:1
+10#2,2:15
 *E

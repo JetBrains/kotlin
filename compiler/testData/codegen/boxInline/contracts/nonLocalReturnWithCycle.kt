@@ -1,6 +1,7 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect +ReadDeserializedContracts
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME

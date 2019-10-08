@@ -21,16 +21,18 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.configureOrCreate
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
 class KotlinMultiplatformPlugin(
@@ -90,8 +92,6 @@ class KotlinMultiplatformPlugin(
         setupCompilerPluginOptions(project)
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
-
-        UnusedSourceSetsChecker.checkSourceSets(project)
     }
 
     private fun setupCompilerPluginOptions(project: Project) {
@@ -137,8 +137,17 @@ class KotlinMultiplatformPlugin(
             add(KotlinJsTargetPreset(project, kotlinPluginVersion))
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
-            HostManager().targets.forEach { _, target ->
-                add(KotlinNativeTargetPreset(target.presetName, project, target, kotlinPluginVersion))
+
+            // Note: modifying this set should also be reflected in the DSL code generator, see 'presetEntries.kt'
+            val testableNativeTargets = setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
+
+            HostManager().targets.forEach { (_, target) ->
+                add(
+                    if (target in testableNativeTargets)
+                        KotlinNativeTargetWithTestsPreset(target.presetName, project, target, kotlinPluginVersion)
+                    else
+                        KotlinNativeTargetPreset(target.presetName, project, target, kotlinPluginVersion)
+                )
             }
         }
     }
@@ -149,10 +158,6 @@ class KotlinMultiplatformPlugin(
             project.multiplatformExtension.run { isGradleMetadataExperimental && !isGradleMetadataAvailable }
         ) {
             SingleWarningPerBuild.show(project, GRADLE_NO_METADATA_WARNING)
-        }
-
-        if (!isGradleVersionAtLeast(4, 8) && project.multiplatformExtension.isGradleMetadataAvailable) {
-            SingleWarningPerBuild.show(project, GRADLE_OLD_METADATA_WARNING)
         }
 
         val targets = project.multiplatformExtension.targets
@@ -168,7 +173,7 @@ class KotlinMultiplatformPlugin(
             }
 
             // Publish the root publication only if Gradle metadata publishing is enabled:
-            project.tasks.withType(AbstractPublishToMaven::class.java).all { publishTask ->
+            project.tasks.withType(AbstractPublishToMaven::class.java).configureEach { publishTask ->
                 publishTask.onlyIf { publishTask.publication != rootPublication || project.multiplatformExtension.isGradleMetadataAvailable }
             }
 
@@ -249,6 +254,12 @@ class KotlinMultiplatformPlugin(
             target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
                 sourceSets.findByName(testCompilation.defaultSourceSetName)?.dependsOn(test)
             }
+        }
+
+        UnusedSourceSetsChecker.checkSourceSets(project)
+
+        project.whenEvaluated {
+            checkSourceSetVisibilityRequirements(project)
         }
     }
 

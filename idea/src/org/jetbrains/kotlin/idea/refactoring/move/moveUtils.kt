@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move
 
+import com.intellij.ide.util.DirectoryUtil
+import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMemberHandler
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
@@ -27,11 +31,15 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addDelayedImportRequest
+import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -46,6 +54,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.io.File
+import java.nio.file.Path
 import java.util.*
 
 sealed class ContainerInfo {
@@ -125,11 +135,10 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
         val declaration by lazy {
             var result = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return@lazy null
 
-            if (descriptor.isCompanionObject()
-                && bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, refExpr] != null
+            if (descriptor.isCompanionObject() &&
+                bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, refExpr] !== null
             ) {
-                if (result !is KtObjectDeclaration) return@lazy null
-                result = result.containingClassOrObject ?: result
+                result = (result as? KtObjectDeclaration)?.containingClassOrObject ?: result
             }
 
             result
@@ -148,10 +157,10 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
             }
 
             if (!isExtension) {
-                if (!(containingDescriptor is PackageFragmentDescriptor
-                            || containingDescriptor is ClassDescriptor && containingDescriptor.kind == ClassKind.OBJECT
-                            || descriptor is JavaCallableMemberDescriptor && ((declaration as? PsiMember)?.hasModifierProperty(PsiModifier.STATIC) == true))
-                ) return null
+                val isCompatibleDescriptor = containingDescriptor is PackageFragmentDescriptor ||
+                        containingDescriptor is ClassDescriptor && containingDescriptor.kind == ClassKind.OBJECT ||
+                        descriptor is JavaCallableMemberDescriptor && ((declaration as? PsiMember)?.hasModifierProperty(PsiModifier.STATIC) == true)
+                if (!isCompatibleDescriptor) return null
             }
         }
 
@@ -387,12 +396,11 @@ private fun isCallableReference(reference: PsiReference): Boolean {
 
 fun guessNewFileName(declarationsToMove: Collection<KtNamedDeclaration>): String? {
     if (declarationsToMove.isEmpty()) return null
-
     val representative = declarationsToMove.singleOrNull()
         ?: declarationsToMove.filterIsInstance<KtClassOrObject>().singleOrNull()
-    representative?.let { return "${it.name}.${KotlinFileType.EXTENSION}" }
-
-    return declarationsToMove.first().containingFile.name
+    val newFileName = representative?.run { "$name.${KotlinFileType.EXTENSION}" }
+        ?: declarationsToMove.first().containingFile.name
+    return newFileName.capitalize()
 }
 
 // returns true if successful
@@ -640,4 +648,25 @@ fun collectOuterInstanceReferences(member: KtNamedDeclaration): List<OuterInstan
     val result = SmartList<OuterInstanceReferenceUsageInfo>()
     traverseOuterInstanceReferences(member, false) { result += it }
     return result
+}
+
+@Throws(IncorrectOperationException::class)
+internal fun getOrCreateDirectory(path: String, project: Project): PsiDirectory {
+
+    File(path).toPsiDirectory(project)?.let { return it }
+
+    return project.executeCommand(RefactoringBundle.message("move.title"), null) {
+        runWriteAction {
+            val fixUpSeparators = path.replace(File.separatorChar, '/')
+            DirectoryUtil.mkdirs(PsiManager.getInstance(project), fixUpSeparators)
+        }
+    }
+}
+
+internal fun getTargetPackageFqName(targetContainer: PsiElement): FqName? {
+    if (targetContainer is PsiDirectory) {
+        val targetPackage = targetContainer.getPackage()
+        return if (targetPackage != null) FqName(targetPackage.qualifiedName) else null
+    }
+    return if (targetContainer is KtFile) targetContainer.packageFqName else null
 }

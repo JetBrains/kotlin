@@ -48,6 +48,10 @@ class ClassWrapper(
         return classKind == ClassKind.INTERFACE
     }
 
+    fun isInner(): Boolean {
+        return modifiers.isInner()
+    }
+
     fun defaultConstructorVisibility(): Visibility {
         return if (isObject() || isSealed() || isEnum())
             Visibilities.PRIVATE

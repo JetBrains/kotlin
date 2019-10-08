@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
@@ -173,7 +170,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         return JvmProtoBufUtil.readClassDataFrom(data, strings)
     }
 
-    private fun ConeClassifierSymbol?.toDefaultResolvedTypeRef(classId: ClassId): FirResolvedTypeRef {
+    private fun FirClassifierSymbol<*>?.toDefaultResolvedTypeRef(classId: ClassId): FirResolvedTypeRef {
         return this?.let {
             FirResolvedTypeRefImpl(
                 null, it.constructType(emptyList(), isNullable = false),
@@ -412,8 +409,7 @@ class KotlinDeserializedJvmSymbolsProvider(
 
 
     private fun findRegularClass(classId: ClassId): FirRegularClass? =
-        @Suppress("UNCHECKED_CAST")
-        (getClassLikeSymbolByFqName(classId) as? FirBasedSymbol<FirRegularClass>)?.fir
+        getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
 
     override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> =
         getClassDeclarations(classId)

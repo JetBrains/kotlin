@@ -5,7 +5,7 @@ FILE: noPrimaryConstructor.kt
 
         public constructor(x: R|kotlin/String|): R|NoPrimary| {
             super<R|kotlin/Any|>()
-            this#.R|/NoPrimary.x| = R|<local>/x|
+            this@R|/NoPrimary|.R|/NoPrimary.x| = R|<local>/x|
         }
 
         public constructor(): R|NoPrimary| {

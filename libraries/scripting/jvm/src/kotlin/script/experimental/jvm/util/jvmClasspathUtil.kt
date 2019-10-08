@@ -115,10 +115,10 @@ internal fun ClassLoader.rawClassPathFromKeyResourcePath(keyResourcePath: String
             (url.openConnection() as? JarURLConnection)?.jarFileURL?.toFileOrNull()
         } else url.toFileOrNull()?.let { file ->
             if (keyResourcePathDepth < 0) {
-                keyResourcePathDepth = keyResourcePath.trim('/').count { it == '/' }
+                keyResourcePathDepth = if (keyResourcePath.isBlank()) 0 else (keyResourcePath.trim('/').count { it == '/' } + 1)
             }
             var root = file
-            for (i in 1..keyResourcePathDepth) {
+            for (i in 0 until keyResourcePathDepth) {
                 root = root.parentFile
             }
             root

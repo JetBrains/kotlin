@@ -46,12 +46,8 @@ class Kapt3WorkersIT : Kapt3IT() {
 
     @Test
     fun testJavacIsLoadedOnce() {
-        // todo: actual minimum version is 4.3, but I had some problems. Investigate later.
-        // todo: consider minimum version for the whole class, with Gradle <4.3 all tests duplicate tests without workers
-        val gradleVersionRequired = GradleVersionRequired.AtLeast("4.5.1")
-
         val project =
-            Project("javacIsLoadedOnce", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+            Project("javacIsLoadedOnce", directoryPrefix = "kapt2")
         project.build("build") {
             assertSuccessful()
             assertSubstringCount("Loaded com.sun.tools.javac.util.Context from", 1)
@@ -60,37 +56,39 @@ class Kapt3WorkersIT : Kapt3IT() {
 
     @Test
     fun testKaptSkipped() {
-        val gradleVersionRequired = GradleVersionRequired.AtLeast("4.3")
-
         val project =
-            Project("kaptSkipped", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+            Project("kaptSkipped", directoryPrefix = "kapt2")
         project.build("build") {
             assertSuccessful()
         }
     }
 
-    private fun testSimpleWithCustomJdk(gradleVersion: String, javaHome: File, jdkDescription: String) {
-        val gradleVersionRequired = GradleVersionRequired.AtLeast(gradleVersion)
-
-        Assume.assumeTrue("$jdkDescription isn't available", javaHome.isDirectory)
+    @Test
+    fun testSimpleWithJdk10() {
+        val javaHome = File(System.getProperty("jdk10Home")!!)
+        Assume.assumeTrue("JDK 10 isn't available", javaHome.isDirectory)
         val options = defaultBuildOptions().copy(javaHome = javaHome)
 
-        val project =
-            Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+        val project = Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = GradleVersionRequired.AtLeast("4.7"))
         project.build("build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
+            // Check added because of https://youtrack.jetbrains.com/issue/KT-33056.
+            assertNotContains("javaslang.match.PatternsProcessor")
         }
     }
 
     @Test
-    fun testSimpleWithJdk10() {
-        testSimpleWithCustomJdk("4.7", File(System.getProperty("jdk10Home")!!), "JDK 10")
-    }
-
-    @Test
     fun testSimpleWithJdk11() {
-        testSimpleWithCustomJdk("5.0", File(System.getProperty("jdk11Home")!!), "JDK 11")
+        val javaHome = File(System.getProperty("jdk11Home")!!)
+        Assume.assumeTrue("JDK 11 isn't available", javaHome.isDirectory)
+        val options = defaultBuildOptions().copy(javaHome = javaHome)
+
+        val project = Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = GradleVersionRequired.AtLeast("5.0"))
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertKaptSuccessful()
+        }
     }
 }
 
@@ -639,6 +637,23 @@ open class Kapt3IT : Kapt3BaseIT() {
             assertFileExists("build/generated/source/kapt/main/demo/DummyGenerated.kt")
             assertTasksExecuted(":compileKotlin")
             assertTasksSkipped(":compileJava")
+        }
+    }
+
+    @Test
+    fun testSimpleWithJdk11AndSourceLevel8() {
+        val javaHome = File(System.getProperty("jdk11Home")!!)
+        Assume.assumeTrue("JDK 11 isn't available", javaHome.isDirectory)
+        val options = defaultBuildOptions().copy(javaHome = javaHome)
+
+        val project = Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = GradleVersionRequired.AtLeast("5.0")).also {
+            it.setupWorkingDir()
+            it.gradleBuildScript().appendText("\nsourceCompatibility = '8'")
+        }
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertKaptSuccessful()
+            assertContains("Javac options: {-source=1.8}")
         }
     }
 }

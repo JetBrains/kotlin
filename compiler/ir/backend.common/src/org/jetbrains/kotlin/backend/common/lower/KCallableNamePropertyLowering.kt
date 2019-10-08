@@ -52,7 +52,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
 
         //TODO rewrite checking
         val directMember = expression.symbol.owner.let {
-            (it as? IrSimpleFunction)?.correspondingProperty ?: it
+            (it as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: it
         }
         val irClass = directMember.parent as? IrClass ?: return expression
         if (!irClass.isSubclassOf(lower.context.irBuiltIns.kCallableClass.owner)) return expression

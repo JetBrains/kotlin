@@ -56,6 +56,7 @@ abstract class SerializerExtension {
     open fun serializeFunction(
         descriptor: FunctionDescriptor,
         proto: ProtoBuf.Function.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer
     ) {
     }
@@ -81,6 +82,9 @@ abstract class SerializerExtension {
     }
 
     open fun serializeTypeParameter(typeParameter: TypeParameterDescriptor, proto: ProtoBuf.TypeParameter.Builder) {
+    }
+
+    open fun serializeTypeAlias(typeAlias: TypeAliasDescriptor, proto: ProtoBuf.TypeAlias.Builder) {
     }
 
     open fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {

@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.idea.core.script.dependencies
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.indexing.IndexableSetContributor
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 
 class KotlinScriptDependenciesIndexableSetContributor : IndexableSetContributor() {
 
     override fun getAdditionalProjectRootsToIndex(project: Project): Set<VirtualFile> {
-        val manager = ScriptDependenciesManager.getInstance(project)
+        val manager = ScriptConfigurationManager.getInstance(project)
         return (manager.getAllScriptsDependenciesClassFiles() + manager.getAllScriptDependenciesSources()).filterTo(LinkedHashSet()) { it.isValid }
     }
 

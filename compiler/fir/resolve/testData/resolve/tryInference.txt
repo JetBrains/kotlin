@@ -1,0 +1,20 @@
+FILE: tryInference.kt
+    public final fun <T> materialize(): R|T| {
+        ^materialize throw R|java/lang/Exception.Exception|()
+    }
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public final fun takeA(a: R|A|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/takeA|(try {
+            R|/materialize|<R|A|>()
+        }
+        catch (e: R|java/lang/Exception|) {
+            R|/materialize|<R|A|>()
+        }
+        finally {
+            R|/materialize|<R|kotlin/Nothing|>()
+        }
+        )
+    }

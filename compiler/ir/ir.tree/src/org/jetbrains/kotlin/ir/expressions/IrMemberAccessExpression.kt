@@ -63,9 +63,6 @@ val CallableDescriptor.typeParametersCount: Int
             else -> typeParameters.size
         }
 
-fun IrMemberAccessExpression.getTypeArgumentOrDefault(typeParameterDescriptor: TypeParameterDescriptor) =
-    getTypeArgument(typeParameterDescriptor)?.toKotlinType() ?: typeParameterDescriptor.defaultType
-
 fun IrMemberAccessExpression.getTypeArgumentOrDefault(irTypeParameter: IrTypeParameter) =
     getTypeArgument(irTypeParameter.index) ?: irTypeParameter.defaultType
 

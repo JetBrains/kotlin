@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.codegen.serialization
 
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -37,14 +40,19 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-class JvmSerializerExtension(private val bindings: JvmSerializationBindings, state: GenerationState) : SerializerExtension() {
+class JvmSerializerExtension @JvmOverloads constructor(
+    private val bindings: JvmSerializationBindings,
+    state: GenerationState,
+    private val typeMapper: KotlinTypeMapperBase = state.typeMapper
+) : SerializerExtension() {
+    private val globalBindings = state.globalSerializationBindings
     private val codegenBinding = state.bindingContext
-    private val typeMapper = state.typeMapper
     override val stringTable = JvmCodegenStringTable(typeMapper)
     private val useTypeTable = state.useTypeTableInSerializer
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
-    private val isReleaseCoroutines = state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+    private val languageVersionSettings = state.languageVersionSettings
+    private val isParamAssertionsDisabled = state.isParamAssertionsDisabled
     override val metadataVersion = state.metadataVersion
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
@@ -151,10 +159,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         }
     }
 
-    override fun serializeConstructor(descriptor: ConstructorDescriptor,
-                                      proto: ProtoBuf.Constructor.Builder,
-                                      childSerializer: DescriptorSerializer) {
-        val method = bindings.get(METHOD_FOR_FUNCTION, descriptor)
+    override fun serializeConstructor(
+        descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder, childSerializer: DescriptorSerializer
+    ) {
+        val method = getBinding(METHOD_FOR_FUNCTION, descriptor)
         if (method != null) {
             val signature = SignatureSerializer().methodSignature(descriptor, method)
             if (signature != null) {
@@ -163,33 +171,53 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
         }
     }
 
-    override fun serializeFunction(descriptor: FunctionDescriptor,
-                                   proto: ProtoBuf.Function.Builder,
-                                   childSerializer: DescriptorSerializer) {
-        val method = bindings.get(METHOD_FOR_FUNCTION, descriptor)
+    override fun serializeFunction(
+        descriptor: FunctionDescriptor,
+        proto: ProtoBuf.Function.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: DescriptorSerializer
+    ) {
+        val method = getBinding(METHOD_FOR_FUNCTION, descriptor)
         if (method != null) {
             val signature = SignatureSerializer().methodSignature(descriptor, method)
             if (signature != null) {
                 proto.setExtension(JvmProtoBuf.methodSignature, signature)
             }
         }
+
+        if (descriptor.needsInlineParameterNullCheckRequirement()) {
+            versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
+        }
     }
 
+    private fun MutableVersionRequirementTable.writeInlineParameterNullCheckRequirement(add: (Int) -> Unit) {
+        if (languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) {
+            // Since Kotlin 1.4, we generate a call to Intrinsics.checkNotNullParameter in inline functions which causes older compilers
+            // (earlier than 1.3.50) to crash because a functional parameter in this position can't be inlined
+            add(writeVersionRequirement(1, 3, 50, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
+        }
+    }
+
+    private fun FunctionDescriptor.needsInlineParameterNullCheckRequirement(): Boolean =
+        isInline && !isSuspend && !isParamAssertionsDisabled &&
+                !Visibilities.isPrivate(visibility) &&
+                (valueParameters.any { it.type.isFunctionType } || extensionReceiverParameter?.type?.isFunctionType == true)
+
     override fun serializeProperty(
-            descriptor: PropertyDescriptor,
-            proto: ProtoBuf.Property.Builder,
-            versionRequirementTable: MutableVersionRequirementTable?,
-            childSerializer: DescriptorSerializer
+        descriptor: PropertyDescriptor,
+        proto: ProtoBuf.Property.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: DescriptorSerializer
     ) {
         val signatureSerializer = SignatureSerializer()
 
         val getter = descriptor.getter
         val setter = descriptor.setter
-        val getterMethod = if (getter == null) null else bindings.get(METHOD_FOR_FUNCTION, getter)
-        val setterMethod = if (setter == null) null else bindings.get(METHOD_FOR_FUNCTION, setter)
+        val getterMethod = if (getter == null) null else getBinding(METHOD_FOR_FUNCTION, getter)
+        val setterMethod = if (setter == null) null else getBinding(METHOD_FOR_FUNCTION, setter)
 
-        val field = bindings.get(FIELD_FOR_PROPERTY, descriptor)
-        val syntheticMethod = bindings.get(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor)
+        val field = getBinding(FIELD_FOR_PROPERTY, descriptor)
+        val syntheticMethod = getBinding(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor)
 
         val signature = signatureSerializer.propertySignature(
             descriptor,
@@ -211,6 +239,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
                 writeVersionRequirement(1, 2, 70, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
             )
         }
+
+        if (getter?.needsInlineParameterNullCheckRequirement() == true || setter?.needsInlineParameterNullCheckRequirement() == true) {
+            versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
+        }
     }
 
     private fun PropertyDescriptor.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
@@ -231,6 +263,9 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
 
         super.serializeErrorType(type, builder)
     }
+
+    private fun <K, V> getBinding(slice: SerializationMappingSlice<K, V>, key: K): V? =
+        bindings.get(slice, key) ?: globalBindings.get(slice, key)
 
     private inner class SignatureSerializer {
         fun methodSignature(descriptor: FunctionDescriptor?, method: Method): JvmProtoBuf.JvmMethodSignature? {
@@ -325,6 +360,6 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     }
 
     override fun releaseCoroutines(): Boolean {
-        return isReleaseCoroutines
+        return languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     }
 }

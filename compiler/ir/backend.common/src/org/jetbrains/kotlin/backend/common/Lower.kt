@@ -25,6 +25,12 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 interface FileLoweringPass {
     fun lower(irFile: IrFile)
+
+    object Empty : FileLoweringPass {
+        override fun lower(irFile: IrFile) {
+            // Do nothing
+        }
+    }
 }
 
 interface ClassLoweringPass : FileLoweringPass {

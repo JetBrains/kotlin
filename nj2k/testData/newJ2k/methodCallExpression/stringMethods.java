@@ -87,7 +87,6 @@ class A {
         int limit = 5;
         useSplit(s.split("\\s+", limit));
         */
-         */
         s.trim();
         s.concat(" another");
 

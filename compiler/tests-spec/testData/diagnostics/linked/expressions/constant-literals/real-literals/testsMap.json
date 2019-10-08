@@ -1,0 +1,286 @@
+{
+  "1": {
+    "neg": {
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 6,
+          "description": "Real literals suffixed by f/F (float suffix) separeted by comments.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 6,
+          "description": "Real literals separeted by comments.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 12,
+          "description": "Real literals with a many digits in a whole-number part and a fraction part (including conforms).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 35,
+          "description": "Simple real literals with a different whole-number part and fraction part.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 35,
+          "description": "Simple real literals suffixed by f/F (the float suffix) with a different whole-number part and fraction part.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 12,
+          "description": "Real literals suffixed by f/F (the float suffix) with a many digits in a whole-number part and a fraction part  (including conforms).",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "4": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 14,
+          "description": "Real literals with underscores before an exponent mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 26,
+          "description": "Real literals with underscores around an exponent mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 29,
+          "description": "Real literals with underscores after an exponent mark.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 15,
+          "description": "Real literals with underscores at the end.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 15,
+          "description": "Real literals without digits after an exponent mark and with undescores in the different pisitions.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 27,
+          "description": "Real literals suffixed by f/F (float suffix) with underscores in a whole-number part and a fraction part.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 27,
+          "description": "Real literals suffixed by f/F (float suffix) with an exponent mark and underscores in a whole-number part, a fraction part and an exponent part.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 29,
+          "description": "Real literals with an omitted whole-number part and underscores in a whole-number part, a fraction part and an exponent part.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 31,
+          "description": "Real literals with an omitted fraction part and underscores in a whole-number part, a fraction part and an exponent part.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 27,
+          "description": "Real literals with underscores in a whole-number part and a fraction part.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "3": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 9,
+          "description": "Real literals with omitted a fraction part and an exponent mark without digits after it.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 17,
+          "description": "Real literals with omitted a whole-number part, suffixed by f/F (float suffix) followed by an exponent mark without digits.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 17,
+          "description": "Real literals with omitted a whole-number part and an exponent mark without digits after it.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 25,
+          "description": "Simple real literals with omitted a fraction part, suffixed by f/F (float suffix).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 23,
+          "description": "Real literals with omitted a fraction part and an exponent mark, suffixed by f/F (float suffix).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 23,
+          "description": "Real literals with omitted a fraction part and an exponent mark.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 30,
+          "description": "Real literals with omitted a whole-number part and an exponent mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 6,
+          "description": "Real literals separeted by comments with omitted a whole-number part.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 23,
+          "description": "Real literals suffixed by f/F (float suffix) with omitted a whole-number part.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 26,
+          "description": "Real literals suffixed by f/F (float suffix) with omitted a whole-number part and an exponent mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 29,
+          "description": "Simple real literals with omitted a whole-number part.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 13,
+          "description": "Real literals with a not allowed exponent mark at the beginning.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 13,
+          "description": "Real literals suffixed by f/F (float suffix) with a not allowed exponent mark at the beginning.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 17,
+          "description": "Real literals suffixed by f/F (float suffix) with an exponent mark without digits after it.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 17,
+          "description": "Real literals without digits after an exponent mark.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 26,
+          "description": "Real literals suffixed by f/F (float suffix) with an exponent mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 39,
+          "description": "Simple real literals with an exponent mark.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 39,
+          "description": "A type checking of a real literal with an exponent mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 29,
+          "description": "A type checking of a real literal with omitted a whole-number part.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 30,
+          "description": "A type checking of a real literal with omitted a whole-number part and an exponent mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 23,
+          "description": "A type checking of a real literal with omitted a fraction part and an exponent mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 14,
+          "description": "A type checking of a simple real literal (with/without underscores).",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

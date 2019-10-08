@@ -1,5 +1,8 @@
 internal annotation class Anon(val value: String) {
-    enum class E { A, B }
+    enum class E {
+        A, B
+    }
+
     companion object {
         var field = E.A
     }

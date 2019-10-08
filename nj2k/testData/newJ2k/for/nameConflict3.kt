@@ -1,6 +1,5 @@
 internal class A {
     var i = 1
-
     fun foo() {
         run {
             var i = 1
@@ -9,7 +8,6 @@ internal class A {
                 i *= 2
             }
         }
-
         i = 10
     }
 }

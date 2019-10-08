@@ -9,7 +9,9 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensureIndexesUpToDate
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 
 /**
  * inspired by @see AbstractHighlightingTest
@@ -44,7 +46,7 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
     }
 
     private fun doWarmUpPerfTest() {
-        innerPerfTest("warm-up") {
+        innerPerfTest(WARM_UP) {
             myFixture.configureByText(
                 KotlinFileType.INSTANCE,
                 "class Foo {\n    private val value: String? = null\n}"
@@ -52,10 +54,10 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         }
     }
 
-    protected fun doPerfTest(filePath: String) {
+    protected fun doPerfTest(unused: String) {
         val testName = getTestName(false)
         innerPerfTest(testName) {
-            myFixture.configureByFile(filePath)
+            myFixture.configureByFile(fileName())
 
             val project = myFixture.project
             commitAllDocuments()
@@ -72,7 +74,9 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
     private fun innerPerfTest(name: String, setUpBody: (TestData<Unit, MutableList<HighlightInfo>>) -> Unit) {
         stats.perfTest<Unit, MutableList<HighlightInfo>>(
             testName = name,
-            setUp = { setUpBody(it) },
+            setUp = {
+                setUpBody(it)
+            },
             test = { it.value = perfTestCore() },
             tearDown = {
                 assertNotNull("no reasons to validate output as it is a performance test", it.value)

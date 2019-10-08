@@ -72,6 +72,10 @@ public enum IrSymbolKind
    * <code>LOCAL_DELEGATED_PROPERTY_SYMBOL = 14;</code>
    */
   LOCAL_DELEGATED_PROPERTY_SYMBOL(13, 14),
+  /**
+   * <code>TYPEALIAS_SYMBOL = 15;</code>
+   */
+  TYPEALIAS_SYMBOL(14, 15),
   ;
 
   /**
@@ -138,6 +142,10 @@ public enum IrSymbolKind
    * <code>LOCAL_DELEGATED_PROPERTY_SYMBOL = 14;</code>
    */
   public static final int LOCAL_DELEGATED_PROPERTY_SYMBOL_VALUE = 14;
+  /**
+   * <code>TYPEALIAS_SYMBOL = 15;</code>
+   */
+  public static final int TYPEALIAS_SYMBOL_VALUE = 15;
 
 
   public final int getNumber() { return value; }
@@ -158,6 +166,7 @@ public enum IrSymbolKind
       case 12: return RECEIVER_PARAMETER_SYMBOL;
       case 13: return PROPERTY_SYMBOL;
       case 14: return LOCAL_DELEGATED_PROPERTY_SYMBOL;
+      case 15: return TYPEALIAS_SYMBOL;
       default: return null;
     }
   }

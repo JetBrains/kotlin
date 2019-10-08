@@ -180,6 +180,16 @@ private object KotlinResolveDataProvider {
                 return AnalysisResult.success(bindingContext, moduleDescriptor)
             }
 
+            /*
+            Note that currently we *have* to re-create LazyTopDownAnalyzer with custom trace in order to disallow resolution of
+            bodies in top-level trace (trace from DI-container).
+            Resolving bodies in top-level trace may lead to memory leaks and incorrect resolution, because top-level
+            trace isn't invalidated on in-block modifications (while body resolution surely does)
+
+            Also note that for function bodies, we'll create DelegatingBindingTrace in ResolveElementCache anyways
+            (see 'functionAdditionalResolve'). However, this trace is still needed, because we have other
+            codepaths for other KtDeclarationWithBodies (like property accessors/secondary constructors/class initializers)
+             */
             val trace = DelegatingBindingTrace(
                 resolveSession.bindingContext,
                 "Trace for resolution of " + analyzableElement,

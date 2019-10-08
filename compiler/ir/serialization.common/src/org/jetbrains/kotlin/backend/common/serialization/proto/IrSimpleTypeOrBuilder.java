@@ -17,13 +17,13 @@ public interface IrSimpleTypeOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol classifier = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
    */
   boolean hasClassifier();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol classifier = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex classifier = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getClassifier();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getClassifier();
 
   /**
    * <code>required bool has_question_mark = 3;</code>
@@ -47,4 +47,13 @@ public interface IrSimpleTypeOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeArgument argument = 4;</code>
    */
   int getArgumentCount();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
+   */
+  boolean hasAbbreviation();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation getAbbreviation();
 }

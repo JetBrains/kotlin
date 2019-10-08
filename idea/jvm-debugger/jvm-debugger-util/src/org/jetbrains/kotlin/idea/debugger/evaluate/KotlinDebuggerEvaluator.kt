@@ -67,6 +67,7 @@ class KotlinDebuggerEvaluator(
         return null
     }
 
+    @Suppress("unused")
     enum class EvaluationType(val clazz: Class<*>?) {
         WATCH(WatchNodeImpl::class.java),
         WINDOW(EvaluatingExpressionRootNode::class.java),

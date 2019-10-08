@@ -126,7 +126,7 @@ public class Visibilities {
 
         @NotNull
         @Override
-        public String getDisplayName() {
+        public String getInternalDisplayName() {
             return "private/*private to this*/";
         }
     };
@@ -269,6 +269,12 @@ public class Visibilities {
         @Override
         public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return false;
+        }
+
+        @Override
+        @NotNull
+        public String getExternalDisplayName() {
+            return "invisible (private in a supertype)";
         }
     };
 

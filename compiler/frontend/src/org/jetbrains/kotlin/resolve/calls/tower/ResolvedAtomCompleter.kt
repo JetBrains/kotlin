@@ -50,7 +50,8 @@ class ResolvedAtomCompleter(
     private val builtIns: KotlinBuiltIns,
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
+    private val typeApproximator: TypeApproximator
 ) {
     private val topLevelCallCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver, moduleDescriptor)
     private val topLevelTrace = topLevelCallCheckerContext.trace
@@ -77,6 +78,8 @@ class ResolvedAtomCompleter(
     }
 
     fun completeResolvedCall(resolvedCallAtom: ResolvedCallAtom, diagnostics: Collection<KotlinCallDiagnostic>): ResolvedCall<*>? {
+        clearPartiallyResolvedCall(resolvedCallAtom)
+
         if (resolvedCallAtom.atom.psiKotlinCall is PSIKotlinCallForVariable) return null
 
         val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(
@@ -115,6 +118,15 @@ class ResolvedAtomCompleter(
         return resolvedCall
     }
 
+    private fun clearPartiallyResolvedCall(resolvedCallAtom: ResolvedCallAtom) {
+        val psiCall = KotlinToResolvedCallTransformer.keyForPartiallyResolvedCall(resolvedCallAtom)
+
+        val partialCallContainer = topLevelTrace[BindingContext.ONLY_RESOLVED_CALL, psiCall]
+        if (partialCallContainer != null) {
+            topLevelTrace.record(BindingContext.ONLY_RESOLVED_CALL, psiCall, PartialCallContainer.empty)
+        }
+    }
+
     private val ResolvedLambdaAtom.isCoercedToUnit: Boolean
         get() {
             val returnTypes =
@@ -142,7 +154,7 @@ class ResolvedAtomCompleter(
         }
 
         val approximatedReturnType =
-            TypeApproximator(builtIns).approximateDeclarationType(
+            typeApproximator.approximateDeclarationType(
                 returnType,
                 local = true,
                 languageVersionSettings = topLevelCallContext.languageVersionSettings

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.expressions
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotatedStatement
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -33,6 +33,6 @@ fun FirExpression.toResolvedCallableReference(): FirResolvedCallableReference? {
 }
 
 
-fun FirExpression.toResolvedCallableSymbol(): ConeCallableSymbol? {
-    return toResolvedCallableReference()?.coneSymbol as ConeCallableSymbol?
+fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
+    return toResolvedCallableReference()?.resolvedSymbol as FirCallableSymbol<*>?
 }

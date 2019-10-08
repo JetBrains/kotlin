@@ -70,7 +70,6 @@ fun <T> ClassWithSixTypeParameters<out T, *, T, in T?, *, T>.case_5() {
 
 /*
  * TESTCASE NUMBER: 6
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-25432
  */
 fun <T> case_6(y: Inv<out T>) {
@@ -82,7 +81,6 @@ fun <T> case_6(y: Inv<out T>) {
 
 /*
  * TESTCASE NUMBER: 7
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-25432
  */
 fun <T> Inv<out T>.case_7() {

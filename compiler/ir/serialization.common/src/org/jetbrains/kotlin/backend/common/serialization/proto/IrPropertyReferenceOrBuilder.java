@@ -8,31 +8,31 @@ public interface IrPropertyReferenceOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol field = 1;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex field = 1;</code>
    */
   boolean hasField();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol field = 1;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex field = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getField();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getField();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getter = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getter = 2;</code>
    */
   boolean hasGetter();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getter = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getter = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getGetter();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getGetter();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol setter = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex setter = 3;</code>
    */
   boolean hasSetter();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol setter = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex setter = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSetter();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSetter();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 4;</code>
@@ -53,11 +53,11 @@ public interface IrPropertyReferenceOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon getMemberAccess();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 6;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 6;</code>
    */
   boolean hasSymbol();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 6;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 6;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSymbol();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSymbol();
 }

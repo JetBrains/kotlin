@@ -8,17 +8,18 @@ package org.jetbrains.kotlin.idea.scratch.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
-import org.jetbrains.kotlin.idea.scratch.getScratchPanel
-import org.jetbrains.kotlin.idea.scratch.getScratchPanelFromSelectedEditor
+import org.jetbrains.kotlin.idea.scratch.getScratchFile
+import org.jetbrains.kotlin.idea.scratch.getScratchFileFromSelectedEditor
 import javax.swing.Icon
 
 abstract class ScratchAction(message: String, icon: Icon) : AnAction(message, message, icon) {
-    override fun update(e: AnActionEvent) {
-        val scratchPanel = e.getData(CommonDataKeys.EDITOR)
-            ?.let { TextEditorProvider.getInstance().getTextEditor(it).getScratchPanel() }
-            ?: e.project?.let { getScratchPanelFromSelectedEditor(it) }
+    override fun update(e: AnActionEvent) = ApplicationManager.getApplication().invokeLater {
+        val scratchFile = e.getData(CommonDataKeys.EDITOR)
+            ?.let { TextEditorProvider.getInstance().getTextEditor(it).getScratchFile() }
+            ?: e.project?.let { getScratchFileFromSelectedEditor(it) }
 
-        e.presentation.isVisible = scratchPanel != null
+        e.presentation.isVisible = scratchFile != null
     }
 }

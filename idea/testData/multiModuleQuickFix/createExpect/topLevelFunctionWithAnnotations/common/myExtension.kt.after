@@ -1,0 +1,1 @@
+expect fun <T : @SimpleA List<@SimpleA List<@SimpleA String>>> @receiver:SimpleA String.myExtension(@SimpleA a: @SimpleA List<@SimpleA List<@SimpleA String>>)

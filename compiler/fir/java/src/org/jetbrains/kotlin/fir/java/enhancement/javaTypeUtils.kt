@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeProjection
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
@@ -240,7 +242,7 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
         else -> return null
     }
     val lookupTag = lookupTagBasedType.lookupTag
-    val firElement = (lookupTag.toSymbol(session) as? FirBasedSymbol<*>)?.fir
+    val firElement = lookupTag.toSymbol(session)?.fir
     if (firElement is FirRegularClass && firElement.classKind == ClassKind.ENUM_CLASS) {
         val name = Name.identifier(value)
         val firEnumEntry = firElement.declarations.filterIsInstance<FirEnumEntry>().find { it.name == name }
@@ -256,7 +258,7 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
             if (firStaticProperty != null) {
                 FirQualifiedAccessExpressionImpl(null).apply {
                     calleeReference = FirResolvedCallableReferenceImpl(
-                        null, name, firStaticProperty.symbol as ConeCallableSymbol
+                        null, name, firStaticProperty.symbol as FirCallableSymbol<*>
                     )
                 }
             } else null

@@ -7,7 +7,7 @@ import java.util.stream.Stream
 fun test(list: /*T1@*/List</*T0@*/String>) {
     val x: /*T9@*/List</*T8@*/String> = list/*T1@List<T0@String>*/.stream()/*Stream<T0@String>!!L*/
         .map</*T3@*/String>({ x: /*T2@*/String -> x/*T2@String*/ + ""/*LIT*//*LIT*/ }/*Function1<T2@String, T10@String>!!L*/)/*Stream<T3@String>*/
-        .collect</*T6@*/List</*T5@*/String>, /*T7@*/Any?>(Collectors/*LIT*/.toList</*T4@*/String>()/*Collector<T4@String, Any, MutableList<T4@String>>*/)/*T6@List<T5@String>*/
+        .collect</*T6@*/List</*T5@*/String>, /*T7@*/Any>(Collectors/*LIT*/.toList</*T4@*/String>()/*Collector<T4@String, Any, MutableList<T4@String>>*/)/*T6@List<T5@String>*/
 
 }
 

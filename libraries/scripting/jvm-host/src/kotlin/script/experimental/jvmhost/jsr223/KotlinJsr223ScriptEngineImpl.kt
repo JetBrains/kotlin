@@ -9,10 +9,9 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.ScriptEvaluationConfiguration
-import kotlin.script.experimental.api.hostConfiguration
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
@@ -40,13 +39,25 @@ class KotlinJsr223ScriptEngineImpl(
 
     val compilationConfiguration by lazy {
         ScriptCompilationConfiguration(baseCompilationConfiguration) {
-            hostConfiguration(jsr223HostConfiguration)
+            hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }
+            repl {
+                // Snippet classes should be named uniquely, to avoid classloading clashes in the "eval in eval" scenario
+                // TODO: consider applying the logic for any REPL, alternatively - develop other naming scheme to avoid clashes
+                makeSnippetIdentifier { configuration, snippetId ->
+                    val scriptContext: ScriptContext? = configuration[ScriptCompilationConfiguration.jsr223.getScriptContext]?.invoke()
+                    val engineState = scriptContext?.let {
+                        it.getBindings(ScriptContext.ENGINE_SCOPE)?.get(KOTLIN_SCRIPT_STATE_BINDINGS_KEY)
+                    }
+                    if (engineState == null) makeDefaultSnippetIdentifier(snippetId)
+                    else "ScriptingHost${System.identityHashCode(engineState).toString(16)}_${makeDefaultSnippetIdentifier(snippetId)}"
+                }
+            }
         }
     }
 
     val evaluationConfiguration by lazy {
         ScriptEvaluationConfiguration(baseEvaluationConfiguration) {
-            hostConfiguration(jsr223HostConfiguration)
+            hostConfiguration.update { it.withDefaultsFrom(jsr223HostConfiguration) }
         }
     }
 

@@ -266,6 +266,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/flagAllowingResultAsReturnType.args");
         }
 
+        @TestMetadata("functionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference.args")
+        public void testFunctionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference() throws Exception {
+            runTest("compiler/testData/cli/jvm/functionReferenceWithDefaultValuesFeatureIsEnabledWithNewInference.args");
+        }
+
+        @TestMetadata("functionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference.args")
+        public void testFunctionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference() throws Exception {
+            runTest("compiler/testData/cli/jvm/functionReferenceWithDefaultValuesFeatureIsEnabledWithXXNewInference.args");
+        }
+
         @TestMetadata("help.args")
         public void testHelp() throws Exception {
             runTest("compiler/testData/cli/jvm/help.args");
@@ -757,6 +767,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("libraryDirNotFound.args")
         public void testLibraryDirNotFound() throws Exception {
             runTest("compiler/testData/cli/js/libraryDirNotFound.args");
+        }
+
+        @TestMetadata("moduleWithMetadataOnlyDependency.args")
+        public void testModuleWithMetadataOnlyDependency() throws Exception {
+            runTest("compiler/testData/cli/js/moduleWithMetadataOnlyDependency.args");
         }
 
         @TestMetadata("modulesWithSameNames.args")

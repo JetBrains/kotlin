@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // FILE: 1.kt
 
 package test
@@ -23,8 +24,8 @@ Kotlin
 + 1 1.kt
 test/_1Kt
 *L
-1#1,8:1
-5#1:9
+1#1,9:1
+6#1:10
 *E
 
 SMAP
@@ -35,7 +36,7 @@ Kotlin
 + 1 1.kt
 test/_1Kt$inlineFun$1
 *L
-1#1,8:1
+1#1,9:1
 *E
 
 // FILE: 2.TODO

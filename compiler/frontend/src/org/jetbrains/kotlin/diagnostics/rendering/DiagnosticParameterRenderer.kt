@@ -20,8 +20,14 @@ interface DiagnosticParameterRenderer<in O> {
     fun render(obj: O, renderingContext: RenderingContext): String
 }
 
-fun <O> Renderer(block: (O) -> String) = object : DiagnosticParameterRenderer<O> {
-    override fun render(obj: O, renderingContext: RenderingContext): String = block(obj)
+interface ContextIndependentParameterRenderer<in O> : DiagnosticParameterRenderer<O> {
+    override fun render(obj: O, renderingContext: RenderingContext): String = render(obj)
+
+    fun render(obj: O): String
+}
+
+fun <O> Renderer(block: (O) -> String) = object : ContextIndependentParameterRenderer<O> {
+    override fun render(obj: O): String = block(obj)
 }
 
 fun <O> ContextDependentRenderer(block: (O, RenderingContext) -> String) = object : DiagnosticParameterRenderer<O> {

@@ -4,7 +4,6 @@
  * SECTIONS: annotations, type-annotations
  * NUMBER: 4
  * DESCRIPTION: Type annotations on type arguments for a containing type of return type, with unresolved reference in parameters.
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28424
  */
 

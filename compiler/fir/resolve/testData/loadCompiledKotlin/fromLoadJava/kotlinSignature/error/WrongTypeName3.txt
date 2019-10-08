@@ -1,5 +1,5 @@
 public open class WrongTypeName3 : R|kotlin/Any| {
-    public open fun foo(p0: R|kotlin/String|?): R|kotlin/String|?
+    public open fun foo(p0: R|kotlin/String?|): R|kotlin/String?|
 
     public constructor(): R|test/WrongTypeName3|
 

@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.psi.KtImportList
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
@@ -111,7 +108,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         return type == KtNodeTypes.FUNCTION_LITERAL ||
                 (type == KtNodeTypes.BLOCK && parentType != KtNodeTypes.FUNCTION_LITERAL) ||
                 type == KtNodeTypes.CLASS_BODY || type == KtTokens.BLOCK_COMMENT || type == KDocTokens.KDOC ||
-                type == KtNodeTypes.STRING_TEMPLATE || type == KtNodeTypes.PRIMARY_CONSTRUCTOR ||
+                type == KtNodeTypes.STRING_TEMPLATE || type == KtNodeTypes.PRIMARY_CONSTRUCTOR || type == KtNodeTypes.WHEN ||
                 node.shouldFoldCollection(document)
     }
 
@@ -150,6 +147,15 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
             val rightParenthesis = valueArgumentList?.rightParenthesis
             if (leftParenthesis != null && rightParenthesis != null) {
                 return TextRange(leftParenthesis.startOffset, rightParenthesis.endOffset)
+            }
+        }
+        
+        if (node.elementType == KtNodeTypes.WHEN) {
+            val whenExpression = node.psi as? KtWhenExpression
+            val openBrace = whenExpression?.openBrace
+            val closeBrace = whenExpression?.closeBrace
+            if (openBrace != null && closeBrace != null) {
+                return TextRange(openBrace.startOffset, closeBrace.endOffset)
             }
         }
 

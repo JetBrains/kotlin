@@ -3,7 +3,6 @@ internal class C {
     private val bbb = 0
     private val ccc = 0
     private val ddd = 0
-
     fun getAaa(): Int {
         return bbb
     }

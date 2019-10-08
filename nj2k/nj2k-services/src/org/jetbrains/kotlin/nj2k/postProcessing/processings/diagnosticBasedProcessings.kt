@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -56,6 +57,13 @@ val fixTypeMismatchDiagnosticBasedProcessing =
                 val fix = NumberConversionFix(element, expectedType, disableIfAvailable = null)
                 fix.invoke(element.project, null, element.containingFile)
             }
+            element is KtLambdaExpression
+                    && expectedType.isNothing() -> {
+                for (valueParameter in element.valueParameters) {
+                    valueParameter.typeReference?.delete()
+                    valueParameter.colon?.delete()
+                }
+            }
         }
     }
 
@@ -77,7 +85,7 @@ val removeUselessCastDiagnosticBasedProcessing =
 val removeInnecessaryNotNullAssertionDiagnosticBasedProcessing =
     diagnosticBasedProcessing<KtSimpleNameExpression>(Errors.UNNECESSARY_NOT_NULL_ASSERTION) { element, _ ->
         val exclExclExpr = element.parent as KtUnaryExpression
-        val baseExpression = exclExclExpr.baseExpression!!
+        val baseExpression = exclExclExpr.baseExpression ?: return@diagnosticBasedProcessing
         val context = baseExpression.analyze(BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
         if (context.diagnostics.forElement(element).any { it.factory == Errors.UNNECESSARY_NOT_NULL_ASSERTION }) {
             exclExclExpr.replace(baseExpression)

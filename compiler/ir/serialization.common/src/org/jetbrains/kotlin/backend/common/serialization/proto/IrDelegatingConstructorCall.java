@@ -54,11 +54,11 @@ public final class IrDelegatingConstructorCall extends
             break;
           }
           case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
             if (((bitField0_ & 0x00000001) == 0x00000001)) {
               subBuilder = symbol_.toBuilder();
             }
-            symbol_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.PARSER, extensionRegistry);
+            symbol_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(symbol_);
               symbol_ = subBuilder.buildPartial();
@@ -114,17 +114,17 @@ public final class IrDelegatingConstructorCall extends
 
   private int bitField0_;
   public static final int SYMBOL_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
    */
   public boolean hasSymbol() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSymbol() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSymbol() {
     return symbol_;
   }
 
@@ -144,7 +144,7 @@ public final class IrDelegatingConstructorCall extends
   }
 
   private void initFields() {
-    symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+    symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
@@ -293,7 +293,7 @@ public final class IrDelegatingConstructorCall extends
 
     public Builder clear() {
       super.clear();
-      symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+      symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
       memberAccess_ = org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
@@ -384,23 +384,23 @@ public final class IrDelegatingConstructorCall extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
     public boolean hasSymbol() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSymbol() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSymbol() {
       return symbol_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
-    public Builder setSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+    public Builder setSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -410,23 +410,23 @@ public final class IrDelegatingConstructorCall extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
     public Builder setSymbol(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       symbol_ = builderForValue.build();
 
       bitField0_ |= 0x00000001;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
-    public Builder mergeSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+    public Builder mergeSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          symbol_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance()) {
+          symbol_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
         symbol_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.newBuilder(symbol_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(symbol_).mergeFrom(value).buildPartial();
       } else {
         symbol_ = value;
       }
@@ -435,10 +435,10 @@ public final class IrDelegatingConstructorCall extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
     public Builder clearSymbol() {
-      symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+      symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000001);
       return this;

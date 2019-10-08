@@ -249,7 +249,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypes(
     moduleDescriptor: ModuleDescriptor,
     resolutionFacade: ResolutionFacade,
     stableSmartCastsOnly: Boolean
-): Collection<KotlinType>? {
+): List<KotlinType>? {
     return receiverTypesWithIndex(bindingContext, contextElement, moduleDescriptor, resolutionFacade, stableSmartCastsOnly)?.map { it.type }
 }
 
@@ -260,7 +260,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
     resolutionFacade: ResolutionFacade,
     stableSmartCastsOnly: Boolean,
     withImplicitReceiversWhenExplicitPresent: Boolean = false
-): Collection<ReceiverType>? {
+): List<ReceiverType>? {
     val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
 
     val receiverExpression: KtExpression?

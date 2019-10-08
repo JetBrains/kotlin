@@ -1,0 +1,9 @@
+package
+
+public fun breakContinueInWhen(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun breakContinueInWhenWithDoWhile(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int): kotlin.Unit
+public fun breakContinueInWhenWithWhile(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int): kotlin.Unit
+public fun labeledBreakContinue(/*0*/ i: kotlin.Int): kotlin.Unit
+public fun testBreakContinueInWhenInDoWhileCondition(): kotlin.Unit
+public fun testBreakContinueInWhenInForIteratorExpression(/*0*/ xs: kotlin.collections.List<kotlin.Any>, /*1*/ i: kotlin.Int): kotlin.Unit
+public fun testBreakContinueInWhenInWhileCondition(): kotlin.Unit

@@ -1,8 +1,8 @@
 FILE: genericFunctions.kt
     public abstract interface Any : R|kotlin/Any| {
     }
-    public final inline fun <reified T : R|Any|> R|Any|.safeAs(): R|T|? {
-        ^safeAs (this# as? R|T|)
+    public final inline fun <reified T : R|Any|> R|Any|.safeAs(): R|T?| {
+        ^safeAs (this@R|/safeAs| as? R|T|)
     }
     public abstract class Summator : R|kotlin/Any| {
         public constructor(): R|Summator| {

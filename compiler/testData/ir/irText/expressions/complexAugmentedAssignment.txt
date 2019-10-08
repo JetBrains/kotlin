@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:X1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x1 visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x1> visibility:public modality:FINAL <> ($this:<root>.X1) returnType:kotlin.Int
@@ -14,14 +14,14 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.X1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x1> (): kotlin.Int declared in <root>.X1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.X1 declared in <root>.X1.<get-x1>' type=<root>.X1 origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x1> visibility:public modality:FINAL <> ($this:<root>.X1, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:x1 visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.X1
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.X1 declared in <root>.X1.<set-x1>' type=<root>.X1 origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.X1.<set-x1>' type=kotlin.Int origin=null
     CLASS OBJECT name:X2 modality:FINAL visibility:public superTypes:[kotlin.Any]
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:X2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
       PROPERTY name:x2 visibility:public modality:FINAL [var]
-        FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:public
+        FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:private
           EXPRESSION_BODY
             CONST Int type=kotlin.Int value=0
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x2> visibility:public modality:FINAL <> ($this:<root>.X1.X2) returnType:kotlin.Int
@@ -39,14 +39,14 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.X1.X2
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-x2> (): kotlin.Int declared in <root>.X1.X2'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
                 receiver: GET_VAR '<this>: <root>.X1.X2 declared in <root>.X1.X2.<get-x2>' type=<root>.X1.X2 origin=null
         FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x2> visibility:public modality:FINAL <> ($this:<root>.X1.X2, <set-?>:kotlin.Int) returnType:kotlin.Unit
           correspondingProperty: PROPERTY name:x2 visibility:public modality:FINAL [var]
           $this: VALUE_PARAMETER name:<this> type:<root>.X1.X2
           VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
           BLOCK_BODY
-            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.X1.X2 declared in <root>.X1.X2.<set-x2>' type=<root>.X1.X2 origin=null
               value: GET_VAR '<set-?>: kotlin.Int declared in <root>.X1.X2.<set-x2>' type=kotlin.Int origin=null
       CLASS OBJECT name:X3 modality:FINAL visibility:public superTypes:[kotlin.Any]
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:X3 modality:FINAL visibility:public superTypes:[kotlin.Any]'
         PROPERTY name:x3 visibility:public modality:FINAL [var]
-          FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:public
+          FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:private
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=0
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x3> visibility:public modality:FINAL <> ($this:<root>.X1.X2.X3) returnType:kotlin.Int
@@ -64,14 +64,14 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.X1.X2.X3
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='public final fun <get-x3> (): kotlin.Int declared in <root>.X1.X2.X3'
-                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
                   receiver: GET_VAR '<this>: <root>.X1.X2.X3 declared in <root>.X1.X2.X3.<get-x3>' type=<root>.X1.X2.X3 origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x3> visibility:public modality:FINAL <> ($this:<root>.X1.X2.X3, <set-?>:kotlin.Int) returnType:kotlin.Unit
             correspondingProperty: PROPERTY name:x3 visibility:public modality:FINAL [var]
             $this: VALUE_PARAMETER name:<this> type:<root>.X1.X2.X3
             VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
             BLOCK_BODY
-              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
                 receiver: GET_VAR '<this>: <root>.X1.X2.X3 declared in <root>.X1.X2.X3.<set-x3>' type=<root>.X1.X2.X3 origin=null
                 value: GET_VAR '<set-?>: kotlin.Int declared in <root>.X1.X2.X3.<set-x3>' type=kotlin.Int origin=null
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
@@ -191,7 +191,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:s visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.Int visibility:private
         EXPRESSION_BODY
           GET_VAR 's: kotlin.Int declared in <root>.B.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:<root>.B) returnType:kotlin.Int
@@ -199,14 +199,14 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.B
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-s> (): kotlin.Int declared in <root>.B'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-s>' type=<root>.B origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-s> visibility:public modality:FINAL <> ($this:<root>.B, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.B
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<set-s>' type=<root>.B origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.B.<set-s>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean

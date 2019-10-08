@@ -53,8 +53,8 @@ fun syntheticVisibility(originalDescriptor: DeclarationDescriptorWithVisibility,
             override fun normalize()
                     = originalVisibility.normalize()
 
-            override val displayName: String
-                get() = originalVisibility.displayName + " for synthetic extension"
+            override val internalDisplayName: String
+                get() = originalVisibility.internalDisplayName + " for synthetic extension"
         }
     }
 

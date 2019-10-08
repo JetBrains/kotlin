@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.compiler.configuration
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
@@ -76,7 +77,9 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
             validateNewSettings(value)
             _settings = value
 
-            project.syncPublisherWithDisposeCheck(KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
+            ApplicationManager.getApplication().invokeLater {
+                project.syncPublisherWithDisposeCheck(KotlinCompilerSettingsListener.TOPIC).settingsChanged(value)
+            }
         }
 
     fun update(changer: T.() -> Unit) {
@@ -111,7 +114,9 @@ abstract class BaseKotlinCompilerSettings<T : Freezable> protected constructor(p
             XmlSerializer.deserializeInto(this, state)
         }
 
-        project.syncPublisherWithDisposeCheck(KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
+        ApplicationManager.getApplication().invokeLater {
+            project.syncPublisherWithDisposeCheck(KotlinCompilerSettingsListener.TOPIC).settingsChanged(settings)
+        }
     }
 
     public override fun clone(): Any = super.clone()

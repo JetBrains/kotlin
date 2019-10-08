@@ -1374,7 +1374,8 @@ public fun CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boole
 public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boolean = false, transform: (CharSequence) -> R): List<R> {
     checkWindowSizeStep(size, step)
     val thisSize = this.length
-    val result = ArrayList<R>((thisSize + step - 1) / step)
+    val resultCapacity = thisSize / step + if (thisSize % step == 0) 0 else 1
+    val result = ArrayList<R>(resultCapacity)
     var index = 0
     while (index < thisSize) {
         val end = index + size

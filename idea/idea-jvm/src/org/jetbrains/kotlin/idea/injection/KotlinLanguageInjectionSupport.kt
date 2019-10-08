@@ -90,7 +90,7 @@ class KotlinLanguageInjectionSupport : AbstractLanguageInjectionSupport() {
         return true
     }
 
-    override fun findCommentInjection(host: PsiElement, commentRef: Ref<PsiElement>?): BaseInjection? {
+    override fun findCommentInjection(host: PsiElement, commentRef: Ref<in PsiElement>?): BaseInjection? {
         // Do not inject through CommentLanguageInjector, because it injects as simple injection.
         // We need to behave special for interpolated strings.
         return null

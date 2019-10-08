@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 open class CandidateCollector(
-    val components: InferenceComponents,
+    val components: BodyResolveComponents,
     val resolutionStageRunner: ResolutionStageRunner
 ) {
     val groupNumbers = mutableListOf<Int>()
@@ -68,9 +69,9 @@ open class CandidateCollector(
 // Collects properties that potentially could be invoke receivers, like 'propertyName()',
 // and initiates further invoke resolution by adding property-bound invoke consumers
 class InvokeReceiverCandidateCollector(
-    val callResolver: CallResolver,
+    val towerResolver: FirTowerResolver,
     val invokeCallInfo: CallInfo,
-    components: InferenceComponents,
+    components: BodyResolveComponents,
     val invokeConsumer: AccumulatingTowerDataConsumer,
     resolutionStageRunner: ResolutionStageRunner
 ) : CandidateCollector(components, resolutionStageRunner) {
@@ -85,10 +86,12 @@ class InvokeReceiverCandidateCollector(
                 FirQualifiedAccessExpressionImpl(null, false).apply {
                     calleeReference = FirNamedReferenceWithCandidate(
                         null,
-                        (candidate.symbol as ConeCallableSymbol).callableId.callableName,
+                        (candidate.symbol as FirCallableSymbol<*>).callableId.callableName,
                         candidate
                     )
-                    typeRef = callResolver.typeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe())
+                    dispatchReceiver = candidate.dispatchReceiverExpression()
+                    extensionReceiver = candidate.extensionReceiverExpression()
+                    typeRef = towerResolver.typeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe())
                 },
                 invokeCallInfo.arguments,
                 invokeCallInfo.isSafeCall,
@@ -102,7 +105,7 @@ class InvokeReceiverCandidateCollector(
             invokeConsumer.addConsumer(
                 createSimpleFunctionConsumer(
                     session, OperatorNameConventions.INVOKE,
-                    boundInvokeCallInfo, components, callResolver.collector
+                    boundInvokeCallInfo, towerResolver.components, towerResolver.collector
                 )
             )
         }

@@ -154,6 +154,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         runTest("compiler/testData/diagnostics/testsWithStdLib/shadowingInDestructuring.kt");
     }
 
+    @TestMetadata("streams.kt")
+    public void testStreams() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/streams.kt");
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -164,6 +169,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
 
         public void testAllFilesPresentInAnnotations() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotationsTargetingLateinitAccessors.kt")
+        public void testAnnotationsTargetingLateinitAccessors() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationsTargetingLateinitAccessors.kt");
         }
 
         @TestMetadata("annotationsTargetingNonExistentAccessor.kt")
@@ -204,6 +214,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         @TestMetadata("Synchronized.kt")
         public void testSynchronized() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/Synchronized.kt");
+        }
+
+        @TestMetadata("SynchronizedOnInterfaceCompanionMember.kt")
+        public void testSynchronizedOnInterfaceCompanionMember() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/SynchronizedOnInterfaceCompanionMember.kt");
         }
 
         @TestMetadata("targetuse.kt")
@@ -1544,18 +1559,8 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         }
 
         @TestMetadata("kt18292.kt")
-        public void testKt18292_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt18292.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("kt18292.kt")
-        public void testKt18292_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt18292.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("kt18292_ni.kt")
-        public void testKt18292_ni() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt18292_ni.kt");
+        public void testKt18292() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt18292.kt");
         }
 
         @TestMetadata("kt28658.kt")

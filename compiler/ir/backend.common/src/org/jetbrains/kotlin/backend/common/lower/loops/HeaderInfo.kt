@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 // TODO: Handle withIndex()
-// TODO: Handle Strings/CharSequences
 // TODO: Handle UIntProgression, ULongProgression
 
 /** Represents a progression type in the Kotlin stdlib. */
@@ -73,6 +72,7 @@ internal sealed class HeaderInfo(
     val first: IrExpression,
     val last: IrExpression,
     val step: IrExpression,
+    val canCacheLast: Boolean,
     val isReversed: Boolean,
     val direction: ProgressionDirection,
     val additionalNotEmptyCondition: IrExpression?
@@ -96,7 +96,13 @@ internal class ProgressionHeaderInfo(
     direction: ProgressionDirection,
     additionalNotEmptyCondition: IrExpression? = null,
     val additionalVariables: List<IrVariable> = listOf()
-) : HeaderInfo(progressionType, first, last, step, isReversed, direction, additionalNotEmptyCondition) {
+) : HeaderInfo(
+    progressionType, first, last, step,
+    canCacheLast = true,
+    isReversed = isReversed,
+    direction = direction,
+    additionalNotEmptyCondition = additionalNotEmptyCondition
+) {
 
     val canOverflow: Boolean by lazy {
         if (canOverflow != null) return@lazy canOverflow
@@ -135,17 +141,23 @@ internal class ProgressionHeaderInfo(
     )
 }
 
-/** Information about a for-loop over an array. The internal induction variable used is an Int. */
-internal class ArrayHeaderInfo(
+/**
+ * Information about a for-loop over an object with an indexed get method (such as arrays or character sequences).
+ * The internal induction variable used is an Int.
+ */
+internal class IndexedGetHeaderInfo(
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,
-    val arrayVariable: IrVariable
+    canCacheLast: Boolean = true,
+    val objectVariable: IrVariable,
+    val expressionHandler: IndexedGetIterationHandler
 ) : HeaderInfo(
     ProgressionType.INT_PROGRESSION,
     first,
     last,
     step,
+    canCacheLast = canCacheLast,
     isReversed = false,
     direction = ProgressionDirection.INCREASING,
     additionalNotEmptyCondition = null
@@ -210,7 +222,8 @@ internal class HeaderInfoBuilder(context: CommonBackendContext, private val scop
     )
 
     private val progressionHandlers = listOf(
-        IndicesHandler(context),
+        CollectionIndicesHandler(context),
+        CharSequenceIndicesHandler(context),
         UntilHandler(context, progressionElementTypes),
         DownToHandler(context, progressionElementTypes),
         RangeToHandler(context, progressionElementTypes)
@@ -218,9 +231,13 @@ internal class HeaderInfoBuilder(context: CommonBackendContext, private val scop
 
     private val reversedHandler = ReversedHandler(context, this)
 
+    // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
+    // String is subtype of CharSequence and therefore its handler is more specialized.
     private val expressionHandlers = listOf(
         ArrayIterationHandler(context),
-        DefaultProgressionHandler(context)
+        DefaultProgressionHandler(context),
+        StringIterationHandler(context),
+        CharSequenceIterationHandler(context)
     )
 
     override fun visitElement(element: IrElement, data: Nothing?): HeaderInfo? = null

@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/implicitCastInReturnFromConstructor.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Unit
               GET_VAR 'x: kotlin.Any? declared in <root>.C.<init>' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='public final fun <init> (x: kotlin.Any?): <root>.C declared in <root>.C'
-              GET_VAR 'x: kotlin.Any? declared in <root>.C.<init>' type=kotlin.Any? origin=null
+              GET_VAR 'x: kotlin.Any? declared in <root>.C.<init>' type=kotlin.Unit origin=null
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

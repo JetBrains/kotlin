@@ -9,6 +9,9 @@ import org.gradle.api.internal.tasks.testing.*
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.Test
+import org.gradle.api.tasks.testing.TestFilter
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinTestRun
 
 open class KotlinJvmTest : Test() {
     @Input

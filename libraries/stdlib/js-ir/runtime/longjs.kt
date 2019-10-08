@@ -335,13 +335,13 @@ internal fun Long.shiftRightUnsigned(numBits: Int): Long {
 internal fun fromInt(value: Int) = Long(value, if (value < 0) -1 else 0)
 
 /**
- * Returns a Long representing the given value, provided that it is a finite
- * number.  Otherwise, zero is returned.
- * @param {number} value The number in question.
- * @return {!Kotlin.Long} The corresponding Long value.
+ * Converts this [Double] value to [Long].
+ * The fractional part, if any, is rounded down towards zero.
+ * Returns zero if this `Double` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
+ * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
  */
 internal fun fromNumber(value: Double): Long {
-    if (value.isNaN() || !value.isFinite()) {
+    if (value.isNaN()) {
         return ZERO;
     } else if (value <= -TWO_PWR_63_DBL_) {
         return MIN_VALUE;

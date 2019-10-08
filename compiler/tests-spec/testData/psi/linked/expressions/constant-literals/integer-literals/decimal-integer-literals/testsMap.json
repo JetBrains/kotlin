@@ -1,0 +1,44 @@
+{
+  "1": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Sequences with not all decimal digit symbols",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Integers with underscore symbols in the valid places.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Integers with underscore symbols before the first digit (it\u0027s considered as identifiers).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Integers with underscore symbol in the last position.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Sequences with decimal digit symbols.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

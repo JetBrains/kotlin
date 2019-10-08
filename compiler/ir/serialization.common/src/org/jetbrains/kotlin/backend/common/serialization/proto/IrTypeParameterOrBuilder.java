@@ -17,13 +17,13 @@ public interface IrTypeParameterOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getName();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
 
   /**
    * <code>required int32 index = 3;</code>
@@ -44,16 +44,16 @@ public interface IrTypeParameterOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance getVariance();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex super_type = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex> 
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> 
       getSuperTypeList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex super_type = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex getSuperType(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSuperType(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex super_type = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_type = 5;</code>
    */
   int getSuperTypeCount();
 

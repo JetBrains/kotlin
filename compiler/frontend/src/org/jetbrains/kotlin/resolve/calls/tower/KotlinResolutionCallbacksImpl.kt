@@ -161,7 +161,7 @@ class KotlinResolutionCallbacksImpl(
                     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
                     callComponents, builtIns, topLevelCallContext, stubsForPostponedVariables, trace,
                     kotlinToResolvedCallTransformer, expressionTypingServices, argumentTypeResolver,
-                    doubleColonExpressionResolver, deprecationResolver, moduleDescriptor
+                    doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, typeApproximator
                 )
             } else {
                 null
@@ -223,21 +223,6 @@ class KotlinResolutionCallbacksImpl(
     override fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom) {
         kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(
             candidate, trace, emptyList(), substitutor = null
-        )
-    }
-
-    override fun createReceiverWithSmartCastInfo(resolvedAtom: ResolvedCallAtom): ReceiverValueWithSmartCastInfo? {
-        val returnType = resolvedAtom.candidateDescriptor.returnType ?: return null
-        val psiKotlinCall = resolvedAtom.atom.psiKotlinCall
-        val callElement = psiKotlinCall.psiCall.callElement.safeAs<KtExpression>() ?: return null
-        val expression = findCommonParent(callElement, resolvedAtom.atom.psiKotlinCall.explicitReceiver)
-
-        return transformToReceiverWithSmartCastInfo(
-            resolvedAtom.candidateDescriptor,
-            trace.bindingContext,
-            psiKotlinCall.resultDataFlowInfo,
-            ExpressionReceiver.create(expression, returnType, trace.bindingContext),
-            languageVersionSettings, dataFlowValueFactory
         )
     }
 

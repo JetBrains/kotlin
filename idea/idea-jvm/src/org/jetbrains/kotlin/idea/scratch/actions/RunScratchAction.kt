@@ -23,9 +23,7 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.DumbService
 import com.intellij.task.ProjectTaskManager
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.scratch.ScratchFile
-import org.jetbrains.kotlin.idea.scratch.SequentialScratchExecutor
-import org.jetbrains.kotlin.idea.scratch.getScratchPanelFromSelectedEditor
+import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.printDebugMessage
 import org.jetbrains.kotlin.idea.scratch.LOG as log
 
@@ -42,9 +40,9 @@ class RunScratchAction : ScratchAction(
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val scratchPanel = getScratchPanelFromSelectedEditor(project) ?: return
+        val scratchFile = getScratchFileFromSelectedEditor(project) ?: return
 
-        doAction(scratchPanel.scratchFile, false)
+        doAction(scratchFile, false)
     }
 
     companion object {
@@ -69,7 +67,7 @@ class RunScratchAction : ScratchAction(
             val isMakeBeforeRun = scratchFile.options.isMakeBeforeRun
             log.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun")
 
-            val module = scratchFile.getModule()
+            val module = scratchFile.module
             log.printDebugMessage("Run Action: module = ${module?.name}")
 
             if (!isAutoRun && module != null && isMakeBeforeRun) {
@@ -105,8 +103,8 @@ class RunScratchAction : ScratchAction(
         }
 
         val project = e.project ?: return
-        val panel = getScratchPanelFromSelectedEditor(project) ?: return
+        val scratchFile = getScratchFileFromSelectedEditor(project) ?: return
 
-        e.presentation.isVisible = !ScratchCompilationSupport.isInProgress(panel.scratchFile)
+        e.presentation.isVisible = !ScratchCompilationSupport.isInProgress(scratchFile)
     }
 }

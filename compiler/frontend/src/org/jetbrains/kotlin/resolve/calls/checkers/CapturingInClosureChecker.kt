@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,7 +39,7 @@ class CapturingInClosureChecker : CallChecker {
         val scopeContainer = scope.ownerDescriptor
         if (isCapturedVariable(variableParent, scopeContainer)) {
             if (trace.get(CAPTURED_IN_CLOSURE, variable) != CaptureKind.NOT_INLINE) {
-                trace.record(CAPTURED_IN_CLOSURE, variable, getCaptureKind(trace.bindingContext, scopeContainer, variableParent))
+                trace.record(CAPTURED_IN_CLOSURE, variable, getCaptureKind(trace.bindingContext, scopeContainer, variableParent, variable))
             }
         }
     }
@@ -57,33 +57,58 @@ class CapturingInClosureChecker : CallChecker {
     }
 
     private fun getCaptureKind(
-        context: BindingContext, scopeContainer: DeclarationDescriptor, variableParent: DeclarationDescriptor
+        context: BindingContext,
+        scopeContainer: DeclarationDescriptor,
+        variableParent: DeclarationDescriptor,
+        variable: VariableDescriptor
     ): CaptureKind {
         val scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer)
         if (!InlineUtil.canBeInlineArgument(scopeDeclaration)) return CaptureKind.NOT_INLINE
 
-        val exactlyOnceContract = isExactlyOnceContract(context, scopeDeclaration as KtFunction)
-        if (InlineUtil.isInlinedArgument(scopeDeclaration, context, exactlyOnceContract)) {
+        if (InlineUtil.isInlinedArgument(scopeDeclaration as KtFunction, context, false) &&
+            !isCrossinlineParameter(context, scopeDeclaration)
+        ) {
             val scopeContainerParent = scopeContainer.containingDeclaration ?: error("parent is null for $scopeContainer")
             return if (
                 !isCapturedVariable(variableParent, scopeContainerParent) ||
-                getCaptureKind(context, scopeContainerParent, variableParent) == CaptureKind.INLINE_ONLY
+                getCaptureKind(context, scopeContainerParent, variableParent, variable) == CaptureKind.INLINE_ONLY
             ) CaptureKind.INLINE_ONLY else CaptureKind.NOT_INLINE
         }
-        if (exactlyOnceContract) return CaptureKind.EXACTLY_ONCE_EFFECT
-        return CaptureKind.NOT_INLINE
+        val exactlyOnceContract = isExactlyOnceContract(context, scopeDeclaration)
+        // We cannot box arguments.
+        val isArgument = variable is ValueParameterDescriptor && variableParent is CallableDescriptor
+                && variableParent.valueParameters.contains(variable)
+        return if (exactlyOnceContract && !isArgument) CaptureKind.EXACTLY_ONCE_EFFECT else CaptureKind.NOT_INLINE
     }
 
-    private fun isExactlyOnceContract(bindingContext: BindingContext, argument: KtFunction): Boolean {
-        val call = KtPsiUtil.getParentCallIfPresent(argument) ?: return false
-        val resolvedCall = call.getResolvedCall(bindingContext) ?: return false
-        val descriptor = resolvedCall.getResultingDescriptor()
-        val valueArgument = resolvedCall.call.getValueArgumentForExpression(argument) ?: return false
-        val mapping = resolvedCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return false
-        val parameter = mapping.valueParameter
-        val contractDescription = descriptor.getUserData(ContractProviderKey)?.getContractDescription() ?: return false
+    private fun isExactlyOnceParameter(function: DeclarationDescriptor, parameter: VariableDescriptor): Boolean {
+        if (function !is CallableDescriptor) return false
+        if (parameter !is ValueParameterDescriptor) return false
+        val contractDescription = function.getUserData(ContractProviderKey)?.getContractDescription() ?: return false
         val effect = contractDescription.effects.filterIsInstance<CallsEffectDeclaration>()
             .find { it.variableReference.descriptor == parameter } ?: return false
         return effect.kind == InvocationKind.EXACTLY_ONCE
+    }
+
+    private fun isExactlyOnceContract(bindingContext: BindingContext, argument: KtFunction): Boolean {
+        val (descriptor, parameter) = getCalleeDescriptorAndParameter(bindingContext, argument) ?: return false
+        return isExactlyOnceParameter(descriptor, parameter)
+    }
+
+    private fun getCalleeDescriptorAndParameter(
+        bindingContext: BindingContext,
+        argument: KtFunction
+    ): Pair<CallableDescriptor, ValueParameterDescriptor>? {
+        val call = KtPsiUtil.getParentCallIfPresent(argument) ?: return null
+        val resolvedCall = call.getResolvedCall(bindingContext) ?: return null
+        val descriptor = resolvedCall.resultingDescriptor
+        val valueArgument = resolvedCall.call.getValueArgumentForExpression(argument) ?: return null
+        val mapping = resolvedCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return null
+        val parameter = mapping.valueParameter
+        return descriptor to parameter
+    }
+
+    private fun isCrossinlineParameter(bindingContext: BindingContext, argument: KtFunction): Boolean {
+        return getCalleeDescriptorAndParameter(bindingContext, argument)?.second?.isCrossinline == true
     }
 }

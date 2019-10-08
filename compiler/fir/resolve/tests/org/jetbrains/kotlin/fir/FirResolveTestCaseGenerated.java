@@ -26,7 +26,7 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     }
 
     public void testAllFilesPresentInResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true, "stdlib");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true, "stdlib", "cfg", "smartcasts");
     }
 
     @TestMetadata("cast.kt")
@@ -42,6 +42,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @TestMetadata("copy.kt")
     public void testCopy() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/copy.kt");
+    }
+
+    @TestMetadata("delegatedSuperType.kt")
+    public void testDelegatedSuperType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/delegatedSuperType.kt");
     }
 
     @TestMetadata("derivedClass.kt")
@@ -94,6 +99,16 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/genericFunctions.kt");
     }
 
+    @TestMetadata("intersectionTypes.kt")
+    public void testIntersectionTypes() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/intersectionTypes.kt");
+    }
+
+    @TestMetadata("localObject.kt")
+    public void testLocalObject() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/localObject.kt");
+    }
+
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/nestedClass.kt");
@@ -112,6 +127,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @TestMetadata("NestedSuperType.kt")
     public void testNestedSuperType() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/NestedSuperType.kt");
+    }
+
+    @TestMetadata("problems2.kt")
+    public void testProblems2() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/problems2.kt");
     }
 
     @TestMetadata("recursiveCallOnWhenWithSealedClass.kt")
@@ -134,6 +154,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/treeSet.kt");
     }
 
+    @TestMetadata("tryInference.kt")
+    public void testTryInference() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/tryInference.kt");
+    }
+
     @TestMetadata("TwoDeclarationsInSameFile.kt")
     public void testTwoDeclarationsInSameFile() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/TwoDeclarationsInSameFile.kt");
@@ -142,6 +167,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @TestMetadata("typeAliasWithGeneric.kt")
     public void testTypeAliasWithGeneric() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/typeAliasWithGeneric.kt");
+    }
+
+    @TestMetadata("typeAliasWithTypeArguments.kt")
+    public void testTypeAliasWithTypeArguments() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/typeAliasWithTypeArguments.kt");
     }
 
     @TestMetadata("typeFromGetter.kt")
@@ -157,6 +187,16 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @TestMetadata("typeParameterVsNested.kt")
     public void testTypeParameterVsNested() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/typeParameterVsNested.kt");
+    }
+
+    @TestMetadata("whenAsReceiver.kt")
+    public void testWhenAsReceiver() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/whenAsReceiver.kt");
+    }
+
+    @TestMetadata("whenInference.kt")
+    public void testWhenInference() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/whenInference.kt");
     }
 
     @TestMetadata("compiler/fir/resolve/testData/resolve/arguments")
@@ -237,6 +277,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/companion.kt");
         }
 
+        @TestMetadata("companionExtension.kt")
+        public void testCompanionExtension() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/companionExtension.kt");
+        }
+
         @TestMetadata("constructor.kt")
         public void testConstructor() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/constructor.kt");
@@ -247,9 +292,29 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/dispatchReceiver.kt");
         }
 
+        @TestMetadata("extensionPropertyInLambda.kt")
+        public void testExtensionPropertyInLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/extensionPropertyInLambda.kt");
+        }
+
+        @TestMetadata("genericPropertyAccess.kt")
+        public void testGenericPropertyAccess() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/genericPropertyAccess.kt");
+        }
+
+        @TestMetadata("importedReceiver.kt")
+        public void testImportedReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/importedReceiver.kt");
+        }
+
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/lambda.kt");
+        }
+
+        @TestMetadata("localExtension.kt")
+        public void testLocalExtension() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/localExtension.kt");
         }
 
         @TestMetadata("localImplicitBodies.kt")
@@ -272,6 +337,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/objects.kt");
         }
 
+        @TestMetadata("outerObject.kt")
+        public void testOuterObject() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/outerObject.kt");
+        }
+
         @TestMetadata("qualifiedExpressions.kt")
         public void testQualifiedExpressions() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/qualifiedExpressions.kt");
@@ -280,6 +350,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @TestMetadata("receiverConsistency.kt")
         public void testReceiverConsistency() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/receiverConsistency.kt");
+        }
+
+        @TestMetadata("sameReceiver.kt")
+        public void testSameReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/sameReceiver.kt");
         }
 
         @TestMetadata("simple.kt")

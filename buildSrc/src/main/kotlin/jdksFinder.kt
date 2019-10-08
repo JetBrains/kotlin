@@ -4,6 +4,7 @@ import net.rubygrapefruit.platform.Native
 import net.rubygrapefruit.platform.WindowsRegistry
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import java.nio.file.Paths
 import java.io.File
 import net.rubygrapefruit.platform.WindowsRegistry.Key.HKEY_LOCAL_MACHINE
 import org.gradle.internal.os.OperatingSystem
@@ -25,7 +26,7 @@ fun Project.getConfiguredJdks(): List<JdkId> {
                 ?: System.getenv(jdkMajorVersion.name)
                 ?: jdkAlternativeVarNames[jdkMajorVersion]?.mapNotNull { System.getenv(it) }?.firstOrNull()
                 ?: continue
-        val explicitJdk = File(explicitJdkEnvVal)
+        val explicitJdk = Paths.get(explicitJdkEnvVal).toRealPath().toFile()
         if (!explicitJdk.isDirectory) {
             throw GradleException("Invalid environment value $jdkMajorVersion: $explicitJdkEnvVal, expecting JDK home path")
         }

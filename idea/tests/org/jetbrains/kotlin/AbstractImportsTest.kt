@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    protected fun doTest(testPath: String) {
+    protected fun doTest(unused: String) {
+        val testPath = testPath()
         CodeStyle.setTemporarySettings(project, CodeStyle.getSettings(project).clone())
         val codeStyleSettings = KotlinCodeStyleSettings.getInstance(project)
 
@@ -30,13 +30,13 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
             val fixture = myFixture
             val dependencySuffixes = listOf(".dependency.kt", ".dependency.java", ".dependency1.kt", ".dependency2.kt")
             for (suffix in dependencySuffixes) {
-                val dependencyPath = testPath.replace(".kt", suffix)
-                if (File(dependencyPath).exists()) {
+                val dependencyPath = fileName().replace(".kt", suffix)
+                if (File(testDataPath, dependencyPath).exists()) {
                     fixture.configureByFile(dependencyPath)
                 }
             }
 
-            fixture.configureByFile(testPath)
+            fixture.configureByFile(fileName())
 
             val file = fixture.file as KtFile
 

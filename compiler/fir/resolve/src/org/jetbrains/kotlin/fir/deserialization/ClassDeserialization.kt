@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl

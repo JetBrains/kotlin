@@ -42,7 +42,10 @@ class AddNameToArgumentIntention : SelfTargetingIntention<KtValueArgument>(
 
     override fun isApplicableTo(element: KtValueArgument, caretOffset: Int): Boolean {
         val expression = element.getArgumentExpression() ?: return false
-        val name = detectNameToAdd(element, shouldBeLastUnnamed = true) ?: return false
+        val name = detectNameToAdd(
+            element,
+            shouldBeLastUnnamed = !element.languageVersionSettings.supportsFeature(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition)
+        ) ?: return false
 
         text = "Add '$name =' to argument"
 

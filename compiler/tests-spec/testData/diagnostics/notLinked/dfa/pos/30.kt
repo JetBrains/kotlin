@@ -181,7 +181,7 @@ fun <T>case_12(x: Inv<T>?) {
  */
 inline fun <reified T>case_13(x: Out<T>?) {
     if (x?.prop_1?.prop_1!!.prop_1?.prop_1 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<T>?")!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!UNSAFE_CALL!>.<!>prop_1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<T>?")!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!UNSAFE_CALL!>.<!>prop_1<!><!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T>?")!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1.prop_1.prop_1<!UNSAFE_CALL!>.<!>prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T>?")!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1.prop_1.prop_1<!UNSAFE_CALL!>.<!>prop_1<!><!UNSAFE_CALL!>.<!>equals(10)
     }
 }

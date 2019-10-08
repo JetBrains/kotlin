@@ -39,4 +39,10 @@ sourceSets {
 ant.importBuild("buildLexer.xml")
 
 ant.properties["builddir"] = buildDir.absolutePath
-ant.properties["flex.classpath"] = jflexPath.asPath
+
+tasks.findByName("lexer")!!.apply {
+    doFirst {
+        ant.properties["flex.classpath"] = jflexPath.asPath
+    }
+}
+

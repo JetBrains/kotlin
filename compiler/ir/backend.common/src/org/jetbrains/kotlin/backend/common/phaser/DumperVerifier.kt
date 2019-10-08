@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
+import org.jetbrains.kotlin.backend.common.CheckDeclarationParentsVisitor
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.IrValidator
+import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
@@ -13,6 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 private val IrElement.elementName: String
@@ -52,7 +57,7 @@ fun <Data, Context> makeVerifyAction(verifier: (Context, Data) -> Unit): Action<
     }
 
 fun dumpIrElement(actionState: ActionState, data: IrElement, context: Any?): String {
-    val beforeOrAfterStr = actionState.beforeOrAfter.name.toLowerCase()
+    val beforeOrAfterStr = actionState.beforeOrAfter.name.toLowerCaseAsciiOnly()
 
     var dumpText: String = ""
     val elementName: String
@@ -117,3 +122,16 @@ fun <Data, Context> dumpToStdout(
     }
 
 val defaultDumper = makeDumpAction(dumpToStdout(::dumpIrElement) + dumpToFile("ir", ::dumpIrElement))
+
+fun <Fragment : IrElement> validationCallback(context: CommonBackendContext, fragment: Fragment) {
+    val validatorConfig = IrValidatorConfig(
+        abortOnError = true,
+        ensureAllNodesAreDifferent = true,
+        checkTypes = false,
+        checkDescriptors = false
+    )
+    fragment.accept(IrValidator(context, validatorConfig), null)
+    fragment.accept(CheckDeclarationParentsVisitor, null)
+}
+
+val validationAction = makeVerifyAction(::validationCallback)

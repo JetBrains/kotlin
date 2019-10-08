@@ -9,6 +9,7 @@ import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.tree.JKTypeParameter
 import org.jetbrains.kotlin.nj2k.tree.JKTypeParameterListOwner
+import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -20,14 +21,14 @@ sealed class JKTypeParameterSymbol : JKSymbol {
 
 class JKMultiverseTypeParameterSymbol(
     override val target: PsiTypeParameter,
-    override val symbolProvider: JKSymbolProvider
+    override val typeFactory: JKTypeFactory
 ) : JKTypeParameterSymbol(), JKMultiverseSymbol<PsiTypeParameter> {
     override val index: Int
         get() = target.index
 }
 
 class JKUniverseTypeParameterSymbol(
-    override val symbolProvider: JKSymbolProvider
+    override val typeFactory: JKTypeFactory
 ) : JKTypeParameterSymbol(), JKUniverseSymbol<JKTypeParameter> {
     override val index: Int
         get() = declaredIn?.safeAs<JKTypeParameterListOwner>()?.typeParameterList?.typeParameters?.indexOf(target) ?: -1
@@ -36,7 +37,7 @@ class JKUniverseTypeParameterSymbol(
 
 class JKMultiverseKtTypeParameterSymbol(
     override val target: KtTypeParameter,
-    override val symbolProvider: JKSymbolProvider
+    override val typeFactory: JKTypeFactory
 ) : JKTypeParameterSymbol(), JKMultiverseKtSymbol<KtTypeParameter> {
     override val index: Int
         get() = target.getParentOfType<KtTypeParameterListOwner>(strict = false)?.typeParameters?.indexOf(target) ?: -1

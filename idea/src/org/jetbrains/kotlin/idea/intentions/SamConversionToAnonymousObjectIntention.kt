@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -21,8 +22,10 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
@@ -84,7 +87,12 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
             functionDescriptor: FunctionDescriptor,
             functionName: String
         ) {
-            val interfaceName = call.calleeExpression?.text ?: return
+            val parentOfCall = call.getQualifiedExpressionForSelector()
+            val interfaceName = if (parentOfCall != null) {
+                parentOfCall.resolveToCall()?.resultingDescriptor?.fqNameSafe?.asString()
+            } else {
+                call.calleeExpression?.text
+            } ?: return
             val typeArguments = call.typeArguments.mapNotNull { it.typeReference }
             val typeArgumentsText =
                 if (typeArguments.isEmpty()) "" else typeArguments.joinToString(prefix = "<", postfix = ">", separator = ", ") { it.text }
@@ -92,7 +100,9 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
             val typeParameters = classDescriptor?.declaredTypeParameters?.map { it.name.asString() }?.zip(typeArguments)?.toMap().orEmpty()
             LambdaToAnonymousFunctionIntention.convertLambdaToFunction(lambda, functionDescriptor, functionName, typeParameters) {
                 it.addModifier(KtTokens.OVERRIDE_KEYWORD)
-                call.replaced(KtPsiFactory(it).createExpression("object : $interfaceName$typeArgumentsText { ${it.text} }"))
+                (parentOfCall ?: call).replaced(
+                    KtPsiFactory(it).createExpression("object : $interfaceName$typeArgumentsText { ${it.text} }")
+                )
             }
         }
 

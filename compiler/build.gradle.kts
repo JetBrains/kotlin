@@ -47,6 +47,7 @@ dependencies {
     testCompile(projectTests(":compiler:fir:psi2fir"))
     testCompile(projectTests(":compiler:fir:fir2ir"))
     testCompile(projectTests(":compiler:fir:resolve"))
+    testCompile(projectTests(":compiler:visualizer"))
     testCompile(projectTests(":generators:test-generator"))
     testCompile(project(":compiler:ir.ir2cfg"))
     testCompile(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
@@ -84,10 +85,10 @@ dependencies {
 
     }
     testRuntime(androidDxJar())
-    testRuntime(files(toolsJar()))
+    testRuntime(toolsJar())
 
     antLauncherJar(commonDep("org.apache.ant", "ant"))
-    antLauncherJar(files(toolsJar()))
+    antLauncherJar(toolsJar())
 }
 
 sourceSets {

@@ -74,18 +74,13 @@ val projectsToShadow by extra(listOf(
         ":j2k",
         ":nj2k",
         ":nj2k:nj2k-services",
-        ":kotlin-allopen-compiler-plugin",
-        ":kotlin-noarg-compiler-plugin",
-        ":kotlin-sam-with-receiver-compiler-plugin",
         ":kotlin-scripting-idea",
-        ":kotlinx-serialization-compiler-plugin",
         ":kotlinx-serialization-ide-plugin",
         ":idea:idea-android",
         ":idea:idea-android-output-parser",
         ":idea:idea-jvm",
         ":idea:idea-git",
         ":idea:idea-jps-common",
-        ":plugins:android-extensions-compiler",
         *if (Ide.IJ())
             arrayOf(":idea:idea-maven")
         else
@@ -106,7 +101,13 @@ val libraryProjects = listOf(
     ":kotlin-scripting-intellij",
     ":kotlin-scripting-jvm",
     ":kotlin-util-io",
-    ":kotlin-util-klib"
+    ":kotlin-util-klib",
+    ":kotlin-util-klib-metadata",
+    ":kotlin-allopen-compiler-plugin",
+    ":kotlin-noarg-compiler-plugin",
+    ":kotlin-sam-with-receiver-compiler-plugin",
+    ":plugins:android-extensions-compiler",
+    ":kotlinx-serialization-compiler-plugin"
 )
 
 // Gradle tooling model jars are loaded into Gradle during import and should present in plugin as separate jar
@@ -157,7 +158,7 @@ dependencies {
 val jar = runtimeJar {
     from("$rootDir/resources/kotlinManifest.properties")
     archiveName = "kotlin-plugin.jar"
-}
+}.get() // make it eager to avoid corresponding refactorings in the kotlin-ultimate part for now
 
 val ideaPluginDir: File by rootProject.extra
 tasks.register<Sync>("ideaPlugin") {

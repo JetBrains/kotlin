@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.reportTrailingLambdaErrorOr
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -118,14 +119,15 @@ class DiagnosticReporterByTrackingStrategy(
             SmartCastDiagnostic::class.java -> reportSmartCast(diagnostic as SmartCastDiagnostic)
             UnstableSmartCast::class.java -> reportUnstableSmartCast(diagnostic as UnstableSmartCast)
             TooManyArguments::class.java -> {
-                reportIfNonNull(callArgument.psiExpression) {
-                    trace.report(TOO_MANY_ARGUMENTS.on(it, (diagnostic as TooManyArguments).descriptor))
+                trace.reportTrailingLambdaErrorOr(callArgument.psiExpression) { expr ->
+                    TOO_MANY_ARGUMENTS.on(expr, (diagnostic as TooManyArguments).descriptor)
                 }
 
                 trace.markAsReported()
             }
-            VarargArgumentOutsideParentheses::class.java ->
-                reportIfNonNull(callArgument.psiExpression) { trace.report(VARARG_OUTSIDE_PARENTHESES.on(it)) }
+            VarargArgumentOutsideParentheses::class.java -> trace.reportTrailingLambdaErrorOr(callArgument.psiExpression) { expr ->
+                VARARG_OUTSIDE_PARENTHESES.on(expr)
+            }
 
             MixingNamedAndPositionArguments::class.java ->
                 trace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(callArgument.psiCallArgument.valueArgument.asElement()))
@@ -147,6 +149,21 @@ class DiagnosticReporterByTrackingStrategy(
                         trace.report(TYPE_MISMATCH.on(it, diagnostic.expectedType, diagnostic.actualType))
                     }
                 }
+            }
+
+            CallableReferencesDefaultArgumentUsed::class.java -> {
+                require(diagnostic is CallableReferencesDefaultArgumentUsed) {
+                    "diagnostic ($diagnostic) should have type CallableReferencesDefaultArgumentUsed"
+                }
+
+                diagnostic.argument.psiExpression?.let {
+                    trace.report(
+                        UNSUPPORTED_FEATURE.on(
+                            it, LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType to context.languageVersionSettings
+                        )
+                    )
+                }
+
             }
         }
     }
@@ -242,7 +259,7 @@ class DiagnosticReporterByTrackingStrategy(
                         val index = parameterTypes.indexOf(constraintError.upperKotlinType.unwrap())
                         val lambdaExpression = lambda.psiExpression as? KtLambdaExpression ?: return@lambda
                         val parameter = lambdaExpression.valueParameters.getOrNull(index) ?: return@lambda
-                        trace.report(Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.on(parameter, constraintError.upperKotlinType.unCapture()))
+                        trace.report(Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.on(parameter, constraintError.upperKotlinType))
                         return
                     }
 
@@ -262,8 +279,8 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.report(
                         Errors.TYPE_MISMATCH.on(
                             deparenthesized,
-                            constraintError.upperKotlinType.unCapture(),
-                            constraintError.lowerKotlinType.unCapture()
+                            constraintError.upperKotlinType,
+                            constraintError.lowerKotlinType
                         )
                     )
                 }
@@ -274,8 +291,8 @@ class DiagnosticReporterByTrackingStrategy(
                         trace.report(
                             Errors.TYPE_MISMATCH.on(
                                 it,
-                                constraintError.upperKotlinType.unCapture(),
-                                constraintError.lowerKotlinType.unCapture()
+                                constraintError.upperKotlinType,
+                                constraintError.lowerKotlinType
                             )
                         )
                     }

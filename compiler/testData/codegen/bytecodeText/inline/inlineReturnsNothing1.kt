@@ -1,4 +1,4 @@
-// NB '!!' uses Intrinsics.throwNpe()
+// NB '!!' uses Intrinsics.throwNpe/checkNotNull
 inline fun exit(): Nothing = null!!
 
 fun box(): String {

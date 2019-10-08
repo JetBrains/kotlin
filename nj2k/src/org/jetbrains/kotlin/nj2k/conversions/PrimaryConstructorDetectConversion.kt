@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.declarationList
 import org.jetbrains.kotlin.nj2k.replace
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtInitDeclarationImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtPrimaryConstructorImpl
 
-class PrimaryConstructorDetectConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+
+class PrimaryConstructorDetectConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element is JKClass &&
             (element.classKind == JKClass.ClassKind.CLASS || element.classKind == JKClass.ClassKind.ENUM)
@@ -22,7 +22,7 @@ class PrimaryConstructorDetectConversion(private val context: NewJ2kConverterCon
     }
 
     private fun processClass(element: JKClass) {
-        val constructors = element.declarationList.filterIsInstance<JKKtConstructor>()
+        val constructors = element.declarationList.filterIsInstance<JKConstructor>()
         if (constructors.any { it is JKKtPrimaryConstructor }) return
         val primaryConstructorCandidate = detectPrimaryConstructor(constructors) ?: return
         val delegationCall = primaryConstructorCandidate.delegationCall as? JKDelegationConstructorCall
@@ -31,11 +31,11 @@ class PrimaryConstructorDetectConversion(private val context: NewJ2kConverterCon
 
         primaryConstructorCandidate.invalidate()
         if (primaryConstructorCandidate.block.statements.isNotEmpty()) {
-            val initDeclaration = JKKtInitDeclarationImpl(primaryConstructorCandidate.block)
-                .withNonCodeElementsFrom(primaryConstructorCandidate)
-            primaryConstructorCandidate.clearNonCodeElements()
-            for (modifierElement in primaryConstructorCandidate.modifierElements()) {
-                modifierElement.clearNonCodeElements()
+            val initDeclaration = JKKtInitDeclaration(primaryConstructorCandidate.block)
+                .withFormattingFrom(primaryConstructorCandidate)
+            primaryConstructorCandidate.clearFormatting()
+            primaryConstructorCandidate.forEachModifier { modifierElement ->
+                modifierElement.clearFormatting()
             }
             element.classBody.declarations =
                 element.classBody.declarations.replace(primaryConstructorCandidate, initDeclaration)
@@ -44,7 +44,7 @@ class PrimaryConstructorDetectConversion(private val context: NewJ2kConverterCon
         }
 
         val primaryConstructor =
-            JKKtPrimaryConstructorImpl(
+            JKKtPrimaryConstructor(
                 primaryConstructorCandidate.name,
                 primaryConstructorCandidate.parameters,
                 primaryConstructorCandidate.delegationCall,
@@ -52,14 +52,14 @@ class PrimaryConstructorDetectConversion(private val context: NewJ2kConverterCon
                 primaryConstructorCandidate.otherModifierElements,
                 primaryConstructorCandidate.visibilityElement,
                 primaryConstructorCandidate.modalityElement
-            ).withNonCodeElementsFrom(primaryConstructorCandidate)
+            ).withFormattingFrom(primaryConstructorCandidate)
 
-        context.symbolProvider.transferSymbol(primaryConstructor, primaryConstructorCandidate)
+        symbolProvider.transferSymbol(primaryConstructor, primaryConstructorCandidate)
 
         element.classBody.declarations += primaryConstructor
     }
 
-    private fun detectPrimaryConstructor(constructors: List<JKKtConstructor>): JKKtConstructor? {
+    private fun detectPrimaryConstructor(constructors: List<JKConstructor>): JKConstructor? {
         val constructorsWithoutOtherConstructorCall =
             constructors.filterNot { (it.delegationCall as? JKDelegationConstructorCall)?.expression is JKThisExpression }
         return constructorsWithoutOtherConstructorCall.singleOrNull()

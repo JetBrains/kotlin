@@ -26,7 +26,26 @@ import org.junit.Test
 import org.junit.runners.Parameterized
 import java.io.File
 
-class GradleNativeLibrariesInIDENamingTest : GradleImportingTestCase() {
+abstract class TestCaseWithFakeKotlinNative : GradleImportingTestCase() {
+    protected fun configureProject() {
+        configureByFiles()
+
+        // include data dir with fake Kotlin/Native libraries
+        val testSuiteDataDir = testDataDirectory().parentFile
+        val kotlinNativeHome = testSuiteDataDir.resolve(FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH)
+
+        kotlinNativeHome.walkTopDown()
+            .filter { it.isFile }
+            .forEach { pathInTestSuite ->
+                // need to put copied file one directory upper than the project root, so adding ".." to the beginning of relative path
+                // reason: distribution KLIBs should not be appear in IDEA indexes, so they should be located outside of the project root
+                val relativePathInProject = DOUBLE_DOT_PATH.resolve(pathInTestSuite.relativeTo(testSuiteDataDir))
+                createProjectSubFile(relativePathInProject.toString(), pathInTestSuite.readText())
+            }
+    }
+}
+
+class GradleNativeLibrariesInIDENamingTest : TestCaseWithFakeKotlinNative() {
 
     // Test naming of Kotlin/Native libraries in projects with Gradle plugin 1.3.21+
     @Test
@@ -49,23 +68,6 @@ class GradleNativeLibrariesInIDENamingTest : GradleImportingTestCase() {
     override fun getExternalSystemConfigFileName() = GradleConstants.KOTLIN_DSL_SCRIPT_NAME
 
     override fun testDataDirName() = "nativeLibraries"
-
-    private fun configureProject() {
-        configureByFiles()
-
-        // include data dir with fake Kotlin/Native libraries
-        val testSuiteDataDir = testDataDirectory().parentFile
-        val kotlinNativeHome = testSuiteDataDir.resolve(FAKE_KOTLIN_NATIVE_HOME_RELATIVE_PATH)
-
-        kotlinNativeHome.walkTopDown()
-            .filter { it.isFile }
-            .forEach { pathInTestSuite ->
-                // need to put copied file one directory upper than the project root, so adding ".." to the beginning of relative path
-                // reason: distribution KLIBs should not be appear in IDEA indexes, so they should be located outside of the project root
-                val relativePathInProject = DOUBLE_DOT_PATH.resolve(pathInTestSuite.relativeTo(testSuiteDataDir))
-                createProjectSubFile(relativePathInProject.toString(), pathInTestSuite.readText())
-            }
-    }
 
     companion object {
         @Parameterized.Parameters(name = "{index}: with Gradle-{0}")
@@ -116,7 +118,7 @@ private fun assertValidModule(module: Module, projectRoot: String) {
         nativeLibraries.forEach { assertValidNativeLibrary(it, projectRoot) }
 
         val kotlinVersion = requireNotNull(module.externalCompilerVersion) {
-            "External compiler version shoul not be null"
+            "External compiler version should not be null"
         }
 
         val expectedNativeLibraryNames = when {

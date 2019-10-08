@@ -1,6 +1,3 @@
 fun foo(b: Boolean) {
-    if (b)
-        println("true")
-    else
-        println("false")
+    if (b) println("true") else println("false")
 }

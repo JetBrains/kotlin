@@ -116,7 +116,7 @@ public class IdeErrorMessages {
                                            "<tr><td>Parameter:</td><td>{1}</td></tr></table></html>", HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, "<html>Return type is ''{0}'', which is not a subtype of overridden<br/>" +
-                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, HTML);
+                                                  "{1}</html>", HTML_RENDER_RETURN_TYPE, HTML_WITH_ANNOTATIONS_WHITELIST);
         MAP.put(RETURN_TYPE_MISMATCH_ON_INHERITANCE, "<html>Return types of inherited members are incompatible:<br/>{0},<br/>{1}</html>",
                 HTML, HTML);
 

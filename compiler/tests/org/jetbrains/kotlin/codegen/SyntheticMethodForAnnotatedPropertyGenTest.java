@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 
 import java.lang.annotation.Annotation;
@@ -38,7 +37,7 @@ public class SyntheticMethodForAnnotatedPropertyGenTest extends CodegenTestCase 
         return "properties/syntheticMethod";
     }
 
-    private static final String TEST_SYNTHETIC_METHOD_NAME = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(Name.identifier("property"));
+    private static final String TEST_SYNTHETIC_METHOD_NAME = JvmAbi.getSyntheticMethodNameForAnnotatedProperty("property");
 
     public void testInClass() {
         loadFile();

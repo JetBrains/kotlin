@@ -25,13 +25,24 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.insertMembersAfter
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.prevSiblingOfSameType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.util.findCallableMemberBySignature
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandler {
 
@@ -42,7 +53,10 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
 
     protected abstract fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject>
 
-    private fun showOverrideImplementChooser(project: Project, members: Array<OverrideMemberChooserObject>): MemberChooser<OverrideMemberChooserObject>? {
+    private fun showOverrideImplementChooser(
+        project: Project,
+        members: Array<OverrideMemberChooserObject>
+    ): MemberChooser<OverrideMemberChooserObject>? {
         val chooser = MemberChooser(members, true, true, project)
         chooser.title = getChooserTitle()
         chooser.show()
@@ -80,8 +94,7 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
         if (implementAll) {
             selectedElements = members
             copyDoc = false
-        }
-        else {
+        } else {
             val chooser = showOverrideImplementChooser(project, members.toTypedArray()) ?: return
             selectedElements = chooser.selectedElements ?: return
             copyDoc = chooser.isCopyJavadoc
@@ -101,12 +114,65 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
 
     companion object {
         fun generateMembers(
-                editor: Editor?,
-                classOrObject: KtClassOrObject,
-                selectedElements: Collection<OverrideMemberChooserObject>,
-                copyDoc: Boolean
+            editor: Editor?,
+            classOrObject: KtClassOrObject,
+            selectedElements: Collection<OverrideMemberChooserObject>,
+            copyDoc: Boolean
         ) {
-            insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(classOrObject, copyDoc) })
+            val selectedMemberDescriptors = selectedElements.associate { it.generateMember(classOrObject, copyDoc) to it.descriptor }
+
+            val classBody = classOrObject.body
+            if (classBody == null) {
+                insertMembersAfter(editor, classOrObject, selectedMemberDescriptors.keys)
+                return
+            }
+            val offset = editor?.caretModel?.offset ?: classBody.startOffset
+            val offsetCursorElement = PsiTreeUtil.findFirstParent(classBody.containingFile.findElementAt(offset)) {
+                it.parent == classBody
+            }
+            if (offsetCursorElement != null && offsetCursorElement != classBody.rBrace) {
+                insertMembersAfter(editor, classOrObject, selectedMemberDescriptors.keys)
+                return
+            }
+            val classLeftBrace = classBody.lBrace
+
+            val allSuperMemberDescriptors = selectedMemberDescriptors.values
+                .mapNotNull { it.containingDeclaration as? ClassDescriptor }
+                .associateWith {
+                    DescriptorUtils.getAllDescriptors(it.unsubstitutedMemberScope).filterIsInstance<CallableMemberDescriptor>()
+                }
+
+            val implementedElements = mutableMapOf<CallableMemberDescriptor, KtDeclaration>()
+
+            fun ClassDescriptor.findElement(memberDescriptor: CallableMemberDescriptor): KtDeclaration? {
+                return implementedElements[memberDescriptor]
+                    ?: (findCallableMemberBySignature(memberDescriptor)?.source?.getPsi() as? KtDeclaration)?.also {
+                        implementedElements[memberDescriptor] = it
+                    }
+            }
+
+            fun getAnchor(selectedElement: KtDeclaration): PsiElement? {
+                val lastElement = classOrObject.declarations.lastOrNull()
+                val selectedMemberDescriptor = selectedMemberDescriptors[selectedElement] ?: return lastElement
+                val superMemberDescriptors = allSuperMemberDescriptors[selectedMemberDescriptor.containingDeclaration] ?: return lastElement
+                val index = superMemberDescriptors.indexOf(selectedMemberDescriptor)
+                if (index == -1) return lastElement
+                val classDescriptor = classOrObject.descriptor as? ClassDescriptor ?: return lastElement
+
+                val upperElement = ((index - 1) downTo 0).firstNotNullResult {
+                    classDescriptor.findElement(superMemberDescriptors[it])
+                }
+                if (upperElement != null) return upperElement
+
+                val lowerElement = ((index + 1) until superMemberDescriptors.size).firstNotNullResult {
+                    classDescriptor.findElement(superMemberDescriptors[it])
+                }
+                if (lowerElement != null) return lowerElement.prevSiblingOfSameType() ?: classLeftBrace
+
+                return lastElement
+            }
+
+            insertMembersAfter(editor, classOrObject, selectedMemberDescriptors.keys) { getAnchor(it) }
         }
     }
 }

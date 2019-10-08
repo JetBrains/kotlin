@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationOutput
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -56,6 +57,12 @@ import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
         set(value) {
             javaSourceSet.compileClasspath = value
         }
+
+     override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
+         if (name != SourceSet.TEST_SOURCE_SET_NAME || other.name != SourceSet.MAIN_SOURCE_SET_NAME) {
+             super.addAssociateCompilationDependencies(other)
+         } // otherwise, do nothing: the Java Gradle plugin adds these dependencies for us, we don't need to add them to the classpath
+     }
 
     fun source(javaSourceSet: SourceSet) {
         with(target.project) {

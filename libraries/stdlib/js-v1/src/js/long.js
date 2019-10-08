@@ -94,13 +94,15 @@ Kotlin.Long.fromInt = function(value) {
 
 
 /**
- * Returns a Long representing the given value, provided that it is a finite
- * number.  Otherwise, zero is returned.
+ * Converts this number value to `Long`.
+ * The fractional part, if any, is rounded down towards zero.
+ * Returns zero if this `Double` value is `NaN`, `Long.MIN_VALUE` if it's less than `Long.MIN_VALUE`,
+ * `Long.MAX_VALUE` if it's bigger than `Long.MAX_VALUE`.
  * @param {number} value The number in question.
  * @return {!Kotlin.Long} The corresponding Long value.
  */
 Kotlin.Long.fromNumber = function(value) {
-  if (isNaN(value) || !isFinite(value)) {
+  if (isNaN(value)) {
     return Kotlin.Long.ZERO;
   } else if (value <= -Kotlin.Long.TWO_PWR_63_DBL_) {
     return Kotlin.Long.MIN_VALUE;

@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.Printer
+import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.BlockJUnit4ClassRunner
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -20,7 +22,8 @@ class TestGenerator(
     baseDir: String,
     suiteTestClassFqName: String,
     baseTestClassFqName: String,
-    testClassModels: Collection<TestClassModel>
+    testClassModels: Collection<TestClassModel>,
+    useJunit4: Boolean
 ) {
 
     private val baseTestClassPackage: String
@@ -28,6 +31,7 @@ class TestGenerator(
     private val suiteClassName: String
     private val baseTestClassName: String
     private val testClassModels: Collection<TestClassModel>
+    private val useJunit4: Boolean
     private val testSourceFilePath: String
 
     init {
@@ -36,6 +40,7 @@ class TestGenerator(
         this.suiteClassPackage = suiteTestClassFqName.substringBeforeLast('.', baseTestClassPackage)
         this.suiteClassName = suiteTestClassFqName.substringAfterLast('.', suiteTestClassFqName)
         this.testClassModels = ArrayList(testClassModels)
+        this.useJunit4 = useJunit4
 
         this.testSourceFilePath = baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java"
 
@@ -60,7 +65,9 @@ class TestGenerator(
         p.println("package ", suiteClassPackage, ";")
         p.println()
         p.println("import com.intellij.testFramework.TestDataPath;")
-        p.println("import ", RUNNER.canonicalName, ";")
+        if (!useJunit4) {
+            p.println("import ", RUNNER.canonicalName, ";")
+        }
         p.println("import " + KotlinTestUtils::class.java.canonicalName + ";")
         p.println("import " + TargetBackend::class.java.canonicalName + ";")
         if (suiteClassPackage != baseTestClassPackage) {
@@ -68,6 +75,10 @@ class TestGenerator(
         }
         p.println("import " + TestMetadata::class.java.canonicalName + ";")
         p.println("import " + RunWith::class.java.canonicalName + ";")
+        if (useJunit4) {
+            p.println("import " + BlockJUnit4ClassRunner::class.java.canonicalName + ";")
+            p.println("import " + Test::class.java.canonicalName + ";")
+        }
         p.println()
         p.println("import java.io.File;")
         p.println("import java.util.regex.Pattern;")
@@ -115,7 +126,7 @@ class TestGenerator(
 
         generateMetadata(p, testClassModel)
         generateTestDataPath(p, testClassModel)
-        p.println("@RunWith(", RUNNER.simpleName, ".class)")
+        p.println("@RunWith(", if (useJunit4) JUNIT4_RUNNER.simpleName else RUNNER.simpleName, ".class)")
 
         p.println("public " + staticModifier + "class ", testClassModel.name, " extends ", baseTestClassName, " {")
         p.pushIndent()
@@ -134,7 +145,7 @@ class TestGenerator(
                 p.println()
             }
 
-            generateTestMethod(p, methodModel)
+            generateTestMethod(p, methodModel, useJunit4)
         }
 
         for (innerTestClass in innerTestClasses) {
@@ -156,8 +167,12 @@ class TestGenerator(
     companion object {
         private val GENERATED_FILES = HashSet<String>()
         private val RUNNER = JUnit3RunnerWithInners::class.java
+        private val JUNIT4_RUNNER = BlockJUnit4ClassRunner::class.java
 
-        private fun generateTestMethod(p: Printer, methodModel: MethodModel) {
+        private fun generateTestMethod(p: Printer, methodModel: MethodModel, useJunit4: Boolean) {
+            if (useJunit4 && (methodModel !is RunTestMethodModel)) {
+                p.println("@Test")
+            }
             generateMetadata(p, methodModel)
 
             methodModel.generateSignature(p)

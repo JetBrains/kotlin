@@ -10,39 +10,29 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructors
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpression
 import org.jetbrains.kotlin.resolve.inline.isInlineOnly
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral
 import org.jetbrains.kotlin.types.expressions.LabelResolver
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -56,33 +46,23 @@ import kotlin.math.max
 abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected val codegen: T,
     protected val state: GenerationState,
-    function: FunctionDescriptor,
-    private val typeParameterMappings: TypeParameterMappings,
-    protected val sourceCompiler: SourceCompilerForInline
+    protected val functionDescriptor: FunctionDescriptor,
+    private val methodOwner: Type,
+    protected val jvmSignature: JvmMethodSignature,
+    private val typeParameterMappings: TypeParameterMappings<*>,
+    protected val sourceCompiler: SourceCompilerForInline,
+    private val reifiedTypeInliner: ReifiedTypeInliner<*>
 ) {
     init {
-        assert(InlineUtil.isInline(function) || InlineUtil.isArrayConstructorWithLambda(function)) {
-            "InlineCodegen can inline only inline functions and array constructors: " + function
+        assert(InlineUtil.isInline(functionDescriptor)) {
+            "InlineCodegen can inline only inline functions: $functionDescriptor"
         }
     }
 
     // TODO: implement AS_FUNCTION inline strategy
     private val asFunctionInline = false
 
-    protected val typeMapper = state.typeMapper
-
     private val initialFrameSize = codegen.frameMap.currentSize
-
-    private val reifiedTypeInliner =
-        ReifiedTypeInliner(typeParameterMappings, state.typeMapper, state.languageVersionSettings.isReleaseCoroutines())
-
-    protected val functionDescriptor: FunctionDescriptor =
-        if (InlineUtil.isArrayConstructorWithLambda(function))
-            FictitiousArrayConstructor.create(function as ConstructorDescriptor)
-        else
-            function.original
-
-    protected val jvmSignature: JvmMethodGenericSignature
 
     private val isSameModule: Boolean
 
@@ -102,12 +82,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     protected var methodHandleInDefaultMethodIndex = -1
 
     init {
-        sourceCompiler.initializeInlineFunctionContext(functionDescriptor)
-        jvmSignature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.contextKind)
         isSameModule = sourceCompiler.isCallInsideSameModuleAsDeclared(functionDescriptor)
 
         if (functionDescriptor !is FictitiousArrayConstructor) {
-            val functionOrAccessorName = typeMapper.mapAsmMethod(function).name
+            val functionOrAccessorName = jvmSignature.asmMethod.name
             //track changes for property accessor and @JvmName inline functions/property accessors
             if (functionOrAccessorName != functionDescriptor.name.asString()) {
                 val scope = getMemberScope(functionDescriptor)
@@ -151,13 +129,16 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     fun performInline(
-        typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+        typeArguments: List<TypeParameterMarker>?,
         callDefault: Boolean,
+        typeSystem: TypeSystemCommonBackendContext,
         codegen: BaseExpressionCodegen
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
-            nodeAndSmap = createInlineMethodNode(functionDescriptor, jvmSignature, callDefault, typeArguments, state, sourceCompiler)
+            nodeAndSmap = createInlineMethodNode(
+                functionDescriptor, methodOwner, jvmSignature, callDefault, typeArguments, typeSystem, state, sourceCompiler
+            )
             endCall(inlineCall(nodeAndSmap, callDefault))
         } catch (e: CompilationException) {
             throw e
@@ -535,13 +516,15 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         internal fun createInlineMethodNode(
             functionDescriptor: FunctionDescriptor,
+            methodOwner: Type,
             jvmSignature: JvmMethodSignature,
             callDefault: Boolean,
-            typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
+            typeArguments: List<TypeParameterMarker>?,
+            typeSystem: TypeSystemCommonBackendContext,
             state: GenerationState,
             sourceCompilerForInline: SourceCompilerForInline
         ): SMAPAndMethodNode {
-            val intrinsic = generateInlineIntrinsic(state, functionDescriptor, typeArguments)
+            val intrinsic = generateInlineIntrinsic(state, functionDescriptor, typeArguments, typeSystem)
             if (intrinsic != null) {
                 return SMAPAndMethodNode(intrinsic, createDefaultFakeSMAP())
             }
@@ -551,12 +534,40 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             else
                 mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
 
-            val owner = state.typeMapper.mapImplementationOwner(functionDescriptor)
-            val methodId = MethodId(owner.internalName, asmMethod)
             val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
             if (!isBuiltInArrayIntrinsic(functionDescriptor) && directMember !is DescriptorWithContainerSource) {
                 return sourceCompilerForInline.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
             }
+
+            return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature)
+        }
+
+        internal fun createSpecialInlineMethodNodeFromBinaries(functionDescriptor: FunctionDescriptor, state: GenerationState): MethodNode {
+            val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
+            assert(directMember is DescriptorWithContainerSource) {
+                "Function is not in binaries: $functionDescriptor"
+            }
+            assert(directMember is FunctionDescriptor && directMember.isOperator) {
+                "Operator function expected: $directMember"
+            }
+
+            val methodOwner = state.typeMapper.mapImplementationOwner(functionDescriptor)
+            val jvmSignature = state.typeMapper.mapSignatureWithGeneric(functionDescriptor, OwnerKind.IMPLEMENTATION)
+
+            val asmMethod = mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
+
+            return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature).node
+        }
+
+        private fun getCompiledMethodNodeInner(
+            functionDescriptor: FunctionDescriptor,
+            directMember: CallableMemberDescriptor,
+            asmMethod: Method,
+            methodOwner: Type,
+            state: GenerationState,
+            jvmSignature: JvmMethodSignature
+        ): SMAPAndMethodNode {
+            val methodId = MethodId(methodOwner.internalName, asmMethod)
 
             val resultInCache = state.inlineCache.methodNodeById.getOrPut(methodId) {
                 val result = doCreateMethodNodeFromCompiled(directMember, state, asmMethod)
@@ -705,159 +716,3 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
 val BaseExpressionCodegen.v: InstructionAdapter
     get() = visitor
-
-class PsiInlineCodegen(
-    codegen: ExpressionCodegen,
-    state: GenerationState,
-    function: FunctionDescriptor,
-    typeParameterMappings: TypeParameterMappings,
-    sourceCompiler: SourceCompilerForInline
-) : InlineCodegen<ExpressionCodegen>(codegen, state, function, typeParameterMappings, sourceCompiler), CallGenerator {
-
-    override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
-        if (info.generateAssertField) {
-            codegen.parentCodegen.generateAssertField()
-        }
-    }
-
-    override fun genCallInner(
-        callableMethod: Callable,
-        resolvedCall: ResolvedCall<*>?,
-        callDefault: Boolean,
-        codegen: ExpressionCodegen
-    ) {
-        if (!state.globalInlineContext.enterIntoInlining(resolvedCall)) {
-            generateStub(resolvedCall, codegen)
-            return
-        }
-        try {
-            performInline(resolvedCall?.typeArguments, callDefault, codegen)
-        } finally {
-            state.globalInlineContext.exitFromInliningOf(resolvedCall)
-        }
-    }
-
-    override fun processAndPutHiddenParameters(justProcess: Boolean) {
-        if (getMethodAsmFlags(functionDescriptor, sourceCompiler.contextKind, state) and Opcodes.ACC_STATIC == 0) {
-            invocationParamBuilder.addNextParameter(AsmTypes.OBJECT_TYPE, false)
-        }
-
-        for (param in jvmSignature.valueParameters) {
-            if (param.kind == JvmMethodParameterKind.VALUE) {
-                break
-            }
-            invocationParamBuilder.addNextParameter(param.asmType, false)
-        }
-
-        invocationParamBuilder.markValueParametersStart()
-        val hiddenParameters = invocationParamBuilder.buildParameters().parameters
-
-        delayedHiddenWriting = recordParameterValueInLocalVal(justProcess, false, *hiddenParameters.toTypedArray())
-    }
-
-    override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
-        activeLambda = next
-        when (next) {
-            is PsiExpressionLambda -> codegen.pushClosureOnStack(next.classDescriptor, true, this, functionReferenceReceiver)
-            is DefaultLambda -> rememberCapturedForDefaultLambda(next)
-            else -> throw RuntimeException("Unknown lambda: $next")
-        }
-        activeLambda = null
-    }
-
-    private fun getBoundCallableReferenceReceiver(argumentExpression: KtExpression): ReceiverValue? {
-        val deparenthesized = KtPsiUtil.deparenthesize(argumentExpression) as? KtCallableReferenceExpression ?: return null
-        val resolvedCall = deparenthesized.callableReference.getResolvedCallWithAssert(state.bindingContext)
-        return JvmCodegenUtil.getBoundCallableReferenceReceiver(resolvedCall)
-    }
-
-    /*lambda or callable reference*/
-    private fun isInliningParameter(expression: KtExpression, valueParameterDescriptor: ValueParameterDescriptor): Boolean {
-        //TODO deparenthisise typed
-        val deparenthesized = KtPsiUtil.deparenthesize(expression)
-
-        return InlineUtil.isInlineParameter(valueParameterDescriptor) && isInlinableParameterExpression(deparenthesized)
-    }
-
-    override fun genValueAndPut(
-        valueParameterDescriptor: ValueParameterDescriptor?,
-        argumentExpression: KtExpression,
-        parameterType: JvmKotlinType,
-        parameterIndex: Int
-    ) {
-        requireNotNull(valueParameterDescriptor) {
-            "Parameter descriptor can only be null in case a @PolymorphicSignature function is called, " +
-                    "which cannot be declared in Kotlin and thus be inline: $codegen"
-        }
-
-        if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
-            val lambdaInfo = rememberClosure(argumentExpression, parameterType.type, valueParameterDescriptor)
-
-            val receiverValue = getBoundCallableReferenceReceiver(argumentExpression)
-            if (receiverValue != null) {
-                val receiver = codegen.generateReceiverValue(receiverValue, false)
-                val receiverKotlinType = receiver.kotlinType
-                val boxedReceiver =
-                    if (receiverKotlinType != null)
-                        receiver.type.boxReceiverForBoundReference(receiverKotlinType, state.typeMapper)
-                    else
-                        receiver.type.boxReceiverForBoundReference()
-
-                putClosureParametersOnStack(
-                    lambdaInfo,
-                    StackValue.coercion(receiver, boxedReceiver, receiverKotlinType)
-                )
-            }
-        } else {
-            val value = codegen.gen(argumentExpression)
-            val kind = when {
-                isCallSiteIsSuspend(valueParameterDescriptor) -> ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_PARAMETER_CALLED_IN_SUSPEND
-                isInlineSuspendParameter(valueParameterDescriptor) -> ValueKind.NON_INLINEABLE_ARGUMENT_FOR_INLINE_SUSPEND_PARAMETER
-                else -> ValueKind.GENERAL
-            }
-            putValueIfNeeded(parameterType, value, kind, parameterIndex)
-        }
-    }
-
-    private fun isInlineSuspendParameter(descriptor: ValueParameterDescriptor): Boolean =
-        functionDescriptor.isInline && !descriptor.isNoinline && descriptor.type.isSuspendFunctionTypeOrSubtype
-
-    private fun isCallSiteIsSuspend(descriptor: ValueParameterDescriptor): Boolean =
-        state.bindingContext[CodegenBinding.CALL_SITE_IS_SUSPEND_FOR_CROSSINLINE_LAMBDA, descriptor] == true
-
-    private fun rememberClosure(expression: KtExpression, type: Type, parameter: ValueParameterDescriptor): LambdaInfo {
-        val ktLambda = KtPsiUtil.deparenthesize(expression)
-        assert(isInlinableParameterExpression(ktLambda)) { "Couldn't find inline expression in ${expression.text}" }
-
-        return PsiExpressionLambda(
-            ktLambda!!, typeMapper, state.languageVersionSettings,
-            parameter.isCrossinline, getBoundCallableReferenceReceiver(expression) != null
-        ).also { lambda ->
-            val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
-            closureInfo.functionalArgument = lambda
-            expressionMap.put(closureInfo.index, lambda)
-        }
-    }
-
-    override fun putValueIfNeeded(parameterType: JvmKotlinType, value: StackValue, kind: ValueKind, parameterIndex: Int) {
-        if (processDefaultMaskOrMethodHandler(value, kind)) return
-
-        assert(maskValues.isEmpty()) { "Additional default call arguments should be last ones, but " + value }
-
-        putArgumentOrCapturedToLocalVal(parameterType, value, -1, parameterIndex, kind)
-    }
-
-    override fun putCapturedValueOnStack(stackValue: StackValue, valueType: Type, paramIndex: Int) {
-        putArgumentOrCapturedToLocalVal(
-            JvmKotlinType(stackValue.type, stackValue.kotlinType), stackValue, paramIndex, paramIndex, ValueKind.CAPTURED
-        )
-    }
-
-    override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) = Unit
-
-    override fun putHiddenParamsIntoLocals() {
-        assert(delayedHiddenWriting != null) { "processAndPutHiddenParameters(true) should be called before putHiddenParamsIntoLocals" }
-        delayedHiddenWriting!!.invoke()
-        delayedHiddenWriting = null
-    }
-}

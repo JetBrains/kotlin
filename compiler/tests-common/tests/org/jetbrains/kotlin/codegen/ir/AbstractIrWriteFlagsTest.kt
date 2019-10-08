@@ -14,4 +14,6 @@ abstract class AbstractIrWriteFlagsTest : AbstractWriteFlagsTest() {
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         configuration.put(JVMConfigurationKeys.IR, true)
     }
+
+    override fun getBackend() = TargetBackend.JVM_IR
 }

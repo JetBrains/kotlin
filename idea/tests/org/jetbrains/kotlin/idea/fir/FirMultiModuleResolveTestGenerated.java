@@ -59,9 +59,19 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
         runTest("idea/testData/fir/multiModule/basicWithPrimitiveJava/");
     }
 
+    @TestMetadata("fieldAccessFromDerived")
+    public void testFieldAccessFromDerived() throws Exception {
+        runTest("idea/testData/fir/multiModule/fieldAccessFromDerived/");
+    }
+
     @TestMetadata("fullWithJavaPredefinedSignature")
     public void testFullWithJavaPredefinedSignature() throws Exception {
         runTest("idea/testData/fir/multiModule/fullWithJavaPredefinedSignature/");
+    }
+
+    @TestMetadata("intersectionTypesProblem")
+    public void testIntersectionTypesProblem() throws Exception {
+        runTest("idea/testData/fir/multiModule/intersectionTypesProblem/");
     }
 
     @TestMetadata("javaGetPrefixConflict")

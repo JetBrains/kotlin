@@ -24,7 +24,7 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
 
     companion object {
         const val MINIMAL_SUPPORTED_VERSION = "minimal"// minimal supported version
-        private val KOTLIN_GRADLE_PLUGIN_VERSIONS = listOf(MINIMAL_SUPPORTED_VERSION, "1.3.20")
+        private val KOTLIN_GRADLE_PLUGIN_VERSIONS = listOf(MINIMAL_SUPPORTED_VERSION, "1.3.50")
 
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: Gradle-{0}, KotlinGradlePlugin-{1}")

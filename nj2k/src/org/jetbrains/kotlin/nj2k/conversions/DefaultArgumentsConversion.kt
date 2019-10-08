@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.psi
+
+
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class DefaultArgumentsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     private fun JKMethod.canBeGetterOrSetter() =
         name.value.asGetterName() != null
                 || name.value.asSetterName() != null
@@ -22,7 +23,7 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
                 || hasOtherModifier(OtherModifier.OVERRIDE)
                 || hasOtherModifier(OtherModifier.NATIVE)
                 || hasOtherModifier(OtherModifier.SYNCHRONIZED)
-                || context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(psi()!!)
+                || psi<PsiMethod>()?.let { context.converter.converterServices.oldServices.referenceSearcher.hasOverrides(it) } == true
                 || annotationList.annotations.isNotEmpty()
                 || canBeGetterOrSetter()
 
@@ -97,8 +98,8 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
                         val target = on.identifier.target
                         if (target is JKParameter) {
                             val newSymbol =
-                                context.symbolProvider.provideUniverseSymbol(calledMethod.parameters[method.parameters.indexOf(target)])
-                            return JKFieldAccessExpressionImpl(newSymbol)
+                                symbolProvider.provideUniverseSymbol(calledMethod.parameters[method.parameters.indexOf(target)])
+                            return JKFieldAccessExpression(newSymbol)
                         }
                     }
 
@@ -107,15 +108,16 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
                 parameter.initializer = remapParameterSymbol(defaultValue) as JKExpression
             }
             element.declarations -= method
-            calledMethod.appendNonCodeElementsFrom(method)
+            calledMethod.withFormattingFrom(method)
         }
-
-        for (method in element.declarations) {
-            if (method !is JKJavaMethod) continue
-            if (method.hasParametersWithDefaultValues()
-                && (method.visibility == Visibility.PUBLIC || method.visibility == Visibility.INTERNAL)
-            ) {
-                method.annotationList.annotations += jvmAnnotation("JvmOverloads", context.symbolProvider)
+        if (element.parentOfType<JKClass>()?.classKind != JKClass.ClassKind.ANNOTATION) {
+            for (method in element.declarations) {
+                if (method !is JKMethod) continue
+                if (method.hasParametersWithDefaultValues()
+                    && (method.visibility == Visibility.PUBLIC || method.visibility == Visibility.INTERNAL)
+                ) {
+                    method.annotationList.annotations += jvmAnnotation("JvmOverloads", symbolProvider)
+                }
             }
         }
 
@@ -128,11 +130,11 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
         if (first is JKNameIdentifier && second is JKNameIdentifier) return first.value == second.value
         if (first is JKLiteralExpression && second is JKLiteralExpression) return first.literal == second.literal
         if (first is JKFieldAccessExpression && second is JKFieldAccessExpression && first.identifier != second.identifier) return false
-        if (first is JKMethodCallExpression && second is JKMethodCallExpression && first.identifier != second.identifier) return false
-        return if (first is JKBranchElement && second is JKBranchElement) {
+        if (first is JKCallExpression && second is JKCallExpression && first.identifier != second.identifier) return false
+        return if (first is JKTreeElement && second is JKTreeElement) {
             first.children.zip(second.children) { childOfFirst, childOfSecond ->
                 when {
-                    childOfFirst is JKBranchElement && childOfSecond is JKBranchElement -> {
+                    childOfFirst is JKTreeElement && childOfSecond is JKTreeElement -> {
                         areTheSameExpressions(
                             childOfFirst,
                             childOfSecond
@@ -144,25 +146,25 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
                                 child1 as JKElement,
                                 child2 as JKElement
                             )
-                        }.reduce(Boolean::and)
+                        }.fold(true, Boolean::and)
                     }
                     else -> false
                 }
-            }.reduce(Boolean::and)
+            }.fold(true, Boolean::and)
         } else false
     }
 
     private fun JKMethod.hasParametersWithDefaultValues() =
         parameters.any { it.initializer !is JKStubExpression }
 
-    private fun lookupCall(statement: JKStatement): JKMethodCallExpression? {
+    private fun lookupCall(statement: JKStatement): JKCallExpression? {
         val expression = when (statement) {
             is JKExpressionStatement -> statement.expression
             is JKReturnStatement -> statement.expression
             else -> null
         }
         return when (expression) {
-            is JKMethodCallExpression -> expression
+            is JKCallExpression -> expression
             is JKQualifiedExpression -> {
                 if (expression.receiver !is JKThisExpression) return null
                 expression.selector.safeAs()
@@ -170,5 +172,4 @@ class DefaultArgumentsConversion(private val context: NewJ2kConverterContext) : 
             else -> null
         }
     }
-
 }

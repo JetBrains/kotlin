@@ -104,7 +104,12 @@ internal class KotlinSelectNestedClassRefactoringDialog private constructor(
                 }
                 nestedClass is KtEnumEntry -> return
                 else -> {
-                    val selectionDialog = KotlinSelectNestedClassRefactoringDialog(project, nestedClass, targetContainer)
+                    val selectionDialog =
+                        KotlinSelectNestedClassRefactoringDialog(
+                            project,
+                            nestedClass,
+                            targetContainer
+                        )
                     selectionDialog.show()
                     if (selectionDialog.exitCode != OK_EXIT_CODE) return
                     selectionDialog.getNextDialog() ?: return

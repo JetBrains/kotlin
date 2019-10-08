@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.load.java.NOT_NULL_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.NULLABLE_ANNOTATIONS
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKTypeElementImpl
+import org.jetbrains.kotlin.nj2k.types.updateNullability
 
 
-class JetbrainsNullableAnnotationsConverter(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class JetbrainsNullableAnnotationsConverter(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKAnnotationListOwner) return recurse(element)
 
@@ -23,11 +23,11 @@ class JetbrainsNullableAnnotationsConverter(private val context: NewJ2kConverter
             when (element) {
                 is JKVariable -> {
                     annotationsToRemove += annotation
-                    element.type = JKTypeElementImpl(element.type.type.updateNullability(nullability))
+                    element.type = JKTypeElement(element.type.type.updateNullability(nullability))
                 }
                 is JKMethod -> {
                     annotationsToRemove += annotation
-                    element.returnType = JKTypeElementImpl(element.returnType.type.updateNullability(nullability))
+                    element.returnType = JKTypeElement(element.returnType.type.updateNullability(nullability))
                 }
             }
         }

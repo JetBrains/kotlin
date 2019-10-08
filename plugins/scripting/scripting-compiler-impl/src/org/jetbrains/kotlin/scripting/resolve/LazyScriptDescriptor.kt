@@ -94,12 +94,6 @@ class LazyScriptDescriptor(
         // TODO: implement robust REPL/script selection
         val replSnippetId =
             scriptInfo.script.getUserData(ScriptPriorities.PRIORITY_KEY)?.toString()
-                ?: run {
-                    val scriptName = name.asString()
-                    if (scriptName.startsWith("Line_"))
-                        scriptName.split("_")[1]
-                    else null
-                }
         return if (replSnippetId != null) {
             // assuming repl
             scriptCompilationConfiguration()[ScriptCompilationConfiguration.repl.resultFieldPrefix]?.takeIf { it.isNotBlank() }?.let {
@@ -205,7 +199,7 @@ class LazyScriptDescriptor(
         val res = ArrayList<ClassDescriptor>()
 
         val importedScriptsFiles = ScriptDependenciesProvider.getInstance(scriptInfo.script.project)
-            ?.getScriptConfigurationResult(scriptInfo.script.containingKtFile)?.valueOrNull()?.importedScripts
+            ?.getScriptConfiguration(scriptInfo.script.containingKtFile)?.importedScripts
         if (importedScriptsFiles != null) {
             val findImportedScriptDescriptor = ImportedScriptDescriptorsFinder()
             importedScriptsFiles.mapNotNullTo(res) {

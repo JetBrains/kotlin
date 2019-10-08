@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class FirClassDeclaredMemberScopeProvider {
@@ -80,14 +77,14 @@ class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
-            if (symbol is ConeVariableSymbol && !processor(symbol)) {
+            if (symbol is FirVariableSymbol && !processor(symbol)) {
                 return STOP
             }
         }
         return NEXT
     }
 
-    override fun processClassifiersByName(name: Name, position: FirPosition, processor: (ConeClassifierSymbol) -> Boolean): Boolean {
+    override fun processClassifiersByName(name: Name, position: FirPosition, processor: (FirClassifierSymbol<*>) -> Boolean): Boolean {
         val matchedClass = classIndex[name]
         if (matchedClass != null && !processor(matchedClass)) {
             return false

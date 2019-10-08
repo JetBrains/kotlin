@@ -49,12 +49,14 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 
-fun checkConflicts(project: Project,
-                   sourceClass: KtClassOrObject,
-                   targetClass: PsiNamedElement,
-                   memberInfos: List<KotlinMemberInfo>,
-                   onShowConflicts: () -> Unit = {},
-                   onAccept: () -> Unit) {
+fun checkConflicts(
+    project: Project,
+    sourceClass: KtClassOrObject,
+    targetClass: PsiNamedElement,
+    memberInfos: List<KotlinMemberInfo>,
+    onShowConflicts: () -> Unit = {},
+    onAccept: () -> Unit
+) {
     val conflicts = MultiMap<PsiElement, String>()
 
     val pullUpData = KotlinPullUpData(sourceClass,
@@ -127,9 +129,12 @@ private val CALLABLE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_N
 
 fun DeclarationDescriptor.renderForConflicts(): String {
     return when (this) {
-        is ClassDescriptor -> "${DescriptorRenderer.getClassifierKindPrefix(this)} ${IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(this)}"
+        is ClassDescriptor -> "${DescriptorRenderer.getClassifierKindPrefix(this)} " +
+                IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(this)
         is FunctionDescriptor -> "function '${CALLABLE_RENDERER.render(this)}'"
         is PropertyDescriptor -> "property '${CALLABLE_RENDERER.render(this)}'"
+        is PackageFragmentDescriptor -> fqName.asString()
+        is PackageViewDescriptor -> fqName.asString()
         else -> ""
     }
 }
@@ -140,9 +145,9 @@ internal fun KotlinPullUpData.getClashingMemberInTargetClass(memberDescriptor: C
 }
 
 private fun KotlinPullUpData.checkClashWithSuperDeclaration(
-        member: KtNamedDeclaration,
-        memberDescriptor: DeclarationDescriptor,
-        conflicts: MultiMap<PsiElement, String>
+    member: KtNamedDeclaration,
+    memberDescriptor: DeclarationDescriptor,
+    conflicts: MultiMap<PsiElement, String>
 ) {
     val message = "${targetClassDescriptor.renderForConflicts()} already contains ${memberDescriptor.renderForConflicts()}"
 
@@ -169,40 +174,44 @@ private fun PsiClass.isSourceOrTarget(data: KotlinPullUpData): Boolean {
 }
 
 private fun KotlinPullUpData.checkAccidentalOverrides(
-        member: KtNamedDeclaration,
-        memberDescriptor: DeclarationDescriptor,
-        conflicts: MultiMap<PsiElement, String>) {
+    member: KtNamedDeclaration,
+    memberDescriptor: DeclarationDescriptor,
+    conflicts: MultiMap<PsiElement, String>
+) {
     if (memberDescriptor is CallableDescriptor && !member.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
         val memberDescriptorInTargetClass = memberDescriptor.substitute(sourceToTargetClassSubstitutor)
         if (memberDescriptorInTargetClass != null) {
             HierarchySearchRequest<PsiElement>(targetClass, targetClass.useScope)
-                    .searchInheritors()
-                    .asSequence()
-                    .filterNot { it.isSourceOrTarget(this) }
-                    .mapNotNull { it.unwrapped as? KtClassOrObject }
-                    .forEach {
-                        val subClassDescriptor = it.resolveToDescriptorWrapperAware(resolutionFacade) as ClassDescriptor
-                        val substitutor = getTypeSubstitutor(targetClassDescriptor.defaultType,
-                                                             subClassDescriptor.defaultType) ?: TypeSubstitutor.EMPTY
-                        val memberDescriptorInSubClass =
-                                memberDescriptorInTargetClass.substitute(substitutor) as? CallableMemberDescriptor
-                        val clashingMemberDescriptor =
-                                memberDescriptorInSubClass?.let { subClassDescriptor.findCallableMemberBySignature(it) } ?: return
-                        val clashingMember = clashingMemberDescriptor.source.getPsi() ?: return
+                .searchInheritors()
+                .asSequence()
+                .filterNot { it.isSourceOrTarget(this) }
+                .mapNotNull { it.unwrapped as? KtClassOrObject }
+                .forEach {
+                    val subClassDescriptor = it.resolveToDescriptorWrapperAware(resolutionFacade) as ClassDescriptor
+                    val substitutor = getTypeSubstitutor(
+                        targetClassDescriptor.defaultType,
+                        subClassDescriptor.defaultType
+                    ) ?: TypeSubstitutor.EMPTY
+                    val memberDescriptorInSubClass =
+                        memberDescriptorInTargetClass.substitute(substitutor) as? CallableMemberDescriptor
+                    val clashingMemberDescriptor =
+                        memberDescriptorInSubClass?.let { subClassDescriptor.findCallableMemberBySignature(it) } ?: return
+                    val clashingMember = clashingMemberDescriptor.source.getPsi() ?: return
 
-                        val message = memberDescriptor.renderForConflicts() +
-                                      " in super class would clash with existing member of " +
-                                      it.resolveToDescriptorWrapperAware(resolutionFacade).renderForConflicts()
-                        conflicts.putValue(clashingMember, message.capitalize())
-                    }
+                    val message = memberDescriptor.renderForConflicts() +
+                            " in super class would clash with existing member of " +
+                            it.resolveToDescriptorWrapperAware(resolutionFacade).renderForConflicts()
+                    conflicts.putValue(clashingMember, message.capitalize())
+                }
         }
     }
 }
 
 private fun KotlinPullUpData.checkInnerClassToInterface(
-        member: KtNamedDeclaration,
-        memberDescriptor: DeclarationDescriptor,
-        conflicts: MultiMap<PsiElement, String>) {
+    member: KtNamedDeclaration,
+    memberDescriptor: DeclarationDescriptor,
+    conflicts: MultiMap<PsiElement, String>
+) {
     if (isInterfaceTarget && memberDescriptor is ClassDescriptor && memberDescriptor.isInner) {
         val message = "${memberDescriptor.renderForConflicts()} is an inner class. It can not be moved to the interface"
         conflicts.putValue(member, message.capitalize())
@@ -210,19 +219,20 @@ private fun KotlinPullUpData.checkInnerClassToInterface(
 }
 
 private fun KotlinPullUpData.checkVisibility(
-        memberInfo: KotlinMemberInfo,
-        memberDescriptor: DeclarationDescriptor,
-        conflicts: MultiMap<PsiElement, String>
+    memberInfo: KotlinMemberInfo,
+    memberDescriptor: DeclarationDescriptor,
+    conflicts: MultiMap<PsiElement, String>
 ) {
     fun reportConflictIfAny(targetDescriptor: DeclarationDescriptor) {
         if (targetDescriptor in memberDescriptors.values) return
         val target = (targetDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
         if (targetDescriptor is DeclarationDescriptorWithVisibility
-            && !Visibilities.isVisibleIgnoringReceiver(targetDescriptor, targetClassDescriptor)) {
+            && !Visibilities.isVisibleIgnoringReceiver(targetDescriptor, targetClassDescriptor)
+        ) {
             val message = RefactoringBundle.message(
-                    "0.uses.1.which.is.not.accessible.from.the.superclass",
-                    memberDescriptor.renderForConflicts(),
-                    targetDescriptor.renderForConflicts()
+                "0.uses.1.which.is.not.accessible.from.the.superclass",
+                memberDescriptor.renderForConflicts(),
+                targetDescriptor.renderForConflicts()
             )
             conflicts.putValue(target, message.capitalize())
         }
@@ -242,19 +252,19 @@ private fun KotlinPullUpData.checkVisibility(
         }
     }
 
-    childrenToCheck.forEach {
-        it.accept(
-                object : KtTreeVisitorVoid() {
-                    override fun visitReferenceExpression(expression: KtReferenceExpression) {
-                        super.visitReferenceExpression(expression)
+    childrenToCheck.forEach { children ->
+        children.accept(
+            object : KtTreeVisitorVoid() {
+                override fun visitReferenceExpression(expression: KtReferenceExpression) {
+                    super.visitReferenceExpression(expression)
 
-                        val context = resolutionFacade.analyze(expression)
-                        expression.references
-                                .flatMap { (it as? KtReference)?.resolveToDescriptors(context) ?: emptyList() }
-                                .forEach(::reportConflictIfAny)
+                    val context = resolutionFacade.analyze(expression)
+                    expression.references
+                        .flatMap { (it as? KtReference)?.resolveToDescriptors(context) ?: emptyList() }
+                        .forEach(::reportConflictIfAny)
 
-                    }
                 }
+            }
         )
     }
 }

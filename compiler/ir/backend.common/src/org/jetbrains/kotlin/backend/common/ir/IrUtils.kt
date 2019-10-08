@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.ir
@@ -49,6 +38,7 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import java.io.StringWriter
 
 
@@ -148,7 +138,7 @@ fun IrValueParameter.copyTo(
             (parent as IrTypeParametersContainer).classIfConstructor,
             irFunction.classIfConstructor
     ),
-    varargElementType: IrType? = this.varargElementType,
+    varargElementType: IrType? = this.varargElementType, // TODO: remapTypeParameters here as well
     defaultValue: IrExpressionBody? = this.defaultValue,
     isCrossinline: Boolean = this.isCrossinline,
     isNoinline: Boolean = this.isNoinline
@@ -350,8 +340,11 @@ val IrFunction.isStatic: Boolean
     get() = parent is IrClass && dispatchReceiverParameter == null
 
 val IrDeclaration.isTopLevel: Boolean
-    get() = parent is IrPackageFragment
-
+    get() {
+        if (parent is IrPackageFragment) return true
+        val parentClass = parent as? IrClass
+        return parentClass?.origin == IrDeclarationOrigin.FILE_CLASS && parentClass.parent is IrPackageFragment
+    }
 
 fun Scope.createTemporaryVariableWithWrappedDescriptor(
     irExpression: IrExpression,
@@ -484,7 +477,7 @@ fun IrClass.addFakeOverrides() {
                 IrSimpleFunctionSymbolImpl(descriptor),
                 irFunction.name,
                 Visibilities.INHERITED,
-                Modality.OPEN,
+                irFunction.modality,
                 irFunction.returnType,
                 irFunction.isInline,
                 irFunction.isExternal,
@@ -512,19 +505,21 @@ fun createStaticFunctionWithReceivers(
     oldFunction: IrFunction,
     dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
     origin: IrDeclarationOrigin = oldFunction.origin,
-    copyBody: Boolean = true
+    modality: Modality = Modality.FINAL
 ): IrSimpleFunction {
-    val descriptor = WrappedSimpleFunctionDescriptor(Annotations.EMPTY, oldFunction.descriptor.source)
+    val descriptor = (oldFunction.descriptor as? DescriptorWithContainerSource)?.let {
+        WrappedFunctionDescriptorWithContainerSource(it.containerSource)
+    } ?: WrappedSimpleFunctionDescriptor(Annotations.EMPTY, oldFunction.descriptor.source)
     return IrFunctionImpl(
         oldFunction.startOffset, oldFunction.endOffset,
         origin,
         IrSimpleFunctionSymbolImpl(descriptor),
         name,
         oldFunction.visibility,
-        Modality.FINAL,
+        modality,
         oldFunction.returnType,
         isInline = oldFunction.isInline,
-        isExternal = false, isTailrec = false, isSuspend = false
+        isExternal = false, isTailrec = false, isSuspend = oldFunction.isSuspend
     ).apply {
         descriptor.bind(this)
         parent = irParent
@@ -548,10 +543,6 @@ fun createStaticFunctionWithReceivers(
         valueParameters.addAll(listOfNotNull(dispatchReceiver, extensionReceiver) +
                                        oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }
         )
-
-        if (copyBody) {
-            copyBodyToStatic(oldFunction, this)
-        }
 
         metadata = oldFunction.metadata
     }

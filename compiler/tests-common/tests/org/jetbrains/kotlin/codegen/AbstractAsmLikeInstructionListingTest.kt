@@ -132,8 +132,10 @@ abstract class AbstractAsmLikeInstructionListingTest : CodegenTestCase() {
         }
 
         val actualIndex = index + localVariableIndexOffset
-        val localVariables = method.localVariables?.takeIf { it.size > actualIndex } ?: return "p$index"
-        return localVariables[actualIndex].name
+        val localVariables = method.localVariables
+        return localVariables?.firstOrNull {
+            it.index == actualIndex
+        }?.name ?: "p$index"
     }
 
     private fun buildLocalVariableTable(method: MethodNode): String {

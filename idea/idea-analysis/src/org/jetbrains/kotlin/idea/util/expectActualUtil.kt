@@ -97,7 +97,7 @@ private fun MemberDescriptor.isConstructorInActual(checkConstructor: Boolean) =
 private fun MemberDescriptor.isEnumEntryInActual() =
     (DescriptorUtils.isEnumEntry(this) && (containingDeclaration as? MemberDescriptor)?.isActual == true)
 
-private fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDescriptor> {
+fun DeclarationDescriptor.actualsForExpected(): Collection<DeclarationDescriptor> {
     if (this is MemberDescriptor) {
         if (!this.isExpect) return emptyList()
 

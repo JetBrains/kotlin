@@ -101,7 +101,7 @@ class KDocSampleTest : AbstractMultiModuleTest() {
         }
 
         val textData = FileUtil.loadFile(testDataFile, true)
-        val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(textData, false, "INFO:")
+        val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(textData, false, true, "INFO:")
 
         if (directives.isEmpty()) {
             throw FileComparisonFailure(

@@ -5,33 +5,32 @@
 
 package org.jetbrains.kotlin.nj2k.symbols
 
+import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMethodsNoWrapping
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.nj2k.isObjectOrCompanionObject
+import org.jetbrains.kotlin.nj2k.psi
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.psi
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
 val JKSymbol.isUnresolved
     get() = this is JKUnresolvedSymbol
 
-fun JKSymbol.getDisplayName(): String {
+fun JKSymbol.getDisplayFqName(): String {
+    fun JKSymbol.isDisplayable() = this is JKClassSymbol || this is JKPackageSymbol
     if (this !is JKUniverseSymbol<*>) return fqName
-    return generateSequence(declaredIn as? JKUniverseClassSymbol) { symbol ->
-        symbol.declaredIn.safeAs<JKUniverseClassSymbol>()?.takeIf { !it.target.hasOtherModifier(OtherModifier.INNER) }
+    return generateSequence(declaredIn?.takeIf { it.isDisplayable() }) { symbol ->
+        symbol.declaredIn?.takeIf { it.isDisplayable() }
     }.fold(name) { acc, symbol -> "${symbol.name}.$acc" }
 }
-
-fun JKSymbol.fqNameToImport(): String? =
-    when {
-        this is JKClassSymbol && this !is JKUniverseClassSymbol -> fqName
-        else -> null
-    }
 
 fun JKSymbol.deepestFqName(): String? {
     fun Any.deepestFqNameForTarget(): String? =
@@ -44,31 +43,33 @@ fun JKSymbol.deepestFqName(): String? {
     return target.deepestFqNameForTarget() ?: fqName
 }
 
+val JKSymbol.containingClass
+    get() = declaredIn as? JKClassSymbol
 
-val JKMethodSymbol.parameterNames: List<String>?
-    get() {
-        return when (this) {
-            is JKMultiverseFunctionSymbol -> target.valueParameters.map { it.name ?: return null }
-            is JKMultiverseMethodSymbol -> target.parameters.map { it.name ?: return null }
-            is JKUniverseMethodSymbol -> target.parameters.map { it.name.value }
-            is JKUnresolvedMethod -> null
-        }
+val JKSymbol.isStaticMember
+    get() = when (val target = target) {
+        is PsiModifierListOwner -> target.hasModifier(JvmModifier.STATIC)
+        is KtElement -> target.getStrictParentOfType<KtClassOrObject>()
+            ?.safeAs<KtObjectDeclaration>()
+            ?.isCompanion() == true
+        is JKTreeElement ->
+            target.safeAs<JKOtherModifiersOwner>()?.hasOtherModifier(OtherModifier.STATIC) == true
+                    || target.parentOfType<JKClass>()?.isObjectOrCompanionObject == true
+        else -> false
     }
 
-
-val JKMethodSymbol.isStatic: Boolean
-    get() = when (this) {
-        is JKMultiverseFunctionSymbol -> target.parent is KtObjectDeclaration
-        is JKMultiverseMethodSymbol -> target.hasModifierProperty(PsiModifier.STATIC)
-        is JKUniverseMethodSymbol -> target.parent?.parent?.safeAs<JKClass>()?.classKind == JKClass.ClassKind.COMPANION
-        is JKUnresolvedMethod -> false
+val JKSymbol.isEnumConstant
+    get() = when (target) {
+        is JKEnumConstant -> true
+        is PsiEnumConstant -> true
+        is KtEnumEntry -> true
+        else -> false
     }
 
-
-fun JKMethodSymbol.parameterTypesWithUnfoldedVarargs(): Sequence<JKType>? {
-    val realParameterTypes = parameterTypes ?: return null
-    if (realParameterTypes.isEmpty()) return emptySequence()
-    val lastArrayType = realParameterTypes.last().arrayInnerType() ?: return realParameterTypes.asSequence()
-    return realParameterTypes.dropLast(1).asSequence() + generateSequence { lastArrayType }
-}
+val JKSymbol.isUnnamedCompanion
+    get() = when (val target = target) {
+        is JKClass -> target.classKind == JKClass.ClassKind.COMPANION
+        is KtObjectDeclaration -> target.isCompanion() && target.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.toString()
+        else -> false
+    }
 

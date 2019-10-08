@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
@@ -21,10 +20,12 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findDeclaration
+import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
@@ -201,6 +202,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val returnIfSuspended = getInternalFunction("returnIfSuspended")
     val getContinuation = getInternalFunction("getContinuation")
 
+    val jsEnsureNonNull = getFunctionInKotlinPackage("ensureNotNull")
+
     // Arrays:
     val array = context.symbolTable.referenceClass(irBuiltIns.builtIns.array)
 
@@ -217,7 +220,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsArrayIteratorFunction = getInternalFunction("arrayIterator")
 
     val jsPrimitiveArrayIteratorFunctions =
-        PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCase()}ArrayIterator") }
+        PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator") }
 
     val arrayLiteral = unOp("arrayLiteral")
 
@@ -234,15 +237,15 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val primitiveToSizeConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCase()}Array")
-            } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}Array"))
+                unOp("${it.toLowerCaseAsciiOnly()}Array")
+            } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}Array"))
         }
 
     val primitiveToLiteralConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCase()}ArrayOf")
-            } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}ArrayOf"))
+                unOp("${it.toLowerCaseAsciiOnly()}ArrayOf")
+            } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}ArrayOf"))
         }
 
     val arrayConcat = getInternalWithoutPackage("arrayConcat")
@@ -281,6 +284,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     private fun getInternalWithoutPackage(name: String) =
         context.symbolTable.referenceSimpleFunction(context.getFunctions(FqName(name)).single())
+
+    private fun getFunctionInKotlinPackage(name: String) =
+        context.symbolTable.referenceSimpleFunction(context.getFunctions(kotlinPackageFqn.child(Name.identifier(name))).single())
 
     private fun getInternalClassWithoutPackage(fqName: String) =
         context.symbolTable.referenceClass(context.getClass(FqName(fqName)))

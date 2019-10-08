@@ -1,0 +1,5 @@
+
+public interface B extends a.A {
+}
+public final class C implements b.B {
+}

@@ -241,7 +241,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             """
         } else {
             """
-             * The fractional part, if any, is rounded down.
+             * The fractional part, if any, is rounded down towards zero.
              * Returns zero if this `$thisName` value is `NaN`, [$otherName.MIN_VALUE] if it's less than `$otherName.MIN_VALUE`,
              * [$otherName.MAX_VALUE] if it's bigger than `$otherName.MAX_VALUE`.
              */

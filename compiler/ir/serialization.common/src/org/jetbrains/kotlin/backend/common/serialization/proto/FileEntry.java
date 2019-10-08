@@ -54,16 +54,9 @@ public final class FileEntry extends
             break;
           }
           case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder subBuilder = null;
-            if (((bitField0_ & 0x00000001) == 0x00000001)) {
-              subBuilder = name_.toBuilder();
-            }
-            name_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.String.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom(name_);
-              name_ = subBuilder.buildPartial();
-            }
+            org.jetbrains.kotlin.protobuf.ByteString bs = input.readBytes();
             bitField0_ |= 0x00000001;
+            name_ = bs;
             break;
           }
           case 16: {
@@ -125,18 +118,45 @@ public final class FileEntry extends
 
   private int bitField0_;
   public static final int NAME_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.String name_;
+  private java.lang.Object name_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
+   * <code>required string name = 1;</code>
    */
   public boolean hasName() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
+   * <code>required string name = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.String getName() {
-    return name_;
+  public java.lang.String getName() {
+    java.lang.Object ref = name_;
+    if (ref instanceof java.lang.String) {
+      return (java.lang.String) ref;
+    } else {
+      org.jetbrains.kotlin.protobuf.ByteString bs = 
+          (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      java.lang.String s = bs.toStringUtf8();
+      if (bs.isValidUtf8()) {
+        name_ = s;
+      }
+      return s;
+    }
+  }
+  /**
+   * <code>required string name = 1;</code>
+   */
+  public org.jetbrains.kotlin.protobuf.ByteString
+      getNameBytes() {
+    java.lang.Object ref = name_;
+    if (ref instanceof java.lang.String) {
+      org.jetbrains.kotlin.protobuf.ByteString b = 
+          org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+              (java.lang.String) ref);
+      name_ = b;
+      return b;
+    } else {
+      return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+    }
   }
 
   public static final int LINE_START_OFFSETS_FIELD_NUMBER = 2;
@@ -162,7 +182,7 @@ public final class FileEntry extends
   }
 
   private void initFields() {
-    name_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    name_ = "";
     lineStartOffsets_ = java.util.Collections.emptyList();
   }
   private byte memoizedIsInitialized = -1;
@@ -175,10 +195,6 @@ public final class FileEntry extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getName().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     memoizedIsInitialized = 1;
     return true;
   }
@@ -187,7 +203,7 @@ public final class FileEntry extends
                       throws java.io.IOException {
     getSerializedSize();
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
-      output.writeMessage(1, name_);
+      output.writeBytes(1, getNameBytes());
     }
     for (int i = 0; i < lineStartOffsets_.size(); i++) {
       output.writeInt32(2, lineStartOffsets_.get(i));
@@ -203,7 +219,7 @@ public final class FileEntry extends
     size = 0;
     if (((bitField0_ & 0x00000001) == 0x00000001)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(1, name_);
+        .computeBytesSize(1, getNameBytes());
     }
     {
       int dataSize = 0;
@@ -308,7 +324,7 @@ public final class FileEntry extends
 
     public Builder clear() {
       super.clear();
-      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      name_ = "";
       bitField0_ = (bitField0_ & ~0x00000001);
       lineStartOffsets_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000002);
@@ -351,7 +367,9 @@ public final class FileEntry extends
     public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry other) {
       if (other == org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry.getDefaultInstance()) return this;
       if (other.hasName()) {
-        mergeName(other.getName());
+        bitField0_ |= 0x00000001;
+        name_ = other.name_;
+        
       }
       if (!other.lineStartOffsets_.isEmpty()) {
         if (lineStartOffsets_.isEmpty()) {
@@ -370,10 +388,6 @@ public final class FileEntry extends
 
     public final boolean isInitialized() {
       if (!hasName()) {
-        
-        return false;
-      }
-      if (!getName().isInitialized()) {
         
         return false;
       }
@@ -399,63 +413,79 @@ public final class FileEntry extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.String name_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    private java.lang.Object name_ = "";
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
+     * <code>required string name = 1;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
+     * <code>required string name = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.String getName() {
-      return name_;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
-     */
-    public Builder setName(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
-      if (value == null) {
-        throw new NullPointerException();
+    public java.lang.String getName() {
+      java.lang.Object ref = name_;
+      if (!(ref instanceof java.lang.String)) {
+        org.jetbrains.kotlin.protobuf.ByteString bs =
+            (org.jetbrains.kotlin.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          name_ = s;
+        }
+        return s;
+      } else {
+        return (java.lang.String) ref;
       }
-      name_ = value;
-
-      bitField0_ |= 0x00000001;
-      return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
+     * <code>required string name = 1;</code>
+     */
+    public org.jetbrains.kotlin.protobuf.ByteString
+        getNameBytes() {
+      java.lang.Object ref = name_;
+      if (ref instanceof String) {
+        org.jetbrains.kotlin.protobuf.ByteString b = 
+            org.jetbrains.kotlin.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        name_ = b;
+        return b;
+      } else {
+        return (org.jetbrains.kotlin.protobuf.ByteString) ref;
+      }
+    }
+    /**
+     * <code>required string name = 1;</code>
      */
     public Builder setName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder builderForValue) {
-      name_ = builderForValue.build();
-
-      bitField0_ |= 0x00000001;
+        java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+      name_ = value;
+      
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
-     */
-    public Builder mergeName(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
-      if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          name_ != org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance()) {
-        name_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.String.newBuilder(name_).mergeFrom(value).buildPartial();
-      } else {
-        name_ = value;
-      }
-
-      bitField0_ |= 0x00000001;
-      return this;
-    }
-    /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
+     * <code>required string name = 1;</code>
      */
     public Builder clearName() {
-      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
-
       bitField0_ = (bitField0_ & ~0x00000001);
+      name_ = getDefaultInstance().getName();
+      
+      return this;
+    }
+    /**
+     * <code>required string name = 1;</code>
+     */
+    public Builder setNameBytes(
+        org.jetbrains.kotlin.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000001;
+      name_ = value;
+      
       return this;
     }
 

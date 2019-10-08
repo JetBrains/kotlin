@@ -25,7 +25,6 @@ abstract class KotlinTest : AbstractTestTask() {
     @Input
     var excludes = mutableSetOf<String>()
 
-    @Suppress("UnstableApiUsage")
     protected val filterExt: DefaultTestFilter
         @Internal get() = filter as DefaultTestFilter
 

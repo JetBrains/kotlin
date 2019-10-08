@@ -22,20 +22,18 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.*
 
 abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
         try {
-            analyzeAndCheckUnhandled(files)
+            analyzeAndCheckUnhandled(testDataFile, files)
         } catch (t: AssertionError) {
             throw t
         } catch (t: Throwable) {
@@ -52,7 +50,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
         }
     }
 
-    private fun analyzeAndCheckUnhandled(files: List<TestFile>) {
+    protected open fun analyzeAndCheckUnhandled(testDataFile: File, files: List<TestFile>) {
         val groupedByModule = files.groupBy(TestFile::module)
 
         val modules = createModules(groupedByModule)
@@ -91,10 +89,38 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
             }
         }
 
-        doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
+        val failure: AssertionError? = try {
+            doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
+            null
+        } catch (e: AssertionError) {
+            e
+        }
+        val failureFile = File(testDataFile.path.replace(".kt", ".fir.fail"))
+        if (failure == null) {
+            checkResultingFirFiles(firFiles, testDataFile)
+            assertFalse("Test is good but there is expected exception", failureFile.exists())
+        } else {
+            checkFailureFile(failure, failureFile)
+        }
+    }
+
+    protected open fun checkResultingFirFiles(
+        firFiles: MutableList<FirFile>,
+        testDataFile: File
+    ) {
 
     }
 
+    private fun checkFailureFile(failure: AssertionError, failureFile: File) {
+        val failureMessage = buildString {
+            appendln(failure.message)
+            failure.cause?.let {
+                append("Cause: ")
+                appendln(it)
+            }
+        }
+        KotlinTestUtils.assertEqualsToFile(failureFile, failureMessage)
+    }
 
     private fun createModules(
         groupedByModule: Map<TestModule?, List<TestFile>>

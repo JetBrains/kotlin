@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.cache.impl.id.IdIndex
 import com.intellij.psi.impl.cache.impl.id.IdIndexEntry
 import com.intellij.psi.search.GlobalSearchScope
@@ -123,7 +124,7 @@ fun PsiSearchHelper.isCheapEnoughToSearchConsideringOperators(
     return isCheapEnoughToSearch(name, scope, fileToIgnoreOccurrencesIn, progress)
 }
 
-fun findScriptsWithUsages(declaration: KtNamedDeclaration): List<VirtualFile> {
+fun findScriptsWithUsages(declaration: KtNamedDeclaration): List<KtFile> {
     val project = declaration.project
     val scope = PsiSearchHelper.getInstance(project).getUseScope(declaration) as? GlobalSearchScope
         ?: return emptyList()
@@ -138,5 +139,8 @@ fun findScriptsWithUsages(declaration: KtNamedDeclaration): List<VirtualFile> {
             scope
         )
     }
-    return collector.results.filter { it.findScriptDefinition(project) != null }.toList()
+    return collector.results
+        .mapNotNull { PsiManager.getInstance(project).findFile(it) as? KtFile }
+        .filter { it.findScriptDefinition() != null }
+        .toList()
 }
