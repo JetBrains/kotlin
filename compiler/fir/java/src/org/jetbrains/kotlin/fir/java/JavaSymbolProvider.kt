@@ -104,7 +104,10 @@ class JavaSymbolProvider(
                             null
                         }
                     }
-            JavaClassUseSiteScope(regularClass, useSiteSession, FirSuperTypeScope(session, superTypeEnhancementScopes), declaredScope)
+            JavaClassUseSiteScope(
+                regularClass, useSiteSession,
+                FirSuperTypeScope(useSiteSession, superTypeEnhancementScopes), declaredScope
+            )
         }
     }
 
