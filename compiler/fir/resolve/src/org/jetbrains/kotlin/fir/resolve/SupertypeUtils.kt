@@ -50,7 +50,7 @@ inline fun <reified T : FirScope> scopeSessionKey(): ScopeSessionKey<T> {
 val USE_SITE = scopeSessionKey<FirScope>()
 val DECLARED = scopeSessionKey<FirScope>()
 
-data class SubstitutionScopeKey<T : FirClassSubstitutionScope>(val type: ConeClassLikeType) : ScopeSessionKey<T>() {}
+data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassSubstitutionScope>() {}
 
 fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
     val symbolProvider = useSiteSession.firSymbolProvider
@@ -83,7 +83,7 @@ fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder
     }
 }
 
-private fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
+fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
     useSiteScope: FirScope,
     declaration: FirClassLikeDeclaration<*>,
