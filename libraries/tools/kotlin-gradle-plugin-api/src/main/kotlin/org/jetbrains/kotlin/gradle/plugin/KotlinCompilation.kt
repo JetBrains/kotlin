@@ -55,7 +55,7 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
     fun kotlinOptions(configure: T.() -> Unit)
     fun kotlinOptions(configure: Closure<*>) = kotlinOptions { ConfigureUtil.configure(configure, this) }
 
-    fun attributes(configure: AttributeContainer.() -> Unit) = configure(attributes)
+    fun attributes(configure: AttributeContainer.() -> Unit) = attributes.configure()
     fun attributes(configure: Closure<*>) = attributes { ConfigureUtil.configure(configure, this) }
 
     val compileAllTaskName: String

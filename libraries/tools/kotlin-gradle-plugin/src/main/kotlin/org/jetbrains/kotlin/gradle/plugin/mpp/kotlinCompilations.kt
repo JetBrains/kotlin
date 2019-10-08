@@ -73,8 +73,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val defaultSourceSet: KotlinSourceSet
         get() = target.project.kotlinExtension.sourceSets.getByName(defaultSourceSetName)
 
-    override fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit) =
-        configure(defaultSourceSet)
+    override fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit) = defaultSourceSet.configure()
 
     override val output: KotlinCompilationOutput by lazy {
         DefaultKotlinCompilationOutput(
