@@ -29,7 +29,6 @@ import java.util.stream.Stream;
 
 class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInputMappingIndex<Key, Value, Input> {
   private static final Logger LOG = Logger.getInstance(SnapshotInputMappings.class);
-  private static final boolean doReadSavedPersistentData = SystemProperties.getBooleanProperty("idea.read.saved.persistent.index", true);
 
   private final ID<Key, Value> myIndexId;
   private final InputMapExternalizer<Key, Value> myMapExternalizer;
@@ -72,28 +71,24 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
   @Nullable
   @Override
   public InputData<Key, Value> readData(@NotNull Input content) throws IOException {
+    int hashId = getHashId(content);
+    ByteArraySequence bytes = readContents(hashId);
+
     Map<Key, Value> data = null;
-    int hashId = 0;
-
-    if (doReadSavedPersistentData) {
-      // avoid blocking read, we can calculate index value
-      hashId = getHashId(content);
-      ByteArraySequence bytes = readContents(hashId);
-
-      if (bytes != null) {
-        data = AbstractForwardIndexAccessor.deserializeFromByteSeq(bytes, myMapExternalizer);
-        if (DebugAssertions.EXTRA_SANITY_CHECKS) {
-          Map<Key, Value> contentData = myIndexer.map(content);
-          boolean sameValueForSavedIndexedResultAndCurrentOne = contentData.equals(data);
-          if (!sameValueForSavedIndexedResultAndCurrentOne) {
-            DebugAssertions.error(
-              "Unexpected difference in indexing of %s by index %s\ndiff %s\nprevious indexed info %s",
-              getContentDebugData(content),
-              myIndexId,
-              buildDiff(data, contentData),
-              myIndexingTrace.get(hashId)
-            );
-          }
+    if (bytes != null) {
+      data = AbstractForwardIndexAccessor.deserializeFromByteSeq(bytes, myMapExternalizer);
+      if (DebugAssertions.EXTRA_SANITY_CHECKS) {
+        Map<Key, Value> contentData = myIndexer.map(content);
+        boolean sameValueForSavedIndexedResultAndCurrentOne = contentData.equals(data);
+        if (!sameValueForSavedIndexedResultAndCurrentOne) {
+          data = contentData;
+          DebugAssertions.error(
+            "Unexpected difference in indexing of %s by index %s\ndiff %s\nprevious indexed info %s",
+            getContentDebugData(content),
+            myIndexId,
+            buildDiff(data, contentData),
+            myIndexingTrace.get(hashId)
+          );
         }
       }
     }
