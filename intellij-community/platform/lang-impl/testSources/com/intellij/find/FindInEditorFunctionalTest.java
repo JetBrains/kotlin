@@ -100,6 +100,25 @@ public class FindInEditorFunctionalTest extends AbstractFindInEditorTest {
     assertEquals(ApplicationBundle.message("editorsearch.matches", 3), component.getStatusText());
     editor.getSelectionModel().removeSelection();
     assertEquals(ApplicationBundle.message("editorsearch.noselection"), component.getStatusText());
+
+    closeFind();
+    init(origText);
+    editor.getSelectionModel().removeSelection();
+    initFind();
+    session = getEditorSearchComponent();
+    model = session.getFindModel();
+    assertEquals("foo", model.getStringToFind());
+
+    closeFind();
+    init(origText);
+    initFind();
+    session = getEditorSearchComponent();
+    model = session.getFindModel();
+    assertEquals("", model.getStringToFind());//Don't use multiline selection as string to find when we start search
+
+    model.setGlobal(true);//Now multiline selection implicitly becomes 'the string to find', equivalent to call ToggleSelectionOnlyAction
+    assertEquals("foo bar baz\nbaz bar foo", editor.getSelectionModel().getSelectedText());
+    assertEquals(editor.getSelectionModel().getSelectedText(), model.getStringToFind());//Don't use multilite selection as string to find
   }
 
   public void testFindEmptyText() {

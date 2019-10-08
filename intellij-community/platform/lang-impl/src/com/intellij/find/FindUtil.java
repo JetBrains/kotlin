@@ -93,6 +93,8 @@ public class FindUtil {
       if (!multiline) {
         stringToFind = selectedText;
         isSelectionUsed = true;
+      } else {
+        stringToFind = "";
       }
     }
     model.setReplaceState(replace);
