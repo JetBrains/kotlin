@@ -14,6 +14,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.*
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.diagnostic.runAndLogException
+import com.intellij.openapi.extensions.ExtensionPointListener
+import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.extensions.ProjectExtensionPointName
 import com.intellij.openapi.options.SchemeManager
 import com.intellij.openapi.options.SchemeManagerFactory
@@ -194,6 +196,25 @@ open class RunManagerImpl @JvmOverloads constructor(val project: Project, shared
         }
       })
     }
+
+    ConfigurationType.CONFIGURATION_TYPE_EP.addExtensionPointListener(object : ExtensionPointListener<ConfigurationType> {
+      override fun extensionAdded(extension: ConfigurationType, pluginDescriptor: PluginDescriptor) {
+        idToType.drop()
+        project.stateStore.reloadState(RunManagerImpl::class.java)
+      }
+
+      override fun extensionRemoved(extension: ConfigurationType, pluginDescriptor: PluginDescriptor) {
+        idToType.drop()
+        for (runnerAndConfigurationSettings in allSettings) {
+          val settingsImpl = runnerAndConfigurationSettings as RunnerAndConfigurationSettingsImpl
+          if (settingsImpl.type == extension) {
+            val configuration = UnknownConfigurationType.getInstance().createTemplateConfiguration(project)
+            configuration.name = settingsImpl.configuration.name
+            settingsImpl.setConfiguration(configuration)
+          }
+        }
+      }
+    }, project)
   }
 
   @TestOnly
