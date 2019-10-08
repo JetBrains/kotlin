@@ -100,18 +100,19 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
          */
         public const val MAX_VALUE: $className = $maxValue""")
             }
-            if (kind.isIntegral) {
+            if (kind.isIntegral || kind.isFloatingPoint) {
+                val sizeSince = if (kind.isFloatingPoint) "1.4" else "1.3"
                 out.println("""
         /**
          * The number of bytes used to represent an instance of $className in a binary form.
          */
-        @SinceKotlin("1.3")
+        @SinceKotlin("$sizeSince")
         public const val SIZE_BYTES: Int = ${kind.byteSize}
 
         /**
          * The number of bits used to represent an instance of $className in a binary form.
          */
-        @SinceKotlin("1.3")
+        @SinceKotlin("$sizeSince")
         public const val SIZE_BITS: Int = ${kind.bitSize}""")
             }
             out.println("""    }""")

@@ -919,6 +919,18 @@ public class Float private constructor() : Number(), Comparable<Float> {
          * A constant holding the "not a number" value of Float.
          */
         public const val NaN: Float = -(0.0F/0.0F)
+
+        /**
+         * The number of bytes used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 4
+
+        /**
+         * The number of bits used to represent an instance of Float in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 32
     }
 
     /**
@@ -1120,6 +1132,18 @@ public class Double private constructor() : Number(), Comparable<Double> {
          * A constant holding the "not a number" value of Double.
          */
         public const val NaN: Double = -(0.0/0.0)
+
+        /**
+         * The number of bytes used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BYTES: Int = 8
+
+        /**
+         * The number of bits used to represent an instance of Double in a binary form.
+         */
+        @SinceKotlin("1.4")
+        public const val SIZE_BITS: Int = 64
     }
 
     /**
