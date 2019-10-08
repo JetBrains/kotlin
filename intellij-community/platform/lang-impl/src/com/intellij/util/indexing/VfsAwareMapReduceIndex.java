@@ -220,8 +220,14 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   @Override
   public void removeTransientDataForKeys(int inputId, @NotNull Collection<? extends Key> keys) {
     MemoryIndexStorage memoryIndexStorage = (MemoryIndexStorage)getStorage();
+    boolean modified = false;
     for (Key key : keys) {
-      memoryIndexStorage.clearMemoryMapForId(key, inputId);
+      if (memoryIndexStorage.clearMemoryMapForId(key, inputId) && !modified) {
+        modified = true;
+      }
+    }
+    if (modified) {
+      myModificationStamp.incrementAndGet();
     }
   }
 

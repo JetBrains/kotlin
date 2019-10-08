@@ -74,11 +74,13 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
     myMap.clear();
   }
 
-  public void clearMemoryMapForId(Key key, int fileId) {
+  public boolean clearMemoryMapForId(Key key, int fileId) {
     ChangeTrackingValueContainer<Value> container = myMap.get(key);
     if (container != null) {
       container.dropAssociatedValue(fileId);
+      return true;
     }
+    return false;
   }
 
   public void fireMemoryStorageCleared() {
