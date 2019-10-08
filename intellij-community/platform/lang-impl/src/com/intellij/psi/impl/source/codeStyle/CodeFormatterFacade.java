@@ -87,17 +87,6 @@ public class CodeFormatterFacade {
   }
 
   public ASTNode processRange(final ASTNode element, final int startOffset, final int endOffset) {
-    return doProcessRange(element, startOffset, endOffset, null);
-  }
-
-  /**
-   * rangeMarker will be disposed
-   */
-  public ASTNode processRange(@NotNull ASTNode element, @NotNull RangeMarker rangeMarker) {
-    return doProcessRange(element, rangeMarker.getStartOffset(), rangeMarker.getEndOffset(), rangeMarker);
-  }
-
-  private ASTNode doProcessRange(final ASTNode element, final int startOffset, final int endOffset, @Nullable RangeMarker rangeMarker) {
     final PsiElement psiElement = SourceTreeToPsiMap.treeElementToPsi(element);
     assert psiElement != null;
     final PsiFile file = psiElement.getContainingFile();
@@ -107,9 +96,10 @@ public class CodeFormatterFacade {
           .getInstance(file.getProject()).getTopLevelFile(file) : psiElement;
     final PsiFile fileToFormat = elementToFormat.getContainingFile();
 
+    RangeMarker rangeMarker = null;
     final FormattingModelBuilder builder = LanguageFormatting.INSTANCE.forContext(fileToFormat);
     if (builder != null) {
-      if (rangeMarker == null && document != null && endOffset < document.getTextLength()) {
+      if (document != null && endOffset < document.getTextLength()) {
         rangeMarker = document.createRangeMarker(startOffset, endOffset);
       }
 
@@ -323,12 +313,7 @@ public class CodeFormatterFacade {
         if (startHostOffset >= range.getStartOffset() && endHostOffset <= range.getEndOffset()) {
           PsiFile injected = InjectedLanguageUtil.findInjectedPsiNoCommit(file, startHostOffset);
           if (injected != null) {
-            int startInjectedOffset = range.getStartOffset() > startHostOffset ? startHostOffset - range.getStartOffset() : 0;
-            int endInjectedOffset = injected.getTextLength();
-            if (range.getEndOffset() < endHostOffset) {
-              endInjectedOffset -= endHostOffset - range.getEndOffset();
-            }
-            final TextRange initialInjectedRange = TextRange.create(startInjectedOffset, endInjectedOffset);
+            final TextRange initialInjectedRange = TextRange.create(0, injected.getTextLength());
             TextRange injectedRange = initialInjectedRange;
             for (PreFormatProcessor processor : PreFormatProcessor.EP_NAME.getExtensionList()) {
               if (processor.changesWhitespacesOnly() || !myCanChangeWhitespaceOnly) {
