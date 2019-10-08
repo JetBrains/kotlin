@@ -964,7 +964,25 @@ object Elements : TemplateGroupBase() {
                 3 -> "rd"
                 else -> "th"
             }
-            doc { "Returns ${getOrdinal(n)} *element* from the collection." }
+
+            val condition = if (n == 1) "this ${f.doc.collection} is empty" else "the size of this ${f.doc.collection} is less than $n"
+            doc {
+                """
+                Returns ${getOrdinal(n)} *element* from the collection.
+            
+                Throws an [IndexOutOfBoundsException] if $condition.
+                """
+            }
+            specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+                doc {
+                    """
+                    Returns ${getOrdinal(n)} *element* from the collection.
+            
+                    If $condition, throws an [IndexOutOfBoundsException] except in Kotlin/JS 
+                    where the behavior is unspecified.
+                    """
+                }
+            }
             returns("T")
             body { "return get(${n-1})" }
         }

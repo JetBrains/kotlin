@@ -19,6 +19,8 @@ import kotlin.ranges.reversed
 
 /**
  * Returns 1st *element* from the collection.
+ * 
+ * Throws an [IndexOutOfBoundsException] if this list is empty.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component1(): T {
@@ -27,6 +29,8 @@ public inline operator fun <T> List<T>.component1(): T {
 
 /**
  * Returns 2nd *element* from the collection.
+ * 
+ * Throws an [IndexOutOfBoundsException] if the size of this list is less than 2.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component2(): T {
@@ -35,6 +39,8 @@ public inline operator fun <T> List<T>.component2(): T {
 
 /**
  * Returns 3rd *element* from the collection.
+ * 
+ * Throws an [IndexOutOfBoundsException] if the size of this list is less than 3.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component3(): T {
@@ -43,6 +49,8 @@ public inline operator fun <T> List<T>.component3(): T {
 
 /**
  * Returns 4th *element* from the collection.
+ * 
+ * Throws an [IndexOutOfBoundsException] if the size of this list is less than 4.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component4(): T {
@@ -51,6 +59,8 @@ public inline operator fun <T> List<T>.component4(): T {
 
 /**
  * Returns 5th *element* from the collection.
+ * 
+ * Throws an [IndexOutOfBoundsException] if the size of this list is less than 5.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> List<T>.component5(): T {
