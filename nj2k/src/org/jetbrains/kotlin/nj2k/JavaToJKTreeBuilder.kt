@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.nj2k
 
+import com.intellij.codeInsight.AnnotationTargetUtil
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.JavaTokenType.SUPER_KEYWORD
@@ -44,7 +45,6 @@ import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.nj2k.types.*
-
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -720,7 +720,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiField.toJK(): JKField {
             return JKField(
-                JKTypeElement(type.toJK()).withFormattingFrom(typeElement),
+                JKTypeElement(type.toJK(), typeElement.annotationList()).withFormattingFrom(typeElement),
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 annotationList(this),
@@ -741,12 +741,16 @@ class JavaToJKTreeBuilder constructor(
                 when {
                     annotation !is PsiAnnotation -> null
                     annotation.qualifiedName == DEPRECATED_ANNOTAION_FQ_NAME && deprecatedAnnotation != null -> null
+                    AnnotationTargetUtil.isTypeAnnotation(annotation) -> null
                     else -> annotation.toJK()
                 }
             }
             return JKAnnotationList(plainAnnotations + listOfNotNull(deprecatedAnnotation))
         }
 
+        fun PsiTypeElement?.annotationList(): JKAnnotationList {
+            return JKAnnotationList(this?.applicableAnnotations?.map { it.toJK() }.orEmpty())
+        }
 
         fun PsiAnnotation.toJK(): JKAnnotation =
             JKAnnotation(
@@ -814,7 +818,8 @@ class JavaToJKTreeBuilder constructor(
                 JKTypeElement(
                     returnType?.toJK()
                         ?: JKJavaVoidType.takeIf { isConstructor }
-                        ?: JKNoType),
+                        ?: JKNoType,
+                    returnTypeElement.annotationList()),
                 nameIdentifier.toJK(),
                 parameterList.parameters.map { it.toJK().withLineBreaksFrom(it) },
                 body?.toJK() ?: JKBodyStub,
@@ -839,8 +844,8 @@ class JavaToJKTreeBuilder constructor(
         fun PsiParameter.toJK(): JKParameter {
             val rawType = type.toJK()
             val type =
-                if (isVarArgs && rawType is JKJavaArrayType) JKTypeElement(rawType.type)
-                else rawType.asTypeElement()
+                if (isVarArgs && rawType is JKJavaArrayType) JKTypeElement(rawType.type, typeElement.annotationList())
+                else rawType.asTypeElement(typeElement.annotationList())
             return JKParameter(
                 type,
                 nameIdentifier.toJK(),
@@ -862,9 +867,9 @@ class JavaToJKTreeBuilder constructor(
                 }
 
 
-        fun PsiLocalVariable.toJK(): JKLocalVariable =
-            JKLocalVariable(
-                JKTypeElement(type.toJK()).withFormattingFrom(typeElement),
+        fun PsiLocalVariable.toJK(): JKLocalVariable {
+            return JKLocalVariable(
+                JKTypeElement(type.toJK(), typeElement.annotationList()).withFormattingFrom(typeElement),
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { initializer.toJK() },
                 JKMutabilityModifierElement(
@@ -878,6 +883,7 @@ class JavaToJKTreeBuilder constructor(
             }.also {
                 it.withFormattingFrom(this)
             }
+        }
 
         fun PsiStatement?.toJK(): JKStatement {
             return when (this) {
