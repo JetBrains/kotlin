@@ -11,12 +11,14 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.CompressionUtil;
 import com.intellij.util.ExceptionUtil;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
 import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
 import com.intellij.util.io.*;
+import com.intellij.util.io.DataOutputStream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +31,8 @@ import java.util.stream.Stream;
 
 class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInputMappingIndex<Key, Value, Input> {
   private static final Logger LOG = Logger.getInstance(SnapshotInputMappings.class);
+
+  private static final boolean USE_MANUAL_COMPRESSION = SystemProperties.getBooleanProperty("snapshots.use.manual.compression", false);
 
   private final ID<Key, Value> myIndexId;
   private final InputMapExternalizer<Key, Value> myMapExternalizer;
@@ -61,38 +65,42 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
   @NotNull
   @Override
   public Map<Key, Value> readData(int hashId) throws IOException {
-    ByteArraySequence byteSequence = readContents(hashId);
-    if (byteSequence != null) {
-      return AbstractForwardIndexAccessor.deserializeFromByteSeq(byteSequence, myMapExternalizer);
-    }
-    return Collections.emptyMap();
+    return ObjectUtils.notNull(doReadData(hashId), Collections.emptyMap());
   }
 
   @Nullable
   @Override
   public InputData<Key, Value> readData(@NotNull Input content) throws IOException {
     int hashId = getHashId(content);
-    ByteArraySequence bytes = readContents(hashId);
 
-    Map<Key, Value> data = null;
-    if (bytes != null) {
-      data = AbstractForwardIndexAccessor.deserializeFromByteSeq(bytes, myMapExternalizer);
-      if (DebugAssertions.EXTRA_SANITY_CHECKS) {
-        Map<Key, Value> contentData = myIndexer.map(content);
-        boolean sameValueForSavedIndexedResultAndCurrentOne = contentData.equals(data);
-        if (!sameValueForSavedIndexedResultAndCurrentOne) {
-          data = contentData;
-          DebugAssertions.error(
-            "Unexpected difference in indexing of %s by index %s\ndiff %s\nprevious indexed info %s",
-            getContentDebugData(content),
-            myIndexId,
-            buildDiff(data, contentData),
-            myIndexingTrace.get(hashId)
-          );
-        }
+    Map<Key, Value> data = doReadData(hashId);
+    if (data != null && DebugAssertions.EXTRA_SANITY_CHECKS) {
+      Map<Key, Value> contentData = myIndexer.map(content);
+      boolean sameValueForSavedIndexedResultAndCurrentOne = contentData.equals(data);
+      if (!sameValueForSavedIndexedResultAndCurrentOne) {
+        data = contentData;
+        DebugAssertions.error(
+          "Unexpected difference in indexing of %s by index %s\ndiff %s\nprevious indexed info %s",
+          getContentDebugData(content),
+          myIndexId,
+          buildDiff(data, contentData),
+          myIndexingTrace.get(hashId)
+        );
       }
     }
     return data == null ? null : new HashedInputData<>(data, hashId);
+  }
+
+  @Nullable
+  private Map<Key, Value> doReadData(int hashId) throws IOException {
+    ByteArraySequence byteSequence = readContents(hashId);
+    if (byteSequence != null) {
+      if (USE_MANUAL_COMPRESSION) {
+        byteSequence = decompress(byteSequence);
+      }
+      return AbstractForwardIndexAccessor.deserializeFromByteSeq(byteSequence, myMapExternalizer);
+    }
+    return null;
   }
 
   @Override
@@ -332,6 +340,9 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
   }
 
   private void saveContents(int id, ByteArraySequence byteSequence) throws IOException {
+    if (USE_MANUAL_COMPRESSION) {
+      byteSequence = compress(byteSequence);
+    }
     if (SharedIndicesData.ourFileSharedIndicesEnabled) {
       if (SharedIndicesData.DO_CHECKS) {
         synchronized (myContents) {
@@ -344,5 +355,17 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
     } else {
       myContents.put(id, byteSequence);
     }
+  }
+
+  @NotNull
+  private static ByteArraySequence decompress(@NotNull ByteArraySequence seq) throws IOException {
+    return new ByteArraySequence(CompressionUtil.readCompressed(seq.toInputStream()));
+  }
+
+  @NotNull
+  private static ByteArraySequence compress(@NotNull ByteArraySequence seq) throws IOException {
+    UnsyncByteArrayOutputStream result = new UnsyncByteArrayOutputStream();
+    CompressionUtil.writeCompressed(new DataOutputStream(result), seq.getBytes(), seq.getOffset(), seq.length());
+    return result.toByteArraySequence();
   }
 }
