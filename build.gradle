@@ -104,7 +104,6 @@ void setupClang(Project project) {
 
     project.convention.plugins.platformManager = project.rootProject.ext.platformManager
     project.convention.plugins.execClang = new org.jetbrains.kotlin.ExecClang(project)
-    project.convention.plugins.execLlvm = new org.jetbrains.kotlin.ExecLlvm(project)
 
     project.plugins.withType(NativeComponentPlugin) {
         project.model {

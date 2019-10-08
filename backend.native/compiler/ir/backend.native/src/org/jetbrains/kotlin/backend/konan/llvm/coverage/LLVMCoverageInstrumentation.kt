@@ -27,6 +27,7 @@ internal class LLVMCoverageInstrumentation(
 
     private val functionHash = Int64(functionRegions.structuralHash).llvm
 
+    // TODO: It's a great place for some debug output.
     fun instrumentIrElement(element: IrElement) {
         functionRegions.regions[element]?.let {
             placeRegionIncrement(it)

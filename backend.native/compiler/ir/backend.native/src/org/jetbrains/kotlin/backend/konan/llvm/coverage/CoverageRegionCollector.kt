@@ -38,7 +38,7 @@ internal class CoverageRegionCollector(private val fileFilter: (IrFile) -> Boole
         }
 
         override fun visitFunction(declaration: IrFunction) {
-            if (!declaration.isInline && !declaration.isExternal) {
+            if (!declaration.isInline && !declaration.isExternal && !declaration.isGeneratedByCompiler) {
                 declaration.body?.let {
                     val regionsCollector = IrFunctionRegionsCollector(fileFilter, file)
                     regionsCollector.visitBody(it)
@@ -52,6 +52,13 @@ internal class CoverageRegionCollector(private val fileFilter: (IrFile) -> Boole
         }
     }
 }
+
+// User doesn't bother about compiler-generated declarations.
+// So lets filter them.
+private val IrDeclaration.isGeneratedByCompiler: Boolean
+    get() {
+        return origin != IrDeclarationOrigin.DEFINED
+    }
 
 /**
  * Very similar to [org.jetbrains.kotlin.backend.konan.llvm.CodeGeneratorVisitor] but instead of bitcode generation we collect regions.
@@ -83,6 +90,7 @@ private class IrFunctionRegionsCollector(
     }
 
     override fun visitVariable(declaration: IrVariable) {
+        recordRegion(declaration)
         declaration.initializer?.let { collectRegions(it) }
     }
 
@@ -95,6 +103,7 @@ private class IrFunctionRegionsCollector(
     fun collectRegions(value: IrExpression): Unit = when (value) {
         is IrTypeOperatorCall -> collectTypeOperator(value)
         is IrCall -> collectCall(value)
+        is IrConstructorCall -> collectCall(value)
         is IrDelegatingConstructorCall -> collectCall(value)
         is IrInstanceInitializerCall -> collectInstanceInitializerCall(value)
         is IrGetValue -> collectGetValue(value)
@@ -130,6 +139,7 @@ private class IrFunctionRegionsCollector(
     }
 
     private fun collectSetVariable(setVariable: IrSetVariable) {
+        recordRegion(setVariable)
         setVariable.value.acceptVoid(this)
     }
 

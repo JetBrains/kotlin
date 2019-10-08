@@ -112,6 +112,9 @@ allprojects {
 
     // backend.native/tests/framework
     ext.testOutputFramework = rootProject.file("$testOutputRoot/framework")
+
+    // backent.native/tests/coverage
+    ext.testOutputCoverage = rootProject.file("$testOutputRoot/coverage")
 }
 testOutputExternal.mkdirs()
 testOutputStdlib.mkdirs()
@@ -3473,7 +3476,7 @@ task interop_echo_server(type: RunInteropKonanTest) {
 */
 
 /*
-TODO: This test isn't run automatically 
+TODO: This test isn't run automatically
 standaloneTest("interop_opengl_teapot") {
     enabled = isAppleTarget(project) && project.testTarget != 'ios_x64'  // No GLUT in iOS
     dependsOnPlatformLibs(it as Task)
@@ -3750,65 +3753,61 @@ KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
             extraOpts project.globalTestArgs
         }
     }
-    
+
     task.finalizedBy("resultsTask")
 }
 
-standaloneTest("coverage_basic_program") {
+if (UtilsKt.testTargetSupportsCodeCoverage(project)) {
+    task coverage_basic_program(type: CoverageTest) {
 
-    disabled = !UtilsKt.testTargetSupportsCodeCoverage(project)
+        binaryName = "CoverageBasic"
+        numberOfCoveredFunctions = 1
+        numberOfCoveredLines = 1
 
-    description = "Test that `-Xcoverage` generates correct __llvm_coverage information"
-
-    def dir = buildDir.absolutePath
-    def coverageFile = "$dir/program.profraw"
-
-    flags = ["-Xcoverage-file=$coverageFile", "-Xcoverage", "-entry", "coverage.basic.program.main"]
-    source = "$projectDir/coverage/basic/program/main.kt"
-
-    doLast {
-        execLlvm("llvm-profdata") {
-            args "merge"
-            args "$dir/program.profraw"
-            args "-o", "$dir/program.profdata"
-        }
-        // Should fail in case of corrupted __llvm_coverage.
-        execLlvm("llvm-cov") {
-            args "report"
-            args "$testOutputLocal/$name/${target.name}/$name.${target.family.exeSuffix}"
-            args "-instr-profile", "$dir/program.profdata"
+        konanArtifacts {
+            program(binaryName, targets: [ target ]) {
+                srcDir 'coverage/basic/program'
+                baseDir "$testOutputCoverage/$binaryName"
+                entryPoint "coverage.basic.program.main"
+                extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
+            }
         }
     }
-}
 
-standaloneTest("coverage_basic_library") {
+    task coverage_basic_library(type: CoverageTest) {
 
-    disabled = !UtilsKt.testTargetSupportsCodeCoverage(project)
+        binaryName = "CoverageBasicLibrary"
+        numberOfCoveredFunctions = 1
+        numberOfCoveredLines = 1
 
-    description = "Test that `-Xlibrary-to-cover` generates correct __llvm_coverage information"
-
-    def dir = buildDir.absolutePath
-
-    doBefore {
-        def konancScript = isWindows() ? "konanc.bat" : "konanc"
-        def konanc = "$dist/bin/$konancScript"
-        "$konanc -target ${PlatformInfo.getTarget(project).name} $projectDir/coverage/basic/library/library.kt -p library -o $dir/lib_to_cover".execute().waitFor()
-    }
-    
-    flags = ["-Xcoverage-file=$dir/program.profraw", "-l", "$dir/lib_to_cover", "-Xlibrary-to-cover=$dir/lib_to_cover.klib", "-entry", "coverage.basic.library.main"]
-    source = "$projectDir/coverage/basic/library/main.kt"
-
-    doLast {
-        execLlvm("llvm-profdata") {
-            args "merge"
-            args "$dir/program.profraw"
-            args "-o", "$dir/program.profdata"
+        konanArtifacts {
+            library("lib_to_cover", targets: [targetName]) {
+                srcFiles 'coverage/basic/library/library.kt'
+            }
+            program(binaryName, targets: [ target ]) {
+                srcFiles 'coverage/basic/library/main.kt'
+                libraries {
+                    artifact konanArtifacts.lib_to_cover
+                }
+                baseDir "$testOutputCoverage/$binaryName"
+                entryPoint "coverage.basic.library.main"
+                extraOpts "-Xcoverage-file=$profrawFile", "-Xlibrary-to-cover=${konanArtifacts.lib_to_cover.getArtifactByTarget(target.name)}"
+            }
         }
-        // Should fail in case of corrupted __llvm_coverage.
-        execLlvm("llvm-cov") {
-            args "report"
-            args "$testOutputLocal/$name/${target.name}/$name.${target.family.exeSuffix}"
-            args "-instr-profile", "$dir/program.profdata"
+    }
+
+    task coverage_smoke0(type: CoverageTest) {
+        binaryName = "CoverageSmoke0"
+        numberOfCoveredFunctions = 2
+        numberOfCoveredLines = 3
+
+        konanArtifacts {
+            program(binaryName, targets: [ target ]) {
+                srcDir 'coverage/basic/smoke0'
+                baseDir "$testOutputCoverage/$binaryName"
+                entryPoint "coverage.basic.smoke0.main"
+                extraOpts "-Xcoverage", "-Xcoverage-file=$profrawFile"
+            }
         }
     }
 }
@@ -3828,7 +3827,7 @@ KotlinNativeTestKt.createTest(project, 'stdlibTest', KonanGTest) { task ->
             srcFiles sources
             baseDir "$testOutputStdlib/stdlibTest"
             enableMultiplatform true
-            extraOpts '-tr', '-Xuse-experimental=kotlin.Experimental,kotlin.ExperimentalStdlibApi', 
+            extraOpts '-tr', '-Xuse-experimental=kotlin.Experimental,kotlin.ExperimentalStdlibApi',
                     "-friend-modules", project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib").absolutePath
             extraOpts project.globalTestArgs
         }
