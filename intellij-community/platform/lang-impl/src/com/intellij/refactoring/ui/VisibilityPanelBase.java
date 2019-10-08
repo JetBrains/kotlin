@@ -38,12 +38,10 @@ public abstract class VisibilityPanelBase<V> extends JPanel {
   public abstract void setVisibility(V visibility);
 
   public void addListener(ChangeListener listener) {
-    //noinspection deprecation
     myEventDispatcher.addListener(listener);
   }
 
   protected void stateChanged(ChangeEvent e) {
-    //noinspection deprecation
     myEventDispatcher.getMulticaster().stateChanged(e);
   }
 }
