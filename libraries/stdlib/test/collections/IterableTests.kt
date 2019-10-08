@@ -199,6 +199,24 @@ abstract class OrderedIterableTests<T : Iterable<String>>(createFrom: (Array<out
             assertFailsWith<IllegalArgumentException>("size $illegalValue") { data.windowed(illegalValue, 1) }
             assertFailsWith<IllegalArgumentException>("step $illegalValue") { data.windowed(1, illegalValue) }
         }
+
+        // index overflow tests
+        for (partialWindows in listOf(true, false)) {
+
+            val windowed1 = data.windowed(5, Int.MAX_VALUE, partialWindows)
+            assertEquals(data.take(5), windowed1.single())
+            val windowed2 = data.windowed(Int.MAX_VALUE, 5, partialWindows)
+            assertEquals(if (partialWindows) listOf(data.toList(), listOf("5", "6")) else listOf(), windowed2)
+            val windowed3 = data.windowed(Int.MAX_VALUE, Int.MAX_VALUE, partialWindows)
+            assertEquals(if (partialWindows) listOf(data.toList()) else listOf(), windowed3)
+
+            val windowedTransform1 = data.windowed(5, Int.MAX_VALUE, partialWindows) { it.joinToString("") }
+            assertEquals("01234", windowedTransform1.single())
+            val windowedTransform2 = data.windowed(Int.MAX_VALUE, 5, partialWindows) { it.joinToString("") }
+            assertEquals(if (partialWindows) listOf("0123456", "56") else listOf(), windowedTransform2)
+            val windowedTransform3 = data.windowed(Int.MAX_VALUE, Int.MAX_VALUE, partialWindows) { it.joinToString("") }
+            assertEquals(if (partialWindows) listOf("0123456") else listOf(), windowedTransform3)
+        }
     }
 
 

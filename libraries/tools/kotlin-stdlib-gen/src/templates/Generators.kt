@@ -655,12 +655,14 @@ object Generators : TemplateGroupBase() {
             checkWindowSizeStep(size, step)
             if (this is RandomAccess && this is List) {
                 val thisSize = this.size
-                val result = ArrayList<R>((thisSize + step - 1) / step)
+                val resultCapacity = thisSize / step + if (thisSize % step == 0) 0 else 1
+                val result = ArrayList<R>(resultCapacity)
                 val window = MovingSubList(this)
                 var index = 0
-                while (index < thisSize) {
-                    window.move(index, (index + size).coerceAtMost(thisSize))
-                    if (!partialWindows && window.size < size) break
+                while (index in 0 until thisSize) {
+                    val windowSize = size.coerceAtMost(thisSize - index)
+                    if (!partialWindows && windowSize < size) break
+                    window.move(index, index + windowSize)
                     result.add(transform(window))
                     index += step
                 }
@@ -681,11 +683,12 @@ object Generators : TemplateGroupBase() {
             """
             checkWindowSizeStep(size, step)
             val thisSize = this.length
-            val result = ArrayList<R>((thisSize + step - 1) / step)
+            val resultCapacity = thisSize / step + if (thisSize % step == 0) 0 else 1
+            val result = ArrayList<R>(resultCapacity)
             var index = 0
-            while (index < thisSize) {
+            while (index in 0 until thisSize) {
                 val end = index + size
-                val coercedEnd = if (end > thisSize) { if (partialWindows) thisSize else break } else end
+                val coercedEnd = if (end < 0 || end > thisSize) { if (partialWindows) thisSize else break } else end
                 result.add(transform(subSequence(index, coercedEnd)))
                 index += step
             }
@@ -731,9 +734,10 @@ object Generators : TemplateGroupBase() {
             checkWindowSizeStep(size, step)
             if (this is RandomAccess && this is List) {
                 val thisSize = this.size
-                val result = ArrayList<List<T>>((thisSize + step - 1) / step)
+                val resultCapacity = thisSize / step + if (thisSize % step == 0) 0 else 1
+                val result = ArrayList<List<T>>(resultCapacity)
                 var index = 0
-                while (index < thisSize) {
+                while (index in 0 until thisSize) {
                     val windowSize = size.coerceAtMost(thisSize - index)
                     if (windowSize < size && !partialWindows) break
                     result.add(List(windowSize) { this[it + index] })
@@ -785,7 +789,11 @@ object Generators : TemplateGroupBase() {
             """
             checkWindowSizeStep(size, step)
             val windows = (if (partialWindows) indices else 0 until length - size + 1) step step
-            return windows.asSequence().map { index -> transform(subSequence(index, (index + size).coerceAtMost(length))) }
+            return windows.asSequence().map { index ->
+                val end = index + size
+                val coercedEnd = if (end < 0 || end > length) length else end
+                transform(subSequence(index, coercedEnd))
+            }
             """
         }
     }
