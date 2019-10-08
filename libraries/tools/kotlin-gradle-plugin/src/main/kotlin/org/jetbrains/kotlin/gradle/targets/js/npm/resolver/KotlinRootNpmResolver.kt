@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
+import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
+import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
@@ -90,12 +91,10 @@ internal class KotlinRootNpmResolver internal constructor(
         }
         val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
 
-        if (allNpmPackages.any { it.externalNpmDependencies.isNotEmpty() }) {
+        val hasExternalNpmDependencies = allNpmPackages.any { it.externalNpmDependencies.isNotEmpty() }
+        val hasNodeModulesDependent = projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks }
+        if (hasExternalNpmDependencies || hasNodeModulesDependent) {
             nodeJs.packageManager.resolveRootProject(rootProject, allNpmPackages, upToDate)
-        } else if (projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks }) {
-            if (!upToDate) {
-                NpmSimpleLinker(nodeJs).link(allNpmPackages)
-            }
         }
 
         nodeJs.rootNodeModulesStateFile.writeText(System.currentTimeMillis().toString())
