@@ -37,10 +37,13 @@ open class ChildAnnotationChecker() : DeclarationChecker, StorageComponentContai
         descriptor: DeclarationDescriptor,
         context: DeclarationCheckerContext
     ) {
-        if(descriptor is FunctionDescriptor) {
+        if (descriptor is FunctionDescriptor) {
             descriptor.valueParameters.forEachIndexed { index, param ->
-                if(param.hasChildrenAnnotation() && index != descriptor.valueParameters.lastIndex) {
-                    context.trace.report(ComposeErrors.CHILDREN_MUST_BE_LAST.on(param.findPsi() as KtElement))
+                if (param.hasChildrenAnnotation() &&
+                    index != descriptor.valueParameters.lastIndex) {
+                    context.trace.report(
+                        ComposeErrors.CHILDREN_MUST_BE_LAST.on(param.findPsi() as KtElement)
+                    )
                 }
             }
         }

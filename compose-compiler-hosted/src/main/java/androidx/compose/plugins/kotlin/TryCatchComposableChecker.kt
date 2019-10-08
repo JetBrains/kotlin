@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-open class TryCatchComposableChecker: CallChecker, StorageComponentContainerContributor {
+open class TryCatchComposableChecker : CallChecker, StorageComponentContainerContributor {
 
     override fun registerModuleComponents(
         container: StorageComponentContainer,
@@ -50,15 +50,18 @@ open class TryCatchComposableChecker: CallChecker, StorageComponentContainerCont
     ) {
         val trace = context.trace
         val call = resolvedCall.call.callElement
-        val shouldBeTag = ComposableAnnotationChecker.get(call.project).shouldInvokeAsTag(trace, resolvedCall)
-        if(shouldBeTag) {
+        val shouldBeTag =
+            ComposableAnnotationChecker.get(call.project).shouldInvokeAsTag(trace, resolvedCall)
+        if (shouldBeTag) {
             var walker: PsiElement? = call
             while (walker != null) {
                 val parent = walker.parent
-                if(parent is KtTryExpression) {
-                    if(walker == parent.tryBlock)
+                if (parent is KtTryExpression) {
+                    if (walker == parent.tryBlock)
                         trace.reportFromPlugin(
-                            ComposeErrors.ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE.on(parent.tryKeyword!!),
+                            ComposeErrors.ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE.on(
+                                parent.tryKeyword!!
+                            ),
                             ComposeDefaultErrorMessages
                         )
                 }
@@ -66,5 +69,4 @@ open class TryCatchComposableChecker: CallChecker, StorageComponentContainerCont
             }
         }
     }
-
 }

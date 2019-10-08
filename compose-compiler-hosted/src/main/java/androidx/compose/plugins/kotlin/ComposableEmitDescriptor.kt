@@ -40,7 +40,7 @@ class ComposableEmitDescriptor(
     name: Name,
     kind: CallableMemberDescriptor.Kind,
     source: SourceElement
-): SimpleFunctionDescriptorImpl(
+) : SimpleFunctionDescriptorImpl(
     containingDeclaration,
     original,
     annotations,

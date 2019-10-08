@@ -107,7 +107,8 @@ class ComposerEmitMetadata(
         ): ComposerEmitMetadata {
             val emitSimpleUpperBoundTypes = mutableSetOf<KotlinType>()
             val emitCompoundUpperBoundTypes = mutableSetOf<KotlinType>()
-            val emittableTypeToImplicitCtorTypes = mutableListOf<Pair<List<KotlinType>, Set<KotlinType>>>()
+            val emittableTypeToImplicitCtorTypes =
+                mutableListOf<Pair<List<KotlinType>, Set<KotlinType>>>()
 
             val emitCandidates = resolveComposerMethodCandidates(
                 KtxNameConventions.EMIT,
@@ -126,8 +127,9 @@ class ComposerEmitMetadata(
 
                 // the signature of emit that we are looking for has 3 or 4 parameters
                 if (params.size < 3 || params.size > 4) continue
-                val ctorParam = params.find { it.name == KtxNameConventions.EMIT_CTOR_PARAMETER }
-                    ?: continue
+                val ctorParam = params.find {
+                    it.name == KtxNameConventions.EMIT_CTOR_PARAMETER
+                } ?: continue
                 if (!ctorParam.type.isFunctionTypeOrSubtype) continue
 
                 // the return type from the ctor param is the "upper bound" of the node type. It will often be a generic type with constraints.
@@ -135,9 +137,10 @@ class ComposerEmitMetadata(
 
                 // the ctor param can have parameters itself, which we interpret as implicit parameter types that the composer knows how to
                 // automatically provide to the component. In the case of Android Views, this is how we automatically provide Context.
-                val implicitParamTypes = ctorParam.type.getValueParameterTypesFromFunctionType().map {
-                    it.type
-                }
+                val implicitParamTypes =
+                    ctorParam.type.getValueParameterTypesFromFunctionType().map {
+                        it.type
+                    }
 
                 for (implicitType in implicitParamTypes) {
                     emittableTypeToImplicitCtorTypes.add(upperBounds to implicitParamTypes.toSet())
@@ -163,10 +166,18 @@ class ComposerEmitMetadata(
             psiFactory: KtPsiFactory,
             resolutionContext: BasicCallResolutionContext
         ): ComposerEmitMetadata {
-            val meta = resolutionContext.trace.bindingContext[ComposeWritableSlices.COMPOSER_EMIT_METADATA, descriptor]
+            val meta = resolutionContext.trace.bindingContext[
+                    ComposeWritableSlices.COMPOSER_EMIT_METADATA,
+                    descriptor
+            ]
             return if (meta == null) {
-                val built = build(descriptor.type, callResolver, psiFactory, resolutionContext)
-                resolutionContext.trace.record(ComposeWritableSlices.COMPOSER_EMIT_METADATA, descriptor, built)
+                val built =
+                    build(descriptor.type, callResolver, psiFactory, resolutionContext)
+                resolutionContext.trace.record(
+                    ComposeWritableSlices.COMPOSER_EMIT_METADATA,
+                    descriptor,
+                    built
+                )
                 built
             } else {
                 meta

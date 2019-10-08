@@ -92,7 +92,7 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
         ).apply {
             constantValueGenerator = ConstantValueGenerator(
                 context.state.module,
-                context.ir .symbols.externalSymbolTable
+                context.ir.symbols.externalSymbolTable
             )
             constantValueGenerator.typeTranslator = this
         }

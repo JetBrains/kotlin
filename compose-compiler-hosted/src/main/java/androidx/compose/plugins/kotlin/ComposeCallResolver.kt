@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectVariables
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
-
 class ComposeCallResolver(
     private val callResolver: CallResolver,
     private val project: Project,
@@ -182,5 +181,4 @@ class ComposeCallResolver(
 
         return listOf(result)
     }
-
 }

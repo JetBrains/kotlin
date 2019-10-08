@@ -72,7 +72,8 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         location: LookupLocation
     ): Collection<FunctionDescriptor> {
         if (ComposeFlags.NEW_CALL_RESOLUTION_INTERCEPTION) {
-            val callResolver = (scopeTower as NewResolutionOldInference.ImplicitScopeTowerImpl).callResolver
+            val callResolver =
+                (scopeTower as NewResolutionOldInference.ImplicitScopeTowerImpl).callResolver
             val element = resolutionContext.call.callElement as KtExpression
             val project = element.project
             val psiFactory = KtPsiFactory(project, markGenerated = false)
