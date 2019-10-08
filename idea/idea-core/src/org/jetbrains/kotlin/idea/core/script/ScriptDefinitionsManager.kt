@@ -25,7 +25,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.ControlFlowException
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileTypes.FileTypeManager
@@ -48,7 +47,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
 import java.net.URLClassLoader
-import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 import kotlin.concurrent.write
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
@@ -68,14 +68,14 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
     private val failedContributorsHashes = HashSet<Int>()
 
-    private val scriptDefinitionsCacheLock = ReentrantReadWriteLock()
+    private val scriptDefinitionsCacheLock = ReentrantLock()
     private val scriptDefinitionsCache = SLRUMap<File, ScriptDefinition>(10, 10)
 
     override fun findDefinition(file: File): ScriptDefinition? {
         if (nonScriptFileName(file.name)) return null
         if (!isReady()) return null
 
-        val cached = scriptDefinitionsCacheLock.write { scriptDefinitionsCache.get(file) }
+        val cached = scriptDefinitionsCacheLock.withLock { scriptDefinitionsCache.get(file) }
         if (cached != null) return cached
 
         val virtualFile = VfsUtil.findFileByIoFile(file, true)
@@ -87,7 +87,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
                 super.findDefinition(file) ?: return null
             }
 
-        scriptDefinitionsCacheLock.write {
+        scriptDefinitionsCacheLock.withLock {
             scriptDefinitionsCache.put(file, definition)
         }
 
@@ -187,7 +187,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         }
 
         clearCache()
-        scriptDefinitionsCacheLock.write { scriptDefinitionsCache.clear() }
+        scriptDefinitionsCacheLock.withLock { scriptDefinitionsCache.clear() }
 
         // TODO: clear by script type/definition
         ScriptConfigurationManager.getInstance(project).clearConfigurationCachesAndRehighlight()
