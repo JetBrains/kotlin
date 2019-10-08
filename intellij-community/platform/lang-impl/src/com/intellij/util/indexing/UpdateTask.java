@@ -57,9 +57,10 @@ abstract class UpdateTask<Type> {
           ProgressManager.checkCanceled();
         }
 
-        while (!myUpdateSemaphore.waitFor(500)) { // may need to wait until another threads are done with indexing
+        do {
+          ProgressManager.checkCanceled();
         }
-        ProgressManager.checkCanceled();
+        while (!myUpdateSemaphore.waitFor(500));
         if (DEBUG) if (hasMoreToProcess) trace("reiterating");
       }
       while (hasMoreToProcess);
