@@ -18,9 +18,9 @@ import kotlin.ranges.contains
 import kotlin.ranges.reversed
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @kotlin.internal.InlineOnly
@@ -29,9 +29,9 @@ public inline operator fun <T> Array<out T>.component1(): T {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @kotlin.internal.InlineOnly
@@ -40,9 +40,9 @@ public inline operator fun ByteArray.component1(): Byte {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @kotlin.internal.InlineOnly
@@ -51,9 +51,9 @@ public inline operator fun ShortArray.component1(): Short {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @kotlin.internal.InlineOnly
@@ -62,9 +62,9 @@ public inline operator fun IntArray.component1(): Int {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @kotlin.internal.InlineOnly
@@ -73,9 +73,9 @@ public inline operator fun LongArray.component1(): Long {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @kotlin.internal.InlineOnly
@@ -84,9 +84,9 @@ public inline operator fun FloatArray.component1(): Float {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @kotlin.internal.InlineOnly
@@ -95,9 +95,9 @@ public inline operator fun DoubleArray.component1(): Double {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @kotlin.internal.InlineOnly
@@ -106,9 +106,9 @@ public inline operator fun BooleanArray.component1(): Boolean {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @kotlin.internal.InlineOnly
@@ -117,7 +117,7 @@ public inline operator fun CharArray.component1(): Char {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -128,7 +128,7 @@ public inline operator fun <T> Array<out T>.component2(): T {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -139,7 +139,7 @@ public inline operator fun ByteArray.component2(): Byte {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -150,7 +150,7 @@ public inline operator fun ShortArray.component2(): Short {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -161,7 +161,7 @@ public inline operator fun IntArray.component2(): Int {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -172,7 +172,7 @@ public inline operator fun LongArray.component2(): Long {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -183,7 +183,7 @@ public inline operator fun FloatArray.component2(): Float {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -194,7 +194,7 @@ public inline operator fun DoubleArray.component2(): Double {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -205,7 +205,7 @@ public inline operator fun BooleanArray.component2(): Boolean {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -216,7 +216,7 @@ public inline operator fun CharArray.component2(): Char {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -227,7 +227,7 @@ public inline operator fun <T> Array<out T>.component3(): T {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -238,7 +238,7 @@ public inline operator fun ByteArray.component3(): Byte {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -249,7 +249,7 @@ public inline operator fun ShortArray.component3(): Short {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -260,7 +260,7 @@ public inline operator fun IntArray.component3(): Int {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -271,7 +271,7 @@ public inline operator fun LongArray.component3(): Long {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -282,7 +282,7 @@ public inline operator fun FloatArray.component3(): Float {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -293,7 +293,7 @@ public inline operator fun DoubleArray.component3(): Double {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -304,7 +304,7 @@ public inline operator fun BooleanArray.component3(): Boolean {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -315,7 +315,7 @@ public inline operator fun CharArray.component3(): Char {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -326,7 +326,7 @@ public inline operator fun <T> Array<out T>.component4(): T {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -337,7 +337,7 @@ public inline operator fun ByteArray.component4(): Byte {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -348,7 +348,7 @@ public inline operator fun ShortArray.component4(): Short {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -359,7 +359,7 @@ public inline operator fun IntArray.component4(): Int {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -370,7 +370,7 @@ public inline operator fun LongArray.component4(): Long {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -381,7 +381,7 @@ public inline operator fun FloatArray.component4(): Float {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -392,7 +392,7 @@ public inline operator fun DoubleArray.component4(): Double {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -403,7 +403,7 @@ public inline operator fun BooleanArray.component4(): Boolean {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -414,7 +414,7 @@ public inline operator fun CharArray.component4(): Char {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -425,7 +425,7 @@ public inline operator fun <T> Array<out T>.component5(): T {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -436,7 +436,7 @@ public inline operator fun ByteArray.component5(): Byte {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -447,7 +447,7 @@ public inline operator fun ShortArray.component5(): Short {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -458,7 +458,7 @@ public inline operator fun IntArray.component5(): Int {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -469,7 +469,7 @@ public inline operator fun LongArray.component5(): Long {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -480,7 +480,7 @@ public inline operator fun FloatArray.component5(): Float {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -491,7 +491,7 @@ public inline operator fun DoubleArray.component5(): Double {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -502,7 +502,7 @@ public inline operator fun BooleanArray.component5(): Boolean {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.

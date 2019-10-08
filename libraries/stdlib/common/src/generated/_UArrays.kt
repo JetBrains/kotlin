@@ -19,9 +19,9 @@ import kotlin.ranges.contains
 import kotlin.ranges.reversed
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @SinceKotlin("1.3")
@@ -32,9 +32,9 @@ public inline operator fun UIntArray.component1(): UInt {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @SinceKotlin("1.3")
@@ -45,9 +45,9 @@ public inline operator fun ULongArray.component1(): ULong {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @SinceKotlin("1.3")
@@ -58,9 +58,9 @@ public inline operator fun UByteArray.component1(): UByte {
 }
 
 /**
- * Returns 1st *element* from the collection.
+ * Returns 1st *element* from the array.
  * 
- * If this array is empty, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+ * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
  */
 @SinceKotlin("1.3")
@@ -71,7 +71,7 @@ public inline operator fun UShortArray.component1(): UShort {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -84,7 +84,7 @@ public inline operator fun UIntArray.component2(): UInt {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -97,7 +97,7 @@ public inline operator fun ULongArray.component2(): ULong {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -110,7 +110,7 @@ public inline operator fun UByteArray.component2(): UByte {
 }
 
 /**
- * Returns 2nd *element* from the collection.
+ * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -123,7 +123,7 @@ public inline operator fun UShortArray.component2(): UShort {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -136,7 +136,7 @@ public inline operator fun UIntArray.component3(): UInt {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -149,7 +149,7 @@ public inline operator fun ULongArray.component3(): ULong {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -162,7 +162,7 @@ public inline operator fun UByteArray.component3(): UByte {
 }
 
 /**
- * Returns 3rd *element* from the collection.
+ * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -175,7 +175,7 @@ public inline operator fun UShortArray.component3(): UShort {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -188,7 +188,7 @@ public inline operator fun UIntArray.component4(): UInt {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -201,7 +201,7 @@ public inline operator fun ULongArray.component4(): ULong {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -214,7 +214,7 @@ public inline operator fun UByteArray.component4(): UByte {
 }
 
 /**
- * Returns 4th *element* from the collection.
+ * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -227,7 +227,7 @@ public inline operator fun UShortArray.component4(): UShort {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -240,7 +240,7 @@ public inline operator fun UIntArray.component5(): UInt {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -253,7 +253,7 @@ public inline operator fun ULongArray.component5(): ULong {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
@@ -266,7 +266,7 @@ public inline operator fun UByteArray.component5(): UByte {
 }
 
 /**
- * Returns 5th *element* from the collection.
+ * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
  * where the behavior is unspecified.
