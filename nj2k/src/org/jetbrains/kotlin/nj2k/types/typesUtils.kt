@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun JKType.asTypeElement() =
-    JKTypeElement(this)
+fun JKType.asTypeElement(annotationList: JKAnnotationList = JKAnnotationList()) =
+    JKTypeElement(this, annotationList)
 
 fun JKClassSymbol.asType(nullability: Nullability = Nullability.Default): JKClassType =
     JKClassType(this, emptyList(), nullability)
