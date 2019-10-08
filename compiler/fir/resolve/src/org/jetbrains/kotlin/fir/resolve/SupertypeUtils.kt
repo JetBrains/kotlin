@@ -48,7 +48,6 @@ inline fun <reified T : FirScope> scopeSessionKey(): ScopeSessionKey<T> {
 }
 
 val USE_SITE = scopeSessionKey<FirScope>()
-val DECLARED = scopeSessionKey<FirScope>()
 
 data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassSubstitutionScope>() {}
 
@@ -67,7 +66,7 @@ fun FirTypeAlias.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSes
 fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
     return builder.getOrBuild(symbol, USE_SITE) {
 
-        val declaredScope = builder.getOrBuild(this.symbol, DECLARED) { declaredMemberScope(this) }
+        val declaredScope = declaredMemberScope(this)
         val scopes = lookupSuperTypes(this, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
             .mapNotNull { useSiteSuperType ->
                 if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
