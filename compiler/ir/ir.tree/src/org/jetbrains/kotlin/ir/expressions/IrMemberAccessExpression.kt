@@ -10,18 +10,18 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrMemberAccessExpression : IrExpression {
+interface IrMemberAccessExpression : IrExpression, IrDeclarationReference {
     var dispatchReceiver: IrExpression?
     var extensionReceiver: IrExpression?
 
-    val descriptor: CallableDescriptor
+    override val descriptor: CallableDescriptor
+    override val symbol: IrSymbol
+
     val origin: IrStatementOrigin?
 
     val typeArgumentsCount: Int
@@ -66,7 +66,7 @@ val CallableDescriptor.typeParametersCount: Int
 fun IrMemberAccessExpression.getTypeArgumentOrDefault(irTypeParameter: IrTypeParameter) =
     getTypeArgument(irTypeParameter.index) ?: irTypeParameter.defaultType
 
-interface IrFunctionAccessExpression : IrMemberAccessExpression, IrDeclarationReference {
+interface IrFunctionAccessExpression : IrMemberAccessExpression {
     override val descriptor: FunctionDescriptor
     override val symbol: IrFunctionSymbol
 }

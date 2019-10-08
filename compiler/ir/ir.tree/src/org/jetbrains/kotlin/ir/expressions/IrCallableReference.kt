@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.symbols.*
 
-interface IrCallableReference : IrMemberAccessExpression, IrDeclarationReference {
-    override val descriptor: CallableDescriptor
+interface IrCallableReference : IrMemberAccessExpression {
 }
 
 interface IrFunctionReference : IrCallableReference {
