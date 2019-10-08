@@ -6722,6 +6722,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/defaultArguments/simpleFromOtherFile.kt");
         }
 
+        @TestMetadata("useNextParamInLambda.kt")
+        public void testUseNextParamInLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/defaultArguments/useNextParamInLambda.kt");
+        }
+
         @TestMetadata("useThisInLambda.kt")
         public void testUseThisInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/defaultArguments/useThisInLambda.kt");

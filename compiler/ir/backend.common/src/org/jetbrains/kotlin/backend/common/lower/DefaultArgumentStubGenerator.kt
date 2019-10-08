@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -84,6 +83,20 @@ open class DefaultArgumentStubGenerator(
                 variables[it] = newIrFunction.extensionReceiverParameter!!
             }
 
+            // In order to deal with forward references in default value lambdas,
+            // accesses to the parameter before it has been determined if there is
+            // a default value or not is redirected to the actual parameter of the
+            // $default function. This is to ensure that examples such as:
+            //
+            // fun f(f1: () -> String = { f2() },
+            //       f2: () -> String = { "OK" }) = f1()
+            //
+            // works correctly so that `f() { "OK" }` returns "OK" and
+            // `f()` throws a NullPointerException.
+            irFunction.valueParameters.associateWithTo(variables) {
+                newIrFunction.valueParameters[it.index]
+            }
+
             for (valueParameter in irFunction.valueParameters) {
                 val parameter = newIrFunction.valueParameters[valueParameter.index]
                 val remapped = if (valueParameter.defaultValue != null) {
@@ -129,7 +142,6 @@ open class DefaultArgumentStubGenerator(
                     passTypeArgumentsFrom(newIrFunction.parentAsClass)
                     passTypeArgumentsFrom(newIrFunction)
                     dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
-
                     params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
                 }
                 is IrSimpleFunction -> +irReturn(dispatchToImplementation(irFunction, newIrFunction, params))
