@@ -31,11 +31,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Vladislav.Soroka
  */
 public class GradleConsoleFilter implements Filter {
+  public static final Pattern LINE_AND_COLUMN_PATTERN = Pattern.compile("line (\\d+), column (\\d+)\\.");
+
   @Nullable
   private final Project myProject;
   private static final TextAttributes HYPERLINK_ATTRIBUTES =
@@ -107,7 +111,15 @@ public class GradleConsoleFilter implements Filter {
     int highlightEndOffset = textStartOffset + fileName.length();
     OpenFileHyperlinkInfo info = null;
     if (myProject != null) {
-      info = new OpenFileHyperlinkInfo(myProject, file, Math.max(lineNumber - 1, 0));
+      int columnNumber = 0;
+      String lineAndColumn = StringUtil.substringAfterLast(line, " @ ");
+      if (lineAndColumn != null) {
+        Matcher matcher = LINE_AND_COLUMN_PATTERN.matcher(lineAndColumn);
+        if (matcher.find()) {
+          columnNumber = Integer.parseInt(matcher.group(2));
+        }
+      }
+      info = new OpenFileHyperlinkInfo(myProject, file, Math.max(lineNumber - 1, 0), columnNumber);
     }
     TextAttributes attributes = HYPERLINK_ATTRIBUTES.clone();
     if (myProject != null && !ProjectRootManager.getInstance(myProject).getFileIndex().isInContent(file)) {

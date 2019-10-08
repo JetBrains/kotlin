@@ -110,22 +110,14 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
 
   private fun getStartupErrorReasonAndFilePosition(errorText: String, filter: GradleConsoleFilter): Pair<String, FilePosition>? {
     val locationLine = errorText.substringAfter("> startup failed:", "").nullize()?.trimStart()?.substringBefore("\n") ?: return null
-    val failedStartupReason = locationLine.substringAfter("'${filter.filteredFileName}': ${filter.filteredLineNumber}: ",
-                                                          "").nullize()?.substringBeforeLast('@') ?: return null
-    val locationPart = locationLine.substringAfterLast('@')
-    val line: Int
-    val column: Int
-
-    val values = Regex(" line (\\d+), column (\\d+)\\.").matchEntire(locationPart)?.groupValues
-    if (values != null) {
-      line = values[1].toInt() - 1
-      column = values[2].toInt()
-    } else {
-      line = filter.filteredLineNumber - 1
-      column = 0
-    }
-    val filePosition = FilePosition(File(filter.filteredFileName), line, column)
-    return Pair(failedStartupReason, filePosition)
+    val failedStartupReason = locationLine.substringAfter("'${filter.filteredFileName}': ${filter.filteredLineNumber}: ", "")
+                                .nullize()?.substringBeforeLast(" @ ") ?: return null
+    val locationPart = locationLine.substringAfterLast(" @ ")
+    val matchResult = GradleConsoleFilter.LINE_AND_COLUMN_PATTERN.toRegex().matchEntire(locationPart)
+    val values = matchResult?.groupValues?.drop(1)?.map { it.toInt() } ?: listOf(filter.filteredLineNumber, 0)
+    val line = values[0] - 1
+    val column = values[1]
+    return Pair(failedStartupReason, FilePosition(File(filter.filteredFileName), line, column))
   }
 
   private fun checkUnresolvedDependencyError(reason: String, description: StringBuilder, parentId: Any): BuildEvent? {
