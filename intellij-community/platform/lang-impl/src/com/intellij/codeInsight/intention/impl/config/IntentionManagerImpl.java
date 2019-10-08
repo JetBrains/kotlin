@@ -4,10 +4,7 @@ package com.intellij.codeInsight.intention.impl.config;
 import com.intellij.codeInsight.daemon.HighlightDisplayKey;
 import com.intellij.codeInsight.daemon.impl.CleanupOnScopeIntention;
 import com.intellij.codeInsight.daemon.impl.EditCleanupProfileIntentionAction;
-import com.intellij.codeInsight.intention.FileModifier;
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.codeInsight.intention.IntentionActionDelegate;
-import com.intellij.codeInsight.intention.IntentionManager;
+import com.intellij.codeInsight.intention.*;
 import com.intellij.codeInspection.GlobalInspectionTool;
 import com.intellij.codeInspection.GlobalSimpleInspectionTool;
 import com.intellij.codeInspection.LocalQuickFix;
@@ -17,7 +14,10 @@ import com.intellij.codeInspection.actions.CleanupInspectionIntention;
 import com.intellij.codeInspection.actions.RunInspectionIntention;
 import com.intellij.codeInspection.ex.*;
 import com.intellij.ide.plugins.PluginManagerCore;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -34,7 +34,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-public final class IntentionManagerImpl extends IntentionManager {
+public final class IntentionManagerImpl extends IntentionManager implements Disposable {
   private static final Logger LOG = Logger.getInstance(IntentionManagerImpl.class);
 
   private final List<IntentionAction> myActions;
@@ -48,6 +48,20 @@ public final class IntentionManagerImpl extends IntentionManager {
       actions.add(new IntentionActionWrapper(extension, extension.getCategories()));
     });
     myActions = ContainerUtil.createLockFreeCopyOnWriteList(actions);
+
+    IntentionManager.EP_INTENTION_ACTIONS.addExtensionPointListener(new ExtensionPointListener<IntentionActionBean>() {
+      @Override
+      public void extensionAdded(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
+        myActions.add(new IntentionActionWrapper(extension, extension.getCategories()));
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
+        myActions.removeIf((wrapper) ->
+                             wrapper instanceof IntentionActionWrapper &&
+                             ((IntentionActionWrapper) wrapper).getImplementationClassName().equals(extension.className));
+      }
+    }, this);
   }
 
   @Override
@@ -104,6 +118,10 @@ public final class IntentionManagerImpl extends IntentionManager {
       throw new AssertionError("unknown tool: " + toolWrapper);
     }
     return null;
+  }
+
+  @Override
+  public void dispose() {
   }
 
   private static IntentionAction createFixAllIntentionInternal(@NotNull InspectionToolWrapper toolWrapper,

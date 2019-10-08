@@ -2,8 +2,10 @@
 package com.intellij.codeInsight.intention.impl.config;
 
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.codeInsight.intention.IntentionActionBean;
 import com.intellij.codeInsight.intention.IntentionManager;
 import com.intellij.ide.ui.search.SearchableOptionsRegistrar;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -12,6 +14,8 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.concurrency.SequentialTaskExecutor;
@@ -27,7 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.regex.Pattern;
 
 @State(name = "IntentionManagerSettings", storages = @Storage("intentionSettings.xml"))
-public final class IntentionManagerSettings implements PersistentStateComponent<Element> {
+public final class IntentionManagerSettings implements PersistentStateComponent<Element>, Disposable {
   private static final Logger LOG = Logger.getInstance(IntentionManagerSettings.class);
   private static final ExecutorService ourExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("Intentions Loader");
 
@@ -46,23 +50,42 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
   private static final Pattern HTML_PATTERN = Pattern.compile("<[^<>]*>");
 
   public IntentionManagerSettings() {
-    IntentionManager.EP_INTENTION_ACTIONS.forEachExtensionSafe(extension -> {
-      String[] categories = extension.getCategories();
-      if (categories == null) {
-        return;
+    IntentionManager.EP_INTENTION_ACTIONS.getPoint(null).addExtensionPointListener(new ExtensionPointListener<IntentionActionBean>() {
+      @Override
+      public void extensionAdded(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
+        registerMetaDataForEP(extension);
       }
 
-      IntentionActionWrapper instance = new IntentionActionWrapper(extension, categories);
-      String descriptionDirectoryName = extension.getDescriptionDirectoryName();
-      if (descriptionDirectoryName == null) {
-        descriptionDirectoryName = instance.getDescriptionDirectoryName();
-      }
-      try {
-        registerMetaData(new IntentionActionMetaData(instance, extension.getLoaderForClass(), categories, descriptionDirectoryName));
-      }
-      catch (ExtensionNotApplicableException ignore) {
-      }
-    });
+      @Override
+      public void extensionRemoved(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
+        String[] categories = extension.getCategories();
+        if (categories == null) return;
+        String familyName = extension.getInstance().getFamilyName();
+        myMetaData.remove(new MetaDataKey(categories, familyName));
+              }
+    }, true, this);
+  }
+
+  @Override
+  public void dispose() {
+  }
+
+  private void registerMetaDataForEP(IntentionActionBean extension) {
+    String[] categories = extension.getCategories();
+    if (categories == null) {
+      return;
+    }
+
+    IntentionActionWrapper instance = new IntentionActionWrapper(extension, categories);
+    String descriptionDirectoryName = extension.getDescriptionDirectoryName();
+    if (descriptionDirectoryName == null) {
+      descriptionDirectoryName = instance.getDescriptionDirectoryName();
+    }
+    try {
+      registerMetaData(new IntentionActionMetaData(instance, extension.getLoaderForClass(), categories, descriptionDirectoryName));
+    }
+    catch (ExtensionNotApplicableException ignore) {
+    }
   }
 
   @NotNull
