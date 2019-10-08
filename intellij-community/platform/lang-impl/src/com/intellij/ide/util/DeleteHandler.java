@@ -1,19 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util;
 
 import com.intellij.CommonBundle;
@@ -62,8 +47,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class DeleteHandler {
-  private DeleteHandler() {
-  }
+  private DeleteHandler() { }
 
   public static class DefaultDeleteProvider implements DeleteProvider {
     @Override
@@ -201,19 +185,19 @@ public class DeleteHandler {
   private static void deleteInCommand(Project project, PsiElement[] elements) {
     CommandProcessor.getInstance().executeCommand(project, () -> NonProjectFileWritingAccessProvider.disableChecksDuring(() -> {
       SmartPointerManager smartPointerManager = SmartPointerManager.getInstance(project);
-      List<SmartPsiElementPointer> pointers = ContainerUtil.map(elements, smartPointerManager::createSmartPsiElementPointer);
+      List<SmartPsiElementPointer<?>> pointers = ContainerUtil.map(elements, smartPointerManager::createSmartPsiElementPointer);
 
       if (!makeWritable(project, elements)) return;
 
       // deleted from project view or something like that.
-      if (CommonDataKeys.EDITOR.getData(DataManager.getInstance().getDataContext()) == null) {
+      @SuppressWarnings("deprecation") DataContext context = DataManager.getInstance().getDataContext();
+      if (CommonDataKeys.EDITOR.getData(context) == null) {
         CommandProcessor.getInstance().markCurrentCommandAsGlobal(project);
       }
 
-      for (SmartPsiElementPointer pointer : pointers) {
+      for (SmartPsiElementPointer<?> pointer : pointers) {
         PsiElement elementToDelete = pointer.getElement();
         if (elementToDelete == null) continue; //was already deleted
-
         doDelete(project, elementToDelete);
       }
     }), RefactoringBundle.message("safe.delete.command", RefactoringUIUtil.calculatePsiElementDescriptionList(elements)), null);
@@ -223,7 +207,7 @@ public class DeleteHandler {
     if (elementToDelete instanceof PsiDirectory) {
       VirtualFile virtualFile = ((PsiDirectory)elementToDelete).getVirtualFile();
       if (virtualFile.isInLocalFileSystem() && !virtualFile.is(VFileProperty.SYMLINK)) {
-        ArrayList<VirtualFile> readOnlyFiles = new ArrayList<>();
+        List<VirtualFile> readOnlyFiles = new ArrayList<>();
         CommonRefactoringUtil.collectReadOnlyFiles(virtualFile, readOnlyFiles);
 
         if (!readOnlyFiles.isEmpty()) {
@@ -264,6 +248,7 @@ public class DeleteHandler {
     if (!clearFileReadOnlyFlags(project, element)) return;
 
     try {
+      //noinspection deprecation
       element.checkDelete();
     }
     catch (IncorrectOperationException ex) {
@@ -275,7 +260,7 @@ public class DeleteHandler {
       try {
         element.delete();
       }
-      catch (final IncorrectOperationException ex) {
+      catch (IncorrectOperationException ex) {
         ApplicationManager.getApplication().invokeLater(
           () -> Messages.showMessageDialog(project, ex.getMessage(), CommonBundle.getErrorTitle(), Messages.getErrorIcon()));
       }

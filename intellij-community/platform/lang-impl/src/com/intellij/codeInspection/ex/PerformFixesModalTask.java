@@ -45,10 +45,6 @@ public abstract class PerformFixesModalTask implements SequentialTask {
   }
 
   @Override
-  public void prepare() {
-  }
-
-  @Override
   public boolean isDone() {
     return myPackIdx > myDescriptorPacks.size() - 1;
   }
@@ -111,9 +107,6 @@ public abstract class PerformFixesModalTask implements SequentialTask {
     }
     return isDone();
   }
-
-  @Override
-  public void stop() {}
 
   protected abstract void applyFix(Project project, CommonProblemDescriptor descriptor);
 

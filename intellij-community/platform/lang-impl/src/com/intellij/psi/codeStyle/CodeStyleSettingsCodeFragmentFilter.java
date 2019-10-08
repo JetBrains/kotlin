@@ -239,10 +239,6 @@ public class CodeStyleSettingsCodeFragmentFilter {
 
       return oldValue;
     }
-
-    @Override
-    public void prepare() {
-    }
   }
 
   public interface CodeStyleSettingsToShow {
@@ -317,10 +313,6 @@ class CompositeSequentialTask implements SequentialTask {
         popUntilCurrentTaskUnfinishedOrNull();
       }
     }
-  }
-
-  @Override
-  public void prepare() {
   }
 
   @Override

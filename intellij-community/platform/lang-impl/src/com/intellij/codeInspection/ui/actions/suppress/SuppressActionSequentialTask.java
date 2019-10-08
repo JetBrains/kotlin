@@ -78,10 +78,6 @@ public class SuppressActionSequentialTask implements SequentialTask {
   }
 
   @Override
-  public void stop() {
-  }
-
-  @Override
   public void prepare() {
     final ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     if (indicator != null) {

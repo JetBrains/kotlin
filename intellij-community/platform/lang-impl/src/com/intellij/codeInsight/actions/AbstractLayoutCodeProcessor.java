@@ -453,10 +453,6 @@ public abstract class AbstractLayoutCodeProcessor {
     }
 
     @Override
-    public void prepare() {
-    }
-
-    @Override
     public boolean isDone() {
       return myStopFormatting;
     }
