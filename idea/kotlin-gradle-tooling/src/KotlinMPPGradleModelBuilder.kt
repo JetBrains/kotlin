@@ -29,6 +29,7 @@ import java.lang.reflect.Method
 class KotlinMPPGradleModelBuilder : ModelBuilderService {
     // This flag enables import of source sets which do not belong to any compilation
     private val DEFAULT_IMPORT_ORPHAN_SOURCE_SETS = true
+    private val DEFAULT_BUILD_METADATA_DEPENDENCIES_FOR_ACTUALISED_SOURCE_SETS = true
 
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder {
         return ErrorMessageBuilder
@@ -131,7 +132,19 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         @Suppress("UNCHECKED_CAST")
         val sourceSets =
             (getSourceSets(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList<Named>()
-        val allSourceSets = sourceSets.mapNotNull { buildSourceSet(it, dependencyResolver, project, dependencyMapper) }
+
+        // Some performance optimisation: do not build metadata dependencies if source set is not common
+        val doBuildMetadataDependencies =
+            project.properties["build_metadata_dependencies_for_actualised_source_sets"]?.toString()?.toBoolean()
+                ?: DEFAULT_BUILD_METADATA_DEPENDENCIES_FOR_ACTUALISED_SOURCE_SETS
+        val allSourceSetsProtos = sourceSets.mapNotNull { buildSourceSet(it, dependencyResolver, project, dependencyMapper) }
+        val allSourceSets = if (doBuildMetadataDependencies) {
+            allSourceSetsProtos.map { proto -> proto.buildKotlinSourceSetImpl(true)}
+        } else {
+            val unactualizedSourceSets = allSourceSetsProtos.flatMap { it.dependsOnSourceSets }.distinct()
+            allSourceSetsProtos.map { proto -> proto.buildKotlinSourceSetImpl(unactualizedSourceSets.contains(proto.name))}
+        }
+
         val map = allSourceSets.map { it.name to it }.toMap()
         val dependsOnCache = HashMap<String, Set<String>>()
         return allSourceSets.map { sourceSet ->
@@ -153,7 +166,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         dependencyResolver: DependencyResolver,
         project: Project,
         dependencyMapper: KotlinDependencyMapper
-    ): KotlinSourceSetImpl? {
+    ): KotlinSourceSetProto? {
         val sourceSetClass = gradleSourceSet.javaClass
         val getLanguageSettings = sourceSetClass.getMethodOrNull("getLanguageSettings") ?: return null
         val getSourceDirSet = sourceSetClass.getMethodOrNull("getKotlin") ?: return null
@@ -162,15 +175,20 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val languageSettings = getLanguageSettings(gradleSourceSet)?.let { buildLanguageSettings(it) } ?: return null
         val sourceDirs = (getSourceDirSet(gradleSourceSet) as? SourceDirectorySet)?.srcDirs ?: emptySet()
         val resourceDirs = (getResourceDirSet(gradleSourceSet) as? SourceDirectorySet)?.srcDirs ?: emptySet()
-        val dependencies = buildSourceSetDependencies(gradleSourceSet, dependencyResolver, project)
+
         @Suppress("UNCHECKED_CAST")
         val dependsOnSourceSets = (getDependsOn(gradleSourceSet) as? Set<Named>)?.mapTo(LinkedHashSet()) { it.name } ?: emptySet<String>()
-        return KotlinSourceSetImpl(
+
+        val sourceSetDependenciesBuilder: () -> Array<KotlinDependencyId> = {
+            buildSourceSetDependencies(gradleSourceSet, dependencyResolver, project).map { dependencyMapper.getId(it) }.distinct()
+                .toTypedArray()
+        }
+        return KotlinSourceSetProto(
             gradleSourceSet.name,
             languageSettings,
             sourceDirs,
             resourceDirs,
-            dependencies.map { dependencyMapper.getId(it) }.distinct().toTypedArray(),
+            sourceSetDependenciesBuilder,
             dependsOnSourceSets
         )
     }
