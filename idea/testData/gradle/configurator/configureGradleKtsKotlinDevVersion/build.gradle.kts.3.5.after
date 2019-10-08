@@ -5,7 +5,7 @@ buildscript {
     var kotlin_version: String by extra
     kotlin_version = "1.2.60-dev-286"
     repositories {
-        maven { setUrl("https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:1.2.60-dev-286,branch:default:any/artifacts/content/maven/") }
+        maven { setUrl("https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Compiler),number:1.2.60-dev-286,branch:(default:any)/artifacts/content/maven") }
         mavenCentral()
     }
     dependencies {
@@ -21,7 +21,7 @@ dependencies {
     implementation(kotlinModule("stdlib-jdk8", kotlin_version))
 }
 repositories {
-    maven { setUrl("https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_dev_Compiler),number:1.2.60-dev-286,branch:default:any/artifacts/content/maven/") }
+    maven { setUrl("https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Compiler),number:1.2.60-dev-286,branch:(default:any)/artifacts/content/maven") }
     mavenCentral()
 }
 val compileKotlin: KotlinCompile by tasks
