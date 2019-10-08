@@ -6,11 +6,14 @@
 import org.jetbrains.kotlin.benchmark.BenchmarkingPlugin
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("benchmarking")
 }
+
+val defaultBuildType = NativeBuildType.RELEASE
 
 benchmark {
     applicationName = "ObjCInterop"
@@ -20,6 +23,7 @@ benchmark {
     mingwSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/mingw")
     posixSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/posix")
     linkerOpts = listOf("-L$buildDir", "-lcomplexnumbers")
+    buildType = (findProperty("nativeBuildType") as String?)?.let { NativeBuildType.valueOf(it) } ?: defaultBuildType
 
     dependencies.common(project(":endorsedLibraries:kotlinx.cli"))
 }

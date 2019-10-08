@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.MPPTools
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.RunJvmTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 buildscript {
     apply from: "$rootProject.projectDir/gradle/kotlinGradlePlugin.gradle"
@@ -29,6 +30,8 @@ repositories {
 def toolsPath = '../../tools'
 def frameworkName = 'benchmarksAnalyzer'
 
+def buildType = NativeBuildType.valueOf(findProperty('nativeBuildType') ?: 'DEBUG')
+
 kotlin {
     sourceSets {
         macosMain {
@@ -52,7 +55,7 @@ kotlin {
     }
 
     macosX64("macos").binaries {
-        framework(frameworkName, [DEBUG])
+        framework(frameworkName, [buildType])
     }
 }
 
@@ -70,6 +73,17 @@ task jvmRun(type: RunJvmTask)  {
     }
 }
 
+def compilerFlags(def buildType) {
+    def result = []
+    if (buildType.optimized) {
+        result.add("-opt")
+    }
+    if (buildType.debuggable) {
+        result.add("-g")
+    }
+    return result
+}
+
 task konanJsonReport {
     doLast {
         if (PlatformInfo.isMac()) {
@@ -82,7 +96,7 @@ task konanJsonReport {
                                                                                     'cinteropLibcurlMacos'])
             def properties = getCommonProperties() + ['type'           : 'native',
                                                       'compilerVersion': "${konanVersion}".toString(),
-                                                      'flags'          : [],
+                                                      'flags'          : compilerFlags(buildType).sort(),
                                                       'benchmarks'     : '[]',
                                                       'compileTime'    : [nativeCompileTime],
                                                       'codeSize'       : MPPTools.getCodeSizeBenchmark(applicationName, nativeExecutable)]

@@ -67,7 +67,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     override fun Project.determinePreset(): AbstractKotlinNativeTargetPreset<*> = kotlin.presets.macosX64 as AbstractKotlinNativeTargetPreset<*>
 
     override fun KotlinNativeTarget.configureNativeOutput(project: Project) {
-        binaries.framework(nativeFrameworkName, listOf(RELEASE)) {
+        binaries.framework(nativeFrameworkName, listOf(project.benchmark.buildType)) {
             // Specify settings configured by a user in the benchmark extension.
             project.afterEvaluate {
                 linkerOpts.addAll(project.benchmark.linkerOpts)
@@ -78,7 +78,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     override fun Project.configureExtraTasks() {
         val nativeTarget = kotlin.targets.getByName(NATIVE_TARGET_NAME) as KotlinNativeTarget
         // Build executable from swift code.
-        framework = nativeTarget.binaries.getFramework(nativeFrameworkName, NativeBuildType.RELEASE)
+        framework = nativeTarget.binaries.getFramework(nativeFrameworkName, benchmark.buildType)
         val buildSwift = tasks.create("buildSwift") { task ->
             task.dependsOn(framework.linkTaskName)
             task.doLast {
@@ -98,9 +98,9 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
                         nativeExecutable
             )
 
-    override fun Project.getCompilerFlags(nativeTarget: KotlinNativeTarget) =
-            if (benchmark.useCodeSize == CodeSizeEntity.FRAMEWORK) {
-                nativeTarget.compilations.main.kotlinOptions.freeCompilerArgs.map { "\"$it\"" }
+    override fun getCompilerFlags(project: Project, nativeTarget: KotlinNativeTarget) =
+            if (project.benchmark.useCodeSize == CodeSizeEntity.FRAMEWORK) {
+                super.getCompilerFlags(project, nativeTarget)
             } else {
                 listOf("-O", "-wmo")
             }

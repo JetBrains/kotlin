@@ -77,14 +77,23 @@ class BenchmarksReport(val env: Environment, benchmarksList: List<BenchmarkResul
         """
     }
 
-    // Concatenate benchmarks report if they have same environment and compiler.
-    operator fun plus(other: BenchmarksReport): BenchmarksReport {
-        if (compiler != other.compiler && env != other.env) {
-            error ("It's impossible to concat reports from different machines!")
+    fun merge(other: BenchmarksReport): BenchmarksReport {
+        val mergedBenchmarks = HashMap(benchmarks)
+        other.benchmarks.forEach {
+            if (it.key in mergedBenchmarks) {
+                error("${it.key} already exists in report!")
+            }
         }
-        val mergedBenchmarks = HashMap<String, List<BenchmarkResult>>(benchmarks)
         mergedBenchmarks.putAll(other.benchmarks)
         return BenchmarksReport(env, mergedBenchmarks.flatMap{it.value}, compiler)
+    }
+
+    // Concatenate benchmarks report if they have same environment and compiler.
+    operator fun plus(other: BenchmarksReport): BenchmarksReport {
+        if (compiler != other.compiler || env != other.env) {
+            error ("It's impossible to concat reports from different machines!")
+        }
+        return merge(other)
     }
 }
 
@@ -304,4 +313,7 @@ class BenchmarkResult(val name: String, val status: Status,
         }
         """
     }
+
+    val shortName: String
+        get() = name.removeSuffix(metric.suffix)
 }

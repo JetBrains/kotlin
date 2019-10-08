@@ -13,6 +13,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskState
 import org.gradle.api.execution.TaskExecutionListener
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.report.*
 import org.jetbrains.report.json.*
@@ -115,8 +116,26 @@ fun mergeReports(reports: List<File>): String {
         val reportElement = JsonTreeParser.parse(json)
         BenchmarksReport.create(reportElement)
     }
-    return if (reportsToMerge.isEmpty()) "" else reportsToMerge.reduce { result, it -> result + it }.toJson()
+    val structuredReports = mutableMapOf<String, MutableList<BenchmarksReport>>()
+    reportsToMerge.map { it.compiler.backend.flags.joinToString() to it }.forEach {
+        structuredReports.getOrPut(it.first) { mutableListOf<BenchmarksReport>() }.add(it.second)
+    }
+    val jsons = structuredReports.map { (_, value) -> value.reduce { result, it -> result + it }.toJson() }
+    return when(jsons.size) {
+        0 -> ""
+        1 -> jsons[0]
+        else -> jsons.joinToString(prefix = "[", postfix = "]")
+    }
 }
+
+fun getCompileOnlyBenchmarksOpts(project: Project, defaultCompilerOpts: List<String>) =
+        (project.findProperty("nativeBuildType") as String?)?.let {
+            if (it.equals("RELEASE", true))
+                listOf("-opt")
+            else if (it.equals("DEBUG", true))
+                listOf("-g")
+            else listOf()
+        } ?: defaultCompilerOpts
 
 // Find file with set name in directory.
 fun findFile(fileName: String, directory: String): String? =

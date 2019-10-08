@@ -29,6 +29,7 @@ open class CompileBenchmarkExtension @Inject constructor(val project: Project) {
     var applicationName = project.name
     var repeatNumber: Int = 1
     var buildSteps: BuildStepContainer = BuildStepContainer(project)
+    var compilerOpts: List<String> = emptyList()
 
     fun buildSteps(configure: Action<BuildStepContainer>): Unit = buildSteps.let { configure.execute(it) }
     fun buildSteps(configure: Closure<Unit>): Unit = buildSteps(ConfigureUtil.configureUsing(configure))
@@ -94,6 +95,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
                     "type" to "native",
                     "compilerVersion" to konanVersion,
                     "benchmarks" to "[]",
+                    "flags" to getCompilerFlags(benchmarkExtension).sorted(),
                     "compileTime" to nativeCompileTime,
                     "codeSize" to getCodeSizeBenchmark(applicationName, nativeExecutable.absolutePath)
                 )
@@ -103,6 +105,9 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
             konanRun.finalizedBy(this)
         }
     }
+
+    private fun getCompilerFlags(benchmarkExtension: CompileBenchmarkExtension) =
+            benchmarkExtension.compilerOpts
 
     private fun Project.configureJvmRun(
         benchmarkExtension: CompileBenchmarkExtension

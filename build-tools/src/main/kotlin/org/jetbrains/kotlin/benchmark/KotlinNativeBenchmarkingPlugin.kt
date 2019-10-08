@@ -96,7 +96,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
 
     private val Project.nativeBinary: Executable
         get() = (kotlin.targets.getByName(NATIVE_TARGET_NAME) as KotlinNativeTarget)
-            .binaries.getExecutable(NATIVE_EXECUTABLE_NAME, NativeBuildType.RELEASE)
+            .binaries.getExecutable(NATIVE_EXECUTABLE_NAME, benchmark.buildType)
 
     override val Project.nativeExecutable: String
         get() = nativeBinary.outputFile.absolutePath
@@ -133,7 +133,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
                 it.compileKotlinTask.kotlinOptions {
                     jvmTarget = "1.8"
                     suppressWarnings = true
-                    freeCompilerArgs = project.compilerArgs
+                    freeCompilerArgs = project.benchmark.compilerOpts + project.compilerArgs
                 }
             }
         }

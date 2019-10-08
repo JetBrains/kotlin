@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.konan.target.HostManager
 import javax.inject.Inject
 import kotlin.reflect.KClass
@@ -30,6 +31,7 @@ internal val Project.attempts: Int
 internal val Project.nativeBenchResults: String
     get() = property("nativeBenchResults") as String
 
+// Gradle property to add flags to benchmarks run from command line.
 internal val Project.compilerArgs: List<String>
     get() = (findProperty("compilerArgs") as String?)?.split("\\s").orEmpty()
 
@@ -66,6 +68,8 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
     var nativeSrcDirs: Collection<Any> = emptyList()
     var compileTasks: List<String> = emptyList()
     var linkerOpts: Collection<String> = emptyList()
+    var compilerOpts: List<String> = emptyList()
+    var buildType: NativeBuildType = NativeBuildType.RELEASE
 
     val dependencies: BenchmarkDependencies = BenchmarkDependencies()
 
@@ -141,7 +145,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     }
 
     protected open fun KotlinNativeTarget.configureNativeOutput(project: Project) {
-        binaries.executable(NATIVE_EXECUTABLE_NAME, listOf(RELEASE)) {
+        binaries.executable(NATIVE_EXECUTABLE_NAME, listOf(project.benchmark.buildType)) {
             if (HostManager.hostIsMingw) {
                 linkerOpts.add("-L${mingwPath}/lib")
             }
@@ -154,13 +158,14 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             // Specify settings configured by a user in the benchmark extension.
             project.afterEvaluate {
                 linkerOpts.addAll(project.benchmark.linkerOpts)
+                freeCompilerArgs = project.benchmark.compilerOpts + project.compilerArgs
             }
         }
     }
 
     protected fun Project.configureNativeTarget(hostPreset: AbstractKotlinNativeTargetPreset<*>) {
         kotlin.targetFromPreset(hostPreset, NATIVE_TARGET_NAME) {
-            compilations.getByName("main").kotlinOptions.freeCompilerArgs = project.compilerArgs
+            compilations.getByName("main").kotlinOptions.freeCompilerArgs = benchmark.compilerOpts + project.compilerArgs
             compilations.getByName("main").enableEndorsedLibs = true
             configureNativeOutput(this@configureNativeTarget)
         }
@@ -189,8 +194,19 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
     protected abstract fun Project.configureJvmTask(): Task
 
-    protected open fun Project.getCompilerFlags(nativeTarget: KotlinNativeTarget) =
-            nativeTarget.compilations.main.kotlinOptions.freeCompilerArgs.map { "\"$it\"" }
+    protected fun compilerFlagsFromBinary(project: Project): List<String> {
+        val result = mutableListOf<String>()
+        if (project.benchmark.buildType.optimized) {
+            result.add("-opt")
+        }
+        if (project.benchmark.buildType.debuggable) {
+            result.add("-g")
+        }
+        return result
+    }
+
+    protected open fun getCompilerFlags(project: Project, nativeTarget: KotlinNativeTarget) =
+            compilerFlagsFromBinary(project) + nativeTarget.compilations.main.kotlinOptions.freeCompilerArgs.map { "\"$it\"" }
 
     protected open fun Project.collectCodeSize(applicationName: String) =
             getCodeSizeBenchmark(applicationName, nativeExecutable)
@@ -209,7 +225,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
                 val properties = commonBenchmarkProperties + mapOf(
                         "type" to "native",
                         "compilerVersion" to konanVersion,
-                        "flags" to getCompilerFlags(nativeTarget),
+                        "flags" to getCompilerFlags(project, nativeTarget).sorted(),
                         "benchmarks" to benchContents,
                         "compileTime" to listOf(nativeCompileTime),
                         "codeSize" to collectCodeSize(applicationName)

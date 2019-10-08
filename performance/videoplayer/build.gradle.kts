@@ -4,6 +4,7 @@
  */
 
 import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.getCompileOnlyBenchmarksOpts
 import org.jetbrains.kotlin.getNativeProgramExtension
 import org.jetbrains.kotlin.mingwPath
 
@@ -47,9 +48,13 @@ var includeDirsSdl = when {
     else -> error("Unsupported platform")
 }
 
+val defaultCompilerOpts =  listOf("-g")
+val buildOpts = getCompileOnlyBenchmarksOpts(project, defaultCompilerOpts)
+
 compileBenchmark {
     applicationName = "Videoplayer"
     repeatNumber = 10
+    compilerOpts = buildOpts
     buildSteps {
         step("runCinteropFfmpeg") {
             command = listOf(
@@ -68,13 +73,13 @@ compileBenchmark {
         step("runKonanProgram") {
             command = listOf(
                 "$dist/bin/konanc$toolSuffix",
-                "-ea", "-p", "program", "-g",
+                "-ea", "-p", "program",
                 "-o", "${buildDir.absolutePath}/program$binarySuffix",
                 "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
                 "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
                 "-Xmulti-platform", "$dist/../samples/videoplayer/src/videoPlayerMain/kotlin",
                 "-entry", "sample.videoplayer.main"
-            ) + linkerOpts
+            ) + buildOpts + linkerOpts
         }
     }
 }

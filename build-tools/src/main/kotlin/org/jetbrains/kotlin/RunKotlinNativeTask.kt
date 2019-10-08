@@ -20,8 +20,6 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
                                                    private val outputFileName: String
 ) : DefaultTask() {
     @Input
-    var buildType = "RELEASE"
-    @Input
     @Option(option = "filter", description = "Benchmarks to run (comma-separated)")
     var filter: String = ""
     @Input
