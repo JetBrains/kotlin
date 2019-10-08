@@ -72,6 +72,9 @@ public class FormatterTagHandler {
   }
 
   public List<TextRange> getEnabledRanges(ASTNode rootNode, TextRange initialRange) {
+    if (!mySettings.FORMATTER_TAGS_ENABLED) {
+      return Collections.singletonList(initialRange);
+    }
     EnabledRangesCollector collector = new EnabledRangesCollector(initialRange);
     collector.processText(rootNode.getChars());
     return collector.getRanges();
