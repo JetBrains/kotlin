@@ -14,7 +14,7 @@ interface CirTypeAlias : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclar
 }
 
 class CirWrappedTypeAlias(private val wrapped: TypeAliasDescriptor) : CirTypeAlias {
-    override val annotations get() = wrapped.annotations
+    override val annotations by lazy(PUBLICATION) { wrapped.annotations.map(::CirAnnotation) }
     override val name get() = wrapped.name
     override val typeParameters by lazy(PUBLICATION) { wrapped.declaredTypeParameters.map(::CirWrappedTypeParameter) }
     override val visibility get() = wrapped.visibility

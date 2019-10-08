@@ -412,10 +412,22 @@ internal class ComparingDeclarationsVisitor(
 
         check(actual != null && expected != null)
 
+        visitAnnotations(
+            expected.annotations,
+            actual.annotations,
+            context.nextLevel("Type annotations")
+        )
+
         val expectedUnwrapped = expected.getAbbreviation() ?: expected.unwrap()
         val actualUnwrapped = actual.getAbbreviation() ?: actual.unwrap()
 
         if (expectedUnwrapped === actualUnwrapped) return
+
+        visitAnnotations(
+            expectedUnwrapped.annotations,
+            actualUnwrapped.annotations,
+            context.nextLevel("Unwrapped/unabbreviated type annotations")
+        )
 
         val expectedFqName = expectedUnwrapped.fqName
         val actualFqName = actualUnwrapped.fqName

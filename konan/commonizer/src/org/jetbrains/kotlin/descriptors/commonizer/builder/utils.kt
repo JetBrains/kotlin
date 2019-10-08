@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSimpleTypeKind.Companion.areCompatible
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.*
@@ -71,6 +72,12 @@ internal fun List<CirValueParameter>.buildDescriptors(
     )
 }
 
+internal fun List<CirAnnotation>.buildDescriptors(targetComponents: TargetDeclarationsBuilderComponents): Annotations =
+    if (isEmpty())
+        Annotations.EMPTY
+    else
+        Annotations.create(map { CommonizedAnnotationDescriptor(targetComponents, it) })
+
 internal fun CirExtensionReceiver.buildExtensionReceiver(
     targetComponents: TargetDeclarationsBuilderComponents,
     typeParameterResolver: TypeParameterResolver,
@@ -78,7 +85,7 @@ internal fun CirExtensionReceiver.buildExtensionReceiver(
 ) = DescriptorFactory.createExtensionReceiverParameterForCallable(
     containingDeclaration,
     type.buildType(targetComponents, typeParameterResolver),
-    annotations
+    annotations.buildDescriptors(targetComponents)
 )
 
 internal fun buildDispatchReceiver(callableDescriptor: CallableDescriptor) =
@@ -107,27 +114,16 @@ internal fun CirSimpleType.buildType(
         }
 
         CirSimpleTypeKind.CLASS, CirSimpleTypeKind.TYPE_ALIAS -> {
-            if (fqName.isUnderStandardKotlinPackages) {
-                // look up for classifier in built-ins module:
-                val builtInsModule = targetComponents.builtIns.builtInsModule
-                // TODO: this works fine for Native as far as built-ins module contains full Native stdlib, but this is not enough for JVM and JS
-                builtInsModule.getPackage(fqName.parent())
-                    .memberScope
-                    .getContributedClassifier(fqName.shortName(), NoLookupLocation.FOR_ALREADY_TRACKED)
-                    ?.cast<ClassifierDescriptorWithTypeParameters>()
-                    ?.also { checkClassifier(it, kind, true) }
-                    ?: error("Classifier $fqName not found in built-ins module $builtInsModule")
-            } else {
-                // otherwise, look up in created descriptors cache:
-                targetComponents.getCachedClassifier(fqName)
-                    ?.also { checkClassifier(it, kind, !targetComponents.isCommon) }
-                    ?: error("Classifier $fqName not found in created descriptors cache")
-            }
+            val classOrTypeAlias = findClassOrTypeAlias(targetComponents, fqName)
+            checkClassifier(classOrTypeAlias, kind, fqName.isUnderStandardKotlinPackages || !targetComponents.isCommon)
+            classOrTypeAlias
         }
     }
 
+    // TODO: commonize annotations, KT-34234
+    val typeAnnotations = if (!targetComponents.isCommon) annotations.buildDescriptors(targetComponents) else Annotations.EMPTY
     val rawType = simpleType(
-        annotations = Annotations.EMPTY, // TODO: support annotations
+        annotations = typeAnnotations,
         constructor = classifier.typeConstructor,
         arguments = arguments.map { it.buildArgument(targetComponents, typeParameterResolver) },
         nullable = isMarkedNullable,
@@ -137,16 +133,36 @@ internal fun CirSimpleType.buildType(
     return if (isDefinitelyNotNullType) rawType.makeSimpleTypeDefinitelyNotNullOrNotNull() else rawType
 }
 
-private fun checkClassifier(classifier: ClassifierDescriptor, kindInCir: CirSimpleTypeKind, strict: Boolean) {
+internal fun findClassOrTypeAlias(
+    targetComponents: TargetDeclarationsBuilderComponents,
+    fqName: FqName
+): ClassifierDescriptorWithTypeParameters {
+    return if (fqName.isUnderStandardKotlinPackages) {
+        // look up for classifier in built-ins module:
+        val builtInsModule = targetComponents.builtIns.builtInsModule
+        // TODO: this works fine for Native as far as built-ins module contains full Native stdlib, but this is not enough for JVM and JS
+        builtInsModule.getPackage(fqName.parent())
+            .memberScope
+            .getContributedClassifier(fqName.shortName(), NoLookupLocation.FOR_ALREADY_TRACKED)
+            ?.cast()
+            ?: error("Classifier $fqName not found in built-ins module $builtInsModule")
+    } else {
+        // otherwise, look up in created descriptors cache:
+        targetComponents.getCachedClassifier(fqName)
+            ?: error("Classifier $fqName not found in created descriptors cache")
+    }
+}
+
+private fun checkClassifier(classifier: ClassifierDescriptor, kind: CirSimpleTypeKind, strict: Boolean) {
     val classifierKind = CirSimpleTypeKind.determineKind(classifier)
 
     if (strict) {
-        check(kindInCir == classifierKind) {
-            "Mismatched classifier kinds.\nFound: $classifierKind, ${classifier::class.java}, $classifier\nShould be: $kindInCir"
+        check(kind == classifierKind) {
+            "Mismatched classifier kinds.\nFound: $classifierKind, ${classifier::class.java}, $classifier\nShould be: $kind"
         }
     } else {
-        check(areCompatible(classifierKind, kindInCir)) {
-            "Incompatible classifier kinds.\nExpect: $classifierKind, ${classifier::class.java}, $classifier\nActual: $kindInCir"
+        check(areCompatible(classifierKind, kind)) {
+            "Incompatible classifier kinds.\nExpect: $classifierKind, ${classifier::class.java}, $classifier\nActual: $kind"
         }
     }
 }

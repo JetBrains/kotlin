@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -41,7 +40,7 @@ data class CirCommonClass(
     override val isInline: Boolean,
     override val isInner: Boolean
 ) : CirClass {
-    override val annotations get() = Annotations.EMPTY
+    override val annotations: List<CirAnnotation> get() = emptyList() // TODO: commonize annotations, KT-34234
     override val isData get() = false
     override val isExternal get() = false
     override var companion: FqName? = null
@@ -57,14 +56,14 @@ data class CirCommonClassConstructor(
     override val hasStableParameterNames: Boolean,
     override val hasSynthesizedParameterNames: Boolean
 ) : CirClassConstructor {
-    override val annotations get() = Annotations.EMPTY
+    override val annotations: List<CirAnnotation> get() = emptyList() // TODO: commonize annotations, KT-34234
     override val containingClassKind get() = unsupported()
     override val containingClassModality get() = unsupported()
     override val containingClassIsData get() = unsupported()
 }
 
 class CirWrappedClass(private val wrapped: ClassDescriptor) : CirClass {
-    override val annotations get() = wrapped.annotations
+    override val annotations by lazy(PUBLICATION) { wrapped.annotations.map(::CirAnnotation) }
     override val name get() = wrapped.name
     override val typeParameters by lazy(PUBLICATION) { wrapped.declaredTypeParameters.map(::CirWrappedTypeParameter) }
     override val companion by lazy(PUBLICATION) { wrapped.companionObjectDescriptor?.fqNameSafe }
@@ -85,7 +84,7 @@ class CirWrappedClassConstructor(private val wrapped: ClassConstructorDescriptor
     override val containingClassKind get() = wrapped.containingDeclaration.kind
     override val containingClassModality get() = wrapped.containingDeclaration.modality
     override val containingClassIsData get() = wrapped.containingDeclaration.isData
-    override val annotations get() = wrapped.annotations
+    override val annotations by lazy(PUBLICATION) { wrapped.annotations.map(::CirAnnotation) }
     override val visibility get() = wrapped.visibility
     override val typeParameters by lazy(PUBLICATION) {
         wrapped.typeParameters.mapNotNull { typeParameter ->

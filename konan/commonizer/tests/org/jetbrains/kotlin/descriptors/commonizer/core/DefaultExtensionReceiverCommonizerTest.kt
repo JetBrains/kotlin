@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
@@ -55,6 +54,6 @@ class DefaultExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensi
 }
 
 private fun mockExtensionReceiver(typeFqName: String) = CirExtensionReceiver(
-    annotations = Annotations.EMPTY,
+    annotations = emptyList(),
     type = CirType.create(mockClassType(typeFqName))
 )

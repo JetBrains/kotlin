@@ -43,7 +43,7 @@ private fun CirFunction.buildDescriptor(
 
     val functionDescriptor = SimpleFunctionDescriptorImpl.create(
         containingDeclaration,
-        annotations,
+        annotations.buildDescriptors(targetComponents),
         name,
         kind,
         SourceElement.NO_SOURCE

@@ -16,6 +16,14 @@ annotation class JsAnnotationForAnnotationClassesOnly(val text: String)
 @CommonAnnotationForAnnotationClassesOnly("annotation-class")
 annotation class JsAnnotation(val text: String)
 
+@Target(AnnotationTarget.CLASS)
+annotation class CommonOuterAnnotation(val inner: CommonInnerAnnotation)
+annotation class CommonInnerAnnotation(val text: String)
+
+@Target(AnnotationTarget.CLASS)
+annotation class JsOuterAnnotation(val inner: JsInnerAnnotation)
+annotation class JsInnerAnnotation(val text: String)
+
 @JsAnnotation("property")
 @CommonAnnotation("property")
 var propertyWithoutBackingField
@@ -48,3 +56,7 @@ class AnnotatedClass @JsAnnotation("constructor") @CommonAnnotation("constructor
 @JsAnnotation("type-alias")
 @CommonAnnotation("type-alias")
 typealias AnnotatedTypeAlias = AnnotatedClass
+
+@JsOuterAnnotation(inner = JsInnerAnnotation("nested-annotations"))
+@CommonOuterAnnotation(inner = CommonInnerAnnotation("nested-annotations"))
+object ObjectWithNestedAnnotations

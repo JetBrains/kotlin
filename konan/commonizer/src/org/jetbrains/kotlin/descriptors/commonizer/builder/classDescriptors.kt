@@ -41,7 +41,7 @@ internal fun CirClass.buildDescriptor(
     val classDescriptor = CommonizedClassDescriptor(
         targetComponents = targetComponents,
         containingDeclaration = containingDeclaration,
-        annotations = annotations,
+        annotations = annotations.buildDescriptors(targetComponents),
         name = name,
         kind = kind,
         modality = modality,
@@ -92,7 +92,7 @@ private fun CirClassConstructor.buildDescriptor(
 
     val constructorDescriptor = CommonizedClassConstructorDescriptor(
         containingDeclaration = containingDeclaration,
-        annotations = annotations,
+        annotations = annotations.buildDescriptors(targetComponents),
         isPrimary = isPrimary,
         kind = kind
     )

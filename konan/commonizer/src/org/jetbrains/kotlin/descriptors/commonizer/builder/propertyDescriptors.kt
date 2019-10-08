@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
 import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 
 internal fun CirPropertyNode.buildDescriptors(
     components: GlobalDeclarationsBuilderComponents,
@@ -45,7 +46,7 @@ private fun CirProperty.buildDescriptor(
 
     val propertyDescriptor = PropertyDescriptorImpl.create(
         containingDeclaration,
-        annotations,
+        annotations.buildDescriptors(targetComponents),
         modality,
         visibility,
         isVar,
@@ -109,6 +110,9 @@ private fun CirProperty.buildDescriptor(
     )
 
     compileTimeInitializer?.let { constantValue ->
+        check(constantValue !is AnnotationValue) {
+            "Unexpected type of compile time constant: ${constantValue::class.java}, $constantValue"
+        }
         propertyDescriptor.setCompileTimeInitializer(targetComponents.storageManager.createNullableLazyValue { constantValue })
     }
 

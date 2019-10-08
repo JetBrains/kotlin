@@ -39,6 +39,7 @@ sealed class CirType {
  * There is no difference between [abbreviation] and [expanded] for types representing classes and type parameters.
  */
 class CirSimpleType(private val wrapped: SimpleType) : CirType() {
+    val annotations by lazy(PUBLICATION) { abbreviation.annotations.map(::CirAnnotation) }
     val kind = CirSimpleTypeKind.determineKind(abbreviation.declarationDescriptor)
     val fqName by lazy(PUBLICATION) { abbreviation.fqName }
     val arguments by lazy(PUBLICATION) { abbreviation.arguments.map(::CirTypeProjection) }

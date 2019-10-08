@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver.Companion.toReceiver
-import org.jetbrains.kotlin.types.KotlinType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 interface CirFunctionOrProperty : CirAnnotatedDeclaration, CirNamedDeclaration, CirDeclarationWithTypeParameters, CirDeclarationWithVisibility, CirDeclarationWithModality, CirMaybeCallableMemberOfClass {
@@ -19,14 +17,14 @@ interface CirFunctionOrProperty : CirAnnotatedDeclaration, CirNamedDeclaration, 
 }
 
 abstract class CirCommonFunctionOrProperty : CirFunctionOrProperty {
-    final override val annotations get() = Annotations.EMPTY
+    final override val annotations: List<CirAnnotation> get() = emptyList() // TODO: commonize annotations, KT-34234
     final override val containingClassKind: ClassKind? get() = unsupported()
     final override val containingClassModality: Modality? get() = unsupported()
     final override val containingClassIsData: Boolean? get() = unsupported()
 }
 
 abstract class CirWrappedFunctionOrProperty<T : CallableMemberDescriptor>(protected val wrapped: T) : CirFunctionOrProperty {
-    final override val annotations get() = wrapped.annotations
+    final override val annotations by lazy(PUBLICATION) { wrapped.annotations.map(::CirAnnotation) }
     final override val name get() = wrapped.name
     final override val modality get() = wrapped.modality
     final override val visibility get() = wrapped.visibility
@@ -42,12 +40,12 @@ abstract class CirWrappedFunctionOrProperty<T : CallableMemberDescriptor>(protec
 }
 
 data class CirExtensionReceiver(
-    val annotations: Annotations,
+    val annotations: List<CirAnnotation>,
     val type: CirType
 ) {
     companion object {
-        fun CirType.toReceiverNoAnnotations() = CirExtensionReceiver(Annotations.EMPTY, this)
-        fun ReceiverParameterDescriptor.toReceiver() = CirExtensionReceiver(annotations, CirType.create(type))
+        fun CirType.toReceiverNoAnnotations() = CirExtensionReceiver( /* TODO: commonize annotations, KT-34234 */ emptyList(), this)
+        fun ReceiverParameterDescriptor.toReceiver() = CirExtensionReceiver(annotations.map(::CirAnnotation), CirType.create(type))
     }
 }
 

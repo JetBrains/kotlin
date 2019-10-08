@@ -16,6 +16,14 @@ annotation class JvmAnnotationForAnnotationClassesOnly(val text: String)
 @CommonAnnotationForAnnotationClassesOnly("annotation-class")
 annotation class JvmAnnotation(val text: String)
 
+@Target(AnnotationTarget.CLASS)
+actual annotation class CommonOuterAnnotation(actual val inner: CommonInnerAnnotation)
+actual annotation class CommonInnerAnnotation(actual val text: String)
+
+@Target(AnnotationTarget.CLASS)
+annotation class JvmOuterAnnotation(val inner: JvmInnerAnnotation)
+annotation class JvmInnerAnnotation(val text: String)
+
 @JvmAnnotation("property")
 @CommonAnnotation("property")
 actual var propertyWithoutBackingField
@@ -48,3 +56,7 @@ actual class AnnotatedClass @JvmAnnotation("constructor") @CommonAnnotation("con
 @JvmAnnotation("type-alias")
 @CommonAnnotation("type-alias")
 actual typealias AnnotatedTypeAlias = AnnotatedClass
+
+@JvmOuterAnnotation(inner = JvmInnerAnnotation("nested-annotations"))
+@CommonOuterAnnotation(inner = CommonInnerAnnotation("nested-annotations"))
+actual object ObjectWithNestedAnnotations

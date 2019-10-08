@@ -44,7 +44,7 @@ private fun CirTypeAlias.buildDescriptor(
     val typeAliasDescriptor = CommonizedTypeAliasDescriptor(
         storageManager = storageManager,
         containingDeclaration = containingDeclaration,
-        annotations = annotations,
+        annotations = annotations.buildDescriptors(targetComponents),
         name = name,
         visibility = visibility,
         isActual = isActual

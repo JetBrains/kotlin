@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 interface CirDeclaration
 
 interface CirAnnotatedDeclaration : CirDeclaration {
-    val annotations: Annotations
+    val annotations: List<CirAnnotation>
 }
 
 interface CirNamedDeclaration : CirDeclaration {
