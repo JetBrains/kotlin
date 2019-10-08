@@ -78,18 +78,12 @@ int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
 #ifdef KONAN_ZEPHYR
   return 0;
 #else
-#ifdef KONAN_WASM
-  FILE* file = nullptr;
-#else
-  FILE* file = stdin;
-#endif
-  char* result = ::fgets(reinterpret_cast<char*>(utf8), maxSizeBytes - 1, file);
-  if (result == nullptr) return -1;
-  int32_t length = ::strlen(result);
-  // fgets reads until EOF or newline so we need to remove linefeeds.
-  char* current = result + length - 1;
+  auto length = ::read(STDIN_FILENO, utf8, maxSizeBytes - 1);
+  if (length <= 0) return -1;
+  char* start = reinterpret_cast<char*>(utf8);
+  char* current = start + length - 1;
   bool isTrimming = true;
-  while (current >= result && isTrimming) {
+  while (current >= start && isTrimming) {
     switch (*current) {
       case '\n':
       case '\r':
