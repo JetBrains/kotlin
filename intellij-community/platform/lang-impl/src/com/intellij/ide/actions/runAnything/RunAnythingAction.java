@@ -19,6 +19,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.FontUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -111,10 +112,16 @@ public class RunAnythingAction extends AnAction implements CustomComponentAction
       protected String getShortcutText() {
         if (myIsDoubleCtrlRegistered) {
           return IdeBundle.message("run.anything.double.ctrl.shortcut",
-                                   SystemInfo.isMac ? FontUtil.thinSpace() + MacKeymapUtil.CONTROL : " Ctrl");
+                                   SystemInfo.isMac ? FontUtil.thinSpace() + MacKeymapUtil.CONTROL : "Ctrl");
         }
         //keymap shortcut is added automatically
         return null;
+      }
+
+      @Override
+      public void setToolTipText(String s) {
+        String shortcutText = getShortcutText();
+        super.setToolTipText(StringUtil.isNotEmpty(shortcutText) ? (s + " (" + shortcutText + ")") : s);
       }
     };
   }
