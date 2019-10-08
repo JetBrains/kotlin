@@ -4,7 +4,7 @@
   "description": "Modern source-map-loader with additional features",
   "main": "kotlin-source-map-loader.js",
   "scripts": {
-    "build": "cpx \"kotlin-source-map-loader.js\" lib",
+    "build": "rimraf lib/* && cpx \"kotlin-source-map-loader.js\" lib",
     "test": "mocha -R spec"
   },
   "dependencies": {
@@ -12,6 +12,7 @@
     "loader-utils": "^1.1.0"
   },
   "devDependencies": {
+    "rimraf": "^2.6.3",
     "mocha": "^5.0.5",
     "should": "^13.2.1",
     "cpx": "^1.5.0"
