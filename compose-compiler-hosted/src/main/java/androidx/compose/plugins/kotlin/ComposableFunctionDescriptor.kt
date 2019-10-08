@@ -18,5 +18,5 @@ package androidx.compose.plugins.kotlin
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
-class ComposableFunctionDescriptor(val underlyingDescriptor: FunctionDescriptor)
-    : FunctionDescriptor by underlyingDescriptor
+class ComposableFunctionDescriptor(val underlyingDescriptor: FunctionDescriptor) :
+    FunctionDescriptor by underlyingDescriptor

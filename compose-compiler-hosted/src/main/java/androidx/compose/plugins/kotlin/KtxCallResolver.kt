@@ -1549,8 +1549,8 @@ class KtxCallResolver(
                     },
                     expressionToReportErrorsOn = expression,
                     context = candidateContext
-                ) ?:
-                return@mapNotNull TempResolveInfo(
+                )
+                ?: return@mapNotNull TempResolveInfo(
                     false,
                     tmpForCandidate,
                     (attributes - attrsUsedInCall - attrsUsedInSets).keys,
@@ -3874,9 +3874,6 @@ private val Collection<ValueParameterDescriptor>.possibleChildrenParameter:
         ValueParameterDescriptor?
     get() = maxBy { it.index }?.let { if (it.type.isFunctionType) it else null }
 
-
-
-
 class NoInterceptionCallResolver(private val callResolver: CallResolver) {
     fun resolveCallWithGivenName(
         context: ResolutionContext<*>,
@@ -3942,7 +3939,7 @@ class NoInterceptionCallResolver(private val callResolver: CallResolver) {
         )
     }
 
-    fun <T: CallableDescriptor> computeTasksAndResolveCall(
+    fun <T : CallableDescriptor> computeTasksAndResolveCall(
         context: BasicCallResolutionContext,
         name: Name,
         tracing: TracingStrategy,
@@ -3957,7 +3954,7 @@ class NoInterceptionCallResolver(private val callResolver: CallResolver) {
         )
     }
 
-    fun <T: CallableDescriptor> computeTasksAndResolveCall(
+    fun <T : CallableDescriptor> computeTasksAndResolveCall(
         context: BasicCallResolutionContext,
         name: Name,
         referenceExpression: KtReferenceExpression,

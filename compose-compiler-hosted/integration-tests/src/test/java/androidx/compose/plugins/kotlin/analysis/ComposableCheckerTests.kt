@@ -929,7 +929,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     }
 
     fun testComposableReporting046() {
-        check( """
+        check("""
             import androidx.compose.*;
             import android.widget.TextView;
 

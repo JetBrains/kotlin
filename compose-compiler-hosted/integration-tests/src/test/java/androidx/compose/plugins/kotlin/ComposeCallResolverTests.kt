@@ -78,7 +78,6 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
-
     private fun <T> setup(block: () -> T): T {
         val original = ComposeFlags.NEW_CALL_RESOLUTION_INTERCEPTION
         try {
@@ -111,12 +110,12 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
                 "<call>" -> assert(resolvedCall.isCall())
                 else -> error("Call type of $calltype not recognized.")
             }
-
         }
     }
 
     private fun ResolvedCall<*>.isEmit(): Boolean = candidateDescriptor is ComposableEmitDescriptor
-    private fun ResolvedCall<*>.isCall(): Boolean = candidateDescriptor is ComposableFunctionDescriptor
+    private fun ResolvedCall<*>.isCall(): Boolean =
+        candidateDescriptor is ComposableFunctionDescriptor
 
     private val callPattern = Regex("(<normal>)|(<emit>)|(<call>)")
     private fun extractCarets(text: String): Pair<String, List<Pair<Int, String>>> {

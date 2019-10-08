@@ -18,7 +18,6 @@ package androidx.compose.plugins.kotlin.analysis
 
 import androidx.compose.plugins.kotlin.AbstractComposeDiagnosticsTest
 
-
 /**
  * We're strongly considering supporting try-catch-finally blocks in the future.
  * If/when we do support them, these tests should be deleted.
