@@ -61,17 +61,16 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
 
   @Test
   fun `test build script plugins errors on Sync`() {
-    createProjectSubFile("buildSrc/src/main/groovy/example/SomePlugin.groovy",
-                         "package example\n" +
+    createProjectSubFile("buildSrc/src/main/java/example/SomePlugin.java",
+                         "package example;\n" +
                          "\n" +
-                         "import org.gradle.api.Plugin\n" +
-                         "import org.gradle.api.Project\n" +
+                         "import org.gradle.api.Plugin;\n" +
+                         "import org.gradle.api.Project;\n" +
                          "\n" +
-                         "class SomePlugin implements Plugin<Project> {\n" +
-                         "    void apply(Project target) {\n" +
-                         "        throw new IllegalArgumentException(\"Something's wrong!\")\n" +
+                         "public class SomePlugin implements Plugin<Project> {\n" +
+                         "    public void apply(Project project) {\n" +
+                         "        throw new IllegalArgumentException(\"Something's wrong!\");\n" +
                          "    }\n" +
-                         "\n" +
                          "}\n")
     importProject("apply plugin: example.SomePlugin")
 
