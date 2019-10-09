@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 
 class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestFramework {
     private val project: Project = compilation.target.project
@@ -46,20 +47,27 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             ignoreOutOfRootNodes = true
         )
 
+        val npmProject = compilation.npmProject
+
+        val cliArgs = KotlinTestRunnerCliArgs(
+            task.nodeModulesToLoad.map { npmProject.require(it) },
+            task.includePatterns,
+            task.excludePatterns
+        )
+
         val nodeModules = listOf(
             "mocha/bin/mocha",
             task.nodeModulesToLoad.single()
         )
 
-        val npmProject = compilation.npmProject
-
         val args = nodeJsArgs +
                 nodeModules.map {
                     npmProject.require(it)
-                } +
+                } + cliArgs.toList() +
+                listOf("--reporter", "mocha-teamcity-reporter") +
                 listOf(
                     "-r", "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js",
-                    "--reporter", "mocha-teamcity-reporter"
+                    "-r", "kotlin-test-js-runner/kotlin-test-nodejs-runner.js"
                 )
 
         return TCServiceMessagesTestExecutionSpec(
