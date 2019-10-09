@@ -383,6 +383,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("idea/testData/refactoring/inline/function/returnAtEnd/DefaultParameter.kt");
             }
 
+            @TestMetadata("InnerFunction.kt")
+            public void testInnerFunction() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/InnerFunction.kt");
+            }
+
+            @TestMetadata("InnerFunction2.kt")
+            public void testInnerFunction2() throws Exception {
+                runTest("idea/testData/refactoring/inline/function/returnAtEnd/InnerFunction2.kt");
+            }
+
             @TestMetadata("MultipleStatements.kt")
             public void testMultipleStatements() throws Exception {
                 runTest("idea/testData/refactoring/inline/function/returnAtEnd/MultipleStatements.kt");
