@@ -19,6 +19,7 @@ apply plugin: "com.google.protobuf"
 apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
+apply plugin: "maven-publish"
 
 // (gets applied to this project and all its subprojects)
 allprojects {
@@ -288,4 +289,20 @@ task debugCompiler(type: JavaExec) {
             "-Djava.library.path=${distDir.canonicalPath}/konan/nativelib"
     enableAssertions = true
     args = findProperty("konan.debug.args").toString().tokenize() ?: []
+}
+
+publishing {
+    repositories {
+        maven { url = "$buildDir/repo" }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            groupId = 'org.jetbrains.kotlin'
+            artifactId = 'backend.native'
+            version = konanVersionFull
+
+            from components.java
+        }
+    }
 }
