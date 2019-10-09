@@ -16,6 +16,10 @@ runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
     compile(project(":compiler:psi"))
+    compile(project(":compiler:frontend.common"))
+    compile(project(":core:descriptors"))
+    compile(project(":compiler:fir:cones"))
+    compile(project(":compiler:ir.tree"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
     compileOnly(intellijDep()) {
@@ -25,6 +29,7 @@ dependencies {
     Platform[192].orHigher {
         runtimeOnly(intellijCoreDep()) { includeJars("jdom") }
     }
+    implementation(kotlin("reflect"))
 }
 
 val writeCopyright by task<WriteCopyrightToFile> {
