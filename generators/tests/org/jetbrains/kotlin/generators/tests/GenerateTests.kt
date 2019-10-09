@@ -140,6 +140,7 @@ import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
+import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.nj2k.AbstractTextNewJavaToKotlinCopyPasteConversionTest
@@ -1084,6 +1085,9 @@ fun main(args: Array<String>) {
         }
         testClass<AbstractTextNewJavaToKotlinCopyPasteConversionTest> {
             model("copyPastePlainText", pattern = """^([^\.]+)\.txt$""")
+        }
+        testClass<AbstractNewJavaToKotlinConverterMultiFileTest> {
+            model("multiFile", extension = null, recursive = false)
         }
     }
 

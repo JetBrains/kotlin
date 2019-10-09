@@ -1,0 +1,7 @@
+package test;
+
+class JavaClass {
+    void foo(AAA a) {
+        a.x = a.x + 1;
+    }
+}
