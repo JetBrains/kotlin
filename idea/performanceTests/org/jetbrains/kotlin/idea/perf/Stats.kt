@@ -219,7 +219,7 @@ class Stats(
             printWarmUpTimings(phaseData.testName, warmUpStatInfosArray)
         }
 
-        warmUpStatInfosArray.filterNotNull().map { it[ERROR_KEY] as? Exception }.firstOrNull()?.let { throw it }
+        warmUpStatInfosArray.filterNotNull().map { it[ERROR_KEY] as? Throwable }.firstOrNull()?.let { throw it }
     }
 
     private fun <SV, TV> mainPhase(phaseData: PhaseData<SV, TV>): Array<StatInfos> =
@@ -264,6 +264,10 @@ class Stats(
                             phaseData.tearDown(testData)
                         }
                         logMessage { "tearDown took $tearDownMillis ms" }
+                    } catch (t: Throwable) {
+                        println("# error at ${phaseData.testName} #$attempt:")
+                        t.printStackTrace()
+                        valueMap[ERROR_KEY] = t
                     } finally {
                         PerformanceCounter.resetAllCounters()
                     }
