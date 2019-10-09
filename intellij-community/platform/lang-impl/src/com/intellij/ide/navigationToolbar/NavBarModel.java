@@ -3,6 +3,7 @@
 package com.intellij.ide.navigationToolbar;
 
 import com.intellij.ide.ui.UISettings;
+import com.intellij.ide.util.treeView.TreeAnchorizer;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -64,7 +65,7 @@ public class NavBarModel {
   @Nullable
   public Object getElement(int index) {
     if (index != -1 && index < myModel.size()) {
-      return myModel.get(index);
+      return get(index);
     }
     return null;
   }
@@ -99,7 +100,7 @@ public class NavBarModel {
     }
 
     psiElement = normalize(psiElement);
-    if (!myModel.isEmpty() && myModel.get(myModel.size() - 1).equals(psiElement) && !myChanged) return;
+    if (!myModel.isEmpty() && Objects.equals(get(myModel.size() - 1), psiElement) && !myChanged) return;
 
     if (psiElement != null && psiElement.isValid()) {
       updateModel(psiElement);
@@ -170,7 +171,7 @@ public class NavBarModel {
     final List<Object> objects = new ArrayList<>();
     boolean update = false;
     for (Object o : myModel) {
-      if (isValid(o)) {
+      if (isValid(TreeAnchorizer.getService().retrieveElement(o))) {
         objects.add(o);
       } else {
         update = true;
@@ -187,15 +188,15 @@ public class NavBarModel {
   }
 
   protected void setModel(List<Object> model, boolean force) {
-    if (!model.equals(myModel)) {
-      myModel = model;
+    if (!model.equals(TreeAnchorizer.retrieveList(myModel))) {
+      myModel = TreeAnchorizer.anchorizeList(model);
       myNotificator.modelChanged();
 
       mySelectedIndex = myModel.size() - 1;
       myNotificator.selectionChanged();
     }
     else if (force) {
-      myModel = model;
+      myModel = TreeAnchorizer.anchorizeList(model);
       myNotificator.modelChanged();
     }
   }
@@ -275,11 +276,17 @@ public class NavBarModel {
   }
 
   public Object get(final int index) {
-    return myModel.get(index);
+    return TreeAnchorizer.getService().retrieveElement(myModel.get(index));
   }
 
   public int indexOf(Object value) {
-    return myModel.indexOf(value);
+    for (int i = 0; i < myModel.size(); i++) {
+      Object o = myModel.get(i);
+      if (Objects.equals(TreeAnchorizer.getService().retrieveElement(o), value)) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   public void setSelectedIndex(final int selectedIndex) {
