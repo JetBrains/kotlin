@@ -122,22 +122,22 @@ class PropertyTest : PropertyTestCase() {
       }
 
     property3.setSynchronously(0)
-    assertEquals(listOf(1, 1, 0, 1), counters.map { it.get() })
+    assertEquals(listOf(1, 1, 1, 1), counters.map { it.get() })
 
     property3.setSynchronously(0)
-    assertEquals(listOf(2, 2, 0, 2), counters.map { it.get() })
+    assertEquals(listOf(2, 2, 2, 2), counters.map { it.get() })
 
     property4.setSynchronously(0)
-    assertEquals(listOf(2, 2, 0, 2), counters.map { it.get() })
+    assertEquals(listOf(2, 2, 2, 3), counters.map { it.get() })
 
     property1.setSynchronously(0)
-    assertEquals(listOf(2, 3, 0, 2), counters.map { it.get() })
+    assertEquals(listOf(3, 3, 2, 3), counters.map { it.get() })
 
     property1.setSynchronously(0)
-    assertEquals(listOf(2, 4, 0, 2), counters.map { it.get() })
+    assertEquals(listOf(4, 4, 2, 3), counters.map { it.get() })
 
     property2.setSynchronously(0)
-    assertEquals(listOf(2, 4, 0, 2), counters.map { it.get() })
+    assertEquals(listOf(4, 5, 2, 3), counters.map { it.get() })
   }
 
   @Test

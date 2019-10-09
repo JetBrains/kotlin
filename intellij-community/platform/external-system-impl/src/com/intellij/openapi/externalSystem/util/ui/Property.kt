@@ -34,6 +34,7 @@ abstract class Property<T>(initial: () -> T) : ReadWriteProperty<Any?, T> {
       isModified = true
       field = value
       childProperties.forEach { it.update(this) }
+      firePropertyChanged(value)
     }
   }
 

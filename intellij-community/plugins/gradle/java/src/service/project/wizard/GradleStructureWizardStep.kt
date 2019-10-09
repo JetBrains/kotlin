@@ -40,6 +40,7 @@ class GradleStructureWizardStep(
     builder.isInheritGroupId = parentData?.group == groupId
     builder.isInheritVersion = parentData?.version == version
     builder.name = entityName
+    builder.contentEntryPath = location
   }
 
   override fun _init() {
