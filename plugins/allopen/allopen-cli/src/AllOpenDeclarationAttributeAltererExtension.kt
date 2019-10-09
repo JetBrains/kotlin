@@ -41,7 +41,6 @@ abstract class AbstractAllOpenDeclarationAttributeAltererExtension : Declaration
             declaration: DeclarationDescriptor?,
             containingDeclaration: DeclarationDescriptor?,
             currentModality: Modality,
-            bindingContext: BindingContext,
             isImplicitModality: Boolean
     ): Modality? {
         if (currentModality != Modality.FINAL) {

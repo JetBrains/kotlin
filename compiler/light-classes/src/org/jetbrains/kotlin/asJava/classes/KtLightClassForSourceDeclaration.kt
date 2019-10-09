@@ -42,7 +42,10 @@ import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiReferenceList
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -53,6 +56,7 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.util.isOrdinaryClass
 import java.util.*
 import javax.swing.Icon
 
@@ -105,13 +109,12 @@ abstract class KtLightClassForSourceDeclaration(
     override val lightClassData: LightClassData
         get() = findLightClassData()
 
-    protected open fun findLightClassData() = getLightClassDataHolder().
-        findDataForClassOrObject(classOrObject)
+    protected open fun findLightClassData() = getLightClassDataHolder().findDataForClassOrObject(classOrObject)
 
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassDataHolder().javaFileStub
 
-    fun getDescriptor(): ClassDescriptor? {
-        return LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
+    public val descriptor = lazyPub {
+        LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
     }
 
     protected fun getLightClassDataHolder(): LightClassDataHolder.ForClass {
@@ -228,7 +231,15 @@ abstract class KtLightClassForSourceDeclaration(
         if (isAbstract() || isSealed()) {
             psiModifiers.add(PsiModifier.ABSTRACT)
         } else if (!(classOrObject.hasModifier(OPEN_KEYWORD) || (classOrObject is KtClass && classOrObject.isEnum()))) {
-            psiModifiers.add(PsiModifier.FINAL)
+            // AllOpen can affect on modality of the member. We ought to check if the extension could override the modality
+            // Resolver will produce correct descriptor corresponding to modality from AllOpen.
+            // The easiest way to get new modality is to resolve the descriptor
+            val modifierToAdd = if (kotlinOrigin.isOrdinaryClass && descriptor.value?.modality == Modality.OPEN) {
+                PsiModifier.OPEN
+            } else {
+                PsiModifier.FINAL
+            }
+            psiModifiers.add(modifierToAdd)
         }
 
         if (!classOrObject.isTopLevel() && !classOrObject.hasModifier(INNER_KEYWORD)) {
@@ -263,13 +274,13 @@ abstract class KtLightClassForSourceDeclaration(
         LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
 
         val qualifiedName: String? = if (baseClass is KtLightClassForSourceDeclaration) {
-            val baseDescriptor = baseClass.getDescriptor()
+            val baseDescriptor = baseClass.descriptor.value
             if (baseDescriptor != null) DescriptorUtils.getFqName(baseDescriptor).asString() else null
         } else {
             baseClass.qualifiedName
         }
 
-        val thisDescriptor = getDescriptor()
+        val thisDescriptor = descriptor.value
         return qualifiedName != null && thisDescriptor != null && checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep)
     }
 

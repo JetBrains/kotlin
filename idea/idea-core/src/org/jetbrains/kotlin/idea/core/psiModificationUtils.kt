@@ -415,7 +415,6 @@ fun KtDeclaration.implicitModality(): KtModifierKeywordToken {
             descriptor as? ClassDescriptor,
             containingDescriptor,
             mapModalityToken(predictedModality),
-            bindingContext,
             isImplicitModality = true
         )
 

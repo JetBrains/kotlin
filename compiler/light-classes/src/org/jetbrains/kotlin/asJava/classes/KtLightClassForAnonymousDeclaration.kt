@@ -90,7 +90,7 @@ internal open class KtLightClassForAnonymousDeclaration(classOrObject: KtClassOr
 
     companion object {
         fun KtLightClassForSourceDeclaration.getFirstSupertypeFQNameForAnonymousDeclaration(): String {
-            val descriptor = getDescriptor() ?: return CommonClassNames.JAVA_LANG_OBJECT
+            val descriptor = descriptor.value ?: return CommonClassNames.JAVA_LANG_OBJECT
 
             val superTypes = descriptor.typeConstructor.supertypes
 

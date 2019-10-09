@@ -75,8 +75,6 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private val _deprecated by lazyPub { classOrObject.isDeprecated(support) }
 
-    private val descriptor = lazyPub { getDescriptor() }
-
     override fun isFinal(isFinalByPsi: Boolean) = if (tooComplex) super.isFinal(isFinalByPsi) else isFinalByPsi
 
     @Volatile
@@ -104,7 +102,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun getModifierList(): PsiModifierList? = _modifierList
 
     private fun allSuperTypes() =
-        getDescriptor()?.typeConstructor?.supertypes.orEmpty()
+        descriptor.value?.typeConstructor?.supertypes.orEmpty()
 
     private fun mapSupertype(supertype: KotlinType, kotlinCollectionAsIs: Boolean = false) =
         supertype.asPsiType(
