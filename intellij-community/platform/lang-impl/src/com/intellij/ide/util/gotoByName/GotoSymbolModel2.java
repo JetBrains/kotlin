@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util.gotoByName;
 
 import com.intellij.ide.IdeBundle;
@@ -17,16 +17,28 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class GotoSymbolModel2 extends FilteringGotoByModel<Language> {
   private String[] mySeparators;
+  private final boolean myAllContributors;
 
   public GotoSymbolModel2(@NotNull Project project, @NotNull ChooseByNameContributor[] contributors) {
     super(project, contributors);
+    myAllContributors = false;
   }
 
   public GotoSymbolModel2(@NotNull Project project) {
-    super(project, ChooseByNameRegistry.getInstance().getSymbolModelContributors());
+    super(project, new ChooseByNameContributor[0]);
+    myAllContributors = true;
+  }
+
+  @Override
+  protected List<ChooseByNameContributor> getContributorList() {
+    if (myAllContributors) {
+      return ChooseByNameRegistry.getInstance().getSymbolModelContributors();
+    }
+    return super.getContributorList();
   }
 
   @Override
@@ -86,7 +98,7 @@ public class GotoSymbolModel2 extends FilteringGotoByModel<Language> {
 
   @Override
   public String getFullName(@NotNull final Object element) {
-    for(ChooseByNameContributor c: getContributors()) {
+    for(ChooseByNameContributor c: getContributorList()) {
       if (c instanceof GotoClassContributor) {
         String result = ((GotoClassContributor) c).getQualifiedName((NavigationItem) element);
         if (result != null) {

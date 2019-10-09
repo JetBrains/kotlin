@@ -6,7 +6,6 @@ import com.intellij.ide.actions.GotoClassPresentationUpdater;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.lang.Language;
 import com.intellij.navigation.ChooseByNameContributor;
-import com.intellij.navigation.ChooseByNameRegistry;
 import com.intellij.navigation.GotoClassContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
@@ -20,13 +19,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class GotoClassModel2 extends FilteringGotoByModel<Language> {
   private String[] mySeparators;
 
   public GotoClassModel2(@NotNull Project project) {
-    super(project, ChooseByNameRegistry.getInstance().getClassModelContributors());
+    super(project, new ChooseByNameContributor[0]);
+  }
+
+  @Override
+  protected List<ChooseByNameContributor> getContributorList() {
+    return ChooseByNameContributor.CLASS_EP_NAME.getExtensionList();
   }
 
   @Override
@@ -90,7 +95,7 @@ public class GotoClassModel2 extends FilteringGotoByModel<Language> {
       return null;
     }
 
-    for (ChooseByNameContributor c : getContributors()) {
+    for (ChooseByNameContributor c : getContributorList()) {
       if (c instanceof GotoClassContributor) {
         String result = ((GotoClassContributor)c).getQualifiedName((NavigationItem)element);
         if (result != null) return result;

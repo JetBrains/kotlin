@@ -57,7 +57,7 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
 
   @Override
   public boolean isDumbAware() {
-    return ContainerUtil.find(myContributors, o -> DumbService.isDumbAware(o)) != null;
+    return ContainerUtil.find(getContributorList(), o -> DumbService.isDumbAware(o)) != null;
   }
 
   @NotNull
@@ -70,12 +70,12 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
     return false;
   }
 
-  private final ConcurrentMap<ChooseByNameContributor, TIntHashSet> myContributorToItsSymbolsMap = ContainerUtil.newConcurrentMap();
+  private final ConcurrentMap<ChooseByNameContributor, TIntHashSet> myContributorToItsSymbolsMap = ContainerUtil.createConcurrentWeakMap();
 
   @Override
   public void processNames(@NotNull Processor<? super String> nameProcessor, @NotNull FindSymbolParameters parameters) {
     long start = System.currentTimeMillis();
-    List<ChooseByNameContributor> contributors = filterDumb(myContributors);
+    List<ChooseByNameContributor> contributors = filterDumb(getContributorList());
     ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
     Processor<ChooseByNameContributor> processor = new ReadActionProcessor<ChooseByNameContributor>() {
       @Override
@@ -222,7 +222,7 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
       }
       return true;
     };
-    if (!JobLauncher.getInstance().invokeConcurrentlyUnderProgress(filterDumb(myContributors), canceled, processor)) {
+    if (!JobLauncher.getInstance().invokeConcurrentlyUnderProgress(filterDumb(getContributorList()), canceled, processor)) {
       canceled.cancel();
     }
     canceled.checkCanceled(); // if parallel job execution was canceled because of PCE, rethrow it from here
@@ -261,8 +261,12 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
     return null;
   }
 
+  protected List<ChooseByNameContributor> getContributorList() {
+    return myContributors;
+  }
+
   protected ChooseByNameContributor[] getContributors() {
-    return myContributors.toArray(new ChooseByNameContributor[]{});
+    return getContributorList().toArray(new ChooseByNameContributor[]{});
   }
 
   /**
