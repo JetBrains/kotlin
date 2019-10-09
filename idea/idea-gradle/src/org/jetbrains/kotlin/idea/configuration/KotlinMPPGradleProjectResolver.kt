@@ -349,7 +349,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
             val ignoreCommonSourceSets by lazy { externalProject.notImportedCommonSourceSets() }
             for (sourceSet in mppModel.sourceSets.values) {
-                if (sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) continue
+                if (sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) continue
                 if (sourceSet.actualPlatforms.supports(KotlinPlatform.COMMON) && ignoreCommonSourceSets) continue
                 val moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
                 val existingSourceSetDataNode = sourceSetMap[moduleId]?.first
@@ -447,7 +447,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 .toMap()
             if (resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java) == null) return
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
-                if (dataNode == null || sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) return@processSourceSets
+                if (dataNode == null || sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) return@processSourceSets
                 createContentRootData(
                     sourceSet.sourceDirs,
                     sourceSet.sourceType,
