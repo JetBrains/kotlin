@@ -44,8 +44,13 @@ class SingleLanguageInlayHintsSettingsPanel(
   private val myProviderList = createList()
   private var myCurrentProvider = selectLastViewedProvider()
   private val myEditorTextField = createEditor()
-  private val myCurrentProviderCustomSettingsPane = JBScrollPane().also { it.border = null }
-  private val myCurrentProviderCasesPane = JBScrollPane().also { it.border = null }
+  private val myCurrentProviderCustomSettingsPane = JBScrollPane().also {
+    it.border = null
+  }
+  private val myCurrentProviderCasesPane = JBScrollPane().also {
+    it.border = null
+    it.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
+  }
   private val myBottomPanel = createBottomPanel()
   private var myCasesPanel: CasesPanel? = null
   private val myRightPanel: JPanel = JPanel()
