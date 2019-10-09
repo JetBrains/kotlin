@@ -276,7 +276,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
             val sourceSetToCompilationData = LinkedHashMap<KotlinSourceSet, MutableSet<GradleSourceSetData>>()
             for (target in mppModel.targets) {
-                if (target.platform == KotlinPlatform.ANDROID) continue
+//                if (target.platform == KotlinPlatform.ANDROID) continue
                 if (target.name == KotlinTarget.METADATA_TARGET_NAME) continue
                 val targetData = KotlinTargetData(target.name).also {
                     it.archiveFile = target.jar?.archiveFile
@@ -350,7 +350,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
             val ignoreCommonSourceSets by lazy { externalProject.notImportedCommonSourceSets() }
             for (sourceSet in mppModel.sourceSets.values) {
-                if (sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) continue
+//                if (sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) continue
                 if (sourceSet.actualPlatforms.supports(KotlinPlatform.COMMON) && ignoreCommonSourceSets) continue
                 val moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
                 val existingSourceSetDataNode = sourceSetMap[moduleId]?.first
@@ -448,7 +448,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 .toMap()
             if (resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java) == null) return
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
-                if (dataNode == null || sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) return@processSourceSets
+                if (dataNode == null /*|| sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID*/) return@processSourceSets
                 createContentRootData(
                     sourceSet.sourceDirs,
                     sourceSet.sourceType,
@@ -558,7 +558,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             }
             val closedSourceSetGraph = Graphs.transitiveClosure(sourceSetGraph)
             for (sourceSet in closedSourceSetGraph.nodes()) {
-                val isAndroid = sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID
+                val isAndroid = false //sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID
                 val fromDataNode = if (isAndroid) {
                     ideModule
                 } else {
@@ -578,7 +578,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         sourceSetInfo.addSourceSets(dependeeSourceSets, selfName, gradleModule, resolverCtx)
                     }
                 }
-                if (sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) continue
+//                if (sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) continue
                 for (dependeeSourceSet in dependeeSourceSets) {
                     val toDataNode = getSiblingKotlinModuleData(dependeeSourceSet, gradleModule, ideModule, resolverCtx) ?: continue
                     addDependency(fromDataNode, toDataNode, dependeeSourceSet.isTestModule)
@@ -747,7 +747,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 }
             }
             for (target in mppModel.targets) {
-                if (target.platform == KotlinPlatform.ANDROID) continue
+//                if (target.platform == KotlinPlatform.ANDROID) continue
                 for (compilation in target.compilations) {
                     val moduleId = getKotlinModuleId(gradleModule, compilation, resolverCtx)
                     val moduleDataNode = sourceSetsMap[moduleId] ?: continue

@@ -5,13 +5,30 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.internal.LoggerWrapper
+import com.android.build.gradle.internal.SdkLocationSourceSet
+import com.android.build.gradle.internal.SdkLocator
+import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import com.android.build.gradle.internal.publishing.AndroidArtifacts.ARTIFACT_TYPE
+import com.android.sdklib.IAndroidTarget
+import com.android.sdklib.repository.AndroidSdkHandler
+import com.android.sdklib.repository.LoggerProgressIndicatorWrapper
 import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Project
+import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.component.ModuleComponentSelector
+import org.gradle.api.artifacts.result.ResolvedComponentResult
+import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
+import org.gradle.internal.component.external.model.DefaultModuleComponentIdentifier
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.io.File
 
 open class KotlinMultiplatformExtension :
     KotlinProjectExtension(),
@@ -52,6 +69,116 @@ open class KotlinMultiplatformExtension :
 
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
         KotlinSoftwareComponentWithCoordinatesAndPublication("kotlin", targets)
+    }
+
+    private fun getAndroidSdkJar(project: Project): File? {
+        val androidExtension = project.extensions.findByName("android") as BaseExtension? ?: return null
+        val sdkLocation = SdkLocator.getSdkLocation(SdkLocationSourceSet(project.rootDir)).directory ?: return null
+        val sdkHandler = AndroidSdkHandler.getInstance(sdkLocation)
+        val logger = LoggerProgressIndicatorWrapper(LoggerWrapper(project.logger))
+        val androidTarget = sdkHandler.getAndroidTargetManager(logger).getTargetFromHashString(androidExtension.compileSdkVersion, logger)
+        return File(androidTarget.getPath(IAndroidTarget.ANDROID_JAR))
+    }
+
+    fun getAndroidSourceSetDependencies(project: Project): Map<String, List<File>?> {
+        val ext = project.extensions.getByName("android") as BaseExtension
+        val androidSdkJar = getAndroidSdkJar(project) ?: return emptyMap()
+
+        val sourceSet2Impl = ext.sourceSets.map {
+            lowerCamelCaseName("android", it.name) to project.configurations.getByName(it.implementationConfigurationName)
+        }.toMap()
+
+        val allImplConfigs = sourceSet2Impl.values.toSet()
+        val impl2CompileClasspath = mapImplementationToCompileClasspathConfiguration(project, allImplConfigs)
+
+        return sourceSet2Impl.mapValues { entry ->
+            val compileClasspathConf = impl2CompileClasspath[entry.value] ?: return@mapValues null
+
+            val dependencies = findDependencies(allImplConfigs, entry.value)
+
+            val selfResolved = dependencies.filterIsInstance<SelfResolvingDependency>().flatMap { it.resolve() }
+            val resolvedExternal = dependencies.filterIsInstance<DefaultExternalModuleDependency>()
+                .flatMap { collectDependencies(it.module, compileClasspathConf) }
+
+            selfResolved + resolvedExternal + androidSdkJar
+        }.toMap()
+    }
+
+    @Suppress("UnstableApiUsage")
+    private fun collectDependencies(
+        module: ModuleIdentifier,
+        compileClasspathConf: Configuration
+    ): List<File> {
+        val viewConfig: (ArtifactView.ViewConfiguration) -> Unit = { config ->
+            config.attributes { it.attribute(ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.JAR.type) }
+            config.isLenient = true
+        }
+
+        val resolvedArtifacts = compileClasspathConf.incoming.artifactView(viewConfig).artifacts.mapNotNull {
+            val id = (it.id.componentIdentifier as? DefaultModuleComponentIdentifier)?.moduleIdentifier ?: return@mapNotNull null
+            id to it
+        }.toMap()
+
+        val resolutionResults = compileClasspathConf.incoming.resolutionResult.allComponents.mapNotNull {
+            val id = it.moduleVersion?.module ?: return@mapNotNull null
+            id to it
+        }.toMap()
+
+        val deps = HashSet<ModuleIdentifier>().also { doCollectDependencies(listOf(module), resolutionResults, it) }
+        return deps.mapNotNull { resolvedArtifacts[it] }.map { it.file }
+    }
+
+    @Suppress("UnstableApiUsage")
+    private tailrec fun doCollectDependencies(
+        modules: List<ModuleIdentifier>,
+        resolutionResults: Map<ModuleIdentifier, ResolvedComponentResult>,
+        result: MutableSet<ModuleIdentifier>
+    ) {
+        if (modules.isEmpty()) return
+        val newModules = modules.filter { result.add(it) }.mapNotNull { resolutionResults[it] }.flatMap { it.dependencies }
+            .mapNotNull { (it.requested as? ModuleComponentSelector)?.moduleIdentifier }
+        doCollectDependencies(newModules, resolutionResults, result)
+    }
+
+    private fun findDependencies(implConfigs: Set<Configuration>, conf: Configuration): Set<Dependency> {
+        return HashSet<Dependency>().also { doFindDependencies(implConfigs, listOf(conf), it) }
+    }
+
+    private tailrec fun doFindDependencies(
+        implConfigs: Set<Configuration>, configs: List<Configuration>, result: MutableSet<Dependency>,
+        visited: MutableSet<Configuration> = HashSet()
+    ) {
+        if (configs.isEmpty()) return
+        result.addAll(configs.flatMap { it.dependencies })
+        doFindDependencies(implConfigs, configs.flatMap { it.extendsFrom }.filter { it !in implConfigs && visited.add(it) }, result)
+    }
+
+    private fun mapImplementationToCompileClasspathConfiguration(
+        project: Project,
+        allImplConfigs: Set<Configuration>
+    ): Map<Configuration, Configuration> {
+        val compileClasspathConfigurations = project.configurations.filter { it.name.endsWith("CompileClasspath", true) }
+        return compileClasspathConfigurations.flatMap { ccConf ->
+            findImplementationConfigurations(allImplConfigs, ccConf).map { it to ccConf }
+        }.toMap()
+    }
+
+    private fun findImplementationConfigurations(
+        allImplConfigs: Set<Configuration>,
+        compileClasspathConf: Configuration
+    ): Set<Configuration> {
+        return HashSet<Configuration>().also { doFindImplementationConfigurations(allImplConfigs, listOf(compileClasspathConf), it) }
+    }
+
+    private tailrec fun doFindImplementationConfigurations(
+        allImplConfigs: Set<Configuration>,
+        conf: List<Configuration>,
+        result: MutableSet<Configuration>,
+        visited: MutableSet<Configuration> = HashSet()
+    ) {
+        if (conf.isEmpty()) return
+        result.addAll(conf.flatMap { it.extendsFrom.filter { newConf -> allImplConfigs.contains(newConf) } })
+        doFindImplementationConfigurations(allImplConfigs, conf.flatMap { it.extendsFrom }.filter { visited.add(it) }, result)
     }
 }
 
