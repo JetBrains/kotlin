@@ -21,6 +21,7 @@ import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.todo.TodoConfiguration;
+import com.intellij.lang.ExternalLanguageAnnotators;
 import com.intellij.lang.LanguageAnnotators;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -357,6 +358,7 @@ public final class DaemonListeners implements Disposable {
 
     restartOnExtensionChange(LanguageAnnotators.EP_NAME, "annotators list changed");
     restartOnExtensionChange(LineMarkerProviders.EP_NAME, "line marker providers list changed");
+    restartOnExtensionChange(ExternalLanguageAnnotators.EP_NAME, "external annotators list changed");
 
     connection.subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
       @Override
