@@ -20,9 +20,7 @@ repositories {
     }
 }
 
-// this module is being built for each gradle invocation
-// while download should happen only for plugin construction
-if (rootProject.extra.has("nativeDebugRepo") && rootProject.hasProperty("pluginVersion")) {
+if (rootProject.extra.has("nativeDebugRepo")) {
     val nativeDebugRepo: String by rootProject.extra
     val nativeDebugVersion: String by rootProject.extra
     val nativeDebugPluginDir: File by rootProject.extra
