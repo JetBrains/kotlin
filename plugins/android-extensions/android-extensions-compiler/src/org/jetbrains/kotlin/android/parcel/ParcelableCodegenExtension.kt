@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.android.parcel
 
 import kotlinx.android.parcel.TypeParceler
 import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension.Companion.createMethod
-import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.*
 import org.jetbrains.kotlin.android.parcel.serializers.*
 import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -44,13 +43,10 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import java.io.FileDescriptor
 
-open class ParcelableCodegenExtension : ExpressionCodegenExtension {
+open class ParcelableCodegenExtension : ParcelableExtensionBase, ExpressionCodegenExtension {
 
-    private companion object {
+    companion object {
         private val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
-        private val CREATOR_NAME = Name.identifier("CREATOR")
-
-        private val ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
     }
 
     @Deprecated(
@@ -59,8 +55,6 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         level = DeprecationLevel.ERROR
     )
     protected open fun isExperimental(element: KtElement) = true
-
-    protected val ClassDescriptor.isParcelableClassDescriptor get() = kind in ALLOWED_CLASS_KINDS && isParcelize
 
     override val shouldGenerateClassSyntheticPartsInLightClassesMode: Boolean
         get() = true
@@ -97,32 +91,6 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
 
             writeCreatorClass(codegen, parcelableClass, parcelClassType, PARCEL_TYPE, parcelerObject, propertiesToSerialize)
         }
-    }
-
-    protected fun ClassDescriptor.hasCreatorField(): Boolean {
-        val companionObject = companionObjectDescriptor ?: return false
-
-        if (companionObject.name == CREATOR_NAME) {
-            return true
-        }
-
-        return companionObject.unsubstitutedMemberScope
-                .getContributedVariables(CREATOR_NAME, NoLookupLocation.FROM_BACKEND)
-                .isNotEmpty()
-    }
-
-    protected fun ClassDescriptor.hasSyntheticDescribeContents() = hasParcelizeSyntheticMethod(ComponentKind.DESCRIBE_CONTENTS)
-
-    protected fun ClassDescriptor.hasSyntheticWriteToParcel() = hasParcelizeSyntheticMethod(ComponentKind.WRITE_TO_PARCEL)
-
-    protected fun ClassDescriptor.hasParcelizeSyntheticMethod(componentKind: ParcelableSyntheticComponent.ComponentKind): Boolean {
-        val methodName = Name.identifier(componentKind.methodName)
-
-        val writeToParcelMethods = unsubstitutedMemberScope
-                .getContributedFunctions(methodName, NoLookupLocation.FROM_BACKEND)
-                .filter { it is ParcelableSyntheticComponent && it.componentKind == componentKind }
-
-        return writeToParcelMethods.size == 1
     }
 
     private fun getCompanionClassType(containerAsmType: Type, parcelerObject: ClassDescriptor): Pair<Type, String> {
@@ -410,12 +378,6 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
                 e.code()
             }
         })
-    }
-
-    protected fun ClassDescriptor.findFunction(componentKind: ParcelableSyntheticComponent.ComponentKind): SimpleFunctionDescriptor? {
-        return unsubstitutedMemberScope
-                .getContributedFunctions(Name.identifier(componentKind.methodName), WHEN_GET_ALL_DESCRIPTORS)
-                .firstOrNull { (it as? ParcelableSyntheticComponent)?.componentKind == componentKind }
     }
 }
 

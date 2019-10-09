@@ -14,7 +14,7 @@ import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import org.jetbrains.kotlin.asJava.UltraLightClassCodegenSupport
+import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightClassData
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -340,10 +340,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         return result
     }
 
-    private inline fun applyCompilerPlugins(body: (UltraLightClassCodegenSupport) -> Unit) {
-        ExpressionCodegenExtension.getInstances(project)
-            .filterIsInstance<UltraLightClassCodegenSupport>()
-            .forEach { body(it) }
+    private inline fun applyCompilerPlugins(body: (UltraLightClassModifierExtension) -> Unit) {
+        UltraLightClassModifierExtension.getInstances(project).forEach { body(it) }
     }
 
     private val _ownMethods: CachedValue<List<KtLightMethod>> = CachedValuesManager.getManager(project).createCachedValue(

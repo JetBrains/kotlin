@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 
 private const val targetClassName = "TargetClassName"
+private const val baseClassName = "BaseClassName"
 private const val noArgAnnotationName = "HelloNoArg"
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
@@ -43,6 +44,25 @@ class TestNoArgForLightClass : KotlinLightCodeInsightFixtureTestCase() {
 
         val classes = file.classes
         assertEquals(2, classes.size)
+
+        val targetClass = classes.firstOrNull { it.name == targetClassName }
+            ?: error { "Expected class $targetClassName not found" }
+
+        val constructors = targetClass.constructors
+        assertEquals(constructors.size, 2)
+        assertTrue(constructors.any { it.parameters.isEmpty() })
+    }
+
+    fun testNoArgDerivedAnnotation() {
+        val file = myFixture.configureByText(
+            "A.kt",
+            "annotation class $noArgAnnotationName\n"
+                    + "@$noArgAnnotationName class $baseClassName(val e: Int)\n"
+                    + "class $targetClassName(val k: Int) : $baseClassName(k)"
+        ) as KtFile
+
+        val classes = file.classes
+        assertEquals(3, classes.size)
 
         val targetClass = classes.firstOrNull { it.name == targetClassName }
             ?: error { "Expected class $targetClassName not found" }

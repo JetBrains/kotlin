@@ -21,15 +21,11 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.allopen.AbstractAllOpenDeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor.Companion.ANNOTATION_OPTION
 import org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor.Companion.PLUGIN_ID
-import org.jetbrains.kotlin.annotation.plugin.ide.AnnotationBasedLightClassApplicabilityExtension
 import org.jetbrains.kotlin.annotation.plugin.ide.CachedAnnotationNames
 import org.jetbrains.kotlin.annotation.plugin.ide.getAnnotationNames
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
 internal val ALL_OPEN_ANNOTATION_OPTION_PREFIX = "plugin:$PLUGIN_ID:${ANNOTATION_OPTION.optionName}="
-
-class IdeAllOpenApplicabilityExtension(project: Project) :
-    AnnotationBasedLightClassApplicabilityExtension(project, ALL_OPEN_ANNOTATION_OPTION_PREFIX)
 
 class IdeAllOpenDeclarationAttributeAltererExtension(val project: Project) :
     AbstractAllOpenDeclarationAttributeAltererExtension() {
