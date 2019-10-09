@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -145,6 +146,8 @@ internal fun buildCodeToInline(
         val statements = bodyCopy.statements
 
         val returnStatements = bodyCopy.collectDescendantsOfType<KtReturnExpression> {
+            val function = it.getStrictParentOfType<KtFunction>()
+            if (function != null && function != declaration) return@collectDescendantsOfType false
             it.getLabelName().let { it == null || it == declaration.name }
         }
 
