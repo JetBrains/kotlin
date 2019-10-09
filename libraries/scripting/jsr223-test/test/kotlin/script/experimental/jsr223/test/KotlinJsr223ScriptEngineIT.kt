@@ -12,6 +12,12 @@ import org.junit.Test
 import javax.script.*
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 
+// duplicating it here to avoid dependency on the implementation - it may interfere with tests
+private const val KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY = "kotlin.jsr223.experimental.resolve.dependencies.from.context.classloader"
+
+@Suppress("unused") // accessed from the tests below
+val shouldBeVisibleFromRepl = 7
+
 class KotlinJsr223ScriptEngineIT {
 
     init {
@@ -271,6 +277,26 @@ obj
 
         Assert.assertTrue(result is Function0<*>)
         Assert.assertEquals(3, (result as Function0<*>).invoke())
+    }
+
+    @Test
+    fun testResolveFromContextStandard() {
+        val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
+        val result = scriptEngine.eval("kotlin.script.experimental.jsr223.test.shouldBeVisibleFromRepl * 6")
+        Assert.assertEquals(42, result)
+    }
+
+    @Test
+    fun testResolveFromContextDirectExperimental() {
+        val prevProp = System.setProperty(KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY, "true")
+        try {
+            val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
+            val result = scriptEngine.eval("kotlin.script.experimental.jsr223.test.shouldBeVisibleFromRepl * 6")
+            Assert.assertEquals(42, result)
+        } finally {
+            if (prevProp == null) System.clearProperty(KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY)
+            else System.setProperty(KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY, prevProp)
+        }
     }
 }
 
