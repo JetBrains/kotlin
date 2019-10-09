@@ -65,12 +65,12 @@ public abstract class AbstractPsiBasedNode<Value> extends ProjectViewNode<Value>
 
   @Override
   @NotNull
-  public final Collection<AbstractTreeNode> getChildren() {
+  public final Collection<? extends AbstractTreeNode> getChildren() {
     return AstLoadingFilter.disallowTreeLoading(this::doGetChildren);
   }
 
   @NotNull
-  private Collection<AbstractTreeNode> doGetChildren() {
+  private Collection<? extends AbstractTreeNode> doGetChildren() {
     final PsiElement psiElement = extractPsiFromValue();
     if (psiElement == null) {
       return new ArrayList<>();
