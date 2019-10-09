@@ -146,10 +146,15 @@ public abstract class AbstractExternalSystemTask extends UserDataHolderBase impl
       doExecute();
       setState(ExternalSystemTaskState.FINISHED);
     }
-    catch (Throwable e) {
+    catch (Exception e) {
       setState(ExternalSystemTaskState.FAILED);
       myError.set(e);
       LOG.debug(e);
+    }
+    catch (Throwable e) {
+      setState(ExternalSystemTaskState.FAILED);
+      myError.set(e);
+      LOG.error(e);
     }
     finally {
       for (ExternalSystemTaskNotificationListener listener : listeners) {

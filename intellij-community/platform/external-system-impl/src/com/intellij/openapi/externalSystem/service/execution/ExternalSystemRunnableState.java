@@ -4,6 +4,7 @@ package com.intellij.openapi.externalSystem.service.execution;
 import com.intellij.build.*;
 import com.intellij.build.events.BuildEvent;
 import com.intellij.build.events.FailureResult;
+import com.intellij.build.events.impl.FailureResultImpl;
 import com.intellij.build.events.impl.FinishBuildEventImpl;
 import com.intellij.build.events.impl.StartBuildEventImpl;
 import com.intellij.build.events.impl.SuccessResultImpl;
@@ -243,6 +244,12 @@ public class ExternalSystemRunnableState extends UserDataHolderBase implements R
           }
         };
         task.execute(ArrayUtil.prepend(taskListener, ExternalSystemTaskNotificationListener.EP_NAME.getExtensions()));
+        Throwable taskError = task.getError();
+        if (taskError != null && !(taskError instanceof Exception)) {
+          FinishBuildEventImpl failureEvent = new FinishBuildEventImpl(task.getId(), null, System.currentTimeMillis(), "failed",
+                                                                       new FailureResultImpl(taskError));
+          eventDispatcher.onEvent(task.getId(), failureEvent);
+        }
       }
     });
     ExecutionConsole executionConsole = progressListener instanceof ExecutionConsole ? (ExecutionConsole)progressListener : consoleView;
