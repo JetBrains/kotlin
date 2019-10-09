@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import com.intellij.psi.PsiField
+import org.jetbrains.kotlin.nj2k.externalCodeProcessing.JKFieldDataFromJava
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.psi
 import org.jetbrains.kotlin.nj2k.tree.*
 
 
@@ -13,6 +16,11 @@ class FieldToPropertyConversion(context: NewJ2kConverterContext) : RecursiveAppl
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKField) return recurse(element)
         element.mutability = if (element.modality == Modality.FINAL) Mutability.IMMUTABLE else Mutability.MUTABLE
+
+        element.psi<PsiField>()?.let { psi ->
+            context.externalCodeProcessor.addMember(JKFieldDataFromJava(psi))
+        }
+
         element.modality = Modality.FINAL
         return recurse(element)
     }

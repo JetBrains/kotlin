@@ -31,12 +31,15 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.nj2k.conversions.JKResolver
+import org.jetbrains.kotlin.nj2k.externalCodeProcessing.NewExternalCodeProcessing
 import org.jetbrains.kotlin.nj2k.printing.JKCodeBuilder
 import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportList
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.ImportPath
 
 class NewJavaToKotlinConverter(
@@ -128,7 +131,8 @@ class NewJavaToKotlinConverter(
     override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
         val phaseDescription = "Converting Java code to Kotlin code"
         val contextElement = inputElements.firstOrNull() ?: return Result(emptyList(), null, null)
-        val symbolProvider = JKSymbolProvider(project, targetModule, contextElement)
+        val resolver = JKResolver(project, targetModule, contextElement)
+        val symbolProvider = JKSymbolProvider(resolver)
         val typeFactory = JKTypeFactory(symbolProvider)
         symbolProvider.typeFactory = typeFactory
         symbolProvider.preBuildTree(inputElements)
@@ -152,14 +156,24 @@ class NewJavaToKotlinConverter(
             processor.updateState(i, 1, phaseDescription)
             element to treeBuilder.buildTree(element, saveImports)
         }
+        val inConversionContext = { element: PsiElement ->
+            inputElements.any { inputElement ->
+                if (inputElement == element) return@any true
+                inputElement.isAncestor(element, true)
+            }
+        }
+
+        val externalCodeProcessing =
+            NewExternalCodeProcessing(oldConverterServices.referenceSearcher, inConversionContext)
 
         val context = NewJ2kConverterContext(
             symbolProvider,
             typeFactory,
             this,
-            { it.containingFile in inputElements },
+            inConversionContext,
             importStorage,
-            JKElementInfoStorage()
+            JKElementInfoStorage(),
+            externalCodeProcessing
         )
         ConversionsRunner.doApply(asts.withIndex().mapNotNull { (i, ast) ->
             processor.updateState(i, 1, phaseDescription)
@@ -182,7 +196,11 @@ class NewJavaToKotlinConverter(
             )
         }
 
-        return Result(results, null, context)
+        return Result(
+            results,
+            externalCodeProcessing.takeIf { it.isExternalProcessingNeeded() },
+            context
+        )
     }
 
     override fun elementsToKotlin(inputElements: List<PsiElement>): Result {

@@ -18,11 +18,10 @@ import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.*
 
 
-class JKSymbolProvider(project: Project, module: Module?, contextElement: PsiElement) {
+class JKSymbolProvider(private val resolver: JKResolver) {
     private val symbolsByFqName = mutableMapOf<String, JKSymbol>()
     val symbolsByPsi = mutableMapOf<PsiElement, JKSymbol>()
     private val symbolsByJK = mutableMapOf<JKDeclaration, JKSymbol>()
-    private val resolver = JKResolver(project, module, contextElement)
 
     private val elementVisitor = ElementVisitor()
     lateinit var typeFactory: JKTypeFactory

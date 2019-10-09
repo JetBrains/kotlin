@@ -48,6 +48,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
+import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -105,6 +107,7 @@ class JavaToKotlinAction : AnAction() {
                         virtualFile.pathBeforeJ2K = virtualFile.path
                         virtualFile.rename(this, fileName)
                     }
+                    result += virtualFile
                 } catch (e: IOException) {
                     MessagesEx.error(psiFile.project, e.message ?: "").showLater()
                 }
@@ -165,7 +168,7 @@ class JavaToKotlinAction : AnAction() {
             ) return emptyList()
 
 
-            var externalCodeUpdate: (() -> Unit)? = null
+            var externalCodeUpdate: ((List<KtFile>) -> Unit)? = null
 
             if (enableExternalCodeProcessing && converterResult!!.externalCodeProcessing != null) {
                 val question =
@@ -196,16 +199,18 @@ class JavaToKotlinAction : AnAction() {
                 CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
 
                 val newFiles = saveResults(javaFiles, converterResult!!.results)
+                    .map { it.toPsiFile(project) as KtFile }
+                    .onEach { it.commitAndUnblockDocument() }
 
-                externalCodeUpdate?.invoke()
+                externalCodeUpdate?.invoke(newFiles)
 
                 PsiDocumentManager.getInstance(project).commitAllDocuments()
 
                 newFiles.singleOrNull()?.let {
-                    FileEditorManager.getInstance(project).openFile(it, true)
+                    FileEditorManager.getInstance(project).openFile(it.virtualFile, true)
                 }
 
-                newFiles.map { it.toPsiFile(project) as KtFile }
+                newFiles
             }
         }
     }
