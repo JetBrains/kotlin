@@ -251,8 +251,8 @@ public class DeleteHandler {
       //noinspection deprecation
       element.checkDelete();
     }
-    catch (IncorrectOperationException ex) {
-      Messages.showMessageDialog(project, ex.getMessage(), CommonBundle.getErrorTitle(), Messages.getErrorIcon());
+    catch (IncorrectOperationException e) {
+      Messages.showMessageDialog(project, e.getMessage(), CommonBundle.getErrorTitle(), Messages.getErrorIcon());
       return;
     }
 
@@ -260,9 +260,9 @@ public class DeleteHandler {
       try {
         element.delete();
       }
-      catch (IncorrectOperationException ex) {
+      catch (IncorrectOperationException e) {
         ApplicationManager.getApplication().invokeLater(
-          () -> Messages.showMessageDialog(project, ex.getMessage(), CommonBundle.getErrorTitle(), Messages.getErrorIcon()));
+          () -> Messages.showMessageDialog(project, e.getMessage(), CommonBundle.getErrorTitle(), Messages.getErrorIcon()));
       }
     });
   }
