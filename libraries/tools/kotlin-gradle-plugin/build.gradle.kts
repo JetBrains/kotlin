@@ -50,10 +50,6 @@ dependencies {
     compile("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
     compile("de.undercouch:gradle-download-task:4.0.2")
     
-    compileOnly("com.android.tools.build:gradle:2.0.0")
-    compileOnly("com.android.tools.build:gradle-core:2.0.0")
-    compileOnly("com.android.tools.build:builder:2.0.0")
-    compileOnly("com.android.tools.build:builder-model:2.0.0")
     compileOnly("org.codehaus.groovy:groovy-all:2.4.12")
     compileOnly(gradleApi())
 
@@ -72,9 +68,21 @@ dependencies {
     })
 
     // com.android.tools.build:gradle has ~50 unneeded transitive dependencies
-    compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
-    compileOnly("com.android.tools.build:gradle-core:3.0.0") { isTransitive = false }
-    compileOnly("com.android.tools.build:builder-model:3.0.0") { isTransitive = false }
+    compileOnly("com.android.tools:common:26.6.0-alpha12") { isTransitive = false }
+    compileOnly("com.android.tools:repository:26.6.0-alpha12") { isTransitive = false }
+    compileOnly("com.android.tools:sdklib:26.6.0-alpha12") { isTransitive = false }
+    compileOnly("com.android.tools.lint:lint-gradle-api:26.6.0-alpha12") { isTransitive = false }
+    compileOnly("com.android.tools.build:gradle:3.6.0-alpha12") //{ isTransitive = false }
+    compileOnly("com.android.tools.build:gradle-api:3.6.0-alpha12") { isTransitive = false }
+    compileOnly("com.android.tools.build:builder-model:3.6.0-alpha12") { isTransitive = false }
+    compileOnly("com.android.tools.build:builder:3.6.0-alpha12") { isTransitive = false }
+//    compileOnly("com.android.tools.build:builder:3.5.0") { isTransitive = false }
+//    compileOnly("com.android.tools:common:26.6.0-alpha12") { isTransitive = false }
+//    compileOnly("com.android.tools:repository:26.6.0-alpha12") { isTransitive = false }
+//    compileOnly("com.android.tools.build:gradle:3.6.0-alpha12") { isTransitive = false }
+//    compileOnly("com.android.tools.build:gradle-api:3.6.0-alpha12") { isTransitive = false }
+//    compileOnly("com.android.tools.build:builder-model:3.6.0-alpha12") { isTransitive = false }
+//    compileOnly("com.android.tools.build:builder:3.6.0-alpha12") { isTransitive = false }
 
     testCompile(intellijDep()) { includeJars( "junit", "serviceMessages", rootProject = rootProject) }
 
