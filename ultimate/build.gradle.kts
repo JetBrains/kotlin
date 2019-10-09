@@ -60,6 +60,10 @@ dependencies {
             compile(project(":kotlin-ultimate:ide:ultimate-native")) { isTransitive = false }
         }
 
+        Platform[193].orHigher {
+            compileOnly(intellijUltimatePluginDep("gradle-java"))
+        }
+
         compileOnly(intellijUltimatePluginDep("CSS"))
         compileOnly(intellijUltimatePluginDep("DatabaseTools"))
         compileOnly(intellijUltimatePluginDep("JavaEE"))
@@ -126,6 +130,9 @@ dependencies {
     if (intellijUltimateEnabled) {
         Platform[192].orHigher {
             testRuntime(intellijUltimatePluginDep("java"))
+        }
+        Platform[193].orHigher {
+            testRuntime(intellijUltimatePluginDep("gradle-java"))
         }
         testCompile(nodeJSPlugin())
         testCompile(intellijUltimatePluginDep("CSS"))
