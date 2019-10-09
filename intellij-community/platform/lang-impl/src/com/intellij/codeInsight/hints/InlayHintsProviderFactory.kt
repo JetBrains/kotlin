@@ -12,7 +12,7 @@ object HintUtils {
 
   fun getLanguagesWithNewInlayHints(project: Project) : Set<Language> {
     val languages = HashSet<Language>()
-    getAllMetaProviders().flatMap { it.getProvidersInfo(project).map { info -> info.language } }
+    getAllMetaProviders().flatMapTo(languages) { it.getProvidersInfo(project).map { info -> info.language } }
     return languages
   }
 
