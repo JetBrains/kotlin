@@ -3,6 +3,8 @@ package org.jetbrains.plugins.gradle.importing;
 
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.externalSystem.importing.ImportSpec;
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings;
 import com.intellij.openapi.externalSystem.settings.ExternalSystemSettingsListenerAdapter;
@@ -223,6 +225,13 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   protected void importProject(@NonNls @Language("Groovy") String config) throws IOException {
     config = injectRepo(config);
     super.importProject(config);
+  }
+
+  @Override
+  protected ImportSpec createImportSpec() {
+    ImportSpecBuilder importSpecBuilder = new ImportSpecBuilder(super.createImportSpec());
+    importSpecBuilder.withArguments("--stacktrace");
+    return importSpecBuilder.build();
   }
 
   @NotNull

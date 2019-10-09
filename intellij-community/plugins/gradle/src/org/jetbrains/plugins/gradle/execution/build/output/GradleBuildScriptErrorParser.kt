@@ -68,6 +68,19 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
         nextLine == "* Try:" -> break@loop
       }
     }
+
+    var exception: StringBuilder? = null
+    while (true) {
+      val nextLine = reader.readLine() ?: break
+      if (nextLine == "* Exception is:")  {
+        exception = StringBuilder(nextLine).appendln()
+      } else {
+        exception?.appendln(nextLine)
+      }
+      if (nextLine == "BUILD FAILED") break
+    }
+    exception?.also { description.appendln().append(it) }
+
     // compilation errors should be added by the respective compiler output parser
     if (reason == "Compilation failed; see the compiler error output for details" ||
         reason == "Compilation error. See log for more details" ||

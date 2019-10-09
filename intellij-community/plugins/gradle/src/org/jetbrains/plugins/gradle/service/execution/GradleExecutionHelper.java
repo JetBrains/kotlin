@@ -154,7 +154,6 @@ public class GradleExecutionHelper {
         if (!settings.getArguments().contains("--debug")){
           settings.withArgument("--info");
         }
-        settings.withArgument("--stacktrace");
       }
     }
 

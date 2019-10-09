@@ -4,7 +4,6 @@ package org.jetbrains.plugins.gradle.importing
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.externalSystem.importing.ImportSpec
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
 import com.intellij.openapi.externalSystem.view.ExternalProjectsViewImpl
@@ -272,9 +271,7 @@ project(':string-utils') {
 
   @Override
   protected ImportSpec createImportSpec() {
-    ImportSpecBuilder importSpecBuilder = new ImportSpecBuilder(myProject, getExternalSystemId())
-      .use(ProgressExecutionMode.MODAL_SYNC)
-      .forceWhenUptodate();
+    ImportSpecBuilder importSpecBuilder = new ImportSpecBuilder(super.createImportSpec())
     if (isPreview) {
       importSpecBuilder.usePreviewMode()
     }
