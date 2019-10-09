@@ -7,6 +7,7 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.intention.AbstractEmptyIntentionAction;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionDelegate;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbService;
@@ -88,7 +89,9 @@ public class IntentionListStep implements ListPopupStep<IntentionActionWithTextC
   private void applyAction(@NotNull IntentionActionWithTextCaching cachedAction) {
     myFinalRunnable = () -> {
       HintManager.getInstance().hideAllHints();
-      if (myProject.isDisposed() || myEditor != null && (myEditor.isDisposed() || !myEditor.getComponent().isShowing())) return;
+      if (myProject.isDisposed()) return;
+      if (myEditor != null && (myEditor.isDisposed() || (!myEditor.getComponent().isShowing() && !ApplicationManager.getApplication().isUnitTestMode()))) return;
+
       if (DumbService.isDumb(myProject) && !DumbService.isDumbAware(cachedAction)) {
         DumbService.getInstance(myProject).showDumbModeNotification(cachedAction.getText() + " is not available during indexing");
         return;
