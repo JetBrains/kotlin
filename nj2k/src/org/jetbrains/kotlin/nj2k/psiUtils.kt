@@ -15,10 +15,15 @@ import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.j2k.ClassKind
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.isNullLiteral
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.nj2k.tree.*
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 //copied from old j2k
 fun canKeepEqEq(left: PsiExpression, right: PsiExpression?): Boolean {
@@ -130,3 +135,9 @@ fun PsiClass.classKind(): JKClass.ClassKind =
         isInterface -> JKClass.ClassKind.INTERFACE
         else -> JKClass.ClassKind.CLASS
     }
+
+val KtDeclaration.fqNameWithoutCompanions
+    get() = generateSequence(this) { it.containingClassOrObject }
+        .filter { it.safeAs<KtObjectDeclaration>()?.isCompanion() != true && it.name != null }
+        .toList()
+        .foldRight(containingKtFile.packageFqName) { container, acc -> acc.child(Name.identifier(container.name!!)) }

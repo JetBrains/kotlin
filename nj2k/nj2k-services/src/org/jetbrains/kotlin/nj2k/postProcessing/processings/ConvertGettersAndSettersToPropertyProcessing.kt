@@ -27,9 +27,12 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.asGetterName
-import org.jetbrains.kotlin.nj2k.asSetterName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.nj2k.*
+import org.jetbrains.kotlin.nj2k.externalCodeProcessing.JKFakeFieldData
+import org.jetbrains.kotlin.nj2k.externalCodeProcessing.JKFieldData
+import org.jetbrains.kotlin.nj2k.externalCodeProcessing.JKMethodData
+import org.jetbrains.kotlin.nj2k.externalCodeProcessing.NewExternalCodeProcessing
 import org.jetbrains.kotlin.nj2k.postProcessing.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -284,7 +287,7 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
         if (classesWithPropertiesData.isEmpty()) return
         runUndoTransparentActionInEdt(inWriteAction = true) {
             for ((klass, propertiesData) in classesWithPropertiesData) {
-                convertClass(klass, propertiesData)
+                convertClass(klass, propertiesData, converterContext.externalCodeProcessor)
             }
         }
     }
@@ -535,7 +538,11 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
         setName(newName)
     }
 
-    private fun convertClass(klass: KtClassOrObject, propertiesData: List<PropertyData>) {
+    private fun convertClass(
+        klass: KtClassOrObject,
+        propertiesData: List<PropertyData>,
+        externalCodeUpdater: NewExternalCodeProcessing
+    ) {
         val factory = KtPsiFactory(klass)
         val accessors = propertiesData.filterGettersAndSetters(klass, factory)
 
@@ -555,6 +562,34 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
                 }
                 is MergedProperty -> {
                     property.mergeTo
+                }
+            }
+
+
+            val propertyInfo = when (property) {
+                is RealProperty -> property.property.fqNameWithoutCompanions.let(externalCodeUpdater::getMember)
+                is MergedProperty -> property.mergeTo.fqNameWithoutCompanions.let(externalCodeUpdater::getMember)
+                is FakeProperty -> JKFakeFieldData(
+                    isStatic = klass is KtObjectDeclaration,
+                    kotlinElementPointer = null,
+                    fqName = klass.fqNameWithoutCompanions.child(Name.identifier(property.name)),
+                    name = property.name
+                ).also { externalCodeUpdater.addMember(it) }
+            }?.also { it.name = property.name } as? JKFieldData
+
+
+            val getterFqName = getter.safeAs<RealGetter>()?.function?.fqNameWithoutCompanions
+            val setterFqName = setter.safeAs<RealSetter>()?.function?.fqNameWithoutCompanions
+
+            getterFqName?.let { fqName ->
+                externalCodeUpdater.getMember(fqName)?.safeAs<JKMethodData>()?.let {
+                    it.usedAsAccessorOfProperty = propertyInfo ?: return@let
+                }
+            }
+
+            setterFqName?.let { fqName ->
+                externalCodeUpdater.getMember(fqName)?.safeAs<JKMethodData>()?.let {
+                    it.usedAsAccessorOfProperty = propertyInfo ?: return@let
                 }
             }
 

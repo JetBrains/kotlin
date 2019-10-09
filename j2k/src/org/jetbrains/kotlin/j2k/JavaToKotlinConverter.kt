@@ -56,7 +56,7 @@ enum class ParseContext {
 }
 
 interface ExternalCodeProcessing {
-    fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit
+    fun prepareWriteOperation(progress: ProgressIndicator?): (List<KtFile>) -> Unit
 }
 
 
@@ -190,7 +190,8 @@ class OldJavaToKotlinConverter(
         if (map.isEmpty()) return null
 
         return object : ExternalCodeProcessing {
-            override fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit {
+            override fun prepareWriteOperation(progress: ProgressIndicator?): (List<KtFile>) -> Unit {
+                if (progress == null) error("Progress should not be null for old J2K")
                 val refs = ArrayList<ReferenceInfo>()
 
                 progress.text = "Searching usages to update..."
@@ -322,7 +323,7 @@ class OldWithProgressProcessor(private val progress: ProgressIndicator?, private
     }
 }
 
-private class ProgressPortionReporter(
+class ProgressPortionReporter(
     indicator: ProgressIndicator,
     private val start: Double,
     private val portion: Double

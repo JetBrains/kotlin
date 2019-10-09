@@ -26,6 +26,9 @@ class StaticsToCompanionExtractConversion(context: NewJ2kConverterContext) : Rec
             if (declaration is JKOtherModifiersOwner) {
                 declaration.otherModifierElements -= declaration.elementByModifier(OtherModifier.STATIC)!!
             }
+            context.externalCodeProcessor.getMember(declaration)?.let {
+                it.isStatic = true
+            }
         }
         return recurse(element)
     }

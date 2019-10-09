@@ -58,11 +58,20 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
             if (accessorMethod.hasModifierProperty(PsiModifier.PRIVATE))
                 emptyList()
             else
-                listOf(AccessorToPropertyProcessor())
+                listOf(AccessorToPropertyProcessor(propertyName, accessorKind))
 
-    inner class AccessorToPropertyProcessor: ExternalCodeProcessor {
+    class AccessorToPropertyProcessor(
+        private val propertyName: String,
+        private val accessorKind: AccessorKind
+    ) : ExternalCodeProcessor {
         override fun processUsage(reference: PsiReference): Array<PsiReference>? {
-            val nameExpr = reference.element as? KtSimpleNameExpression ?: return null
+            return processUsage(reference.element, propertyName, accessorKind)
+        }
+    }
+
+    companion object {
+        fun processUsage(element: PsiElement, propertyName: String, accessorKind: AccessorKind): Array<PsiReference>? {
+            val nameExpr = element as? KtSimpleNameExpression ?: return null
             val callExpr = nameExpr.parent as? KtCallExpression ?: return null
 
             val arguments = callExpr.valueArguments
@@ -73,8 +82,7 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
                 if (arguments.size != 0) return null // incorrect call
                 propertyNameExpr = callExpr.replace(propertyNameExpr) as KtSimpleNameExpression
                 return propertyNameExpr.references
-            }
-            else {
+            } else {
                 val value = arguments.singleOrNull()?.getArgumentExpression() ?: return null
                 var assignment = factory.createExpression("a = b") as KtBinaryExpression
                 assignment.right!!.replace(value)
@@ -85,8 +93,7 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
                     assignment.left!!.replace(qualifiedExpression)
                     assignment = qualifiedExpression.replace(assignment) as KtBinaryExpression
                     (assignment.left as KtQualifiedExpression).selectorExpression!!.references
-                }
-                else {
+                } else {
                     assignment.left!!.replace(propertyNameExpr)
                     assignment = callExpr.replace(assignment) as KtBinaryExpression
                     assignment.left!!.references
