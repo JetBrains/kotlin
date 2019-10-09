@@ -122,7 +122,7 @@ internal val ModuleDescriptor.packageFragmentProvider
 internal fun createKotlinNativeForwardDeclarationsModule(
     storageManager: StorageManager,
     builtIns: KotlinBuiltIns
-) =
+): ModuleDescriptorImpl =
     (createDefaultKonanResolvedModuleDescriptorsFactory(DefaultDeserializedDescriptorFactory) as KlibResolvedModuleDescriptorsFactoryImpl)
         .createForwardDeclarationsModule(
             builtIns = builtIns,

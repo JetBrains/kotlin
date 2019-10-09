@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.Target
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.isUnderKotlinNativeSyntheticP
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.dimension
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -29,12 +29,13 @@ class DeclarationsBuilderCache(dimension: Int) {
         check(dimension > 0)
     }
 
-    private val modules = CommonizedGroup<Collection<ModuleDescriptor>>(dimension)
+    private val modules = CommonizedGroup<List<ModuleDescriptorImpl>>(dimension)
     private val packageFragments = CommonizedGroupMap<Pair<Name, FqName>, CommonizedPackageFragmentDescriptor>(dimension)
     private val classes = CommonizedGroupMap<FqName, CommonizedClassDescriptor>(dimension)
     private val typeAliases = CommonizedGroupMap<FqName, CommonizedTypeAliasDescriptor>(dimension)
 
-    private val forwardDeclarationsModules = CommonizedGroup<ModuleDescriptor>(dimension)
+    private val forwardDeclarationsModules = CommonizedGroup<ModuleDescriptorImpl>(dimension)
+    private val allModulesWithDependencies = CommonizedGroup<List<ModuleDescriptor>>(dimension)
 
     fun getCachedPackageFragments(moduleName: Name, packageFqName: FqName): List<CommonizedPackageFragmentDescriptor?> =
         packageFragments.getOrFail(moduleName to packageFqName)
@@ -44,7 +45,7 @@ class DeclarationsBuilderCache(dimension: Int) {
     fun getCachedClassifier(fqName: FqName, index: Int): ClassifierDescriptorWithTypeParameters? =
         classes.getOrNull(fqName)?.get(index) ?: typeAliases.getOrNull(fqName)?.get(index)
 
-    fun cache(index: Int, modules: Collection<ModuleDescriptor>) {
+    fun cache(index: Int, modules: List<ModuleDescriptorImpl>) {
         this.modules[index] = modules
     }
 
@@ -60,7 +61,7 @@ class DeclarationsBuilderCache(dimension: Int) {
         typeAliases[fqName][index] = descriptor
     }
 
-    fun computeIfAbsentForwardDeclarationsModule(index: Int, computable: () -> ModuleDescriptor): ModuleDescriptor {
+    fun computeIfAbsentForwardDeclarationsModule(index: Int, computable: () -> ModuleDescriptorImpl): ModuleDescriptorImpl {
         forwardDeclarationsModules[index]?.let { return it }
 
         val module = computable()
@@ -68,16 +69,24 @@ class DeclarationsBuilderCache(dimension: Int) {
         return module
     }
 
-    fun getAllModules(index: Int): Collection<ModuleDescriptor> {
+    fun getAllModules(index: Int): List<ModuleDescriptor> {
+        allModulesWithDependencies[index]?.let { return it }
+
         val modulesForTarget = modules[index] ?: error("No module descriptors found for index $index")
         val forwardDeclarationsModule = forwardDeclarationsModules[index]
 
         // forward declarations module is created on demand (and only when commonizing Kotlin/Native target)
         // so, don't return it if it's not necessary
-        return if (forwardDeclarationsModule != null)
+        val allModules = if (forwardDeclarationsModule != null)
             modulesForTarget + forwardDeclarationsModule
         else
             modulesForTarget
+
+        // set dependencies for target modules and cache them
+        modulesForTarget.forEach { it.setDependencies(allModules) }
+        allModulesWithDependencies[index] = allModules
+
+        return allModules
     }
 
     companion object {

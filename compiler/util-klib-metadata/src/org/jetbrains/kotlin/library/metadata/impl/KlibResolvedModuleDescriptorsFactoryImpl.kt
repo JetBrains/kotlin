@@ -71,26 +71,27 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
     }
 
     fun createForwardDeclarationsModule(
-            builtIns: KotlinBuiltIns?,
-            storageManager: StorageManager): ModuleDescriptorImpl {
+        builtIns: KotlinBuiltIns?,
+        storageManager: StorageManager
+    ): ModuleDescriptorImpl {
 
-        val name = Name.special("<forward declarations>")
-        val module = createDescriptorOptionalBuiltsIns(name, storageManager, builtIns, SyntheticModulesOrigin)
+        val module = createDescriptorOptionalBuiltsIns(FORWARD_DECLARATIONS_MODULE_NAME, storageManager, builtIns, SyntheticModulesOrigin)
 
         fun createPackage(fqName: FqName, supertypeName: String, classKind: ClassKind) =
-                ForwardDeclarationsPackageFragmentDescriptor(
-                        storageManager,
-                        module,
-                        fqName,
-                        Name.identifier(supertypeName),
-                        classKind)
+            ForwardDeclarationsPackageFragmentDescriptor(
+                storageManager,
+                module,
+                fqName,
+                Name.identifier(supertypeName),
+                classKind
+            )
 
         val packageFragmentProvider = PackageFragmentProviderImpl(
-                listOf(
-                        createPackage(ForwardDeclarationsFqNames.cNamesStructs, "COpaque", ClassKind.CLASS),
-                        createPackage(ForwardDeclarationsFqNames.objCNamesClasses, "ObjCObjectBase", ClassKind.CLASS),
-                        createPackage(ForwardDeclarationsFqNames.objCNamesProtocols, "ObjCObject", ClassKind.INTERFACE)
-                )
+            listOf(
+                createPackage(ForwardDeclarationsFqNames.cNamesStructs, "COpaque", ClassKind.CLASS),
+                createPackage(ForwardDeclarationsFqNames.objCNamesClasses, "ObjCObjectBase", ClassKind.CLASS),
+                createPackage(ForwardDeclarationsFqNames.objCNamesProtocols, "ObjCObject", ClassKind.INTERFACE)
+            )
         )
 
         module.initialize(packageFragmentProvider)
@@ -119,6 +120,10 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns, packageAccessHandler)
     else
         moduleDescriptorFactory.createDescriptorAndNewBuiltIns(library, languageVersionSettings, storageManager, packageAccessHandler)
+
+    companion object {
+        val FORWARD_DECLARATIONS_MODULE_NAME = Name.special("<forward declarations>")
+    }
 }
 
 /**
