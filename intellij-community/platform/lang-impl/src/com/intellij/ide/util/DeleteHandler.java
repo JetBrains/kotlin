@@ -15,13 +15,18 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.fileEditor.impl.NonProjectFileWritingAccessProvider;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ex.MessagesEx;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VFileProperty;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.WritingAccessProvider;
 import com.intellij.psi.*;
@@ -41,6 +46,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -256,6 +263,21 @@ public class DeleteHandler {
       return;
     }
 
+    if (element instanceof PsiDirectory) {
+      VirtualFile file = ((PsiDirectory)element).getVirtualFile();
+      if (file.isInLocalFileSystem()) {
+        DeleteDirectoryTask task = new DeleteDirectoryTask(project, file);
+        ProgressManager.getInstance().run(task);
+        if (task.error != null) {
+          Messages.showMessageDialog(project, task.error.getMessage(), CommonBundle.getErrorTitle(), Messages.getErrorIcon());
+        }
+        if (task.aborted) {
+          VfsUtil.markDirtyAndRefresh(true, true, false, file);
+          return;
+        }
+      }
+    }
+
     ApplicationManager.getApplication().runWriteAction(() -> {
       try {
         element.delete();
@@ -296,5 +318,54 @@ public class DeleteHandler {
       }
     }
     return true;
+  }
+
+  private static class DeleteDirectoryTask extends Task.Modal {
+    private final Path myDir;
+    boolean aborted = false;
+    IOException error = null;
+
+    DeleteDirectoryTask(@Nullable Project project, VirtualFile dir) {
+      super(project, IdeBundle.message("progress.deleting"), true);
+      myDir = Paths.get(dir.getPath());
+    }
+
+    @Override
+    public void run(@NotNull ProgressIndicator indicator) {
+      indicator.setIndeterminate(true);
+      indicator.setText(myDir.toString());
+
+      try {
+        Files.walkFileTree(myDir, new SimpleFileVisitor<Path>() {
+          @Override
+          public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            if (SystemInfo.isWindows && attrs.isOther()) {  // a junction
+              visitFile(dir, null);
+              return FileVisitResult.SKIP_SUBTREE;
+            }
+            else {
+              return indicator.isCanceled() ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
+            }
+          }
+
+          @Override
+          public FileVisitResult visitFile(Path file, @Nullable BasicFileAttributes attrs) throws IOException {
+            indicator.setText2(myDir.relativize(file).toString());
+            Files.delete(file);
+            return indicator.isCanceled() ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
+          }
+
+          @Override
+          public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            return visitFile(dir, null);
+          }
+        });
+        aborted = indicator.isCanceled();
+      }
+      catch (IOException e) {
+        error = e;
+        aborted = true;
+      }
+    }
   }
 }
