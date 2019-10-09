@@ -138,17 +138,20 @@ class KotlinMultiplatformPlugin(
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
 
-            // Note: modifying this set should also be reflected in the DSL code generator, see 'presetEntries.kt'
+            // Note: modifying these sets should also be reflected in the DSL code generator, see 'presetEntries.kt'
             val testableNativeTargets = setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
+            val disabledNativeTargets = setOf(KonanTarget.WATCHOS_X64)
 
-            HostManager().targets.forEach { (_, target) ->
-                add(
-                    if (target in testableNativeTargets)
-                        KotlinNativeTargetWithTestsPreset(target.presetName, project, target, kotlinPluginVersion)
-                    else
-                        KotlinNativeTargetPreset(target.presetName, project, target, kotlinPluginVersion)
-                )
-            }
+            HostManager().targets
+                .filter { (_, target) -> target !in disabledNativeTargets }
+                .forEach { (_, target) ->
+                    add(
+                        if (target in testableNativeTargets)
+                            KotlinNativeTargetWithTestsPreset(target.presetName, project, target, kotlinPluginVersion)
+                        else
+                            KotlinNativeTargetPreset(target.presetName, project, target, kotlinPluginVersion)
+                    )
+                }
         }
     }
 

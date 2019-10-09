@@ -213,21 +213,6 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun watchosX86(name: String, configure: Closure<*>) = watchosX86(name) { ConfigureUtil.configure(configure, this) }
     fun watchosX86(configure: Closure<*>) = watchosX86 { ConfigureUtil.configure(configure, this) }
 
-    fun watchosX64(
-        name: String = "watchosX64",
-        configure: KotlinNativeTarget.() -> Unit = { }
-    ): KotlinNativeTarget =
-        configureOrCreate(
-            name,
-            presets.getByName("watchosX64") as KotlinNativeTargetPreset,
-            configure
-        )
-
-    fun watchosX64() = watchosX64("watchosX64") { }
-    fun watchosX64(name: String) = watchosX64(name) { }
-    fun watchosX64(name: String, configure: Closure<*>) = watchosX64(name) { ConfigureUtil.configure(configure, this) }
-    fun watchosX64(configure: Closure<*>) = watchosX64 { ConfigureUtil.configure(configure, this) }
-
     fun tvosArm64(
         name: String = "tvosArm64",
         configure: KotlinNativeTarget.() -> Unit = { }
