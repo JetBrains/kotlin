@@ -255,6 +255,8 @@ fun loadDefinitionsFromTemplates(
             LOG.warn("[kts] cannot load script definition class $templateClassName")
             null
         } catch (e: Throwable) {
+            if (e is ControlFlowException) throw e
+
             val message = "[kts] cannot load script definition class $templateClassName"
             val thirdPartyPlugin = PluginManagerCore.getPluginByClassName(templateClassName)
             if (thirdPartyPlugin != null) {
