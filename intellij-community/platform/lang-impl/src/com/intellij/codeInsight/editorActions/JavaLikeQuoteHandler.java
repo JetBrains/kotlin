@@ -23,4 +23,8 @@ public interface JavaLikeQuoteHandler extends QuoteHandler {
   boolean isAppropriateElementTypeForLiteral(@NotNull IElementType tokenType);
 
   boolean needParenthesesAroundConcatenation(PsiElement element);
+
+  default boolean needSemicolonAfter(@NotNull PsiElement element) {
+    return false;
+  }
 }

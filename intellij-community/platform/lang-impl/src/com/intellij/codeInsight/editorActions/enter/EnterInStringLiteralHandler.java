@@ -45,9 +45,9 @@ public class EnterInStringLiteralHandler extends EnterHandlerDelegateAdapter {
     PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument());
     PsiElement psiAtOffset = file.findElementAt(caretOffset);
     if (psiAtOffset != null && psiAtOffset.getTextOffset() < caretOffset) {
+      Document document = editor.getDocument();
       if (quoteHandler.canBeConcatenated(psiAtOffset)) {
         ASTNode token = psiAtOffset.getNode();
-        Document document = editor.getDocument();
         CharSequence text = document.getText();
         
         TextRange range = token.getTextRange();
@@ -82,6 +82,9 @@ public class EnterInStringLiteralHandler extends EnterHandlerDelegateAdapter {
         caretOffsetRef.set(caretOffset);
         caretAdvanceRef.set(caretAdvance);
         return Result.DefaultForceIndent;
+      }
+      if (quoteHandler.needSemicolonAfter(psiAtOffset)) {
+        document.insertString(psiAtOffset.getTextRange().getEndOffset(), ";");
       }
     }
     return Result.Continue;
