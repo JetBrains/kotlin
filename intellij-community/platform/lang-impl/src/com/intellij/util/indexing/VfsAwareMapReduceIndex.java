@@ -16,11 +16,7 @@ import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.impl.*;
-import com.intellij.util.indexing.impl.forward.AbstractMapForwardIndexAccessor;
-import com.intellij.util.indexing.impl.forward.ForwardIndex;
-import com.intellij.util.indexing.impl.forward.ForwardIndexAccessor;
-import com.intellij.util.indexing.impl.forward.MapForwardIndexAccessor;
-import com.intellij.util.indexing.impl.forward.PersistentMapBasedForwardIndex;
+import com.intellij.util.indexing.impl.forward.*;
 import gnu.trove.THashSet;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +47,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
   private final SnapshotInputMappingIndex<Key, Value, Input> mySnapshotInputMappings;
   private final boolean myUpdateMappings;
+  private final boolean mySingleEntryIndex;
 
   public VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, Input> extension,
                                 @NotNull IndexStorage<Key, Value> storage) throws IOException {
@@ -85,6 +82,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     }
     mySnapshotInputMappings = IndexImporterMappingIndex.wrap(snapshotInputMappings, extension);
     myUpdateMappings = snapshotInputMappings instanceof UpdatableSnapshotInputMappingIndex;
+    mySingleEntryIndex = extension instanceof SingleEntryFileBasedIndexExtension;
     installMemoryModeListener();
   }
 
@@ -143,7 +141,8 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
   @NotNull
   protected InputDataDiffBuilder<Key, Value> getKeysDiffBuilderInMemoryMode(int inputId, @NotNull Map<Key, Value> keysAndValues) {
-    return new MapInputDataDiffBuilder<>(inputId, keysAndValues);
+    return mySingleEntryIndex ? new SingleEntryIndexForwardIndexAccessor.SingleValueDiffBuilder(inputId, keysAndValues)
+                              : new MapInputDataDiffBuilder<>(inputId, keysAndValues);
   }
 
   @Override
@@ -355,6 +354,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   @Nullable
   private static <Key, Value> ForwardIndexAccessor<Key, Value> getForwardIndexAccessor(@NotNull IndexExtension<Key, Value, ?> indexExtension) {
     if (!shouldCreateForwardIndex(indexExtension)) return null;
+    if (indexExtension instanceof SingleEntryFileBasedIndexExtension) return new SingleEntryIndexForwardIndexAccessor(indexExtension);
     return new MapForwardIndexAccessor<>(new InputMapExternalizer<>(indexExtension));
   }
 
@@ -362,6 +362,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   private static ForwardIndex getForwardIndexMap(@NotNull IndexExtension<?, ?, ?> indexExtension)
     throws IOException {
     if (!shouldCreateForwardIndex(indexExtension)) return null;
+    if (indexExtension instanceof SingleEntryFileBasedIndexExtension<?>) return new EmptyForwardIndex(); // indexStorage and forwardIndex are same here
     File indexStorageFile = IndexInfrastructure.getInputIndexStorageFile((ID<?, ?>)indexExtension.getName());
     return new PersistentMapBasedForwardIndex(indexStorageFile, false);
   }
