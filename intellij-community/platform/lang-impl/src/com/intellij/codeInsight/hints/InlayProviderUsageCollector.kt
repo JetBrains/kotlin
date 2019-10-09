@@ -5,7 +5,9 @@ import com.intellij.codeInsight.hints.settings.InlayProviderSettingsModel
 import com.intellij.codeInsight.hints.settings.InlaySettingsProvider
 import com.intellij.internal.statistic.beans.MetricEvent
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
+import com.intellij.internal.statistic.eventLog.StatisticsEventEscaper
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
+import com.intellij.internal.statistic.utils.getPluginInfo
 import com.intellij.lang.Language
 import com.intellij.openapi.project.Project
 
@@ -32,10 +34,12 @@ class InlayProviderUsageCollector : ProjectUsagesCollector() {
   private fun getModelEvent(model: InlayProviderSettingsModel, language: Language): MetricEvent {
     val usageData = FeatureUsageData()
       .addLanguage(language)
+      .addData("id", StatisticsEventEscaper.escapeFieldName(model.id))
       .addData("enabled", model.isEnabled)
+      .addPluginInfo(getPluginInfo(model.javaClass))
     for (case in model.cases) {
-      usageData.addData(case.id.replace('.', '_'), case.value)
+      usageData.addData(StatisticsEventEscaper.escapeFieldName(case.id), case.value)
     }
-    return MetricEvent(model.id, usageData)
+    return MetricEvent("settings", usageData)
   }
 }
