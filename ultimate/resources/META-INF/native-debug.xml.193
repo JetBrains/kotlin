@@ -13,8 +13,6 @@
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
-    <moduleType id="KONAN_MODULE" implementationClass="com.jetbrains.konan.KonanModuleType"/>
-
     <configurationType implementation="com.jetbrains.konan.IdeaKonanRunConfigurationType"/>
     <executionTargetProvider implementation="com.jetbrains.konan.IdeaKonanExecutionTargetProvider"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.konan.IdeaKonanBuildBeforeRunTaskProvider"/>
@@ -22,9 +20,6 @@
     <projectTaskRunner implementation="com.jetbrains.konan.IdeaKonanProjectTaskRunner"/>
 
     <externalProjectDataService implementation="com.jetbrains.konan.gradle.IdeaKonanProjectDataService"/>
-    <applicationService serviceInterface="com.intellij.openapi.module.ModuleTypeManager"
-                        serviceImplementation="com.jetbrains.konan.KonanModuleTypeManager"
-                        overrides="true"/>
     <externalSystem.debuggerBackend implementation="com.jetbrains.konan.debugger.GradleLLDBDebuggerBackend" />
   </extensions>
 
