@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.cli.utilities
 import org.jetbrains.kotlin.native.interop.gen.defFileDependencies
 import org.jetbrains.kotlin.cli.bc.main as konancMain
 import org.jetbrains.kotlin.cli.klib.main as klibMain
-import org.jetbrains.kotlin.cli.bc.mainNoExit as konancMainNoExit
 
-private fun mainImpl(args: Array<String>, konancMain: (Array<String>) -> Unit) {
+fun main(args: Array<String>) {
     val utilityName = args[0]
     val utilityArgs = args.drop(1).toTypedArray()
     when (utilityName) {
@@ -31,8 +30,4 @@ private fun mainImpl(args: Array<String>, konancMain: (Array<String>) -> Unit) {
             error("Unexpected utility name")
     }
 }
-
-fun main(args: Array<String>) = mainImpl(args, ::konancMain)
-
-fun daemonMain(args: Array<String>) = mainImpl(args, ::konancMainNoExit)
 

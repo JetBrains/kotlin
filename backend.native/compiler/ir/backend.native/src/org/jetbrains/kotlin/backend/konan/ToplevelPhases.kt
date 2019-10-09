@@ -378,13 +378,12 @@ internal val entryPointPhase = SameTypeNamedPhaseWrapper(
 internal val bitcodePhase = namedIrModulePhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
-        lower = contextLLVMSetupPhase then
-                buildDFGPhase then
+        lower = buildDFGPhase then
                 serializeDFGPhase then
                 deserializeDFGPhase then
                 devirtualizationPhase then
                 dcePhase then
-                createLLVMDeclarationsPhase then
+                contextLLVMSetupPhase then
                 ghaPhase then
                 RTTIPhase then
                 generateDebugInfoHeaderPhase then
@@ -419,7 +418,6 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                                 verifyBitcodePhase then
                                 printBitcodePhase then
                                 produceOutputPhase then
-                                disposeLLVMPhase then
                                 unitSink()
                 ) then
                 linkPhase

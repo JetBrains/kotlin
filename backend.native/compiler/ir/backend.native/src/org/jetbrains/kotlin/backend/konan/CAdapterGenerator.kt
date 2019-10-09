@@ -233,8 +233,8 @@ private class ExportedElement(val kind: ElementKind,
                 cname = "_konan_function_${owner.nextFunctionIndex()}"
                 // Produce type getter.
                 val getTypeFunction = LLVMAddFunction(context.llvmModule, "${cname}_type", owner.kGetTypeFuncType)!!
-                val builder = LLVMCreateBuilderInContext(llvmContext)!!
-                val bb = LLVMAppendBasicBlockInContext(llvmContext, getTypeFunction, "")!!
+                val builder = LLVMCreateBuilder()!!
+                val bb = LLVMAppendBasicBlock(getTypeFunction, "")!!
                 LLVMPositionBuilderAtEnd(builder, bb)
                 LLVMBuildRet(builder, irClass.typeInfoPtr.llvm)
                 LLVMDisposeBuilder(builder)

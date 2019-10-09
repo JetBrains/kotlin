@@ -180,8 +180,9 @@ class StubIrTextEmitter(
             emitKotlinFileHeader()
             stubLines.forEach(out)
             nativeBridges.kotlinLines.forEach(out)
-            if (context.platform == KotlinPlatform.JVM)
-                out("private val loadLibrary = loadKonanLibrary(\"${context.libName}\")")
+            if (context.platform == KotlinPlatform.JVM) {
+                out("private val loadLibrary = System.loadLibrary(\"${context.libName}\")")
+            }
         }
     }
     private val printer = object : StubIrVisitor<StubContainer?, Unit> {

@@ -23,7 +23,7 @@ internal class CodeGenerator(override val context: Context) : ContextUtils {
 
     fun llvmFunction(function: IrFunction): LLVMValueRef = llvmFunctionOrNull(function) ?: error("no function ${function.name} in ${function.file.fqName}")
     fun llvmFunctionOrNull(function: IrFunction): LLVMValueRef? = function.llvmFunctionOrNull
-    val intPtrType = LLVMIntPtrTypeInContext(llvmContext, llvmTargetData)!!
+    val intPtrType = LLVMIntPtrType(llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
     // Keep in sync with OBJECT_TAG_MASK in C++.
     internal val immTypeInfoMask = LLVMConstNot(LLVMConstInt(intPtrType, 3, 0)!!)!!
@@ -120,17 +120,12 @@ internal inline fun<R> generateFunction(codegen: CodeGenerator,
                                         code: FunctionGenerationContext.(FunctionGenerationContext) -> R) {
     val llvmFunction = codegen.llvmFunction(function)
 
-    val functionGenerationContext = FunctionGenerationContext(
+    generateFunctionBody(FunctionGenerationContext(
             llvmFunction,
             codegen,
             startLocation,
             endLocation,
-            function)
-    try {
-        generateFunctionBody(functionGenerationContext, code)
-    } finally {
-        functionGenerationContext.dispose()
-    }
+            function), code)
 
     // To perform per-function validation.
     if (false)
@@ -140,12 +135,7 @@ internal inline fun<R> generateFunction(codegen: CodeGenerator,
 
 internal inline fun<R> generateFunction(codegen: CodeGenerator, function: LLVMValueRef,
                                         code:FunctionGenerationContext.(FunctionGenerationContext) -> R) {
-    val functionGenerationContext = FunctionGenerationContext(function, codegen, null, null)
-    try {
-        generateFunctionBody(functionGenerationContext, code)
-    } finally {
-        functionGenerationContext.dispose()
-    }
+    generateFunctionBody(FunctionGenerationContext(function, codegen, null, null), code)
 }
 
 internal inline fun generateFunction(
@@ -228,18 +218,14 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
     }
 
-    fun dispose() {
-        currentPositionHolder.dispose()
-    }
-
     private fun basicBlockInFunction(name: String, locationInfo: LocationInfo?): LLVMBasicBlockRef {
-        val bb = LLVMAppendBasicBlockInContext(llvmContext, function, name)!!
+        val bb = LLVMAppendBasicBlock(function, name)!!
         update(bb, locationInfo)
         return bb
     }
 
     fun basicBlock(name:String = "label_", startLocationInfo:LocationInfo?, endLocationInfo: LocationInfo? = startLocationInfo): LLVMBasicBlockRef {
-        val result = LLVMInsertBasicBlockInContext(llvmContext, this.currentBlock, name)!!
+        val result = LLVMInsertBasicBlock(this.currentBlock, name)!!
         update(result, startLocationInfo, endLocationInfo)
         LLVMMoveBasicBlockAfter(result, this.currentBlock)
         return result
@@ -1090,7 +1076,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
      * This class is introduced to workaround unreachable code handling.
      */
     inner class PositionHolder {
-        private val builder: LLVMBuilderRef = LLVMCreateBuilderInContext(llvmContext)!!
+        private val builder: LLVMBuilderRef = LLVMCreateBuilder()!!
 
 
         fun getBuilder(): LLVMBuilderRef {

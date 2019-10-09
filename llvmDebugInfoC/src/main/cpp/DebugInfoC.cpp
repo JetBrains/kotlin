@@ -59,10 +59,6 @@ DIBuilderRef DICreateBuilder(LLVMModuleRef module) {
 void DIFinalize(DIBuilderRef builder) {
   auto diBuilder = llvm::unwrap(builder);
   diBuilder->finalize();
-}
-
-void DIDispose(DIBuilderRef builder) {
-  auto diBuilder = llvm::unwrap(builder);
   delete diBuilder;
 }
 
