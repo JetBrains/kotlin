@@ -18,6 +18,7 @@ import javax.swing.border.EmptyBorder
 class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.Composite {
   private val configurables: List<SingleLanguageInlayHintsConfigurable> = InlaySettingsProvider.EP.getExtensions()
     .flatMap { it.getSupportedLanguages(project) }
+    .toSet()
     .map { SingleLanguageInlayHintsConfigurable(project, it) }
     .sortedBy { it.displayName }
 
