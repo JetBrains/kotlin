@@ -9,6 +9,31 @@ import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
 
+private val llvmContextHolder = ThreadLocal<LLVMContextRef>()
+internal var llvmContext: LLVMContextRef
+    get() = llvmContextHolder.get()
+    set(value) { llvmContextHolder.set(value) }
+
+internal fun tryDisposeLLVMContext() {
+    val llvmContext = llvmContextHolder.get()
+    if (llvmContext != null)
+        LLVMContextDispose(llvmContext)
+    llvmContextHolder.remove()
+}
+
+internal val LLVMTypeRef.context: LLVMContextRef
+    get() = LLVMGetTypeContext(this)!!
+
+internal val List<LLVMTypeRef>.context: LLVMContextRef
+    get() {
+        val context = this[0].context
+        for (i in 1 until this.size)
+            assert(this[i].context == context) {
+                "Expected the same context for all types in a list"
+            }
+        return context
+    }
+
 internal val LLVMValueRef.type: LLVMTypeRef
     get() = LLVMTypeOf(this)!!
 
@@ -77,32 +102,47 @@ internal open class Struct(val type: LLVMTypeRef?, val elements: List<ConstValue
     }
 }
 
+internal val int1Type get() = LLVMInt1TypeInContext(llvmContext)!!
+internal val int8Type get() = LLVMInt8TypeInContext(llvmContext)!!
+internal val int16Type get() = LLVMInt16TypeInContext(llvmContext)!!
+internal val int32Type get() = LLVMInt32TypeInContext(llvmContext)!!
+internal val int64Type get() = LLVMInt64TypeInContext(llvmContext)!!
+internal val int8TypePtr get() = pointerType(int8Type)
+internal val floatType get() = LLVMFloatTypeInContext(llvmContext)!!
+internal val doubleType get() = LLVMDoubleTypeInContext(llvmContext)!!
+
+internal val voidType get() = LLVMVoidTypeInContext(llvmContext)!!
+
 internal class Int1(val value: Byte) : ConstValue {
-    override val llvm = LLVMConstInt(LLVMInt1Type(), value.toLong(), 1)!!
+    override val llvm = LLVMConstInt(int1Type, value.toLong(), 1)!!
 }
 
 internal class Int8(val value: Byte) : ConstValue {
-    override val llvm = LLVMConstInt(LLVMInt8Type(), value.toLong(), 1)!!
+    override val llvm = LLVMConstInt(int8Type, value.toLong(), 1)!!
+}
+
+internal class Int16(val value: Short) : ConstValue {
+    override val llvm = LLVMConstInt(int16Type, value.toLong(), 1)!!
 }
 
 internal class Char16(val value: Char) : ConstValue {
-    override val llvm = LLVMConstInt(LLVMInt16Type(), value.toLong(), 1)!!
+    override val llvm = LLVMConstInt(int16Type, value.toLong(), 1)!!
 }
 
 internal class Int32(val value: Int) : ConstValue {
-    override val llvm = LLVMConstInt(LLVMInt32Type(), value.toLong(), 1)!!
+    override val llvm = LLVMConstInt(int32Type, value.toLong(), 1)!!
 }
 
 internal class Int64(val value: Long) : ConstValue {
-    override val llvm = LLVMConstInt(LLVMInt64Type(), value, 1)!!
+    override val llvm = LLVMConstInt(int64Type, value, 1)!!
 }
 
 internal class Float32(val value: Float) : ConstValue {
-    override val llvm = LLVMConstReal(LLVMFloatType(), value.toDouble())!!
+    override val llvm = LLVMConstReal(floatType, value.toDouble())!!
 }
 
 internal class Float64(val value: Double) : ConstValue {
-    override val llvm = LLVMConstReal(LLVMDoubleType(), value)!!
+    override val llvm = LLVMConstReal(doubleType, value)!!
 }
 
 internal class Zero(val type: LLVMTypeRef) : ConstValue {
@@ -121,17 +161,6 @@ internal fun constValue(value: LLVMValueRef) = object : ConstValue {
     override val llvm = value
 }
 
-internal val int1Type = LLVMInt1Type()!!
-internal val int8Type = LLVMInt8Type()!!
-internal val int16Type = LLVMInt16Type()!!
-internal val int32Type = LLVMInt32Type()!!
-internal val int64Type = LLVMInt64Type()!!
-internal val int8TypePtr = pointerType(int8Type)
-internal val floatType = LLVMFloatType()!!
-internal val doubleType = LLVMDoubleType()!!
-
-internal val voidType = LLVMVoidType()!!
-
 internal val RuntimeAware.kTypeInfo: LLVMTypeRef
     get() = runtime.typeInfoType
 internal val RuntimeAware.kObjHeader: LLVMTypeRef
@@ -146,13 +175,13 @@ internal val RuntimeAware.kArrayHeaderPtr: LLVMTypeRef
     get() = pointerType(kArrayHeader)
 internal val RuntimeAware.kTypeInfoPtr: LLVMTypeRef
     get() = pointerType(kTypeInfo)
-internal val kInt1         = LLVMInt1Type()!!
-internal val kBoolean      = kInt1
-internal val kInt8Ptr      = pointerType(int8Type)
-internal val kInt8PtrPtr   = pointerType(kInt8Ptr)
-internal val kNullInt8Ptr  = LLVMConstNull(kInt8Ptr)!!
-internal val kImmInt32Zero = Int32(0).llvm
-internal val kImmInt32One  = Int32(1).llvm
+internal val kInt1         get() = int1Type
+internal val kBoolean      get() = kInt1
+internal val kInt8Ptr      get() = pointerType(int8Type)
+internal val kInt8PtrPtr   get() = pointerType(kInt8Ptr)
+internal val kNullInt8Ptr  get() = LLVMConstNull(kInt8Ptr)!!
+internal val kImmInt32Zero get() = Int32(0).llvm
+internal val kImmInt32One  get() = Int32(1).llvm
 internal val ContextUtils.kNullObjHeaderPtr: LLVMValueRef
     get() = LLVMConstNull(this.kObjHeaderPtr)!!
 internal val ContextUtils.kNullObjHeaderPtrPtr: LLVMValueRef
@@ -167,7 +196,7 @@ internal fun pointerType(pointeeType: LLVMTypeRef) = LLVMPointerType(pointeeType
 internal fun structType(vararg types: LLVMTypeRef): LLVMTypeRef = structType(types.toList())
 
 internal fun structType(types: List<LLVMTypeRef>): LLVMTypeRef =
-    LLVMStructType(types.toCValues(), types.size, 0)!!
+    LLVMStructTypeInContext(llvmContext, types.toCValues(), types.size, 0)!!
 
 internal fun ContextUtils.numParameters(functionType: LLVMTypeRef) : Int {
     // Note that type is usually function pointer, so we have to dereference it.
@@ -273,7 +302,7 @@ fun parseBitcodeFile(path: String): LLVMModuleRef = memScoped {
     try {
 
         val moduleRef = alloc<LLVMModuleRefVar>()
-        val parseRes = LLVMParseBitcode2(memoryBuffer, moduleRef.ptr)
+        val parseRes = LLVMParseBitcodeInContext2(llvmContext, memoryBuffer, moduleRef.ptr)
         if (parseRes != 0) {
             throw Error(parseRes.toString())
         }
@@ -347,8 +376,8 @@ fun addFunctionSignext(function: LLVMValueRef, index: Int, type: LLVMTypeRef?) {
     }
 }
 
-internal fun String.mdString() = LLVMMDString(this, this.length)!!
-internal fun node(vararg it:LLVMValueRef) = LLVMMDNode(it.toList().toCValues(), it.size)
+internal fun String.mdString() = LLVMMDStringInContext(llvmContext, this, this.length)!!
+internal fun node(vararg it:LLVMValueRef) = LLVMMDNodeInContext(llvmContext, it.toList().toCValues(), it.size)
 
 internal fun LLVMValueRef.setUnaligned() = apply { LLVMSetAlignment(this, 1) }
 

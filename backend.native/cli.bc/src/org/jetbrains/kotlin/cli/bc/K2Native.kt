@@ -230,6 +230,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 doMain(K2Native(), args)
             }
         }
+        @JvmStatic fun mainNoExit(args: Array<String>) {
+            profile("Total compiler main()") {
+                if (CLITool.doMainNoExit(K2Native(), args) != ExitCode.OK)
+                    throw KonanCompilationException("Compilation finished with errors")
+            }
+        }
     }
 }
 
@@ -338,4 +344,4 @@ private fun parseLibrariesToCache(
 }
 
 fun main(args: Array<String>) = K2Native.main(args)
-
+fun mainNoExit(args: Array<String>) = K2Native.mainNoExit(args)

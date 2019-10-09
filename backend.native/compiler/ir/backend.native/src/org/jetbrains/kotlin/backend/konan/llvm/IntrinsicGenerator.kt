@@ -344,7 +344,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         // Note: LLVM allows to read without padding tail up to byte boundary, but the result seems to be incorrect.
 
         val bitsWithPaddingNum = prefixBitsNum + size + suffixBitsNum
-        val bitsWithPaddingType = LLVMIntType(bitsWithPaddingNum)!!
+        val bitsWithPaddingType = LLVMIntTypeInContext(llvmContext, bitsWithPaddingNum)!!
 
         val bitsWithPaddingPtr = bitcast(org.jetbrains.kotlin.backend.konan.llvm.pointerType(bitsWithPaddingType), gep(ptr, org.jetbrains.kotlin.backend.konan.llvm.Int64(offset / 8).llvm))
         val bitsWithPadding = load(bitsWithPaddingPtr).setUnaligned()
@@ -370,13 +370,13 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val value = args[3]
         assert(value.type == int64Type)
 
-        val bitsType = LLVMIntType(size)!!
+        val bitsType = LLVMIntTypeInContext(llvmContext, size)!!
 
         val prefixBitsNum = (offset % 8).toInt()
         val suffixBitsNum = (8 - ((size + offset) % 8).toInt()) % 8
 
         val bitsWithPaddingNum = prefixBitsNum + size + suffixBitsNum
-        val bitsWithPaddingType = LLVMIntType(bitsWithPaddingNum)!!
+        val bitsWithPaddingType = LLVMIntTypeInContext(llvmContext, bitsWithPaddingNum)!!
 
         // 0011111000:
         val discardBitsMask = LLVMConstShl(
@@ -443,8 +443,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     }
 
     // TODO: Find better place for these guys.
-    private val kImmZero     = LLVMConstInt(LLVMInt32Type(),  0, 1)!!
-    private val kImmOne      = LLVMConstInt(LLVMInt32Type(),  1, 1)!!
+    private val kImmZero     = LLVMConstInt(int32Type,  0, 1)!!
+    private val kImmOne      = LLVMConstInt(int32Type,  1, 1)!!
 
     private fun FunctionGenerationContext.emitGetObjCClass(callSite: IrCall): LLVMValueRef {
         val descriptor = callSite.descriptor.original
@@ -487,7 +487,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         return when (val typeKind = LLVMGetTypeKind(first.type)) {
             llvm.LLVMTypeKind.LLVMFloatTypeKind, llvm.LLVMTypeKind.LLVMDoubleTypeKind -> {
                 val numBits = llvm.LLVMSizeOfTypeInBits(codegen.llvmTargetData, first.type).toInt()
-                val integerType = llvm.LLVMIntType(numBits)!!
+                val integerType = LLVMIntTypeInContext(llvmContext, numBits)!!
                 icmpEq(bitcast(integerType, first), bitcast(integerType, second))
             }
             llvm.LLVMTypeKind.LLVMIntegerTypeKind, llvm.LLVMTypeKind.LLVMPointerTypeKind -> icmpEq(first, second)

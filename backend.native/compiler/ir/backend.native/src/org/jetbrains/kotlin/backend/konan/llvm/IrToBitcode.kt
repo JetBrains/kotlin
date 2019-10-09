@@ -65,9 +65,10 @@ val IrField.isMainOnlyNonPrimitive get() = when  {
 internal fun verifyModule(llvmModule: LLVMModuleRef, current: String = "") {
     memScoped {
         val errorRef = allocPointerTo<ByteVar>()
-        // TODO: use LLVMDisposeMessage() on errorRef, once possible in interop.
-        if (LLVMVerifyModule(
-                llvmModule, LLVMVerifierFailureAction.LLVMPrintMessageAction, errorRef.ptr) == 1) {
+        val verificationResult = LLVMVerifyModule(
+                llvmModule, LLVMVerifierFailureAction.LLVMPrintMessageAction, errorRef.ptr)
+        LLVMDisposeMessage(errorRef.value)
+        if (verificationResult == 1) {
             if (current.isNotEmpty())
                 println("Error in $current")
             LLVMDumpModule(llvmModule)
@@ -349,8 +350,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    val kVoidFuncType = LLVMFunctionType(LLVMVoidType(), null, 0, 0)!!
-    val kInitFuncType = LLVMFunctionType(LLVMVoidType(), cValuesOf(LLVMInt32Type()), 1, 0)!!
+    val kVoidFuncType = functionType(voidType)
+    val kInitFuncType = functionType(voidType, false, int32Type)
     val kNodeInitType = LLVMGetTypeByName(context.llvmModule, "struct.InitNode")!!
     //-------------------------------------------------------------------------//
 
@@ -1573,14 +1574,14 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 true  -> return kTrue
                 false -> return kFalse
             }
-            IrConstKind.Char   -> return LLVMConstInt(LLVMInt16Type(), (value.value as Char).toLong(),  0)!!
-            IrConstKind.Byte   -> return LLVMConstInt(LLVMInt8Type(),  (value.value as Byte).toLong(),  1)!!
-            IrConstKind.Short  -> return LLVMConstInt(LLVMInt16Type(), (value.value as Short).toLong(), 1)!!
-            IrConstKind.Int    -> return LLVMConstInt(LLVMInt32Type(), (value.value as Int).toLong(),   1)!!
-            IrConstKind.Long   -> return LLVMConstInt(LLVMInt64Type(), value.value as Long,             1)!!
+            IrConstKind.Char   -> return Char16(value.value as Char).llvm
+            IrConstKind.Byte   -> return Int8(value.value as Byte).llvm
+            IrConstKind.Short  -> return Int16(value.value as Short).llvm
+            IrConstKind.Int    -> return Int32(value.value as Int).llvm
+            IrConstKind.Long   -> return Int64(value.value as Long).llvm
             IrConstKind.String -> return evaluateStringConst(value as IrConst<String>)
-            IrConstKind.Float  -> return LLVMConstRealOfString(LLVMFloatType(), (value.value as Float).toString())!!
-            IrConstKind.Double -> return LLVMConstRealOfString(LLVMDoubleType(), (value.value as Double).toString())!!
+            IrConstKind.Float  -> return LLVMConstRealOfString(floatType, (value.value as Float).toString())!!
+            IrConstKind.Double -> return LLVMConstRealOfString(doubleType, (value.value as Double).toString())!!
         }
         TODO(ir2string(value))
     }
@@ -2150,10 +2151,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
-    private val kImmZero     = LLVMConstInt(LLVMInt32Type(),  0, 1)!!
-    private val kImmOne      = LLVMConstInt(LLVMInt32Type(),  1, 1)!!
-    private val kTrue        = LLVMConstInt(LLVMInt1Type(),   1, 1)!!
-    private val kFalse       = LLVMConstInt(LLVMInt1Type(),   0, 1)!!
+    private val kImmZero = Int32(0).llvm
+    private val kImmOne  = Int32(1).llvm
+    private val kTrue    = Int1(1).llvm
+    private val kFalse   = Int1(0).llvm
 
     // TODO: Intrinsify?
     private fun evaluateOperatorCall(callee: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
@@ -2317,13 +2318,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     //-------------------------------------------------------------------------//
     // Create type { i32, void ()*, i8* }
 
-    val kCtorType = LLVMStructType(
-            cValuesOf(
-                    LLVMInt32Type(),
-                    LLVMPointerType(kVoidFuncType, 0),
-                    kInt8Ptr
-            ),
-            3, 0)!!
+    val kCtorType = structType(int32Type, pointerType(kVoidFuncType), kInt8Ptr)
 
     //-------------------------------------------------------------------------//
     // Create object { i32, void ()*, i8* } { i32 1, void ()* @ctorFunction, i8* null }

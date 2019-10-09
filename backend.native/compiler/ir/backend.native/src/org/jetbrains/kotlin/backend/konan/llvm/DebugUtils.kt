@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.konan.file.File
 internal object DWARF {
     val producer                       = "konanc ${KonanVersion.CURRENT} / kotlin-compiler: ${KotlinVersion.CURRENT}"
     /* TODO: from LLVM sources is unclear what runtimeVersion corresponds to term in terms of dwarf specification. */
-    val dwarfVersionMetaDataNodeName   = "Dwarf Version".mdString()
-    val dwarfDebugInfoMetaDataNodeName = "Debug Info Version".mdString()
+    val dwarfVersionMetaDataNodeName  get() = "Dwarf Version".mdString()
+    val dwarfDebugInfoMetaDataNodeName get() = "Debug Info Version".mdString()
     const val debugInfoVersion = 3 /* TODO: configurable? */
     /**
      * This is  the value taken from [DIFlags.FlagFwdDecl], to mark type declaration as
@@ -80,7 +80,7 @@ internal class DebugInfo internal constructor(override val context: Context):Con
             context.irBuiltIns.doubleType  to context.llvm.llvmDouble)
     val llvmTypeSizes = llvmTypes.map { it.key to LLVMSizeOfTypeInBits(llvmTargetData, it.value) }.toMap()
     val llvmTypeAlignments = llvmTypes.map {it.key to LLVMPreferredAlignmentOfType(llvmTargetData, it.value)}.toMap()
-    val otherLlvmType = LLVMPointerType(LLVMInt64Type(), 0)!!
+    val otherLlvmType = LLVMPointerType(int64Type, 0)!!
     val otherTypeSize = LLVMSizeOfTypeInBits(llvmTargetData, otherLlvmType)
     val otherTypeAlignment = LLVMPreferredAlignmentOfType(llvmTargetData, otherLlvmType)
 
