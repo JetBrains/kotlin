@@ -5,7 +5,11 @@ import com.intellij.application.options.codeStyle.CodeStyleBlankLinesPanel;
 import com.intellij.application.options.codeStyle.CodeStyleSchemesModel;
 import com.intellij.application.options.codeStyle.CodeStyleSpacesPanel;
 import com.intellij.application.options.codeStyle.WrappingAndBracesPanel;
+import com.intellij.ide.DataManager;
 import com.intellij.lang.Language;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
@@ -14,16 +18,20 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.JBMenuItem;
 import com.intellij.openapi.ui.JBPopupMenu;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TabbedPaneWrapper;
 import com.intellij.util.EventDispatcher;
+import com.intellij.util.ObjectUtils;
+import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.GraphicsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -124,7 +132,25 @@ public abstract class TabbedLanguageCodeStylePanel extends CodeStyleAbstractPane
 
   public void showSetFrom(Component component) {
     initCopyFromMenu();
-    myCopyFromMenu.show(component, 0, component.getHeight());
+    DefaultActionGroup group = new DefaultActionGroup();
+    for (Component c : myCopyFromMenu.getComponents()) {
+      if (c instanceof JSeparator) {
+        group.addSeparator();
+      }
+      else if (c instanceof JMenuItem) {
+        group.add(new DumbAwareAction(((JMenuItem)c).getText(), "", ObjectUtils.notNull(((JMenuItem)c).getIcon(), EmptyIcon.ICON_16)) {
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e) {
+            ((JMenuItem)c).doClick();
+          }
+        });
+      }
+    }
+    int maxRows = group.getChildrenCount() > 17 ? 15 : -1;
+    DataContext dataContext = DataManager.getInstance().getDataContext(component);
+    JBPopupFactory.getInstance().createActionGroupPopup(
+      null, group, dataContext, JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false, null, maxRows, null, "popup@TabbedLanguageCodeStylePanel")
+    .showUnderneathOf(component);
   }
 
   private void initCopyFromMenu() {
