@@ -20,7 +20,7 @@ fun box(): String  {
     val implemented: Implemented = Implemented()
     val res: String = implemented.blaBla(4) + implemented.blaBlaBla(2)
     val tmp0_subject: String = res
-    when  {
+    when {
         tmp0_subject == "-42" ->  {
             return "OK"
         }

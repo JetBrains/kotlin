@@ -10,12 +10,14 @@
 ## TODO-лист
 
 - наследование
+- функции высших порядков
+- typealias со стрелкой (для функций высших порядков)
+
 - super и instance вызовы в конструкторе/методе
 - секции инициализации (нужно ли отображать IrInstanceInitializerCall?)
 - кастомные геттер и сеттер
 - аргументы по-умолчанию в методах и конструкторах
-- extension properties
-- вложенные классы
+- inner, nested классы
 - локальные классы
 - companion object, именованный object, top-level object
 - package, import, import as (https://kotlinlang.org/docs/reference/packages.html)
@@ -26,16 +28,16 @@
 
 ## LATER
 
-- typealias со стрелкой (для функций высших порядков)
 - when с множественным условием через запятую
 - return when (varName) - block с WHEN в origin
 - 
 - когда у проперти нет BackingField
 - как обращаться к исключению в теле catch
-- почему box падает при OK в finally
 
 ## DONE
 
+- реализация интерфейсов (в т.ч множественная)
+- extension properties
 - оператор is, !is в ветке when
 - создание экземпляров класса через вызовы конструкторов
 - получение свойства экземпляра, инициализированной в конструкторе

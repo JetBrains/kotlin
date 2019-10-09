@@ -24,7 +24,7 @@ fun box(): String  {
     val myChildClass: MyChildClass = MyChildClass()
     val res: Int = myChildClass.blaBlaBla(3)
     val tmp0_subject: Int = res
-    when  {
+    when {
         tmp0_subject == -12 ->  {
             return "OK"
         }

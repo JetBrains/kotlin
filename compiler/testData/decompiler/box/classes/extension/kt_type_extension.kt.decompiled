@@ -1,0 +1,12 @@
+fun Int.box(other: Int): String  {
+    if (this > other) {
+        return "OK"
+    }
+    else {
+        return "FAIL"
+    }
+}
+
+fun box(): String  {
+    return 99.box(9)
+}

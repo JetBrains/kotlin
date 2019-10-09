@@ -8,12 +8,10 @@ class TestClass {
 }
 fun box(): String  {
     val testClass: TestClass = TestClass()
-    when  {
-        testClass.fn_true() ->  {
-            return "OK"
-        }
-        else ->  {
-            return "FAIL"
-        }
+    if (testClass.fn_true()) {
+        return "OK"
+    }
+    else {
+        return "FAIL"
     }
 }

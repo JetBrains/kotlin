@@ -1,13 +1,9 @@
 fun fib_rec(i: Int): Int  {
-    when  {
-        i == 0 ->  {
-            return 0
-        }
+    if (i == 0) {
+        return 0
     }
-    when  {
-        i == 1 ->  {
-            return 1
-        }
+    if (i == 1) {
+        return 1
     }
     return fib_rec(i - 1) + fib_rec(i - 2)
 }
@@ -15,15 +11,11 @@ fun fib_rec(i: Int): Int  {
 fun fib_loop(i: Int): Int  {
     var a: Int = 0
     var b: Int = 1
-    when  {
-        i == 0 ->  {
-            return a
-        }
+    if (i == 0) {
+        return a
     }
-    when  {
-        i == 1 ->  {
-            return b
-        }
+    if (i == 1) {
+        return b
     }
     val tmp0_iterator: IntIterator = 2.rangeTo(i).iterator()
     while (tmp0_iterator.hasNext())  {
@@ -38,12 +30,10 @@ fun fib_loop(i: Int): Int  {
 fun box(): String  {
     val fib_rec: Int = fib_rec(20)
     val fib_loop: Int = fib_loop(20)
-    when  {
-        fib_rec == fib_loop ->  {
-            return "OK"
-        }
-        else ->  {
-            return "FAIL"
-        }
+    if (fib_loop == fib_rec) {
+        return "OK"
+    }
+    else {
+        return "FAIL"
     }
 }

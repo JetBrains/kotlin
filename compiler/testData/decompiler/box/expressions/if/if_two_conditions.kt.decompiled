@@ -4,10 +4,8 @@ fun box(): String  {
     val z: Int = 3
     if ((x == 42) && (z == 3)) {
         return "OK"
-        kotlin.Unit
     }
     else {
         return "FAIL"
-        kotlin.Unit
     }
 }

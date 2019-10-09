@@ -180,12 +180,22 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                             (if (modality == Modality.FINAL) "" else modality.name.toLowerCase() + " ")
                         } else "override ") +
                         renderVisibility() +
-                        "fun $name" +
+                        "fun " +
+                        renderFunctionName() +
                         renderTypeParameters() +
                         renderValueParameterTypes() +
                         returnType.toKotlinType().takeIf { !it.isUnit() }.let { ": ${returnType.toKotlinType()} " }
             }
         }
+
+    private fun IrFunction.renderFunctionName(): String {
+        var result = ""
+        if (extensionReceiverParameter != null) {
+            result += extensionReceiverParameter?.type?.toKotlinType().toString()
+            result += "."
+        }
+        return result + name()
+    }
 
 
     private fun renderFlagsList(vararg flags: String?) =
@@ -450,14 +460,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                         append(expression.getValueArgument(1)?.accept(this@DecompilerIrElementVisitor, null))
                     } else {
                         append("(${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}).")
-                        append(expression.symbol.owner.name())
-                        append(
-                            ArrayList<String?>().apply {
-                                (0 until expression.valueArgumentsCount).mapTo(this) {
-                                    expression.getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null)
-                                }
-                            }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
-                        )
+                        append(expression.renderNameWithArgs())
                     }
                 }
 
@@ -493,25 +496,31 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                         if (expression.superQualifierSymbol != null) {
                             append("super.")
                         } else {
-                            append("${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}.")
+                            append("${expression.dispatchReceiver!!.accept(this@DecompilerIrElementVisitor, null)}.")
                         }
+                    } else if (expression.extensionReceiver != null) {
+                        append("${expression.extensionReceiver!!.accept(this@DecompilerIrElementVisitor, null)}.")
                     }
 
 //                    if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
 //                        append(expression.symbol.owner.name())
 //                    } else {
-                    append(expression.symbol.owner.name())
-//                }
-                    append(
-                        ArrayList<String?>().apply {
-                            (0 until expression.valueArgumentsCount).mapTo(this) {
-                                expression.getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null)
-                            }
-                        }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
-                    )
+                    append(expression.renderNameWithArgs())
                 }
             }
         }.toString()
+
+    private fun IrCall.renderNameWithArgs() =
+        StringBuilder().apply {
+            append(symbol.owner.name())
+            append(
+                ArrayList<String?>().apply {
+                    (0 until valueArgumentsCount).mapTo(this) {
+                        getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null)
+                    }
+                }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
+            )
+    }.toString()
 
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): String =

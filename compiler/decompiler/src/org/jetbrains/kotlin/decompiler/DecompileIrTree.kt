@@ -178,11 +178,13 @@ class DecompileIrTreeVisitor(
                 IrStatementOrigin.IF -> {
                     printer.print("if (${concatenateConditions(expression.branches[0].condition)})")
                     withBraces {
-                        printer.println(expression.branches[0].result.accept(this, ""))
+                        expression.branches[0].result.accept(this, "")
                     }
-                    printer.print("else")
-                    withBraces {
-                        printer.println(expression.branches[1].result.accept(this, ""))
+                    if (expression.branches.size == 2) {
+                        printer.print("else")
+                        withBraces {
+                            expression.branches[1].result.accept(this, "")
+                        }
                     }
                 }
                 else -> TODO()

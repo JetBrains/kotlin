@@ -4,10 +4,11 @@ fun foo(): Int  {
 
 fun box(): String  {
     val f: Int = foo()
-    val tmp0_subject: Int = f
-    when
- {
-        ((tmp0_subject == 12)) ->  {
+    when {
+        f == 40 ->  {
+            return "FAIL"
+        }
+        f == 41 ->  {
             return "FAIL"
         }
         else ->  {

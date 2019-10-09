@@ -1,0 +1,11 @@
+class MyClass {
+    constructor() {
+    }
+}
+fun MyClass.printOk(): String  {
+    return "OK"
+}
+
+fun box(): String  {
+    return MyClass().printOk()
+}

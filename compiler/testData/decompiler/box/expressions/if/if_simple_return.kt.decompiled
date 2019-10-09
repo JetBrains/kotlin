@@ -4,12 +4,10 @@ fun foo(): Int  {
 
 fun box(): String  {
     val f: Int = foo()
-    if (f == 40) {
-        return "FAIL"
-        kotlin.Unit
+    return     if (f == 40) {
+        "FAIL"
     }
     else {
-        return "OK"
-        kotlin.Unit
+        "OK"
     }
 }

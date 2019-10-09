@@ -15,7 +15,7 @@ fun box(): String  {
     val testClassPrimary: TestClassWithPrimaryAndSecondaryCtors = TestClassWithPrimaryAndSecondaryCtors()
     val testClassSecondaryInt: TestClassWithPrimaryAndSecondaryCtors = TestClassWithPrimaryAndSecondaryCtors(777)
     val testClassSecondaryString: TestClassWithPrimaryAndSecondaryCtors = TestClassWithPrimaryAndSecondaryCtors("13")
-    when  {
+    when {
         (testClassPrimary.intProp == 42).not() ->  {
             return "FAIL"
         }

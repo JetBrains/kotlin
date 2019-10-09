@@ -40,7 +40,7 @@ fun box(): String  {
     val t4: Int = test4(2, 1)
     val t4x: Int = test4x(2, 1)
     val tmp0_subject: Int = t1
-    when  {
+    when {
         tmp0_subject == 3 ->  {
             return "OK"
         }
