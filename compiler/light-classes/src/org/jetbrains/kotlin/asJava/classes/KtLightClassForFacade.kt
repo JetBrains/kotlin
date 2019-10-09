@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.TextRange
@@ -53,21 +52,7 @@ open class KtLightClassForFacade constructor(
     files: Collection<KtFile>
 ) : KtLazyLightClass(manager) {
 
-    @Volatile
-    @VisibleForTesting
-    var isClsDelegateLoaded = false
-
-    override val clsDelegate: PsiClass
-        get() {
-            isClsDelegateLoaded = true
-            return super.clsDelegate
-        }
-
     protected open val lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade> = myLightClassDataCache
-        get() {
-            isClsDelegateLoaded = true
-            return field
-        }
 
     val files: Collection<KtFile> = files.toSet()
 

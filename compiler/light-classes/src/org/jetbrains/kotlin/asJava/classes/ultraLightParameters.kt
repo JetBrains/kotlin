@@ -30,8 +30,7 @@ internal class KtUltraLightSuspendContinuationParameter(
     override val kotlinTypeForNullabilityAnnotation: KotlinType? get() = ktType
     override val psiTypeForNullabilityAnnotation: PsiType? get() = psiType
     override val kotlinOrigin: KtParameter? = null
-    override val clsDelegate: PsiParameter
-        get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
+    override val clsDelegate: PsiParameter get() = invalidAccess()
 
     private val ktType by lazyPub {
         val descriptor = ktFunction.resolve() as? FunctionDescriptor
@@ -79,8 +78,7 @@ internal abstract class KtUltraLightParameter(
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = kotlinOrigin == another
 
-    override val clsDelegate: PsiParameter
-        get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
+    override val clsDelegate: PsiParameter get() = invalidAccess()
 
     private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
 

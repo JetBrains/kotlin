@@ -113,9 +113,8 @@ abstract class KtLightClassForSourceDeclaration(
 
     private fun getJavaFileStub(): PsiJavaFileStub = getLightClassDataHolder().javaFileStub
 
-    public val descriptor = lazyPub {
+    fun getDescriptor() =
         LightClassGenerationSupport.getInstance(project).resolveToDescriptor(classOrObject) as? ClassDescriptor
-    }
 
     protected fun getLightClassDataHolder(): LightClassDataHolder.ForClass {
         val lightClassData = getLightClassDataHolder(classOrObject)
@@ -234,12 +233,9 @@ abstract class KtLightClassForSourceDeclaration(
             // AllOpen can affect on modality of the member. We ought to check if the extension could override the modality
             // Resolver will produce correct descriptor corresponding to modality from AllOpen.
             // The easiest way to get new modality is to resolve the descriptor
-            val modifierToAdd = if (kotlinOrigin.isOrdinaryClass && descriptor.value?.modality == Modality.OPEN) {
-                PsiModifier.OPEN
-            } else {
-                PsiModifier.FINAL
+            if (!kotlinOrigin.isOrdinaryClass || getDescriptor()?.modality != Modality.OPEN) {
+                psiModifiers.add(PsiModifier.FINAL)
             }
-            psiModifiers.add(modifierToAdd)
         }
 
         if (!classOrObject.isTopLevel() && !classOrObject.hasModifier(INNER_KEYWORD)) {
@@ -274,13 +270,13 @@ abstract class KtLightClassForSourceDeclaration(
         LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
 
         val qualifiedName: String? = if (baseClass is KtLightClassForSourceDeclaration) {
-            val baseDescriptor = baseClass.descriptor.value
+            val baseDescriptor = baseClass.getDescriptor()
             if (baseDescriptor != null) DescriptorUtils.getFqName(baseDescriptor).asString() else null
         } else {
             baseClass.qualifiedName
         }
 
-        val thisDescriptor = descriptor.value
+        val thisDescriptor = getDescriptor()
         return qualifiedName != null && thisDescriptor != null && checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep)
     }
 

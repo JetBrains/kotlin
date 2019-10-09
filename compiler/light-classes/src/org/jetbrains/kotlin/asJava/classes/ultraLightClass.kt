@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.google.common.annotations.VisibleForTesting
 import com.intellij.psi.*
 import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.impl.PsiClassImplUtil
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -71,38 +69,22 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         )
     }
 
-    protected val tooComplex: Boolean by lazyPub { support.isTooComplexForUltraLightGeneration(classOrObject) }
-
     private val _deprecated by lazyPub { classOrObject.isDeprecated(support) }
 
-    override fun isFinal(isFinalByPsi: Boolean) = if (tooComplex) super.isFinal(isFinalByPsi) else isFinalByPsi
+    override fun isFinal(isFinalByPsi: Boolean) = isFinalByPsi
 
-    @Volatile
-    @VisibleForTesting
-    var isClsDelegateLoaded = false
+    override fun findLightClassData(): LightClassData = invalidAccess()
 
-    private inline fun <T> forTooComplex(getter: () -> T): T {
-        if (!isClsDelegateLoaded) {
-            isClsDelegateLoaded = true
-            check(tooComplex) {
-                "Cls delegate shouldn't be loaded for not too complex ultra-light classes! Qualified name: $qualifiedName"
-            }
-        }
-        return getter()
-    }
-
-    override fun findLightClassData(): LightClassData = forTooComplex { super.findLightClassData() }
-
-    override fun getDelegate(): PsiClass = forTooComplex { super.getDelegate() }
+    override fun getDelegate(): PsiClass = invalidAccess()
 
     private val _modifierList: PsiModifierList? by lazyPub {
-        if (tooComplex) super.getModifierList() else KtUltraLightClassModifierList(this, support) { computeModifiers() }
+        KtUltraLightClassModifierList(this, support) { computeModifiers() }
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
 
     private fun allSuperTypes() =
-        descriptor.value?.typeConstructor?.supertypes.orEmpty()
+        getDescriptor()?.typeConstructor?.supertypes.orEmpty()
 
     private fun mapSupertype(supertype: KotlinType, kotlinCollectionAsIs: Boolean = false) =
         supertype.asPsiType(
@@ -120,8 +102,6 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
 
         if (isAnnotationType) return KotlinLightReferenceListBuilder(manager, language, role)
-
-        if (tooComplex) return if (forExtendsList) super.createExtendsList() else super.createImplementsList()
 
         val superTypes = allSuperTypes().filter {
             isTypeForInheritanceList(it, forExtendsList)
@@ -180,8 +160,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         return forExtendsList == !JvmCodegenUtil.isJvmInterface(supertype)
     }
 
-    override fun buildTypeParameterList(): PsiTypeParameterList =
-        if (tooComplex) super.buildTypeParameterList() else buildTypeParameterList(classOrObject, this, support)
+    override fun buildTypeParameterList(): PsiTypeParameterList = buildTypeParameterList(classOrObject, this, support)
 
     // the following logic should be in the platform (super), overrides can be removed once that happens
     override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)
@@ -217,10 +196,11 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         }
 
         fun ArrayList<KtLightField>.updateWithCompilerPlugins() = also {
+            val lazyDescriptor = lazy { getDescriptor() }
             applyCompilerPlugins {
                 it.interceptFieldsBuilding(
                     declaration = kotlinOrigin,
-                    descriptor = descriptor,
+                    descriptor = lazyDescriptor,
                     containingDeclaration = this@KtUltraLightClass,
                     fieldsList = result
                 )
@@ -275,7 +255,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private fun isNamedObject() = classOrObject is KtObjectDeclaration && !classOrObject.isCompanion()
 
-    override fun getOwnFields(): List<KtLightField> = if (tooComplex) super.getOwnFields() else _ownFields
+    override fun getOwnFields(): List<KtLightField> = _ownFields
 
     private fun propertyParameters() = classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() }
 
@@ -328,10 +308,11 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         addMethodsFromDataClass(result)
         addDelegatesToInterfaceMethods(result)
 
+        val lazyDescriptor = lazy { getDescriptor() }
         applyCompilerPlugins {
             it.interceptMethodsBuilding(
                 declaration = kotlinOrigin,
-                descriptor = descriptor,
+                descriptor = lazyDescriptor,
                 containingDeclaration = this,
                 methodsList = result
             )
@@ -467,7 +448,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private fun isJvmStatic(declaration: KtAnnotated): Boolean = declaration.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)
 
-    override fun getOwnMethods(): List<KtLightMethod> = if (tooComplex) super.getOwnMethods() else _ownMethods.value
+    override fun getOwnMethods(): List<KtLightMethod> = _ownMethods.value
 
     private fun KtAnnotated.hasAnnotation(name: FqName) = support.findAnnotation(this, name) != null
 
@@ -478,13 +459,15 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     override fun getInitializers(): Array<PsiClassInitializer> = emptyArray()
 
-    override fun getContainingClass(): PsiClass? =
-        if (tooComplex) super.getContainingClass()
-        else ((classOrObject.parent as? KtClassBody)?.parent as? KtClassOrObject)?.let(KtLightClassForSourceDeclaration::create)
+    override fun getContainingClass(): PsiClass? {
+        val containingBody = classOrObject.parent as? KtClassBody
+        val containingClass = containingBody?.parent as? KtClassOrObject
+        return containingClass?.let { create(it) }
+    }
 
-    override fun getParent(): PsiElement? = if (tooComplex) super.getParent() else containingClass ?: containingFile
+    override fun getParent(): PsiElement? = containingClass ?: containingFile
 
-    override fun getScope(): PsiElement? = if (tooComplex) super.getScope() else parent
+    override fun getScope(): PsiElement? = parent
 
     override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
         baseClass?.let { InheritanceImplUtil.isInheritorDeep(this, it, classToByPass) } ?: false

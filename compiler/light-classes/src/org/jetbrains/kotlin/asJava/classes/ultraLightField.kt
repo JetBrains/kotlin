@@ -144,8 +144,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
 
     override val kotlinOrigin = declaration
 
-    override val clsDelegate: PsiField
-        get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
+    override val clsDelegate: PsiField get() = invalidAccess()
 
     override val lightMemberOrigin = LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER)
 

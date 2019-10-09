@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.idea.perf.UltraLightChecker
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -31,9 +30,7 @@ abstract class AbstractUltraLightClassLoadingTest : KotlinLightCodeInsightFixtur
                     LightClassGenerationSupport.getInstance(ktClass.project).createUltraLightClass(ktClass)?.let { it to ktClass }
                 }.joinToString("\n\n") { (ultraLightClass, ktClass) ->
                     with(UltraLightChecker) {
-                        ultraLightClass.renderClass().also {
-                            checkClassLoadingExpectations(ktClass, ultraLightClass)
-                        }
+                        ultraLightClass.renderClass()
                     }
                 }
 
@@ -42,23 +39,8 @@ abstract class AbstractUltraLightClassLoadingTest : KotlinLightCodeInsightFixtur
         }
 
         for (ktClass in UltraLightChecker.allClasses(file)) {
-            val ultraLightClass = UltraLightChecker.checkClassEquivalence(ktClass)
-            if (ultraLightClass != null) {
-                checkClassLoadingExpectations(ktClass, ultraLightClass)
-            }
+            UltraLightChecker.checkClassEquivalence(ktClass)
         }
 
-    }
-
-    private fun checkClassLoadingExpectations(
-        ktClass: KtClassOrObject,
-        ultraLightClass: KtUltraLightClass
-    ) {
-        val clsLoadingExpected = ktClass.docComment?.text?.contains("should load cls") == true
-        assertEquals(
-            "Cls-loaded status differs from expected for ${ultraLightClass.qualifiedName}",
-            clsLoadingExpected,
-            ultraLightClass.isClsDelegateLoaded
-        )
     }
 }

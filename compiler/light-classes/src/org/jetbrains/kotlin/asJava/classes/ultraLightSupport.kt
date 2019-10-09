@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 interface KtUltraLightSupport {
     val moduleName: String
     fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>?
-    fun isTooComplexForUltraLightGeneration(element: KtDeclaration): Boolean
     val deprecationResolver: DeprecationResolver
     val typeMapper: KotlinTypeMapper
     val moduleDescriptor: ModuleDescriptor
