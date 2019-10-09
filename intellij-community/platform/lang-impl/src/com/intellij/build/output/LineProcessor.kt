@@ -23,6 +23,9 @@ abstract class LineProcessor : Appendable, Closeable {
   override fun append(c: Char): LineProcessor {
     if (lineBuilder == null) throw IllegalStateException("The line processor was closed")
     if (c == '\n') {
+      if (lineBuilder!!.last() == '\r') {
+        lineBuilder!!.deleteCharAt(lineBuilder!!.length - 1)
+      }
       flushBuffer()
     }
     else {
