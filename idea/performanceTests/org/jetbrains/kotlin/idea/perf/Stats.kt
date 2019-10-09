@@ -167,6 +167,8 @@ class Stats(
                         printTestFailed(stabilityName, "stability above $stabilityPercentage %")
                     }
                 }
+            } else {
+                printTimings(testName, printOnlyErrors = true, statInfoArray = statInfoArray)
             }
         }
 
@@ -180,15 +182,20 @@ class Stats(
     private fun printTimings(
         prefix: String,
         statInfoArray: Array<StatInfos>,
+        printOnlyErrors: Boolean = false,
         attemptFn: (Int) -> String = { attempt -> "#$attempt" }
     ) {
         for (statInfoIndex in statInfoArray.withIndex()) {
             val attempt = statInfoIndex.index
             val statInfo = statInfoIndex.value ?: continue
             val n = "$name: $prefix ${attemptFn(attempt)}"
-            printTestStarted(n)
+
             val t = statInfo[ERROR_KEY] as? Throwable
-            if (t != null) printTestFinished(n, t) else {
+            if (t != null) {
+                printTestStarted(n)
+                printTestFinished(n, t)
+            } else if (!printOnlyErrors) {
+                printTestStarted(n)
                 for ((k, v) in statInfo) {
                     if (k == TEST_KEY) continue
                     printStatValue("$n $k", v)
@@ -217,6 +224,12 @@ class Stats(
 
         if (phaseData.testName != WARM_UP) {
             printWarmUpTimings(phaseData.testName, warmUpStatInfosArray)
+        } else {
+            printTimings(
+                phaseData.testName,
+                printOnlyErrors = true,
+                statInfoArray = warmUpStatInfosArray
+            ) { attempt -> "warm-up #$attempt" }
         }
 
         warmUpStatInfosArray.filterNotNull().map { it[ERROR_KEY] as? Throwable }.firstOrNull()?.let { throw it }
@@ -237,7 +250,8 @@ class Stats(
                 val phaseProfiler = createPhaseProfiler(phaseData, phaseName, attempt)
 
                 val setUpMillis = measureTimeMillis { phaseData.setUp(testData) }
-                logMessage { "setup took $setUpMillis ms" }
+                val attemptName = "${phaseData.testName} #$attempt"
+                logMessage { "$attemptName setup took $setUpMillis ms" }
 
                 val valueMap = HashMap<String, Any>(2 * PerformanceCounter.numberOfCounters + 1)
                 statInfosArray[attempt] = valueMap
@@ -255,26 +269,26 @@ class Stats(
                     }
 
                 } catch (t: Throwable) {
-                    println("# error at ${phaseData.testName} #$attempt:")
-                    t.printStackTrace()
+                    logMessage(t) { "error at $attemptName" }
                     valueMap[ERROR_KEY] = t
+                    break
                 } finally {
                     try {
                         val tearDownMillis = measureTimeMillis {
                             phaseData.tearDown(testData)
                         }
-                        logMessage { "tearDown took $tearDownMillis ms" }
+                        logMessage { "$attemptName tearDown took $tearDownMillis ms" }
                     } catch (t: Throwable) {
-                        println("# error at ${phaseData.testName} #$attempt:")
-                        t.printStackTrace()
+                        logMessage(t) { "error at tearDown of $attemptName" }
                         valueMap[ERROR_KEY] = t
+                        break
                     } finally {
                         PerformanceCounter.resetAllCounters()
                     }
                 }
             }
         } catch (t: Throwable) {
-            println("error at ${phaseData.testName}:")
+            logMessage(t) { "error at ${phaseData.testName}" }
             tcPrintErrors(phaseData.testName, listOf(t))
         }
         return statInfosArray
@@ -356,7 +370,6 @@ class Stats(
             println("error at $testName:")
             printStatValue(testName, -1)
             tcPrintErrors(testName, listOf(error))
-            //printTestFinished(testName)
         }
 
         private fun printTestFailed(testName: String, details: String) {
@@ -376,7 +389,6 @@ class Stats(
             printTestStarted(name)
             val (time, errors) = block()
             tcPrintErrors(name, errors)
-            //printTestFinished(name, time, includeStatValue = false)
         }
 
         private fun tcEscape(s: String) = s.replace("|", "||")

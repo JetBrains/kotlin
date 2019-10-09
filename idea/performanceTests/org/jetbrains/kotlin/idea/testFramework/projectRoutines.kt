@@ -22,6 +22,8 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.parameterInfo.HintType
+import java.io.PrintWriter
+import java.io.StringWriter
 
 fun commitAllDocuments() {
     val fileDocumentManager = FileDocumentManager.getInstance()
@@ -104,4 +106,12 @@ fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementatio
 
 fun logMessage(message: () -> String) {
     println("-- ${message()}")
+}
+
+fun logMessage(t: Throwable, message: () -> String) {
+    val writer = StringWriter()
+    PrintWriter(writer).use {
+        t.printStackTrace(it)
+    }
+    println("-- ${message()}:\n$writer")
 }
