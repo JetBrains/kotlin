@@ -61,8 +61,8 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
         String[] categories = extension.getCategories();
         if (categories == null) return;
         String familyName = extension.getInstance().getFamilyName();
-        myMetaData.remove(new MetaDataKey(categories, familyName));
-              }
+        unregisterMetaData(categories, familyName);
+      }
     }, true, this);
   }
 
@@ -209,5 +209,9 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
         break;
       }
     }
+  }
+
+  private synchronized void unregisterMetaData(String[] categories, String familyName) {
+    myMetaData.remove(new MetaDataKey(categories, familyName));
   }
 }
