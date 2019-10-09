@@ -15,6 +15,7 @@ val appcodeUnscrambledJarDir: File by rootProject.extra
 dependencies {
     compile(project(":kotlin-ultimate:ide:common-cidr-native"))
     compileOnly(fileTree(appcodeUnscrambledJarDir) { include("**/*.jar") })
+    compileOnly(intellijDep()) { includeJars("trove4j", "external-system-rt", "objenesis-3.0.1") }
 }
 
 the<JavaPluginConvention>().sourceSets["main"].apply {

@@ -19,7 +19,7 @@ import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import com.jetbrains.cidr.xcode.model.PBXTarget
 import org.jetbrains.konan.resolve.KtModificationCount
-import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener.Companion.getInsideCodeBlockModificationScope
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener.Companion.getInsideCodeBlockModificationScope
 import org.jetbrains.kotlin.psi.KtFile
 
 class KonanBridgeFileManager(
