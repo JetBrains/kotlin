@@ -91,9 +91,8 @@ internal class KotlinRootNpmResolver internal constructor(
         }
         val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
 
-        val hasExternalNpmDependencies = allNpmPackages.any { it.externalNpmDependencies.isNotEmpty() }
-        val hasNodeModulesDependent = projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks }
-        if (hasExternalNpmDependencies || hasNodeModulesDependent) {
+        val hasNodeModulesDependentTasks = projectResolvers.values.any { it.taskRequirements.hasNodeModulesDependentTasks }
+        if (hasNodeModulesDependentTasks) {
             nodeJs.packageManager.resolveRootProject(rootProject, allNpmPackages, upToDate)
         }
 
