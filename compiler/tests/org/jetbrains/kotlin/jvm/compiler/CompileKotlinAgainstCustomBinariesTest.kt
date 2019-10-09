@@ -596,6 +596,25 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         classLoader.loadClass("SourceKt").getDeclaredMethod("main").invoke(null)
     }
 
+    fun testSeparateCompilationRegression() {
+        val library = compileLibrary("library")
+        compileKotlin("usage.kt", tmpdir, listOf(library), expectedFileName = null)
+        val newLibrary = compileLibrary("newlibrary")
+        val classLoader = URLClassLoader(arrayOf(newLibrary.toURI().toURL(), tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
+        val box = classLoader.loadClass("UsageKt").getDeclaredMethod("box")
+        TestCase.assertEquals("OK", box.invoke(null))
+    }
+
+    fun testSeparateCompilationRegressionIr() {
+        val useIRBackend = listOf("-Xuse-ir")
+        val library = compileLibrary("library", additionalOptions = useIRBackend)
+        compileKotlin("usage.kt", tmpdir, listOf(library), expectedFileName = null, additionalOptions = useIRBackend)
+        val newLibrary = compileLibrary("newlibrary", additionalOptions = useIRBackend)
+        val classLoader = URLClassLoader(arrayOf(newLibrary.toURI().toURL(), tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeJarClassLoader())
+        val box = classLoader.loadClass("UsageKt").getDeclaredMethod("box")
+        TestCase.assertEquals("OK", box.invoke(null))
+    }
+
     companion object {
         // compiler before 1.1.4 version  did not include suspension marks into bytecode.
         private fun stripSuspensionMarksToImitateLegacyCompiler(bytes: ByteArray): Pair<ByteArray, Int> {
