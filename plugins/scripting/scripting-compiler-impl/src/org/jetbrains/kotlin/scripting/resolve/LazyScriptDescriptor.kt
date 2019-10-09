@@ -49,6 +49,7 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.GetScriptingClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 
 class LazyScriptDescriptor(
@@ -118,8 +119,8 @@ class LazyScriptDescriptor(
     }
 
     private val scriptingHostConfiguration: () -> ScriptingHostConfiguration = resolveSession.storageManager.createLazyValue {
-        scriptCompilationConfiguration()[ScriptCompilationConfiguration.hostConfiguration]
-            ?: throw IllegalArgumentException("Expecting 'hostConfiguration' property in the script compilation configuration for the script ${scriptInfo.script.containingFile}")
+        // TODO: use platform-specific configuration by default instead
+        scriptCompilationConfiguration()[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
     }
 
     private val scriptingClassGetter: () -> GetScriptingClass = resolveSession.storageManager.createLazyValue {
