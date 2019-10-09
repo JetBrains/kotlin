@@ -1,7 +1,8 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.navigationToolbar;
 
 import com.intellij.ide.navigationToolbar.ui.NavBarUI;
+import com.intellij.ide.util.treeView.TreeAnchorizer;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.util.Disposer;
@@ -42,7 +43,7 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
   public NavBarItem(NavBarPanel panel, Object object, int idx, Disposable parent) {
     myPanel = panel;
     myUI = panel.getNavBarUI();
-    myObject = object;
+    myObject = object == null ? null : TreeAnchorizer.getService().createAnchor(object);
     myIndex = idx;
     isPopupElement = idx == -1;
 
@@ -87,7 +88,7 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
   }
 
   public Object getObject() {
-    return myObject;
+    return myObject == null ? null : TreeAnchorizer.getService().retrieveElement(myObject);
   }
 
   public SimpleTextAttributes getAttributes() {
@@ -188,7 +189,7 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
 
   public boolean isSelected() {
     final NavBarModel model = myPanel.getModel();
-    return isPopupElement ? myPanel.isSelectedInPopup(myObject) : model.getSelectedIndex() == myIndex;
+    return isPopupElement ? myPanel.isSelectedInPopup(getObject()) : model.getSelectedIndex() == myIndex;
   }
 
   @Override
@@ -211,7 +212,7 @@ public class NavBarItem extends SimpleColoredComponent implements DataProvider, 
   @Nullable
   @Override
   public Object getData(@NotNull String dataId) {
-    return myPanel.getDataImpl(dataId, this, () -> JBIterable.of(myObject));
+    return myPanel.getDataImpl(dataId, this, () -> JBIterable.of(getObject()));
   }
 
   @Override
