@@ -43,26 +43,29 @@ internal val androidPresetEntry = KotlinPresetEntry(
     typeName("$MPP_PACKAGE.KotlinAndroidTarget")
 )
 
-// Note: modifying this set should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
+// Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
 private val testableNativeTargets = setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
+private val disabledNativeTargets = setOf(KonanTarget.WATCHOS_X64)
 
-internal val nativePresetEntries = HostManager().targets.map { (_, target) ->
-    KotlinPresetEntry(
-        target.presetName,
-        typeName(
-            if (target in testableNativeTargets)
-                KOTLIN_NATIVE_TARGET_WITH_TESTS_PRESET_CLASS_FQNAME
-            else
-                KOTLIN_NATIVE_TARGET_PRESET_CLASS_FQNAME
-        ),
-        typeName(
-            if (target in testableNativeTargets)
-                KOTLIN_NATIVE_TARGET_WITH_TESTS_CLASS_FQNAME
-            else
-                KOTLIN_NATIVE_TARGET_CLASS_FQNAME
+internal val nativePresetEntries = HostManager().targets
+    .filter { (_, target) -> target !in disabledNativeTargets }
+    .map { (_, target) ->
+        KotlinPresetEntry(
+            target.presetName,
+            typeName(
+                if (target in testableNativeTargets)
+                    KOTLIN_NATIVE_TARGET_WITH_TESTS_PRESET_CLASS_FQNAME
+                else
+                    KOTLIN_NATIVE_TARGET_PRESET_CLASS_FQNAME
+            ),
+            typeName(
+                if (target in testableNativeTargets)
+                    KOTLIN_NATIVE_TARGET_WITH_TESTS_CLASS_FQNAME
+                else
+                    KOTLIN_NATIVE_TARGET_CLASS_FQNAME
+            )
         )
-    )
-}
+    }
 
 internal val allPresetEntries = listOf(
     jvmPresetEntry,
