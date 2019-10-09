@@ -9,26 +9,14 @@ public interface IrFileOrBuilder extends
 
   /**
    * <code>repeated int64 declaration_id = 1;</code>
-   *
-   * <pre>
-   *  repeated UniqId declaration_id = 1;
-   * </pre>
    */
   java.util.List<java.lang.Long> getDeclarationIdList();
   /**
    * <code>repeated int64 declaration_id = 1;</code>
-   *
-   * <pre>
-   *  repeated UniqId declaration_id = 1;
-   * </pre>
    */
   int getDeclarationIdCount();
   /**
    * <code>repeated int64 declaration_id = 1;</code>
-   *
-   * <pre>
-   *  repeated UniqId declaration_id = 1;
-   * </pre>
    */
   long getDeclarationId(int index);
 

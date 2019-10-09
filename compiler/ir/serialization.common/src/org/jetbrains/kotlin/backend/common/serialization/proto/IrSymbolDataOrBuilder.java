@@ -27,18 +27,10 @@ public interface IrSymbolDataOrBuilder extends
 
   /**
    * <code>required int64 top_level_uniq_id_index = 5;</code>
-   *
-   * <pre>
-   *  required bool uniq_id_locality = 5;
-   * </pre>
    */
   boolean hasTopLevelUniqIdIndex();
   /**
    * <code>required int64 top_level_uniq_id_index = 5;</code>
-   *
-   * <pre>
-   *  required bool uniq_id_locality = 5;
-   * </pre>
    */
   long getTopLevelUniqIdIndex();
 

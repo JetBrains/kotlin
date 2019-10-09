@@ -37,7 +37,7 @@ public final class IrSymbolData extends
         org.jetbrains.kotlin.protobuf.ByteString.newOutput();
     org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
         org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-            unknownFieldsOutput);
+            unknownFieldsOutput, 1);
     try {
       boolean done = false;
       while (!done) {
@@ -180,20 +180,12 @@ public final class IrSymbolData extends
   private long topLevelUniqIdIndex_;
   /**
    * <code>required int64 top_level_uniq_id_index = 5;</code>
-   *
-   * <pre>
-   *  required bool uniq_id_locality = 5;
-   * </pre>
    */
   public boolean hasTopLevelUniqIdIndex() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
    * <code>required int64 top_level_uniq_id_index = 5;</code>
-   *
-   * <pre>
-   *  required bool uniq_id_locality = 5;
-   * </pre>
    */
   public long getTopLevelUniqIdIndex() {
     return topLevelUniqIdIndex_;
@@ -615,30 +607,18 @@ public final class IrSymbolData extends
     private long topLevelUniqIdIndex_ ;
     /**
      * <code>required int64 top_level_uniq_id_index = 5;</code>
-     *
-     * <pre>
-     *  required bool uniq_id_locality = 5;
-     * </pre>
      */
     public boolean hasTopLevelUniqIdIndex() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
      * <code>required int64 top_level_uniq_id_index = 5;</code>
-     *
-     * <pre>
-     *  required bool uniq_id_locality = 5;
-     * </pre>
      */
     public long getTopLevelUniqIdIndex() {
       return topLevelUniqIdIndex_;
     }
     /**
      * <code>required int64 top_level_uniq_id_index = 5;</code>
-     *
-     * <pre>
-     *  required bool uniq_id_locality = 5;
-     * </pre>
      */
     public Builder setTopLevelUniqIdIndex(long value) {
       bitField0_ |= 0x00000004;
@@ -648,10 +628,6 @@ public final class IrSymbolData extends
     }
     /**
      * <code>required int64 top_level_uniq_id_index = 5;</code>
-     *
-     * <pre>
-     *  required bool uniq_id_locality = 5;
-     * </pre>
      */
     public Builder clearTopLevelUniqIdIndex() {
       bitField0_ = (bitField0_ & ~0x00000004);

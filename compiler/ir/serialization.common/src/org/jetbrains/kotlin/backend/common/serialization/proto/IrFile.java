@@ -37,7 +37,7 @@ public final class IrFile extends
         org.jetbrains.kotlin.protobuf.ByteString.newOutput();
     org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
         org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-            unknownFieldsOutput);
+            unknownFieldsOutput, 1);
     try {
       boolean done = false;
       while (!done) {
@@ -187,10 +187,6 @@ public final class IrFile extends
   private java.util.List<java.lang.Long> declarationId_;
   /**
    * <code>repeated int64 declaration_id = 1;</code>
-   *
-   * <pre>
-   *  repeated UniqId declaration_id = 1;
-   * </pre>
    */
   public java.util.List<java.lang.Long>
       getDeclarationIdList() {
@@ -198,20 +194,12 @@ public final class IrFile extends
   }
   /**
    * <code>repeated int64 declaration_id = 1;</code>
-   *
-   * <pre>
-   *  repeated UniqId declaration_id = 1;
-   * </pre>
    */
   public int getDeclarationIdCount() {
     return declarationId_.size();
   }
   /**
    * <code>repeated int64 declaration_id = 1;</code>
-   *
-   * <pre>
-   *  repeated UniqId declaration_id = 1;
-   * </pre>
    */
   public long getDeclarationId(int index) {
     return declarationId_.get(index);
@@ -655,10 +643,6 @@ public final class IrFile extends
     }
     /**
      * <code>repeated int64 declaration_id = 1;</code>
-     *
-     * <pre>
-     *  repeated UniqId declaration_id = 1;
-     * </pre>
      */
     public java.util.List<java.lang.Long>
         getDeclarationIdList() {
@@ -666,30 +650,18 @@ public final class IrFile extends
     }
     /**
      * <code>repeated int64 declaration_id = 1;</code>
-     *
-     * <pre>
-     *  repeated UniqId declaration_id = 1;
-     * </pre>
      */
     public int getDeclarationIdCount() {
       return declarationId_.size();
     }
     /**
      * <code>repeated int64 declaration_id = 1;</code>
-     *
-     * <pre>
-     *  repeated UniqId declaration_id = 1;
-     * </pre>
      */
     public long getDeclarationId(int index) {
       return declarationId_.get(index);
     }
     /**
      * <code>repeated int64 declaration_id = 1;</code>
-     *
-     * <pre>
-     *  repeated UniqId declaration_id = 1;
-     * </pre>
      */
     public Builder setDeclarationId(
         int index, long value) {
@@ -700,10 +672,6 @@ public final class IrFile extends
     }
     /**
      * <code>repeated int64 declaration_id = 1;</code>
-     *
-     * <pre>
-     *  repeated UniqId declaration_id = 1;
-     * </pre>
      */
     public Builder addDeclarationId(long value) {
       ensureDeclarationIdIsMutable();
@@ -713,10 +681,6 @@ public final class IrFile extends
     }
     /**
      * <code>repeated int64 declaration_id = 1;</code>
-     *
-     * <pre>
-     *  repeated UniqId declaration_id = 1;
-     * </pre>
      */
     public Builder addAllDeclarationId(
         java.lang.Iterable<? extends java.lang.Long> values) {
@@ -728,10 +692,6 @@ public final class IrFile extends
     }
     /**
      * <code>repeated int64 declaration_id = 1;</code>
-     *
-     * <pre>
-     *  repeated UniqId declaration_id = 1;
-     * </pre>
      */
     public Builder clearDeclarationId() {
       declarationId_ = java.util.Collections.emptyList();
