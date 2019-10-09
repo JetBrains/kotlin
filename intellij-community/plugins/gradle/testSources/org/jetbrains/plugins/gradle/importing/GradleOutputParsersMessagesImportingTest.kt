@@ -74,15 +74,16 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                                "  :buildSrc:testClasses\n" +
                                "  :buildSrc:test\n" +
                                "  :buildSrc:check\n" +
-                               "  :buildSrc:build\n";
+                               "  :buildSrc:build\n"
     }
 
     expectedExecutionTree += "  -build.gradle\n" +
                              "   Something's wrong!"
     assertSyncViewTreeEquals(expectedExecutionTree)
 
+    val filePath = FileUtil.toSystemDependentName(myProjectConfig.path)
     assertSyncViewSelectedNode("Something's wrong!",
-                               "Build file '${myProjectConfig.path}' line: 1\n" +
+                               "Build file '$filePath' line: 1\n\n" +
                                "A problem occurred evaluating root project 'project'.\n" +
                                "> Failed to apply plugin [class 'example.SomePlugin']\n" +
                                "   > Something's wrong!\n")
@@ -248,7 +249,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
 
   @Test
   fun `test startup build script errors with column info`() {
-    importProject("apply plugin: 'java'" +
+    importProject("apply plugin: 'java'\n" +
                   "dependencies { \n" +
                   "  testCompile group: 'junit', name: 'junit', version: '4.12\n" +
                   "}")

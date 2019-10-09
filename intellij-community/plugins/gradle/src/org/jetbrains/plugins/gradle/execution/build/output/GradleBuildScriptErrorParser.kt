@@ -44,7 +44,7 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
 
     val description = StringBuilder()
     if (location != null) {
-      description.appendln(location)
+      description.appendln(location).appendln()
     }
     var reason = reader.readLine() ?: return false
     val parentId: Any
