@@ -80,7 +80,7 @@ public abstract class AbstractInspectionCmdlineOptions implements InspectionTool
     if (getDirToInspectProperty() != null) {
       final String dirToInspect = determineDirectoryToInspect(projectPath);
       if (dirToInspect == null) {
-        throw new CmdlineArgsValidationException("Directory '" + dirToInspect + "' not found.");
+        throw new CmdlineArgsValidationException("Directory to inspect for project '" + projectPath + "' not found.");
       }
     }
 
