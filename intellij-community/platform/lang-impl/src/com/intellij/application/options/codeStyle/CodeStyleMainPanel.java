@@ -19,6 +19,7 @@ import com.intellij.psi.codeStyle.CodeStyleSchemes;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.ui.components.labels.SwingActionLink;
 import com.intellij.util.concurrency.EdtExecutorService;
+import com.intellij.util.ui.JBDimension;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -66,7 +67,12 @@ public class CodeStyleMainPanel extends JPanel implements TabbedLanguageCodeStyl
     super(new BorderLayout());
     myModel = model;
     myFactory = factory;
-    mySchemesPanel = new CodeStyleSchemesPanel(model, createLinkComponent());
+    mySchemesPanel = new CodeStyleSchemesPanel(model) {
+      @Override
+      protected JComponent createTopComponent() {
+        return createLinkComponent();
+      }
+    };
     myProperties = PropertiesComponent.getInstance();
 
     model.addListener(new CodeStyleSchemesModelListener(){
@@ -132,18 +138,22 @@ public class CodeStyleMainPanel extends JPanel implements TabbedLanguageCodeStyl
     mySchemesPanel.resetSchemesCombo();
     mySchemesPanel.onSelectedSchemeChanged();
     onCurrentSchemeChanged();
-
   }
 
   @NotNull
   private JComponent createLinkComponent() {
-    JPanel linkPanel = new JPanel();
     JLabel link = new SwingActionLink(mySetFromAction);
     link.setVerticalAlignment(SwingConstants.BOTTOM);
-    linkPanel.setLayout(new BoxLayout(linkPanel, BoxLayout.Y_AXIS));
-    linkPanel.add(Box.createVerticalGlue());
-    linkPanel.add(link);
-    return linkPanel;
+
+    Box linkBox = new Box(BoxLayout.Y_AXIS);
+    linkBox.add(Box.createVerticalGlue());
+    linkBox.add(link);
+
+    Box row = new Box(BoxLayout.X_AXIS);
+    row.add(Box.createRigidArea(new JBDimension(0, 12)));
+    row.add(Box.createHorizontalGlue());
+    row.add(linkBox);
+    return row;
   }
 
   private void addWaitCard() {

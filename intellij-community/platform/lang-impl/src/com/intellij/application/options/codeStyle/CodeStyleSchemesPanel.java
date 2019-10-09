@@ -22,7 +22,6 @@ import com.intellij.application.options.schemes.SchemesModel;
 import com.intellij.application.options.schemes.SimpleSchemesPanel;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.ui.MessageType;
 import com.intellij.psi.codeStyle.CodeStyleScheme;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
@@ -53,8 +52,9 @@ public class CodeStyleSchemesPanel extends SimpleSchemesPanel<CodeStyleScheme> {
     super(vGap);
     myModel = model;
   }
-  CodeStyleSchemesPanel(CodeStyleSchemesModel model, @NotNull JComponent linkComponent) {
-    super(DEFAULT_VGAP, linkComponent);
+
+  CodeStyleSchemesPanel(CodeStyleSchemesModel model) {
+    super(DEFAULT_VGAP);
     myModel = model;
     showOverridingMessage(myModel.getOverridingStatus());
   }
