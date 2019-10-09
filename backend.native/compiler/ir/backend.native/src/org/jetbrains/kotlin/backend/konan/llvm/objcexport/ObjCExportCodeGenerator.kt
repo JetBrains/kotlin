@@ -560,41 +560,52 @@ private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
             constPointer(context.llvm.Kotlin_ObjCExport_CreateNSStringFromKString)
     )
 
-    setObjCExportTypeInfo(
-            symbols.list.owner,
-            constPointer(context.llvm.Kotlin_Interop_CreateNSArrayFromKList)
-    )
-
-    setObjCExportTypeInfo(
-            symbols.mutableList.owner,
-            constPointer(context.llvm.Kotlin_Interop_CreateNSMutableArrayFromKList)
-    )
-
-    setObjCExportTypeInfo(
-            symbols.set.owner,
-            constPointer(context.llvm.Kotlin_Interop_CreateNSSetFromKSet)
-    )
-
-    setObjCExportTypeInfo(
-            symbols.mutableSet.owner,
-            constPointer(context.llvm.Kotlin_Interop_CreateKotlinMutableSetFromKSet)
-    )
-
-    setObjCExportTypeInfo(
-            symbols.map.owner,
-            constPointer(context.llvm.Kotlin_Interop_CreateNSDictionaryFromKMap)
-    )
-
-    setObjCExportTypeInfo(
-            symbols.mutableMap.owner,
-            constPointer(context.llvm.Kotlin_Interop_CreateKotlinMutableDictonaryFromKMap)
-    )
+    emitCollectionConverters()
 
     emitBoxConverters()
 
     emitFunctionConverters()
 
     emitBlockToKotlinFunctionConverters()
+}
+
+private fun ObjCExportCodeGenerator.emitCollectionConverters() {
+
+    fun importConverter(name: String): ConstPointer = constPointer(context.llvm.externalFunction(
+            name,
+            kotlinToObjCFunctionType,
+            CurrentKlibModuleOrigin
+    ))
+
+    setObjCExportTypeInfo(
+            symbols.list.owner,
+            importConverter("Kotlin_Interop_CreateNSArrayFromKList")
+    )
+
+    setObjCExportTypeInfo(
+            symbols.mutableList.owner,
+            importConverter("Kotlin_Interop_CreateNSMutableArrayFromKList")
+    )
+
+    setObjCExportTypeInfo(
+            symbols.set.owner,
+            importConverter("Kotlin_Interop_CreateNSSetFromKSet")
+    )
+
+    setObjCExportTypeInfo(
+            symbols.mutableSet.owner,
+            importConverter("Kotlin_Interop_CreateKotlinMutableSetFromKSet")
+    )
+
+    setObjCExportTypeInfo(
+            symbols.map.owner,
+            importConverter("Kotlin_Interop_CreateNSDictionaryFromKMap")
+    )
+
+    setObjCExportTypeInfo(
+            symbols.mutableMap.owner,
+            importConverter("Kotlin_Interop_CreateKotlinMutableDictonaryFromKMap")
+    )
 }
 
 private inline fun ObjCExportCodeGenerator.generateObjCImpBy(

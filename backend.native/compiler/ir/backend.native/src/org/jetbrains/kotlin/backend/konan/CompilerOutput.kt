@@ -51,11 +51,20 @@ internal fun produceCStubs(context: Context) {
 }
 
 private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<String>) {
-    val runtimeNativeLibraries = context.config.runtimeNativeLibraries
+    val config = context.config
+
+    val runtimeNativeLibraries = config.runtimeNativeLibraries
             .takeIf { context.producedLlvmModuleContainsStdlib }.orEmpty()
-    val launcherNativeLibraries = context.config.launcherNativeLibraries
-            .takeIf { context.config.produce == CompilerOutputKind.PROGRAM }.orEmpty()
-    val nativeLibraries = context.config.nativeLibraries + runtimeNativeLibraries + launcherNativeLibraries
+
+    val launcherNativeLibraries = config.launcherNativeLibraries
+            .takeIf { config.produce == CompilerOutputKind.PROGRAM }.orEmpty()
+
+    val objCNativeLibraries = config.objCNativeLibraries
+            .takeIf { config.produce.isFinalBinary && config.target.family.isAppleFamily }.orEmpty()
+
+    val nativeLibraries = config.nativeLibraries + runtimeNativeLibraries +
+            launcherNativeLibraries + objCNativeLibraries
+
     val bitcodeLibraries = context.llvm.bitcodeToLink.map { it.bitcodePaths }.flatten().filter { it.isBitcode }
     val additionalBitcodeFilesToLink = context.llvm.additionalProducedBitcodeFiles
     val bitcodeFiles = (nativeLibraries + generatedBitcodeFiles + additionalBitcodeFilesToLink + bitcodeLibraries).toSet()

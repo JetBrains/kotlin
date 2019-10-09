@@ -473,12 +473,6 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val Kotlin_ObjCExport_refToObjC by lazyRtFunction
     val Kotlin_ObjCExport_refFromObjC by lazyRtFunction
     val Kotlin_ObjCExport_CreateNSStringFromKString by lazyRtFunction
-    val Kotlin_Interop_CreateNSArrayFromKList by lazyRtFunction
-    val Kotlin_Interop_CreateNSMutableArrayFromKList by lazyRtFunction
-    val Kotlin_Interop_CreateNSSetFromKSet by lazyRtFunction
-    val Kotlin_Interop_CreateKotlinMutableSetFromKSet by lazyRtFunction
-    val Kotlin_Interop_CreateNSDictionaryFromKMap by lazyRtFunction
-    val Kotlin_Interop_CreateKotlinMutableDictonaryFromKMap by lazyRtFunction
     val Kotlin_ObjCExport_convertUnit by lazyRtFunction
     val Kotlin_ObjCExport_GetAssociatedObject by lazyRtFunction
     val Kotlin_ObjCExport_AbstractMethodCalled by lazyRtFunction
