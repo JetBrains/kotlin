@@ -1,4 +1,4 @@
-class TestClassWithPrimaryAndSecondaryCtors{
+class TestClassWithPrimaryAndSecondaryCtors {
     constructor() {
     }
     var intProp: Int = 42
@@ -11,30 +11,30 @@ class TestClassWithPrimaryAndSecondaryCtors{
         this.stringProp = stringProp
     }
 }
-fun box(): String {
+fun box(): String  {
     val testClassPrimary: TestClassWithPrimaryAndSecondaryCtors = TestClassWithPrimaryAndSecondaryCtors()
     val testClassSecondaryInt: TestClassWithPrimaryAndSecondaryCtors = TestClassWithPrimaryAndSecondaryCtors(777)
     val testClassSecondaryString: TestClassWithPrimaryAndSecondaryCtors = TestClassWithPrimaryAndSecondaryCtors("13")
-    when {
-        (testClassPrimary.intProp == 42).not() -> {
+    when  {
+        (testClassPrimary.intProp == 42).not() ->  {
             return "FAIL"
         }
-        (testClassPrimary.stringProp == "42").not() -> {
+        (testClassPrimary.stringProp == "42").not() ->  {
             return "FAIL"
         }
-        (testClassSecondaryInt.intProp == 777).not() -> {
+        (testClassSecondaryInt.intProp == 777).not() ->  {
             return "FAIL"
         }
-        (testClassSecondaryInt.stringProp == "777").not() -> {
+        (testClassSecondaryInt.stringProp == "777").not() ->  {
             return "FAIL"
         }
-        (testClassSecondaryString.intProp == 42).not() -> {
+        (testClassSecondaryString.intProp == 42).not() ->  {
             return "FAIL"
         }
-        (testClassSecondaryString.stringProp == "13").not() -> {
+        (testClassSecondaryString.stringProp == "13").not() ->  {
             return "FAIL"
         }
-        else -> {
+        else ->  {
             return "OK"
         }
     }

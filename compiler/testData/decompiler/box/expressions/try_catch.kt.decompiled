@@ -1,16 +1,16 @@
-fun fail(message: String): Nothing {
+fun fail(message: String): Nothing  {
     throw IllegalArgumentException(message)
 }
 
-fun box(): String {
-    try {
+fun box(): String  {
+    try  {
         fail("Testing fail")
         return "FAIL"
     }
-    catch (e: IllegalArgumentException) {
+    catch (e: IllegalArgumentException)  {
         return "OK"
     }
-    finally {
+    finally  {
         return "OK"
     }
 }

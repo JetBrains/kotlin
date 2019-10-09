@@ -1,0 +1,15 @@
+fun foo(): Int  {
+    return 42
+}
+
+fun box(): String  {
+    val f: Int = foo()
+    if (f == 40) {
+        return "FAIL"
+        kotlin.Unit
+    }
+    else {
+        return "OK"
+        kotlin.Unit
+    }
+}

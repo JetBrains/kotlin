@@ -1,0 +1,14 @@
+fun box(): String  {
+    val x: Int = 42
+    val y: Int = 777
+    val z: Int = 3
+    val t: Int = 11
+    if ((((x == 42) && (y == 777)) && (z == 3)) && (t == 11)) {
+        return "OK"
+        kotlin.Unit
+    }
+    else {
+        return "FAIL"
+        kotlin.Unit
+    }
+}

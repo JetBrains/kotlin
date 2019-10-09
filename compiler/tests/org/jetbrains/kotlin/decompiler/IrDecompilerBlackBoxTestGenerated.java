@@ -34,11 +34,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         runTest("compiler/testData/decompiler/box/dummy.kt");
     }
 
-    @TestMetadata("dummy.decompiled.kt")
-    public void testDummy_decompiled() throws Exception {
-        runTest("compiler/testData/decompiler/box/dummy.decompiled.kt");
-    }
-
     @TestMetadata("compiler/testData/decompiler/box/classes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -51,14 +46,14 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("classes_init_section.kt")
+        public void testClasses_init_section() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/classes_init_section.kt");
+        }
+
         @TestMetadata("classes_instance_ctor.kt")
         public void testClasses_instance_ctor() throws Exception {
             runTest("compiler/testData/decompiler/box/classes/classes_instance_ctor.kt");
-        }
-
-        @TestMetadata("classes_instance_ctor.decompiled.kt")
-        public void testClasses_instance_ctor_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/classes/classes_instance_ctor.decompiled.kt");
         }
 
         @TestMetadata("classes_instance_different_ctors.kt")
@@ -66,9 +61,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/classes/classes_instance_different_ctors.kt");
         }
 
-        @TestMetadata("classes_instance_different_ctors.decompiled.kt")
-        public void testClasses_instance_different_ctors_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/classes/classes_instance_different_ctors.decompiled.kt");
+        @TestMetadata("classes_multiple_implement.kt")
+        public void testClasses_multiple_implement() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/classes_multiple_implement.kt");
         }
 
         @TestMetadata("classes_simple.kt")
@@ -81,21 +76,10 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/classes/classes_simple_implement.kt");
         }
 
-        @TestMetadata("classes_multiple_implement.kt")
-        public void testClasses_multiple_implement() throws Exception {
-            runTest("compiler/testData/decompiler/box/classes/classes_multiple_implement.kt");
-        }
-
         @TestMetadata("classes_super_this_calls.kt")
-        public void testСlasses_super_this_calls() throws Exception {
+        public void testClasses_super_this_calls() throws Exception {
             runTest("compiler/testData/decompiler/box/classes/classes_super_this_calls.kt");
         }
-
-        @TestMetadata("classes_init_section.kt")
-        public void testСlasses_init_section() throws Exception {
-            runTest("compiler/testData/decompiler/box/classes/classes_init_section.kt");
-        }
-
     }
 
     @TestMetadata("compiler/testData/decompiler/box/expressions")
@@ -115,19 +99,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/expressions/return_try_catch.kt");
         }
 
-        @TestMetadata("return_try_catch.decompiled.kt")
-        public void testReturn_try_catch_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/expressions/return_try_catch.decompiled.kt");
-        }
-
         @TestMetadata("try_catch.kt")
         public void testTry_catch() throws Exception {
             runTest("compiler/testData/decompiler/box/expressions/try_catch.kt");
-        }
-
-        @TestMetadata("try_catch.decompiled.kt")
-        public void testTry_catch_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/expressions/try_catch.decompiled.kt");
         }
     }
 
@@ -148,19 +122,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/functions/fibonacci.kt");
         }
 
-        @TestMetadata("fibonacci.decompiled.kt")
-        public void testFibonacci_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/functions/fibonacci.decompiled.kt");
-        }
-
         @TestMetadata("fun_invokation.kt")
         public void testFun_invokation() throws Exception {
             runTest("compiler/testData/decompiler/box/functions/fun_invokation.kt");
-        }
-
-        @TestMetadata("fun_invokation.decompiled.kt")
-        public void testFun_invokation_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/functions/fun_invokation.decompiled.kt");
         }
 
         @TestMetadata("fun_recursion.kt")
@@ -168,19 +132,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/functions/fun_recursion.kt");
         }
 
-        @TestMetadata("fun_recursion.decompiled.kt")
-        public void testFun_recursion_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/functions/fun_recursion.decompiled.kt");
-        }
-
         @TestMetadata("simpleOperators.kt")
         public void testSimpleOperators() throws Exception {
             runTest("compiler/testData/decompiler/box/functions/simpleOperators.kt");
-        }
-
-        @TestMetadata("simpleOperators.decompiled.kt")
-        public void testSimpleOperators_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/functions/simpleOperators.decompiled.kt");
         }
     }
 
@@ -196,6 +150,36 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/loops_conditions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("if_else_if.kt")
+        public void testIf_else_if() throws Exception {
+            runTest("compiler/testData/decompiler/box/loops_conditions/if_else_if.kt");
+        }
+
+        @TestMetadata("if_four_conditions.kt")
+        public void testIf_four_conditions() throws Exception {
+            runTest("compiler/testData/decompiler/box/loops_conditions/if_four_conditions.kt");
+        }
+
+        @TestMetadata("if_simple.kt")
+        public void testIf_simple() throws Exception {
+            runTest("compiler/testData/decompiler/box/loops_conditions/if_simple.kt");
+        }
+
+        @TestMetadata("if_simple_return.kt")
+        public void testIf_simple_return() throws Exception {
+            runTest("compiler/testData/decompiler/box/loops_conditions/if_simple_return.kt");
+        }
+
+        @TestMetadata("if_three_conditions.kt")
+        public void testIf_three_conditions() throws Exception {
+            runTest("compiler/testData/decompiler/box/loops_conditions/if_three_conditions.kt");
+        }
+
+        @TestMetadata("if_two_conditions.kt")
+        public void testIf_two_conditions() throws Exception {
+            runTest("compiler/testData/decompiler/box/loops_conditions/if_two_conditions.kt");
+        }
+
         @TestMetadata("loops.kt")
         public void testLoops() throws Exception {
             runTest("compiler/testData/decompiler/box/loops_conditions/loops.kt");
@@ -206,9 +190,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/loops_conditions/when_is.kt");
         }
 
-        @TestMetadata("when_is.decompiled.decompiled.kt")
-        public void testWhen_is_decompiled_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/loops_conditions/when_is.decompiled.decompiled.kt");
+        @TestMetadata("when_multiple_choice.kt")
+        public void testWhen_multiple_choice() throws Exception {
+            runTest("compiler/testData/decompiler/box/loops_conditions/when_multiple_choice.kt");
         }
     }
 

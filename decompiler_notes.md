@@ -3,9 +3,9 @@
 ## ВОПРОСЫ
 
 - почему при использовании try/catch как выражения после return у finallyExpression тип - IrTypeOperatorCall?
-- типы выводятся оригинальные, а не typealias. Получается, что в декомпиляторе от typealias толку нет
+- типы выводятся оригинальные, а не typealias. Получается, что в декомпиляторе от typealias толку нет - abbrevation
 - when с множественным условием через запятую - м.б. изменить на последовательные EQEQ бранчи?
-- override fun - становится open? как определить, что бы override, достаточно ли для этого overridenSymbols проверить
+- override fun - становится open? как определить, что бы override, достаточно ли для этого overridenSymbols проверить (если visibility и modality не отличаются от родительских, то не пишем)
 
 ## TODO-лист
 
@@ -18,6 +18,11 @@
 - вложенные классы
 - локальные классы
 - companion object, именованный object, top-level object
+- package, import, import as (https://kotlinlang.org/docs/reference/packages.html)
+- делегирование (https://kotlinlang.org/docs/reference/delegation.html, https://kotlinlang.org/docs/reference/delegated-properties.html)
+- Safe и Unsafe cast operator, Smart casts
+- Работа со scope functions - https://kotlinlang.org/docs/reference/scope-functions.html
+- Дженерики (https://kotlinlang.org/docs/reference/generics.html)
 
 ## LATER
 
@@ -37,3 +42,12 @@
 - try/catch
 - typealias
 - интерполяция строк для getValue и костант (надо придумать как унифицировать, а не через when)
+
+
+В интерфейсах можно не обрабатывать modality
+return try - ветка finally без явного return не возвращается 
+IrDelegatingConstructorCall 
+  - у primary - только отличный от Any родитель (запись : ParentClass())
+  - secondary конструктор по цепочке должен доделегироваться до primary
+  - secondary - если нет primary, то 
+для return when(...) использовать return run{...}

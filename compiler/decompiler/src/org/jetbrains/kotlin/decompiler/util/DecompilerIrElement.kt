@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.typeUtil.isTypeAliasParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
@@ -276,7 +274,9 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             )
             append(declaration.name.asString())
             val filteredSuperTypes = declaration.superTypes.filter { !it.isAny() }
-            append(if (filteredSuperTypes.isEmpty()) "" else filteredSuperTypes.map { it.toKotlinType() }.joinToString(", ", " : "))
+            if (!declaration.isAnnotationClass) {
+                append(if (filteredSuperTypes.isEmpty()) "" else filteredSuperTypes.map { it.toKotlinType() }.joinToString(", ", " : "))
+            }
         }
 
     private fun IrClass.renderClassFlags() =
@@ -582,7 +582,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             append(")")
         }
 
-    override fun visitWhen(expression: IrWhen, data: Nothing?): String = "when "
+    override fun visitWhen(expression: IrWhen, data: Nothing?): String = TODO()
 
     override fun visitBranch(branch: IrBranch, data: Nothing?): String = TODO()
 

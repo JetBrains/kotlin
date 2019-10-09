@@ -1,18 +1,18 @@
-class TestClass{
+class TestClass {
     constructor() {
     }
-    fun fn_true(): Boolean {
+    fun fn_true(): Boolean  {
         return true
     }
 
 }
-fun box(): String {
+fun box(): String  {
     val testClass: TestClass = TestClass()
-    when {
-        testClass.fn_true() -> {
+    when  {
+        testClass.fn_true() ->  {
             return "OK"
         }
-        else -> {
+        else ->  {
             return "FAIL"
         }
     }

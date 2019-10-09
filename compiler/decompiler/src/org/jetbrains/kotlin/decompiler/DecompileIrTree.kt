@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -28,6 +30,10 @@ fun IrFile.decompileTreesFromLineNumber(lineNumber: Int): String {
     accept(DecompileTreeFromSourceLineVisitor(fileEntry, lineNumber, sb), null)
     return sb.toString()
 }
+
+const val disjunctionToken = "||"
+const val conjunctionToken = "&&"
+
 
 class DecompileIrTreeVisitor(
     out: Appendable
@@ -167,16 +173,84 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitWhen(expression: IrWhen, data: String) {
-        printer.print(expression.decompile())
-        withBraces {
-            expression.branches.decompileElements()
+        if (expression is IrIfThenElseImpl) {
+            when (expression.origin) {
+                IrStatementOrigin.IF -> {
+                    printer.print("if (${concatenateConditions(expression.branches[0].condition)})")
+                    withBraces {
+                        printer.println(expression.branches[0].result.accept(this, ""))
+                    }
+                    printer.print("else")
+                    withBraces {
+                        printer.println(expression.branches[1].result.accept(this, ""))
+                    }
+                }
+                else -> TODO()
+            }
+        } else {
+            printer.print("when")
+            withBraces {
+                expression.branches.decompileElements()
+            }
         }
     }
 
+    private fun concatenateConditions(condition: IrExpression): String {
+        var result = ""
+        when (condition) {
+            is IrIfThenElseImpl -> {
+                val firstBranch = condition.branches[0]
+                result += "(${concatenateConditions(firstBranch.condition)})"
+                if (firstBranch.result !is IrConst<*>) {
+                    when (condition.origin) {
+                        IrStatementOrigin.ANDAND -> {
+                            result += " $conjunctionToken "
+                            result += "(${concatenateConditions(firstBranch.result)})"
+                        }
+                        IrStatementOrigin.OROR -> {
+                            result += " $disjunctionToken "
+                            result += "(${concatenateConditions(firstBranch.result)})"
+                        }
+                        else -> {
+                            TODO()
+                        }
+                    }
+                }
+            }
+            is IrCallImpl -> {
+                return condition.decompile()
+            }
+        }
+        return result
+    }
+
     override fun visitBranch(branch: IrBranch, data: String) {
-        printer.print("${branch.condition.decompile()} -> ")
+        if (branch.condition is IrIfThenElseImpl) {
+            printer.print(collectCommaArguments(branch.condition))
+        } else {
+            printer.print(branch.condition.decompile())
+        }
+        printer.printWithNoIndent(" -> ")
         withBraces {
-            branch.result.accept(this, "")
+            branch.result.accept(this@DecompileIrTreeVisitor, "")
+        }
+    }
+
+    private fun collectCommaArguments(condition: IrExpression): String {
+        var result = ""
+        when (condition) {
+            is IrIfThenElseImpl -> {
+                val firstBranch = condition.branches[0]
+                result += "(${collectCommaArguments(firstBranch.condition)})"
+                if (firstBranch.result !is IrConst<*>) {
+                    result += " $disjunctionToken (${collectCommaArguments(firstBranch.result)})"
+                }
+                return result;
+            }
+            is IrCallImpl -> {
+                return condition.decompile()
+            }
+            else -> TODO()
         }
     }
 

@@ -1,20 +1,20 @@
-class TestClass{
+class TestClass {
     constructor() {
     }
-    fun foo(): Unit {
+    fun foo(): Unit  {
     }
 
-    fun bar(): Unit {
+    fun bar(): Unit  {
     }
 
 }
-interface TestInterface{
+interface TestInterface {
     abstract fun foo(): Unit
 }
-object TestObject{
+object TestObject {
 }
-annotation class TestAnnotationClass{
+annotation class TestAnnotationClass {
 }
-fun box(): String {
+fun box(): String  {
     return "OK"
 }
