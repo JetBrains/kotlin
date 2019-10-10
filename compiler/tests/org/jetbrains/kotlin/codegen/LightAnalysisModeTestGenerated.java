@@ -12813,6 +12813,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/kt28920_javaPrimitiveType.kt");
         }
 
+        @TestMetadata("kt34268.kt")
+        public void testKt34268() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt34268.kt");
+        }
+
         @TestMetadata("mangledDefaultParameterFunction.kt")
         public void testMangledDefaultParameterFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt");
