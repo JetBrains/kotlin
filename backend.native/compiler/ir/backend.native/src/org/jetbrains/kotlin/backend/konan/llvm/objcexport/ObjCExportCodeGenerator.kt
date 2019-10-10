@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.constructedClass
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isReal
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.Name
@@ -230,10 +227,10 @@ internal class ObjCExportCodeGenerator(
 
     internal fun emitRtti() {
         NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
-            dataGenerator.exportClass("Kotlin${it.shortClassName}")
+            dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
         }
-        dataGenerator.exportClass("KotlinMutableSet")
-        dataGenerator.exportClass("KotlinMutableDictionary")
+        dataGenerator.exportClass(namer.mutableSetName.binaryName)
+        dataGenerator.exportClass(namer.mutableMapName.binaryName)
 
         emitSpecialClassesConvertions()
 
@@ -520,7 +517,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
 
         val value = kotlinToObjC(kotlinValue, objCValueType)
 
-        val nsNumberSubclass = genGetLinkedClass("Kotlin${boxClass.name}")
+        val nsNumberSubclass = genGetLinkedClass(namer.numberBoxName(boxClass.classId!!).binaryName)
         ret(genSendMessage(int8TypePtr, nsNumberSubclass, nsNumberFactorySelector, value))
     }
 
