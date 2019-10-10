@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
 import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import java.util.*
 
 class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
@@ -193,16 +194,19 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
     }
 
     private class AddExecutionLocalFix(
-        val file: XmlFile,
+        file: XmlFile,
         val module: Module,
         val kotlinPlugin: MavenDomPlugin,
         val goal: String
     ) : LocalQuickFix {
+        private val pointer = file.createSmartPointer()
+
         override fun getName() = "Create $goal execution"
 
         override fun getFamilyName() = "Create kotlin execution"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val file = pointer.element ?: return
             PomFile.forFileOrNull(file)
                 ?.addKotlinExecution(module, kotlinPlugin, goal, PomFile.getPhase(module.hasJavaFiles(), false), false, listOf(goal))
         }
@@ -218,36 +222,44 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
         }
     }
 
-    private class AddJavaExecutionsLocalFix(val module: Module, val file: XmlFile, val kotlinPlugin: MavenDomPlugin) : LocalQuickFix {
+    private class AddJavaExecutionsLocalFix(val module: Module, file: XmlFile, val kotlinPlugin: MavenDomPlugin) : LocalQuickFix {
+        private val pointer = file.createSmartPointer()
+
         override fun getName() = "Configure maven-compiler-plugin executions in the right order"
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val file = pointer.element ?: return
             PomFile.forFileOrNull(file)?.addJavacExecutions(module, kotlinPlugin)
         }
     }
 
-    private class FixAddStdlibLocalFix(val pomFile: XmlFile, val id: String, val version: String?) : LocalQuickFix {
+    private class FixAddStdlibLocalFix(pomFile: XmlFile, val id: String, val version: String?) : LocalQuickFix {
+        private val pointer = pomFile.createSmartPointer()
+
         override fun getName() = "Add $id dependency"
         override fun getFamilyName() = "Add dependency"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            PomFile.forFileOrNull(pomFile)
-                ?.addDependency(MavenId(KotlinMavenConfigurator.GROUP_ID, id, version), MavenArtifactScope.COMPILE)
+            val file = pointer.element ?: return
+            PomFile.forFileOrNull(file)?.addDependency(MavenId(KotlinMavenConfigurator.GROUP_ID, id, version), MavenArtifactScope.COMPILE)
         }
     }
 
     private class ConfigurePluginExecutionLocalFix(
         val module: Module,
-        val xmlFile: XmlFile,
+        xmlFile: XmlFile,
         val goal: String,
         val version: String?
     ) : LocalQuickFix {
+        private val pointer = xmlFile.createSmartPointer()
+
         override fun getName() = "Create $goal execution of kotlin-maven-compiler"
         override fun getFamilyName() = "Create kotlin execution"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            PomFile.forFileOrNull(xmlFile)?.let { pom ->
+            val file = pointer.element ?: return
+            PomFile.forFileOrNull(file)?.let { pom ->
                 val plugin = pom.addKotlinPlugin(version)
                 pom.addKotlinExecution(module, plugin, "compile", PomFile.getPhase(module.hasJavaFiles(), false), false, listOf(goal))
             }
