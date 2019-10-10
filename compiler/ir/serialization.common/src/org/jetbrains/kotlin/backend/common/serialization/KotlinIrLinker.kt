@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.types.Variance
@@ -408,24 +407,26 @@ abstract class KotlinIrLinker(
             fileDeserializer.file = file
             fileToDeserializerMap[file] = fileDeserializer
 
-            fileProto.declarationIdList.forEach {
-                val uniqId = UniqId(it)
-                moduleReversedFileIndex.getOrPut(uniqId) { fileDeserializer }
+            val fileUniqIdIndex = fileProto.declarationIdList.map { UniqId(it) }
+
+            fileUniqIdIndex.forEach {
+                moduleReversedFileIndex.getOrPut(it) { fileDeserializer }
             }
 
-            val forceLoadedIds = deserializationStrategy.run {
-                when {
-                    theWholeWorld -> fileProto.declarationIdList.map { UniqId(it) }
-                    explicitlyExported -> fileProto.explicitlyExportedToCompilerList.map {
-                        fileDeserializer.loadSymbolData(it).run {
-                            UniqId(topLevelUniqIdIndex)
-                        }
-                    }
-                    else -> emptyList()
+            for (d in fileProto.explicitlyExportedToCompilerList) {
+                fileDeserializer.run {
+                    fileLocalDeserializationState.addUniqID(UniqId(loadSymbolData(d).topLevelUniqIdIndex))
                 }
             }
 
-            forceLoadedIds.forEach { moduleDeserializationState.addUniqID(it.also { i -> assert(i.isPublic) }) }
+            if (deserializationStrategy.theWholeWorld) {
+                for (id in fileUniqIdIndex) {
+                    assert(id.isPublic)
+                    moduleDeserializationState.addUniqID(id)
+                }
+            } else if (deserializationStrategy.explicitlyExported) {
+                modulesWithReachableTopLevels.add(this)
+            }
 
             return file
         }
