@@ -55,7 +55,7 @@ export function runWithTeamCityConsoleAdapter(
                         return () => globalConsole[method] = realMethod
                     });
                 try {
-                    fn();
+                    return fn();
                 } catch (e) {
                     throw e;
                 } finally {
