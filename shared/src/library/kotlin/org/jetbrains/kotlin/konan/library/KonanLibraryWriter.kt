@@ -3,9 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
-package org.jetbrains.kotlin.backend.konan.library
+package org.jetbrains.kotlin.konan.library
 
-import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.library.BaseWriter
 import org.jetbrains.kotlin.library.IrWriter
 import org.jetbrains.kotlin.library.MetadataWriter
@@ -15,7 +14,6 @@ interface TargetedWriter {
 }
 
 interface BitcodeWriter : TargetedWriter {
-    fun addKotlinBitcode(llvmModule: LLVMModuleRef)
     fun addNativeBitcode(library: String)
 }
 

@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
 import org.jetbrains.kotlin.konan.CURRENT
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 
 /**
  * Supposed to be true for a single LLVM module within final binary.
@@ -139,19 +139,18 @@ internal fun produceOutput(context: Context) {
             val manifestProperties = context.config.manifestProperties
 
             val library = buildLibrary(
-                context.config.nativeLibraries,
-                context.config.includeBinaries,
-                neededLibraries,
-                context.serializedMetadata!!,
-                context.serializedIr!!,
-                versions,
-                target,
-                output,
-                libraryName,
-                null,
-                nopack,
-                manifestProperties,
-                context.dataFlowGraph)
+                    context.config.nativeLibraries,
+                    context.config.includeBinaries,
+                    neededLibraries,
+                    context.serializedMetadata!!,
+                    context.serializedIr!!,
+                    versions,
+                    target,
+                    output,
+                    libraryName,
+                    nopack,
+                    manifestProperties,
+                    context.dataFlowGraph)
 
             context.bitcodeFileName = library.mainBitcodeFileName
         }
