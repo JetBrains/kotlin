@@ -2,12 +2,13 @@
 package com.intellij.ide.actions.runAnything.activity
 
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.execution.ParametersListUtil
 import org.jetbrains.annotations.ApiStatus
 
 @ApiStatus.Internal
 abstract class RunAnythingCommandLineProvider : RunAnythingProviderWithVisibleExecutionFail<String>() {
+
+  open fun getHelpCommandAliases(): List<String> = emptyList()
 
   abstract override fun getHelpCommand(): String
 
@@ -17,26 +18,36 @@ abstract class RunAnythingCommandLineProvider : RunAnythingProviderWithVisibleEx
 
   override fun getCommand(value: String) = value
 
+  private fun getHelpCommands() = listOf(helpCommand) + getHelpCommandAliases()
+
   override fun findMatchingValue(dataContext: DataContext, pattern: String) =
-    if (pattern.startsWith(helpCommand)) getCommand(pattern) else null
+    if (getHelpCommands().any { pattern.startsWith(it) }) getCommand(pattern) else null
+
+  private fun extractLeadingHelpPrefix(commandLine: String): Pair<String, String>? {
+    for (helpCommand in getHelpCommands()) {
+      val prefix = "$helpCommand "
+      when {
+        commandLine.startsWith(prefix) -> return helpCommand to commandLine.removePrefix(prefix)
+        prefix.startsWith(commandLine) -> return helpCommand to ""
+      }
+    }
+    return null
+  }
 
   private fun parseCommandLine(commandLine: String): CommandLine? {
-    val command = when {
-      commandLine.startsWith(helpCommand) -> StringUtil.trimStart(commandLine, helpCommand)
-      helpCommand.startsWith(commandLine) -> ""
-      else -> return null
-    }
+    val (helpCommand, command) = extractLeadingHelpPrefix(commandLine) ?: return null
     val parameters = ParametersListUtil.parse(command, true, true, true)
     val toComplete = parameters.lastOrNull() ?: ""
     val prefix = command.removeSuffix(toComplete).trim()
     val nonEmptyParameters = parameters.filter { it.isNotEmpty() }
     val completedParameters = parameters.dropLast(1).filter { it.isNotEmpty() }
-    return CommandLine(nonEmptyParameters, completedParameters, command.trim(), prefix, toComplete)
+    return CommandLine(nonEmptyParameters, completedParameters, helpCommand, command.trim(), prefix, toComplete)
   }
 
   override fun getValues(dataContext: DataContext, pattern: String): List<String> {
     val commandLine = parseCommandLine(pattern) ?: return emptyList()
     val variants = suggestCompletionVariants(dataContext, commandLine)
+    val helpCommand = commandLine.helpCommand
     val prefix = commandLine.prefix.let { if (it.isEmpty()) helpCommand else "$helpCommand $it" }
     return variants.map { "$prefix $it" }.toList()
   }
@@ -46,9 +57,10 @@ abstract class RunAnythingCommandLineProvider : RunAnythingProviderWithVisibleEx
     return runAnything(dataContext, commandLine)
   }
 
-  data class CommandLine(
+  class CommandLine(
     val parameters: List<String>,
     val completedParameters: List<String>,
+    val helpCommand: String,
     val command: String,
     val prefix: String,
     val toComplete: String
