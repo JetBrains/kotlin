@@ -27,6 +27,7 @@ import com.intellij.openapi.editor.event.*;
 import com.intellij.openapi.editor.ex.*;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.editor.impl.EditorMouseHoverPopupControl;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
@@ -463,6 +464,8 @@ public final class EditorMouseHoverPopupManager implements Disposable {
           }
         }
         catch (IndexNotReadyException ignored) {
+        }
+        catch (ProcessCanceledException ignored) {
         }
         catch (Exception e) {
           LOG.warn(e);
