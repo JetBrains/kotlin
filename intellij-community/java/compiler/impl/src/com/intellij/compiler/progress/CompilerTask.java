@@ -368,8 +368,7 @@ public class CompilerTask extends Task.Backgroundable {
           !myMessagesAutoActivated &&
           (
             CompilerMessageCategory.ERROR.equals(category) ||
-            (CompilerMessageCategory.WARNING.equals(category) && !ErrorTreeViewConfiguration.getInstance(myProject).isHideWarnings()) ||
-            (CompilerMessageCategory.INFORMATION.equals(category) && !ErrorTreeViewConfiguration.getInstance(myProject).isHideInfoMessages())
+            (CompilerMessageCategory.WARNING.equals(category) && !ErrorTreeViewConfiguration.getInstance(myProject).isHideWarnings())
           );
         if (shouldAutoActivate) {
           myMessagesAutoActivated = true;
