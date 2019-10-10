@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils.getTypeParameterDescriptorOrNull
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.isNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
@@ -29,29 +32,49 @@ internal inline val KotlinType.fqName: FqName
     get() = declarationDescriptor.fqNameSafe
 
 internal val KotlinType.fqNameWithTypeParameters: String
-    get() = buildString { buildFqNameWithTypeParameters(this@fqNameWithTypeParameters) }
+    get() = buildString { buildFqNameWithTypeParameters(this@fqNameWithTypeParameters, HashSet()) }
 
-private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType) {
+private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, exploredTypeParameters: MutableSet<KotlinType>) {
     append(type.fqName)
 
-    val arguments = type.arguments
-    if (arguments.isNotEmpty()) {
-        append("<")
-        arguments.forEachIndexed { index, argument ->
-            if (index > 0)
-                append(",")
+    val typeParameterDescriptor = getTypeParameterDescriptorOrNull(type)
+    if (typeParameterDescriptor != null) {
+        // N.B this is type parameter type
 
-            if (argument.isStarProjection)
-                append("*")
-            else {
-                val variance = argument.projectionKind
-                if (variance != Variance.INVARIANT)
-                    append(variance).append(" ")
-                buildFqNameWithTypeParameters(argument.type)
+        if (exploredTypeParameters.add(type.makeNotNullable())) { // print upper bounds once the first time when type parameter type is met
+            append(":[")
+            typeParameterDescriptor.upperBounds.forEachIndexed { index, upperBound ->
+                if (index > 0)
+                    append(",")
+                buildFqNameWithTypeParameters(upperBound, exploredTypeParameters)
             }
+            append("]")
         }
-        append(">")
+    } else {
+        // N.B. this is classifier type
+
+        val arguments = type.arguments
+        if (arguments.isNotEmpty()) {
+            append("<")
+            arguments.forEachIndexed { index, argument ->
+                if (index > 0)
+                    append(",")
+
+                if (argument.isStarProjection)
+                    append("*")
+                else {
+                    val variance = argument.projectionKind
+                    if (variance != Variance.INVARIANT)
+                        append(variance).append(" ")
+                    buildFqNameWithTypeParameters(argument.type, exploredTypeParameters)
+                }
+            }
+            append(">")
+        }
     }
+
+    if (type.isMarkedNullable)
+        append("?")
 }
 
 internal fun Any?.isNull(): Boolean = this == null
