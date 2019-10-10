@@ -115,15 +115,12 @@ public class SharedIndicesData {
     }
   }
 
-  public static void init() {
-  }
-
   private static final int CONTENTLESS = 1;
   private static final int CONTENTFUL = 2;
 
   static <Key, Value, Input> void registerIndex(@NotNull ID<Key, Value> indexId, @NotNull IndexExtension<Key, Value, Input> extension) {
     if (extension instanceof FileBasedIndexExtension) {
-      boolean dependsOnFileContent = ((FileBasedIndexExtension)extension).dependsOnFileContent();
+      boolean dependsOnFileContent = ((FileBasedIndexExtension<?, ?>)extension).dependsOnFileContent();
       ourRegisteredIndices.put(indexId.getUniqueId(), dependsOnFileContent ? CONTENTFUL : CONTENTLESS);
     }
   }

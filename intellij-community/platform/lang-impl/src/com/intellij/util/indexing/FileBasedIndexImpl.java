@@ -725,7 +725,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     ensureUpToDate(indexId, project, filter, null);
   }
 
-  protected <K> void ensureUpToDate(@NotNull final ID<K, ?> indexId,
+  <K> void ensureUpToDate(@NotNull final ID<K, ?> indexId,
                                     @Nullable Project project,
                                     @Nullable GlobalSearchScope filter,
                                     @Nullable VirtualFile restrictedFile) {
@@ -1912,7 +1912,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     }
   }
 
-  private FileTypeManagerImpl getFileTypeManager() {
+  private static FileTypeManagerImpl getFileTypeManager() {
     return (FileTypeManagerImpl)FileTypeManager.getInstance();
   }
 

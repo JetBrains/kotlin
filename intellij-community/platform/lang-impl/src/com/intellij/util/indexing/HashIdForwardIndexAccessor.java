@@ -37,7 +37,7 @@ class HashIdForwardIndexAccessor<Key, Value, Input>
 
   @Override
   public int serializeIndexedDataToInt(@NotNull InputData<Key, Value> data) {
-    return data == InputData.empty() ? 0 : ((HashedInputData)data).getHashId();
+    return data == InputData.empty() ? 0 : ((HashedInputData<Key, Value>)data).getHashId();
   }
 
   @Nullable

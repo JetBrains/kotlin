@@ -113,7 +113,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     data = super.mapInput(content);
     if (!containsSnapshotData && !UpdatableSnapshotInputMappingIndex.ignoreMappingIndexUpdate(content)) {
       try {
-        return ((UpdatableSnapshotInputMappingIndex)mySnapshotInputMappings).putData(content, data);
+        return ((UpdatableSnapshotInputMappingIndex<Key, Value, Input>)mySnapshotInputMappings).putData(content, data);
       }
       catch (IOException e) {
         throw new RuntimeException(e);
@@ -218,7 +218,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
   @Override
   public void removeTransientDataForKeys(int inputId, @NotNull Collection<? extends Key> keys) {
-    MemoryIndexStorage memoryIndexStorage = (MemoryIndexStorage)getStorage();
+    MemoryIndexStorage<Key, Value> memoryIndexStorage = (MemoryIndexStorage<Key, Value>)getStorage();
     boolean modified = false;
     for (Key key : keys) {
       if (memoryIndexStorage.clearMemoryMapForId(key, inputId) && !modified) {
@@ -233,12 +233,12 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
 
   @Override
   public void setBufferingEnabled(boolean enabled) {
-    ((MemoryIndexStorage)getStorage()).setBufferingEnabled(enabled);
+    ((MemoryIndexStorage<Key, Value>)getStorage()).setBufferingEnabled(enabled);
   }
 
   @Override
   public void cleanupMemoryStorage() {
-    MemoryIndexStorage memStorage = (MemoryIndexStorage)getStorage();
+    MemoryIndexStorage<Key, Value> memStorage = (MemoryIndexStorage<Key, Value>)getStorage();
     ConcurrencyUtil.withLock(getWriteLock(), () -> memStorage.clearMemoryMap());
     memStorage.fireMemoryStorageCleared();
   }
@@ -246,7 +246,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   @TestOnly
   @Override
   public void cleanupForNextTest() {
-    MemoryIndexStorage memStorage = (MemoryIndexStorage)getStorage();
+    MemoryIndexStorage<Key, Value> memStorage = (MemoryIndexStorage<Key, Value>)getStorage();
     ConcurrencyUtil.withLock(getReadLock(), () -> memStorage.clearCaches());
   }
 
@@ -321,7 +321,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     super.doClear();
     if (mySnapshotInputMappings != null && myUpdateMappings) {
       try {
-        ((UpdatableSnapshotInputMappingIndex)mySnapshotInputMappings).clear();
+        ((UpdatableSnapshotInputMappingIndex<Key, Value, Input>)mySnapshotInputMappings).clear();
       }
       catch (IOException e) {
         LOG.error(e);
@@ -333,7 +333,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   protected void doFlush() throws IOException, StorageException {
     super.doFlush();
     if (mySnapshotInputMappings != null && myUpdateMappings) {
-      ((UpdatableSnapshotInputMappingIndex)mySnapshotInputMappings).flush();
+      ((UpdatableSnapshotInputMappingIndex<Key, Value, Input>)mySnapshotInputMappings).flush();
     }
   }
 
@@ -379,7 +379,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   private void installMemoryModeListener() {
     IndexStorage<Key, Value> storage = getStorage();
     if (storage instanceof MemoryIndexStorage) {
-      ((MemoryIndexStorage)storage).addBufferingStateListener(new MemoryIndexStorage.BufferingStateListener() {
+      ((MemoryIndexStorage<Key, Value>)storage).addBufferingStateListener(new MemoryIndexStorage.BufferingStateListener() {
         @Override
         public void bufferingStateChanged(boolean newState) {
           myInMemoryMode.set(newState);

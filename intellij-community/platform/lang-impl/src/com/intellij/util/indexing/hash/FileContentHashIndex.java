@@ -35,17 +35,14 @@ public class FileContentHashIndex extends VfsAwareMapReduceIndex<Integer, Void, 
 
   @NotNull
   IntIntFunction toHashIdToFileIdFunction() {
-    return new IntIntFunction() {
-      @Override
-      public int fun(int hash) {
-        try {
-          ValueContainer<Void> data = getData(hash);
-          assert data.size() == 1;
-          return data.getValueIterator().getInputIdsIterator().next();
-        }
-        catch (StorageException e) {
-          throw new RuntimeException(e);
-        }
+    return hash -> {
+      try {
+        ValueContainer<Void> data = getData(hash);
+        assert data.size() == 1;
+        return data.getValueIterator().getInputIdsIterator().next();
+      }
+      catch (StorageException e) {
+        throw new RuntimeException(e);
       }
     };
   }
@@ -53,7 +50,7 @@ public class FileContentHashIndex extends VfsAwareMapReduceIndex<Integer, Void, 
   final static class HashIndexUpdateComputable implements Computable<Boolean> {
     @NotNull
     private final Computable<Boolean> myUnderlying;
-    private boolean myEmptyInput;
+    private final boolean myEmptyInput;
 
     HashIndexUpdateComputable(@NotNull Computable<Boolean> underlying, boolean isEmptyInput) {myUnderlying = underlying;
       myEmptyInput = isEmptyInput;

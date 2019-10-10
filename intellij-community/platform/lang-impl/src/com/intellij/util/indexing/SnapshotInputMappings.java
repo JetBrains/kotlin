@@ -198,7 +198,7 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
   }
 
   @Override
-  public void close() throws IOException {
+  public void close() {
     Stream.of(myContents, myIndexingTrace).filter(Objects::nonNull).forEach(index -> {
       try {
         index.close();

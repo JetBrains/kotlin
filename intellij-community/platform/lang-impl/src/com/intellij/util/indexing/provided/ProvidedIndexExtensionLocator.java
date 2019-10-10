@@ -3,7 +3,6 @@ package com.intellij.util.indexing.provided;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.util.indexing.FileBasedIndexExtension;
-import com.intellij.util.indexing.ID;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

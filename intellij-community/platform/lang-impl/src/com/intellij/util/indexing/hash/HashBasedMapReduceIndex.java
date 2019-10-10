@@ -7,9 +7,7 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.IndexStorage;
 import com.intellij.util.indexing.impl.MapIndexStorage;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
-import com.intellij.util.indexing.provided.ProvidedIndexExtensionLocator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
