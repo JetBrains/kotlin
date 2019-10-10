@@ -7,6 +7,7 @@ import com.intellij.task.ProjectTaskContext;
 import com.intellij.task.ProjectTaskListener;
 import com.intellij.task.ProjectTaskResult;
 import com.intellij.testFramework.EdtTestUtil;
+import com.intellij.util.PathUtil;
 import com.intellij.util.PathsList;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
@@ -139,7 +140,8 @@ public class GradleDelegatedBuildTest extends GradleDelegatedBuildTestCase {
 
       @Override
       public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult executionResult) {
-        context.getDirtyOutputPaths().ifPresent(stream -> dirtyOutputRoots.addAll(stream.collect(Collectors.toList())));
+        context.getDirtyOutputPaths()
+          .ifPresent(paths -> dirtyOutputRoots.addAll(paths.map(PathUtil::toSystemDependentName).collect(Collectors.toList())));
       }
     });
 
