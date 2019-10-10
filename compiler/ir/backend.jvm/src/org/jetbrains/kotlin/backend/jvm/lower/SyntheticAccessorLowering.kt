@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
@@ -329,7 +330,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
                 IrConstImpl.constNull(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
-                    context.ir.symbols.defaultConstructorMarker.owner.defaultType
+                    context.ir.symbols.defaultConstructorMarker.owner.defaultType.makeNullable()
                 )
             )
         }
