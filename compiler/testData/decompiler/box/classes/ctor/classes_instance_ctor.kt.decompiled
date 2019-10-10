@@ -1,4 +1,4 @@
-class TestClass {
+class TestClass() {
     fun fn_true(): Boolean  {
         return true
     }

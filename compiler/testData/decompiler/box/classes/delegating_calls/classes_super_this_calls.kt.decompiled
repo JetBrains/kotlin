@@ -1,14 +1,10 @@
-open class MyParentClass {
-    constructor() {
-    }
+open class MyParentClass() {
     open fun blaBlaBla(bla: Int): Int  {
         return bla * 2
     }
 
 }
-class MyChildClass : MyParentClass {
-    constructor() {
-    }
+class MyChildClass() : MyParentClass() {
     override fun blaBlaBla(bla: Int): Int  {
         val superCall: Int = super.blaBlaBla(bla)
         val thisCall: Int = this.inverse(superCall)

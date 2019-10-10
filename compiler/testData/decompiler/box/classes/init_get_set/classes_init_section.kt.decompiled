@@ -1,0 +1,19 @@
+class ClassWithInit() {
+    val someProp: String
+    val anotherProp: Int
+    init {
+        this.someProp = "someProp"
+        this.anotherProp = 42
+    }
+}
+fun box(): String  {
+    val classWithInit: ClassWithInit = ClassWithInit()
+    when {
+        (classWithInit.anotherProp == 42) || (classWithInit.someProp == "someProp") ->  {
+            return "OK"
+        }
+        else ->  {
+            return "FAIL"
+        }
+    }
+}

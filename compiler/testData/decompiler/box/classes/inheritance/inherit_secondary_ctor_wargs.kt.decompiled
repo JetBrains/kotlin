@@ -1,10 +1,12 @@
 open class ParentClass() {
     var x: Int = 5
-    constructor(x: Int) : ParentClass() {
+    constructor(x: Int) : this() {
         this.x = x
     }
 }
 class ChildClass() : ParentClass(9) {
+    constructor(y: Int) : this() {
+    }
 }
 fun box(): String  {
     val parentClass: ParentClass = ParentClass(9)

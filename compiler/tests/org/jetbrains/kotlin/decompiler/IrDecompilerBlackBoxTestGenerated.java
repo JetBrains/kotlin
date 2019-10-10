@@ -63,6 +63,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes/ctor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("classes_default_param_ctor.kt")
+            public void testClasses_default_param_ctor() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/ctor/classes_default_param_ctor.kt");
+            }
+
             @TestMetadata("classes_instance_ctor.kt")
             public void testClasses_instance_ctor() throws Exception {
                 runTest("compiler/testData/decompiler/box/classes/ctor/classes_instance_ctor.kt");
@@ -158,6 +163,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
 
             public void testAllFilesPresentInInit_get_set() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes/init_get_set"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("classes_init_section.kt")
+            public void testClasses_init_section() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/init_get_set/classes_init_section.kt");
             }
         }
 

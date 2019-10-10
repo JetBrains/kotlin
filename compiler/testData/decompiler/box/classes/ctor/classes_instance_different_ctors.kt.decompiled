@@ -1,13 +1,11 @@
-class TestClassWithPrimaryAndSecondaryCtors {
-    constructor() {
-    }
+class TestClassWithPrimaryAndSecondaryCtors() {
     var intProp: Int = 42
     var stringProp: String = "42"
-    constructor(intProp: Int) {
+    constructor(intProp: Int) : this() {
         this.intProp = intProp
         this.stringProp = intProp.toString()
     }
-    constructor(stringProp: String) {
+    constructor(stringProp: String) : this() {
         this.stringProp = stringProp
     }
 }

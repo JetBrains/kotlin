@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.decompiler
 
 import org.jetbrains.kotlin.decompiler.util.DecompilerIrElementVisitor
+import org.jetbrains.kotlin.decompiler.util.name
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.SourceManager
 import org.jetbrains.kotlin.ir.declarations.*
@@ -14,9 +16,9 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.statements
@@ -98,13 +100,19 @@ class DecompileIrTreeVisitor(
         printer.print(declaration.decompile())
         val implStr = declaration.renderInheritance()
         if (declaration.kind == ClassKind.CLASS) {
-            printer.printWithNoIndent(declaration.primaryConstructor?.decompile())
-            if (implStr.isNotEmpty()) {
-                printer.printWithNoIndent(", $implStr")
-            }
+            declaration.primaryConstructor?.renderPrimaryCtor()
             withBraces {
                 declaration.declarations
-                    .filterNot { it is IrConstructor && it.isPrimary }
+                    .filter { it is IrProperty }
+                    .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+                    .decompileElements()
+
+                val secondaryCtors = declaration.constructors.filter { !it.isPrimary }
+                secondaryCtors.forEach {
+                    it.renderSecondaryCtor()
+                }
+                declaration.declarations
+                    .filterNot { it is IrConstructor || it is IrProperty }
                     .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
                     .decompileElements()
             }
@@ -120,6 +128,59 @@ class DecompileIrTreeVisitor(
             }
         }
     }
+
+    private fun IrConstructor.renderPrimaryCtor() {
+        printer.printWithNoIndent(renderValueParameterTypes())
+        val delegatingCtorCall = body!!.statements.filter { it is IrDelegatingConstructorCall }.first()
+        printer.printWithNoIndent(delegatingCtorCall.decompile())
+        val implStr = parentAsClass.renderInheritance()
+        if (implStr.isNotEmpty()) {
+            printer.printWithNoIndent(", $implStr")
+        }
+    }
+
+    private fun IrConstructor.renderSecondaryCtor() {
+        printer.print("${renderVisibility()}constructor${renderValueParameterTypes()}")
+        val delegatingCtorCall = body!!.statements.filter { it is IrDelegatingConstructorCall }.first()
+        val delegatingCtorClass = (delegatingCtorCall as IrDelegatingConstructorCall).symbol.owner.returnType
+        printer.printWithNoIndent(" : ${delegatingCtorCall.renderDelegatingIntoSecondary(returnType != delegatingCtorClass)}")
+        val implStr = parentAsClass.renderInheritance()
+        if (implStr.isNotEmpty()) {
+            printer.printWithNoIndent(", $implStr")
+        }
+        body?.accept(this@DecompileIrTreeVisitor, "")
+    }
+
+    private fun IrDelegatingConstructorCall.renderDelegatingIntoSecondary(isSuper: Boolean): String {
+        var result = ""
+        result += if (isSuper) {
+            "super"
+        } else {
+            "this"
+        }
+        result += (0 until valueArgumentsCount).map { getValueArgument(it)?.decompile() }
+            .joinToString(", ", "(", ")")
+        return result
+    }
+
+
+    private fun IrFunction.renderValueParameterTypes(): String =
+        ArrayList<String>().apply {
+            valueParameters.mapTo(this) {
+                var argDefinition = "${it.name}: ${it.type.toKotlinType()}"
+                if (it.defaultValue != null) {
+                    argDefinition += " = ${it.defaultValue!!.decompile()}"
+                }
+                argDefinition
+            }
+        }.joinToString(separator = ", ", prefix = "(", postfix = ")")
+
+    private inline fun IrDeclarationWithVisibility.renderVisibility(): String =
+        when (visibility) {
+            Visibilities.PUBLIC -> ""
+            else -> "${visibility.name.toLowerCase()} "
+        }
+
 
     private fun IrClass.renderInheritance(): String {
         val implementedInterfaces = superTypes
@@ -192,10 +253,8 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: String) {
-        printer.println("init")
-        withBraces {
-            declaration.body.accept(this, "")
-        }
+        printer.print("init")
+        declaration.body.accept(this, "")
     }
 
     override fun visitWhen(expression: IrWhen, data: String) {
@@ -327,7 +386,10 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitSetField(expression: IrSetField, data: String) {
-        TODO()
+        val initValue = expression.value.decompile()
+        val receiverValue = expression.receiver?.decompile() ?: ""
+        val backFieldSymbolVal = expression.symbol.owner.name()
+        printer.println("$receiverValue.$backFieldSymbolVal = $initValue")
     }
 
 

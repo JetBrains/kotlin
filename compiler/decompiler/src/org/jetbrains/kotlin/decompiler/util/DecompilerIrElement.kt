@@ -164,20 +164,20 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             else -> "${visibility.name.toLowerCase()} "
         }
 
-    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String {
-        var result = if (declaration.isPrimary) {
-            declaration.renderValueParameterTypes()
-        } else {
-            "${declaration.renderVisibility()}constructor${declaration.renderValueParameterTypes()}"
-        }
-        val delegatingCall = declaration.body!!.statements.filter { it is IrDelegatingConstructorCall }.first()
-        result += delegatingCall.accept(this, null)
-        return result
-    }
+    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String = TODO("Refactored into tree")
+//    {
+//        var result = if (declaration.isPrimary) {
+//            declaration.renderValueParameterTypes()
+//        } else {
+//            "${declaration.renderVisibility()}constructor${declaration.renderValueParameterTypes()}"
+//        }
+//        val delegatingCall = declaration.body!!.statements.filter { it is IrDelegatingConstructorCall }.first()
+//        result += delegatingCall.accept(this, null)
+//        return result
+//    }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String {
         var result = ""
-        if (expression.symbol.owner.returnType)
         if (!expression.symbol.owner.returnType.isAny()) {
             result += buildTrimEnd {
                 append(" : ")
@@ -556,6 +556,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): String =
         buildTrimEnd {
             append(expression.type.toKotlinType())
+            //TODO добавить проверку наличия defaultValue у expression.symbol.owner
             append((0 until expression.valueArgumentsCount)
                        .map { expression.getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null) }
                        .joinToString(", ", "(", ")"))

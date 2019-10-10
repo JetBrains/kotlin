@@ -1,4 +1,4 @@
-class MyClass {
+class MyClass() {
 }
 fun MyClass.printOk(): String  {
     return "OK"
