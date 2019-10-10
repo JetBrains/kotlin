@@ -54,27 +54,9 @@ if not "!ARG!" == "" (
 set "NATIVE_LIB=%_KONAN_HOME%\konan\nativelib"
 set "KONAN_LIB=%_KONAN_HOME%\konan\lib"
 
-set "SHARED_JAR=%KONAN_LIB%\shared.jar"
-set "KOTLINX_CLI_JAR=%KONAN_LIB%\kotlinx.cli-jvm.jar"
-set "EXTRACTED_METADATA_JAR=%KONAN_LIB%\konan.metadata.jar"
-set "EXTRACTED_SERIALIZER_JAR=%KONAN_LIB%\konan.serializer.jar"
-set "INTEROP_INDEXER_JAR=%KONAN_LIB%\Indexer.jar"
-set "INTEROP_RUNTIME_JAR=%KONAN_LIB%\Runtime.jar"
-set "KLIB_JAR=%KONAN_LIB%\klib.jar"
-set "KONAN_JAR=%KONAN_LIB%\backend.native.jar"
-set "KOTLIN_JAR=%KONAN_LIB%\kotlin-compiler.jar"
-set "KOTLIN_STDLIB_JAR=%KONAN_LIB%\kotlin-stdlib.jar"
-set "KOTLIN_REFLECT_JAR=%KONAN_LIB%\kotlin-stdlib.jar"
-set "KOTLIN_SCRIPT_RUNTIME_JAR=%KONAN_LIB%\kotlin-script-runtime.jar"
-set "STUB_GENERATOR_JAR=%KONAN_LIB%\StubGenerator.jar"
-set "UTILITIES_JAR=%KONAN_LIB%\utilities.jar"
-set "NATIVE_UTILS_JAR=%KONAN_LIB%\kotlin-native-utils.jar"
-set "UTIL_IO_JAR=%KONAN_LIB%\kotlin-util-io.jar"
-set "UTIL_KLIB_JAR=%KONAN_LIB%\kotlin-util-klib.jar"
-set "UTIL_KLIB_METADATA_JAR=%KONAN_LIB%\kotlin-util-klib-metadata.jar"
-set TROVE_JAR="%KONAN_LIB%\lib\trove4j.jar"
+set "KONAN_JAR=%KONAN_LIB%\kotlin-native.jar"
 
-set "KONAN_CLASSPATH=%KOTLIN_JAR%;%KOTLIN_STDLIB_JAR%;%KOTLIN_REFLECT_JAR%;%KOTLIN_SCRIPT_RUNTIME_JAR%;%INTEROP_RUNTIME_JAR%;%KONAN_JAR%;%STUB_GENERATOR_JAR%;%INTEROP_INDEXER_JAR%;%SHARED_JAR%;%EXTRACTED_METADATA_JAR%;%EXTRACTED_SERIALIZER_JAR%;%KLIB_JAR%;%UTILITIES_JAR%;%NATIVE_UTILS_JAR%;%UTIL_IO_JAR%;%UTIL_KLIB_JAR%;%UTIL_KLIB_METADATA_JAR%;%TROVE_JAR%;%KOTLINX_CLI_JAR%"
+set "KONAN_CLASSPATH=%KONAN_JAR%"
 
 set JAVA_OPTS=-ea ^
     -Xmx3G ^

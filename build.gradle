@@ -226,34 +226,43 @@ task distSources {
     dependsOn(distEndorsedSources)
 }
 
-task distCompiler(type: Copy) {
+def jarContent(def jarTask, FileTree baseFileTree) {
+    jarTask.from {
+        baseFileTree
+                .matching { include("*.jar") }
+                .collect { zipTree("${it.absolutePath}") }
+    }
+}
+
+task mergeJars(type: Jar) {
     dependsOn ':backend.native:jar'
     dependsOn ':utilities:jar'
     dependsOn ':klib:jar'
     dependsOn ':sharedJar'
     dependsOn ':endorsedLibraries:jvmJar'
 
+    archiveFileName = 'kotlin-native.jar'
+    destinationDirectory = file("$distDir/konan/lib")
+
+    jarContent(it, project(':backend.native').fileTree('build/libs'))
+    jarContent(it, project('Interop').fileTree('Runtime/build/libs'))
+    jarContent(it, project('Interop').fileTree('Indexer/build/libs'))
+    jarContent(it, project('Interop').fileTree('StubGenerator/build/libs'))
+    jarContent(it, project(':backend.native').fileTree('build/external_jars'))
+    jarContent(it, project(':utilities').fileTree('build/libs'))
+
+    jarContent(it, project(':klib').fileTree('build/libs'))
+    jarContent(it, project(':endorsedLibraries:kotlinx.cli').fileTree('build/libs'))
+    jarContent(it, fileTree("${gradle.includedBuild('kotlin-native-shared').projectDir}/build/libs"))
+    jarContent(it, fileTree("${gradle.includedBuild('konan.metadata').projectDir}/build/libs"))
+    jarContent(it, fileTree("${gradle.includedBuild('konan.serializer').projectDir}/build/libs"))
+
+}
+
+task distCompiler(type: Copy) {
+    dependsOn ':mergeJars'
+
     destinationDir distDir
-
-    from(project(':backend.native').file('build/libs')) {
-        into('konan/lib')
-    }
-
-    from(project('Interop').file('Runtime/build/libs')) {
-        into('konan/lib')
-    }
-
-    from(project('Interop').file('Indexer/build/libs')) {
-        into('konan/lib')
-    }
-
-    from(project('Interop').file('StubGenerator/build/libs')) {
-        into('konan/lib')
-    }
-
-    from(project(':backend.native').file('build/external_jars')) {
-        into('konan/lib')
-    }
 
     from(project(':backend.native').file("build/nativelibs/$hostName")) {
         into('konan/nativelib')
@@ -281,30 +290,6 @@ task distCompiler(type: Copy) {
 
     from(project(':utilities').file('env_blacklist')) {
         into('tools')
-    }
-
-    from(project(':utilities').file('build/libs')) {
-        into('konan/lib')
-    }
-
-    from(project(':klib').file('build/libs')) {
-        into('konan/lib')
-    }
-
-    from(project(':endorsedLibraries:kotlinx.cli').file('build/libs')) {
-        into('konan/lib')
-    }
-
-    from(file("${gradle.includedBuild('kotlin-native-shared').projectDir}/build/libs")) {
-        into('konan/lib')
-    }
-
-    from(file("${gradle.includedBuild('konan.metadata').projectDir}/build/libs")) {
-        into('konan/lib')
-    }
-
-    from(file("${gradle.includedBuild('konan.serializer').projectDir}/build/libs")) {
-        into('konan/lib')
     }
 
     from(file('cmd')) {
