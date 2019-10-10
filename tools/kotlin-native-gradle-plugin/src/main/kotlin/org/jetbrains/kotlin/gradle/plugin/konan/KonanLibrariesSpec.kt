@@ -153,7 +153,7 @@ open class KonanLibrariesSpec(val task: KonanArtifactWithLibrariesTask, val proj
         )
     )
 
-    fun asFiles(resolver: SearchPathResolver<KonanLibraryImpl>): List<File> = mutableListOf<File>().apply {
+    fun asFiles(resolver: SearchPathResolver<*>): List<File> = mutableListOf<File>().apply {
         files.flatMapTo(this) { it.files }
         addAll(artifactFiles)
         addAll(task.platformConfiguration.files)
