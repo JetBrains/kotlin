@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrBlock
-import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeOfCallableReference
+import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeOfSuspendCallableReference
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.descriptors.Modality
@@ -433,7 +433,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             override fun visitFunction(declaration: IrFunction) {
                 super.visitFunction(declaration)
                 if (declaration.isSuspend && declaration !in suspendLambdas && !declaration.isInline &&
-                    !declaration.isInvokeOfCallableReference()
+                    !declaration.isInvokeOfSuspendCallableReference()
                 ) {
                     result.add(declaration)
                 }

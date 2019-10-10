@@ -40,6 +40,7 @@ class JvmSymbols(
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
     private val kotlinPackage: IrPackageFragment = createPackage(FqName("kotlin"))
     private val kotlinCoroutinesPackage: IrPackageFragment = createPackage(FqName("kotlin.coroutines"))
+    private val kotlinCoroutinesJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.coroutines.jvm.internal"))
     private val kotlinJvmPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm"))
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal"))
     private val kotlinJvmFunctionsPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.functions"))
@@ -81,6 +82,7 @@ class JvmSymbols(
             parent = when (fqName.parent().asString()) {
                 "kotlin" -> kotlinPackage
                 "kotlin.coroutines" -> kotlinCoroutinesPackage
+                "kotlin.coroutines.jvm.internal" -> kotlinCoroutinesJvmInternalPackage
                 "kotlin.jvm.internal" -> kotlinJvmInternalPackage
                 "kotlin.jvm.functions" -> kotlinJvmFunctionsPackage
                 "java.lang" -> javaLangPackage
@@ -168,6 +170,8 @@ class JvmSymbols(
         createClass(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE, ClassKind.INTERFACE) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.IN_VARIANCE)
         }
+
+    val suspendFunctionInterface: IrClassSymbol = createClass(FqName("kotlin.coroutines.jvm.internal.SuspendFunction"), ClassKind.INTERFACE)
 
     val lambdaClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Lambda")) { klass ->
         klass.addConstructor().apply {

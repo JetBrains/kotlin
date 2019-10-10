@@ -103,14 +103,12 @@ internal fun IrFunction.isInvokeOfSuspendLambda(context: JvmBackendContext): Boo
 internal fun IrFunction.isInvokeSuspendOfContinuation(context: JvmBackendContext): Boolean =
     name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass in context.suspendFunctionContinuations.values
 
-internal fun IrFunction.isInvokeOfCallableReference(): Boolean = isSuspend && name.asString() == "invoke" && (parent as? IrClass)?.let {
-    // TODO: Should we use different origin for lowered callable references?
-    it.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL && it.functions.any { it.name.asString() == "getSignature" }
-} == true
+internal fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean = isSuspend && name.asString() == "invoke" &&
+        (parent as? IrClass)?.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
 
 internal fun IrFunction.isKnownToBeTailCall(): Boolean =
     origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-            isInvokeOfCallableReference()
+            isInvokeOfSuspendCallableReference()
 
 internal fun IrFunction.shouldNotContainSuspendMarkers(context: JvmBackendContext): Boolean =
     isInvokeSuspendOfContinuation(context) || isKnownToBeTailCall()
