@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.isReferenceToBuiltInEnumFunction
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -53,7 +54,7 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
     companion object {
         fun isRedundantCompanionReference(reference: KtReferenceExpression): Boolean {
             val parent = reference.parent as? KtDotQualifiedExpression ?: return false
-            val grandParent = parent.parent
+            val grandParent = parent.parent as? KtElement
             val selectorExpression = parent.selectorExpression
             if (reference == selectorExpression && grandParent !is KtDotQualifiedExpression) return false
             if (parent.getStrictParentOfType<KtImportDirective>() != null) return false
@@ -66,6 +67,9 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
 
             val containingClass = objectDeclaration.containingClass() ?: return false
             if (reference.containingClass() != containingClass && reference == parent.receiverExpression) return false
+            if (containingClass.isEnum() &&
+                (selectorExpression?.isReferenceToBuiltInEnumFunction() == true || grandParent?.isReferenceToBuiltInEnumFunction() == true)
+            ) return false
             val context = reference.analyze()
             val containingClassDescriptor =
                 context[BindingContext.DECLARATION_TO_DESCRIPTOR, containingClass] as? ClassDescriptor ?: return false
