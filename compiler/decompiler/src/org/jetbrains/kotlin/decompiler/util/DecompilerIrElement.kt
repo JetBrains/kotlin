@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import kotlin.math.exp
 
 class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
 
@@ -163,12 +164,31 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             else -> "${visibility.name.toLowerCase()} "
         }
 
-    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
-        if (declaration.isPrimary) {
+    override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String {
+        var result = if (declaration.isPrimary) {
             declaration.renderValueParameterTypes()
         } else {
             "${declaration.renderVisibility()}constructor${declaration.renderValueParameterTypes()}"
         }
+        val delegatingCall = declaration.body!!.statements.filter { it is IrDelegatingConstructorCall }.first()
+        result += delegatingCall.accept(this, null)
+        return result
+    }
+
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String {
+        var result = ""
+        if (expression.symbol.owner.returnType)
+        if (!expression.symbol.owner.returnType.isAny()) {
+            result += buildTrimEnd {
+                append(" : ")
+                append(expression.symbol.owner.returnType.toKotlinType())
+                append((0 until expression.valueArgumentsCount)
+                           .map { expression.getValueArgument(it)?.accept(this@DecompilerIrElementVisitor, null) }
+                           .joinToString(", ", "(", ")"))
+            }
+        }
+        return result
+    }
 
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
@@ -242,7 +262,18 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 append("${declaration.modality.name.toLowerCase()} ")
             }
             append(declaration.renderPropertyFlags())
-            append(declaration.backingField?.accept(this@DecompilerIrElementVisitor, null))
+            if (declaration.backingField != null) {
+                append("${declaration.backingField!!.name()}: ${declaration.backingField!!.type.toKotlinType()}")
+                if (declaration.backingField!!.initializer != null) {
+                    append(" = ")
+                    val parentPrimaryCtor = declaration.parentAsClass.primaryConstructor
+//                    val ctorParamNames = parentPrimaryCtor?.valueParameters?.map { it.name() } ?: emptyList()
+                    append(declaration.backingField!!.initializer!!.accept(this@DecompilerIrElementVisitor, null))
+                }
+            } else {
+                append("${declaration.name()}: ${declaration.getter!!.returnType.toKotlinType()}")
+            }
+//            append(declaration.backingField?.accept(this@DecompilerIrElementVisitor, null))
         }
 
 
@@ -463,16 +494,17 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 }
 
                 IrStatementOrigin.GET_PROPERTY -> {
-                    append(expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null))
-                    append(".")
                     val fullName = expression.symbol.owner.name()
-                    if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
-                        val regex = """<get-(.+)>""".toRegex()
-                        val matchResult = regex.find(fullName)
-                        val propName = matchResult!!.groups[1]!!.value
+                    val regex = """<get-(.+)>""".toRegex()
+                    val matchResult = regex.find(fullName)
+                    val propName = matchResult?.groups?.get(1)?.value
+
+                    val primaryCtor = expression.symbol.owner.parentAsClass.primaryConstructor
+                    val primaryCtorArgNames = primaryCtor?.valueParameters?.map { it.name() }
+                    if (!primaryCtorArgNames.isNullOrEmpty() && primaryCtorArgNames.contains(propName)) {
                         append(propName)
                     } else {
-                        append(fullName)
+                        append("${expression.dispatchReceiver?.accept(this@DecompilerIrElementVisitor, null)}.${propName}")
                     }
                 }
 
@@ -529,8 +561,6 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                        .joinToString(", ", "(", ")"))
         }
 
-
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String = TODO()
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?): String = TODO()
 

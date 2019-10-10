@@ -1,6 +1,6 @@
 open class ParentClass() {
-    val x: Int
-    constructor(val x: Int) {
+    var x: Int = 5
+    constructor(x: Int): this() {
         this.x = x
     }
 }

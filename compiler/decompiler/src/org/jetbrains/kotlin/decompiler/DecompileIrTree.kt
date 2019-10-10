@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 fun IrElement.decompile(): String =
     StringBuilder().also { sb ->
@@ -96,9 +96,12 @@ class DecompileIrTreeVisitor(
 
     override fun visitClass(declaration: IrClass, data: String) {
         printer.print(declaration.decompile())
+        val implStr = declaration.renderInheritance()
         if (declaration.kind == ClassKind.CLASS) {
             printer.printWithNoIndent(declaration.primaryConstructor?.decompile())
-            printer.printWithNoIndent(declaration.renderInheritance())
+            if (implStr.isNotEmpty()) {
+                printer.printWithNoIndent(", $implStr")
+            }
             withBraces {
                 declaration.declarations
                     .filterNot { it is IrConstructor && it.isPrimary }
@@ -106,7 +109,9 @@ class DecompileIrTreeVisitor(
                     .decompileElements()
             }
         } else {
-            printer.printWithNoIndent(declaration.renderInheritance())
+            if (implStr.isNotEmpty()) {
+                printer.printWithNoIndent(", $implStr")
+            }
             withBraces {
                 declaration.declarations
                     .filterNot { it is IrConstructor }
@@ -116,17 +121,14 @@ class DecompileIrTreeVisitor(
         }
     }
 
-    private fun IrClass.renderInheritance(): String =
-        superTypes
-            .filter { !it.isAny() }
+    private fun IrClass.renderInheritance(): String {
+        val implementedInterfaces = superTypes
+            .filter { !it.isAny() && it.toKotlinType().isInterface() }
             .map {
-                // Пока предположим, что тут или интерфейс - тогда мапим в имя, или класс - тогда мапим в вызов конструктора
-                if (it.toKotlinType().isInterface()) {
-                    it.toKotlinType().toString()
-                } else {
-                    it.toKotlinType().toString() + it.classOrNull?.owner?.primaryConstructor?.decompile()
-                }
-            }.takeIf { it.isNotEmpty() }?.joinToString(", ", " : ") ?: ""
+                it.toKotlinType().toString()
+            }
+        return implementedInterfaces.joinToString(", ")
+    }
 
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
@@ -142,11 +144,13 @@ class DecompileIrTreeVisitor(
     override fun visitTypeParameter(declaration: IrTypeParameter, data: String) = TODO()
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: String) {
-        declaration.generatesSourcesForElement {
-            decompileAnnotations(declaration)
-            declaration.body?.accept(this, "")
+        if (declaration.origin != IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+            declaration.generatesSourcesForElement {
+                decompileAnnotations(declaration)
+                declaration.body?.accept(this, "")
+            }
+            printer.printlnWithNoIndent()
         }
-        printer.printlnWithNoIndent()
     }
 
     private fun decompileAnnotations(element: IrAnnotationContainer) {
@@ -158,15 +162,17 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitProperty(declaration: IrProperty, data: String) {
-        if (declaration.backingField != null) {
+        if (!declaration.isPrimaryCtorArg()) {
             printer.println(declaration.decompile())
-            indented {
-                declaration.getter?.decompile()
-                declaration.setter?.decompile()
-            }
-        } else {
-            throw UnsupportedOperationException("The property ${declaration.name.asString()} has no backing field!")
+            declaration.getter?.accept(this, "")
+            declaration.setter?.accept(this, "")
         }
+    }
+
+    private fun IrProperty.isPrimaryCtorArg(): Boolean {
+        val primaryCtor = parentAsClass.primaryConstructor
+        val primaryCtorArgNames = primaryCtor?.valueParameters?.map { it.name }
+        return !primaryCtorArgNames.isNullOrEmpty() && primaryCtorArgNames.contains(name)
     }
 
     override fun visitField(declaration: IrField, data: String) {
@@ -316,8 +322,13 @@ class DecompileIrTreeVisitor(
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: String) = TODO()
     override fun visitConstructorCall(expression: IrConstructorCall, data: String) = TODO()
-    override fun visitGetField(expression: IrGetField, data: String) = TODO()
-    override fun visitSetField(expression: IrSetField, data: String) = TODO()
+    override fun visitGetField(expression: IrGetField, data: String) {
+        TODO()
+    }
+
+    override fun visitSetField(expression: IrSetField, data: String) {
+        TODO()
+    }
 
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: String) {
