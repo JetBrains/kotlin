@@ -222,7 +222,7 @@ fun <T : KtDeclaration> insertMembersAfter(
     getAnchor: (KtDeclaration) -> PsiElement? = { null }
 ): List<T> {
     members.ifEmpty { return emptyList() }
-
+    val project = classOrObject.project
     return runWriteAction {
         val insertedMembers = SmartList<T>()
 
@@ -269,7 +269,7 @@ fun <T : KtDeclaration> insertMembersAfter(
             moveCaretIntoGeneratedElement(editor, firstElement)
         }
 
-        val codeStyleManager = CodeStyleManager.getInstance(firstElement.project)
+        val codeStyleManager = CodeStyleManager.getInstance(project)
         resultMembers.forEach { codeStyleManager.reformat(it) }
 
         resultMembers.toList()
