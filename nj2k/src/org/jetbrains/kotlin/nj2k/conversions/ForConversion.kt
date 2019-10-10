@@ -57,20 +57,14 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         // To use psi information in ContinueStatementConversion later.
         convertedFromForLoopSyntheticWhileStatement.psi = loopStatement.psi<PsiForStatement>()!!
 
-        val notNeedParentBlock = loopStatement.parent is JKBlock
-                || loopStatement.parent is JKLabeledExpression && loopStatement.parent?.parent is JKBlock
-
-        return when {
-            loopStatement.hasNameConflict() ->
-                JKExpressionStatement(
-                    runExpression(
-                        convertedFromForLoopSyntheticWhileStatement,
-                        symbolProvider
-                    )
+        return if (loopStatement.hasNameConflict()) {
+            JKExpressionStatement(
+                runExpression(
+                    convertedFromForLoopSyntheticWhileStatement,
+                    symbolProvider
                 )
-            !notNeedParentBlock -> blockStatement(convertedFromForLoopSyntheticWhileStatement)
-            else -> convertedFromForLoopSyntheticWhileStatement
-        }
+            )
+        } else convertedFromForLoopSyntheticWhileStatement
     }
 
     private fun createWhileBody(loopStatement: JKJavaForLoopStatement): JKStatement {

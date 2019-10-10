@@ -24,13 +24,6 @@ class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveAp
     }
 
     private fun convert(loopStatement: JKLoopStatement): JKStatement? {
-        // Check JKKtConvertedFromForLoopSyntheticWhileStatement and not JKWhileStatement if its parent is
-        // JKKtConvertedFromForLoopSyntheticWhileStatement because setting LabeledExpression to the child of
-        // JKKtConvertedFromForLoopSyntheticWhileStatement causes type error.
-        if (loopStatement is JKWhileStatement && loopStatement.parent is JKKtConvertedFromForLoopSyntheticWhileStatement) {
-            return null
-        }
-
         var needLabel = false
         var labelChanged = false
         var loopLabel = "loop"
@@ -44,10 +37,7 @@ class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveAp
         fun convertContinue(element: JKTreeElement): JKTreeElement {
             if (element !is JKContinueStatement) return applyRecursive(element, ::convertContinue)
             val elementPsi = element.psi<PsiContinueStatement>() ?: return applyRecursive(element, ::convertContinue)
-            if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi) return applyRecursive(
-                element,
-                ::convertContinue
-            )
+            if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi) return element
             if (element.parentIsWhenCase() && element.label is JKLabelEmpty) {
                 element.label = JKLabelText(JKNameIdentifier(loopLabel))
                 if (!labelChanged) {
@@ -63,36 +53,27 @@ class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveAp
             else JKBlockStatement(JKBlockImpl(statements))
         }
 
-        val body = convertContinue(loopStatement.body)
-        if (!needLabel || body !is JKStatement) {
-            return null
-        }
+        convertContinue(loopStatement.body)
 
-        loopStatement.body = body
-
-        if (!needLabel) {
+        val notNeedParentBlock = loopStatement !is JKKtConvertedFromForLoopSyntheticWhileStatement || loopStatement.parent is JKBlock
+                || loopStatement.parent is JKLabeledExpression && loopStatement.parent?.parent is JKBlock
+        if (!needLabel && notNeedParentBlock) {
             return loopStatement
         }
-
-        if (loopStatement !is JKKtConvertedFromForLoopSyntheticWhileStatement) {
-            return JKLabeledExpression(
-                loopStatement.copyTreeAndDetach(),
-                listOf(JKNameIdentifier(loopLabel))
-            ).asStatement()
+        if (!needLabel) {
+            return blockStatement(loopStatement.copyTreeAndDetach())
         }
 
-        return JKBlockStatementWithoutBrackets(
-            listOf(
-                loopStatement::variableDeclaration.detached(),
-                JKLabeledExpression(
-                    JKWhileStatement(
-                        loopStatement::condition.detached(),
-                        loopStatement::body.detached()
-                    ),
-                    listOf(JKNameIdentifier(loopLabel))
-                ).asStatement()
-            )
-        )
+        val labeledLoop = JKLabeledExpression(
+            loopStatement.copyTreeAndDetach(),
+            listOf(JKNameIdentifier(loopLabel))
+        ).asStatement()
+
+        if (notNeedParentBlock) {
+            return labeledLoop
+        }
+
+        return blockStatement(labeledLoop)
     }
 
     private fun JKElement.parentIsWhenCase(): Boolean {
