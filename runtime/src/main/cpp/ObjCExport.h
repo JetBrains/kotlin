@@ -34,11 +34,6 @@ inline static OBJ_GETTER(AllocInstanceWithAssociatedObject, const TypeInfo* type
 extern "C" id Kotlin_ObjCExport_refToObjC(ObjHeader* obj);
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_refFromObjC, id obj);
 
-@protocol ConvertibleToKotlin
-@required
--(KRef)toKotlin:(KRef*)OBJ_RESULT;
-@end;
-
 extern "C" id Kotlin_Interop_CreateNSStringFromKString(KRef str);
 extern "C" OBJ_GETTER(Kotlin_Interop_CreateKStringFromNSString, NSString* str);
 

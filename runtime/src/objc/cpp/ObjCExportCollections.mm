@@ -81,7 +81,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   return index;
 }
 
-@interface NSArray (NSArrayToKotlin) <ConvertibleToKotlin>
+@interface NSArray (NSArrayToKotlin)
 @end;
 
 @implementation NSArray (NSArrayToKotlin)
@@ -94,7 +94,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 }
 @end;
 
-@interface NSMutableArray (NSMutableArrayToKotlin) <ConvertibleToKotlin>
+@interface NSMutableArray (NSMutableArrayToKotlin)
 @end;
 
 @implementation NSMutableArray (NSArrayToKotlin)
@@ -108,7 +108,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 @end;
 
 
-@interface NSSet (NSSetToKotlin) <ConvertibleToKotlin>
+@interface NSSet (NSSetToKotlin)
 @end;
 
 @implementation NSSet (NSSetToKotlin)
@@ -122,7 +122,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @end;
 
-@interface NSDictionary (NSDictionaryToKotlin) <ConvertibleToKotlin>
+@interface NSDictionary (NSDictionaryToKotlin)
 @end;
 
 @implementation NSDictionary (NSDictionaryToKotlin)
@@ -165,7 +165,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 }
 @end;
 
-@interface KListAsNSArray : NSArray <ConvertibleToKotlin>
+@interface KListAsNSArray : NSArray
 @end;
 
 @implementation KListAsNSArray {
@@ -199,7 +199,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @end;
 
-@interface KMutableListAsNSMutableArray : NSMutableArray <ConvertibleToKotlin>
+@interface KMutableListAsNSMutableArray : NSMutableArray
 @end;
 
 @implementation KMutableListAsNSMutableArray {
@@ -258,7 +258,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 
 @end;
 
-@interface KSetAsNSSet : NSSet <ConvertibleToKotlin>
+@interface KSetAsNSSet : NSSet
 @end;
 
 static inline id KSet_getElement(KRef set, id object) {
@@ -314,7 +314,7 @@ static inline id KSet_getElement(KRef set, id object) {
 }
 @end;
 
-@interface KotlinMutableSet : NSMutableSet <ConvertibleToKotlin>
+@interface KotlinMutableSet : NSMutableSet
 @end;
 
 @implementation KotlinMutableSet {
@@ -408,7 +408,7 @@ static inline id KSet_getElement(KRef set, id object) {
 }
 @end;
 
-@interface KMapAsNSDictionary : NSDictionary <ConvertibleToKotlin>
+@interface KMapAsNSDictionary : NSDictionary
 @end;
 
 static inline id KMap_get(KRef map, id aKey) {
@@ -462,7 +462,7 @@ static inline id KMap_get(KRef map, id aKey) {
 
 @end;
 
-@interface KotlinMutableDictionary : NSMutableDictionary <ConvertibleToKotlin>
+@interface KotlinMutableDictionary : NSMutableDictionary
 @end;
 
 @implementation KotlinMutableDictionary {

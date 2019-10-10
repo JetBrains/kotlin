@@ -14,7 +14,7 @@
 #import "Memory.h"
 #import "ObjCExport.h"
 
-@interface KotlinBase : NSObject <ConvertibleToKotlin, NSCopying>
+@interface KotlinBase : NSObject <NSCopying>
 +(instancetype)createWrapper:(ObjHeader*)obj;
 @end;
 

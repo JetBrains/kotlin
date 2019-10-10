@@ -130,7 +130,7 @@ extern "C" id objc_autoreleaseReturnValue(id self);
 
 @end;
 
-@interface NSObject (NSObjectToKotlin) <ConvertibleToKotlin>
+@interface NSObject (NSObjectToKotlin)
 @end;
 
 static void checkLoadedOnce();
@@ -152,7 +152,7 @@ static void checkLoadedOnce();
 }
 @end;
 
-@interface NSString (NSStringToKotlin) <ConvertibleToKotlin>
+@interface NSString (NSStringToKotlin)
 @end;
 
 @implementation NSString (NSStringToKotlin)
@@ -176,7 +176,7 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 
 }
 
-@interface NSNumber (NSNumberToKotlin) <ConvertibleToKotlin>
+@interface NSNumber (NSNumberToKotlin)
 @end;
 
 @implementation NSNumber (NSNumberToKotlin)
@@ -202,7 +202,7 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
 }
 @end;
 
-@interface NSDecimalNumber (NSDecimalNumberToKotlin) <ConvertibleToKotlin>
+@interface NSDecimalNumber (NSDecimalNumberToKotlin)
 @end;
 
 @implementation NSDecimalNumber (NSDecimalNumberToKotlin)
