@@ -640,6 +640,11 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
             runTest("compiler/testData/codegen/boxInline/assert/jvmAssertInlineLambda.kt");
         }
 
+        @TestMetadata("jvmClassInitializer.kt")
+        public void testJvmClassInitializer() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmClassInitializer.kt");
+        }
+
         @TestMetadata("jvmCompanion.kt")
         public void testJvmCompanion() throws Exception {
             runTest("compiler/testData/codegen/boxInline/assert/jvmCompanion.kt");
