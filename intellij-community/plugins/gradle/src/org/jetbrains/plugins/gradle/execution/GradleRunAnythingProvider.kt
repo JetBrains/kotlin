@@ -66,20 +66,22 @@ class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
     val project = RunAnythingUtil.fetchProject(dataContext)
     val executionContext = dataContext.getData(EXECUTING_CONTEXT) ?: ProjectContext(project)
     val context = createContext(project, executionContext, dataContext)
-    val tasksVariants = completeTasks(commandLine, context)
-    val taskOptionsVariants = completeTaskOptions(commandLine, context)
-    val taskClassArgumentsVariants = completeTaskClassArguments(commandLine, context)
-    val longOptionsVariants = completeOptions(commandLine, isLongOpt = true)
-    val shortOptionsVariants = completeOptions(commandLine, isLongOpt = false)
+    val (tasksVariants, wildcardTaskVariants) = completeTasks(commandLine, context)
+      .partition { it.startsWith(":") }
+      .let { it.first.sorted().asSequence() to it.second.sorted().asSequence() }
+    val taskOptionsVariants = completeTaskOptions(commandLine, context).sorted()
+    val taskClassArgumentsVariants = completeTaskClassArguments(commandLine, context).sorted()
+    val longOptionsVariants = completeOptions(commandLine, isLongOpt = true).sorted()
+    val shortOptionsVariants = completeOptions(commandLine, isLongOpt = false).sorted()
     return when {
       commandLine.toComplete.startsWith("--") ->
-        taskOptionsVariants + longOptionsVariants + shortOptionsVariants + taskClassArgumentsVariants + tasksVariants
+        taskOptionsVariants + longOptionsVariants + shortOptionsVariants + taskClassArgumentsVariants + wildcardTaskVariants + tasksVariants
       commandLine.toComplete.startsWith("-") ->
-        taskOptionsVariants + shortOptionsVariants + longOptionsVariants + taskClassArgumentsVariants + tasksVariants
+        taskOptionsVariants + shortOptionsVariants + longOptionsVariants + taskClassArgumentsVariants + wildcardTaskVariants + tasksVariants
       commandLine.toComplete.startsWith(":") ->
-        tasksVariants + taskOptionsVariants + shortOptionsVariants + longOptionsVariants + taskClassArgumentsVariants
+        tasksVariants + wildcardTaskVariants + taskOptionsVariants + shortOptionsVariants + longOptionsVariants + taskClassArgumentsVariants
       else ->
-        taskClassArgumentsVariants + tasksVariants + taskOptionsVariants + longOptionsVariants + shortOptionsVariants
+        taskClassArgumentsVariants + wildcardTaskVariants + tasksVariants + taskOptionsVariants + longOptionsVariants + shortOptionsVariants
     }
   }
 
