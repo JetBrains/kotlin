@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -62,7 +61,7 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
 
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, out)
-        environment.registerJavac(emptyList<File>(), bootClasspath = listOf(KotlinTestUtils.findMockJdkRtJar()))
+        environment.registerJavac(emptyList(), bootClasspath = listOf(findMockJdkRtJar()))
 
         val analysisResult = JvmResolveUtil.analyze(environment)
         val packageView = analysisResult.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
@@ -85,11 +84,11 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, outDir)
         environment.registerJavac(
             javaFiles = javaFiles,
-            kotlinFiles = listOf(KotlinTestUtils.loadJetFile(environment.project, ktFiles.first())),
+            kotlinFiles = listOf(loadJetFile(environment.project, ktFiles.first())),
             arguments = arrayOf("-proc:none"),
-            bootClasspath = listOf(KotlinTestUtils.findMockJdkRtJar())
+            bootClasspath = listOf(findMockJdkRtJar())
         )
-        if (!ktFiles.isEmpty()) {
+        if (ktFiles.isNotEmpty()) {
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
         } else {
             val mkdirs = outDir.mkdirs()
