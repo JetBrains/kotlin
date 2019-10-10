@@ -190,6 +190,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/functionDeclaration.kt");
         }
 
+        @TestMetadata("functionWithBodyExpression.kt")
+        public void testFunctionWithBodyExpression() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/functionWithBodyExpression.kt");
+        }
+
         @TestMetadata("genericCrossinlineArgument.kt")
         public void testGenericCrossinlineArgument() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/genericCrossinlineArgument.kt");
