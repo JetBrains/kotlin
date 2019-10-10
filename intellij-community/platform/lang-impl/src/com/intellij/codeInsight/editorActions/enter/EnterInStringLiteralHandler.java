@@ -83,9 +83,6 @@ public class EnterInStringLiteralHandler extends EnterHandlerDelegateAdapter {
         caretAdvanceRef.set(caretAdvance);
         return Result.DefaultForceIndent;
       }
-      if (quoteHandler.needSemicolonAfter(psiAtOffset)) {
-        document.insertString(psiAtOffset.getTextRange().getEndOffset(), ";");
-      }
     }
     return Result.Continue;
   }
