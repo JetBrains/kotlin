@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.evaluation.CodeFragmentFactory
-import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
@@ -56,13 +55,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         val contextElement = getContextElement(context)
 
-        val constructor = when (item.kind) {
-            null -> error("Code fragment kind should be set")
-            CodeFragmentKind.EXPRESSION -> ::KtExpressionCodeFragment
-            CodeFragmentKind.CODE_BLOCK -> ::KtBlockCodeFragment
-        }
-
-        val codeFragment = constructor(project, "fragment.kt", item.text, initImports(item.imports), contextElement)
+        val codeFragment = KtBlockCodeFragment(project, "fragment.kt", item.text, initImports(item.imports), contextElement)
         supplyDebugInformation(item, codeFragment, context)
 
         codeFragment.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR) { expression: KtExpression ->
@@ -228,7 +221,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
 
     override fun createPresentationCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         val kotlinCodeFragment = createCodeFragment(item, context, project)
-        if (PsiTreeUtil.hasErrorElements(kotlinCodeFragment) && kotlinCodeFragment is KtExpressionCodeFragment) {
+        if (PsiTreeUtil.hasErrorElements(kotlinCodeFragment) && kotlinCodeFragment is KtCodeFragment) {
             val javaExpression = try {
                 PsiElementFactory.SERVICE.getInstance(project).createExpressionFromText(item.text, context)
             } catch (e: IncorrectOperationException) {

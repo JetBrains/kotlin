@@ -238,20 +238,30 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
     }
 
     private fun KtCodeFragment.wrapToStringIfNeeded(bindingContext: BindingContext): Boolean {
-        if (this !is KtExpressionCodeFragment) {
-            return false
-        }
+        val expression = runReadAction {
+            when (this) {
+                is KtExpressionCodeFragment -> getContentElement()
+                is KtBlockCodeFragment -> getContentElement().statements.lastOrNull()
+                else -> {
+                    LOG.error("Invalid code fragment type: ${this.javaClass}")
+                    null
+                }
+            }
+        } ?: return false
 
-        val contentElement = runReadAction { getContentElement() }
-        val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, contentElement]?.type
-        if (contentElement != null && expressionType?.isInlineClassType() == true) {
+        return wrapToStringIfNeeded(expression, bindingContext)
+    }
+
+    private fun wrapToStringIfNeeded(expression: KtExpression, bindingContext: BindingContext): Boolean {
+        val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type ?: return false
+        if (expressionType.isInlineClassType()) {
             val newExpression = runReadAction {
-                val expressionText = contentElement.text
-                KtPsiFactory(project).createExpression("($expressionText).toString()")
+                val expressionText = expression.text
+                KtPsiFactory(expression.project).createExpression("($expressionText).toString()")
             }
             runInEdtAndWait {
-                project.executeWriteCommand("Wrap with 'toString()'") {
-                    contentElement.replace(newExpression)
+                expression.project.executeWriteCommand("Wrap with 'toString()'") {
+                    expression.replace(newExpression)
                 }
             }
             return true
