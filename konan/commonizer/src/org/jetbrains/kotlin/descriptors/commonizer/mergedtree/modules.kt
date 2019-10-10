@@ -62,7 +62,7 @@ internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(collector: (FqN
             collector(packageFqName, memberScope)
         }
 
-        packageFragmentProvider.getSubPackagesOf(packageFqName, alwaysTrue()).map { recurse(it) }
+        packageFragmentProvider.getSubPackagesOf(packageFqName, alwaysTrue()).toSet().map { recurse(it) }
     }
 
     recurse(FqName.ROOT)
