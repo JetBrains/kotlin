@@ -57,8 +57,6 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
   private final Collection<VirtualFile> myCheckingQueue = new THashSet<>(10);
 
   private final Project myProject;
-  private final List<Condition<VirtualFile>> myFilters = ContainerUtil.createLockFreeCopyOnWriteList();
-  private boolean myFiltersLoaded;
 
   private void doRemove(@NotNull VirtualFile problemFile) {
     ProblemFileInfo old;
@@ -378,13 +376,7 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
   private boolean isToBeHighlighted(@Nullable VirtualFile virtualFile) {
     if (virtualFile == null) return false;
 
-    synchronized (myFilters) {
-      if (!myFiltersLoaded) {
-        myFiltersLoaded = true;
-        myFilters.addAll(Arrays.asList(FILTER_EP_NAME.getExtensions(myProject)));
-      }
-    }
-    for (final Condition<VirtualFile> filter : myFilters) {
+    for (final Condition<VirtualFile> filter : FILTER_EP_NAME.getExtensions(myProject)) {
       ProgressManager.checkCanceled();
       if (filter.value(virtualFile)) {
         return true;
