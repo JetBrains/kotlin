@@ -7,18 +7,19 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 
 import groovy.lang.Closure
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.mocha.KotlinMocha
-import org.jetbrains.kotlin.gradle.targets.js.testing.nodejs.KotlinNodeJsTestRunner
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 
 open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
@@ -60,14 +61,6 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
 
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
-
-    fun useNodeJs() = useNodeJs {}
-    fun useNodeJs(body: KotlinNodeJsTestRunner.() -> Unit) = use(KotlinNodeJsTestRunner(compilation), body)
-    fun useNodeJs(fn: Closure<*>) {
-        useNodeJs {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
 
     fun useMocha() = useMocha {}
     fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(compilation), body)
