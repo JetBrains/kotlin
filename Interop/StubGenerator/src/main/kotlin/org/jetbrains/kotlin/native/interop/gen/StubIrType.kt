@@ -21,7 +21,7 @@ class ClassifierStubType(
         override val nullable: Boolean = false
 ) : StubType() {
     fun nested(name: String): ClassifierStubType {
-        assert(underlyingType != null) {
+        assert(underlyingType == null) {
             "Cannot access nested class `$name` of typealias ${classifier.fqName}"
         }
         return ClassifierStubType(classifier.nested(name))
