@@ -103,10 +103,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
             status.evaluationType(evaluationType)
         }
 
-        val language = when (codeFragment.language) {
-            KotlinLanguage.INSTANCE -> EvaluationContextLanguage.Kotlin
-            JavaLanguage.INSTANCE -> EvaluationContextLanguage.Java
-            else -> EvaluationContextLanguage.Other
+        val language = runReadAction {
+            when {
+                codeFragment.getCopyableUserData(KtCodeFragment.FAKE_CONTEXT_FOR_JAVA_FILE) != null -> EvaluationContextLanguage.Java
+                codeFragment.context?.language == KotlinLanguage.INSTANCE -> EvaluationContextLanguage.Kotlin
+                else -> EvaluationContextLanguage.Other
+            }
         }
 
         status.contextLanguage(language)
