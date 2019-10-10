@@ -20744,6 +20744,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                         runTest("compiler/testData/codegen/box/ranges/stepped/expression/until/mixedTypeStep.kt");
                     }
 
+                    @TestMetadata("progressionToNonConst.kt")
+                    public void testProgressionToNonConst() throws Exception {
+                        runTest("compiler/testData/codegen/box/ranges/stepped/expression/until/progressionToNonConst.kt");
+                    }
+
                     @TestMetadata("singleElementStepTwo.kt")
                     public void testSingleElementStepTwo() throws Exception {
                         runTest("compiler/testData/codegen/box/ranges/stepped/expression/until/singleElementStepTwo.kt");

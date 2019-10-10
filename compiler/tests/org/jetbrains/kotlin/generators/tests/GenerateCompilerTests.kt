@@ -153,6 +153,7 @@ fun main(args: Array<String>) {
 
         GenerateRangesCodegenTestData.main(emptyArray<String>())
         GenerateInRangeExpressionTestData.main(emptyArray<String>())
+        GenerateSteppedRangesCodegenTestData.main(emptyArray<String>())
         GeneratePrimitiveVsObjectEqualityTestData.main(emptyArray<String>())
 
         testClass<AbstractBlackBoxCodegenTest> {
@@ -160,7 +161,9 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractLightAnalysisModeTest> {
-            model("codegen/box", targetBackend = TargetBackend.JVM, skipIgnored = true)
+            // "ranges/stepped" is excluded because it contains hundreds of generated tests and only have a box() method.
+            // There isn't much to be gained from running light analysis tests on them.
+            model("codegen/box", targetBackend = TargetBackend.JVM, skipIgnored = true, excludeDirs = listOf("ranges/stepped"))
         }
 
         testClass<AbstractKapt3BuilderModeBytecodeShapeTest> {
