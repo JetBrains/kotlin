@@ -38,13 +38,19 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile
 import org.junit.Assert
 import java.io.File
-import java.io.IOException
 import java.lang.annotation.Retention
 
 abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
 
-    @Throws(IOException::class)
-    protected fun doTest(ktFilePath: String) {
+    protected fun doTestWithoutAPT(ktFilePath: String) {
+        doTest(ktFilePath, aptMode = false)
+    }
+
+    protected fun doTestWithAPT(ktFilePath: String) {
+        doTest(ktFilePath, aptMode = true)
+    }
+
+    private fun doTest(ktFilePath: String, aptMode: Boolean) {
         Assert.assertTrue(ktFilePath.endsWith(".kt"))
         val ktFile = File(ktFilePath)
         val javaFile = File(ktFilePath.replaceFirst("\\.kt$".toRegex(), ".java"))
@@ -53,7 +59,8 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         val compiledSuccessfully = compileKotlinWithJava(
             listOf(javaFile),
             listOf(ktFile),
-            out, testRootDisposable
+            out, testRootDisposable,
+            aptMode
         )
         if (!compiledSuccessfully) return
 
@@ -75,12 +82,12 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile)
     }
 
-    @Throws(IOException::class)
     fun compileKotlinWithJava(
         javaFiles: List<File>,
         kotlinFiles: List<File>,
         outDir: File,
-        disposable: Disposable
+        disposable: Disposable,
+        aptMode: Boolean
     ): Boolean {
         val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
@@ -91,7 +98,7 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
         environment.registerJavac(
             javaFiles = javaFiles,
             kotlinFiles = ktFiles,
-            arguments = arrayOf("-proc:none"),
+            arguments = if (aptMode) arrayOf() else arrayOf("-proc:none"),
             bootClasspath = listOf(findMockJdkRtJar())
         )
         ModuleVisibilityManager.SERVICE.getInstance(environment.project).addModule(
