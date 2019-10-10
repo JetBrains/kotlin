@@ -141,7 +141,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
     private fun useWebpack() {
         createAdapterJs()
-        requiredDependencies.add(versions.browserProcessHrtime)
 
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(versions.webpack)

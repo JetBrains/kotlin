@@ -18,7 +18,7 @@ function withName(name: string, data?: TeamCityMessageData): TeamCityMessageData
     return data
 }
 
-export function runWithTeamCityReporter(
+export function runWithTeamCityConsoleAdapter(
     runner: KotlinTestRunner,
     teamCity: TeamCityMessagesFlow
 ): KotlinTestRunner {

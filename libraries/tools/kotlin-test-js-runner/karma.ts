@@ -4,13 +4,12 @@
  */
 
 import {CliArgsParser, getDefaultCliDescription} from "./src/CliArgsParser";
-import {getFilteringAdapter} from "./src/Adapter";
+import {runWithFilteringAdapter} from "./src/Adapter";
 import {TeamCityMessagesFlow} from "./src/TeamCityMessagesFlow";
-import {runWithTeamCityReporter} from "./src/KotlinTestTeamCityReporter";
+import {runWithTeamCityConsoleAdapter} from "./src/KotlinTestTeamCityReporter";
 
 const kotlin_test = require('kotlin-test');
 
-process.hrtime = require('browser-process-hrtime');
 process.exit = (exitCode) => {
     throw new Error(`Exit with ${exitCode}`)
 };
@@ -25,9 +24,9 @@ const initialAdapter = kotlin_test.kotlin.test.detectAdapter_8be2vx$();
 
 const realConsoleLog = console.log;
 const teamCity = new TeamCityMessagesFlow(null, (payload) => realConsoleLog(payload));
-const teamCityAdapter = runWithTeamCityReporter(initialAdapter, teamCity);
+const teamCityAdapter = runWithTeamCityConsoleAdapter(initialAdapter, teamCity);
 
-kotlin_test.setAdapter(getFilteringAdapter(teamCityAdapter, untypedArgs));
+kotlin_test.setAdapter(runWithFilteringAdapter(teamCityAdapter, untypedArgs));
 
 const resultFun = window.__karma__.result;
 window.__karma__.result = function (result) {
