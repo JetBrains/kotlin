@@ -42,7 +42,7 @@ class KonanGradleTaskManagerExtension : GradleTaskManagerExtension {
                 debugServerPath = "bin/lldb-server"
                 params[DEBUG_SERVER_ARGS_KEY] = "g"
             }
-            KonanTarget.MINGW_X64 -> TODO("implementation needed")
+            KonanTarget.MINGW_X64 -> return super.executeTasks(id, taskNames, projectPath, settings, jvmParametersSetup, listener)
         }
 
         params[DEBUG_SERVER_PATH_KEY] = workspace.lldbHome.resolve(debugServerPath).toString()
