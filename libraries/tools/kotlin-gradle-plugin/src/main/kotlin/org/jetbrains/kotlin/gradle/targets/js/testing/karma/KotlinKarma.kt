@@ -246,7 +246,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             val npmProject = compilation.npmProject
             val files = it.nodeModulesToLoad.map { npmProject.require(it) }
 
-            val adapterJs = npmProject.dir.resolve("adapter.js")
+            val adapterJs = npmProject.dir.resolve("adapter-browser.js")
             adapterJs.printWriter().use { writer ->
                 val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
                 writer.println("require(${karmaRunner.jsQuoted()})")

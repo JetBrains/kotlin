@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinGradleNpmPackage
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
+import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -50,14 +51,15 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         val npmProject = compilation.npmProject
 
         val cliArgs = KotlinTestRunnerCliArgs(
-            task.nodeModulesToLoad.map { npmProject.require(it) },
-            task.includePatterns,
-            task.excludePatterns
+            include = task.includePatterns,
+            exclude = task.excludePatterns
         )
+
+        createAdapterJs(task)
 
         val nodeModules = listOf(
             "mocha/bin/mocha",
-            task.nodeModulesToLoad.single()
+            "./$ADAPTER_NODEJS"
         )
 
         val args = nodeJsArgs +
@@ -66,8 +68,7 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                 } + cliArgs.toList() +
                 listOf("--reporter", "mocha-teamcity-reporter") +
                 listOf(
-                    "-r", "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js",
-                    "-r", "kotlin-test-js-runner/kotlin-test-nodejs-runner.js"
+                    "-r", "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js"
                 )
 
         return TCServiceMessagesTestExecutionSpec(
@@ -76,5 +77,24 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             false,
             clientSettings
         )
+    }
+
+    private fun createAdapterJs(task: KotlinJsTest) {
+        val npmProject = compilation.npmProject
+        val file = task.nodeModulesToLoad
+            .map { npmProject.require(it) }
+            .single()
+
+        val adapterJs = npmProject.dir.resolve(ADAPTER_NODEJS)
+        adapterJs.printWriter().use { writer ->
+            val adapter = npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-runner.js")
+            writer.println("require(${adapter.jsQuoted()})")
+
+            writer.println("require(${file.jsQuoted()})")
+        }
+    }
+
+    companion object {
+        const val ADAPTER_NODEJS = "adapter-nodejs.js"
     }
 }
