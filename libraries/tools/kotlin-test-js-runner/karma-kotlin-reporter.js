@@ -108,8 +108,6 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
 
     const formatError = createFormatError(config, emitter);
 
-    this.TEST_STD_OUT = "##teamcity[testStdOut name='%s' out='%s' flowId='']";
-
     const END_KOTLIN_TEST = "'--END_KOTLIN_TEST--";
 
     const tcOnBrowserStart = this.onBrowserStart;
@@ -134,7 +132,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
         }
 
         if (browserResult) {
-            browserResult.consoleCollector.push(`[${type}] ${log}\n`)
+            browserResult.consoleCollector.push(log.slice(1, -1))
         }
     };
 
@@ -143,13 +141,10 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
         tcSpecSuccess.call(this, browser, result);
 
         const log = this.getLog(browser, result);
-        const testName = result.description;
 
         const endMessage = log.pop();
         this.browserResults[browser.id].consoleResultCollector[concatenateFqn(result)].forEach(item => {
-            log.push(
-                formatMessage(this.TEST_STD_OUT, testName, item)
-            )
+            log.push(item)
         });
         log.push(endMessage);
     };
@@ -160,9 +155,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
 
         log.push(formatMessage(this.TEST_START, testName));
         this.browserResults[browser.id].consoleResultCollector[concatenateFqn(result)].forEach(item => {
-            log.push(
-                formatMessage(this.TEST_STD_OUT, testName, item)
-            )
+            log.push(item)
         });
 
         log.push(formatMessage(this.TEST_FAILED, testName,
