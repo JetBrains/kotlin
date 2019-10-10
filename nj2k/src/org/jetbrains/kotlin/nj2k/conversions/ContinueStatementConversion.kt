@@ -41,27 +41,6 @@ class ContinueStatementConversion(context: NewJ2kConverterContext) : RecursiveAp
             labelChanged = true
         }
 
-        val continueStatementConverter = object : RecursiveApplicableConversionBase(context) {
-            override fun applyToElement(element: JKTreeElement): JKTreeElement {
-                if (element !is JKContinueStatement) return recurse(element)
-                val elementPsi = element.psi<PsiContinueStatement>() ?: return recurse(element)
-                if (elementPsi.findContinuedStatement()?.toContinuedLoop() != loopStatement.psi) return recurse(element)
-                if (element.parentIsWhenCase() && element.label is JKLabelEmpty) {
-                    element.label = JKLabelText(JKNameIdentifier(loopLabel))
-                    if (!labelChanged) {
-                        needLabel = true
-                    }
-                }
-                if (loopStatement !is JKKtConvertedFromForLoopSyntheticWhileStatement) {
-                    return element
-                }
-                val statements = loopStatement.forLoopUpdaters.map { it.copyTreeAndDetach() } + element.copyTreeAndDetach()
-                return if (element.parent is JKBlock)
-                    JKBlockStatementWithoutBrackets(statements)
-                else JKBlockStatement(JKBlockImpl(statements))
-            }
-        }
-
         fun convertContinue(element: JKTreeElement): JKTreeElement {
             if (element !is JKContinueStatement) return applyRecursive(element, ::convertContinue)
             val elementPsi = element.psi<PsiContinueStatement>() ?: return applyRecursive(element, ::convertContinue)
