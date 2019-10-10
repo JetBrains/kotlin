@@ -5,8 +5,6 @@ interface AnotherInterface {
     abstract fun blaBla(bla: Int): String
 }
 class Implemented : MyInterface, AnotherInterface {
-    constructor() {
-    }
     override fun blaBlaBla(bla: Int): String  {
         return bla.toString()
     }

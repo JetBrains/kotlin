@@ -1,6 +1,4 @@
 class MyClass {
-    constructor() {
-    }
     val prop: Int = 42
 }
 typealias MyClassAlias = MyClass

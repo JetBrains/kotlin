@@ -127,14 +127,24 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes/inheritance"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("classes_multiple_implement.kt")
-            public void testClasses_multiple_implement() throws Exception {
-                runTest("compiler/testData/decompiler/box/classes/inheritance/classes_multiple_implement.kt");
+            @TestMetadata("inherit_and_implement.kt")
+            public void testInherit_and_implement() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/inheritance/inherit_and_implement.kt");
             }
 
-            @TestMetadata("classes_simple_implement.kt")
-            public void testClasses_simple_implement() throws Exception {
-                runTest("compiler/testData/decompiler/box/classes/inheritance/classes_simple_implement.kt");
+            @TestMetadata("inherit_primary_ctor_noargs.kt")
+            public void testInherit_primary_ctor_noargs() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/inheritance/inherit_primary_ctor_noargs.kt");
+            }
+
+            @TestMetadata("inherit_primary_ctor_wargs.kt")
+            public void testInherit_primary_ctor_wargs() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/inheritance/inherit_primary_ctor_wargs.kt");
+            }
+
+            @TestMetadata("inherit_secondary_ctor_wargs.kt")
+            public void testInherit_secondary_ctor_wargs() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/inheritance/inherit_secondary_ctor_wargs.kt");
             }
         }
 
@@ -148,6 +158,29 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
 
             public void testAllFilesPresentInInit_get_set() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes/init_get_set"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+        }
+
+        @TestMetadata("compiler/testData/decompiler/box/classes/interface_implement")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Interface_implement extends AbstractIrDecompilerBlackBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInterface_implement() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes/interface_implement"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("classes_multiple_implement.kt")
+            public void testClasses_multiple_implement() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/interface_implement/classes_multiple_implement.kt");
+            }
+
+            @TestMetadata("classes_simple_implement.kt")
+            public void testClasses_simple_implement() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/interface_implement/classes_simple_implement.kt");
             }
         }
     }

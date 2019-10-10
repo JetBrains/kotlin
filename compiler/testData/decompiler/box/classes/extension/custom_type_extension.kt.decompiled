@@ -1,6 +1,4 @@
 class MyClass {
-    constructor() {
-    }
 }
 fun MyClass.printOk(): String  {
     return "OK"

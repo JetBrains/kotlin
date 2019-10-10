@@ -1,6 +1,4 @@
 class TestClass {
-    constructor() {
-    }
     fun foo(): Unit  {
     }
 

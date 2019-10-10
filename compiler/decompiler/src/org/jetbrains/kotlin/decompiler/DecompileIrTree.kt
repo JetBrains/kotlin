@@ -14,11 +14,17 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 fun IrElement.decompile(): String =
     StringBuilder().also { sb ->
@@ -91,14 +97,16 @@ class DecompileIrTreeVisitor(
     override fun visitClass(declaration: IrClass, data: String) {
         printer.print(declaration.decompile())
         if (declaration.kind == ClassKind.CLASS) {
-//            printer.print(declaration.primaryConstructor?.decompile())
+            printer.printWithNoIndent(declaration.primaryConstructor?.decompile())
+            printer.printWithNoIndent(declaration.renderInheritance())
             withBraces {
                 declaration.declarations
-//                    .filterNot { it is IrConstructor && it.isPrimary }
+                    .filterNot { it is IrConstructor && it.isPrimary }
                     .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
                     .decompileElements()
             }
         } else {
+            printer.printWithNoIndent(declaration.renderInheritance())
             withBraces {
                 declaration.declarations
                     .filterNot { it is IrConstructor }
@@ -106,8 +114,20 @@ class DecompileIrTreeVisitor(
                     .decompileElements()
             }
         }
-
     }
+
+    private fun IrClass.renderInheritance(): String =
+        superTypes
+            .filter { !it.isAny() }
+            .map {
+                // Пока предположим, что тут или интерфейс - тогда мапим в имя, или класс - тогда мапим в вызов конструктора
+                if (it.toKotlinType().isInterface()) {
+                    it.toKotlinType().toString()
+                } else {
+                    it.toKotlinType().toString() + it.classOrNull?.owner?.primaryConstructor?.decompile()
+                }
+            }.takeIf { it.isNotEmpty() }?.joinToString(", ", " : ") ?: ""
+
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
         printer.print(declaration.decompile())

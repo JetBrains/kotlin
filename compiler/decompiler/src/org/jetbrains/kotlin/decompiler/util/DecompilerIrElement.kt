@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.model.typeConstructor
+import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
@@ -161,14 +163,13 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
             else -> "${visibility.name.toLowerCase()} "
         }
 
-    // Пока обрабатываем все конструкторы как secondary
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
-        "${declaration.renderVisibility()}constructor${declaration.renderValueParameterTypes()}"
-//        if (declaration.isPrimary) {
-//            declaration.runTrimEnd {
-//                renderValueParameterTypes()
-//            }
-//        } else {
+        if (declaration.isPrimary) {
+            declaration.renderValueParameterTypes()
+        } else {
+            "${declaration.renderVisibility()}constructor${declaration.renderValueParameterTypes()}"
+        }
+
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
@@ -283,11 +284,8 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 }
             )
             append(declaration.name.asString())
-            val filteredSuperTypes = declaration.superTypes.filter { !it.isAny() }
-            if (!declaration.isAnnotationClass) {
-                append(if (filteredSuperTypes.isEmpty()) "" else filteredSuperTypes.map { it.toKotlinType() }.joinToString(", ", " : "))
-            }
         }
+
 
     private fun IrClass.renderClassFlags() =
         renderFlagsList(
@@ -520,7 +518,7 @@ class DecompilerIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     }
                 }.filterNotNull().joinToString(separator = ", ", prefix = "(", postfix = ")")
             )
-    }.toString()
+        }.toString()
 
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): String =
