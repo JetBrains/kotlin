@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 
 class LetImplementInterfaceFix(
-        element: KtClassOrObject,
-        expectedType: KotlinType,
-        expressionType: KotlinType
+    element: KtClassOrObject,
+    expectedType: KotlinType,
+    expressionType: KotlinType
 ) : KotlinQuickFixAction<KtClassOrObject>(element), LowPriorityAction {
 
     private fun KotlinType.renderShort() = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(this)
@@ -47,10 +47,10 @@ class LetImplementInterfaceFix(
 
     private val prefix: String
 
-    private val validExpectedType = with (expectedType) {
+    private val validExpectedType = with(expectedType) {
         isInterface() &&
-        !containsStarProjections() &&
-        constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::constructor)
+                !containsStarProjections() &&
+                constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::constructor)
     }
 
     init {
