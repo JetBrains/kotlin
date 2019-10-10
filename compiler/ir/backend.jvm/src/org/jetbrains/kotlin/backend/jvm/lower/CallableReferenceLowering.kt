@@ -247,7 +247,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                 body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
                     +irDelegatingConstructorCall(constructor).apply {
                         if (samSuperType == null) {
-                            putValueArgument(0, irInt(argumentTypes.size))
+                            putValueArgument(0, irInt(argumentTypes.size + if (irFunctionReference.isSuspend) 1 else 0))
                             if (boundReceiver != null)
                                 putValueArgument(1, irGet(valueParameters.first()))
                         }
