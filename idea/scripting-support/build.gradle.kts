@@ -27,6 +27,8 @@ dependencies {
     testRuntime(project(":kotlinx-serialization-compiler-plugin"))
     testRuntime(project(":kotlinx-serialization-ide-plugin")) { isTransitive = false }
 
+    testRuntime(project(":idea:idea-android")) { isTransitive = false }
+
     Platform[192].orHigher {
         testCompileOnly(intellijPluginDep("java"))
         testRuntime(intellijPluginDep("java"))
