@@ -1,7 +1,5 @@
 import {CliArgsParser, getDefaultCliDescription} from "./src/CliArgsParser";
-import {runWithFilteringAdapter} from "./src/Adapter";
-import {runWithTeamCityConsoleAdapter} from "./src/KotlinTestTeamCityReporter";
-import {TeamCityMessagesFlow} from "./src/TeamCityMessagesFlow";
+import {runWithFilteringAndConsoleAdapters} from "./src/Adapter";
 
 const kotlin_test = require('kotlin-test');
 
@@ -27,14 +25,9 @@ const defaultMochaArgs = [
     '--ui',
     'bdd'
 ];
-
 const processArgs = process.argv.slice(2, -1 * defaultMochaArgs.length);
 const untypedArgs = parser.parse(processArgs);
 
 // TODO(ilgonmic): Try to detect adapter
 const initialAdapter = new kotlin_test.kotlin.test.adapters.JasmineLikeAdapter();
-
-const realConsoleLog = console.log;
-const teamCity = new TeamCityMessagesFlow(null, (payload) => realConsoleLog(payload));
-const teamCityAdapter = runWithTeamCityConsoleAdapter(initialAdapter, teamCity);
-kotlin_test.setAdapter(runWithFilteringAdapter(teamCityAdapter, untypedArgs));
+kotlin_test.setAdapter(runWithFilteringAndConsoleAdapters(initialAdapter, untypedArgs));

@@ -1,5 +1,5 @@
 import {println, startsWith} from "./utils";
-import {IgnoredTestSuitesReporting} from "./KotlinTestTeamCityReporter";
+import {IgnoredTestSuitesReporting} from "./KotlinTestTeamCityConsoleAdapter";
 
 export type CliDescription = {
     version: string,
