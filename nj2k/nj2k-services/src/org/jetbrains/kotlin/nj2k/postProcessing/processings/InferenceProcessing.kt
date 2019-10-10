@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
-import com.intellij.openapi.editor.RangeMarker
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.util.range
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
@@ -20,19 +19,16 @@ import org.jetbrains.kotlin.nj2k.inference.common.collectors.CommonConstraintsCo
 import org.jetbrains.kotlin.nj2k.inference.common.collectors.FunctionConstraintsCollector
 import org.jetbrains.kotlin.nj2k.inference.mutability.*
 import org.jetbrains.kotlin.nj2k.inference.nullability.*
-import org.jetbrains.kotlin.nj2k.postProcessing.GeneralPostProcessing
+import org.jetbrains.kotlin.nj2k.postProcessing.ElementsBasedPostProcessing
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 
-abstract class InferenceProcessing : GeneralPostProcessing {
-    final override fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
-        val elements = if (rangeMarker != null) {
-            val range = rangeMarker.range ?: return
-            runReadAction { file.elementsInRange(range) }.filterIsInstance<KtElement>()
-        } else listOf(file)
-        val resolutionFacade = runReadAction { file.getResolutionFacade() }
-        createInferenceFacade(resolutionFacade, converterContext).runOn(elements)
+abstract class InferenceProcessing : ElementsBasedPostProcessing() {
+    override fun runProcessing(elements: List<PsiElement>, converterContext: NewJ2kConverterContext) {
+        val kotlinElements = elements.filterIsInstance<KtElement>()
+        val resolutionFacade = runReadAction {
+            KotlinCacheService.getInstance(converterContext.project).getResolutionFacade(kotlinElements)
+        }
+        createInferenceFacade(resolutionFacade, converterContext).runOn(kotlinElements)
     }
 
     abstract fun createInferenceFacade(

@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import java.io.IOException
 import java.util.*

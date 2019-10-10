@@ -10,12 +10,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.nj2k.JKImportStorage
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.postProcessing.FileBasedPostProcessing
 import org.jetbrains.kotlin.nj2k.postProcessing.GeneralPostProcessing
 import org.jetbrains.kotlin.nj2k.postProcessing.runUndoTransparentActionInEdt
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 
-class ShortenReferenceProcessing : GeneralPostProcessing {
+class ShortenReferenceProcessing : FileBasedPostProcessing() {
     private val filter = filter@{ element: PsiElement ->
         when (element) {
             is KtQualifiedExpression -> when {
@@ -26,7 +27,7 @@ class ShortenReferenceProcessing : GeneralPostProcessing {
         }
     }
 
-    override fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
+    override fun runProcessing(file: KtFile, allFiles: List<KtFile>, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
         runUndoTransparentActionInEdt(inWriteAction = false) {
             if (rangeMarker != null) {
                 if (rangeMarker.isValid) {

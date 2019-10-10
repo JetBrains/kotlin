@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.nj2k
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -28,7 +26,6 @@ import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.conversions.JKResolver
@@ -68,36 +65,27 @@ class NewJavaToKotlinConverter(
                     elementsToKotlin(files, withProgressProcessor)
                 })
 
-            val texts = results.mapIndexed { i, result ->
-                try {
-                    val kotlinFile = ApplicationManager.getApplication().runReadAction(Computable {
-                        KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", result!!.text, files[i])
-                    })
-
-                    ApplicationManager.getApplication().invokeAndWait {
-                        CommandProcessor.getInstance().runUndoTransparentAction {
-                            runWriteAction {
-                                kotlinFile.addImports(result!!.importsToAdd)
-                            }
-                        }
+            val kotlinFiles = results.mapIndexed { i, result ->
+                runUndoTransparentActionInEdt(inWriteAction = true) {
+                    val javaFile = files[i]
+                    KtPsiFactory(project).createFileWithLightClassSupport(
+                        javaFile.name.replace(".java", ".kt"),
+                        result!!.text,
+                        files[i]
+                    ).apply {
+                        addImports(result.importsToAdd)
                     }
-                    AfterConversionPass(project, postProcessor).run(
-                        kotlinFile,
-                        context,
-                        range = null,
-                        onPhaseChanged = { phase, description ->
-                            withProgressProcessor.updateState(i, phase + 1, description)
-                        }
-                    )
-                    kotlinFile.text
-                } catch (e: ProcessCanceledException) {
-                    throw e
-                } catch (t: Throwable) {
-                    LOG.error(t)
-                    result!!.text
                 }
+
             }
-            FilesResult(texts, externalCodeProcessing)
+
+            postProcessor.doAdditionalProcessing(
+                JKMultipleFilesPostProcessingTarget(kotlinFiles),
+                context
+            ) { phase, description ->
+                withProgressProcessor.updateState(fileIndex = null, phase = phase + 1, description = description)
+            }
+            FilesResult(kotlinFiles.map { it.text }, externalCodeProcessing)
         }
     }
 
@@ -217,12 +205,13 @@ class NewJ2kWithProgressProcessor(
         val DEFAULT = NewJ2kWithProgressProcessor(null, null, 0)
     }
 
-    override fun updateState(fileIndex: Int, phase: Int, description: String) {
+    override fun updateState(fileIndex: Int?, phase: Int, description: String) {
         progress?.checkCanceled()
         progress?.fraction = phase / phasesCount.toDouble()
         progress?.text = "$description - phase $phase of $phasesCount"
-        if (files != null && files.isNotEmpty()) {
-            progress?.text2 = files[fileIndex].virtualFile.presentableUrl
+        progress?.text2 = when {
+            files != null && files.isNotEmpty() && fileIndex != null -> files[fileIndex].virtualFile.presentableUrl
+            else -> ""
         }
     }
 

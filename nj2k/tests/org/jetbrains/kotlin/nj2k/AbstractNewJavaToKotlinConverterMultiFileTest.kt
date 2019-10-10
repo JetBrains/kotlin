@@ -28,9 +28,11 @@ abstract class AbstractNewJavaToKotlinConverterMultiFileTest : AbstractJavaToKot
             psiManager.findFile(virtualFile) as PsiJavaFile
         }
 
-        val externalFiles = File(dirPath + File.separator + "external").listFiles { _, name ->
-            name.endsWith(".java") || name.endsWith(".kt")
-        }!!
+        val externalFiles = File(dirPath + File.separator + "external")
+            .takeIf { it.exists() }
+            ?.listFiles { _, name ->
+                name.endsWith(".java") || name.endsWith(".kt")
+            }.orEmpty()
 
         val externalPsiFiles = externalFiles.map { file ->
             val virtualFile = addFile(file, "test")

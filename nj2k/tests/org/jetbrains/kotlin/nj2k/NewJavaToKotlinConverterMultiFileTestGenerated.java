@@ -34,6 +34,11 @@ public class NewJavaToKotlinConverterMultiFileTestGenerated extends AbstractNewJ
         runTest("nj2k/testData/multiFile/AnnotationWithArrayParameter/");
     }
 
+    @TestMetadata("DetectPropertiesMultipleFiles")
+    public void testDetectPropertiesMultipleFiles() throws Exception {
+        runTest("nj2k/testData/multiFile/DetectPropertiesMultipleFiles/");
+    }
+
     @TestMetadata("FieldToProperty")
     public void testFieldToProperty() throws Exception {
         runTest("nj2k/testData/multiFile/FieldToProperty/");
@@ -47,6 +52,11 @@ public class NewJavaToKotlinConverterMultiFileTestGenerated extends AbstractNewJ
     @TestMetadata("GetterAndSetterUsages")
     public void testGetterAndSetterUsages() throws Exception {
         runTest("nj2k/testData/multiFile/GetterAndSetterUsages/");
+    }
+
+    @TestMetadata("InterfaceWithGetterInOtherFile")
+    public void testInterfaceWithGetterInOtherFile() throws Exception {
+        runTest("nj2k/testData/multiFile/InterfaceWithGetterInOtherFile/");
     }
 
     @TestMetadata("KT11952")
