@@ -421,6 +421,10 @@ abstract class KotlinIrLinker(
                 val uniqId = it.uniqId()
                 assert(uniqId.isPublic)
                 moduleReversedFileIndex.getOrPut(uniqId) { fileDeserializer }
+            val fileUniqIdIndex = fileProto.declarationIdList.map { UniqId(it) }
+
+            fileUniqIdIndex.forEach {
+                moduleReversedFileIndex.getOrPut(it) { fileDeserializer }
             }
 
             val forceLoadedIds = deserializationStrategy.run {
@@ -430,7 +434,19 @@ abstract class KotlinIrLinker(
                         fileDeserializer.loadSymbolData(it.index).topLevelUniqId
                     }
                     else -> emptyList()
+            for (d in fileProto.explicitlyExportedToCompilerList) {
+                fileDeserializer.run {
+                    fileLocalDeserializationState.addUniqID(UniqId(loadSymbolData(d).topLevelUniqIdIndex))
                 }
+            }
+
+            if (deserializationStrategy.theWholeWorld) {
+                for (id in fileUniqIdIndex) {
+                    assert(id.isPublic)
+                    moduleDeserializationState.addUniqID(id)
+                }
+            } else if (deserializationStrategy.explicitlyExported) {
+                modulesWithReachableTopLevels.add(this)
             }
 
             forceLoadedIds.forEach { moduleDeserializationState.addUniqID(it.uniqId().also { i -> assert(i.isPublic) }) }

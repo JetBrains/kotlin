@@ -1325,7 +1325,6 @@ open class IrFileSerializer(
         file.declarations
             .filterIsInstance<IrProperty>()
             .filter { it.backingField?.initializer != null && !it.isConst }
-            .filter { it.visibility.let { it == Visibilities.PUBLIC || it == Visibilities.INTERNAL } }
             .forEach { proto.addExplicitlyExportedToCompiler(serializeIrSymbol(it.backingField!!.symbol)) }
 
         // TODO: Konan specific

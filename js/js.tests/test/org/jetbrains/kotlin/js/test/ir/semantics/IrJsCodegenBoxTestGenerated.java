@@ -14203,6 +14203,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/properties/genericPropertyMultiModule.kt");
         }
 
+        @TestMetadata("initOrderMultiModule.kt")
+        public void testInitOrderMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/initOrderMultiModule.kt");
+        }
+
         @TestMetadata("kt10715.kt")
         public void testKt10715() throws Exception {
             runTest("compiler/testData/codegen/box/properties/kt10715.kt");
