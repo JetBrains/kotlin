@@ -21,33 +21,14 @@ interface SearchPathResolverWithAttributes<L: KotlinLibrary>: SearchPathResolver
     val knownCompilerVersions: List<KonanVersion>?
 }
 
-fun resolverByName(
-    repositories: List<String>,
-    directLibs: List<String> = emptyList(),
-    distributionKlib: String? = null,
-    localKotlinDir: String? = null,
-    skipCurrentDir: Boolean = false,
-    logger: Logger
-): SearchPathResolver<KotlinLibrary> =
-    KotlinLibrarySearchPathResolver(
-        repositories,
-        directLibs,
-        distributionKlib,
-        localKotlinDir,
-        skipCurrentDir,
-        logger,
-        ::createKotlinLibrary
-    )
-
 // This is a simple library resolver that only cares for file names.
-open class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
+abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
         repositories: List<String>,
         directLibs: List<String>,
         val distributionKlib: String?,
         val localKotlinDir: String?,
         val skipCurrentDir: Boolean,
-        override val logger: Logger,
-        open val libraryBuilder: (File, Boolean) -> L
+        override val logger: Logger
 ) : SearchPathResolver<L> {
 
     val localHead: File?
@@ -62,6 +43,8 @@ open class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
         get() = if (!skipCurrentDir) File.userDir else null
 
     private val repoRoots: List<File> by lazy { repositories.map { File(it) } }
+
+    abstract fun libraryBuilder(file: File, isDefault: Boolean): L
 
     private val directLibraries: List<KotlinLibrary> by lazy {
         directLibs.mapNotNull { found(File(it)) }.map { libraryBuilder(it, false) }
@@ -179,7 +162,7 @@ fun KonanVersion.compatible(other: KonanVersion) =
 // This is a library resolver aware of attributes shared between platforms,
 // such as abi version.
 // JS and Native resolvers are inherited from this one.
-open class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
+abstract class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
     repositories: List<String>,
     directLibs: List<String>,
     override val knownAbiVersions: List<KotlinAbiVersion>?,
@@ -187,9 +170,8 @@ open class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
     distributionKlib: String?,
     localKotlinDir: String?,
     skipCurrentDir: Boolean,
-    override val logger: Logger,
-    override val libraryBuilder: (File, Boolean) -> L
-) : KotlinLibrarySearchPathResolver<L>(repositories, directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger, libraryBuilder),
+    override val logger: Logger
+) : KotlinLibrarySearchPathResolver<L>(repositories, directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger),
     SearchPathResolverWithAttributes<L>
 {
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean {

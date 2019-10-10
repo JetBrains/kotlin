@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.util.Logger
-import java.io.File
 
 class JsLibraryResolver(
     repositories: List<String>,
@@ -33,9 +33,11 @@ class JsLibraryResolver(
     distributionKlib,
     localKotlinDir,
     skipCurrentDir,
-    logger,
-    ::createKotlinLibrary
-)
+    logger
+) {
+    // Stick with the default KotlinLibrary for now.
+    override fun libraryBuilder(file: File, isDefault: Boolean) = createKotlinLibrary(file, isDefault)
+}
 
 // TODO: This is a temporary set of library resolver policies for js compiler.
 fun jsResolveLibraries(libraries: List<String>, logger: Logger): KotlinLibraryResolveResult {
