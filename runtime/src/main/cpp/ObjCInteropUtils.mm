@@ -22,7 +22,7 @@
 #import <Foundation/NSException.h>
 #import <Foundation/NSString.h>
 #import "Memory.h"
-#import "MemorySharedRefs.hpp"
+#import "ObjCInteropUtilsPrivate.h"
 
 namespace {
   Class nsStringClass = nullptr;
@@ -97,49 +97,16 @@ id MissingInitImp(id self, SEL _cmd) {
   return nullptr;
 }
 
-// TODO: rework the interface to reduce the number of virtual calls
-// in Kotlin_Interop_createKotlinObjectHolder and Kotlin_Interop_unwrapKotlinObjectHolder
-@interface KotlinObjectHolder : NSObject
--(id)initWithRef:(KRef)ref;
--(KRef)ref;
-@end;
-
-@implementation KotlinObjectHolder {
-  KRefSharedHolder refHolder;
-};
-
--(id)initWithRef:(KRef)ref {
-  if (self = [super init]) {
-    refHolder.init(ref);
-  }
-  return self;
-}
-
--(KRef)ref {
-  return refHolder.ref();
-}
-
--(void)dealloc {
-  refHolder.dispose();
-  [super dealloc];
-}
-
-@end;
+// Initialized in [ObjCInteropUtilsClasses.mm].
+id (*Kotlin_Interop_createKotlinObjectHolder_ptr)(KRef any) = nullptr;
+KRef (*Kotlin_Interop_unwrapKotlinObjectHolder_ptr)(id holder) = nullptr;
 
 id Kotlin_Interop_createKotlinObjectHolder(KRef any) {
-  if (any == nullptr) {
-    return nullptr;
-  }
-
-  return [[[KotlinObjectHolder alloc] initWithRef:any] autorelease];
+  return Kotlin_Interop_createKotlinObjectHolder_ptr(any);
 }
 
 KRef Kotlin_Interop_unwrapKotlinObjectHolder(id holder) {
-  if (holder == nullptr) {
-    return nullptr;
-  }
-
-  return [((KotlinObjectHolder*)holder) ref];
+  return Kotlin_Interop_unwrapKotlinObjectHolder_ptr(holder);
 }
 
 KBoolean Kotlin_Interop_DoesObjectConformToProtocol(id obj, void* prot, KBoolean isMeta) {
@@ -154,46 +121,15 @@ KBoolean Kotlin_Interop_IsObjectKindOfClass(id obj, void* cls) {
   return [((id<NSObject>)obj) isKindOfClass:(Class)cls];
 }
 
-// Used as an associated object for ObjCWeakReferenceImpl.
-@interface KotlinObjCWeakReference : NSObject
-@end;
-
-// libobjc:
-id objc_loadWeakRetained(id *location);
-id objc_storeWeak(id *location, id newObj);
-void objc_destroyWeak(id *location);
-void objc_release(id obj);
-
-@implementation KotlinObjCWeakReference {
-  @public id referred;
-}
-
-// Called when removing Kotlin object.
--(void)releaseAsAssociatedObject {
-  objc_destroyWeak(&referred);
-  objc_release(self);
-}
-
-@end;
-
-OBJ_GETTER(Kotlin_Interop_refFromObjC, id obj);
+OBJ_GETTER((*Konan_ObjCInterop_getWeakReference_ptr), KRef ref) = nullptr;
+void (*Konan_ObjCInterop_initWeakReference_ptr)(KRef ref, id objcPtr) = nullptr;
 
 OBJ_GETTER(Konan_ObjCInterop_getWeakReference, KRef ref) {
-  MetaObjHeader* meta = ref->meta_object();
-  KotlinObjCWeakReference* objcRef = (KotlinObjCWeakReference*)meta->associatedObject_;
-
-  id objcReferred = objc_loadWeakRetained(&objcRef->referred);
-  KRef result = Kotlin_Interop_refFromObjC(objcReferred, OBJ_RESULT);
-  objc_release(objcReferred);
-
-  return result;
+  RETURN_RESULT_OF(Konan_ObjCInterop_getWeakReference_ptr, ref);
 }
 
 void Konan_ObjCInterop_initWeakReference(KRef ref, id objcPtr) {
-  MetaObjHeader* meta = ref->meta_object();
-  KotlinObjCWeakReference* objcRef = [KotlinObjCWeakReference new];
-  objc_storeWeak(&objcRef->referred, objcPtr);
-  meta->associatedObject_ = objcRef;
+  Konan_ObjCInterop_initWeakReference_ptr(ref, objcPtr);
 }
 
 } // extern "C"
