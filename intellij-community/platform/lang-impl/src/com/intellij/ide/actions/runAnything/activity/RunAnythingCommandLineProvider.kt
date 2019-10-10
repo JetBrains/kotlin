@@ -27,7 +27,7 @@ abstract class RunAnythingCommandLineProvider : RunAnythingProviderWithVisibleEx
       else -> return null
     }
     val parameters = ParametersListUtil.parse(command, true, true, true)
-    val toComplete = parameters.last()
+    val toComplete = parameters.lastOrNull() ?: ""
     val prefix = command.removeSuffix(toComplete).trim()
     val nonEmptyParameters = parameters.filter { it.isNotEmpty() }
     val completedParameters = parameters.dropLast(1).filter { it.isNotEmpty() }
