@@ -7,7 +7,7 @@ import {CliArgValues} from "./CliArgsParser";
 import {KotlinTestRunner} from "./KotlinTestRunner";
 import {configureFiltering} from "./CliFiltertingConfiguration";
 
-export function getFilteringAdapter(
+export function runWithFilteringAdapter(
     initialAdapter: KotlinTestRunner,
     cliArgsValue: CliArgValues
 ): KotlinTestRunner {

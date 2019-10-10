@@ -1,6 +1,6 @@
 import {CliArgsParser, getDefaultCliDescription} from "./src/CliArgsParser";
-import {getFilteringAdapter} from "./src/Adapter";
-import {runWithTeamCityReporter} from "./src/KotlinTestTeamCityReporter";
+import {runWithFilteringAdapter} from "./src/Adapter";
+import {runWithTeamCityConsoleAdapter} from "./src/KotlinTestTeamCityReporter";
 import {TeamCityMessagesFlow} from "./src/TeamCityMessagesFlow";
 
 const kotlin_test = require('kotlin-test');
@@ -36,5 +36,5 @@ const initialAdapter = new kotlin_test.kotlin.test.adapters.JasmineLikeAdapter()
 
 const realConsoleLog = console.log;
 const teamCity = new TeamCityMessagesFlow(null, (payload) => realConsoleLog(payload));
-const teamCityAdapter = runWithTeamCityReporter(initialAdapter, teamCity);
-kotlin_test.setAdapter(getFilteringAdapter(teamCityAdapter, untypedArgs));
+const teamCityAdapter = runWithTeamCityConsoleAdapter(initialAdapter, teamCity);
+kotlin_test.setAdapter(runWithFilteringAdapter(teamCityAdapter, untypedArgs));
