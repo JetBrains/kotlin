@@ -30,17 +30,21 @@ import org.jetbrains.kotlin.psi.psiUtil.replaceFileAnnotationList
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class KotlinSuppressIntentionAction private constructor(
-        private val suppressAt: PsiElement,
-        private val suppressKey: String,
-        private val kind: AnnotationHostKind
+    private val suppressAt: PsiElement,
+    private val suppressKey: String,
+    private val kind: AnnotationHostKind
 ) : SuppressIntentionAction() {
-    constructor(suppressAt: KtExpression,
-                suppressKey: String,
-                kind: AnnotationHostKind) : this(suppressAt as PsiElement, suppressKey, kind)
+    constructor(
+        suppressAt: KtExpression,
+        suppressKey: String,
+        kind: AnnotationHostKind
+    ) : this(suppressAt as PsiElement, suppressKey, kind)
 
-    constructor(suppressAt: KtFile,
-                suppressKey: String,
-                kind: AnnotationHostKind) : this(suppressAt as PsiElement, suppressKey, kind)
+    constructor(
+        suppressAt: KtFile,
+        suppressKey: String,
+        kind: AnnotationHostKind
+    ) : this(suppressAt as PsiElement, suppressKey, kind)
 
     override fun getFamilyName() = KotlinBundle.message("suppress.warnings.family")
     override fun getText() = KotlinBundle.message("suppress.warning.for", suppressKey, kind.kind, kind.name)
@@ -53,14 +57,16 @@ class KotlinSuppressIntentionAction private constructor(
 
         val id = "\"$suppressKey\""
         when (suppressAt) {
-            is KtModifierListOwner ->
-                suppressAt.addAnnotation(KotlinBuiltIns.FQ_NAMES.suppress,
-                                         id,
-                                         whiteSpaceText = if (kind.newLineNeeded) "\n" else " ",
-                                         addToExistingAnnotation = { entry ->
-                                             addArgumentToSuppressAnnotation(entry, id)
-                                             true
-                                         })
+            is KtModifierListOwner -> suppressAt.addAnnotation(
+                KotlinBuiltIns.FQ_NAMES.suppress,
+                id,
+                whiteSpaceText = if (kind.newLineNeeded) "\n" else " ",
+                addToExistingAnnotation = { entry ->
+                    addArgumentToSuppressAnnotation(
+                        entry,
+                        id
+                    ); true
+                })
 
             is KtAnnotatedExpression ->
                 suppressAtAnnotatedExpression(CaretBox(suppressAt, editor), id)
@@ -102,8 +108,7 @@ class KotlinSuppressIntentionAction private constructor(
         if (entry != null) {
             // already annotated with @suppress
             addArgumentToSuppressAnnotation(entry, id)
-        }
-        else {
+        } else {
             suppressAtExpression(suppressAt, id)
         }
     }
@@ -119,7 +124,7 @@ class KotlinSuppressIntentionAction private constructor(
 
         val afterReplace = suppressAt.replace(annotatedExpression) as KtAnnotatedExpression
         val toReplace = afterReplace.findElementAt(afterReplace.textLength - 2)!!
-        assert (toReplace.text == placeholderText)
+        assert(toReplace.text == placeholderText)
         val result = toReplace.replace(copy)!!
 
         caretBox.positionCaretInCopy(result)
@@ -139,7 +144,8 @@ class KotlinSuppressIntentionAction private constructor(
         }
     }
 
-    private fun suppressAnnotationText(id: String, withAt: Boolean = true) = "${if (withAt) "@" else ""}${KotlinBuiltIns.FQ_NAMES.suppress.shortName()}($id)"
+    private fun suppressAnnotationText(id: String, withAt: Boolean = true) =
+        "${if (withAt) "@" else ""}${KotlinBuiltIns.FQ_NAMES.suppress.shortName()}($id)"
 
     private fun findSuppressAnnotation(annotated: KtAnnotated): KtAnnotationEntry? {
         val context = annotated.analyze()
@@ -164,9 +170,9 @@ private fun KtPsiFactory.createWhiteSpace(kind: AnnotationHostKind): PsiElement 
     return if (kind.newLineNeeded) createNewLine() else createWhiteSpace()
 }
 
-private class CaretBox<out E: KtExpression>(
-        val expression: E,
-        private val editor: Editor?
+private class CaretBox<out E : KtExpression>(
+    val expression: E,
+    private val editor: Editor?
 ) {
     private val offsetInExpression: Int = (editor?.caretModel?.offset ?: 0) - expression.textRange!!.startOffset
 
