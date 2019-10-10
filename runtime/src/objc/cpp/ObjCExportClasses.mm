@@ -133,8 +133,6 @@ extern "C" id objc_autoreleaseReturnValue(id self);
 @interface NSObject (NSObjectToKotlin)
 @end;
 
-static void checkLoadedOnce();
-
 @implementation NSObject (NSObjectToKotlin)
 -(ObjHeader*)toKotlin:(ObjHeader**)OBJ_RESULT {
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
@@ -142,13 +140,6 @@ static void checkLoadedOnce();
 
 -(void)releaseAsAssociatedObject {
   objc_release(self);
-}
-
-+(void)load {
-  static dispatch_once_t onceToken = 0;
-  dispatch_once(&onceToken, ^{
-    checkLoadedOnce();
-  });
 }
 @end;
 
@@ -211,16 +202,6 @@ OBJ_GETTER(Kotlin_boxDouble, KDouble value);
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
 @end;
-
-static void checkLoadedOnce() {
-  Class marker = objc_allocateClassPair([NSObject class], "KotlinFrameworkLoadedOnceMarker", 0);
-  if (marker == nullptr) {
-    [NSException raise:NSGenericException
-          format:@"Only one Kotlin framework can be loaded currently"];
-  } else {
-    objc_registerClassPair(marker);
-  }
-}
 
 __attribute__((constructor))
 static void injectToRuntime() {
