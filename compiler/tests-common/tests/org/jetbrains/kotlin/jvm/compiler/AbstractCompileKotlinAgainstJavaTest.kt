@@ -17,10 +17,14 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -74,28 +78,34 @@ abstract class AbstractCompileKotlinAgainstJavaTest : TestCaseWithTmpdir() {
     @Throws(IOException::class)
     fun compileKotlinWithJava(
         javaFiles: List<File>,
-        ktFiles: List<File>,
+        kotlinFiles: List<File>,
         outDir: File,
         disposable: Disposable
     ): Boolean {
         val environment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable)
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         environment.configuration.put(JVMConfigurationKeys.COMPILE_JAVA, true)
-        environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, outDir)
+        val ktFiles = kotlinFiles.map { kotlinFile: File ->
+            createFile(kotlinFile.name, FileUtil.loadFile(kotlinFile, true), environment.project)
+        }
         environment.registerJavac(
             javaFiles = javaFiles,
-            kotlinFiles = listOf(loadJetFile(environment.project, ktFiles.first())),
+            kotlinFiles = ktFiles,
             arguments = arrayOf("-proc:none"),
             bootClasspath = listOf(findMockJdkRtJar())
         )
-        if (ktFiles.isNotEmpty()) {
-            LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
+        ModuleVisibilityManager.SERVICE.getInstance(environment.project).addModule(
+            ModuleBuilder("module for test", tmpdir.absolutePath, "test")
+        )
+
+        if (kotlinFiles.isNotEmpty()) {
+            GenerationUtils.compileFilesTo(ktFiles, environment, outDir)
         } else {
             val mkdirs = outDir.mkdirs()
             assert(mkdirs) { "Not created: $outDir" }
         }
 
-        return JavacWrapper.getInstance(environment.project).use { it.compile() }
+        return JavacWrapper.getInstance(environment.project).use { it.compile(outDir) }
     }
 
     companion object {
