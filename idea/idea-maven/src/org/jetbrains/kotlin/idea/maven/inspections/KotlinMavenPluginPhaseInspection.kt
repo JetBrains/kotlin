@@ -39,7 +39,8 @@ import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.idea.platform.tooling
-import org.jetbrains.kotlin.idea.versions.*
+import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
+import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import java.util.*
 
@@ -107,7 +108,8 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                                 || pom.isExecutionEnabled(javacPlugin, "default-compile")
                                 || pom.isExecutionEnabled(javacPlugin, "default-testCompile")
                                 || pom.isPluginExecutionMissing(javacPlugin, "default-compile", "compile")
-                                || pom.isPluginExecutionMissing(javacPlugin, "default-testCompile", "testCompile")) {
+                                || pom.isPluginExecutionMissing(javacPlugin, "default-testCompile", "testCompile")
+                            ) {
 
                                 holder.createProblem(
                                     badExecution.phase.createStableCopy(),
@@ -179,19 +181,23 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
         }
 
         pom.findKotlinExecutions().filter {
-            it.goals.goals.any { it.rawText == PomFile.KotlinGoals.Compile || it.rawText == PomFile.KotlinGoals.Js }
-                    && it.goals.goals.any { it.rawText == PomFile.KotlinGoals.TestCompile || it.rawText == PomFile.KotlinGoals.TestJs }
+            it.goals.goals.any { goal -> goal.rawText == PomFile.KotlinGoals.Compile || goal.rawText == PomFile.KotlinGoals.Js }
+                    && it.goals.goals.any { goal -> goal.rawText == PomFile.KotlinGoals.TestCompile || goal.rawText == PomFile.KotlinGoals.TestJs }
         }.forEach { badExecution ->
-                holder.createProblem(
-                    badExecution.goals.createStableCopy(),
-                    HighlightSeverity.WEAK_WARNING,
-                    "It is not recommended to have both test and compile goals in the same execution"
-                )
-            }
+            holder.createProblem(
+                badExecution.goals.createStableCopy(),
+                HighlightSeverity.WEAK_WARNING,
+                "It is not recommended to have both test and compile goals in the same execution"
+            )
+        }
     }
 
-    private class AddExecutionLocalFix(val file: XmlFile, val module: Module, val kotlinPlugin: MavenDomPlugin, val goal: String) :
-        LocalQuickFix {
+    private class AddExecutionLocalFix(
+        val file: XmlFile,
+        val module: Module,
+        val kotlinPlugin: MavenDomPlugin,
+        val goal: String
+    ) : LocalQuickFix {
         override fun getName() = "Create $goal execution"
 
         override fun getFamilyName() = "Create kotlin execution"
@@ -231,8 +237,12 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
         }
     }
 
-    private class ConfigurePluginExecutionLocalFix(val module: Module, val xmlFile: XmlFile, val goal: String, val version: String?) :
-        LocalQuickFix {
+    private class ConfigurePluginExecutionLocalFix(
+        val module: Module,
+        val xmlFile: XmlFile,
+        val goal: String,
+        val version: String?
+    ) : LocalQuickFix {
         override fun getName() = "Create $goal execution of kotlin-maven-compiler"
         override fun getFamilyName() = "Create kotlin execution"
 
