@@ -32,7 +32,7 @@ public class ProgramRunnerUtil {
   private ProgramRunnerUtil() { }
 
   @Nullable
-  public static ProgramRunner getRunner(@NotNull String executorId, @Nullable RunnerAndConfigurationSettings configuration) {
+  public static ProgramRunner<?> getRunner(@NotNull String executorId, @Nullable RunnerAndConfigurationSettings configuration) {
     return configuration == null ? null : ProgramRunner.getRunner(executorId, configuration.getConfiguration());
   }
 
@@ -55,6 +55,8 @@ public class ProgramRunnerUtil {
 
     RunnerAndConfigurationSettings runnerAndConfigurationSettings = environment.getRunnerAndConfigurationSettings();
     final Project project = environment.getProject();
+    ProgramRunner<?> runner = environment.getRunner();
+
     if (runnerAndConfigurationSettings != null) {
       if (!ExecutionTargetManager.canRun(environment)) {
         ExecutionUtil.handleExecutionError(environment, new ExecutionException(
@@ -79,9 +81,18 @@ public class ProgramRunnerUtil {
           }
         }
       }
+
+      // corresponding runner can be changed after configuration edit
+      runner = getRunner(environment.getExecutor().getId(), runnerAndConfigurationSettings);
     }
 
     try {
+      if (runner == null) {
+        throw new ExecutionException("Cannot find runner for " + environment.getRunProfile().getName());
+      }
+      if (!runner.equals(environment.getRunner())) {
+        environment = new ExecutionEnvironmentBuilder(environment).runner(runner).build();
+      }
       if (assignNewId) {
         environment.assignNewExecutionId();
       }
