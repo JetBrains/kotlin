@@ -5,6 +5,8 @@
 
 import {CliArgsParser, getDefaultCliDescription} from "./src/CliArgsParser";
 import {getFilteringAdapter} from "./src/Adapter";
+import {TeamCityMessagesFlow} from "./src/TeamCityMessagesFlow";
+import {runWithTeamCityReporter} from "./src/KotlinTestTeamCityReporter";
 
 const kotlin_test = require('kotlin-test');
 
@@ -20,7 +22,12 @@ const parser = new CliArgsParser(cliDescription);
 const untypedArgs = parser.parse(processArgs);
 
 const initialAdapter = kotlin_test.kotlin.test.detectAdapter_8be2vx$();
-kotlin_test.setAdapter(getFilteringAdapter(initialAdapter, untypedArgs));
+
+const realConsoleLog = console.log;
+const teamCity = new TeamCityMessagesFlow(null, (payload) => realConsoleLog(payload));
+const teamCityAdapter = runWithTeamCityReporter(initialAdapter, teamCity);
+
+kotlin_test.setAdapter(getFilteringAdapter(teamCityAdapter, untypedArgs));
 
 const resultFun = window.__karma__.result;
 window.__karma__.result = function (result) {

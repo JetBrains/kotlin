@@ -2,8 +2,6 @@ import {KotlinTestRunner} from "./KotlinTestRunner";
 import {TeamCityMessageData, TeamCityMessagesFlow} from "./TeamCityMessagesFlow";
 import {format} from "util";
 
-const kotlin_test = require('kotlin-test');
-
 // don't use enum as it is not minified by uglify
 export type IgnoredTestSuitesReporting
     = "skip" | "reportAsIgnoredTest" | "reportAllInnerTestsAsIgnored"
