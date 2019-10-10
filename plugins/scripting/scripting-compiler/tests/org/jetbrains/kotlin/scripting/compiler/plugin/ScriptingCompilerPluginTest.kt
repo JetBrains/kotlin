@@ -10,6 +10,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -41,6 +42,10 @@ class ScriptingCompilerPluginTest : TestCase() {
 
     companion object {
         const val TEST_DATA_DIR = "plugins/scripting/scripting-compiler/testData"
+    }
+
+    init {
+        setIdeaIoUseFallback()
     }
 
     private val kotlinPaths: KotlinPaths by lazy(LazyThreadSafetyMode.PUBLICATION) {
