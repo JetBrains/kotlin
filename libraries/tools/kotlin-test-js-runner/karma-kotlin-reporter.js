@@ -1,6 +1,11 @@
 const util = require('util');
 const resolve = require('path').resolve;
 
+/**
+ * From karma
+ * The MIT License
+ * Copyright (C) 2011-2019 Google, Inc.
+ */
 // This ErrorFormatter is copied from standard karma's,
 //  but without warning in case of failed original location finding
 function createFormatError(config, emitter) {
@@ -62,6 +67,11 @@ function createFormatError(config, emitter) {
     };
 }
 
+/**
+ * From karma-teamcity-reporter.
+ * The MIT License
+ * Copyright (C) 2011-2013 Vojta Jína and contributors
+ */
 const escapeMessage = function (message) {
     if (message === null || message === undefined) {
         return ''
