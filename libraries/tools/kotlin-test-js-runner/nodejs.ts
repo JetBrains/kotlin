@@ -10,8 +10,6 @@ const defaultMochaArgs = [
     'place-holder',
     '--require',
     'place-holder',
-    '--require',
-    'place-holder',
     '--no-config',
     '--no-package',
     '--no-opts',
@@ -28,6 +26,5 @@ const defaultMochaArgs = [
 const processArgs = process.argv.slice(2, -1 * defaultMochaArgs.length);
 const untypedArgs = parser.parse(processArgs);
 
-// TODO(ilgonmic): Try to detect adapter
-const initialAdapter = new kotlin_test.kotlin.test.adapters.JasmineLikeAdapter();
+const initialAdapter = kotlin_test.kotlin.test.detectAdapter_8be2vx$();
 kotlin_test.setAdapter(runWithFilteringAndConsoleAdapters(initialAdapter, untypedArgs));
