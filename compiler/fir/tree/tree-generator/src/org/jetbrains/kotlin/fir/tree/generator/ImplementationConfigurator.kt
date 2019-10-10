@@ -433,6 +433,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultNull("candidateSymbol", withGetter = true)
         }
 
+        impl(resolvedRealCallableReference) {
+            defaultNull("candidateSymbol", withGetter = true)
+        }
+
         impl(namedReference, "FirSimpleNamedReference") {
             kind = OpenClass
         }

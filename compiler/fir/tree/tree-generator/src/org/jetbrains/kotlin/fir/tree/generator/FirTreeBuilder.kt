@@ -121,6 +121,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val delegateFieldReference = element("DelegateFieldReference", Reference, resolvedCallableReference)
     val backingFieldReference = element("BackingFieldReference", Reference, resolvedCallableReference)
 
+    val resolvedRealCallableReference = element("ResolvedRealCallableReference", Reference, resolvedCallableReference)
+
     val resolvedTypeRef = element("ResolvedTypeRef", TypeRef, typeRef)
     val errorTypeRef = element("ErrorTypeRef", TypeRef, resolvedTypeRef)
     val delegatedTypeRef = element("DelegatedTypeRef", TypeRef, typeRef)

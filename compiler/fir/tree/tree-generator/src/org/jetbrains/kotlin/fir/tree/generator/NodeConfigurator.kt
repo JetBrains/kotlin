@@ -396,6 +396,10 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +field("originalType", typeRef)
         }
 
+        callableReferenceAccess.configure {
+            +field("calleeReference", namedReference)
+        }
+
         getClassCall.configure {
             +field("argument", expression)
         }
@@ -446,6 +450,10 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         resolvedCallableReference.configure {
             +field("resolvedSymbol", abstractFirBasedSymbolType, "*")
+        }
+
+        resolvedRealCallableReference.configure {
+            +fieldList("inferredTypeArguments", coneKotlinTypeType)
         }
 
         delegateFieldReference.configure {
