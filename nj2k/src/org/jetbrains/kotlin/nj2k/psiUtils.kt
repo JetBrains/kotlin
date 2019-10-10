@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.nj2k
 
 import com.intellij.codeInsight.generation.GenerateEqualsHelper.getEqualsSignature
 import com.intellij.lang.jvm.JvmClassKind
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.PsiUtil
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.ClassKind
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.isNullLiteral
@@ -141,3 +144,16 @@ val KtDeclaration.fqNameWithoutCompanions
         .filter { it.safeAs<KtObjectDeclaration>()?.isCompanion() != true && it.name != null }
         .toList()
         .foldRight(containingKtFile.packageFqName) { container, acc -> acc.child(Name.identifier(container.name!!)) }
+
+internal fun <T> runUndoTransparentActionInEdt(inWriteAction: Boolean, action: () -> T): T {
+    var result: T? = null
+    ApplicationManager.getApplication().invokeAndWait {
+        CommandProcessor.getInstance().runUndoTransparentAction {
+            result = when {
+                inWriteAction -> runWriteAction(action)
+                else -> action()
+            }
+        }
+    }
+    return result!!
+}

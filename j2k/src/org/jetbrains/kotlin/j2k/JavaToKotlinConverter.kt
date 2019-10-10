@@ -26,12 +26,15 @@ import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.DummyHolder
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.core.util.range
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.usageProcessing.ExternalCodeProcessor
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
@@ -43,11 +46,35 @@ interface PostProcessor {
     val phasesCount: Int
 
     fun doAdditionalProcessing(
-        file: KtFile,
+        target: JKPostProcessingTarget,
         converterContext: ConverterContext?,
-        rangeMarker: RangeMarker?,
         onPhaseChanged: ((Int, String) -> Unit)?
     )
+}
+
+sealed class JKPostProcessingTarget
+
+data class JKPieceOfCodePostProcessingTarget(
+    val file: KtFile,
+    val rangeMarker: RangeMarker
+) : JKPostProcessingTarget()
+
+
+data class JKMultipleFilesPostProcessingTarget(
+    val files: List<KtFile>
+) : JKPostProcessingTarget()
+
+fun JKPostProcessingTarget.elements() = when (this) {
+    is JKPieceOfCodePostProcessingTarget -> runReadAction {
+        val range = rangeMarker.range ?: return@runReadAction emptyList()
+        file.elementsInRange(range)
+    }
+    is JKMultipleFilesPostProcessingTarget -> files
+}
+
+fun JKPostProcessingTarget.files() = when (this) {
+    is JKPieceOfCodePostProcessingTarget -> listOf(file)
+    is JKMultipleFilesPostProcessingTarget -> files
 }
 
 enum class ParseContext {
@@ -270,7 +297,7 @@ interface WithProgressProcessor {
         processItem: (TInputItem) -> TOutputItem
     ): List<TOutputItem>
 
-    fun updateState(fileIndex: Int, phase: Int, description: String)
+    fun updateState(fileIndex: Int?, phase: Int, description: String)
     fun <T> process(action: () -> T): T
 }
 
@@ -318,7 +345,7 @@ class OldWithProgressProcessor(private val progress: ProgressIndicator?, private
         throw AbstractMethodError("Should not be called for old J2K")
     }
 
-    override fun updateState(fileIndex: Int, phase: Int, description: String) {
+    override fun updateState(fileIndex: Int?, phase: Int, description: String) {
         throw AbstractMethodError("Should not be called for old J2K")
     }
 }
