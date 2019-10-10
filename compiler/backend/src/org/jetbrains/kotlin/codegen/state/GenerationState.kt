@@ -336,6 +336,9 @@ private class LazyJvmDiagnostics(compute: () -> Diagnostics) : Diagnostics {
 
     override fun noSuppression() = delegate.noSuppression()
 
+    override fun hasDiagnostic(diagnostic: Diagnostic) =
+        delegate.hasDiagnostic(diagnostic)
+
     override fun iterator() = delegate.iterator()
 }
 

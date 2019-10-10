@@ -112,9 +112,9 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
 }
 
 fun BindingTrace.reportDiagnosticOnce(diagnostic: Diagnostic) {
-    if (bindingContext.diagnostics.forElement(diagnostic.psiElement).any { it.factory == diagnostic.factory }) return
-
-    report(diagnostic)
+    if (!bindingContext.diagnostics.hasDiagnostic(diagnostic)) {
+        report(diagnostic)
+    }
 }
 
 class TypeMismatchDueToTypeProjectionsData(
