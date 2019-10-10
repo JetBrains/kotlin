@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava.builder
 
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.impl.DebugUtil
@@ -94,6 +95,7 @@ fun PsiJavaFileStub.findDelegate(classOrObject: KtClassOrObject): PsiClass {
     val ktFileText: String? = try {
         outermostClassOrObject.containingFile.text
     } catch (e: Exception) {
+        if (e is ControlFlowException) throw e
         "Can't get text for outermost class"
     }
 
