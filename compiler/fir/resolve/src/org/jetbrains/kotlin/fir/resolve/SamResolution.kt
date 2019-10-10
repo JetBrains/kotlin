@@ -191,7 +191,7 @@ class FirSamResolverImpl(
             val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull(firSession, scopeSession) ?: return@getOrPut NULL_STUB
             // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
 
-            abstractMethod.getFunctionTypeForAbstractMethod(firSession)
+            abstractMethod.getFunctionTypeForAbstractMethod()
         } as? ConeKotlinType
     }
 
@@ -292,14 +292,13 @@ private fun FirRegularClass.hasMoreThenOneAbstractFunctionOrHasAbstractProperty(
     return false
 }
 
-private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(session: FirSession): ConeLookupTagBasedType {
+private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(): ConeLookupTagBasedType {
     val parameterTypes = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter $it")
     }
 
     return createFunctionalType(
-        session, parameterTypes,
-        receiverType = null,
+        parameterTypes, receiverType = null,
         rawReturnType = returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $this")
     )
 }
