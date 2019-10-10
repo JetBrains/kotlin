@@ -73,13 +73,7 @@ public class ProjectScopeBuilderImpl extends ProjectScopeBuilder {
       return new EverythingGlobalScope(myProject);
     }
 
-    boolean searchOutsideRootModel = false;
-    for (SearchScopeEnlarger each : SearchScopeEnlarger.EXTENSION.getExtensionList()) {
-      searchOutsideRootModel = each.allScopeSearchesOutsideRootModel(myProject);
-      if (searchOutsideRootModel) break;
-    }
-
-    return new ProjectAndLibrariesScope(myProject, searchOutsideRootModel) {
+    return new ProjectAndLibrariesScope(myProject) {
       @Override
       public boolean contains(@NotNull VirtualFile file) {
         DirectoryInfo info = ((ProjectFileIndexImpl)myProjectFileIndex).getInfoForFileOrDirectory(file);
