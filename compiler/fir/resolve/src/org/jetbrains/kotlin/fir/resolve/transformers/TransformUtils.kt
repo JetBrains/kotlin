@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -96,11 +98,7 @@ internal object StoreCalleeReference : FirTransformer<FirResolvedCallableReferen
 
 internal object StoreReceiver : FirTransformer<FirExpression>() {
     override fun <E : FirElement> transformElement(element: E, data: FirExpression): CompositeTransformResult<E> {
-        return element.compose()
-    }
-
-    override fun transformExpression(expression: FirExpression, data: FirExpression): CompositeTransformResult<FirStatement> {
-        if (expression !is FirNoReceiverExpression) return expression.compose()
-        return data.compose()
+        @Suppress("UNCHECKED_CAST")
+        return (data as E).compose()
     }
 }
