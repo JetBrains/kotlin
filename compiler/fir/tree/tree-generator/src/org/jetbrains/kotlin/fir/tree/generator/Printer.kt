@@ -499,7 +499,7 @@ fun PrintWriter.printImplementation(implementation: Implementation) {
             println("}")
         }
 
-        print("}")
+        println("}")
     }
 }
 
@@ -678,7 +678,7 @@ fun PrintWriter.printElement(element: Element) {
             indent()
             println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
         }
-        print("}")
+        println("}")
     }
 }
 
