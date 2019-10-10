@@ -11,6 +11,7 @@ import com.intellij.util.Range
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -21,11 +22,13 @@ import javax.swing.Icon
 
 class KotlinMethodSmartStepTarget(
     descriptor: CallableMemberDescriptor,
-    val declaration: KtDeclaration?,
+    declaration: KtDeclaration?,
     label: String,
     highlightElement: PsiElement,
     lines: Range<Int>
 ) : SmartStepTarget(label, highlightElement, false, lines) {
+    val declaration = declaration?.let(SourceNavigationHelper::getNavigationElement)
+
     val isInvoke = descriptor is FunctionInvokeDescriptor
 
     init {

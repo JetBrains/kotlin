@@ -1261,6 +1261,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/smartStepIntoWithOverrides.kt");
         }
 
+        @TestMetadata("stepIntoLibWithSources.kt")
+        public void testStepIntoLibWithSources() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/stepIntoLibWithSources.kt");
+        }
+
         @TestMetadata("stepIntoStdlibInlineFun2step.kt")
         public void testStepIntoStdlibInlineFun2step() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/stepping/custom/stepIntoStdlibInlineFun2step.kt");
