@@ -26,14 +26,18 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.addAnnotation
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.replaceFileAnnotationList
 import org.jetbrains.kotlin.resolve.BindingContext
 
 class KotlinSuppressIntentionAction private constructor(
-    private val suppressAt: PsiElement,
+    suppressAt: PsiElement,
     private val suppressKey: String,
     private val kind: AnnotationHostKind
 ) : SuppressIntentionAction() {
+    val pointer = suppressAt.createSmartPointer()
+    val project = suppressAt.project
+
     constructor(
         suppressAt: KtExpression,
         suppressKey: String,
@@ -53,6 +57,7 @@ class KotlinSuppressIntentionAction private constructor(
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
         if (!element.isValid) return
+        val suppressAt = pointer.element ?: return
         if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
 
         val id = "\"$suppressKey\""
@@ -80,7 +85,7 @@ class KotlinSuppressIntentionAction private constructor(
     }
 
     private fun suppressAtFile(ktFile: KtFile, id: String) {
-        val psiFactory = KtPsiFactory(suppressAt)
+        val psiFactory = KtPsiFactory(project)
 
         val fileAnnotationList: KtFileAnnotationList? = ktFile.fileAnnotationList
         if (fileAnnotationList == null) {
