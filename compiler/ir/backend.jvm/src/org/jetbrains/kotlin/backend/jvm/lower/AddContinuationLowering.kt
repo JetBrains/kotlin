@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrBlock
+import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeOfCallableReference
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.descriptors.Modality
@@ -431,7 +432,9 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
             override fun visitFunction(declaration: IrFunction) {
                 super.visitFunction(declaration)
-                if (declaration.isSuspend && declaration !in suspendLambdas && !declaration.isInline) {
+                if (declaration.isSuspend && declaration !in suspendLambdas && !declaration.isInline &&
+                    !declaration.isInvokeOfCallableReference()
+                ) {
                     result.add(declaration)
                 }
             }
@@ -469,7 +472,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             override fun visitFunctionReference(expression: IrFunctionReference) {
                 expression.acceptChildrenVoid(this)
 
-                if (expression.isSuspend && expression !in inlineLambdas) {
+                if (expression.isSuspend && expression !in inlineLambdas && expression.origin == IrStatementOrigin.LAMBDA) {
                     suspendLambdas += SuspendLambdaInfo(
                         expression.symbol.owner,
                         (expression.type as IrSimpleType).arguments.size - 1,

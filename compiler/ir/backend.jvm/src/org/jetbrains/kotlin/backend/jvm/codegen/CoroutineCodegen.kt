@@ -11,17 +11,16 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.config.isReleaseCoroutines
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -104,6 +103,18 @@ internal fun IrFunction.isInvokeOfSuspendLambda(context: JvmBackendContext): Boo
 internal fun IrFunction.isInvokeSuspendOfContinuation(context: JvmBackendContext): Boolean =
     name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass in context.suspendFunctionContinuations.values
 
+internal fun IrFunction.isInvokeOfCallableReference(): Boolean = isSuspend && name.asString() == "invoke" && (parent as? IrClass)?.let {
+    // TODO: Should we use different origin for lowered callable references?
+    it.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL && it.functions.any { it.name.asString() == "getSignature" }
+} == true
+
+internal fun IrFunction.isKnownToBeTailCall(): Boolean =
+    origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+            isInvokeOfCallableReference()
+
+internal fun IrFunction.shouldNotContainSuspendMarkers(context: JvmBackendContext): Boolean =
+    isInvokeSuspendOfContinuation(context) || isKnownToBeTailCall()
+
 // Transform `suspend fun foo(params): RetType` into `fun foo(params, $completion: Continuation<RetType>): Any?`
 // the result is called 'view', just to be consistent with old backend.
 internal fun IrFunction.getOrCreateSuspendFunctionViewIfNeeded(context: JvmBackendContext): IrFunction {
@@ -118,7 +129,10 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
     val originalDescriptor = this.descriptor
     // For SuspendFunction{N}.invoke we need to generate INVOKEINTERFACE Function{N+1}.invoke(...Ljava/lang/Object;)...
     // instead of INVOKEINTERFACE Function{N+1}.invoke(...Lkotlin/coroutines/Continuation;)...
-    val isInvokeOfNumberedSuspendFunction = (symbol.owner.parent as? IrClass)?.defaultType?.isSuspendFunction() == true
+    val isInvokeOfNumberedSuspendFunction = (parent as? IrClass)?.defaultType?.isSuspendFunction() == true
+    // And we need to generate this function for callable references
+    val isBridgeInvokeOfCallableReference = origin == IrDeclarationOrigin.BRIDGE &&
+            (parent as? IrClass)?.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
     val descriptor =
         if (originalDescriptor is DescriptorWithContainerSource && originalDescriptor.containerSource != null)
             WrappedFunctionDescriptorWithContainerSource(originalDescriptor.containerSource!!)
@@ -139,7 +153,7 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
         valueParameters.mapTo(it.valueParameters) { p -> p.copyTo(it) }
         it.addValueParameter(
             SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME,
-            if (isInvokeOfNumberedSuspendFunction) context.irBuiltIns.anyNType
+            if (isInvokeOfNumberedSuspendFunction || isBridgeInvokeOfCallableReference) context.irBuiltIns.anyNType
             else context.ir.symbols.continuationClass.createType(false, listOf(makeTypeProjection(returnType, Variance.INVARIANT)))
         )
         val valueParametersMapping = explicitParameters.zip(it.explicitParameters).toMap()
@@ -152,6 +166,11 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
                 valueParametersMapping[expression.symbol.owner]?.let { newParam ->
                     expression.run { IrGetValueImpl(startOffset, endOffset, type, newParam.symbol, origin) }
                 } ?: expression
+
+            override fun visitClass(declaration: IrClass): IrStatement {
+                // Do not cross class boundaries inside functions. Otherwise, callable references will try to access wrong $completion.
+                return declaration
+            }
 
             override fun visitCall(expression: IrCall): IrExpression {
                 if (!expression.isSuspend) return super.visitCall(expression)

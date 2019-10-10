@@ -222,6 +222,24 @@ class JvmSymbols(
     fun getJvmFunctionClass(parameterCount: Int): IrClassSymbol =
         jvmFunctionClasses(parameterCount)
 
+    private val jvmSuspendFunctionClasses = storageManager.createMemoizedFunction { n: Int ->
+        createClass(FqName("kotlin.jvm.functions.Function${n + 1}"), ClassKind.INTERFACE) { klass ->
+            for (i in 1..n) {
+                klass.addTypeParameter("P$i", irBuiltIns.anyNType, Variance.IN_VARIANCE)
+            }
+            val returnType = klass.addTypeParameter("R", irBuiltIns.anyNType, Variance.OUT_VARIANCE)
+
+            klass.addFunction("invoke", returnType.defaultType, Modality.ABSTRACT, isSuspend = true).apply {
+                for (i in 1..n) {
+                    addValueParameter("p$i", klass.typeParameters[i - 1].defaultType)
+                }
+            }
+        }
+    }
+
+    fun getJvmSuspendFunctionClass(parameterCount: Int): IrClassSymbol =
+        jvmSuspendFunctionClasses(parameterCount)
+
     val functionN: IrClassSymbol = createClass(FqName("kotlin.jvm.functions.FunctionN"), ClassKind.INTERFACE) { klass ->
         val returnType = klass.addTypeParameter("R", irBuiltIns.anyNType, Variance.OUT_VARIANCE)
 
