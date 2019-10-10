@@ -170,10 +170,10 @@ class JavacWrapper(
         setClassPathForCompilation(outDir)
         makeOutputDirectoryClassesVisible()
 
-        context.get(Log.outKey)?.println(
-            "Compiling $javaFilesNumber Java source files" +
-                    " to [${fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path}]"
-        )
+        val outputPath =
+            // Includes a hack with 'takeIf' for CLI test, to have stable string here (independent from random test directory)
+            fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path?.takeIf { "compilerProject_test" !in it } ?: "test directory"
+        context.get(Log.outKey)?.print("Compiling $javaFilesNumber Java source files to [$outputPath]")
         compile(fileObjects)
         errorCount() == 0
     }
@@ -340,7 +340,7 @@ class JavacWrapper(
     private fun makeOutputDirectoryClassesVisible() {
         // TODO: below we have a hacky part with a purpose
         // to make already analyzed classes visible by Javac without reading them again.
-        // However, it does not work as it should (but some tests depend on this code fragment)
+        // This works (and necessary!) when javac has "-proc:none" argument, so works without APT
         val reader = ClassReader.instance(context)
         val names = Names.instance(context)
         val outDirName = fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path ?: ""
@@ -368,6 +368,9 @@ class JavacWrapper(
     private fun setClassPathForCompilation(outDir: File?) = apply {
         (outDir ?: outputDirectory)?.let { outputDir ->
             if (outputDir.exists()) {
+                // This line is necessary for e.g. CliTestGenerated.jvm.javacKotlinJavaInterdependency to work
+                // In general, it makes compiled Kotlin classes from the module visible for javac
+                // It's necessary when javac work with APT (without -proc:none flag)
                 fileManager.setLocation(CLASS_PATH, fileManager.getLocation(CLASS_PATH) + outputDir)
             }
             outputDir.mkdirs()

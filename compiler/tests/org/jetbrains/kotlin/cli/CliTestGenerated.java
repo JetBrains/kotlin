@@ -346,6 +346,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/javaSrcWrongPackage.args");
         }
 
+        @TestMetadata("javacKotlinJavaInterdependency.args")
+        public void testJavacKotlinJavaInterdependency() throws Exception {
+            runTest("compiler/testData/cli/jvm/javacKotlinJavaInterdependency.args");
+        }
+
         @TestMetadata("jdkPathDoesNotExist.args")
         public void testJdkPathDoesNotExist() throws Exception {
             runTest("compiler/testData/cli/jvm/jdkPathDoesNotExist.args");
