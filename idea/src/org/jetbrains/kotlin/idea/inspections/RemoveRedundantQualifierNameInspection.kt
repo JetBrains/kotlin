@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.unwrapIfFakeOverride
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.intentions.isReferenceToBuiltInEnumFunction
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -36,10 +36,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import javax.swing.JComponent
 
 class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
-    companion object {
-        private val ENUM_STATIC_METHODS = listOf("values", "valueOf")
-    }
-
     /**
      * In order to detect that `foo()` and `GrandBase.foo()` point to the same method,
      * we need to unwrap fake overrides from descriptors. If we don't do that, they will
@@ -77,7 +73,7 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
 
                 if (receiverReference?.safeAs<KtClass>()?.isEnum() == true
                     && expressionForAnalyze.getParentOfTypesAndPredicate(true, KtClass::class.java) { it.isEnum() } != receiverReference
-                    && (expressionForAnalyze.isEnumStaticMethodCall() || expressionForAnalyze.isCompanionObjectReference())
+                    && (expressionForAnalyze.isReferenceToBuiltInEnumFunction() || expressionForAnalyze.isCompanionObjectReference())
                 ) return
 
                 val context = originalExpression.analyze()
@@ -106,8 +102,6 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                 reportProblem(holder, applicableExpression)
             }
         }
-
-    private fun KtDotQualifiedExpression.isEnumStaticMethodCall() = callExpression?.calleeExpression?.text in ENUM_STATIC_METHODS
 
     private fun KtDotQualifiedExpression.isCompanionObjectReference(): Boolean {
         val selector = receiverExpression.safeAs<KtDotQualifiedExpression>()?.selectorExpression ?: selectorExpression

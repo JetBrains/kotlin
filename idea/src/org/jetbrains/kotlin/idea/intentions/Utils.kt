@@ -17,18 +17,19 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
+import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -368,3 +369,30 @@ fun KotlinType.reflectToRegularFunctionType(): KotlinType {
 
 val CallableDescriptor.isInvokeOperator: Boolean
     get() = this is FunctionDescriptor && isOperator && name == OperatorNameConventions.INVOKE
+
+private val KOTLIN_BUILTIN_ENUM_FUNCTIONS = listOf(FqName("kotlin.enumValues"), FqName("kotlin.enumValueOf"))
+
+private val ENUM_STATIC_METHODS = listOf("values", "valueOf")
+
+fun KtElement.isReferenceToBuiltInEnumFunction(): Boolean {
+    return when (this) {
+        is KtTypeReference -> {
+            val target = (parent.getStrictParentOfType<KtTypeArgumentList>() ?: this)
+                .getParentOfTypes(true, KtCallExpression::class.java, KtCallableDeclaration::class.java)
+            when (target) {
+                is KtCallExpression -> target.isCalling(KOTLIN_BUILTIN_ENUM_FUNCTIONS)
+                is KtCallableDeclaration -> {
+                    target.anyDescendantOfType<KtCallExpression> {
+                        val context = it.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
+                        it.isCalling(KOTLIN_BUILTIN_ENUM_FUNCTIONS, context) && it.isUsedAsExpression(context)
+                    }
+                }
+                else -> false
+            }
+        }
+        is KtQualifiedExpression -> this.callExpression?.calleeExpression?.text in ENUM_STATIC_METHODS
+        is KtCallExpression -> this.calleeExpression?.text in ENUM_STATIC_METHODS
+        is KtCallableReferenceExpression -> this.callableReference.text in ENUM_STATIC_METHODS
+        else -> false
+    }
+}
