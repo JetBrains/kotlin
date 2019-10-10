@@ -35,10 +35,14 @@ class ResourceTextDescriptor implements TextDescriptor {
     return Objects.hash(myLoader, myResourcePath);
   }
 
+  @NotNull
   @Override
   public String getText() throws IOException {
     InputStream stream = myLoader.getResourceAsStream(myResourcePath);
-    return stream != null ? ResourceUtil.loadText(stream) : null;
+    if (stream == null) {
+      throw new IOException("Resource not found: " + myResourcePath);
+    }
+    return ResourceUtil.loadText(stream);
   }
 
   @NotNull

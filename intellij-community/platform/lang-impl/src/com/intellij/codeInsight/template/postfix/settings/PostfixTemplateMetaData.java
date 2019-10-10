@@ -67,6 +67,7 @@ public final class PostfixTemplateMetaData extends BeforeAfterActionMetaData {
     List<TextDescriptor> list = new ArrayList<>(before.length);
     for (final TextDescriptor descriptor : before) {
       list.add(new TextDescriptor() {
+        @NotNull
         @Override
         public String getText() throws IOException {
           return StringUtil.replace(descriptor.getText(), KEY, key);

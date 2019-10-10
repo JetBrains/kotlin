@@ -24,6 +24,7 @@ import java.io.IOException;
  * @author yole
  */
 public interface TextDescriptor {
+  @NotNull
   String getText() throws IOException;
   @NotNull
   String getFileName();
