@@ -9,6 +9,7 @@ import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
+import org.jetbrains.kotlin.nj2k.types.JKNoType
 
 
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -91,6 +92,8 @@ class DefaultArgumentsConversion(context: NewJ2kConverterContext) : RecursiveApp
                 .zip(calledMethod.parameters)
                 .drop(method.parameters.size)
 
+            val parameters = defaults.map { it.second }
+            val declarations = element.declarations
 
             for ((defaultValue, parameter) in defaults) {
                 fun remapParameterSymbol(on: JKTreeElement): JKTreeElement {
@@ -102,7 +105,12 @@ class DefaultArgumentsConversion(context: NewJ2kConverterContext) : RecursiveApp
                             return JKFieldAccessExpression(newSymbol)
                         }
                     }
-
+                    if (on is JKExpression) {
+                        val newExpression = on.addThisReceiverIfNeeded(parameters, declarations)
+                        if (newExpression != null) {
+                            return newExpression
+                        }
+                    }
                     return applyRecursive(on, ::remapParameterSymbol)
                 }
                 parameter.initializer = remapParameterSymbol(defaultValue) as JKExpression
@@ -123,6 +131,52 @@ class DefaultArgumentsConversion(context: NewJ2kConverterContext) : RecursiveApp
 
         return recurse(element)
 
+    }
+
+    private fun JKExpression.addThisReceiverIfNeeded(
+        parameters: List<JKParameter>,
+        declarations: List<JKDeclaration>
+    ): JKExpression? = when (this) {
+        is JKFieldAccessExpression, is JKCallExpression -> {
+            if (parameters.any { it.name.value == identifier?.name } && declarations.any { it == identifier?.target }) {
+                parent?.also { this.detach(it) }
+                JKQualifiedExpression(JKThisExpression(JKLabelEmpty(), JKNoType), this)
+            } else {
+                null
+            }
+        }
+        is JKQualifiedExpression -> {
+            selector.detach(this)
+            receiver.detach(this)
+            JKQualifiedExpression(
+                receiver.addThisReceiverIfNeeded(parameters, declarations) ?: receiver,
+                selector
+            )
+        }
+        is JKBinaryExpression -> {
+            left.detach(this)
+            right.detach(this)
+            JKBinaryExpression(
+                left.addThisReceiverIfNeeded(parameters, declarations) ?: left,
+                right.addThisReceiverIfNeeded(parameters, declarations) ?: right,
+                operator
+            )
+        }
+        is JKPrefixExpression -> {
+            expression.detach(this)
+            JKPrefixExpression(
+                expression.addThisReceiverIfNeeded(parameters, declarations) ?: expression,
+                operator
+            )
+        }
+        is JKPostfixExpression -> {
+            expression.detach(this)
+            JKPostfixExpression(
+                expression.addThisReceiverIfNeeded(parameters, declarations) ?: expression,
+                operator
+            )
+        }
+        else -> null
     }
 
     private fun areTheSameExpressions(first: JKElement, second: JKElement): Boolean {
