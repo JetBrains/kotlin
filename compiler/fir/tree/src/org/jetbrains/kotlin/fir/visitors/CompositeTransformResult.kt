@@ -13,15 +13,11 @@ sealed class CompositeTransformResult<out T : Any>() {
 
     class Multiple<out T : Any>(val _list: List<T>) : CompositeTransformResult<T>()
 
-
     companion object {
         fun <T : Any> empty() = CompositeTransformResult.Multiple<T>(emptyList<T>())
         fun <T : Any> single(t: T) = CompositeTransformResult.Single(t)
         fun <T : Any> many(l: List<T>) = CompositeTransformResult.Multiple(l)
-
-
     }
-
 
     val list: List<T>
         get() = when (this) {
@@ -41,8 +37,6 @@ sealed class CompositeTransformResult<out T : Any>() {
 
     val isEmpty
         get() = this is CompositeTransformResult.Multiple<*> && this.list.isEmpty()
-
-
 }
 
 @Suppress("NOTHING_TO_INLINE")

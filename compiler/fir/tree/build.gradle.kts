@@ -18,10 +18,7 @@ dependencies {
 }
 
 sourceSets {
-    "main" {
-        projectDefault()
-        java.srcDir("visitors")
-    }
+    "main" { projectDefault() }
 }
 
 val generatorClasspath by configurations.creating
