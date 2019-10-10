@@ -33,11 +33,19 @@ public class ConsoleViewRunningState extends ConsoleState {
   private final ProcessHandler myProcessHandler;
   private final ConsoleState myFinishedStated;
   private final Writer myUserInputWriter;
+  private final ProcessStreamsSynchronizer myStreamsSynchronizer;
 
   private final ProcessAdapter myProcessListener = new ProcessAdapter() {
     @Override
-    public void onTextAvailable(@NotNull final ProcessEvent event, @NotNull final Key outputType) {
-      myConsole.print(event.getText(), ConsoleViewContentType.getConsoleViewType(outputType));
+    public void onTextAvailable(@NotNull ProcessEvent event, @NotNull Key outputType) {
+      if (outputType instanceof ProcessOutputType) {
+        myStreamsSynchronizer.doWhenStreamsSynchronized(event.getText(), (ProcessOutputType)outputType, () -> {
+          print(event.getText(), outputType);
+        });
+      }
+      else {
+        print(event.getText(), outputType);
+      }
     }
   };
 
@@ -64,6 +72,7 @@ public class ConsoleViewRunningState extends ConsoleState {
     else {
       myUserInputWriter = null;
     }
+    myStreamsSynchronizer = new ProcessStreamsSynchronizer(console);
   }
 
   private static OutputStreamWriter createOutputStreamWriter(OutputStream processInput, ProcessHandler processHandler) {
@@ -75,6 +84,10 @@ public class ConsoleViewRunningState extends ConsoleState {
       charset = EncodingManager.getInstance().getDefaultCharset();
     }
     return new OutputStreamWriter(processInput, charset);
+  }
+
+  private void print(@NotNull String text, @NotNull Key<?> outputType) {
+    myConsole.print(text, ConsoleViewContentType.getConsoleViewType(outputType));
   }
 
   @Override
