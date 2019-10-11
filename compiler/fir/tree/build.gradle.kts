@@ -41,6 +41,7 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
     args(generationRoot)
     classpath = generatorClasspath
     main = "org.jetbrains.kotlin.fir.tree.generator.MainKt"
+    systemProperties["line.separator"] = "\n"
 }
 
 val compileKotlin by tasks
