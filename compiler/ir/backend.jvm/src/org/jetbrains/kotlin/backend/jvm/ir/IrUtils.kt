@@ -99,7 +99,7 @@ fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
     else
         irBuiltIns.primitiveArrayElementTypes.getValue(this.classOrNull!!)
 
-val IrStatementOrigin?.isLambda
+val IrStatementOrigin?.isLambda: Boolean
     get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
 
 val IrConstructor.shouldBeHidden: Boolean
