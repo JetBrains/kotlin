@@ -12,12 +12,8 @@ process.exit = (exitCode) => {
     throw new Error(`Exit with ${exitCode}`)
 };
 
-const cliDescription = getDefaultCliDescription();
-cliDescription.freeArgsTitle = null;
-const parser = new CliArgsParser(cliDescription);
-
-const processArgs = window.__karma__.config.args;
-const untypedArgs = parser.parse(processArgs);
+const parser = new CliArgsParser(getDefaultCliDescription());
+const untypedArgs = parser.parse(window.__karma__.config.args);
 
 const initialAdapter = kotlin_test.kotlin.test.detectAdapter_8be2vx$();
 kotlin_test.setAdapter(runWithFilteringAndConsoleAdapters(initialAdapter, untypedArgs));
