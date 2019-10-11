@@ -355,7 +355,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val caller = codegen.context.functionDescriptor
         if (!caller.isInline) return false
         val callerPackage = DescriptorUtils.getParentOfType(caller, PackageFragmentDescriptor::class.java) ?: return false
-        return callerPackage.fqName.asString().startsWith("kotlin.")
+        return callerPackage.fqName.asString().let {
+            // package either equals to 'kotlin' or starts with 'kotlin.'
+            it.startsWith("kotlin") && (it.length <= 6 || it[6] == '.')
+        }
     }
 
     private fun generateClosuresBodies() {
