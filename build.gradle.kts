@@ -333,7 +333,7 @@ allprojects {
         "-Xuse-experimental=kotlin.Experimental",
         "-Xread-deserialized-contracts",
         "-Xjvm-default=compatibility",
-        "-Xprogressive".takeIf { hasProperty("test.progressive.mode") } // TODO: change to "-progressive" after bootstrap
+        "-progressive".takeIf { hasProperty("test.progressive.mode") }
     )
 
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
