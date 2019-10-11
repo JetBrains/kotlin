@@ -668,6 +668,12 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
     }
 
+    if (declaration is KtProperty && declaration.isExtensionDeclaration() && !declaration.isTopLevel) {
+        val receiverTypeReference = (declaration as? KtCallableDeclaration)?.receiverTypeReference
+        receiverTypeReference?.siblings(withItself = false)?.firstOrNull { it.node.elementType == KtTokens.DOT }?.delete()
+        receiverTypeReference?.delete()
+    }
+
     CodeStyleManager.getInstance(descriptor.extractionData.project).reformat(declaration)
 
     return ExtractionResult(this, declaration, duplicateReplacers)

@@ -2927,6 +2927,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             runTest("idea/testData/refactoring/introduceProperty/kt21530.kt");
         }
 
+        @TestMetadata("kt24615.kt")
+        public void testKt24615() throws Exception {
+            runTest("idea/testData/refactoring/introduceProperty/kt24615.kt");
+        }
+
         @TestMetadata("primaryConstructorParameterReference.kt")
         public void testPrimaryConstructorParameterReference() throws Exception {
             runTest("idea/testData/refactoring/introduceProperty/primaryConstructorParameterReference.kt");
