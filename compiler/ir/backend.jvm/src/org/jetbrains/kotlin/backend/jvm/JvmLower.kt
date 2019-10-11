@@ -14,11 +14,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
-import org.jetbrains.kotlin.ir.builders.irBlock
-import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -82,15 +78,7 @@ private val expectDeclarationsRemovingPhase = makeIrModulePhase(
 )
 
 private val lateinitPhase = makeIrFilePhase(
-    { backend: JvmBackendContext ->
-        object : LateinitLowering(backend) {
-            override fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression =
-                builder.irBlock {
-                    +super.throwUninitializedPropertyAccessException(builder, name)
-                    +irThrow(irNull())
-                }
-        }
-    },
+    ::LateinitLowering,
     name = "Lateinit",
     description = "Insert checks for lateinit field references"
 )

@@ -19169,6 +19169,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/properties/lateinit/exceptionGetter.kt");
             }
 
+            @TestMetadata("nameClash.kt")
+            public void testNameClash() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/lateinit/nameClash.kt");
+            }
+
             @TestMetadata("override.kt")
             public void testOverride() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/lateinit/override.kt");

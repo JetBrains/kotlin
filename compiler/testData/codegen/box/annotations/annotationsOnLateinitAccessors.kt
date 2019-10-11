@@ -1,6 +1,5 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_REFLECT
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 
 // Please make sure that this test is consistent with the diagnostic test "annotationsTargetingLateinitAccessor.kt"
