@@ -1,4 +1,4 @@
-namespace org.w3c.fullscreen;
+package org.w3c.fullscreen;
 
 
 // Downloaded from https://raw.githubusercontent.com/whatwg/fullscreen/master/fullscreen.html

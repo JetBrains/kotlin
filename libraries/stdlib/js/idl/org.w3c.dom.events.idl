@@ -1,4 +1,4 @@
-namespace org.w3c.dom.events;
+package org.w3c.dom.events;
 
 
 // Downloaded from http://www.w3.org/TR/uievents/

@@ -51,6 +51,7 @@ val mirroredUrls = listOf(
     "https://jetbrains.bintray.com/test-discovery",
     "https://jetbrains.bintray.com/wormhole",
     "https://jitpack.io",
+    "https://kotlin.bintray.com/dukat",
     "https://kotlin.bintray.com/kotlin-dependencies",
     "https://oss.sonatype.org/content/repositories/releases",
     "https://oss.sonatype.org/content/repositories/snapshots",

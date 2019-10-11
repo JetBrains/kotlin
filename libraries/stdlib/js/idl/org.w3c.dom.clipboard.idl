@@ -1,4 +1,4 @@
-namespace org.w3c.dom.clipboard;
+package org.w3c.dom.clipboard;
 
 
 // Downloaded from https://w3c.github.io/clipboard-apis

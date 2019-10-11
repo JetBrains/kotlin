@@ -1,4 +1,4 @@
-namespace org.w3c.dom.svg;
+package org.w3c.dom.svg;
 
 
 // Downloaded from https://www.w3.org/TR/SVG2/single-page.html
