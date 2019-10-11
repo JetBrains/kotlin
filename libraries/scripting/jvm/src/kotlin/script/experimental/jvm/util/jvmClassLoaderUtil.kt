@@ -62,12 +62,14 @@ internal val pathElementPattern = if (File.separatorChar == '/') "[^/]*" else "[
 internal val pathSeparatorPattern = if (File.separatorChar == '/') "/" else "[/${File.separatorChar.escape()}]."
 internal val specialPatternChars = patternCharsToEscape + pathSeparatorChars
 
+private fun String.toUniversalSeparator(): String = if (File.separatorChar == '/') this else replace(File.separatorChar, '/')
+
 internal fun forAllMatchingFilesInDirectory(baseDir: File, namePattern: String, body: (String, InputStream) -> Unit) {
     val patternStart = namePattern.indexOfAny(wildcardChars)
     if (patternStart < 0) {
         // assuming a single file
         baseDir.resolve(namePattern).takeIf { it.exists() && it.isFile }?.let { file ->
-            body(file.relativeToOrSelf(baseDir).path, file.inputStream())
+            body(file.relativeToOrSelf(baseDir).path.toUniversalSeparator(), file.inputStream())
         }
     } else {
         val patternDirStart = namePattern.lastIndexOfAny(pathSeparatorChars, patternStart)
@@ -77,7 +79,7 @@ internal fun forAllMatchingFilesInDirectory(baseDir: File, namePattern: String, 
             root.walkTopDown().filter {
                 re.matches(it.relativeToOrSelf(root).path)
             }.forEach { file ->
-                body(file.relativeToOrSelf(baseDir).path, file.inputStream())
+                body(file.relativeToOrSelf(baseDir).path.toUniversalSeparator(), file.inputStream())
             }
         }
     }
