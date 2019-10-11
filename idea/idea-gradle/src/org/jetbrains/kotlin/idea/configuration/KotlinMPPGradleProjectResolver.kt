@@ -79,9 +79,16 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
     }
 
     override fun populateModuleContentRoots(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
-        if (resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) == null) {
+        val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
+        if (mppModel == null) {
             return super.populateModuleContentRoots(gradleModule, ideModule)
+        } else {
+            if (!nativeDebugAdvertised && mppModel.kotlinNativeHome.isNotEmpty()) {
+                nativeDebugAdvertised = true
+                suggestNativeDebug(resolverCtx.projectPath)
+            }
         }
+
         populateContentRoots(gradleModule, ideModule, resolverCtx)
     }
 
@@ -215,6 +222,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         val MPP_CONFIGURATION_ARTIFACTS =
             Key.create<MutableMap<String/* artifact path */, MutableList<String> /* module ids*/>>("gradleMPPArtifactsMap")
         val proxyObjectCloningCache = WeakHashMap<Any, Any>()
+
+        private var nativeDebugAdvertised = false
 
         fun initializeModuleData(
             gradleModule: IdeaModule,
