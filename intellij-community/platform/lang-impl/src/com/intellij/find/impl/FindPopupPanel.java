@@ -45,8 +45,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.VfsPresentationUtil;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.openapi.wm.impl.IdeGlassPaneImpl;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import com.intellij.openapi.wm.impl.IdeGlassPaneImpl;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopeUtil;
@@ -909,6 +909,10 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     if (file == null) return null;
     String path = VfsUtilCore.getRelativePath(file, myProject.getBaseDir());
     if (path == null) path = file.getPath();
+    path = StringUtil.trimMiddle(path, 120);
+    if (SystemInfo.isMacOSCatalina) {
+      return "<html><body>&nbsp;&nbsp;&nbsp;" + path + "</body></html>";
+    }
     return "<html><body>&nbsp;&nbsp;&nbsp;" + path.replace(file.getName(), "<b>" + file.getName() + "</b>") + "</body></html>";
   }
 
