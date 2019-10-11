@@ -538,9 +538,19 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
     if (myGradleHomePathField != null) {
       String gradleHomePath = FileUtil.toCanonicalPath(myGradleHomePathField.getText());
       File gradleHomeFile = new File(gradleHomePath);
-      String finalGradleHomePath = myInstallationManager.isGradleSdkHome(gradleHomeFile)
-                                   ? myInstallationManager.suggestBetterGradleHomePath(gradleHomePath)
-                                   : gradleHomePath;
+      String finalGradleHomePath;
+      if (myInstallationManager.isGradleSdkHome(gradleHomeFile)) {
+        finalGradleHomePath = gradleHomePath;
+      }
+      else {
+        finalGradleHomePath = myInstallationManager.suggestBetterGradleHomePath(gradleHomePath);
+        if (finalGradleHomePath != null) {
+          //noinspection SSBasedInspection
+          SwingUtilities.invokeLater(() -> {
+            myGradleHomePathField.setText(finalGradleHomePath);
+          });
+        }
+      }
       if (StringUtil.isEmpty(finalGradleHomePath)) {
         settings.setGradleHome(null);
       }
