@@ -13,10 +13,7 @@ class MergeElseIfIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpressi
     override fun isApplicableTo(element: KtIfExpression, caretOffset: Int): Boolean {
         val elseBody = element.`else` ?: return false
         val nestedIf = elseBody.nestedIf() ?: return false
-        if (nestedIf.`else` != null) {
-            return false
-        }
-        return true
+        return nestedIf.`else` == null
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor?) {
@@ -24,16 +21,15 @@ class MergeElseIfIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpressi
     }
 
     companion object {
-        fun applyTo(element: KtIfExpression): Int {
-            val nestedIf = element.`else`?.nestedIf() ?: return -1
-            val condition = nestedIf.condition ?: return -1
-            val nestedBody = nestedIf.then ?: return -1
+        private inline fun applyTo(element: KtIfExpression) {
+            val nestedIf = element.`else`?.nestedIf() ?: return
+            val condition = nestedIf.condition ?: return
+            val nestedBody = nestedIf.then ?: return
 
             val factory = KtPsiFactory(element)
-            val newBody = element.`else`?.replace(
+            element.`else`?.replace(
                 factory.createExpressionByPattern("if ($0) $1", condition, nestedBody)
-            ) ?: return -1
-            return newBody.textRange!!.startOffset
+            )
         }
 
         private fun KtExpression.nestedIf() =
