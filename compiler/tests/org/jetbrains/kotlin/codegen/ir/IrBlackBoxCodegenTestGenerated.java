@@ -14037,6 +14037,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/jvmOverloads/companionObject.kt");
         }
 
+        @TestMetadata("constructorWithTypeParams.kt")
+        public void testConstructorWithTypeParams() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmOverloads/constructorWithTypeParams.kt");
+        }
+
         @TestMetadata("defaultsNotAtEnd.kt")
         public void testDefaultsNotAtEnd() throws Exception {
             runTest("compiler/testData/codegen/box/jvmOverloads/defaultsNotAtEnd.kt");
