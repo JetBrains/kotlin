@@ -4108,6 +4108,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/QualifiedCall.kt");
         }
 
+        @TestMetadata("ReplaceWithHasNamedArgument.kt")
+        public void testReplaceWithHasNamedArgument() throws Exception {
+            runTest("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/ReplaceWithHasNamedArgument.kt");
+        }
+
         @TestMetadata("Return.kt")
         public void testReturn() throws Exception {
             runTest("idea/testData/inspectionsLocal/deprecatedCallableAddReplaceWith/Return.kt");
