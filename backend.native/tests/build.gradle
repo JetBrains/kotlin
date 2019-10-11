@@ -3292,6 +3292,10 @@ createInterop("ctypes") {
     it.defFile 'interop/basics/ctypes.def'
 }
 
+createInterop("cvalues") {
+    it.defFile 'interop/basics/cvalues.def'
+}
+
 createInterop("ccallbacksAndVarargs") {
     it.defFile 'interop/basics/ccallbacksAndVarargs.def'
 }
@@ -3447,6 +3451,12 @@ interopTest("interop_types") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/basics/types.kt"
     interop = 'ctypes'
+}
+
+interopTest("interop_values") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/basics/values.kt"
+    interop = 'cvalues'
 }
 
 interopTest("interop_callbacksAndVarargs") {

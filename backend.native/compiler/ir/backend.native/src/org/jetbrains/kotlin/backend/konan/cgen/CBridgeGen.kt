@@ -1375,8 +1375,10 @@ private class ObjCBlockPointerValuePassing(
 private class WCStringArgumentPassing : KotlinToCArgumentPassing {
 
     override fun KotlinToCCallBuilder.passValue(expression: IrExpression): CExpression {
-        val wcstr = irBuilder.irCall(symbols.interopWcstr.owner).apply {
-            extensionReceiver = expression
+        val wcstr = irBuilder.irSafeTransform(expression) {
+            irCall(symbols.interopWcstr.owner).apply {
+                extensionReceiver = it
+            }
         }
         return with(CValuesRefArgumentPassing) { passValue(wcstr) }
     }
@@ -1386,8 +1388,10 @@ private class WCStringArgumentPassing : KotlinToCArgumentPassing {
 private class CStringArgumentPassing : KotlinToCArgumentPassing {
 
     override fun KotlinToCCallBuilder.passValue(expression: IrExpression): CExpression {
-        val cstr = irBuilder.irCall(symbols.interopCstr.owner).apply {
-            extensionReceiver = expression
+        val cstr = irBuilder.irSafeTransform(expression) {
+            irCall(symbols.interopCstr.owner).apply {
+                extensionReceiver = it
+            }
         }
         return with(CValuesRefArgumentPassing) { passValue(cstr) }
     }
@@ -1410,25 +1414,33 @@ private fun KotlinToCCallBuilder.cValuesRefToPointer(
         value: IrExpression
 ): IrExpression = if (value.type.classifierOrNull == symbols.interopCPointer) {
     value // Optimization
-} else with(irBuilder) {
+} else {
     val getPointerFunction = symbols.interopCValuesRef.owner
             .simpleFunctions()
             .single { it.name.asString() == "getPointer" }
 
-    fun getPointer(expression: IrExpression) = irCall(getPointerFunction).apply {
-        dispatchReceiver = expression
-        putValueArgument(0, bridgeCallBuilder.getMemScope())
+    irBuilder.irSafeTransform(value) {
+        irCall(getPointerFunction).apply {
+            dispatchReceiver = it
+            putValueArgument(0, bridgeCallBuilder.getMemScope())
+        }
     }
+}
 
-    if (!value.type.isNullable()) {
-        getPointer(value) // Optimization
-    } else irLetS(value) { valueVarSymbol ->
+private fun IrBuilderWithScope.irSafeTransform(
+        value: IrExpression,
+        block: IrBuilderWithScope.(IrExpression) -> IrExpression
+): IrExpression = if (!value.type.isNullable()) {
+    block(value) // Optimization
+} else {
+    irLetS(value) { valueVarSymbol ->
         val valueVar = valueVarSymbol.owner
+        val transformed = block(irGet(valueVar))
         irIfThenElse(
-                type = symbols.interopCPointer.typeWithStarProjections.makeNullable(),
+                type = transformed.type.makeNullable(),
                 condition = irEqeqeq(irGet(valueVar), irNull()),
                 thenPart = irNull(),
-                elsePart = getPointer(irGet(valueVar))
+                elsePart = transformed
         )
     }
 }
