@@ -48,9 +48,6 @@ internal val callableReferencePhase = makeIrFilePhase(
     description = "Handle callable references"
 )
 
-private val IrStatementOrigin?.isLambda
-    get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
-
 internal class InlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitorVoidWithContext() {
     val inlineReferences = mutableSetOf<IrFunctionReference>()
 
@@ -379,11 +376,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         private fun createGetSignatureMethod(superFunction: IrSimpleFunction): IrSimpleFunction = buildOverride(superFunction).apply {
             body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
                 irExprBody(irCall(backendContext.ir.symbols.signatureStringIntrinsic).apply {
-                    putValueArgument(0, with(irFunctionReference) {
-                        IrFunctionReferenceImpl(
-                            startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, valueArgumentsCount, origin
-                        )
-                    })
+                    putValueArgument(0, irFunctionReference.deepCopyWithSymbols(symbol.owner))
                 })
             }
         }

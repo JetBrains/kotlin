@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -48,64 +47,6 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     override fun lower(irFile: IrFile) {
         inlineLambdaToCallSite.putAll(InlineReferenceLocator.scan(context, irFile).lambdaToCallSite)
-
-        // Unconditionally add bridges for hidden constructors
-        irFile.transformChildrenVoid(object: IrElementTransformerVoid() {
-            private val hiddenDeclarations = mutableSetOf<IrConstructor>()
-
-            private fun handleConstructor(declaration: IrConstructor): IrConstructorSymbol? {
-                if (declaration.shouldBeHidden) {
-                    declaration.visibility = Visibilities.PRIVATE
-                    hiddenDeclarations += declaration
-                }
-
-                if (declaration !in hiddenDeclarations)
-                    return null
-
-                return functionMap.getOrPut(declaration.symbol) {
-                    declaration.makeConstructorAccessor().also { accessor ->
-                        // There's a special case in the JVM backend for serializing the metadata of hidden
-                        // constructors - we serialize the descriptor of the original constructor, but the
-                        // signature of the bridge. We implement this special case in the JVM IR backend by
-                        // attaching the metadata directly to the bridge. We also have to move all annotations
-                        // to the bridge method. Parameter annotations are already moved by the copyTo method.
-                        accessor.metadata = declaration.metadata
-                        declaration.safeAs<IrConstructorImpl>()?.metadata = null
-                        accessor.annotations += declaration.annotations
-                        declaration.annotations.clear()
-                        declaration.valueParameters.forEach { it.annotations.clear() }
-                    }.symbol
-                } as IrConstructorSymbol
-            }
-
-            override fun visitConstructor(declaration: IrConstructor): IrStatement {
-                handleConstructor(declaration)
-                return super.visitConstructor(declaration)
-            }
-
-            override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-                handleConstructor(expression.symbol.owner)
-                return super.visitConstructorCall(expression)
-            }
-
-            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-                val function = expression.symbol.owner
-
-                if (!expression.origin.isLambda && function is IrConstructor) {
-                    handleConstructor(function)?.let { accessor ->
-                        expression.transformChildrenVoid()
-                        return IrFunctionReferenceImpl(
-                            expression.startOffset, expression.endOffset, expression.type,
-                            accessor, accessor.descriptor, accessor.owner.typeParameters.size,
-                            accessor.owner.valueParameters.size, expression.origin
-                        )
-                    }
-                }
-
-                return super.visitFunctionReference(expression)
-            }
-        })
-
         irFile.transformChildrenVoid(this)
         pendingTransformations.forEach { it() }
     }
@@ -146,6 +87,57 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     override fun visitSetField(expression: IrSetField) = super.visitExpression(
         handleAccess(expression, expression.symbol, setterMap, ::makeSetterAccessorSymbol, ::modifySetterExpression)
     )
+
+    override fun visitConstructor(declaration: IrConstructor): IrStatement {
+        handleHiddenConstructor(declaration)
+        return super.visitConstructor(declaration)
+    }
+
+    override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+        handleHiddenConstructor(expression.symbol.owner)
+        return super.visitConstructorCall(expression)
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        val function = expression.symbol.owner
+
+        if (!expression.origin.isLambda && function is IrConstructor) {
+            handleHiddenConstructor(function)?.let { accessor ->
+                expression.transformChildrenVoid()
+                return IrFunctionReferenceImpl(
+                    expression.startOffset, expression.endOffset, expression.type,
+                    accessor, accessor.descriptor, accessor.owner.typeParameters.size,
+                    accessor.owner.valueParameters.size, expression.origin
+                )
+            }
+        }
+
+        return super.visitFunctionReference(expression)
+    }
+
+    private fun handleHiddenConstructor(declaration: IrConstructor): IrConstructorSymbol? {
+        functionMap[declaration.symbol]?.let { return it as IrConstructorSymbol }
+
+        if (!declaration.shouldBeHidden)
+            return null
+
+        declaration.visibility = Visibilities.PRIVATE
+
+        return declaration.makeConstructorAccessor().also { accessor ->
+            functionMap[declaration.symbol] = accessor.symbol
+
+            // There's a special case in the JVM backend for serializing the metadata of hidden
+            // constructors - we serialize the descriptor of the original constructor, but the
+            // signature of the bridge. We implement this special case in the JVM IR backend by
+            // attaching the metadata directly to the bridge. We also have to move all annotations
+            // to the bridge method. Parameter annotations are already moved by the copyTo method.
+            accessor.metadata = declaration.metadata
+            declaration.safeAs<IrConstructorImpl>()?.metadata = null
+            accessor.annotations += declaration.annotations
+            declaration.annotations.clear()
+            declaration.valueParameters.forEach { it.annotations.clear() }
+        }.symbol
+    }
 
     private inline fun <ExprT : IrDeclarationReference, reified FromSyT : IrSymbol, ToSyT : IrSymbol> handleAccess(
         expression: ExprT,
