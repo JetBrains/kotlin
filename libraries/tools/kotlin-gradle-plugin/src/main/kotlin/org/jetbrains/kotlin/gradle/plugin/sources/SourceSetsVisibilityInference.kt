@@ -66,7 +66,7 @@ class UnsatisfiedSourceSetVisibilityException(
             append(
                 "The source set ${sourceSet.name} requires visibility of the " +
                         singularOrPlural(requiredButNotVisible, "source set", "source sets:") + " " +
-                        "${requiredButNotVisible.joinToString()}. " +
+                        "${requiredButNotVisible.joinToString { it.name }}. " +
                         "This requirement was not satisfied.\n\n"
             )
 
@@ -90,7 +90,7 @@ class UnsatisfiedSourceSetVisibilityException(
 
                 append(
                     if (isAssociatedCompilation)
-                        ", which compiles" +
+                        ", which compiles " +
                                 singularOrPlural(allKotlinSourceSets, "source set ", "source sets: ") +
                                 allKotlinSourceSets.joinToString { it.name } +
                                 "\n"
@@ -109,9 +109,9 @@ class UnsatisfiedSourceSetVisibilityException(
                     } else {
                         append(
                             "${indent}To ensure the required visibility, the compilation " + compilationWithTarget(compilation) +
-                                    "must have a direct or indirect associate that compiles the source " +
+                                    " must have a direct or indirect associate that compiles the source " +
                                     singularOrPlural(missingRequiredSourceSets, "set ", "sets: ") +
-                                    missingRequiredSourceSets.joinToString() + "\n"
+                                    missingRequiredSourceSets.joinToString { it.name } + "\n"
                         )
                     }
                 }
@@ -140,7 +140,7 @@ internal fun checkSourceSetVisibilityRequirements(
         val inferredVisibility =
             getVisibleSourceSetsFromAssociateCompilations(compilationsBySourceSet[sourceSet].orEmpty())
 
-        val requiredButNotVisible = requiredVisibility - inferredVisibility //TODO minus dependsOn?
+        val requiredButNotVisible = requiredVisibility - inferredVisibility - sourceSet.getSourceSetHierarchy()
 
         if (requiredButNotVisible.isNotEmpty()) {
             val compilations = compilationsBySourceSet.getValue(sourceSet)
