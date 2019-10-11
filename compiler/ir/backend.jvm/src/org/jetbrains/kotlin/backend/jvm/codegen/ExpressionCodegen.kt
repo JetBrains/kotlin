@@ -152,6 +152,7 @@ class ExpressionCodegen(
             // State-machine builder splits the sequence of instructions into states inside state-machine, adding additional LINENUMBERs
             // between them for debugger to stop on suspension. Thus, it requires as much LINENUMBER information as possible to be present,
             // otherwise, any exception will have incorrect line number. See elvisLineNumber.kt test.
+            // TODO: Remove unneeded LINENUMBERs after building the state-machine.
             if (lastLineNumber != lineNumber || irFunction.isSuspend || irFunction.isInvokeSuspendOfLambda(context)) {
                 lastLineNumber = lineNumber
                 mv.visitLineNumber(lineNumber, markNewLabel())

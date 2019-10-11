@@ -209,36 +209,28 @@ class JvmSymbols(
         symbolTable.referenceClass(builtIns.getFunction(parameterCount))
 
     private val jvmFunctionClasses = storageManager.createMemoizedFunction { n: Int ->
-        createClass(FqName("kotlin.jvm.functions.Function$n"), ClassKind.INTERFACE) { klass ->
+        createFunctionClass(n, false)
+    }
+
+    private fun createFunctionClass(n: Int, isSuspend: Boolean): IrClassSymbol =
+        createClass(FqName("kotlin.jvm.functions.Function${n + if (isSuspend) 1 else 0}"), ClassKind.INTERFACE) { klass ->
             for (i in 1..n) {
                 klass.addTypeParameter("P$i", irBuiltIns.anyNType, Variance.IN_VARIANCE)
             }
             val returnType = klass.addTypeParameter("R", irBuiltIns.anyNType, Variance.OUT_VARIANCE)
 
-            klass.addFunction("invoke", returnType.defaultType, Modality.ABSTRACT).apply {
+            klass.addFunction("invoke", returnType.defaultType, Modality.ABSTRACT, isSuspend = isSuspend).apply {
                 for (i in 1..n) {
                     addValueParameter("p$i", klass.typeParameters[i - 1].defaultType)
                 }
             }
         }
-    }
 
     fun getJvmFunctionClass(parameterCount: Int): IrClassSymbol =
         jvmFunctionClasses(parameterCount)
 
     private val jvmSuspendFunctionClasses = storageManager.createMemoizedFunction { n: Int ->
-        createClass(FqName("kotlin.jvm.functions.Function${n + 1}"), ClassKind.INTERFACE) { klass ->
-            for (i in 1..n) {
-                klass.addTypeParameter("P$i", irBuiltIns.anyNType, Variance.IN_VARIANCE)
-            }
-            val returnType = klass.addTypeParameter("R", irBuiltIns.anyNType, Variance.OUT_VARIANCE)
-
-            klass.addFunction("invoke", returnType.defaultType, Modality.ABSTRACT, isSuspend = true).apply {
-                for (i in 1..n) {
-                    addValueParameter("p$i", klass.typeParameters[i - 1].defaultType)
-                }
-            }
-        }
+        createFunctionClass(n, true)
     }
 
     fun getJvmSuspendFunctionClass(parameterCount: Int): IrClassSymbol =

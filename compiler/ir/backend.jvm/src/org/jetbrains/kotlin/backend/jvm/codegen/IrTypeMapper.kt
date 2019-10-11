@@ -35,6 +35,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBase() {
     internal val typeSystem = IrTypeCheckerContext(context.irBuiltIns)
+
     private val IrTypeArgument.adjustedType
         get() = (this as? IrTypeProjection)?.type ?: context.irBuiltIns.anyNType
 

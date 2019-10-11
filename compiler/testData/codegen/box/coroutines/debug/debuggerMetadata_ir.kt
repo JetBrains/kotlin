@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // WITH_COROUTINES
+// TODO: Merge the test with debuggerMetadata when KT-28016 is fixed, particulary, do not spill 0, since it is constant.
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
 
@@ -93,7 +94,6 @@ fun box(): String {
     builder {
         multipleLocalsInOneSlot()
     }
-    // TODO: Do not spill 0, since it is constant.
     res = (continuation!! as BaseContinuationImpl).getSpilledVariableFieldMapping()!!.toMap()["I$1"] ?: "multipleLocalsInOneSlot fail 1"
     if (res != "first") {
         return "" + res

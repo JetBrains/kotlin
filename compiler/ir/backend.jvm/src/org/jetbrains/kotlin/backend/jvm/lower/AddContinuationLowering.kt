@@ -129,6 +129,9 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             }
 
             val parametersFields = info.function.valueParameters.map { addField(it.name.asString(), it.type) }
+            val parametersWithoutArguments = parametersFields.withIndex()
+                .mapNotNull { (i, field) -> if (info.reference.getValueArgument(i) == null) field else null }
+            val parametersWithArguments = parametersFields - parametersWithoutArguments
             val constructor = addPrimaryConstructorForLambda(info.arity, info.reference, parametersFields)
             val secondaryConstructor = addSecondaryConstructorForLambda(constructor)
             val invokeToOverride = functionNClass.functions.single {
@@ -136,10 +139,11 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             }
             val invokeSuspend = addInvokeSuspendForLambda(info.function, parametersFields, receiverField)
             if (info.arity <= 1) {
-                val create = addCreate(constructor, suspendLambda, info.arity, parametersFields, receiverField)
-                addInvoke(create, invokeSuspend, invokeToOverride, parametersFields, receiverField, isConstructorCall = false)
+                val singleParameterField = receiverField ?: parametersWithoutArguments.singleOrNull()
+                val create = addCreate(constructor, suspendLambda, info, parametersWithArguments, singleParameterField)
+                addInvoke(create, invokeSuspend, invokeToOverride, singleParameterField, emptyList(), isConstructorCall = false)
             } else {
-                addInvoke(constructor, invokeSuspend, invokeToOverride, parametersFields, receiverField, isConstructorCall = true)
+                addInvoke(constructor, invokeSuspend, invokeToOverride, receiverField, parametersWithoutArguments, isConstructorCall = true)
             }
 
             context.suspendLambdaToOriginalFunctionMap[this] = info.function
@@ -205,8 +209,8 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         create: IrFunction,
         invokeSuspend: IrFunction,
         invokeToOverride: IrSimpleFunctionSymbol,
-        parametersFields: List<IrField>,
         receiverField: IrField?,
+        parametersWithoutArguments: List<IrField>,
         isConstructorCall: Boolean
     ) {
         val unitClass = context.irBuiltIns.unitClass
@@ -222,12 +226,14 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     }
                     createCall.putValueArgument(if (receiverField != null) 1 else 0, irGet(function.valueParameters.last()))
                 }, "create")
-                // In old BE 'create' function was responsible for putting arguments into fields, but in IR_BE I do not generate create,
-                // unless suspend lambda has no parameters (extension receiver is allowed, however)
-                // Thus, we put arguments into fields
-                if (function.valueParameters.size > create.valueParameters.size) {
+                // In old BE 'create' function was responsible for putting arguments into fields, but in IR_BE we do not generate create,
+                // unless suspend lambda has no or one parameter, including extension receiver
+                // This is because 'create' is called only from 'createCoroutineUnintercepted' from stdlib. And we have only versions
+                // for suspend lambdas without parameters and for ones with exactly one parameter (or extension receiver).
+                // Thus, we put arguments into fields in 'invoke'.
+                if (parametersWithoutArguments.isNotEmpty()) {
                     for ((index, param) in function.valueParameters.drop(if (receiverField != null) 1 else 0).dropLast(1).withIndex()) {
-                        +irSetField(irGet(newlyCreatedObject), parametersFields[index], irGet(param))
+                        +irSetField(irGet(newlyCreatedObject), parametersWithoutArguments[index], irGet(param))
                     }
                 }
                 +irReturn(irCall(invokeSuspend).also { invokeSuspendCall ->
@@ -241,27 +247,29 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun IrClass.addCreate(
         constructor: IrFunction,
         superType: IrClass,
-        arity: Int,
-        parametersFields: List<IrField>,
-        receiverField: IrField?
+        info: SuspendLambdaInfo,
+        parametersWithArguments: List<IrField>,
+        singleParameterField: IrField?
     ): IrFunction {
         val create = superType.functions.single {
-            it.name.asString() == "create" && it.valueParameters.size == arity + 1 &&
+            it.name.asString() == "create" && it.valueParameters.size == info.arity + 1 &&
                     it.valueParameters.last().type.isContinuation() &&
-                    if (arity == 1) it.valueParameters.first().type.isNullableAny() else true
+                    if (info.arity == 1) it.valueParameters.first().type.isNullableAny() else true
         }
         return addFunctionOverride(create).also { function ->
             function.body = context.createIrBuilder(function.symbol).irBlockBody {
+                var index = 0
                 val constructorCall = irCall(constructor).also {
-                    for ((i, field) in parametersFields.withIndex()) {
-                        it.putValueArgument(i, irGetField(irGet(function.dispatchReceiverParameter!!), field))
+                    for ((i, field) in parametersWithArguments.withIndex()) {
+                        if (info.reference.getValueArgument(i) == null) continue
+                        it.putValueArgument(index++, irGetField(irGet(function.dispatchReceiverParameter!!), field))
                     }
-                    it.putValueArgument(parametersFields.size, irGet(function.valueParameters.last()))
+                    it.putValueArgument(index, irGet(function.valueParameters.last()))
                 }
-                if (receiverField != null) {
+                if (singleParameterField != null) {
                     assert(function.valueParameters.size == 2)
                     val result = irTemporary(constructorCall, "result")
-                    +irSetField(irGet(result), receiverField, irGet(function.valueParameters.first()))
+                    +irSetField(irGet(result), singleParameterField, irGet(function.valueParameters.first()))
                     +irReturn(irGet(result))
                 } else {
                     assert(function.valueParameters.size == 1)
