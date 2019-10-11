@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.Test
@@ -13,39 +14,12 @@ import kotlin.test.assertTrue
 class FatFrameworkIT : BaseGradleIT() {
 
     @Test
-    fun smoke() = with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
+    fun smokeIos() = with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
         build("fat") {
-            assertSuccessful()
-            val archs = listOf("x64", "arm64", "arm32")
-            val linkTasks = archs.map { ":linkDebugFrameworkIos${it.capitalize()}" }
-
-            assertTasksExecuted(linkTasks)
-            assertTasksExecuted(":fat")
-
-            assertFileExists("build/fat-framework/smoke.framework/smoke")
-            assertFileExists("build/fat-framework/smoke.framework/Headers/smoke.h")
-            assertFileExists("build/fat-framework/smoke.framework.dSYM/Contents/Resources/DWARF/smoke")
-
-            val headerContent = fileInWorkingDir("build/fat-framework/smoke.framework/Headers/smoke.h").readText()
-            assertTrue(
-                headerContent.contains("+ (int32_t)foo __attribute__((swift_name(\"foo()\")));"),
-                "Unexpected header content:\n$headerContent"
-            )
-
-            val plistContent = fileInWorkingDir("build/fat-framework/smoke.framework/Info.plist")
-                .readLines()
-                .joinToString(separator = "\n") { it.trim() }
-
-            assertTrue(
-                plistContent.contains(
-                    """
-                        <key>CFBundleSupportedPlatforms</key>
-                        <array>
-                        <string>iPhoneOS</string>
-                        </array>
-                    """.trimIndent()
-                ),
-                "Unexpected Info.plist content:\n$plistContent"
+            checkSmokeBuild(
+                archs = listOf("x64", "arm64", "arm32"),
+                targetPrefix = "ios",
+                expectedPlistPlatform = "iPhoneOS"
             )
 
             val binary = fileInWorkingDir("build/fat-framework/smoke.framework/smoke")
@@ -56,6 +30,70 @@ class FatFrameworkIT : BaseGradleIT() {
                 assertTrue(output.contains("\\(for architecture arm64\\):\\s+Mach-O 64-bit dynamically linked shared library arm64".toRegex()))
             }
         }
+    }
+
+    @Test
+    fun smokeWatchos() = with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
+        gradleBuildScript().modify {
+            it.checkedReplace("iosArm32()", "watchosArm32()")
+                .checkedReplace("iosArm64()", "watchosArm64()")
+                .checkedReplace("iosX64()", "watchosX86()")
+        }
+
+
+        build("fat") {
+            checkSmokeBuild(
+                archs = listOf("x86", "arm64", "arm32"),
+                targetPrefix = "watchos",
+                expectedPlistPlatform = "WatchOS"
+            )
+
+            val binary = fileInWorkingDir("build/fat-framework/smoke.framework/smoke")
+            with(runProcess(listOf("file", binary.absolutePath), projectDir)) {
+                assertTrue(isSuccessful)
+                assertTrue(output.contains("\\(for architecture i386\\):\\s+Mach-O dynamically linked shared library i386".toRegex()))
+                assertTrue(output.contains("\\(for architecture armv7k\\):\\s+Mach-O dynamically linked shared library arm_v7k".toRegex()))
+                assertTrue(output.contains("\\(for architecture arm64_32\\):\\s+Mach-O dynamically linked shared library arm64_32_v8".toRegex()))
+            }
+        }
+    }
+
+    private fun CompiledProject.checkSmokeBuild(
+        archs: List<String>,
+        targetPrefix: String,
+        expectedPlistPlatform: String
+    ) {
+        assertSuccessful()
+        val linkTasks = archs.map { ":linkDebugFramework${targetPrefix.capitalize()}${it.capitalize()}" }
+
+        assertTasksExecuted(linkTasks)
+        assertTasksExecuted(":fat")
+
+        assertFileExists("build/fat-framework/smoke.framework/smoke")
+        assertFileExists("build/fat-framework/smoke.framework/Headers/smoke.h")
+        assertFileExists("build/fat-framework/smoke.framework.dSYM/Contents/Resources/DWARF/smoke")
+
+        val headerContent = fileInWorkingDir("build/fat-framework/smoke.framework/Headers/smoke.h").readText()
+        assertTrue(
+            headerContent.contains("+ (int32_t)foo __attribute__((swift_name(\"foo()\")));"),
+            "Unexpected header content:\n$headerContent"
+        )
+
+        val plistContent = fileInWorkingDir("build/fat-framework/smoke.framework/Info.plist")
+            .readLines()
+            .joinToString(separator = "\n") { it.trim() }
+
+        assertTrue(
+            plistContent.contains(
+                """
+                        <key>CFBundleSupportedPlatforms</key>
+                        <array>
+                        <string>$expectedPlistPlatform</string>
+                        </array>
+                    """.trimIndent()
+            ),
+            "Unexpected Info.plist content:\n$plistContent"
+        )
     }
 
     @Test
@@ -77,7 +115,7 @@ class FatFrameworkIT : BaseGradleIT() {
     }
 
     @Test
-    fun testIncorrectTarget() = with(
+    fun testIncorrectFamily() = with(
         transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")
     ) {
         gradleBuildScript().modify {
@@ -90,7 +128,7 @@ class FatFrameworkIT : BaseGradleIT() {
         }
         build("fat") {
             assertFailed()
-            assertContains("Cannot add a framework with target 'macos_x64' to the fat framework")
+            assertContains("Cannot add a binary with platform family 'osx' to the fat framework")
         }
     }
 
