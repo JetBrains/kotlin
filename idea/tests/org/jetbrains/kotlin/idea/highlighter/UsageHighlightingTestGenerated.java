@@ -49,6 +49,26 @@ public class UsageHighlightingTestGenerated extends AbstractUsageHighlightingTes
         runTest("idea/testData/usageHighlighter/importAlias.kt");
     }
 
+    @TestMetadata("importAliasFromStdLibClass.kt")
+    public void testImportAliasFromStdLibClass() throws Exception {
+        runTest("idea/testData/usageHighlighter/importAliasFromStdLibClass.kt");
+    }
+
+    @TestMetadata("importAliasFromStdLibFunction.kt")
+    public void testImportAliasFromStdLibFunction() throws Exception {
+        runTest("idea/testData/usageHighlighter/importAliasFromStdLibFunction.kt");
+    }
+
+    @TestMetadata("importAliasFromStdLibFunctionFromObject.kt")
+    public void testImportAliasFromStdLibFunctionFromObject() throws Exception {
+        runTest("idea/testData/usageHighlighter/importAliasFromStdLibFunctionFromObject.kt");
+    }
+
+    @TestMetadata("importAliasFromStdLibPropertyFromObject.kt")
+    public void testImportAliasFromStdLibPropertyFromObject() throws Exception {
+        runTest("idea/testData/usageHighlighter/importAliasFromStdLibPropertyFromObject.kt");
+    }
+
     @TestMetadata("labeledAnonymousFun.kt")
     public void testLabeledAnonymousFun() throws Exception {
         runTest("idea/testData/usageHighlighter/labeledAnonymousFun.kt");

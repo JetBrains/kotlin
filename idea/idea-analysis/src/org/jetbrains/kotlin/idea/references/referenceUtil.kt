@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -26,8 +28,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -35,12 +42,18 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.FunctionImportedFromObject
+import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeAliasDescriptor
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -68,6 +81,20 @@ fun PsiReference.canBeReferenceTo(candidateTarget: PsiElement): Boolean {
     // optimization
     return element.containingFile == candidateTarget.containingFile
             || ProjectRootsUtil.isInProjectOrLibSource(element, includeScriptsOutsideSourceRoots = true)
+}
+
+fun DeclarationDescriptor.findPsiDeclarations(project: Project, resolveScope: GlobalSearchScope): Collection<PsiElement> {
+    val fqName = importableFqName ?: return emptyList()
+
+    fun Collection<KtNamedDeclaration>.fqNameFilter() = filter { it.fqName == fqName }
+    return when (this) {
+        is DeserializedClassDescriptor -> KotlinFullClassNameIndex.getInstance()[fqName.asString(), project, resolveScope]
+        is DeserializedTypeAliasDescriptor -> KotlinTypeAliasShortNameIndex.getInstance()[fqName.shortName().asString(), project, resolveScope].fqNameFilter()
+        is DeserializedSimpleFunctionDescriptor, is FunctionImportedFromObject -> KotlinFunctionShortNameIndex.getInstance()[fqName.shortName().asString(), project, resolveScope].fqNameFilter()
+        is DeserializedPropertyDescriptor, is PropertyImportedFromObject -> KotlinPropertyShortNameIndex.getInstance()[fqName.shortName().asString(), project, resolveScope].fqNameFilter()
+        is DeclarationDescriptorWithSource -> listOfNotNull(source.getPsi())
+        else -> emptyList()
+    }
 }
 
 fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
@@ -100,7 +127,14 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
         val importableTargets = unwrappedTargets.mapNotNull {
             if (it is KtConstructor<*>) it.containingClassOrObject else it
         }
-        return importedDescriptors.any { (it as? DeclarationDescriptorWithSource)?.source?.getPsi() in importableTargets }
+
+        val project = element.project
+        val resolveScope = element.resolveScope
+        return importedDescriptors.any {
+            it.findPsiDeclarations(project, resolveScope).any { declaration ->
+                declaration in importableTargets
+            }
+        }
     }
 
     if (element is KtLabelReferenceExpression) {
