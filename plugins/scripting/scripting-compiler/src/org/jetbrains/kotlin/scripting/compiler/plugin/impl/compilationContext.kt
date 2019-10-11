@@ -23,13 +23,25 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.container.StorageComponentContainer
+import org.jetbrains.kotlin.container.useInstance
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
+import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.load.java.sam.SamWithReceiverResolver
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.api.dependencies
@@ -64,7 +76,7 @@ internal fun createIsolatedCompilationContext(
 
     return SharedScriptCompilationContext(
         disposable, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState
-    )
+    ).applyConfigure()
 }
 
 internal fun createCompilationContextFromEnvironment(
@@ -83,7 +95,37 @@ internal fun createCompilationContextFromEnvironment(
 
     return SharedScriptCompilationContext(
         null, initialScriptCompilationConfiguration, environment, ignoredOptionsReportingState
-    )
+    ).applyConfigure()
+}
+
+// copied with minor modifications from the sam-with-receiver-cli
+// TODO: consider placing into a shared jar
+internal class ScriptingSamWithReceiverComponentContributor(val annotations: List<String>) : StorageComponentContainerContributor {
+
+    private class Extension(private val annotations: List<String>) : SamWithReceiverResolver, AnnotationBasedExtension {
+        override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?) = annotations
+
+        override fun shouldConvertFirstSamParameterToReceiver(function: FunctionDescriptor): Boolean =
+            (function.containingDeclaration as? ClassDescriptor)?.hasSpecialAnnotation(null) ?: false
+    }
+
+    override fun registerModuleComponents(
+        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+    ) {
+        if (platform.isJvm()) {
+            container.useInstance(Extension(annotations))
+        }
+    }
+}
+
+internal fun SharedScriptCompilationContext.applyConfigure(): SharedScriptCompilationContext = apply {
+    val samWithReceiverAnnotations = baseScriptCompilationConfiguration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]
+    if (samWithReceiverAnnotations?.isEmpty() == false) {
+        StorageComponentContainerContributor.registerExtension(
+            environment.project,
+            ScriptingSamWithReceiverComponentContributor(samWithReceiverAnnotations.map { it.typeName })
+        )
+    }
 }
 
 internal fun createInitialConfigurations(
