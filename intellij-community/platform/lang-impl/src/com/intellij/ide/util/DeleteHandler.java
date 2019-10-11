@@ -15,13 +15,18 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.fileEditor.impl.NonProjectFileWritingAccessProvider;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ex.MessagesEx;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VFileProperty;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.WritingAccessProvider;
 import com.intellij.psi.*;
@@ -41,10 +46,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class DeleteHandler {
   private DeleteHandler() { }
@@ -195,12 +203,25 @@ public class DeleteHandler {
         CommandProcessor.getInstance().markCurrentCommandAsGlobal(project);
       }
 
-      for (SmartPsiElementPointer<?> pointer : pointers) {
-        PsiElement elementToDelete = pointer.getElement();
-        if (elementToDelete == null) continue; //was already deleted
-        doDelete(project, elementToDelete);
+      if (Stream.of(elements).allMatch(DeleteHandler::isLocalFile)) {
+        doDeleteFiles(project, elements);
+      }
+      else {
+        for (SmartPsiElementPointer<?> pointer : pointers) {
+          PsiElement elementToDelete = pointer.getElement();
+          if (elementToDelete == null) continue; //was already deleted
+          doDelete(project, elementToDelete);
+        }
       }
     }), RefactoringBundle.message("safe.delete.command", RefactoringUIUtil.calculatePsiElementDescriptionList(elements)), null);
+  }
+
+  private static boolean isLocalFile(PsiElement e) {
+    if (e instanceof PsiFileSystemItem) {
+      VirtualFile file = ((PsiFileSystemItem)e).getVirtualFile();
+      if (file != null && file.isInLocalFileSystem()) return true;
+    }
+    return false;
   }
 
   private static boolean clearFileReadOnlyFlags(Project project, PsiElement elementToDelete) {
@@ -267,6 +288,34 @@ public class DeleteHandler {
     });
   }
 
+  private static void doDeleteFiles(Project project, PsiElement[] fileElements) {
+    for (PsiElement file : fileElements) {
+      if (!clearFileReadOnlyFlags(project, file)) return;
+    }
+
+    LocalFilesDeleteTask task = new LocalFilesDeleteTask(project, fileElements);
+    ProgressManager.getInstance().run(task);
+    if (task.error != null) {
+      Messages.showMessageDialog(project, task.error.getMessage(), CommonBundle.getErrorTitle(), Messages.getErrorIcon());
+    }
+    if (task.aborted != null) {
+      VfsUtil.markDirtyAndRefresh(true, true, false, task.aborted);
+    }
+    if (!task.processed.isEmpty()) {
+      ApplicationManager.getApplication().runWriteAction(() -> {
+        for (PsiElement fileElement : task.processed) {
+          try {
+            fileElement.delete();
+          }
+          catch (IncorrectOperationException e) {
+            ApplicationManager.getApplication().invokeLater(
+              () -> Messages.showMessageDialog(project, e.getMessage(), CommonBundle.getErrorTitle(), Messages.getErrorIcon()));
+          }
+        }
+      });
+    }
+  }
+
   private static boolean clearReadOnlyFlag(final VirtualFile virtualFile, final Project project) {
     final boolean[] success = new boolean[1];
     CommandProcessor.getInstance().executeCommand(project, () -> {
@@ -296,5 +345,66 @@ public class DeleteHandler {
       }
     }
     return true;
+  }
+
+  private static class LocalFilesDeleteTask extends Task.Modal {
+    private final PsiElement[] myFileElements;
+    List<PsiElement> processed = new ArrayList<>();
+    VirtualFile aborted = null;
+    IOException error = null;
+
+    LocalFilesDeleteTask(Project project, PsiElement[] fileElements) {
+      super(project, IdeBundle.message("progress.deleting"), true);
+      myFileElements = fileElements;
+    }
+
+    @Override
+    public void run(@NotNull ProgressIndicator indicator) {
+      indicator.setIndeterminate(true);
+
+      try {
+        for (PsiElement e : myFileElements) {
+          if (indicator.isCanceled()) break;
+
+          VirtualFile file = ((PsiFileSystemItem)e).getVirtualFile();
+          aborted = file;
+          Path path = Paths.get(file.getPath());
+          indicator.setText(path.toString());
+
+          Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+              if (SystemInfo.isWindows && attrs.isOther()) {  // a junction
+                visitFile(dir, null);
+                return FileVisitResult.SKIP_SUBTREE;
+              }
+              else {
+                return FileVisitResult.CONTINUE;
+              }
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, @Nullable BasicFileAttributes attrs) throws IOException {
+              indicator.setText2(path.relativize(file).toString());
+              Files.delete(file);
+              return indicator.isCanceled() ? FileVisitResult.TERMINATE : FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+              return visitFile(dir, null);
+            }
+          });
+
+          if (!indicator.isCanceled()) {
+            processed.add(e);
+            aborted = null;
+          }
+        }
+      }
+      catch (IOException e) {
+        error = e;
+      }
+    }
   }
 }
