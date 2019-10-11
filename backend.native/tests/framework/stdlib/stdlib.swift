@@ -355,7 +355,7 @@ class StdlibTests : TestProvider {
                 _ set: KotlinMutableSet<NSString>,
                 _ check: (KotlinMutableSet<NSString>) throws -> Void = { _ in }
         ) throws {
-            try assertEquals(actual: String(describing: type(of: set)), expected: "KotlinMutableSet")
+            try assertEquals(actual: String(describing: type(of: set)), expected: "StdlibMutableSet")
             try check(set)
             try assertFalse(set.contains("1"))
             set.add("1")
@@ -414,7 +414,7 @@ class StdlibTests : TestProvider {
                 _ dict: KotlinMutableDictionary<NSString, NSString>,
                 _ check: (KotlinMutableDictionary<NSString, NSString>) throws -> Void = { _ in }
         ) throws {
-            try assertEquals(actual: String(describing: type(of: dict)), expected: "KotlinMutableDictionary")
+            try assertEquals(actual: String(describing: type(of: dict)), expected: "StdlibMutableDictionary")
             try check(dict)
             try assertTrue(dict["1"] == nil)
             dict["1"] = "2"

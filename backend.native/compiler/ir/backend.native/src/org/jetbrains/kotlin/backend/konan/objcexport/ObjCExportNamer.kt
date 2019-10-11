@@ -40,6 +40,8 @@ interface ObjCExportNamer {
         val objcGenerics: Boolean
     }
 
+    val topLevelNamePrefix: String
+
     fun getFileClassName(file: SourceFile): ClassOrProtocolName
     fun getClassOrProtocolName(descriptor: ClassDescriptor): ClassOrProtocolName
     fun getSelector(method: FunctionDescriptor): String
@@ -192,20 +194,16 @@ internal class ObjCExportNamerImpl(
             local
     )
 
-    private fun String.toUnmangledClassOrProtocolName(): ObjCExportNamer.ClassOrProtocolName =
-            ObjCExportNamer.ClassOrProtocolName(swiftName = this, objCName = this)
-
     private val objcGenerics get() = configuration.objcGenerics
-    private val topLevelNamePrefix get() = configuration.topLevelNamePrefix
+    override val topLevelNamePrefix get() = configuration.topLevelNamePrefix
     private val helper = ObjCExportNamingHelper(configuration.topLevelNamePrefix)
 
     private fun String.toSpecialStandardClassOrProtocolName() = ObjCExportNamer.ClassOrProtocolName(
             swiftName = "Kotlin$this",
-            objCName = "${topLevelNamePrefix}$this",
-            binaryName = "Kotlin$this"
+            objCName = "${topLevelNamePrefix}$this"
     )
 
-    override val kotlinAnyName = "KotlinBase".toUnmangledClassOrProtocolName()
+    override val kotlinAnyName = "Base".toSpecialStandardClassOrProtocolName()
 
     override val mutableSetName = "MutableSet".toSpecialStandardClassOrProtocolName()
     override val mutableMapName = "MutableDictionary".toSpecialStandardClassOrProtocolName()

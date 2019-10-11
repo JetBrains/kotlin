@@ -1,27 +1,25 @@
-@interface KotlinBase : NSObject
+__attribute__((swift_name("KotlinBase")))
+@interface ValuesBase : NSObject
 - (instancetype)init __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
 + (void)initialize __attribute__((objc_requires_super));
 @end;
 
-@interface KotlinBase (KotlinBaseCopying) <NSCopying>
+@interface ValuesBase (ValuesBaseCopying) <NSCopying>
 @end;
 
-__attribute__((objc_runtime_name("KotlinMutableSet")))
 __attribute__((swift_name("KotlinMutableSet")))
 @interface ValuesMutableSet<ObjectType> : NSMutableSet<ObjectType>
 @end;
 
-__attribute__((objc_runtime_name("KotlinMutableDictionary")))
 __attribute__((swift_name("KotlinMutableDictionary")))
 @interface ValuesMutableDictionary<KeyType, ObjectType> : NSMutableDictionary<KeyType, ObjectType>
 @end;
 
-@interface NSError (NSErrorKotlinException)
+@interface NSError (NSErrorValuesKotlinException)
 @property (readonly) id _Nullable kotlinException;
 @end;
 
-__attribute__((objc_runtime_name("KotlinNumber")))
 __attribute__((swift_name("KotlinNumber")))
 @interface ValuesNumber : NSNumber
 - (instancetype)initWithChar:(char)value __attribute__((unavailable));
@@ -56,77 +54,66 @@ __attribute__((swift_name("KotlinNumber")))
 + (instancetype)numberWithUnsignedInteger:(NSUInteger)value __attribute__((unavailable));
 @end;
 
-__attribute__((objc_runtime_name("KotlinByte")))
 __attribute__((swift_name("KotlinByte")))
 @interface ValuesByte : ValuesNumber
 - (instancetype)initWithChar:(char)value;
 + (instancetype)numberWithChar:(char)value;
 @end;
 
-__attribute__((objc_runtime_name("KotlinUByte")))
 __attribute__((swift_name("KotlinUByte")))
 @interface ValuesUByte : ValuesNumber
 - (instancetype)initWithUnsignedChar:(unsigned char)value;
 + (instancetype)numberWithUnsignedChar:(unsigned char)value;
 @end;
 
-__attribute__((objc_runtime_name("KotlinShort")))
 __attribute__((swift_name("KotlinShort")))
 @interface ValuesShort : ValuesNumber
 - (instancetype)initWithShort:(short)value;
 + (instancetype)numberWithShort:(short)value;
 @end;
 
-__attribute__((objc_runtime_name("KotlinUShort")))
 __attribute__((swift_name("KotlinUShort")))
 @interface ValuesUShort : ValuesNumber
 - (instancetype)initWithUnsignedShort:(unsigned short)value;
 + (instancetype)numberWithUnsignedShort:(unsigned short)value;
 @end;
 
-__attribute__((objc_runtime_name("KotlinInt")))
 __attribute__((swift_name("KotlinInt")))
 @interface ValuesInt : ValuesNumber
 - (instancetype)initWithInt:(int)value;
 + (instancetype)numberWithInt:(int)value;
 @end;
 
-__attribute__((objc_runtime_name("KotlinUInt")))
 __attribute__((swift_name("KotlinUInt")))
 @interface ValuesUInt : ValuesNumber
 - (instancetype)initWithUnsignedInt:(unsigned int)value;
 + (instancetype)numberWithUnsignedInt:(unsigned int)value;
 @end;
 
-__attribute__((objc_runtime_name("KotlinLong")))
 __attribute__((swift_name("KotlinLong")))
 @interface ValuesLong : ValuesNumber
 - (instancetype)initWithLongLong:(long long)value;
 + (instancetype)numberWithLongLong:(long long)value;
 @end;
 
-__attribute__((objc_runtime_name("KotlinULong")))
 __attribute__((swift_name("KotlinULong")))
 @interface ValuesULong : ValuesNumber
 - (instancetype)initWithUnsignedLongLong:(unsigned long long)value;
 + (instancetype)numberWithUnsignedLongLong:(unsigned long long)value;
 @end;
 
-__attribute__((objc_runtime_name("KotlinFloat")))
 __attribute__((swift_name("KotlinFloat")))
 @interface ValuesFloat : ValuesNumber
 - (instancetype)initWithFloat:(float)value;
 + (instancetype)numberWithFloat:(float)value;
 @end;
 
-__attribute__((objc_runtime_name("KotlinDouble")))
 __attribute__((swift_name("KotlinDouble")))
 @interface ValuesDouble : ValuesNumber
 - (instancetype)initWithDouble:(double)value;
 + (instancetype)numberWithDouble:(double)value;
 @end;
 
-__attribute__((objc_runtime_name("KotlinBoolean")))
 __attribute__((swift_name("KotlinBoolean")))
 @interface ValuesBoolean : ValuesNumber
 - (instancetype)initWithBool:(BOOL)value;
@@ -135,7 +122,7 @@ __attribute__((swift_name("KotlinBoolean")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("DelegateClass")))
-@interface ValuesDelegateClass : KotlinBase <ValuesKotlinReadWriteProperty>
+@interface ValuesDelegateClass : ValuesBase <ValuesKotlinReadWriteProperty>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (ValuesKotlinArray *)getValueThisRef:(ValuesKotlinNothing * _Nullable)thisRef property:(id<ValuesKotlinKProperty>)property __attribute__((swift_name("getValue(thisRef:property:)")));
@@ -150,13 +137,13 @@ __attribute__((swift_name("I")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("DefaultInterfaceExt")))
-@interface ValuesDefaultInterfaceExt : KotlinBase <ValuesI>
+@interface ValuesDefaultInterfaceExt : ValuesBase <ValuesI>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((swift_name("OpenClassI")))
-@interface ValuesOpenClassI : KotlinBase <ValuesI>
+@interface ValuesOpenClassI : ValuesBase <ValuesI>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (NSString *)iFun __attribute__((swift_name("iFun()")));
@@ -212,7 +199,7 @@ __attribute__((swift_name("Enumeration")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TripleVals")))
-@interface ValuesTripleVals : KotlinBase
+@interface ValuesTripleVals : ValuesBase
 - (instancetype)initWithFirst:(id _Nullable)first second:(id _Nullable)second third:(id _Nullable)third __attribute__((swift_name("init(first:second:third:)"))) __attribute__((objc_designated_initializer));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
@@ -228,7 +215,7 @@ __attribute__((swift_name("TripleVals")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TripleVars")))
-@interface ValuesTripleVars : KotlinBase
+@interface ValuesTripleVars : ValuesBase
 - (instancetype)initWithFirst:(id _Nullable)first second:(id _Nullable)second third:(id _Nullable)third __attribute__((swift_name("init(first:second:third:)"))) __attribute__((objc_designated_initializer));
 - (NSString *)description __attribute__((swift_name("description()")));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
@@ -243,14 +230,14 @@ __attribute__((swift_name("TripleVars")))
 @end;
 
 __attribute__((swift_name("WithCompanionAndObject")))
-@interface ValuesWithCompanionAndObject : KotlinBase
+@interface ValuesWithCompanionAndObject : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("WithCompanionAndObject.Companion")))
-@interface ValuesWithCompanionAndObjectCompanion : KotlinBase
+@interface ValuesWithCompanionAndObjectCompanion : ValuesBase
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion __attribute__((swift_name("init()")));
@@ -280,7 +267,7 @@ __attribute__((swift_name("MyException")))
 @end;
 
 __attribute__((swift_name("BridgeBase")))
-@interface ValuesBridgeBase : KotlinBase
+@interface ValuesBridgeBase : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (id _Nullable)foo1AndReturnError:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("foo1()")));
@@ -302,21 +289,21 @@ __attribute__((swift_name("Bridge")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Deeply")))
-@interface ValuesDeeply : KotlinBase
+@interface ValuesDeeply : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Deeply.Nested")))
-@interface ValuesDeeplyNested : KotlinBase
+@interface ValuesDeeplyNested : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Deeply.NestedType")))
-@interface ValuesDeeplyNestedType : KotlinBase
+@interface ValuesDeeplyNestedType : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @property (readonly) int32_t thirtyTwo __attribute__((swift_name("thirtyTwo")));
@@ -324,21 +311,21 @@ __attribute__((swift_name("Deeply.NestedType")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("WithGenericDeeply")))
-@interface ValuesWithGenericDeeply : KotlinBase
+@interface ValuesWithGenericDeeply : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("WithGenericDeeply.Nested")))
-@interface ValuesWithGenericDeeplyNested : KotlinBase
+@interface ValuesWithGenericDeeplyNested : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("WithGenericDeeply.NestedType")))
-@interface ValuesWithGenericDeeplyNestedType : KotlinBase
+@interface ValuesWithGenericDeeplyNestedType : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @property (readonly) int32_t thirtyThree __attribute__((swift_name("thirtyThree")));
@@ -346,14 +333,14 @@ __attribute__((swift_name("WithGenericDeeply.NestedType")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TypeOuter")))
-@interface ValuesTypeOuter : KotlinBase
+@interface ValuesTypeOuter : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TypeOuter.Type_")))
-@interface ValuesTypeOuterType_ : KotlinBase
+@interface ValuesTypeOuterType_ : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @property (readonly) int32_t thirtyFour __attribute__((swift_name("thirtyFour")));
@@ -361,7 +348,7 @@ __attribute__((swift_name("TypeOuter.Type_")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("CKeywords")))
-@interface ValuesCKeywords : KotlinBase
+@interface ValuesCKeywords : ValuesBase
 - (instancetype)initWithFloat:(float)float_ enum:(int32_t)enum_ goto:(BOOL)goto_ __attribute__((swift_name("init(float:enum:goto:)"))) __attribute__((objc_designated_initializer));
 - (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
 - (NSUInteger)hash __attribute__((swift_name("hash()")));
@@ -393,7 +380,7 @@ __attribute__((swift_name("Base2")))
 @end;
 
 __attribute__((swift_name("Base23")))
-@interface ValuesBase23 : KotlinBase <ValuesBase2>
+@interface ValuesBase23 : ValuesBase <ValuesBase2>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (ValuesInt *)sameValue:(ValuesInt * _Nullable)value __attribute__((swift_name("same(value:)")));
@@ -412,7 +399,7 @@ __attribute__((swift_name("TransformWithDefault")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TransformInheritingDefault")))
-@interface ValuesTransformInheritingDefault : KotlinBase <ValuesTransformWithDefault>
+@interface ValuesTransformInheritingDefault : ValuesBase <ValuesTransformWithDefault>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
@@ -424,7 +411,7 @@ __attribute__((swift_name("TransformIntString")))
 @end;
 
 __attribute__((swift_name("TransformIntToString")))
-@interface ValuesTransformIntToString : KotlinBase <ValuesTransform, ValuesTransformIntString>
+@interface ValuesTransformIntToString : ValuesBase <ValuesTransform, ValuesTransformIntString>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (NSString *)mapValue:(ValuesInt *)intValue __attribute__((swift_name("map(value:)")));
@@ -440,7 +427,7 @@ __attribute__((swift_name("TransformIntToDecimalString")))
 @end;
 
 __attribute__((swift_name("TransformIntToLong")))
-@interface ValuesTransformIntToLong : KotlinBase <ValuesTransform>
+@interface ValuesTransformIntToLong : ValuesBase <ValuesTransform>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (ValuesLong *)mapValue:(ValuesInt *)value __attribute__((swift_name("map(value:)")));
@@ -448,21 +435,21 @@ __attribute__((swift_name("TransformIntToLong")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("GH2931")))
-@interface ValuesGH2931 : KotlinBase
+@interface ValuesGH2931 : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("GH2931.Data")))
-@interface ValuesGH2931Data : KotlinBase
+@interface ValuesGH2931Data : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("GH2931.Holder")))
-@interface ValuesGH2931Holder : KotlinBase
+@interface ValuesGH2931Holder : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @property (readonly) ValuesGH2931Data *data __attribute__((swift_name("data")));
@@ -470,7 +457,7 @@ __attribute__((swift_name("GH2931.Holder")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("GH2945")))
-@interface ValuesGH2945 : KotlinBase
+@interface ValuesGH2945 : ValuesBase
 - (instancetype)initWithErrno:(int32_t)errno __attribute__((swift_name("init(errno:)"))) __attribute__((objc_designated_initializer));
 - (int32_t)testErrnoInSelectorP:(int32_t)p errno:(int32_t)errno __attribute__((swift_name("testErrnoInSelector(p:errno:)")));
 @property int32_t errno __attribute__((swift_name("errno")));
@@ -478,7 +465,7 @@ __attribute__((swift_name("GH2945")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("GH2830")))
-@interface ValuesGH2830 : KotlinBase
+@interface ValuesGH2830 : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (id)getI __attribute__((swift_name("getI()")));
@@ -491,7 +478,7 @@ __attribute__((swift_name("GH2830I")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("GH2959")))
-@interface ValuesGH2959 : KotlinBase
+@interface ValuesGH2959 : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (NSArray<id<ValuesGH2959I>> *)getIId:(int32_t)id __attribute__((swift_name("getI(id:)")));
@@ -512,7 +499,7 @@ __attribute__((swift_name("IntBlocks")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("IntBlocksImpl")))
-@interface ValuesIntBlocksImpl : KotlinBase <ValuesIntBlocks>
+@interface ValuesIntBlocksImpl : ValuesBase <ValuesIntBlocks>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)intBlocksImpl __attribute__((swift_name("init()")));
@@ -529,7 +516,7 @@ __attribute__((swift_name("UnitBlockCoercion")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("UnitBlockCoercionImpl")))
-@interface ValuesUnitBlockCoercionImpl : KotlinBase <ValuesUnitBlockCoercion>
+@interface ValuesUnitBlockCoercionImpl : ValuesBase <ValuesUnitBlockCoercion>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)unitBlockCoercionImpl __attribute__((swift_name("init()")));
@@ -543,7 +530,7 @@ __attribute__((swift_name("MyAbstractList")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestKClass")))
-@interface ValuesTestKClass : KotlinBase
+@interface ValuesTestKClass : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (id<ValuesKotlinKClass> _Nullable)getKotlinClassClazz:(Class)clazz __attribute__((swift_name("getKotlinClass(clazz:)")));
@@ -575,7 +562,7 @@ __attribute__((swift_name("ForwardC2")))
 @end;
 
 __attribute__((swift_name("ForwardC1")))
-@interface ValuesForwardC1 : KotlinBase
+@interface ValuesForwardC1 : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (ValuesForwardC2 *)getForwardC2 __attribute__((swift_name("getForwardC2()")));
@@ -601,7 +588,7 @@ __attribute__((swift_name("TestClashes2")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestClashesImpl")))
-@interface ValuesTestClashesImpl : KotlinBase <ValuesTestClashes1, ValuesTestClashes2>
+@interface ValuesTestClashesImpl : ValuesBase <ValuesTestClashes1, ValuesTestClashes2>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @property (readonly) int32_t clashingProperty __attribute__((swift_name("clashingProperty")));
@@ -610,7 +597,7 @@ __attribute__((swift_name("TestClashesImpl")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestInvalidIdentifiers")))
-@interface ValuesTestInvalidIdentifiers : KotlinBase
+@interface ValuesTestInvalidIdentifiers : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (int32_t)a_d_d_1:(int32_t)_1 _2:(int32_t)_2 _3:(int32_t)_3 __attribute__((swift_name("a_d_d(_1:_2:_3:)")));
@@ -621,14 +608,14 @@ __attribute__((swift_name("TestInvalidIdentifiers")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestInvalidIdentifiers._Foo")))
-@interface ValuesTestInvalidIdentifiers_Foo : KotlinBase
+@interface ValuesTestInvalidIdentifiers_Foo : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestInvalidIdentifiers.Bar_")))
-@interface ValuesTestInvalidIdentifiersBar_ : KotlinBase
+@interface ValuesTestInvalidIdentifiersBar_ : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
@@ -649,7 +636,7 @@ __attribute__((swift_name("TestInvalidIdentifiers.E")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestInvalidIdentifiers.Companion_")))
-@interface ValuesTestInvalidIdentifiersCompanion_ : KotlinBase
+@interface ValuesTestInvalidIdentifiersCompanion_ : ValuesBase
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 + (instancetype)companion_ __attribute__((swift_name("init()")));
@@ -657,7 +644,7 @@ __attribute__((swift_name("TestInvalidIdentifiers.Companion_")))
 @end;
 
 __attribute__((swift_name("TestDeprecation")))
-@interface ValuesTestDeprecation : KotlinBase
+@interface ValuesTestDeprecation : ValuesBase
 - (instancetype)initWithError:(int16_t)error __attribute__((swift_name("init(error:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable("error")));
 - (instancetype)initWithWarning:(int32_t)warning __attribute__((swift_name("init(warning:)"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("warning")));
 - (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer));
@@ -720,7 +707,7 @@ __attribute__((swift_name("TestDeprecationHiddenInterface")))
 @end;
 
 __attribute__((swift_name("TestDeprecation.ImplementingHidden")))
-@interface ValuesTestDeprecationImplementingHidden : KotlinBase
+@interface ValuesTestDeprecationImplementingHidden : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (int32_t)effectivelyHidden __attribute__((swift_name("effectivelyHidden()")));
@@ -783,7 +770,7 @@ __attribute__((swift_name("TestDeprecationErrorInterface")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestDeprecation.ImplementingError")))
-@interface ValuesTestDeprecationImplementingError : KotlinBase <ValuesTestDeprecationErrorInterface>
+@interface ValuesTestDeprecationImplementingError : ValuesBase <ValuesTestDeprecationErrorInterface>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
@@ -821,7 +808,7 @@ __attribute__((swift_name("TestDeprecationWarningInterface")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestDeprecation.ImplementingWarning")))
-@interface ValuesTestDeprecationImplementingWarning : KotlinBase <ValuesTestDeprecationWarningInterface>
+@interface ValuesTestDeprecationImplementingWarning : ValuesBase <ValuesTestDeprecationWarningInterface>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
@@ -953,7 +940,7 @@ __attribute__((swift_name("TopLevelHidden.InnerInner")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("TestWeakRefs")))
-@interface ValuesTestWeakRefs : KotlinBase
+@interface ValuesTestWeakRefs : ValuesBase
 - (instancetype)initWithFrozen:(BOOL)frozen __attribute__((swift_name("init(frozen:)"))) __attribute__((objc_designated_initializer));
 - (id)getObj __attribute__((swift_name("getObj()")));
 - (void)clearObj __attribute__((swift_name("clearObj()")));
@@ -962,7 +949,7 @@ __attribute__((swift_name("TestWeakRefs")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("SharedRefs")))
-@interface ValuesSharedRefs : KotlinBase
+@interface ValuesSharedRefs : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (ValuesSharedRefsMutableData *)createRegularObject __attribute__((swift_name("createRegularObject()")));
@@ -976,7 +963,7 @@ __attribute__((swift_name("SharedRefs")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("SharedRefs.MutableData")))
-@interface ValuesSharedRefsMutableData : KotlinBase
+@interface ValuesSharedRefsMutableData : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 - (void)update __attribute__((swift_name("update()")));
@@ -984,7 +971,7 @@ __attribute__((swift_name("SharedRefs.MutableData")))
 @end;
 
 __attribute__((swift_name("ClassForTypeCheck")))
-@interface ValuesClassForTypeCheck : KotlinBase
+@interface ValuesClassForTypeCheck : ValuesBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end;
@@ -1000,7 +987,7 @@ __attribute__((swift_name("InterfaceForTypeCheck")))
 
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ValuesKt")))
-@interface ValuesValuesKt : KotlinBase
+@interface ValuesValuesKt : ValuesBase
 + (ValuesBoolean * _Nullable)boxBooleanValue:(BOOL)booleanValue __attribute__((swift_name("box(booleanValue:)")));
 + (ValuesByte * _Nullable)boxByteValue:(int8_t)byteValue __attribute__((swift_name("box(byteValue:)")));
 + (ValuesShort * _Nullable)boxShortValue:(int16_t)shortValue __attribute__((swift_name("box(shortValue:)")));

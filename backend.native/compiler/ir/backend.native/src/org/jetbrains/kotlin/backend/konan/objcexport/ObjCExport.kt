@@ -70,13 +70,15 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         }
     }
 
+    lateinit var namer: ObjCExportNamer
+
     internal fun generate(codegen: CodeGenerator) {
         if (!target.family.isAppleFamily) return
 
         if (!context.config.produce.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
         val mapper = exportedInterface?.mapper ?: ObjCExportMapper()
-        val namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
+        namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
                 setOf(codegen.context.moduleDescriptor),
                 context.moduleDescriptor.builtIns,
                 mapper,

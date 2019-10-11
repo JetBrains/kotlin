@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.Llvm
+import org.jetbrains.kotlin.backend.konan.llvm.objc.linkObjC
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.konan.KonanVersion
@@ -59,11 +60,9 @@ private fun linkAllDependencies(context: Context, generatedBitcodeFiles: List<St
     val launcherNativeLibraries = config.launcherNativeLibraries
             .takeIf { config.produce == CompilerOutputKind.PROGRAM }.orEmpty()
 
-    val objCNativeLibraries = config.objCNativeLibraries
-            .takeIf { config.produce.isFinalBinary && config.target.family.isAppleFamily }.orEmpty()
+    linkObjC(context)
 
-    val nativeLibraries = config.nativeLibraries + runtimeNativeLibraries +
-            launcherNativeLibraries + objCNativeLibraries
+    val nativeLibraries = config.nativeLibraries + runtimeNativeLibraries + launcherNativeLibraries
 
     val bitcodeLibraries = context.llvm.bitcodeToLink.map { it.bitcodePaths }.flatten().filter { it.isBitcode }
     val additionalBitcodeFilesToLink = context.llvm.additionalProducedBitcodeFiles

@@ -181,9 +181,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         File(distribution.defaultNatives(target)).child(it).absolutePath
     }
 
-    internal val objCNativeLibraries: List<String> = listOf("objc.bc").map {
-        File(distribution.defaultNatives(target)).child(it).absolutePath
-    }
+    internal val objCNativeLibrary: String =
+            File(distribution.defaultNatives(target)).child("objc.bc").absolutePath
 
     internal val nativeLibraries: List<String> = 
         configuration.getList(KonanConfigKeys.NATIVE_LIBRARY_FILES)

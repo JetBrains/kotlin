@@ -336,7 +336,11 @@ internal class ObjCExportCodeGenerator(
             ObjCDataGenerator.Method(selector, getEncoding(bridge), constPointer(imp))
         }
 
-        dataGenerator.emitClass("KotlinSelectorsHolder", "NSObject", instanceMethods = methods)
+        dataGenerator.emitClass(
+                "${namer.topLevelNamePrefix}KotlinSelectorsHolder",
+                superName = "NSObject",
+                instanceMethods = methods
+        )
     }
 
     private val impType = pointerType(functionType(int8TypePtr, true, int8TypePtr, int8TypePtr))

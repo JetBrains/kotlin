@@ -91,7 +91,8 @@ internal class ObjCExportTranslatorImpl(
                 superClass = "NSMutableDictionary<KeyType, ObjectType>"
         ))
 
-        stubs.add(ObjCInterfaceImpl("NSError", categoryName = "NSErrorKotlinException", members = buildMembers {
+        val nsErrorCategoryName = "NSError${namer.topLevelNamePrefix}KotlinException"
+        stubs.add(ObjCInterfaceImpl("NSError", categoryName = nsErrorCategoryName, members = buildMembers {
             +ObjCProperty("kotlinException", null, ObjCNullableReferenceType(ObjCIdType), listOf("readonly"))
         }))
 
