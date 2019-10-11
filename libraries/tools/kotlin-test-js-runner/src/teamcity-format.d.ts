@@ -1,0 +1,1 @@
+export function tcEscape(str: string): string

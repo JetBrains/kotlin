@@ -1,4 +1,5 @@
-import {dateTimeWithoutTimeZone, newFlowId, tcEscape} from "./utils"
+import {dateTimeWithoutTimeZone, newFlowId} from "./utils"
+import {tcEscape} from "./teamcity-format";
 
 export type TeamCityMessageData = { [key: string]: any }
 

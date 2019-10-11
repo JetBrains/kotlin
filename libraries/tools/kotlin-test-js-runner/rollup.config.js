@@ -44,6 +44,22 @@ export default [
             sourcemap: true
         },
         plugins: plugins()
+    },
+    {
+        input: './karma-kotlin-reporter.js',
+        external: ['path', 'util'],
+        output: {
+            file: 'lib/karma-kotlin-reporter.js',
+            format: 'cjs'
+        }
+    },
+    {
+        input: './mocha-kotlin-reporter.js',
+        external: ['path', 'util'],
+        output: {
+            file: 'lib/mocha-kotlin-reporter.js',
+            format: 'cjs'
+        }
     }
 ]
 

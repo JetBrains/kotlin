@@ -187,10 +187,19 @@ any distributions of the tools or libraries:
              and [license/third_party/karma-teamcity-reporter_LICENSE.txt](third_party/karma-teamcity-reporter_LICENSE.txt))
       - Origin: Copyright (C) 2011-2019 Google, Inc. and Copyright (C) 2011-2013 Vojta Jína and contributors.
       
+ - Path: libraries/tools/kotlin-test-js-runner/mocha-kotlin-reporter.js
+      - License: MIT ([license/third_party/mocha-teamcity-reporter_LICENSE.txt](third_party/mocha-teamcity-reporter_LICENSE.txt))
+      - Origin: Copyright (c) 2016 Jamie Sherriff
+      
  - Path: libraries/tools/kotlin-test-js-runner/src/utils.ts
       - License: MIT ([license/third_party/teamcity-service-messages_LICENSE.txt](third_party/teamcity-service-messages_LICENSE.txt)
              and [license/third_party/lodash_LICENSE.txt](third_party/lodash_LICENSE.txt))
       - Origin: Copyright (c) 2013 Aaron Forsander and Copyright JS Foundation and other contributors <https://js.foundation/>
+      
+ - Path: libraries/tools/kotlin-test-js-runner/src/teamcity-format.js
+      - License: MIT ([license/third_party/mocha-teamcity-reporter_LICENSE.txt](third_party/mocha-teamcity-reporter_LICENSE.txt)
+             and [license/third_party/teamcity-service-messages_LICENSE.txt](third_party/teamcity-service-messages_LICENSE.txt))
+      - Origin: Copyright (c) 2016 Jamie Sherriff and Copyright (c) 2013 Aaron Forsander
       
  - Path: libraries/tools/kotlin-source-map-loader/kotlin-source-map-loader.js
       - License: MIT ([license/third_party/source-map-loader_LICENSE.txt](third_party/source-map-loader_LICENSE.txt))

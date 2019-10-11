@@ -31,8 +31,7 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = listOf(
             KotlinGradleNpmPackage("test-js-runner"),
-            versions.mocha,
-            versions.mochaTeamCityReporter
+            versions.mocha
         )
 
     override fun createTestExecutionSpec(
@@ -66,7 +65,7 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                 nodeModules.map {
                     npmProject.require(it)
                 } + cliArgs.toList() +
-                listOf("--reporter", "mocha-teamcity-reporter") +
+                listOf("--reporter", "kotlin-test-js-runner/mocha-kotlin-reporter.js") +
                 listOf(
                     "-r", "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js"
                 )
