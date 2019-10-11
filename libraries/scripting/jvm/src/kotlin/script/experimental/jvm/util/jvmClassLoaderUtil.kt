@@ -55,7 +55,7 @@ fun ClassLoader.forAllMatchingFiles(namePattern: String, body: (String, InputStr
 internal val wildcardChars = "*?".toCharArray()
 internal val patternCharsToEscape = ".*?+()[]^\${}|".toCharArray().also { assert(wildcardChars.all { wc -> it.contains(wc) }) }
 
-private fun Char.escape(): String = (if (patternCharsToEscape.contains(this)) "\\" else "") + this
+private fun Char.escape(): String = (if (this == '\\' || patternCharsToEscape.contains(this)) "\\" else "") + this
 
 internal val pathSeparatorChars = "/".let { if (File.separatorChar == '/') it else it + File.separator }.toCharArray()
 internal val pathElementPattern = if (File.separatorChar == '/') "[^/]*" else "[^/${File.separatorChar.escape()}]*"
