@@ -12,6 +12,7 @@ import com.intellij.refactoring.ui.DocCommentPanel;
 import com.intellij.refactoring.ui.RefactoringDialog;
 import com.intellij.refactoring.util.DocCommentPolicy;
 import com.intellij.usageView.UsageViewUtil;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.swing.*;
 import java.awt.*;
@@ -103,10 +104,13 @@ public abstract class AbstractPushDownDialog<MemberInfo extends MemberInfoBase<M
   protected void doAction() {
     if(!isOKActionEnabled()) return;
 
-    savePreviewOption(isPreviewUsages());
-
     invokeRefactoring(new PushDownProcessor<>(myClass, getSelectedMemberInfos(), new DocCommentPolicy(myJavaDocPanel.getPolicy())));
   }
 
+  /**
+   * @deprecated no read usages of preview option
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.2")
   protected abstract void savePreviewOption(boolean usages);
 }
