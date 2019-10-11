@@ -1,4 +1,4 @@
-namespace org.w3c.css.masking;
+package org.w3c.css.masking;
 
 
 // Downloaded from https://www.w3.org/TR/css-masking-1/

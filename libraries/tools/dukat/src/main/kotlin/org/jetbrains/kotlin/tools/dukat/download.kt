@@ -1,22 +1,10 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.idl2k.dl
+package org.jetbrains.kotlin.tools.dukat
 
-import org.jetbrains.idl2k.urls
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.parser.Tag
@@ -45,7 +33,7 @@ fun main(args: Array<String>) {
         val pkg = e.value.first().second
 
         File(dir, fileName).bufferedWriter().use { w ->
-            w.appendln("namespace $pkg;")
+            w.appendln("package $pkg;")
             w.appendln()
             w.appendln()
 
@@ -104,3 +92,40 @@ private fun extractIDLText(rawContent: String, out: Appendable) {
     soup.select("code.idl-code").attachTo(out)
     soup.select("spec-idl").attachTo(out)
 }
+
+private val urls = listOf(
+    "https://raw.githubusercontent.com/whatwg/html-mirror/master/source" to "org.w3c.dom",
+    "https://html.spec.whatwg.org/" to "org.w3c.dom",
+    "https://raw.githubusercontent.com/whatwg/dom/master/dom.html" to "org.w3c.dom",
+    "https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html" to "org.w3c.dom",
+    "https://www.w3.org/TR/animation-timing/" to "org.w3c.dom",
+    "https://www.w3.org/TR/geometry-1/" to "org.w3c.dom",
+    "https://www.w3.org/TR/cssom-view/" to "org.w3c.dom",
+    "https://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
+    "https://www.w3.org/TR/pointerevents/" to "org.w3c.dom.pointerevents",
+
+    "https://drafts.csswg.org/cssom/" to "org.w3c.dom.css",
+    "https://www.w3.org/TR/css-masking-1/" to "org.w3c.css.masking",
+
+    "https://w3c.github.io/mediacapture-main/" to "org.w3c.dom.mediacapture",
+    "https://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
+    "https://w3c.github.io/clipboard-apis" to "org.w3c.dom.clipboard",
+    "https://raw.githubusercontent.com/whatwg/url/master/url.html" to "org.w3c.dom.url",
+
+    "https://www.w3.org/TR/SVG2/single-page.html" to "org.w3c.dom.svg",
+    "https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl" to "org.khronos.webgl",
+    "https://www.khronos.org/registry/typedarray/specs/latest/typedarray.idl" to "org.khronos.webgl",
+
+    "https://raw.githubusercontent.com/whatwg/xhr/master/Overview.src.html" to "org.w3c.xhr",
+    "https://raw.githubusercontent.com/whatwg/fetch/master/Overview.src.html" to "org.w3c.fetch",
+    "https://raw.githubusercontent.com/w3c/FileAPI/gh-pages/index.html" to "org.w3c.files",
+
+    "https://raw.githubusercontent.com/whatwg/notifications/master/notifications.html" to "org.w3c.notifications",
+    "https://raw.githubusercontent.com/whatwg/fullscreen/master/fullscreen.html" to "org.w3c.fullscreen",
+    "https://www.w3.org/TR/vibration/" to "org.w3c.vibration",
+
+    "https://www.w3.org/TR/hr-time/" to "org.w3c.performance",
+    "https://www.w3.org/TR/2012/REC-navigation-timing-20121217/" to "org.w3c.performance",
+
+    "https://w3c.github.io/ServiceWorker/" to "org.w3c.workers"
+)

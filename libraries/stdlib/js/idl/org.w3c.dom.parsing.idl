@@ -1,4 +1,4 @@
-namespace org.w3c.dom.parsing;
+package org.w3c.dom.parsing;
 
 
 // Downloaded from http://www.w3.org/TR/DOM-Parsing/

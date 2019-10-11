@@ -75,6 +75,7 @@ include ":kotlin-build-common",
         ":compiler:android-tests",
         ":compiler:tests-common",
         ":compiler:tests-common-jvm6",
+        ":dukat",
         ":js:js.ast",
         ":js:js.serializer",
         ":js:js.parser",
@@ -263,8 +264,6 @@ if (flags.inJpsBuildIdeaSync) {
     project(":kotlin-stdlib:jps-build").projectDir = "$rootDir/libraries/stdlib/jps-build" as File
 } else {
     // modules that we are currently cannot compile with jps
-    include ":kotlin-idl2k"
-    project(':kotlin-idl2k').projectDir = file("$rootDir/libraries/tools/idl2k")
 
     include ":core:builtins",
             ":kotlin-stdlib-common",
@@ -407,6 +406,7 @@ project(':kotlin-imports-dumper-compiler-plugin').projectDir = "$rootDir/plugins
 project(':libraries:kotlin-prepush-hook').projectDir = "$rootDir/libraries/tools/kotlin-prepush-hook" as File
 project(':plugins:jvm-abi-gen').projectDir = "$rootDir/plugins/jvm-abi-gen" as File
 project(':plugins:jvm-abi-gen-embeddable').projectDir = "$rootDir/plugins/jvm-abi-gen/embeddable" as File
+project(":dukat").projectDir = "$rootDir/libraries/tools/dukat" as File
 
 // plugin markers:
 project(':kotlin-gradle-plugin:plugin-marker').projectDir = file("$rootDir/libraries/tools/kotlin-gradle-plugin/plugin-marker")

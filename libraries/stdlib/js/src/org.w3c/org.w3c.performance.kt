@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
-// See libraries/tools/idl2k for details
+// See github.com/kotlin/dukat for details
 
-@file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.performance
 
 import kotlin.js.*
@@ -44,27 +43,27 @@ public external interface GlobalPerformance {
  * Exposes the JavaScript [PerformanceTiming](https://developer.mozilla.org/en/docs/Web/API/PerformanceTiming) to Kotlin
  */
 public external abstract class PerformanceTiming {
-    open val navigationStart: Int
-    open val unloadEventStart: Int
-    open val unloadEventEnd: Int
-    open val redirectStart: Int
-    open val redirectEnd: Int
-    open val fetchStart: Int
-    open val domainLookupStart: Int
-    open val domainLookupEnd: Int
-    open val connectStart: Int
-    open val connectEnd: Int
-    open val secureConnectionStart: Int
-    open val requestStart: Int
-    open val responseStart: Int
-    open val responseEnd: Int
-    open val domLoading: Int
-    open val domInteractive: Int
-    open val domContentLoadedEventStart: Int
-    open val domContentLoadedEventEnd: Int
-    open val domComplete: Int
-    open val loadEventStart: Int
-    open val loadEventEnd: Int
+    open val navigationStart: Number
+    open val unloadEventStart: Number
+    open val unloadEventEnd: Number
+    open val redirectStart: Number
+    open val redirectEnd: Number
+    open val fetchStart: Number
+    open val domainLookupStart: Number
+    open val domainLookupEnd: Number
+    open val connectStart: Number
+    open val connectEnd: Number
+    open val secureConnectionStart: Number
+    open val requestStart: Number
+    open val responseStart: Number
+    open val responseEnd: Number
+    open val domLoading: Number
+    open val domInteractive: Number
+    open val domContentLoadedEventStart: Number
+    open val domContentLoadedEventEnd: Number
+    open val domComplete: Number
+    open val loadEventStart: Number
+    open val loadEventEnd: Number
 }
 
 /**
@@ -81,4 +80,3 @@ public external abstract class PerformanceNavigation {
         val TYPE_RESERVED: Short
     }
 }
-

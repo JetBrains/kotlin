@@ -1,4 +1,4 @@
-namespace org.w3c.performance;
+package org.w3c.performance;
 
 
 // Downloaded from http://www.w3.org/TR/hr-time/

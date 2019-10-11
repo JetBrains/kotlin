@@ -1,4 +1,4 @@
-namespace org.w3c.vibration;
+package org.w3c.vibration;
 
 
 // Downloaded from http://www.w3.org/TR/vibration/

@@ -1,4 +1,4 @@
-namespace org.w3c.xhr;
+package org.w3c.xhr;
 
 
 // Downloaded from https://raw.githubusercontent.com/whatwg/xhr/master/Overview.src.html

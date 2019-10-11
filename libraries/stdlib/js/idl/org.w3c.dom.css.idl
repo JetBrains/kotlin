@@ -1,4 +1,4 @@
-namespace org.w3c.dom.css;
+package org.w3c.dom.css;
 
 
 // Downloaded from https://drafts.csswg.org/cssom/
