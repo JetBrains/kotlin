@@ -81,6 +81,7 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
         }
 
         val argumentText = StringBuilder().apply {
+            if (annotationEntry.valueArguments.any { it.isNamed() }) append("replaceWith = ")
             append("kotlin.ReplaceWith(\"")
             append(escapedText)
             append("\"")
