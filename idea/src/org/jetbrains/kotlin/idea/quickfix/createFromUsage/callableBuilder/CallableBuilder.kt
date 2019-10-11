@@ -445,6 +445,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     if (containingElement is KtBlockExpression && (callableInfo as? PropertyInfo)?.writable == true) {
                         originalElement as KtBinaryExpression
                     } else null
+                val pointerOfAssignmentToReplace = assignmentToReplace?.createSmartPointer()
 
                 val ownerTypeString = if (isExtension) {
                     val renderedType = receiverTypeCandidate!!.renderedTypes.first()
@@ -575,9 +576,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     }
                 }
 
-                if (assignmentToReplace != null) {
-                    (declaration as KtProperty).initializer = assignmentToReplace.right
-                    return assignmentToReplace.replace(declaration) as KtCallableDeclaration
+                val newInitializer = pointerOfAssignmentToReplace?.element
+                if (newInitializer != null) {
+                    (declaration as KtProperty).initializer = newInitializer.right
+                    return newInitializer.replace(declaration) as KtCallableDeclaration
                 }
 
                 val container = if (containingElement is KtClass && callableInfo.isForCompanion) {
