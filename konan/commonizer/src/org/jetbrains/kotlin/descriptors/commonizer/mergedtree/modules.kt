@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.CommonizedGroupMap
+import org.jetbrains.kotlin.descriptors.commonizer.firstNonNull
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirModuleNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.buildModuleNode
@@ -33,8 +34,9 @@ internal fun mergeModules(
         }
     }
 
+    val moduleName = modules.firstNonNull().name
     for ((packageFqName, packageMemberScopesGroup) in packageMemberScopesMap) {
-        node.packages += mergePackages(storageManager, cacheRW, packageFqName, packageMemberScopesGroup.toList())
+        node.packages += mergePackages(storageManager, cacheRW, moduleName, packageFqName, packageMemberScopesGroup.toList())
     }
 
     return node

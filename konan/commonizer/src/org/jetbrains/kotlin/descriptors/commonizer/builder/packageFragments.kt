@@ -37,7 +37,7 @@ private fun CirPackage.buildDescriptor(
     val packageFragment = CommonizedPackageFragmentDescriptor(module, fqName)
 
     // cache created package fragment descriptor:
-    components.cache.cache(fqName, index, packageFragment)
+    components.cache.cache(module.name, fqName, index, packageFragment)
 
     output[index] = packageFragment
 }

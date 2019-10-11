@@ -25,19 +25,21 @@ class DeclarationsBuilderCache(dimension: Int) {
         check(dimension > 0)
     }
 
-    private val packageFragments = CommonizedGroupMap<FqName, CommonizedPackageFragmentDescriptor>(dimension)
+    private val packageFragments = CommonizedGroupMap<Pair<Name, FqName>, CommonizedPackageFragmentDescriptor>(dimension)
     private val classes = CommonizedGroupMap<FqName, CommonizedClassDescriptor>(dimension)
     private val typeAliases = CommonizedGroupMap<FqName, CommonizedTypeAliasDescriptor>(dimension)
     private val modules = CommonizedGroup<Collection<ModuleDescriptor>>(dimension)
 
-    fun getCachedPackageFragments(fqName: FqName): List<CommonizedPackageFragmentDescriptor?> = packageFragments.getOrFail(fqName)
+    fun getCachedPackageFragments(moduleName: Name, packageFqName: FqName): List<CommonizedPackageFragmentDescriptor?> =
+        packageFragments.getOrFail(moduleName to packageFqName)
+
     fun getCachedClasses(fqName: FqName): List<CommonizedClassDescriptor?> = classes.getOrFail(fqName)
 
-    private inline fun <reified T : DeclarationDescriptor> CommonizedGroupMap<FqName, T>.getOrFail(fqName: FqName): List<T?> =
-        getOrNull(fqName)?.toList() ?: error("No cached ${T::class.java} with FQ name $fqName found")
+    private inline fun <reified K, reified V : DeclarationDescriptor> CommonizedGroupMap<K, V>.getOrFail(key: K): List<V?> =
+        getOrNull(key)?.toList() ?: error("No cached ${V::class.java} with key $key found")
 
-    fun cache(fqName: FqName, index: Int, descriptor: CommonizedPackageFragmentDescriptor) {
-        packageFragments[fqName][index] = descriptor
+    fun cache(moduleName: Name, packageFqName: FqName, index: Int, descriptor: CommonizedPackageFragmentDescriptor) {
+        packageFragments[moduleName to packageFqName][index] = descriptor
     }
 
     fun cache(fqName: FqName, index: Int, descriptor: CommonizedClassDescriptor) {

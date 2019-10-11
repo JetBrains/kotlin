@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir
 
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 interface CirNode<T : CirDeclaration, R : CirDeclaration> {
@@ -53,6 +54,7 @@ class CirPackageNode(
     override val target: List<CirPackage?>,
     override val common: NullableLazyValue<CirPackage>
 ) : CirNodeWithFqName<CirPackage, CirPackage> {
+    lateinit var moduleName: Name
     override lateinit var fqName: FqName
 
     val properties: MutableList<CirPropertyNode> = ArrayList()

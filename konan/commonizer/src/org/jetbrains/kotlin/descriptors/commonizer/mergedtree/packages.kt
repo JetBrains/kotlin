@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.storage.StorageManager
 internal fun mergePackages(
     storageManager: StorageManager,
     cacheRW: CirRootNode.ClassifiersCacheImpl,
+    moduleName: Name,
     packageFqName: FqName,
     packageMemberScopes: List<MemberScope?>
 ): CirPackageNode {
-    val node = buildPackageNode(storageManager, packageFqName, packageMemberScopes)
+    val node = buildPackageNode(storageManager, moduleName, packageFqName, packageMemberScopes)
 
     val propertiesMap = CommonizedGroupMap<PropertyApproximationKey, PropertyDescriptor>(packageMemberScopes.size)
     val functionsMap = CommonizedGroupMap<FunctionApproximationKey, SimpleFunctionDescriptor>(packageMemberScopes.size)

@@ -46,7 +46,7 @@ internal class DeclarationsBuilderVisitor2(
     }
 
     override fun visitPackageNode(node: CirPackageNode, data: List<DeclarationDescriptor?>): List<PackageFragmentDescriptor?> {
-        val packageFragments = components.cache.getCachedPackageFragments(node.fqName)
+        val packageFragments = components.cache.getCachedPackageFragments(node.moduleName, node.fqName)
 
         // build non-classifier package members:
         val packageMemberScopes = packageFragments.map { it?.getMemberScope() }
