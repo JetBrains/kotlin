@@ -70,7 +70,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         return KotlinResolvedModuleDescriptors(moduleDescriptors, forwardDeclarationsModule)
     }
 
-    private fun createForwardDeclarationsModule(
+    fun createForwardDeclarationsModule(
             builtIns: KotlinBuiltIns?,
             storageManager: StorageManager): ModuleDescriptorImpl {
 
@@ -125,11 +125,11 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
  * Package fragment which creates descriptors for forward declarations on demand.
  */
 class ForwardDeclarationsPackageFragmentDescriptor(
-        storageManager: StorageManager,
-        module: ModuleDescriptor,
-        fqName: FqName,
-        supertypeName: Name,
-        classKind: ClassKind
+    storageManager: StorageManager,
+    module: ModuleDescriptor,
+    fqName: FqName,
+    supertypeName: Name,
+    classKind: ClassKind
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
     private val memberScope = object : MemberScopeImpl() {
@@ -137,23 +137,23 @@ class ForwardDeclarationsPackageFragmentDescriptor(
         private val declarations = storageManager.createMemoizedFunction(this::createDeclaration)
 
         private val supertype by storageManager.createLazyValue {
-            val descriptor = builtIns.builtInsModule.getPackage(ForwardDeclarationsFqNames.packageName)
-                    .memberScope
-                    .getContributedClassifier(supertypeName, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+            val descriptor = builtIns.builtInsModule.getPackage(ForwardDeclarationsFqNames.cInterop)
+                .memberScope
+                .getContributedClassifier(supertypeName, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
 
             descriptor.defaultType
         }
 
         private fun createDeclaration(name: Name): ClassDescriptor {
             return ClassDescriptorImpl(
-                    this@ForwardDeclarationsPackageFragmentDescriptor,
-                    name,
-                    Modality.FINAL,
-                    classKind,
-                    listOf(supertype),
-                    SourceElement.NO_SOURCE,
-                    false,
-                    LockBasedStorageManager.NO_LOCKS
+                this@ForwardDeclarationsPackageFragmentDescriptor,
+                name,
+                Modality.FINAL,
+                classKind,
+                listOf(supertype),
+                SourceElement.NO_SOURCE,
+                false,
+                LockBasedStorageManager.NO_LOCKS
             ).apply {
                 this.initialize(MemberScope.Empty, emptySet(), null)
             }
@@ -170,14 +170,16 @@ class ForwardDeclarationsPackageFragmentDescriptor(
 }
 
 // TODO decouple and move interop-specific logic back to Kotlin/Native.
-internal object ForwardDeclarationsFqNames {
+object ForwardDeclarationsFqNames {
 
-    val packageName = FqName("kotlinx.cinterop")
+    internal val cInterop = FqName("kotlinx.cinterop")
 
-    val cNames = FqName("cnames")
-    val cNamesStructs = cNames.child(Name.identifier("structs"))
+    private val cNames = FqName("cnames")
+    internal val cNamesStructs = cNames.child(Name.identifier("structs"))
 
-    val objCNames = FqName("objcnames")
-    val objCNamesClasses = objCNames.child(Name.identifier("classes"))
-    val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
+    private val objCNames = FqName("objcnames")
+    internal val objCNamesClasses = objCNames.child(Name.identifier("classes"))
+    internal val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
+
+    val syntheticPackages = setOf(cNames, objCNames)
 }

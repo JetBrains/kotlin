@@ -136,19 +136,22 @@ internal fun CirSimpleType.buildType(
 internal fun findClassOrTypeAlias(
     targetComponents: TargetDeclarationsBuilderComponents,
     fqName: FqName
-): ClassifierDescriptorWithTypeParameters {
-    return if (fqName.isUnderStandardKotlinPackages) {
+): ClassifierDescriptorWithTypeParameters = when {
+    fqName.isUnderStandardKotlinPackages -> {
         // look up for classifier in built-ins module:
         val builtInsModule = targetComponents.builtIns.builtInsModule
+
         // TODO: this works fine for Native as far as built-ins module contains full Native stdlib, but this is not enough for JVM and JS
         builtInsModule.getPackage(fqName.parent())
             .memberScope
             .getContributedClassifier(fqName.shortName(), NoLookupLocation.FOR_ALREADY_TRACKED)
             ?.cast()
             ?: error("Classifier $fqName not found in built-ins module $builtInsModule")
-    } else {
-        // otherwise, look up in created descriptors cache:
-        targetComponents.getCachedClassifier(fqName)
+    }
+
+    else -> {
+        // otherwise, find the appropriate user classifier:
+        targetComponents.findAppropriateClassOrTypeAlias(fqName)
             ?: error("Classifier $fqName not found in created descriptors cache")
     }
 }

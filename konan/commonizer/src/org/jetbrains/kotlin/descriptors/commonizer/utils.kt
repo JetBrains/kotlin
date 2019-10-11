@@ -7,13 +7,18 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.konan.library.KonanFactories.DefaultDeserializedDescriptorFactory
+import org.jetbrains.kotlin.konan.library.KonanFactories.createDefaultKonanResolvedModuleDescriptorsFactory
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
+import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils.getTypeParameterDescriptorOrNull
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
@@ -79,7 +84,44 @@ private fun StringBuilder.buildFqNameWithTypeParameters(type: KotlinType, explor
 
 internal fun Any?.isNull(): Boolean = this == null
 
-private val KOTLINX_PACKAGE_NAME = Name.identifier("kotlinx")
+private val STANDARD_KOTLIN_PACKAGE_PREFIXES = listOf(
+    KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString(),
+    "kotlinx"
+)
+
+private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES_PREFIXES = ForwardDeclarationsFqNames.syntheticPackages
+    .map { fqName ->
+        check(!fqName.isRoot)
+        fqName.asString()
+    }
 
 internal val FqName.isUnderStandardKotlinPackages: Boolean
-    get() = startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) || startsWith(KOTLINX_PACKAGE_NAME)
+    get() = hasAnyPrefix(STANDARD_KOTLIN_PACKAGE_PREFIXES)
+
+internal val FqName.isUnderKotlinNativeSyntheticPackages: Boolean
+    get() = hasAnyPrefix(KOTLIN_NATIVE_SYNTHETIC_PACKAGES_PREFIXES)
+
+private fun FqName.hasAnyPrefix(prefixes: List<String>): Boolean =
+    asString().let { fqName ->
+        prefixes.any { prefix ->
+            val lengthDifference = fqName.length - prefix.length
+            when {
+                lengthDifference == 0 -> fqName == prefix
+                lengthDifference > 0 -> fqName[prefix.length] == '.' && fqName.startsWith(prefix)
+                else -> false
+            }
+        }
+    }
+
+internal val ModuleDescriptor.packageFragmentProvider
+    get() = (this as ModuleDescriptorImpl).packageFragmentProviderForModuleContentWithoutDependencies
+
+internal fun createKotlinNativeForwardDeclarationsModule(
+    storageManager: StorageManager,
+    builtIns: KotlinBuiltIns
+) =
+    (createDefaultKonanResolvedModuleDescriptorsFactory(DefaultDeserializedDescriptorFactory) as KlibResolvedModuleDescriptorsFactoryImpl)
+        .createForwardDeclarationsModule(
+            builtIns = builtIns,
+            storageManager = storageManager
+        )
