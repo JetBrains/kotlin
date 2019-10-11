@@ -13,6 +13,7 @@ import java.security.MessageDigest
 import java.util.zip.ZipFile
 
 const val CLASS_STRUCTURE_ARTIFACT_TYPE = "class-structure"
+private const val MODULE_INFO = "module-info.class"
 
 class StructureArtifactTransform : ArtifactTransform() {
     override fun transform(input: File): MutableList<File> {
@@ -37,7 +38,9 @@ private fun visitDirectory(directory: File): ClasspathEntryData {
     val entryData = ClasspathEntryData()
 
     directory.walk().filter {
-        it.extension == "class" && !it.relativeTo(directory).toString().toLowerCase().startsWith("meta-inf")
+        it.extension == "class"
+                && !it.relativeTo(directory).toString().toLowerCase().startsWith("meta-inf")
+                && it.name != MODULE_INFO
     }.forEach {
         val internalName = it.relativeTo(directory).invariantSeparatorsPath.dropLast(".class".length)
         BufferedInputStream(it.inputStream()).use { inputStream ->
@@ -56,7 +59,10 @@ private fun visitJar(jar: File): ClasspathEntryData {
         while (entries.hasMoreElements()) {
             val entry = entries.nextElement()
 
-            if (entry.name.endsWith("class") && !entry.name.toLowerCase().startsWith("meta-inf")) {
+            if (entry.name.endsWith("class")
+                && !entry.name.toLowerCase().startsWith("meta-inf")
+                && entry.name != MODULE_INFO
+            ) {
                 BufferedInputStream(zipFile.getInputStream(entry)).use { inputStream ->
                     analyzeInputStream(inputStream, entry.name.dropLast(".class".length), entryData)
                 }
