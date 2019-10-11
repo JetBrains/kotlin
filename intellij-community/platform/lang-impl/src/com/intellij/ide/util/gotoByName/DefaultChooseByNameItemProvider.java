@@ -129,7 +129,7 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
 
     List<MatchResult> result = getSortedNames(base, parameters, indicator, allNamesProducer, matchingPattern, preferStartMatches);
     if (!namePattern.contains("*")) return result;
-    
+
     Set<String> allNames = new HashSet<>(ContainerUtil.map(result, mr -> mr.elementName));
     for (int i = 1; i < namePattern.length() - 1; i++) {
       if (namePattern.charAt(i) == '*') {
@@ -255,9 +255,8 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
         sameNameElements.clear();
         for (final Object element : elements) {
           indicator.checkCanceled();
-          MatchResult qualifierResult = matchQualifiedName(model, fullMatcher, element);
-          if (qualifierResult != null) {
-            sameNameElements.add(Pair.create(element, qualifierResult));
+          if (matchQualifiedName(model, fullMatcher, element) != null) {
+            sameNameElements.add(Pair.create(element, result));
           }
         }
         Collections.sort(sameNameElements, weightComparator);
@@ -266,9 +265,8 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
         if (!ContainerUtil.process(processedItems, consumer)) return false;
       }
       else if (elements.length == 1) {
-        MatchResult matchResult = matchQualifiedName(model, fullMatcher, elements[0]);
-        if (matchResult != null) {
-          if (!consumer.process(new FoundItemDescriptor<>(elements[0], matchResult.matchingDegree))) return false;
+        if (matchQualifiedName(model, fullMatcher, elements[0]) != null) {
+          if (!consumer.process(new FoundItemDescriptor<>(elements[0], result.matchingDegree))) return false;
         }
       }
     }
@@ -321,7 +319,7 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
   private static MatchResult matchQualifiedName(ChooseByNameModel model, MinusculeMatcher fullMatcher, @NotNull Object element) {
     String fullName = model.getFullName(element);
     if (fullName == null) return null;
-    
+
     for (String separator : model.getSeparators()) {
       fullName = StringUtil.replace(fullName, separator, UNIVERSAL_SEPARATOR);
     }
