@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameProcessor;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.util.containers.MultiMap;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,24 +75,6 @@ public abstract class InvertBooleanDelegate {
       return true;
     }
     return false;
-  }
-
-  /**
-   * Use {@link #collectForeignElementsToInvert(PsiElement, PsiElement, Language, Collection)} instead
-   * @deprecated To be removed in 2018.3
-   */
-  @Deprecated
-  @ApiStatus.ScheduledForRemoval(inVersion = "2018.3")
-  protected static PsiElement getForeignElementToInvert(PsiElement namedElement,
-                                                        PsiElement expression,
-                                                        Language language) {
-    if (!expression.getLanguage().is(language)){
-      final InvertBooleanDelegate delegate = findInvertBooleanDelegate(expression);
-      if (delegate != null) {
-        return delegate.getElementToInvert(namedElement, expression);
-      }
-    }
-    return null;
   }
 
   /**
