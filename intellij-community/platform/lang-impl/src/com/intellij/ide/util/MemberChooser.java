@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.util;
 
@@ -218,7 +218,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
     return new DefaultTreeModel(rootNode);
   }
 
-  protected MemberNode createMemberNode(Ref<Integer> count, T object, ParentNode parentNode) {
+  protected MemberNode createMemberNode(Ref<Integer> count, @NotNull T object, ParentNode parentNode) {
     return new MemberNodeImpl(parentNode, object, count);
   }
 
@@ -710,6 +710,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
   }
 
   protected interface ElementNode extends MutableTreeNode {
+    @NotNull
     MemberChooserObject getDelegate();
     int getOrder();
   }
@@ -718,9 +719,9 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
 
   protected abstract static class ElementNodeImpl extends DefaultMutableTreeNode implements ElementNode {
     private final int myOrder;
-    private final MemberChooserObject myDelegate;
+    @NotNull private final MemberChooserObject myDelegate;
 
-    public ElementNodeImpl(@Nullable DefaultMutableTreeNode parent, MemberChooserObject delegate, Ref<Integer> order) {
+    public ElementNodeImpl(@Nullable DefaultMutableTreeNode parent, @NotNull MemberChooserObject delegate, Ref<Integer> order) {
       myOrder = order.get();
       order.set(myOrder + 1);
       myDelegate = delegate;
@@ -729,6 +730,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
       }
     }
 
+    @NotNull
     @Override
     public MemberChooserObject getDelegate() {
       return myDelegate;
@@ -741,7 +743,7 @@ public class MemberChooser<T extends ClassMember> extends DialogWrapper implemen
   }
 
   protected static class MemberNodeImpl extends ElementNodeImpl implements MemberNode {
-    public MemberNodeImpl(ParentNode parent, ClassMember delegate, Ref<Integer> order) {
+    public MemberNodeImpl(ParentNode parent, @NotNull ClassMember delegate, Ref<Integer> order) {
       super(parent, delegate, order);
     }
   }
