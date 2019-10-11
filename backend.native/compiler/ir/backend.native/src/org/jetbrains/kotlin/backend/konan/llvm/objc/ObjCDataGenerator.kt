@@ -246,32 +246,48 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         context.llvm.compilerUsedGlobals += global.llvmGlobal
     }
 
-    private val classNames =
-            CStringLiteralsTable("OBJC_CLASS_NAME_", "__TEXT,__objc_classname,cstring_literals")
+    private val classNames = CStringLiteralsTable(classNameGenerator)
 
-    private val selectors =
-            CStringLiteralsTable("OBJC_METH_VAR_NAME_",  "__TEXT,__objc_methname,cstring_literals")
+    private val selectors = CStringLiteralsTable(selectorGenerator)
 
-    private val encodings =
-            CStringLiteralsTable("OBJC_METH_VAR_TYPE_", "__TEXT,__objc_methtype,cstring_literals")
+    private val encodings = CStringLiteralsTable(encodingGenerator)
 
-    private inner class CStringLiteralsTable(val label: String, val section: String) {
+    private inner class CStringLiteralsTable(val generator: CStringLiteralsGenerator) {
 
         private val literals = mutableMapOf<String, ConstPointer>()
 
         fun get(value: String) = literals.getOrPut(value) {
+            val globalPointer = generator.generate(context.llvmModule!!, value)
+            context.llvm.compilerUsedGlobals += globalPointer.llvm
+            globalPointer.getElementPtr(0)
+        }
+    }
+
+    companion object {
+        val classNameGenerator =
+                CStringLiteralsGenerator("OBJC_CLASS_NAME_", "__TEXT,__objc_classname,cstring_literals")
+
+        val selectorGenerator =
+                CStringLiteralsGenerator("OBJC_METH_VAR_NAME_",  "__TEXT,__objc_methname,cstring_literals")
+
+        private val encodingGenerator =
+                CStringLiteralsGenerator("OBJC_METH_VAR_TYPE_", "__TEXT,__objc_methtype,cstring_literals")
+    }
+
+    class CStringLiteralsGenerator(val label: String, val section: String) {
+        fun generate(module: LLVMModuleRef, value: String): ConstPointer {
             val bytes = value.toByteArray(Charsets.UTF_8).map { Int8(it) } + Int8(0)
-            val global = context.llvm.staticData.placeGlobalArray(label, int8Type, bytes)
+            val initializer = ConstArray(int8Type, bytes)
+            val llvmGlobal = LLVMAddGlobal(module, initializer.llvmType, label)!!
+            LLVMSetInitializer(llvmGlobal, initializer.llvm)
 
-            global.setConstant(true)
-            global.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
-            global.setSection(section)
-            LLVMSetUnnamedAddr(global.llvmGlobal, 1)
-            global.setAlignment(1)
+            LLVMSetGlobalConstant(llvmGlobal, 1)
+            LLVMSetLinkage(llvmGlobal, LLVMLinkage.LLVMPrivateLinkage)
+            LLVMSetSection(llvmGlobal, section)
+            LLVMSetUnnamedAddr(llvmGlobal, 1)
+            LLVMSetAlignment(llvmGlobal, 1)
 
-            context.llvm.compilerUsedGlobals += global.llvmGlobal
-
-            global.pointer.getElementPtr(0)
+            return constPointer(llvmGlobal)
         }
     }
 }
