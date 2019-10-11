@@ -15,41 +15,39 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 class NpmVersions {
     val dukat = NpmPackageVersion("dukat", "0.0.19")
 
-    val webpack = NpmPackageVersion("webpack", "4.29.6")
-    val webpackCli = NpmPackageVersion("webpack-cli", "3.3.0")
-    val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "3.3.2")
-    val webpackDevServer = NpmPackageVersion("webpack-dev-server", "3.3.1")
+    val webpack = NpmPackageVersion("webpack", "4.41.1")
+    val webpackCli = NpmPackageVersion("webpack-cli", "3.3.9")
+    val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "3.5.2")
+    val webpackDevServer = NpmPackageVersion("webpack-dev-server", "3.8.2")
 
     // Temporarily use our own source-map-loader, while original source-map-loader is not updated
     //  https://github.com/webpack-contrib/source-map-loader/pull/91
     val kotlinSourceMapLoader = KotlinGradleNpmPackage("source-map-loader")
     val sourceMapLoader = NpmPackageVersion("source-map-loader", "0.2.4")
-    val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.12")
+    val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.13")
 
-    val mocha = NpmPackageVersion("mocha", "6.1.2")
-    val mochaTeamCityReporter = NpmPackageVersion("mocha-teamcity-reporter", ">=2.0.0")
+    val mocha = NpmPackageVersion("mocha", "6.2.1")
+    val mochaTeamCityReporter = NpmPackageVersion("mocha-teamcity-reporter", "3.0.0")
 
-    val karma = NpmPackageVersion("karma", "4.0.1")
+    val karma = NpmPackageVersion("karma", "4.3.0")
     val karmaTeamcityReporter = NpmPackageVersion("karma-teamcity-reporter", "1.1.0")
 
-    val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "2.2.0")
+    val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "3.1.0")
     val karmaPhantomJsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "1.0.4")
-    val karmaFirefoxLauncher = NpmPackageVersion("karma-firefox-launcher", "1.1.0")
+    val karmaFirefoxLauncher = NpmPackageVersion("karma-firefox-launcher", "1.2.0")
     val karmaOperaLauncher = NpmPackageVersion("karma-opera-launcher", "1.0.0")
     val karmaIeLauncher = NpmPackageVersion("karma-ie-launcher", "1.0.0")
     val karmaSafariLauncher = NpmPackageVersion("karma-safari-launcher", "1.0.0")
 
     val karmaMocha = NpmPackageVersion("karma-mocha", "1.3.0")
-    val karmaWebpack = NpmPackageVersion("karma-webpack", "^4.0.0-rc.6")
-    val karmaCoverage = NpmPackageVersion("karma-coverage", "1.1.2")
+    val karmaWebpack = NpmPackageVersion("karma-webpack", "4.0.2")
+    val karmaCoverage = NpmPackageVersion("karma-coverage", "2.0.1")
 
     val karmaSourceMapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.3.7")
 
-    val puppeteer = NpmPackageVersion("puppeteer", "1.19.0")
+    val puppeteer = NpmPackageVersion("puppeteer", "1.20.0")
 
     val kotlinJsTestRunner = KotlinGradleNpmPackage("test-js-runner")
-
-    val istanbulInstrumenterLoader = NpmPackageVersion("istanbul-instrumenter-loader", "3.0.1")
 }
 
 interface RequiredKotlinJsDependency {
