@@ -124,7 +124,7 @@ class DefaultKotlinSourceSet(
         get() = Collections.unmodifiableSet(_requiresVisibilityOf)
 
     override fun requiresVisibilityOf(other: KotlinSourceSet) {
-        requiresVisibilityOf += other
+        _requiresVisibilityOf += other
     }
 
     //region IDE import for Granular source sets metadata
