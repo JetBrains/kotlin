@@ -119,6 +119,7 @@ class CompileCppToBitcode extends DefaultTask {
             workingDir objDir
             executable "clang++"
             args '-std=c++14'
+            args '-Werror'
             args '-O2'
             if (!targetingMinGW) {
                 args '-fPIC'
