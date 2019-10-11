@@ -100,8 +100,6 @@ export class CliArgsParser {
                         continue args;
                     }
                 }
-
-                this.badArgsExit("Unknown option: " + arg);
             } else {
                 result.free.push(arg)
             }
@@ -149,6 +147,6 @@ export function getDefaultCliDescription(): CliDescription {
                 default: IgnoredTestSuitesReporting.reportAllInnerTestsAsIgnored
             }
         },
-        freeArgsTitle: "module_name"
+        freeArgsTitle: null
     };
 }
