@@ -59,50 +59,62 @@ abstract class KotlinIrLinker(
 ) : DescriptorUniqIdAware, IrDeserializer {
 
 
-    sealed class DeserializationState {
+    sealed class DeserializationState<T> {
         val deserializedSymbols = mutableMapOf<UniqId, IrSymbol>()
-        val reachableTopLevels = mutableSetOf<UniqId>()
-        val deserializedTopLevels = mutableSetOf<UniqId>()
 
         operator fun contains(key: UniqId) = key in deserializedSymbols
         operator fun get(key: UniqId): IrSymbol = deserializedSymbols[key] ?: error("No deserialized symbol found for $key")
 
         abstract fun addUniqID(key: UniqId)
-        protected open fun peekReachableKey(): UniqId? = reachableTopLevels.firstOrNull()
+        abstract fun processPendingDeclaration(processor: (T) -> Unit)
 
-        class ModuleDeserializationState(val module: IrModuleDeserializer): DeserializationState() {
+        class ModuleDeserializationState(val module: IrModuleDeserializer): DeserializationState<IrModuleDeserializer.IrDeserializerForFile>() {
+            private val filesWithPendingTopLevels = mutableSetOf<IrModuleDeserializer.IrDeserializerForFile>()
+
+            fun enqueueFile(fileDeserializer: IrModuleDeserializer.IrDeserializerForFile) {
+                filesWithPendingTopLevels.add(fileDeserializer)
+                module.enqueueModule()
+            }
+
             override fun addUniqID(key: UniqId) {
-                module.addModuleReachableTopLevel(key)
+                val fileDeserializer = module.moduleReversedFileIndex[key] ?: error("No file found for key $key")
+                fileDeserializer.fileLocalDeserializationState.addUniqID(key)
+
+                enqueueFile(fileDeserializer)
+            }
+
+            override fun processPendingDeclaration(processor: (IrModuleDeserializer.IrDeserializerForFile) -> Unit) {
+                while (filesWithPendingTopLevels.isNotEmpty()) {
+                    val pendingDeserializer = filesWithPendingTopLevels.first()
+
+                    processor(pendingDeserializer)
+
+                    filesWithPendingTopLevels.remove(pendingDeserializer)
+                }
             }
         }
 
-        class SimpleDeserializationState: DeserializationState() {
+        class SimpleDeserializationState: DeserializationState<UniqId>() {
+            private val reachableTopLevels = mutableSetOf<UniqId>()
+
             override fun addUniqID(key: UniqId) {
                 reachableTopLevels.add(key)
             }
 
-            override fun peekReachableKey(): UniqId {
-                return reachableTopLevels.firstOrNull() ?: error("Expecting non-empty set")
-            }
-        }
+            override fun processPendingDeclaration(processor: (UniqId) -> Unit) {
+                while (reachableTopLevels.isNotEmpty()) {
+                    val reachableKey = reachableTopLevels.first()
 
-        fun processPendingDeclaration(processor: (UniqId) -> Unit) {
-            do {
+                    if (deserializedSymbols[reachableKey]?.isBound == true) {
+                        reachableTopLevels.remove(reachableKey)
+                        continue
+                    }
 
-                val reachableKey = peekReachableKey() ?: return
+                    processor(reachableKey)
 
-                if (deserializedSymbols[reachableKey]?.isBound == true) {
                     reachableTopLevels.remove(reachableKey)
-                    deserializedTopLevels.add(reachableKey)
-                    continue
                 }
-
-                processor(reachableKey)
-
-                reachableTopLevels.remove(reachableKey)
-                deserializedTopLevels.add(reachableKey)
-
-            } while (reachableTopLevels.isNotEmpty())
+            }
         }
     }
 
@@ -127,7 +139,7 @@ abstract class KotlinIrLinker(
         protected val moduleResolvedForwardDeclarations = mutableMapOf<UniqId, UniqId>()
 
         private val moduleDeserializationState = DeserializationState.ModuleDeserializationState(this)
-        private val moduleReversedFileIndex = mutableMapOf<UniqId, IrDeserializerForFile>()
+        val moduleReversedFileIndex = mutableMapOf<UniqId, IrDeserializerForFile>()
         private val moduleDependencies by lazy {
             moduleDescriptor.allDependencyModules.filter { it != moduleDescriptor }.map { deserializersForModules[it]!! }
         }
@@ -135,7 +147,7 @@ abstract class KotlinIrLinker(
         // This is a heavy initializer
         val module = deserializeIrModuleHeader()
 
-        inner class IrDeserializerForFile(private var annotationsProto: ProtoAnnotations?, private val fileIndex: Int, onlyHeaders: Boolean) :
+        inner class IrDeserializerForFile(private var annotationsProto: ProtoAnnotations?, private var fordcedDeclarations: List<UniqId>?, private val fileIndex: Int, onlyHeaders: Boolean) :
             IrFileDeserializer(logger, builtIns, symbolTable) {
 
             private var fileLoops = mutableMapOf<Int, IrLoopBase>()
@@ -285,7 +297,7 @@ abstract class KotlinIrLinker(
                 return moduleDependencies.firstOrNull { key in it.moduleReversedFileIndex }
             }
 
-            private fun getStateForID(key: UniqId): DeserializationState {
+            private fun getStateForID(key: UniqId): DeserializationState<*> {
                 if (key.isLocal) return fileLocalDeserializationState
                 if (isGlobalUniqID(key)) return globalDeserializationState
                 return getModuleForTopLevelId(key)?.moduleDeserializationState ?: handleNoModuleDeserializerFound(key)
@@ -381,17 +393,18 @@ abstract class KotlinIrLinker(
                 }
             }
 
-            fun deserializeFileAnnotationsIfFirstUse() {
+            fun deserializeFileImplicitDataIfFirstUse() {
                 annotationsProto?.let {
                     file.annotations.addAll(deserializeAnnotations(it))
                     annotationsProto = null
                 }
+                fordcedDeclarations?.let {
+                    it.forEach { fileLocalDeserializationState.addUniqID(it) }
+                    fordcedDeclarations = null
+                }
             }
 
-            fun deserializeFileTopLevelDeclaration(key: UniqId) {
-
-                fileLocalDeserializationState.addUniqID(key)
-
+            fun deserializeAllFileReachableTopLevel() {
                 fileLocalDeserializationState.processPendingDeclaration {
                     val declaration = deserializeDeclaration(it)
                     file.declarations.add(declaration)
@@ -405,7 +418,10 @@ abstract class KotlinIrLinker(
 
             val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
 
-            val fileDeserializer = IrDeserializerForFile(fileProto.annotations, fileIndex, !deserializationStrategy.needBodies)
+            val explicitlyExported = mutableListOf<UniqId>()
+
+            val fileDeserializer =
+                IrDeserializerForFile(fileProto.annotations, explicitlyExported, fileIndex, !deserializationStrategy.needBodies)
 
             val fqName = fileDeserializer.deserializeFqName(fileProto.fqName)
 
@@ -417,27 +433,14 @@ abstract class KotlinIrLinker(
             fileDeserializer.file = file
             fileToDeserializerMap[file] = fileDeserializer
 
-            fileProto.declarationIdList.forEach {
-                val uniqId = it.uniqId()
-                assert(uniqId.isPublic)
-                moduleReversedFileIndex.getOrPut(uniqId) { fileDeserializer }
-            val fileUniqIdIndex = fileProto.declarationIdList.map { UniqId(it) }
+            val fileUniqIdIndex = fileProto.declarationIdList.map { UniqId(it.index, it.isLocal) }
 
             fileUniqIdIndex.forEach {
                 moduleReversedFileIndex.getOrPut(it) { fileDeserializer }
             }
 
-            val forceLoadedIds = deserializationStrategy.run {
-                when {
-                    theWholeWorld -> fileProto.declarationIdList
-                    explicitlyExported -> fileProto.explicitlyExportedToCompilerList.map {
-                        fileDeserializer.loadSymbolData(it.index).topLevelUniqId
-                    }
-                    else -> emptyList()
-            for (d in fileProto.explicitlyExportedToCompilerList) {
-                fileDeserializer.run {
-                    fileLocalDeserializationState.addUniqID(UniqId(loadSymbolData(d).topLevelUniqIdIndex))
-                }
+            fileProto.explicitlyExportedToCompilerList.mapTo(explicitlyExported) {
+                fileDeserializer.loadSymbolData(it.index).topLevelUniqId.uniqId()
             }
 
             if (deserializationStrategy.theWholeWorld) {
@@ -446,10 +449,8 @@ abstract class KotlinIrLinker(
                     moduleDeserializationState.addUniqID(id)
                 }
             } else if (deserializationStrategy.explicitlyExported) {
-                modulesWithReachableTopLevels.add(this)
+                moduleDeserializationState.enqueueFile(fileDeserializer)
             }
-
-            forceLoadedIds.forEach { moduleDeserializationState.addUniqID(it.uniqId().also { i -> assert(i.isPublic) }) }
 
             return file
         }
@@ -463,24 +464,22 @@ abstract class KotlinIrLinker(
                 files.add(deserializeIrFile(ProtoFile.parseFrom(readFile(moduleDescriptor, i), newInstance()), i))
             }
 
-
             return IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
         }
 
         fun deserializeAllModuleReachableTopLevels() {
-
-            moduleDeserializationState.processPendingDeclaration {
-                val fileDeserializer = moduleReversedFileIndex[it]
-                    ?: error("No file deserializer for key $it")
-
-                fileDeserializer.deserializeFileTopLevelDeclaration(it)
-                fileDeserializer.deserializeFileAnnotationsIfFirstUse()
+            moduleDeserializationState.processPendingDeclaration { fileDeserializer ->
+                fileDeserializer.deserializeFileImplicitDataIfFirstUse()
+                fileDeserializer.deserializeAllFileReachableTopLevel()
             }
         }
 
-        fun addModuleReachableTopLevel(topLevelKey: UniqId) {
-            moduleDeserializationState.reachableTopLevels.add(topLevelKey)
+        fun enqueueModule() {
             modulesWithReachableTopLevels.add(this)
+        }
+
+        fun addModuleReachableTopLevel(key: UniqId) {
+            moduleDeserializationState.addUniqID(key)
         }
     }
 
@@ -515,7 +514,7 @@ abstract class KotlinIrLinker(
     protected abstract fun readFileCount(moduleDescriptor: ModuleDescriptor): Int
 
     protected abstract fun checkAccessibility(declarationDescriptor: DeclarationDescriptor): Boolean
-    protected open fun handleNoModuleDeserializerFound(key: UniqId): DeserializationState {
+    protected open fun handleNoModuleDeserializerFound(key: UniqId): DeserializationState<*> {
         error("Deserializer for declaration $key is not found")
     }
 
@@ -537,7 +536,6 @@ abstract class KotlinIrLinker(
         require(checkAccessibility(topLevelDescriptor)) {
             "Locally accessible declarations should not be accessed here $topLevelDescriptor"
         }
-
 
         if (topLevelDescriptor !is DeserializedClassDescriptor && topLevelDescriptor !is DeserializedCallableMemberDescriptor) {
             return null
@@ -605,7 +603,7 @@ abstract class KotlinIrLinker(
         }
     }
 
-    private fun deserializeIrModuleHeader(
+    fun deserializeIrModuleHeader(
         moduleDescriptor: ModuleDescriptor,
         deserializationStrategy: DeserializationStrategy = DeserializationStrategy.ONLY_REFERENCED
     ): IrModuleFragment {

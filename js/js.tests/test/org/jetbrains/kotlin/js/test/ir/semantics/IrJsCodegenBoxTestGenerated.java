@@ -14383,6 +14383,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/properties/privatePropertyWithoutBackingField.kt");
         }
 
+        @TestMetadata("sideEffectInTopLevelInitializerMultiModule.kt")
+        public void testSideEffectInTopLevelInitializerMultiModule() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/sideEffectInTopLevelInitializerMultiModule.kt");
+        }
+
         @TestMetadata("twoAnnotatedExtensionPropertiesWithoutBackingFields.kt")
         public void testTwoAnnotatedExtensionPropertiesWithoutBackingFields() throws Exception {
             runTest("compiler/testData/codegen/box/properties/twoAnnotatedExtensionPropertiesWithoutBackingFields.kt");
