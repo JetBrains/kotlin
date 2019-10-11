@@ -226,11 +226,11 @@ task distSources {
     dependsOn(distEndorsedSources)
 }
 
-def jarContent(def jarTask, FileTree baseFileTree) {
+def jarContent(def jarTask, FileTree baseFileTree, Iterable<String> excludedList = []) {
     jarTask.from {
         baseFileTree
                 .matching { include("*.jar") }
-                .collect { zipTree("${it.absolutePath}") }
+                .collect { zipTree("${it.absolutePath}").matching { exclude(excludedList) } }
     }
 }
 
@@ -243,13 +243,14 @@ task mergeJars(type: Jar) {
 
     archiveFileName = 'kotlin-native.jar'
     destinationDirectory = file("$distDir/konan/lib")
-
+    
+    jarContent(it, project(':backend.native').fileTree('build/external_jars'),
+            ['META-INF/services/org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition'])
     jarContent(it, project(':backend.native').fileTree('build/libs'))
+    jarContent(it, project(':utilities').fileTree('build/libs'))
     jarContent(it, project('Interop').fileTree('Runtime/build/libs'))
     jarContent(it, project('Interop').fileTree('Indexer/build/libs'))
     jarContent(it, project('Interop').fileTree('StubGenerator/build/libs'))
-    jarContent(it, project(':backend.native').fileTree('build/external_jars'))
-    jarContent(it, project(':utilities').fileTree('build/libs'))
 
     jarContent(it, project(':klib').fileTree('build/libs'))
     jarContent(it, project(':endorsedLibraries:kotlinx.cli').fileTree('build/libs'))
