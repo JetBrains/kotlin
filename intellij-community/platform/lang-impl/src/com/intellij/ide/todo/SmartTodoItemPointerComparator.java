@@ -24,15 +24,15 @@ import java.util.Comparator;
 /**
  * @author Vladimir Kondratyev
  */
-public final class SmartTodoItemPointerComparator implements Comparator{
+public final class SmartTodoItemPointerComparator implements Comparator<TodoItemNode> {
   public static final SmartTodoItemPointerComparator ourInstance=new SmartTodoItemPointerComparator();
 
   private SmartTodoItemPointerComparator(){}
 
   @Override
-  public int compare(Object obj1,Object obj2){
-    TextRange range1=((TodoItemNode)obj1).getValue().getTodoItem().getTextRange();
-    TextRange range2=((TodoItemNode)obj2).getValue().getTodoItem().getTextRange();
+  public int compare(TodoItemNode obj1,TodoItemNode obj2){
+    TextRange range1= obj1.getValue().getTodoItem().getTextRange();
+    TextRange range2= obj2.getValue().getTodoItem().getTextRange();
     return range1.getStartOffset()-range2.getStartOffset();
   }
 }
