@@ -8,14 +8,20 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.junit.Assume
 import org.junit.Test
 import kotlin.test.assertTrue
 
 class FatFrameworkIT : BaseGradleIT() {
 
     @Test
-    fun smokeIos() = with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
-        build("fat") {
+    fun smokeIos() {
+        Assume.assumeTrue(HostManager.hostIsMac)
+        transformProjectWithPluginsDsl(
+            "smoke",
+            directoryPrefix = "new-mpp-fat-framework"
+        ).build("fat") {
             checkSmokeBuild(
                 archs = listOf("x64", "arm64", "arm32"),
                 targetPrefix = "ios",
@@ -23,7 +29,7 @@ class FatFrameworkIT : BaseGradleIT() {
             )
 
             val binary = fileInWorkingDir("build/fat-framework/smoke.framework/smoke")
-            with(runProcess(listOf("file", binary.absolutePath), projectDir)) {
+            with(runProcess(listOf("file", binary.absolutePath), project.projectDir)) {
                 assertTrue(isSuccessful)
                 assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
                 assertTrue(output.contains("\\(for architecture armv7\\):\\s+Mach-O dynamically linked shared library arm_v7".toRegex()))
@@ -33,27 +39,30 @@ class FatFrameworkIT : BaseGradleIT() {
     }
 
     @Test
-    fun smokeWatchos() = with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
-        gradleBuildScript().modify {
-            it.checkedReplace("iosArm32()", "watchosArm32()")
-                .checkedReplace("iosArm64()", "watchosArm64()")
-                .checkedReplace("iosX64()", "watchosX86()")
-        }
+    fun smokeWatchos() {
+        Assume.assumeTrue(HostManager.hostIsMac)
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
 
+            gradleBuildScript().modify {
+                it.checkedReplace("iosArm32()", "watchosArm32()")
+                    .checkedReplace("iosArm64()", "watchosArm64()")
+                    .checkedReplace("iosX64()", "watchosX86()")
+            }
 
-        build("fat") {
-            checkSmokeBuild(
-                archs = listOf("x86", "arm64", "arm32"),
-                targetPrefix = "watchos",
-                expectedPlistPlatform = "WatchOS"
-            )
+            build("fat") {
+                checkSmokeBuild(
+                    archs = listOf("x86", "arm64", "arm32"),
+                    targetPrefix = "watchos",
+                    expectedPlistPlatform = "WatchOS"
+                )
 
-            val binary = fileInWorkingDir("build/fat-framework/smoke.framework/smoke")
-            with(runProcess(listOf("file", binary.absolutePath), projectDir)) {
-                assertTrue(isSuccessful)
-                assertTrue(output.contains("\\(for architecture i386\\):\\s+Mach-O dynamically linked shared library i386".toRegex()))
-                assertTrue(output.contains("\\(for architecture armv7k\\):\\s+Mach-O dynamically linked shared library arm_v7k".toRegex()))
-                assertTrue(output.contains("\\(for architecture arm64_32\\):\\s+Mach-O dynamically linked shared library arm64_32_v8".toRegex()))
+                val binary = fileInWorkingDir("build/fat-framework/smoke.framework/smoke")
+                with(runProcess(listOf("file", binary.absolutePath), projectDir)) {
+                    assertTrue(isSuccessful)
+                    assertTrue(output.contains("\\(for architecture i386\\):\\s+Mach-O dynamically linked shared library i386".toRegex()))
+                    assertTrue(output.contains("\\(for architecture armv7k\\):\\s+Mach-O dynamically linked shared library arm_v7k".toRegex()))
+                    assertTrue(output.contains("\\(for architecture arm64_32\\):\\s+Mach-O dynamically linked shared library arm64_32_v8".toRegex()))
+                }
             }
         }
     }
@@ -97,40 +106,41 @@ class FatFrameworkIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDuplicatedArchitecture()= with(
-        transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")
-    ) {
-        gradleBuildScript().modify {
-            it + """
+    fun testDuplicatedArchitecture() {
+        Assume.assumeTrue(HostManager.hostIsMac)
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
+            gradleBuildScript().modify {
+                it + """
                 val anotherDeviceTarget = kotlin.iosArm64("another") {
                     binaries.framework("DEBUG")
                 }
                 fat.from(anotherDeviceTarget.binaries.getFramework("DEBUG"))
             """.trimIndent()
-        }
-        build("fat") {
-            assertFailed()
-            assertContains("This fat framework already has a binary for architecture `arm64`")
+            }
+            build("fat") {
+                assertFailed()
+                assertContains("This fat framework already has a binary for architecture `arm64`")
+            }
         }
     }
 
     @Test
-    fun testIncorrectFamily() = with(
-        transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")
-    ) {
-        gradleBuildScript().modify {
-            it + """
+    fun testIncorrectFamily() {
+        Assume.assumeTrue(HostManager.hostIsMac)
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "new-mpp-fat-framework")) {
+            gradleBuildScript().modify {
+                it + """
                 val macos = kotlin.macosX64 {
                     binaries.framework("DEBUG")
                 }
                 fat.from(macos.binaries.getFramework("DEBUG"))
             """.trimIndent()
-        }
-        build("fat") {
-            assertFailed()
-            assertContains("Cannot add a binary with platform family 'osx' to the fat framework")
+            }
+            build("fat") {
+                assertFailed()
+                assertContains("Cannot add a binary with platform family 'osx' to the fat framework")
+            }
         }
     }
-
 }
 
