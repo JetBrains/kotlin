@@ -13,9 +13,6 @@ object AnalysisFlags {
     val multiPlatformDoNotCheckActual by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val allowKotlinPackage by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val experimental by AnalysisFlag.Delegates.ListOfStrings
 
     @JvmStatic

@@ -258,9 +258,7 @@ class FunctionDescriptorResolver(
     ): LazyContractProvider? {
         if (function !is KtNamedFunction) return null
 
-        val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
-                // We need to enable contracts if we're compiling "kotlin"-package to be able to ship contracts in stdlib in 1.2
-                languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
+        val isContractsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions)
 
         if (!isContractsEnabled || !function.mayHaveContract()) return null
 

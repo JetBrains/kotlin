@@ -91,9 +91,7 @@ class ContractParsingServices(val languageVersionSettings: LanguageVersionSettin
     }
 
     private fun checkFeatureEnabled(collector: ContractParsingDiagnosticsCollector) {
-        val isFeatureTurnedOn = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions) ||
-                // This condition is here for technical purposes of compiling 1.2-runtime with contracts
-                languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
+        val isFeatureTurnedOn = languageVersionSettings.supportsFeature(LanguageFeature.AllowContractsForCustomFunctions)
         if (!isFeatureTurnedOn) {
             collector.unsupportedFeature(languageVersionSettings)
         }

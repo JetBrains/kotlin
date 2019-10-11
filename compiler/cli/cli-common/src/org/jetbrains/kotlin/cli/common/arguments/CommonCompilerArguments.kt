@@ -314,7 +314,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
             put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
-            put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.experimental, experimental?.toList().orEmpty())
             put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty())
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
