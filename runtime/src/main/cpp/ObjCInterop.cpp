@@ -48,7 +48,7 @@ static inline void SetKotlinTypeInfo(Class clazz, const TypeInfo* typeInfo) {
 
 const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj) RUNTIME_NOTHROW;
 
-const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj) RUNTIME_NOTHROW {
+RUNTIME_NOTHROW const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj) {
   RuntimeAssert(obj->has_meta_object(), "");
   void* objcPtr = obj->meta_object()->associatedObject_;
   RuntimeAssert(objcPtr != nullptr, "");
