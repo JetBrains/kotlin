@@ -29,6 +29,14 @@ dependencies {
 
 val generateTree by tasks.registering(NoDebugJavaExec::class) {
     val generationRoot = "$projectDir/src/"
+    val generatorRoot = "$projectDir/tree-generator/src/"
+
+    val generatorConfigurationFiles = fileTree(generatorRoot) {
+        include("**/*.kt")
+    }
+
+    inputs.files(generatorConfigurationFiles)
+    outputs.dirs(generationRoot)
 
     args(generationRoot)
     classpath = generatorClasspath
