@@ -15,7 +15,9 @@ import com.intellij.packaging.artifacts.ModifiableArtifactModel
 import com.intellij.projectImport.DeprecatedProjectBuilderForImport
 import com.intellij.projectImport.ProjectImportBuilder
 import com.intellij.projectImport.ProjectImportProvider.getDefaultPath
+import com.intellij.projectImport.ProjectOpenProcessor
 import icons.GradleIcons
+import org.jetbrains.plugins.gradle.service.project.open.GradleProjectOpenProcessor
 import org.jetbrains.plugins.gradle.service.project.open.linkAndRefreshGradleProject
 import org.jetbrains.plugins.gradle.util.GradleBundle
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -78,4 +80,7 @@ class JavaGradleProjectImportBuilder : ProjectImportBuilder<Any>(), DeprecatedPr
     linkAndRefreshGradleProject(fileToImport, project)
     return emptyList()
   }
+
+  override fun getProjectOpenProcessor() =
+    ProjectOpenProcessor.EXTENSION_POINT_NAME.findExtensionOrFail(GradleProjectOpenProcessor::class.java)
 }
