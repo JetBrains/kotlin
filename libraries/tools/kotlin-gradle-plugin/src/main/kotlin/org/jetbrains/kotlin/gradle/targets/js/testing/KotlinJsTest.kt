@@ -62,6 +62,19 @@ open class KotlinJsTest : KotlinTest(), RequiresNpmDependencies {
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
 
+    @Deprecated("Use useMocha instead", ReplaceWith("useMocha()"))
+    fun useNodeJs() = useMocha()
+
+    @Deprecated("Use useMocha instead", ReplaceWith("useMocha(body)"))
+    fun useNodeJs(body: KotlinMocha.() -> Unit) = useMocha(body)
+
+    @Deprecated("Use useMocha instead", ReplaceWith("useMocha(fn)"))
+    fun useNodeJs(fn: Closure<*>) {
+        useMocha {
+            ConfigureUtil.configure(fn, this)
+        }
+    }
+
     fun useMocha() = useMocha {}
     fun useMocha(body: KotlinMocha.() -> Unit) = use(KotlinMocha(compilation), body)
     fun useMocha(fn: Closure<*>) {
