@@ -22,10 +22,14 @@ class KlibMetadataSerializerExtension(
     private val languageVersionSettings: LanguageVersionSettings,
     override val metadataVersion: BinaryVersion,
     val declarationTableHandler: (DeclarationDescriptor) -> KlibMetadataProtoBuf.DescriptorUniqId?,
-    val descriptorFileId: (DeclarationDescriptorWithSource) -> Int?,
     override val stringTable: StringTableImpl
 ) : KotlinSerializerExtensionBase(KlibMetadataSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
+
+    private fun descriptorFileId(descriptor: DeclarationDescriptorWithSource): Int? {
+        val fileName = descriptor.source.containingFile.name ?: return null
+        return stringTable.getStringIndex(fileName)
+    }
 
     override fun serializeFlexibleType(flexibleType: FlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
         lowerProto.flexibleTypeCapabilitiesId = stringTable.getStringIndex(DynamicTypeDeserializer.id)

@@ -365,7 +365,8 @@ fun serializeModuleIntoKlib(
 
     val header = metadataSerializer.serializeHeader(
         moduleDescriptor,
-        compiledKotlinFiles.map { it.irData.fqName }.distinct()
+        compiledKotlinFiles.map { it.irData.fqName }.distinct(),
+        emptyList()
     ).toByteArray()
     incrementalResultsConsumer?.run {
         processHeader(header)
