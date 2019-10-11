@@ -34,10 +34,6 @@ interface Diagnostics : Iterable<Diagnostic> {
 
     fun noSuppression(): Diagnostics
 
-    @JvmDefault
-    fun hasDiagnostic(diagnostic: Diagnostic): Boolean =
-        forElement(diagnostic.psiElement).any { it.factory == diagnostic.factory }
-
     override fun iterator() = all().iterator()
 
     companion object {
@@ -46,7 +42,6 @@ interface Diagnostics : Iterable<Diagnostic> {
             override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
             override fun all() = listOf<Diagnostic>()
             override fun forElement(psiElement: PsiElement) = listOf<Diagnostic>()
-            override fun hasDiagnostic(diagnostic: Diagnostic): Boolean = false
         }
     }
 }

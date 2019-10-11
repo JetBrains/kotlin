@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.diagnostics
 
+import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import java.util.ArrayList

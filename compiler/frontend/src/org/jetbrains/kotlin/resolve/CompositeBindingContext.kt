@@ -93,9 +93,5 @@ class CompositeBindingContext private constructor(
         override fun noSuppression(): Diagnostics {
             return CompositeDiagnostics(delegates.map { it.noSuppression() })
         }
-
-        override fun hasDiagnostic(diagnostic: Diagnostic): Boolean {
-            return delegates.any { it.hasDiagnostic(diagnostic) }
-        }
     }
 }
