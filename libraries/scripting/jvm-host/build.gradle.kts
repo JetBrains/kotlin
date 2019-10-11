@@ -28,5 +28,9 @@ sourceSets {
     "test" {}
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions.freeCompilerArgs += "-Xallow-kotlin-package"
+}
+
 standardPublicJars()
 
