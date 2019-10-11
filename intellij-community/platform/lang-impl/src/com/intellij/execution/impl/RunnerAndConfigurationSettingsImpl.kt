@@ -14,6 +14,7 @@ import com.intellij.execution.configurations.*
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.ProgramRunner
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.PathMacroManager
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.impl.ProjectPathMacroManager
@@ -318,7 +319,7 @@ class RunnerAndConfigurationSettingsImpl @JvmOverloads constructor(
     val configuration = configuration
     var warning: RuntimeConfigurationWarning?
 
-    warning = doCheck { configuration.checkConfiguration() }
+    warning = doCheck { runReadAction { configuration.checkConfiguration() } }
     if (configuration !is RunConfigurationBase<*>) {
       if (warning != null) {
         throw warning
