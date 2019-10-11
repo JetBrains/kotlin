@@ -52,12 +52,9 @@ import java.util.*
 // For property accessor return enclosing property
 val PsiReference.unwrappedTargets: Set<PsiElement>
     get() {
-        fun PsiElement.adjust(): PsiElement? {
-            val target = unwrapped?.originalElement
-            return when {
-                target is KtPropertyAccessor -> target.getNonStrictParentOfType<KtProperty>()
-                else -> target
-            }
+        fun PsiElement.adjust(): PsiElement? = when (val target = unwrapped?.originalElement) {
+            is KtPropertyAccessor -> target.getNonStrictParentOfType<KtProperty>()
+            else -> target
         }
 
         return when (this) {
@@ -107,8 +104,7 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     }
 
     if (element is KtLabelReferenceExpression) {
-        val labelParent = (element.parent as? KtContainerNode)?.parent
-        when (labelParent) {
+        when ((element.parent as? KtContainerNode)?.parent) {
             is KtReturnExpression -> unwrappedTargets.forEach {
                 if (it !is KtFunctionLiteral && !(it is KtNamedFunction && it.name.isNullOrEmpty())) return@forEach
                 it as KtFunction
@@ -136,7 +132,7 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     if (this is KtReference) {
         return targets.any {
             it.isConstructorOf(unwrappedCandidate)
-            || it is KtObjectDeclaration && it.isCompanion() && it.getNonStrictParentOfType<KtClass>() == unwrappedCandidate
+                    || it is KtObjectDeclaration && it.isCompanion() && it.getNonStrictParentOfType<KtClass>() == unwrappedCandidate
         }
     }
     // TODO: Workaround for Kotlin constructor search in Java code. To be removed after refactoring of the search API
@@ -205,12 +201,10 @@ val KDocName.mainReference: KDocReference
     get() = references.firstIsInstance()
 
 val KtElement.mainReference: KtReference?
-    get() {
-        return when {
-            this is KtReferenceExpression -> mainReference
-            this is KDocName -> mainReference
-            else -> references.firstIsInstanceOrNull<KtReference>()
-        }
+    get() = when (this) {
+        is KtReferenceExpression -> mainReference
+        is KDocName -> mainReference
+        else -> references.firstIsInstanceOrNull<KtReference>()
     }
 
 fun KtElement.resolveMainReferenceToDescriptors(): Collection<DeclarationDescriptor> {
@@ -229,8 +223,7 @@ fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean) = readWriteAcc
 fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boolean): Pair<ReferenceAccess, KtExpression> {
     var expression = getQualifiedExpressionForSelectorOrThis()
     loop@ while (true) {
-        val parent = expression.parent
-        when (parent) {
+        when (val parent = expression.parent) {
             is KtParenthesizedExpression, is KtAnnotatedExpression, is KtLabeledExpression -> expression = parent as KtExpression
             else -> break@loop
         }
@@ -288,8 +281,8 @@ fun KtElement.canBeResolvedViaImport(target: DeclarationDescriptor, bindingConte
 fun KtFunction.getCalleeByLambdaArgument(): KtSimpleNameExpression? {
     val argument = getParentOfTypeAndBranch<KtValueArgument> { getArgumentExpression() } ?: return null
     val callExpression = when (argument) {
-                             is KtLambdaArgument -> argument.parent as? KtCallExpression
-                             else -> (argument.parent as? KtValueArgumentList)?.parent as? KtCallExpression
-                         } ?: return null
+        is KtLambdaArgument -> argument.parent as? KtCallExpression
+        else -> (argument.parent as? KtValueArgumentList)?.parent as? KtCallExpression
+    } ?: return null
     return callExpression.calleeExpression as? KtSimpleNameExpression
 }
