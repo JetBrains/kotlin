@@ -76,9 +76,9 @@ class FileLoggerTest : HeavyPlatformTestCase() {
     val watchService = FileSystems.getDefault().newWatchService()
     val key = dir.toPath().register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY)
 
-    logger.completionStarted(lookup, true, 2, System.currentTimeMillis(), 0)
+    logger.completionStarted(lookup, true, 2, System.currentTimeMillis())
 
-    logger.completionCancelled(System.currentTimeMillis())
+    logger.completionCancelled(Fixtures.performance, System.currentTimeMillis())
     loggerProvider.dispose()
 
     var attemps = 0

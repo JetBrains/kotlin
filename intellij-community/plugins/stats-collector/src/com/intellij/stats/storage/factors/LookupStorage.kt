@@ -4,6 +4,7 @@ package com.intellij.stats.storage.factors
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.completion.sorting.RankingModelWrapper
 import com.intellij.lang.Language
+import com.intellij.stats.PerformanceTracker
 import com.intellij.stats.personalization.session.LookupSessionFactorsStorage
 
 interface LookupStorage {
@@ -17,5 +18,6 @@ interface LookupStorage {
   val sessionFactors: LookupSessionFactorsStorage
   val userFactors: Map<String, String>
   val contextFactors: Map<String, String>
+  val performanceTracker: PerformanceTracker
   fun getItemStorage(id: String): LookupElementStorage
 }

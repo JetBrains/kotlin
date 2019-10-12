@@ -29,5 +29,4 @@ abstract class LogEventVisitor {
     open fun visit(event: ExplicitSelectEvent) {}
     open fun visit(event: TypedSelectEvent) {}
     open fun visit(event: CustomMessageEvent) {}
-    open fun visit(event: PerformanceEvent) {}
 }

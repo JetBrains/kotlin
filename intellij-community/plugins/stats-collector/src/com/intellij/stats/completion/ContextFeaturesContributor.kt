@@ -39,9 +39,14 @@ class ContextFeaturesContributor : CompletionContributor() {
       for (provider in ContextFeatureProvider.forLanguage(storage.language)) {
         ProgressManager.checkCanceled()
         val providerName = provider.name
-        for ((featureName, value) in provider.calculateFeatures(context)) {
+        val start = System.nanoTime()
+        val features = provider.calculateFeatures(context)
+        for ((featureName, value) in features) {
           contextFeatures["ml_ctx_${providerName}_$featureName"] = value
         }
+
+        val timeSpent = System.nanoTime() - start
+        storage.performanceTracker.contextFeaturesCalculated(providerName, timeSpent / 1000)
       }
 
       ContextFeaturesStorage.setContextFeatures(file, contextFeatures, context)

@@ -16,7 +16,7 @@ class CompletionFileLogger(private val installationUID: String,
     private val stateManager = LookupStateManager()
 
     override fun completionStarted(lookup: LookupImpl, isExperimentPerformed: Boolean, experimentVersion: Int,
-                                   timestamp: Long, mlTimeContribution: Long) {
+                                   timestamp: Long) {
         val state = stateManager.update(lookup, false)
 
         val language = lookup.language()
@@ -43,7 +43,6 @@ class CompletionFileLogger(private val installationUID: String,
             event.lookupShownTime = shownTimestamp
         }
 
-        event.mlTimeContribution = mlTimeContribution
         event.isOneLineMode = lookup.editor.isOneLineMode
         event.isAutoPopup = CompletionUtil.getCurrentCompletionParameters()?.isAutoPopup
         event.fillCompletionParameters()
@@ -54,10 +53,6 @@ class CompletionFileLogger(private val installationUID: String,
     override fun customMessage(message: String, timestamp: Long) {
         val event = CustomMessageEvent(installationUID, completionUID, message, timestamp)
         eventLogger.log(event)
-    }
-
-    override fun performanceMessage(description: String, value: Long, timestamp: Long) {
-        eventLogger.log(PerformanceEvent(installationUID, completionUID, description, value, timestamp))
     }
 
     override fun afterCharTyped(c: Char, lookup: LookupImpl, timestamp: Long) {
@@ -84,27 +79,27 @@ class CompletionFileLogger(private val installationUID: String,
         eventLogger.log(event)
     }
 
-    override fun completionCancelled(timestamp: Long) {
-        val event = CompletionCancelledEvent(installationUID, completionUID, timestamp)
+    override fun completionCancelled(performance: Map<String, Long>, timestamp: Long) {
+        val event = CompletionCancelledEvent(installationUID, completionUID, performance, timestamp)
         eventLogger.log(event)
     }
 
-    override fun itemSelectedByTyping(lookup: LookupImpl, timestamp: Long) {
+    override fun itemSelectedByTyping(lookup: LookupImpl, performance: Map<String, Long>, timestamp: Long) {
         val state = stateManager.update(lookup, true)
 
         val history = lookup.itemsHistory()
 
-        val event = TypedSelectEvent(installationUID, completionUID, state, state.selectedId, history, timestamp)
+        val event = TypedSelectEvent(installationUID, completionUID, state, state.selectedId, history, performance, timestamp)
         event.fillCompletionParameters()
 
         eventLogger.log(event)
     }
 
-    override fun itemSelectedCompletionFinished(lookup: LookupImpl, timestamp: Long) {
+    override fun itemSelectedCompletionFinished(lookup: LookupImpl, performance: Map<String, Long>, timestamp: Long) {
         val state = stateManager.update(lookup, true)
         val history = lookup.itemsHistory()
 
-        val event = ExplicitSelectEvent(installationUID, completionUID, state, state.selectedId, history, timestamp)
+        val event = ExplicitSelectEvent(installationUID, completionUID, state, state.selectedId, history, performance, timestamp)
         event.fillCompletionParameters()
 
         eventLogger.log(event)

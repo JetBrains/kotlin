@@ -38,14 +38,19 @@ object Fixtures {
     val initialState = LookupState(lookupList.map { it.id }, lookupList, emptyList(), 0)
 
     val userFactors: Map<String, String> = mapOf(
-            "avgTimeToType" to "0.6",
-            "maxSelecterItem" to "10",
-            "explicitSelectCountToday" to "100"
+      "avgTimeToType" to "0.6",
+      "maxSelecterItem" to "10",
+      "explicitSelectCountToday" to "100"
     )
 
     val contextFactors: Map<String, String> = mapOf(
       "line_number" to "10",
       "is_line_beginning" to "true"
+    )
+
+    val performance: Map<String, Long> = mapOf(
+      "sorting" to 300L,
+      "log" to 35L
     )
 
     val history = mapOf(10 to ElementPositionHistory(listOf(StagePosition(0, 1))))
@@ -90,14 +95,14 @@ class EventSerializeDeserializeTest {
     
     @Test
     fun `completion cancelled event`() {
-        val event = CompletionCancelledEvent(Fixtures.userId, "xx", System.currentTimeMillis())
+        val event = CompletionCancelledEvent(Fixtures.userId, "xx", emptyMap(), System.currentTimeMillis())
         serializeDeserializeAndCheck(event)
     }
     
     @Test
     fun `item selected by typing event`() {
         val event = TypedSelectEvent(Fixtures.userId, "xx", Fixtures.initialState.withoutNewItems(),
-                                     0, Fixtures.history, System.currentTimeMillis())
+                                     0, Fixtures.history, Fixtures.performance, System.currentTimeMillis())
         serializeDeserializeAndCheck(event)
     }
     
@@ -105,7 +110,7 @@ class EventSerializeDeserializeTest {
     fun `explicit select event`() {
         val state = Fixtures.initialState.withoutNewItems()
         val event = ExplicitSelectEvent(Fixtures.userId, "xx", state, 0,
-                                        Fixtures.history, System.currentTimeMillis())
+                                        Fixtures.history, Fixtures.performance, System.currentTimeMillis())
         serializeDeserializeAndCheck(event)
     }
 

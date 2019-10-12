@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.stats.PerformanceTracker
 import com.intellij.stats.completion.idString
 import com.intellij.stats.personalization.UserFactorStorage
 import com.intellij.stats.personalization.UserFactorsManager
@@ -29,6 +30,8 @@ class MutableLookupStorage(
   override val contextFactors: Map<String, String>
     get() = _contextFactors ?: emptyMap()
 
+  override val performanceTracker: PerformanceTracker = PerformanceTracker()
+
   companion object {
     private val LOG = logger<MutableLookupStorage>()
     private val LOOKUP_STORAGE = Key.create<MutableLookupStorage>("completion.ml.lookup.storage")
@@ -37,7 +40,9 @@ class MutableLookupStorage(
       return lookup.getUserData(LOOKUP_STORAGE)
     }
 
-    fun initLookupStorage(lookup: LookupImpl, language: Language): MutableLookupStorage {
+    fun initOrGetLookupStorage(lookup: LookupImpl, language: Language): MutableLookupStorage {
+      val existed = get(lookup)
+      if (existed != null) return existed
       val storage = MutableLookupStorage(System.currentTimeMillis(), language, RankingSupport.getRankingModel(language))
       lookup.putUserData(LOOKUP_STORAGE, storage)
       return storage

@@ -5,7 +5,7 @@ package com.intellij.stats.completion.events
 import com.intellij.stats.completion.*
 
 
-class CompletionCancelledEvent(userId: String, sessionId: String, timestamp: Long)
+class CompletionCancelledEvent(userId: String, sessionId: String, @JvmField var performance: Map<String, Long>, timestamp: Long)
     : LogEvent(userId, sessionId, Action.COMPLETION_CANCELED, timestamp) {
     override fun accept(visitor: LogEventVisitor) {
         visitor.visit(this)
@@ -19,6 +19,7 @@ class ExplicitSelectEvent(
         lookupState: LookupState,
         @JvmField var selectedId: Int,
         @JvmField var history: Map<Int, ElementPositionHistory>,
+        @JvmField var performance: Map<String, Long>,
         timestamp: Long
 ) : LookupStateLogData(
         userId,
@@ -35,15 +36,13 @@ class ExplicitSelectEvent(
 }
 
 
-/**
- * selectedId here, because position is 0 here
- */
 class TypedSelectEvent(
         userId: String,
         sessionId: String,
         lookupState: LookupState,
         @JvmField var selectedId: Int,
         @JvmField var history: Map<Int, ElementPositionHistory>,
+        @JvmField var performance: Map<String, Long>,
         timestamp: Long
 ) : LookupStateLogData(userId, sessionId, Action.TYPED_SELECT, lookupState, timestamp) {
 

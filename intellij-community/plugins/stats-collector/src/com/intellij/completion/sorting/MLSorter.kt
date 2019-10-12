@@ -13,7 +13,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.registry.Registry
-import com.intellij.stats.completion.CompletionUtil
+import com.intellij.stats.PerformanceTracker
 import com.intellij.stats.completion.RelevanceUtil
 import com.intellij.stats.completion.prefixLength
 import com.intellij.stats.personalization.session.SessionFactorsUtils
@@ -77,13 +77,12 @@ class MLSorter : CompletionFinalSorter() {
     val positionsBefore = elements.withIndex().associate { it.value to it.index }
 
     fillCachedScores(element2score, elements, prefixLength)
-    calculateScores(element2score, elements.filter { it !in element2score }, positionsBefore,
+    val itemsForScoring = elements.filter { it !in element2score }
+    calculateScores(element2score, itemsForScoring, positionsBefore,
                     prefixLength, lookup, lookupStorage, parameters)
     val finalRanking = sortByMlScores(elements, element2score, positionsBefore, lookupStorage.language)
 
-    val timeSpent = System.currentTimeMillis() - startedTimestamp
-    val totalTime = timeSpent + (lookup.getUserData(CompletionUtil.ML_SORTING_CONTRIBUTION_KEY) ?: 0)
-    lookup.putUserData(CompletionUtil.ML_SORTING_CONTRIBUTION_KEY, totalTime)
+    lookupStorage.performanceTracker.sortingPerformed(itemsForScoring.size, System.currentTimeMillis() - startedTimestamp)
 
     return finalRanking
   }
@@ -108,24 +107,28 @@ class MLSorter : CompletionFinalSorter() {
                               parameters: CompletionParameters) {
     if (items.isEmpty()) return
 
-    val relevanceObjects = lookup.getRelevanceObjects(items, false)
-
     val rankingModel = lookupStorage.model
 
     val commonSessionFactors = SessionFactorsUtils.updateSessionFactors(lookupStorage, items)
     val contextFactors = lookupStorage.contextFactors
     val features = RankingFeatures(lookupStorage.userFactors, contextFactors, commonSessionFactors)
+    val relevanceObjects = lookup.getRelevanceObjects(items, false)
+    val tracker = ModelTimeTracker()
     for (element in items) {
       val position = positionsBefore.getValue(element)
       val (relevance, additional) = RelevanceUtil.asRelevanceMaps(relevanceObjects.getOrDefault(element, emptyList()))
       SessionFactorsUtils.saveElementFactorsTo(additional, lookupStorage, element)
       calculateAdditionalFeaturesTo(additional, element, prefixLength, position, parameters)
-      val score = calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), prefixLength)
+      val score = tracker.measure {
+        calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), prefixLength)
+      }
       element2score[element] = score
 
       additional.putAll(relevance)
       lookupStorage.fireElementScored(element, additional, score)
     }
+
+    tracker.finished(lookupStorage.performanceTracker)
   }
 
   private fun sortByMlScores(items: List<LookupElement>,
@@ -196,6 +199,28 @@ class MLSorter : CompletionFinalSorter() {
     cachedScore[element] = info
 
     return info.mlRank
+  }
+
+  /*
+   * Measures time on getting predictions from the ML model
+   */
+  private class ModelTimeTracker {
+    private var itemsScored: Int = 0
+    private var timeSpent: Long = 0L
+    fun measure(scoringFun: () -> Double?): Double? {
+      val start = System.nanoTime()
+      val result = scoringFun.invoke()
+      if (result != null) {
+        itemsScored += 1
+        timeSpent += System.nanoTime() - start
+      }
+
+      return result
+    }
+
+    fun finished(performanceTracker: PerformanceTracker) {
+      performanceTracker.itemsScored(itemsScored, timeSpent / 1000)
+    }
   }
 }
 

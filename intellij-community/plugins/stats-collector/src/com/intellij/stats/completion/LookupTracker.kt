@@ -2,7 +2,7 @@
 package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.lang.Language
+import com.intellij.stats.storage.factors.MutableLookupStorage
 import java.beans.PropertyChangeEvent
 import java.beans.PropertyChangeListener
 
@@ -10,14 +10,18 @@ abstract class LookupTracker : PropertyChangeListener {
   override fun propertyChange(evt: PropertyChangeEvent?) {
     val lookup = evt?.newValue
     if (lookup is LookupImpl) {
-      lookupCreated(lookup.language(), lookup)
+      val language = lookup.language()
+      if (language != null) {
+        val lookupStorage = MutableLookupStorage.initOrGetLookupStorage(lookup, language)
+        lookupCreated(lookup, lookupStorage)
+      }
     }
     else {
       lookupClosed()
     }
   }
 
-  protected abstract fun lookupCreated(language: Language?, lookup: LookupImpl)
+  protected abstract fun lookupCreated(lookup: LookupImpl, storage: MutableLookupStorage)
 
   protected abstract fun lookupClosed()
 }

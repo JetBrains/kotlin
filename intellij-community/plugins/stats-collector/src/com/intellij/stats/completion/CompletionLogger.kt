@@ -33,8 +33,7 @@ abstract class CompletionLoggerProvider {
 
 abstract class CompletionLogger {
 
-    abstract fun completionStarted(lookup: LookupImpl, isExperimentPerformed: Boolean, experimentVersion: Int,
-                                   timestamp: Long, mlTimeContribution: Long)
+    abstract fun completionStarted(lookup: LookupImpl, isExperimentPerformed: Boolean, experimentVersion: Int, timestamp: Long)
 
     abstract fun afterCharTyped(c: Char, lookup: LookupImpl, timestamp: Long)
 
@@ -43,10 +42,9 @@ abstract class CompletionLogger {
     abstract fun downPressed(lookup: LookupImpl, timestamp: Long)
     abstract fun upPressed(lookup: LookupImpl, timestamp: Long)
 
-    abstract fun itemSelectedCompletionFinished(lookup: LookupImpl, timestamp: Long)
-    abstract fun completionCancelled(timestamp: Long)
-    abstract fun itemSelectedByTyping(lookup: LookupImpl, timestamp: Long)
+    abstract fun itemSelectedCompletionFinished(lookup: LookupImpl, performance: Map<String, Long>, timestamp: Long)
+    abstract fun completionCancelled(performance: Map<String, Long>, timestamp: Long)
+    abstract fun itemSelectedByTyping(lookup: LookupImpl, performance: Map<String, Long>, timestamp: Long)
 
     abstract fun customMessage(message: String, timestamp: Long)
-    abstract fun performanceMessage(description: String, value: Long, timestamp: Long)
 }

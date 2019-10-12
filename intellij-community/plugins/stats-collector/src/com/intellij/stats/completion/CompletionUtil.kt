@@ -22,15 +22,12 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.CompletionProgressIndicator
 import com.intellij.codeInsight.completion.CompletionService
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.openapi.util.Key
 import com.intellij.util.ReflectionUtil
 
 /**
  * @author Vitaliy.Bibaev
  */
 object CompletionUtil {
-    val ML_SORTING_CONTRIBUTION_KEY = Key.create<Long>("com.intellij.stats.completion.ml.contribution")
-
     fun getCurrentCompletionParameters(): CompletionParameters? = getCurrentCompletion()?.parameters
 
     fun getShownTimestamp(lookup: LookupImpl): Long? {
@@ -39,10 +36,6 @@ object CompletionUtil {
         }
 
         return null
-    }
-
-    fun getMLTimeContribution(lookup: LookupImpl): Long? {
-        return lookup.getUserData(ML_SORTING_CONTRIBUTION_KEY)
     }
 
     private fun getCurrentCompletion(): CompletionProgressIndicator? =

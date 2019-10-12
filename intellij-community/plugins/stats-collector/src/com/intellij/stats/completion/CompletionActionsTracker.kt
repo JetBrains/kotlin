@@ -3,23 +3,16 @@
 package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupEvent
-import com.intellij.codeInsight.lookup.LookupListener
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.codeInsight.lookup.impl.PrefixChangeListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.stats.experiment.WebServiceStatus
+import com.intellij.stats.storage.factors.LookupStorage
 
 class CompletionActionsTracker(private val lookup: LookupImpl,
+                               private val lookupStorage: LookupStorage,
                                private val logger: CompletionLogger,
                                private val experimentHelper: WebServiceStatus)
-    : CompletionPopupListener,
-      PrefixChangeListener,
-      LookupListener {
-    private companion object {
-        const val INITIAL_CONTRIBUTION_KEY = "ml.contribution.initial"
-        const val CURRENT_CONTRIBUTION_KEY = "ml.contribution.current"
-        const val TOTAL_CONTRIBUTION_KEY = "ml.contribution.total"
-    }
+    : CompletionActionsListener {
 
     private var completionStarted = false
     private var selectedByDotTyping = false
@@ -36,23 +29,20 @@ class CompletionActionsTracker(private val lookup: LookupImpl,
 
         val timestamp = System.currentTimeMillis()
         deferredLog.log()
-        val mlTimeContribution = CompletionUtil.getMLTimeContribution(lookup)
         val items = lookup.items
         val currentItem = lookup.currentItem
+        val performance = lookupStorage.performanceTracker.measurements()
         if (currentItem == null) {
-            logPerformance(TOTAL_CONTRIBUTION_KEY, mlTimeContribution, timestamp - 1)
-            logger.completionCancelled(timestamp)
+            logger.completionCancelled(performance, timestamp)
             return
         }
 
         val prefix = lookup.itemPattern(currentItem)
         val wasTyped = items.firstOrNull()?.lookupString?.equals(prefix) ?: false
         if (wasTyped || selectedByDotTyping) {
-            logPerformance(TOTAL_CONTRIBUTION_KEY, mlTimeContribution, timestamp - 1)
-            logger.itemSelectedByTyping(lookup, timestamp)
+            logger.itemSelectedByTyping(lookup, performance, timestamp)
         } else {
-            logPerformance(TOTAL_CONTRIBUTION_KEY, mlTimeContribution, timestamp - 1)
-            logger.completionCancelled(timestamp)
+            logger.completionCancelled(performance, timestamp)
         }
     }
 
@@ -62,14 +52,12 @@ class CompletionActionsTracker(private val lookup: LookupImpl,
         }
 
         val timestamp = System.currentTimeMillis()
-        val mlTimeContribution = CompletionUtil.getMLTimeContribution(lookup)
         completionStarted = true
         deferredLog.defer {
             val isPerformExperiment = experimentHelper.isExperimentOnCurrentIDE()
             val experimentVersion = experimentHelper.experimentVersion()
             logger.completionStarted(lookup, isPerformExperiment, experimentVersion,
-                                     timestamp, mlTimeContribution ?: -1)
-            logPerformance(INITIAL_CONTRIBUTION_KEY, mlTimeContribution, timestamp + 1)
+                                     timestamp)
         }
     }
 
@@ -78,8 +66,7 @@ class CompletionActionsTracker(private val lookup: LookupImpl,
 
         val timestamp = System.currentTimeMillis()
         deferredLog.log()
-        logPerformance(TOTAL_CONTRIBUTION_KEY, CompletionUtil.getMLTimeContribution(lookup), timestamp - 1)
-        logger.itemSelectedCompletionFinished(lookup, timestamp)
+        logger.itemSelectedCompletionFinished(lookup, lookupStorage.performanceTracker.measurements(), timestamp)
     }
 
     override fun beforeDownPressed() {
@@ -149,17 +136,9 @@ class CompletionActionsTracker(private val lookup: LookupImpl,
         if (!isCompletionActive()) return
 
         val timestamp = System.currentTimeMillis()
-        val mlTimeContribution = CompletionUtil.getMLTimeContribution(lookup)
         deferredLog.log()
         deferredLog.defer {
             logger.afterCharTyped(c, lookup, timestamp)
-            logPerformance(CURRENT_CONTRIBUTION_KEY, mlTimeContribution, timestamp)
-        }
-    }
-
-    private fun logPerformance(key: String, measure: Long?, timestamp: Long) {
-        if (measure != null) {
-            logger.performanceMessage(key, measure, timestamp)
         }
     }
 }
