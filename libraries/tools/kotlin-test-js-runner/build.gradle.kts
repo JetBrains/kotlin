@@ -35,7 +35,7 @@ tasks {
         }
         // Without it several yarns can works incorrectly
         (this as YarnTask).apply {
-            args = listOf("--network-concurrency", "1", "--mutex", "network")
+            args = args + "--network-concurrency" + "1" + "--mutex" + "network"
         }
     }
 
