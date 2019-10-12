@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.types.KotlinType
@@ -35,10 +34,7 @@ import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 object ComposeFqNames {
     val Composable = ComposeUtils.composeFqName("Composable")
     val Pivotal = ComposeUtils.composeFqName("Pivotal")
-    val Children = ComposeUtils.composeFqName("Children")
-    val Stateful = ComposeUtils.composeFqName("Stateful")
     val StableMarker = ComposeUtils.composeFqName("StableMarker")
-    val Emittable = ComposeUtils.composeFqName("Emittable")
     val HiddenAttribute = ComposeUtils.composeFqName("HiddenAttribute")
 
     fun makeComposableAnnotation(module: ModuleDescriptor): AnnotationDescriptor =
@@ -69,31 +65,13 @@ fun Annotated.hasComposableAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Composable) != null
 fun Annotated.hasPivotalAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.Pivotal) != null
-fun Annotated.hasChildrenAnnotation(): Boolean =
-    annotations.findAnnotation(ComposeFqNames.Children) != null
-fun Annotated.hasStatefulAnnotation(): Boolean =
-    annotations.findAnnotation(ComposeFqNames.Stateful) != null
-fun Annotated.hasEmittableAnnotation(): Boolean =
-    annotations.findAnnotation(ComposeFqNames.Emittable) != null
 fun Annotated.hasHiddenAttributeAnnotation(): Boolean =
     annotations.findAnnotation(ComposeFqNames.HiddenAttribute) != null
-
-fun Annotated.isComposableFromChildrenAnnotation(): Boolean {
-    val childrenAnnotation = annotations.findAnnotation(ComposeFqNames.Children) ?: return false
-    return childrenAnnotation.isComposableChildrenAnnotation
-}
 
 internal val KotlinType.isSpecialType: Boolean get() =
     this === NO_EXPECTED_TYPE || this === UNIT_EXPECTED_TYPE
 
 val AnnotationDescriptor.isComposableAnnotation: Boolean get() = fqName == ComposeFqNames.Composable
-val AnnotationDescriptor.isChildrenAnnotation: Boolean get() = fqName == ComposeFqNames.Children
-val AnnotationDescriptor.isComposableChildrenAnnotation: Boolean
-    get() {
-        if (fqName != ComposeFqNames.Children) return false
-        val composableValueArgument = argumentValue("composable")?.value
-        return composableValueArgument == null || composableValueArgument == true
-    }
 
 fun Annotations.hasStableMarker(): Boolean = any(AnnotationDescriptor::isStableMarker)
 

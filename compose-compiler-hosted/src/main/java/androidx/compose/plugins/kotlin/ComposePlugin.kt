@@ -76,18 +76,13 @@ class ComposeComponentRegistrar : ComponentRegistrar {
     companion object {
 
         @Suppress("UNUSED_PARAMETER")
-        fun registerProjectExtensions(project: Project, configuration: CompilerConfiguration) {
-            StorageComponentContainerContributor.registerExtension(
-                project,
-                ComponentsClosedDeclarationChecker()
-            )
+        fun registerProjectExtensions(
+            project: Project,
+            configuration: CompilerConfiguration
+        ) {
             StorageComponentContainerContributor.registerExtension(
                 project,
                 ComposableAnnotationChecker()
-            )
-            StorageComponentContainerContributor.registerExtension(
-                project,
-                ChildAnnotationChecker()
             )
             StorageComponentContainerContributor.registerExtension(
                 project,
@@ -96,15 +91,6 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             StorageComponentContainerContributor.registerExtension(
                 project,
                 TryCatchComposableChecker()
-            )
-            KtxParsingExtension.registerExtension(project,
-                ComposeKtxParsingExtension()
-            )
-            KtxTypeResolutionExtension.registerExtension(project,
-                ComposeKtxTypeResolutionExtension()
-            )
-            KtxControlFlowExtension.registerExtension(project,
-                ComposeKtxControlFlowExtension()
             )
             ComposeDiagnosticSuppressor.registerExtension(
                 project,
@@ -124,7 +110,6 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 project,
                 ComposeCallResolutionInterceptorExtension()
             )
-
             StorageComponentContainerContributor.registerExtension(project,
                 FrameModelChecker()
             )

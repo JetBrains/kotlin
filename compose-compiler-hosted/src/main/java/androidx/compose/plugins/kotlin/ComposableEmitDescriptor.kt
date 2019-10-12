@@ -17,6 +17,7 @@
 package androidx.compose.plugins.kotlin
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
@@ -28,12 +29,20 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 class ComposableEmitDescriptor(
-    val ktxCall: ResolvedKtxElementCall,
+    val composer: ResolvedCall<*>,
+    val emitCall: ResolvedCall<*>,
+    val hasChildren: Boolean,
+    val pivotals: List<String>,
+    val ctorCall: ResolvedCall<*>,
+    val ctorParams: List<String>,
+    val validations: List<ValidatedAssignment>,
     containingDeclaration: DeclarationDescriptor,
     original: SimpleFunctionDescriptor?,
     annotations: Annotations,
@@ -50,25 +59,32 @@ class ComposableEmitDescriptor(
 ) {
 
     companion object {
-        fun fromKtxCall(
-            ktxCall: ResolvedKtxElementCall,
-            scopeTower: ImplicitScopeTower,
+        fun build(
+            hasChildren: Boolean,
+            emitCall: ResolvedCall<*>,
+            pivotals: List<String>,
+            ctorCall: ResolvedCall<*>,
+            ctorParams: List<String>,
+            validations: List<ValidatedAssignment>,
+            composerCall: ResolvedCall<*>,
             name: Name
-        ): ComposableEmitDescriptor? {
+        ): ComposableEmitDescriptor {
 
             val builtIns = DefaultBuiltIns.Instance
-            val emitOrCall = ktxCall.emitOrCall
-            if (emitOrCall !is EmitCallNode) {
-                return null
-            }
 
-            val resolvedCall = emitOrCall.primaryCall ?: return null
+            val resolvedCall = ctorCall
 
-            val original = resolvedCall.candidateDescriptor
-                            as? SimpleFunctionDescriptor
+            val original = resolvedCall.resultingDescriptor as? SimpleFunctionDescriptor
+
             val descriptor = ComposableEmitDescriptor(
-                ktxCall,
-                ktxCall.infixOrCall!!.candidateDescriptor.containingDeclaration,
+                composerCall,
+                emitCall,
+                hasChildren,
+                pivotals,
+                ctorCall,
+                ctorParams,
+                validations,
+                emitCall.candidateDescriptor.containingDeclaration,
                 original,
                 Annotations.EMPTY,
                 name,
@@ -77,20 +93,43 @@ class ComposableEmitDescriptor(
             )
 
             val valueArgs = mutableListOf<ValueParameterDescriptor>()
+            val paramSet = mutableSetOf<String>()
 
-            ktxCall.usedAttributes.forEachIndexed { index, attributeInfo ->
+            for (paramName in ctorParams) {
+                if (paramSet.contains(paramName)) continue
+                val param = resolvedCall.resultingDescriptor.valueParameters.find {
+                    it.name.identifier == paramName
+                } ?: continue
+
+                paramSet.add(paramName)
                 valueArgs.add(
                     ValueParameterDescriptorImpl(
-                        descriptor, null, index,
+                        descriptor, null, valueArgs.size,
                         Annotations.EMPTY,
-                        Name.identifier(
-                            if (attributeInfo.name == CHILDREN_KEY)
-                                attributeInfo.descriptor.name.identifier
-                            else attributeInfo.name
-                        ),
-                        attributeInfo.type, false,
+                        param.name,
+                        param.type, false,
                         false,
                         false, null,
+                        SourceElement.NO_SOURCE
+                    )
+                )
+            }
+
+            for (validation in validations) {
+                if (paramSet.contains(validation.name)) continue
+                paramSet.add(validation.name)
+                valueArgs.add(
+                    ValueParameterDescriptorImpl(
+                        descriptor,
+                        null,
+                        valueArgs.size,
+                        Annotations.EMPTY,
+                        Name.identifier(validation.name),
+                        validation.type,
+                        false,
+                        false,
+                        false,
+                        null,
                         SourceElement.NO_SOURCE
                     )
                 )
@@ -100,10 +139,16 @@ class ComposableEmitDescriptor(
                 0
             ).defaultType.replace(
                 listOf(builtIns.unitType.asTypeProjection())
-            ).makeComposable(scopeTower.module)
-            (emitOrCall as? EmitCallNode)?.inlineChildren?.let {
+            )
+            // NOTE(lmr): it's actually kind of important that this is *not* a composable lambda,
+            // so that the observe patcher doesn't insert an observe scope.
+            // In the future, we should reconsider how this is done since semantically a composable
+            // lambda is more correct here. I tried, but had trouble passing enough information to
+            // the observe patcher so it knew not to do this.
+            /*.makeComposable(scopeTower.module)*/
+            if (hasChildren) {
                 valueArgs.add(
-                    ValueParameterDescriptorImpl(
+                    EmitChildrenValueParameterDescriptor(
                         descriptor, null, valueArgs.size,
                         Annotations.EMPTY,
                         Name.identifier("\$CHILDREN"),
@@ -129,3 +174,29 @@ class ComposableEmitDescriptor(
         }
     }
 }
+
+class EmitChildrenValueParameterDescriptor(
+    containingDeclaration: CallableDescriptor,
+    original: ValueParameterDescriptor?,
+    index: Int,
+    annotations: Annotations,
+    name: Name,
+    outType: KotlinType,
+    declaresDefaultValue: Boolean,
+    isCrossinline: Boolean,
+    isNoinline: Boolean,
+    varargElementType: KotlinType?,
+    source: SourceElement
+) : ValueParameterDescriptorImpl(
+    containingDeclaration,
+    original,
+    index,
+    annotations,
+    name,
+    outType,
+    declaresDefaultValue,
+    isCrossinline,
+    isNoinline,
+    varargElementType,
+    source
+)

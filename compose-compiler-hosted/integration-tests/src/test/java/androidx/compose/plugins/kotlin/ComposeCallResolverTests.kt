@@ -34,7 +34,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
             import android.widget.TextView
 
             @Composable fun Foo() {}
-            
+
             fun Bar() {}
 
             @Composable
@@ -79,13 +79,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
     )
 
     private fun <T> setup(block: () -> T): T {
-        val original = ComposeFlags.NEW_CALL_RESOLUTION_INTERCEPTION
-        try {
-            ComposeFlags.NEW_CALL_RESOLUTION_INTERCEPTION = true
-            return block()
-        } finally {
-            ComposeFlags.NEW_CALL_RESOLUTION_INTERCEPTION = original
-        }
+        return block()
     }
 
     fun assertInterceptions(srcText: String) = setup {

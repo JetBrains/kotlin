@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.getKeyValue
+import androidx.compose.plugins.kotlin.isEmitInline
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -109,13 +110,16 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
         super.visitFunction(declaration)
 
         // Only insert observe scopes in non-empty composable function
-        if (declaration.body == null) return declaration
-        if (!isComposable(declaration)) return declaration
+        if (declaration.body == null)
+            return declaration
+        if (!isComposable(declaration))
+            return declaration
 
         val descriptor = declaration.descriptor
 
         // Do not insert observe scope in an inline function
-        if (descriptor.isInline) return declaration
+        if (descriptor.isInline)
+            return declaration
 
         // Do not insert an observe scope in an inline composable lambda
         descriptor.findPsi()?.let { psi ->
@@ -123,15 +127,19 @@ class ComposeObservePatcher(val context: JvmBackendContext) :
                 if (InlineUtil.isInlinedArgument(
                         it,
                         context.state.bindingContext,
-                        true
+                        false
                     )
                 )
                     return declaration
+                if (it.isEmitInline(context.state.bindingContext)) {
+                    return declaration
+                }
             }
         }
 
         // Do not insert an observe scope if the funciton has a return result
-        if (descriptor.returnType.let { it == null || !it.isUnit() }) return declaration
+        if (descriptor.returnType.let { it == null || !it.isUnit() })
+            return declaration
 
         // Check if the descriptor has restart scope calls resolved
         val bindingContext = context.state.bindingContext

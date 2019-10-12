@@ -31,9 +31,9 @@ class UnionCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             fun bar() {
-                <foo value=1 />
-                <foo value="1" />
-                <foo value=<!ILLEGAL_ASSIGN_TO_UNIONTYPE!>1f<!> />
+                foo(value=1)
+                foo(value="1")
+                foo(value=<!ILLEGAL_ASSIGN_TO_UNIONTYPE!>1f<!>)
             }
         """)
     }
@@ -49,7 +49,7 @@ class UnionCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             fun bar(value: @UnionType(Int::class, String::class) Any) {
-                <foo value />
+                foo(value)
             }
         """)
     }
@@ -65,7 +65,7 @@ class UnionCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             fun bar(value: @UnionType(Int::class, String::class) Any) {
-                <foo value />
+                foo(value)
             }
         """)
     }
@@ -81,7 +81,7 @@ class UnionCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             fun bar(value: @UnionType(Int::class, String::class, Float::class) Any) {
-                <foo <!ILLEGAL_ASSIGN_TO_UNIONTYPE!>value<!> />
+                foo(<!ILLEGAL_ASSIGN_TO_UNIONTYPE!>value<!>)
             }
         """)
     }

@@ -17,6 +17,22 @@
 package androidx.compose.plugins.kotlin
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
-class ComposableFunctionDescriptor(val underlyingDescriptor: FunctionDescriptor) :
-    FunctionDescriptor by underlyingDescriptor
+class ComposableFunctionDescriptor(
+    val underlyingDescriptor: FunctionDescriptor,
+    val composerCall: ResolvedCall<*>,
+    val composerMetadata: ComposerMetadata
+) : FunctionDescriptor by underlyingDescriptor {
+    override fun substitute(substitutor: TypeSubstitutor): FunctionDescriptor? {
+        return underlyingDescriptor.substitute(substitutor)?.let {
+            ComposableFunctionDescriptor(
+                underlyingDescriptor = it,
+                composerCall = composerCall,
+                composerMetadata = composerMetadata
+            )
+        }
+    }
+}

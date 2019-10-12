@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -37,7 +38,8 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isNothingOrNullableNothing
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-class ComposerEmitMetadata(
+class ComposerMetadata(
+    val type: KotlinType,
     // Set of valid upper bound types that were defined on the composer that can't have children
     // For android, this should be [View]
     private val emitSimpleUpperBoundTypes: Set<KotlinType>,
@@ -56,7 +58,8 @@ class ComposerEmitMetadata(
     //      fun <T : View> emit(key: Any, ctor: (context: Context) -> T, update: U<T>.() -> Unit)
     //
     // would produce a Pair of [View] to [Context]
-    private val emittableTypeToImplicitCtorTypes: List<Pair<List<KotlinType>, Set<KotlinType>>>
+    private val emittableTypeToImplicitCtorTypes: List<Pair<List<KotlinType>, Set<KotlinType>>>,
+    val callDescriptors: List<FunctionDescriptor>
 ) {
 
     companion object {
@@ -104,7 +107,7 @@ class ComposerEmitMetadata(
             callResolver: CallResolver,
             psiFactory: KtPsiFactory,
             resolutionContext: BasicCallResolutionContext
-        ): ComposerEmitMetadata {
+        ): ComposerMetadata {
             val emitSimpleUpperBoundTypes = mutableSetOf<KotlinType>()
             val emitCompoundUpperBoundTypes = mutableSetOf<KotlinType>()
             val emittableTypeToImplicitCtorTypes =
@@ -112,6 +115,14 @@ class ComposerEmitMetadata(
 
             val emitCandidates = resolveComposerMethodCandidates(
                 KtxNameConventions.EMIT,
+                resolutionContext,
+                composerType,
+                callResolver,
+                psiFactory
+            )
+
+            val callCandidates = resolveComposerMethodCandidates(
+                KtxNameConventions.CALL,
                 resolutionContext,
                 composerType,
                 callResolver,
@@ -153,10 +164,16 @@ class ComposerEmitMetadata(
                 }
             }
 
-            return ComposerEmitMetadata(
+            val callDescriptors = callCandidates.mapNotNull {
+                it.candidateDescriptor as? FunctionDescriptor
+            }
+
+            return ComposerMetadata(
+                composerType,
                 emitSimpleUpperBoundTypes,
                 emitCompoundUpperBoundTypes,
-                emittableTypeToImplicitCtorTypes
+                emittableTypeToImplicitCtorTypes,
+                callDescriptors
             )
         }
 
@@ -165,16 +182,15 @@ class ComposerEmitMetadata(
             callResolver: CallResolver,
             psiFactory: KtPsiFactory,
             resolutionContext: BasicCallResolutionContext
-        ): ComposerEmitMetadata {
+        ): ComposerMetadata {
             val meta = resolutionContext.trace.bindingContext[
-                    ComposeWritableSlices.COMPOSER_EMIT_METADATA,
+                    ComposeWritableSlices.COMPOSER_METADATA,
                     descriptor
             ]
             return if (meta == null) {
-                val built =
-                    build(descriptor.type, callResolver, psiFactory, resolutionContext)
+                val built = build(descriptor.type, callResolver, psiFactory, resolutionContext)
                 resolutionContext.trace.record(
-                    ComposeWritableSlices.COMPOSER_EMIT_METADATA,
+                    ComposeWritableSlices.COMPOSER_METADATA,
                     descriptor,
                     built
                 )

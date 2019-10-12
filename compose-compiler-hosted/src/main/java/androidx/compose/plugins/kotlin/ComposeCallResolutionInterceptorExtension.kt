@@ -17,39 +17,35 @@
 package androidx.compose.plugins.kotlin
 
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
-import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.IGNORE_COMPOSABLE_INTERCEPTION
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtLambdaArgument
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
+import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
-import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinedArgument
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
-import org.jetbrains.kotlin.types.replace
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExtension {
     override fun interceptCandidates(
@@ -71,62 +67,59 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         name: Name,
         location: LookupLocation
     ): Collection<FunctionDescriptor> {
-        if (ComposeFlags.NEW_CALL_RESOLUTION_INTERCEPTION) {
-            val callResolver =
-                (scopeTower as NewResolutionOldInference.ImplicitScopeTowerImpl).callResolver
-            val element = resolutionContext.call.callElement as KtExpression
-            val project = element.project
-            val psiFactory = KtPsiFactory(project, markGenerated = false)
+        val callResolver =
+            (scopeTower as NewResolutionOldInference.ImplicitScopeTowerImpl).callResolver
+        val element = resolutionContext.call.callElement as KtExpression
+        val project = element.project
 
-            return ComposeCallResolver(
-                callResolver,
-                project,
-                psiFactory
-            ).interceptCandidates(
-                candidates,
-                scopeTower,
-                resolutionContext,
-                resolutionScope,
-                name,
-                location
-            )
-        }
         if (candidates.isEmpty()) return candidates
         val bindingContext = resolutionContext.trace.bindingContext
         val call = resolutionContext.call
-        val shouldIgnore = bindingContext[IGNORE_COMPOSABLE_INTERCEPTION, call] ?: false
+        val shouldIgnore = bindingContext[
+                ComposeWritableSlices.IGNORE_COMPOSABLE_INTERCEPTION,
+                call
+        ] ?: false
+
         if (shouldIgnore) return candidates
 
-        for (arg in resolutionContext.call.valueArguments) {
-            if (arg is KtLambdaArgument) continue
-            if (arg.getArgumentName() != null) continue
-            return candidates
+        val composables = mutableListOf<FunctionDescriptor>()
+        val nonComposablesNonConstructors = mutableListOf<FunctionDescriptor>()
+        val constructors = mutableListOf<ConstructorDescriptor>()
+
+        var needToLookupComposer = false
+
+        for (candidate in candidates) {
+            when {
+                candidate.hasComposableAnnotation() -> {
+                    needToLookupComposer = true
+                    composables.add(candidate)
+                }
+                candidate is ConstructorDescriptor -> {
+                    needToLookupComposer = true
+                    constructors.add(candidate)
+                }
+                else -> nonComposablesNonConstructors.add(candidate)
+            }
         }
 
-        val element = resolutionContext.call.callElement as KtExpression
-        val composableAnnotationChecker =
-            ComposableAnnotationChecker.get(element.project)
-
-        val context = ExpressionTypingContext.newContext(
-            resolutionContext.trace,
-            resolutionContext.scope,
-            resolutionContext.dataFlowInfo,
-            resolutionContext.expectedType,
-            resolutionContext.languageVersionSettings,
-            resolutionContext.dataFlowValueFactory
-        )
+        // If none of the candidates are composable or constructors, then it's unnecessary for us
+        // to do any work at all, since it will never be anything we intercept
+        if (!needToLookupComposer) return candidates
 
         val temporaryTraceForKtxCall =
-                TemporaryTraceAndCache.create(
-                        context,
-                        "trace to resolve ktx call", element
-                )
-        val temporaryForKtxCall = context.replaceTraceAndCache(temporaryTraceForKtxCall)
+            TemporaryTraceAndCache.create(
+                resolutionContext,
+                "trace to resolve ktx call", element
+            )
+
+        val composableAnnotationChecker =
+            ComposableAnnotationChecker.get(call.callElement.project)
 
         // Ensure we are in a composable context
-        var walker: PsiElement? = element
+        // TODO(lmr): there ought to be a better way to do this
+        var walker: PsiElement? = call.callElement
         var isComposableContext = false
-        var composableDescriptor: SimpleFunctionDescriptor? = null
+//        var composableDescriptor: SimpleFunctionDescriptor? = null
         while (walker != null) {
             val descriptor = try {
                 resolutionContext.trace[BindingContext.FUNCTION, walker]
@@ -139,189 +132,198 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
                     descriptor
                 )
                 isComposableContext =
-                        composability != ComposableAnnotationChecker.Composability.NOT_COMPOSABLE
-                if (isComposableContext) composableDescriptor = descriptor
+                    composability != ComposableAnnotationChecker.Composability.NOT_COMPOSABLE
+//                if (isComposableContext) composableDescriptor = descriptor
 
                 // If the descriptor is for an inlined lambda, infer composability from the
                 // outer scope
                 if (!(walker is KtFunction) ||
-                        !isInlinedArgument(
-                                walker,
-                                context.trace.bindingContext,
-                                true))
+                    !InlineUtil.isInlinedArgument(
+                        walker,
+                        resolutionContext.trace.bindingContext,
+                        true
+                    )
+                )
                     break
             }
             walker = try { walker.parent } catch (e: Throwable) { null }
         }
         if (!isComposableContext) return candidates
 
-        val callResolver =
-            (scopeTower as NewResolutionOldInference.ImplicitScopeTowerImpl).callResolver
-        val ktxCallResolver = KtxCallResolver(
+        // use the call resolver to find any variable that would resolve with "composer" in scope.
+        val composerCall = callResolver.resolveComposer(resolutionContext)
+        val composer = composerCall?.resultingDescriptor as? VariableDescriptor
+
+        // If there is no composer in scope, then we cannot intercept. This means that we need to
+        // remove any @Composable from the candidates
+        if (composer == null) {
+            return nonComposablesNonConstructors + constructors
+        }
+
+        val psiFactory = KtPsiFactory(project, markGenerated = false)
+
+        // If we made it this far, we need to check and see if the constructors qualify as emit
+        // calls instead of constructor calls.  First, we need to look at the composer to see
+        // what kinds of "emittables" it accepts.
+        // We cache the metadata into a writeable slice based on the descriptor
+        val composerMetadata = ComposerMetadata.getOrBuild(
+            composer,
             callResolver,
-            null,
-            element.project,
-            composableAnnotationChecker
+            psiFactory,
+            resolutionContext
         )
 
-        val resolvedKtxElementCall = try {
+        // TODO(lmr):
+        // We might decide there are some composers that are not "valid", ie, I shouldn't be able
+        // to call a composable if I just have `val composer = Unit` in scope... Right now we are
+        // just seeing if there are call descriptors. In the future, more validation might be
+        // warranted
+        val isValidComposer = composerMetadata.callDescriptors.isNotEmpty()
 
-            ktxCallResolver.initializeFromCall(call, temporaryForKtxCall)
-
-            ktxCallResolver.resolveFromCall(
-                call,
-                temporaryForKtxCall
-            )
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            throw e
+        if (!isValidComposer) {
+            return nonComposablesNonConstructors + constructors
         }
 
-        // Doesn't appear to be resolvable to a composable; return normal resolution candidates
-        val resolvedCall = when (resolvedKtxElementCall.emitOrCall) {
-            is MemoizedCallNode -> resolvedKtxElementCall.emitOrCall.call.resolvedCalls().first()
-            is EmitCallNode -> resolvedKtxElementCall.emitOrCall.resolvedCalls().first()
-            is ErrorNode -> return candidates
-            else ->
-                throw Error("Unexpectd type: " + resolvedKtxElementCall.emitOrCall.javaClass)
-        }
-
-        if (resolvedKtxElementCall.emitOrCall is MemoizedCallNode &&
-                !ComposableAnnotationChecker.get(element.project).shouldInvokeAsTag(
-                    temporaryForKtxCall.trace,
-                    resolvedCall
-                ))
-            return candidates
-        val candidateDescriptor = resolvedCall.candidateDescriptor
-        if (candidateDescriptor is FunctionDescriptor && candidateDescriptor.isOperator &&
-                candidateDescriptor.name == OperatorNameConventions.INVOKE)
-            return candidates
-
-        // If control flow gets here, we are intercepting this call.
-
-        val original = when (resolvedKtxElementCall.emitOrCall) {
-            is MemoizedCallNode -> {
-                resolvedKtxElementCall.emitOrCall.call.resolvedCalls().first().candidateDescriptor
-                        as? SimpleFunctionDescriptor
+        // If there are no constructors, then all of the candidates are either composables or
+        // non-composable functions, and we follow normal resolution rules.
+        if (constructors.isEmpty()) {
+            // we wrap the composable descriptors into a ComposableFunctionDescriptor so we know
+            // to intercept it in the backend.
+            return nonComposablesNonConstructors + composables.map {
+                ComposableFunctionDescriptor(it, composerCall, composerMetadata)
             }
-            else -> null
         }
 
-        val descriptor =
-            ComposableInvocationDescriptor(
-                element,
-                resolvedKtxElementCall,
-                resolvedKtxElementCall.infixOrCall!!.candidateDescriptor.containingDeclaration,
-                original,
-                Annotations.EMPTY,
-                name,
-                CallableMemberDescriptor.Kind.SYNTHESIZED,
-                SourceElement.NO_SOURCE
-            )
+        val emittables = constructors.filter {
+            composerMetadata.isEmittable(it.returnType) && !it.returnType.isAbstract()
+        }
+        val hasEmittableCandidate = emittables.isNotEmpty()
 
-        val valueArgs = mutableListOf<ValueParameterDescriptor>()
-
-        resolvedKtxElementCall.usedAttributes.forEachIndexed { index, attributeInfo ->
-            valueArgs.add(
-                ValueParameterDescriptorImpl(
-                    descriptor, null, index,
-                    Annotations.EMPTY,
-                    Name.identifier(
-                            if (attributeInfo.name == CHILDREN_KEY)
-                                attributeInfo.descriptor.name.identifier
-                            else attributeInfo.name
-                    ),
-                    attributeInfo.type, false,
-                    false,
-                    false, null,
-                    SourceElement.NO_SOURCE
-                )
-            )
+        // if none of the constructors are emittables, then all of the candidates are valid
+        if (!hasEmittableCandidate) {
+            return nonComposablesNonConstructors + constructors + composables.map {
+                ComposableFunctionDescriptor(it, composerCall, composerMetadata)
+            }
         }
 
-        val unitLambdaType = scopeTower.module.builtIns.getFunction(
-                0
-        ).defaultType.replace(
-                listOf(scopeTower.module.builtIns.unitType.asTypeProjection())
-        ).makeComposable(scopeTower.module)
-        (resolvedKtxElementCall.emitOrCall as? EmitCallNode)?.inlineChildren?.let {
-            valueArgs.add(
-                ValueParameterDescriptorImpl(
-                    descriptor, null, valueArgs.size,
-                    Annotations.EMPTY,
-                    Name.identifier("\$CHILDREN"),
-                    unitLambdaType, false,
-                    false,
-                    false, null,
-                    SourceElement.NO_SOURCE
-                )
-            )
-        }
+        // since some of the constructors are emittables, we fall back to resolving using the
+        // emit resolver.
+        val emitResolver = ComposeEmitResolver(
+            callResolver,
+            project,
+            composerMetadata
+        )
 
+        val context = ExpressionTypingContext.newContext(
+            resolutionContext.trace,
+            resolutionContext.scope,
+            resolutionContext.dataFlowInfo,
+            resolutionContext.expectedType,
+            resolutionContext.languageVersionSettings,
+            resolutionContext.dataFlowValueFactory
+        )
+
+        val temporaryForKtxCall = context.replaceTraceAndCache(temporaryTraceForKtxCall)
+
+        val emitCandidates = emitResolver.resolveCandidates(
+            call,
+            emittables,
+            composerCall,
+            name,
+            temporaryForKtxCall
+        )
+
+        // TODO(lmr): deal with the RESTART_CALLS_NEEDED stuff for restartGroups
         // Once we know we have a valid binding to a composable function call see if the scope need
         // the startRestartGroup and endRestartGroup information
-        val trace = temporaryTraceForKtxCall.trace
-        if (trace.get(
-                ComposeWritableSlices.RESTART_CALLS_NEEDED,
-                composableDescriptor!!
-            ) != false) {
-            val recordingContext = TemporaryTraceAndCache.create(
-                context,
-                "trace to resolve ktx call", element
-            )
-            val recordingTrace = recordingContext.trace
-            recordingTrace.record(
-                ComposeWritableSlices.RESTART_CALLS_NEEDED,
-                composableDescriptor,
-                false
-            )
+//        val trace = temporaryTraceForKtxCall.trace
+//        if (trace.get(
+//                ComposeWritableSlices.RESTART_CALLS_NEEDED,
+//                composableDescriptor!!
+//            ) != false) {
+//            val recordingContext = TemporaryTraceAndCache.create(
+//                context,
+//                "trace to resolve ktx call", element
+//            )
+//            val recordingTrace = recordingContext.trace
+//            recordingTrace.record(
+//                ComposeWritableSlices.RESTART_CALLS_NEEDED,
+//                composableDescriptor,
+//                false
+//            )
+//
+//            val startRestartGroup = ktxCallResolver.resolveStartRestartGroup(
+//                call,
+//                temporaryForKtxCall
+//            )
+//            val endRestartGroup = ktxCallResolver.resolveEndRestartGroup(call, temporaryForKtxCall)
+//            val composerCall = ktxCallResolver.resolveComposerCall()
+//            if (startRestartGroup != null && endRestartGroup != null && composerCall != null) {
+//                recordingTrace.record(
+//                    ComposeWritableSlices.RESTART_CALLS, composableDescriptor,
+//                    ResolvedRestartCalls(
+//                        startRestartGroup = startRestartGroup,
+//                        endRestartGroup = endRestartGroup,
+//                        composer = composerCall
+//                    )
+//                )
+//            }
+//            recordingTrace.commit()
+//        }
 
-            val startRestartGroup = ktxCallResolver.resolveStartRestartGroup(
-                call,
-                temporaryForKtxCall
-            )
-            val endRestartGroup = ktxCallResolver.resolveEndRestartGroup(call, temporaryForKtxCall)
-            val composerCall = ktxCallResolver.resolveComposerCall()
-            if (startRestartGroup != null && endRestartGroup != null && composerCall != null) {
-                recordingTrace.record(
-                    ComposeWritableSlices.RESTART_CALLS, composableDescriptor,
-                    ResolvedRestartCalls(
-                        startRestartGroup = startRestartGroup,
-                        endRestartGroup = endRestartGroup,
-                        composer = composerCall
-                    )
-                )
-            }
-            recordingTrace.commit()
-        }
-
-        descriptor.initialize(
-            null,
-            null,
-            mutableListOf(),
-            valueArgs,
-            scopeTower.module.builtIns.unitType,
-            Modality.FINAL,
-            Visibilities.DEFAULT_VISIBILITY
-        )
-
-        return listOf(descriptor)
+        return nonComposablesNonConstructors +
+                composables.map {
+                    ComposableFunctionDescriptor(it, composerCall, composerMetadata)
+                } +
+                constructors.filter { !composerMetadata.isEmittable(it.returnType) } +
+                emitCandidates
     }
 
-    class ComposableInvocationDescriptor(
-        val element: KtExpression,
-        val ktxCall: ResolvedKtxElementCall,
-        containingDeclaration: DeclarationDescriptor,
-        original: SimpleFunctionDescriptor?,
-        annotations: Annotations,
+    private fun CallResolver.resolveVar(
         name: Name,
-        kind: CallableMemberDescriptor.Kind,
-        source: SourceElement
-    ) : SimpleFunctionDescriptorImpl(
-        containingDeclaration,
-        original,
-        annotations,
-        name,
-        kind,
-        source)
+        context: BasicCallResolutionContext
+    ): OverloadResolutionResults<CallableDescriptor> {
+        val temporaryForVariable = TemporaryTraceAndCache.create(
+            context,
+            "trace to resolve variable",
+            context.call.callElement as KtExpression
+        )
+        val call = makeCall(context.call.callElement)
+        val contextForVariable = BasicCallResolutionContext.create(
+            context.replaceTraceAndCache(temporaryForVariable),
+            call,
+            CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+            DataFlowInfoForArgumentsImpl(context.dataFlowInfo, call)
+
+        )
+        contextForVariable.trace.record(
+            ComposeWritableSlices.IGNORE_COMPOSABLE_INTERCEPTION,
+            call,
+            true
+        )
+        return computeTasksAndResolveCall<CallableDescriptor>(
+            contextForVariable,
+            name,
+            TracingStrategy.EMPTY,
+            NewResolutionOldInference.ResolutionKind.Variable
+        )
+    }
+
+    private fun CallResolver.resolveComposer(context: BasicCallResolutionContext):
+            ResolvedCall<CallableDescriptor>? {
+
+        // The composer is currently resolved as whatever is currently in scope with the name "composer".
+        val resolvedComposer = resolveVar(KtxNameConventions.COMPOSER, context)
+
+        if (!resolvedComposer.isSuccess) {
+            return null
+        }
+
+        return resolvedComposer.resultingCall
+    }
+
+    private fun KotlinType.isAbstract(): Boolean {
+        val modality = (constructor.declarationDescriptor as? ClassDescriptor)?.modality
+        return modality == Modality.ABSTRACT || modality == Modality.SEALED
+    }
 }
