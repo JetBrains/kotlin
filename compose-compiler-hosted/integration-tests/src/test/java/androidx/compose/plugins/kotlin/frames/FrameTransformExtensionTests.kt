@@ -226,7 +226,6 @@ class FrameTransformExtensionTests : AbstractCodegenTest() {
           var strVal get() = myStrVal; set(value) { myStrVal = value }
         }
 
-
         class Test {
           fun test() {
             val instance = frame { MyModel() }

@@ -16,15 +16,14 @@
 
 package androidx.compose.plugins.kotlin
 
+import androidx.compose.plugins.kotlin.analysis.ComposeDefaultErrorMessages
+import androidx.compose.plugins.kotlin.analysis.ComposeErrors
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.psi.KtFunction
-import androidx.compose.plugins.kotlin.analysis.ComposeDefaultErrorMessages
-import androidx.compose.plugins.kotlin.analysis.ComposeErrors
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtTryExpression

@@ -99,7 +99,7 @@ abstract class AbstractCompilerTest : TestCase() {
     }
 
     protected open fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        ComposeComponentRegistrar().registerProjectComponents(
+        ComposeComponentRegistrar.registerProjectExtensions(
             environment.project as MockProject,
             environment.configuration
         )

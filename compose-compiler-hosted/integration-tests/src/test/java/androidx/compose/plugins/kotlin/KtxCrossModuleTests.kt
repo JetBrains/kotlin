@@ -47,6 +47,120 @@ import java.net.URLClassLoader
 class KtxCrossModuleTests : AbstractCodegenTest() {
 
     @Test
+    fun testCrossModule_SimpleCompositionxxx(): Unit = ensureSetup {
+        val tvId = 29
+
+        compose(
+            "TestF", mapOf(
+                "library module" to mapOf(
+                    "my/test/lib/InternalComp.kt" to """
+                    package my.test.lib
+
+                import androidx.compose.Composable
+                import androidx.compose.composer
+                import androidx.compose.Emittable
+                import androidx.ui.core.DataNode
+                import androidx.ui.core.ParentData
+                import androidx.ui.core.ParentDataKey
+
+                class Bar
+
+                class XDataNodeKey<T>(val name: String)
+
+                class XDataNode<T>(var key: XDataNodeKey<T>, var value: T) : Emittable {
+                    override fun emitInsertAt(index: Int, instance: Emittable) {
+
+                    }
+
+                    override fun emitRemoveAt(index: Int, count: Int) {
+
+                    }
+
+                    override fun emitMove(from: Int, to: Int, count: Int) {
+
+                    }
+                }
+
+                val Key1 = XDataNodeKey<String>("foo")
+                val Key2 = XDataNodeKey<Bar>("bar")
+
+        class ViewEmitWrapper(context: android.content.Context) : android.view.View(context) {
+            var emittable: Emittable? = null
+        }
+
+        class EmitViewWrapper : Emittable {
+            var view: android.view.View? = null
+            override fun emitInsertAt(index: Int, instance: Emittable) {
+
+            }
+
+            override fun emitRemoveAt(index: Int, count: Int) {
+
+            }
+
+            override fun emitMove(from: Int, to: Int, count: Int) {
+
+            }
+        }
+
+                 """
+                ),
+                "Main" to mapOf(
+                    "my/test/app/Main.kt" to """
+                   package my.test.app
+
+                   import android.widget.*
+                   import androidx.compose.*
+                   import my.test.lib.*
+
+                   var doRecompose: () -> Unit = {}
+
+                   class TestF {
+                       @Composable
+                       fun compose() {
+
+                       composer.registerAdapter { parent, child ->
+                            when (parent) {
+                                is android.view.ViewGroup -> when (child) {
+                                    is android.view.View -> child
+                                    is Emittable -> ViewEmitWrapper(composer.composer.context).apply { 
+                                    emittable = child }
+                                    else -> null
+                                }
+                                is Emittable -> when (child) {
+                                    is android.view.View -> EmitViewWrapper().apply { view = child }
+                                    is Emittable -> child
+                                    else -> null
+                                }
+                                else -> null
+                            }
+                        }
+
+                         Recompose { recompose ->
+                           Foo()
+                         }
+                       }
+
+                       fun advance() {
+                         doRecompose()
+                       }
+                   }
+
+                   @Composable
+                   fun Foo() {
+                    val s = ""
+                    val b = Bar()
+                    XDataNode(key = Key2, value = b)
+                   }
+                """
+                )
+            )
+        ).then { activity ->
+            assert(true)
+        }
+    }
+
+    @Test
     fun testCrossModule_SimpleComposition(): Unit = ensureSetup {
         val tvId = 29
 
@@ -58,11 +172,8 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                     import androidx.compose.*
 
-                    class InternalComp(@Children var block: () -> Unit) : Component() {
-
-                      override fun compose() {
-                        <block />
-                      }
+                    @Composable fun InternalComp(block: @Composable() () -> Unit) {
+                        block()
                     }
                  """
                 ),
@@ -80,10 +191,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                    class TestF {
                        @Composable
                        fun compose() {
-                         <Recompose> recompose ->
+                         Recompose { recompose ->
                            doRecompose = recompose
-                           <Foo bar />
-                         </Recompose>
+                           Foo(bar)
+                         }
                        }
 
                        fun advance() {
@@ -94,9 +205,9 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                    @Composable
                    fun Foo(bar: Int) {
-                     <InternalComp>
-                       <TextView text="${'$'}bar" id=$tvId />
-                     </InternalComp>
+                     InternalComp {
+                       TextView(text="${'$'}bar", id=$tvId)
+                     }
                    }
                 """
                 )
@@ -126,10 +237,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                        @Composable
                        fun ComponentFunction(name: String, age: Int) {
-                         <LinearLayout>
-                           <TextView text=name id=$tvName />
-                           <TextView text="${'$'}age" id=$tvAge />
-                         </LinearLayout>
+                         LinearLayout {
+                           TextView(text=name, id=$tvName)
+                           TextView(text="${'$'}age", id=$tvAge)
+                         }
                        }
                  """
                 ),
@@ -148,10 +259,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                        class TestF {
                            @Composable
                            fun compose() {
-                             <Recompose> recompose ->
+                             Recompose { recompose ->
                                doRecompose = recompose
-                               <Foo name age />
-                             </Recompose>
+                               Foo(name=name, age=age)
+                             }
                            }
 
                            fun advance() {
@@ -163,7 +274,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                        @Composable
                        fun Foo(name: String, age: Int) {
-                         <ComponentFunction name age />
+                         ComponentFunction(name, age)
                        }
                     """
                 )
@@ -198,10 +309,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                        object Container {
                            @Composable
                            fun ComponentFunction(name: String, age: Int) {
-                             <LinearLayout>
-                               <TextView text=name id=$tvName />
-                               <TextView text="${'$'}age" id=$tvAge />
-                             </LinearLayout>
+                             LinearLayout {
+                               TextView(text=name, id=$tvName)
+                               TextView(text="${'$'}age", id=$tvAge)
+                             }
                            }
                        }
                  """
@@ -221,10 +332,10 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                        class TestF {
                            @Composable
                            fun compose() {
-                             <Recompose> recompose ->
+                             Recompose { recompose ->
                                doRecompose = recompose
-                               <Foo name age />
-                             </Recompose>
+                               Foo(name, age)
+                             }
                            }
 
                            fun advance() {
@@ -236,7 +347,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                        @Composable
                        fun Foo(name: String, age: Int) {
-                         <Container.ComponentFunction name age />
+                         Container.ComponentFunction(name, age)
                        }
                     """
                 )
@@ -251,157 +362,6 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             assertEquals(PRESIDENT_NAME_16, name.text)
             val age = activity.findViewById(tvAge) as TextView
             assertEquals("$PRESIDENT_AGE_16", age.text)
-        }
-    }
-
-    @Test
-    fun testCrossModule_ConstructorProperties(): Unit = ensureSetup {
-        val tvId = 29
-
-        compose(
-            "TestF", mapOf(
-                "library module" to mapOf(
-                    "my/test/lib/MyComponent.kt" to """
-                    package my.test.lib
-
-                    import androidx.compose.*
-
-                    class MyComponent(
-                        var a: Int,
-                        var b: String,
-                        @Children var children: (a: Int, b: String)->Unit
-                    ) : Component() {
-
-                      override fun compose() {
-                        <children a b />
-                      }
-                    }
-                 """
-                ),
-                "Main" to mapOf(
-                    "my/test/app/Main.kt" to """
-                   package my.test.app
-
-                   import android.widget.*
-                   import androidx.compose.*
-                   import my.test.lib.*
-
-                   var bar = 0
-                   var doRecompose: () -> Unit = {}
-
-                   class TestF {
-                       @Composable
-                       fun compose() {
-                         <Recompose> recompose ->
-                           doRecompose = recompose
-                           <Foo bar />
-                         </Recompose>
-                       }
-
-                       fun advance() {
-                         bar++
-                         doRecompose()
-                       }
-                   }
-
-                   @Composable
-                   fun Foo(bar: Int) {
-                     <MyComponent b="SomeValue" a=bar> c, d ->
-                       <TextView text="${'$'}d: ${'$'}c" id=$tvId />
-                     </MyComponent>
-                   }
-                """
-                )
-            )
-        ).then { activity ->
-            val tv = activity.findViewById(tvId) as TextView
-            assertEquals("SomeValue: 0", tv.text)
-        }.then { activity ->
-            val tv = activity.findViewById(tvId) as TextView
-            assertEquals("SomeValue: 1", tv.text)
-        }
-    }
-
-    @Test
-    fun testCrossModule_ConstructorParameters(): Unit = ensureSetup {
-        val tvId = 29
-
-        compose(
-            "TestF", mapOf(
-                "library module" to mapOf(
-                    "my/test/lib/MyComponent.kt" to """
-                    package my.test.lib
-
-                    import androidx.compose.*
-
-                    class MyComponent(
-                      a: Int,
-                      b: String,
-                      @Children var children: (a: Int, b: String)->Unit
-                    ) : Component() {
-                      val aValue = a
-                      val bValue = b
-
-                      override fun compose() {
-                        <children a=aValue b=bValue />
-                      }
-                    }
-                 """
-                ),
-                "Main" to mapOf(
-                    "my/test/app/Main.kt" to """
-                   package my.test.app
-
-                   import android.widget.*
-                   import androidx.compose.*
-                   import my.test.lib.*
-
-                   var bar = 0
-                   var doRecompose: () -> Unit = {}
-
-                    class MyComponent(
-                      a: Int,
-                      b: String,
-                      @Children var children: (a: Int, b: String)->Unit
-                    ) : Component() {
-                      val aValue = a
-                      val bValue = b
-
-                      override fun compose() {
-                        <children a=aValue b=bValue />
-                      }
-                    }
-
-                   class TestF {
-                       @Composable
-                       fun compose() {
-                         <Recompose> recompose ->
-                           doRecompose = recompose
-                           <Foo bar />
-                         </Recompose>
-                       }
-
-                       fun advance() {
-                         bar++
-                         doRecompose()
-                       }
-                   }
-
-                   @Composable
-                   fun Foo(bar: Int) {
-                     <MyComponent b="SomeValue" a=bar> c, d ->
-                       <TextView text="${'$'}d: ${'$'}c" id=$tvId />
-                     </MyComponent>
-                   }
-                """
-                )
-            )
-        ).then { activity ->
-            val tv = activity.findViewById(tvId) as TextView
-            assertEquals("SomeValue: 0", tv.text)
-        }.then { activity ->
-            val tv = activity.findViewById(tvId) as TextView
-            assertEquals("SomeValue: 1", tv.text)
         }
     }
 

@@ -16,15 +16,24 @@
 
 package androidx.compose.plugins.kotlin
 
-import org.junit.runners.model.FrameworkMethod
-import org.robolectric.RobolectricTestRunner
-import org.robolectric.internal.bytecode.InstrumentationConfiguration
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.KotlinType
 
-class ComposeRobolectricTestRunner(testClass: Class<*>) : RobolectricTestRunner(testClass) {
-    override fun createClassLoaderConfig(method: FrameworkMethod?): InstrumentationConfiguration {
-        val builder = InstrumentationConfiguration.Builder(super.createClassLoaderConfig(method))
-        builder.doNotInstrumentPackage("androidx.compose")
-        builder.doNotInstrumentPackage("androidx.ui")
-        return builder.build()
-    }
+class ValidatedAssignment(
+    val validationType: ValidationType,
+    val validationCall: ResolvedCall<*>?,
+    val uncheckedValidationCall: ResolvedCall<*>?,
+    val assignment: ResolvedCall<*>?,
+    val assignmentLambda: FunctionDescriptor?, // needed?
+    val type: KotlinType,
+    val name: String,
+    val descriptor: DeclarationDescriptor
+)
+
+enum class ValidationType {
+    CHANGED,
+    SET,
+    UPDATE
 }

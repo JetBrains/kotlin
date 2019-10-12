@@ -37,6 +37,7 @@ dependencies {
 
     testImplementation(KOTLIN_COMPOSE_STDLIB)
     testImplementation(project(":compose:compose-runtime"))
+    testImplementation(project(":ui:ui-framework"))
     testImplementation(project(":ui:ui-android-view-non-ir"))
     testImplementation(project(":compose:compose-compiler-hosted"))
 }

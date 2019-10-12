@@ -39,6 +39,25 @@ private val noParameters = { emptyMap<String, String>() }
 class FcsCodegenTests : AbstractCodegenTest() {
 
     @Test
+    fun testForDevelopment(): Unit = ensureSetup {
+        codegen(
+            """
+            import androidx.compose.*
+
+            @Composable
+            fun bar() {
+
+            }
+
+            @Composable
+            fun foo() {
+                TextView(text="Hello World")
+            }
+            """
+        )
+    }
+
+    @Test
     fun testSimpleFunctionResolution(): Unit = ensureSetup {
         compose(
             """
@@ -180,7 +199,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
 
                 @Composable
-                fun FancyBox2(@Children children: @Composable() ()->Unit) {
+                fun FancyBox2(children: @Composable() ()->Unit) {
                     children()
                 }
             """,
@@ -564,7 +583,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         compose(
             """
                 @Composable
-                fun Foo(x: Double, @Children children: Double.() -> Unit) {
+                fun Foo(x: Double, children: @Composable Double.() -> Unit) {
                   x.children()
                 }
             """,
@@ -1304,40 +1323,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }
     }
 
-    // @Test
-    fun testCGNSimpleCall3(): Unit = ensureSetup {
-        val tvId = 258
-        var text = "Hello, world!"
-        var someInt = 456
-
-        compose(
-            """
-                @Stateful
-                class SomeClassoawid(var x: String) {
-                    @Composable
-                    operator fun invoke(y: Int) {
-                        TextView(text="${"$"}x ${"$"}y", id=$tvId)
-                    }
-                }
-            """,
-            { mapOf("text" to text, "someInt" to someInt) },
-            """
-                SomeClassoawid(x=text, y=someInt)
-            """
-        ).then { activity ->
-            val textView = activity.findViewById(tvId) as TextView
-
-            assertEquals("Hello, world! 456", textView.text)
-
-            text = "Other value"
-            someInt = 123
-        }.then { activity ->
-            val textView = activity.findViewById(tvId) as TextView
-
-            assertEquals("Other value 123", textView.text)
-        }
-    }
-
     @Test
     fun testCGNCallWithChildren(): Unit = ensureSetup {
         val tvId = 258
@@ -1346,7 +1331,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         compose(
             """
                 @Composable
-                fun Block(@Children children: () -> Unit) {
+                fun Block(children: @Composable() () -> Unit) {
                     children()
                 }
             """,
@@ -1733,7 +1718,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             """
             var called = 0
 
-            class TestContainer(@Children var children: @Composable() ()->Unit): Component() {
+            class TestContainer(var children: @Composable() ()->Unit): Component() {
               override fun compose() {
                 LinearLayout {
                   children()
@@ -1768,7 +1753,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
         compose(
             """
-            class ClassComponent(@Children private val callback: () -> Unit) : Component() {
+            class ClassComponent(private val callback: @Composable() () -> Unit) : Component() {
                 override fun compose() {
                     callback()
                 }
@@ -1907,7 +1892,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         compose(
             """
                 @Composable
-                fun Foo(a: Int = 42, b: String, @Children c: () -> Unit) {
+                fun Foo(a: Int = 42, b: String, c: @Composable() () -> Unit) {
                     c()
                     TextView(text=b, id=a)
                 }
@@ -1960,13 +1945,11 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 override fun toString(): String = ""
             }
 
-
             class Canvas2() {
                 fun drawPath(path: Path3) {
                     System.out.println(""+path)
                 }
             }
-
 
             class Path3(private val internalPath: android.graphics.Path = android.graphics.Path()) {
             }
@@ -2075,7 +2058,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
 
                 @Composable
-                fun Box(@Children children: ()->Unit) {
+                fun Box(children: @Composable() ()->Unit) {
                     LinearLayout(orientation=LinearLayout.VERTICAL) {
                         children()
                     }
@@ -2175,7 +2158,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 @Composable
                 fun DefineAction(
                     onAction: Action = Action(param = 1) {},
-                    @Children children: ()->Unit
+                    children: @Composable() ()->Unit
                  ) { }
             """
         )
@@ -2244,7 +2227,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             }
 
             @Composable
-            fun Main(v: ValueHolder) {
+            fun Main(v: ValueHolder, n: NotStable) {
               TestSkipping(a=1, b=1f, c=2.0, d=NotStable(), e=v)
             }
         """, {
@@ -2254,7 +2237,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }, """
             output = outerOutput
             val v = ValueHolder(0)
-            Main(v)
+            Main(v, NotStable())
         """).then {
             // Expect that all the methods are called in order
             assertEquals(
@@ -2296,7 +2279,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             fun log(msg: String) { output.add(msg) }
 
             @Composable
-            fun Container(@Children children: () -> Unit) {
+            fun Container(children: @Composable() () -> Unit) {
               log("Container")
               children()
             }

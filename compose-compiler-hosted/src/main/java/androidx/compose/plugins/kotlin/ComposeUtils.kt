@@ -16,7 +16,19 @@
 
 package androidx.compose.plugins.kotlin
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtLambdaArgument
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 object ComposeUtils {
 
@@ -38,4 +50,24 @@ object ComposeUtils {
         // use !lower to capture non-alpha chars
         return name.startsWith("set") && name.length > 3 && !name[3].isLowerCase()
     }
+
+    fun isComposeComponent(descriptor: DeclarationDescriptor): Boolean {
+        if (descriptor !is ClassDescriptor) return false
+        val baseComponentDescriptor =
+            descriptor.module.findClassAcrossModuleDependencies(
+                ClassId.topLevel(
+                    FqName(ComposeUtils.generateComposePackageName() + ".Component")
+                )
+            ) ?: return false
+        return descriptor.isSubclassOf(baseComponentDescriptor)
+    }
+}
+
+fun KtFunction.isEmitInline(bindingContext: BindingContext): Boolean {
+    if (this !is KtFunctionLiteral) return false
+    if (parent?.parent !is KtLambdaArgument) return false
+    val call = parent?.parent?.parent as? KtCallExpression
+    val resolvedCall = call?.getResolvedCall(bindingContext)
+    return resolvedCall != null &&
+            resolvedCall.candidateDescriptor is ComposableEmitDescriptor
 }

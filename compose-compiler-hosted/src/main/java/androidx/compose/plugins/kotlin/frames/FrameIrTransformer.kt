@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrKtxStatement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
@@ -628,10 +627,6 @@ fun IrElement.find(filter: (descriptor: IrElement) -> Boolean): Collection<IrEle
             if (filter(element)) elements.add(element)
             element.acceptChildren(this, null)
         }
-
-        override fun visitKtxStatement(expression: IrKtxStatement, data: Nothing?) {
-            expression.acceptChildren(this, null)
-        }
     }, null)
     return elements
 }
@@ -647,11 +642,6 @@ fun IrElement.anyChild(filter: (descriptor: IrElement) -> Boolean): Boolean {
                     element.acceptChildren(this, null)
                 }
             }
-        }
-
-        override fun visitKtxStatement(expression: IrKtxStatement, data: Nothing?) {
-            if (!result)
-                expression.acceptChildren(this, null)
         }
     }, null)
     return result

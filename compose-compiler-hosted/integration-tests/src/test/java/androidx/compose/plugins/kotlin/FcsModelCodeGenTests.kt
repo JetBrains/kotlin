@@ -116,7 +116,6 @@ class FcsModelCodeGenTests : AbstractCodegenTest() {
               }
             }
 
-
             """, { mapOf("name" to name, "age" to age) }, """
                fcs_president.name = name
                fcs_president.age = age

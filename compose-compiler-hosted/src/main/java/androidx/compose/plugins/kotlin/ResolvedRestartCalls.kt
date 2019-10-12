@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.compose.plugins.kotlin.analysis
+package androidx.compose.plugins.kotlin
 
-import androidx.compose.plugins.kotlin.AbstractComposeDiagnosticsTest
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-class ChildrenAnnotationTest : AbstractComposeDiagnosticsTest() {
-
-    fun testReportChildrenOnWrongParameter() {
-        doTest("""
-            import androidx.compose.*;
-
-            @Composable fun MyWidget(<!CHILDREN_MUST_BE_LAST!>@Children children: ()->Unit<!>, value: Int) {
-                System.out.println(""+children+value)
-            }
-        """)
-    }
-}
+class ResolvedRestartCalls(
+    val composer: ResolvedCall<*>,
+    val startRestartGroup: ResolvedCall<*>,
+    val endRestartGroup: ResolvedCall<*>
+)

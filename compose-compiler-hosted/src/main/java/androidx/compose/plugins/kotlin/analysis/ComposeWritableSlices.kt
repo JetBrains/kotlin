@@ -1,11 +1,11 @@
 package androidx.compose.plugins.kotlin.analysis
 
 import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
-import androidx.compose.plugins.kotlin.ComposerEmitMetadata
-import androidx.compose.plugins.kotlin.ResolvedKtxElementCall
+import androidx.compose.plugins.kotlin.ComposerMetadata
 import androidx.compose.plugins.kotlin.ResolvedRestartCalls
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.Call
@@ -20,13 +20,6 @@ import org.jetbrains.kotlin.types.KotlinType
 object ComposeWritableSlices {
     val COMPOSABLE_ANALYSIS: WritableSlice<KtElement, ComposableAnnotationChecker.Composability> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
-    val RESOLVED_KTX_CALL: WritableSlice<KtElement, ResolvedKtxElementCall> =
-        BasicWritableSlice(RewritePolicy.DO_NOTHING)
-    val ATTRIBUTE_KEY_REFERENCE_TARGET:
-            WritableSlice<KtReferenceExpression, Set<DeclarationDescriptor>> =
-        BasicWritableSlice(REWRITES_ALLOWED)
-    val FAILED_CANDIDATES: WritableSlice<KtElement, Collection<ResolvedCall<FunctionDescriptor>>> =
-        BasicWritableSlice(REWRITES_ALLOWED)
     val FCS_CALL_WITHIN_COMPOSABLE: WritableSlice<KtElement, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val FCS_RESOLVEDCALL_COMPOSABLE: WritableSlice<KtElement, Boolean> =
@@ -39,9 +32,11 @@ object ComposeWritableSlices {
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val RESTART_CALLS: WritableSlice<SimpleFunctionDescriptor, ResolvedRestartCalls> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
-    val COMPOSER_EMIT_METADATA: WritableSlice<VariableDescriptor, ComposerEmitMetadata> =
+    val COMPOSER_METADATA: WritableSlice<VariableDescriptor, ComposerMetadata> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val IGNORE_COMPOSABLE_INTERCEPTION: WritableSlice<Call, Boolean> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val IS_EMIT_CHILDREN_PARAMETER: WritableSlice<ParameterDescriptor, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
 
