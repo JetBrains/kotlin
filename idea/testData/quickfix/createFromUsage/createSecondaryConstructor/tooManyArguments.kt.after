@@ -1,0 +1,9 @@
+// "Create secondary constructor" "true"
+
+class CtorPrimary(val f1: Int) {
+    constructor(f1: Int, i: Int) : this(f1)
+}
+
+fun construct() {
+    val v6 = CtorPrimary(1, 2)
+}

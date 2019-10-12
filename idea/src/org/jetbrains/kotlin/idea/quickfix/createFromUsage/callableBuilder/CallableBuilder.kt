@@ -582,12 +582,20 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 if (declarationInPlace is KtSecondaryConstructor) {
                     val containingClass = declarationInPlace.containingClassOrObject!!
-                    if (containingClass.primaryConstructorParameters.isNotEmpty()) {
+                    val primaryConstructorParameters = containingClass.primaryConstructorParameters
+                    if (primaryConstructorParameters.isNotEmpty()) {
                         declarationInPlace.replaceImplicitDelegationCallWithExplicit(true)
                     } else if ((receiverClassDescriptor as ClassDescriptor).getSuperClassOrAny().constructors
                             .all { it.valueParameters.isNotEmpty() }
                     ) {
                         declarationInPlace.replaceImplicitDelegationCallWithExplicit(false)
+                    }
+                    if (declarationInPlace.valueParameters.size > primaryConstructorParameters.size) {
+                        val delegationCallArgumentList = declarationInPlace.getDelegationCall().valueArgumentList
+                        primaryConstructorParameters.forEach {
+                            val name = it.name
+                            if (name != null) delegationCallArgumentList?.addArgument(psiFactory.createArgument(name))
+                        }
                     }
                 }
 
