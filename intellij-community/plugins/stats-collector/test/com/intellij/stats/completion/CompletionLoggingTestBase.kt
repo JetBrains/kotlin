@@ -44,7 +44,7 @@ abstract class CompletionLoggingTestBase : LightFixtureCompletionTestCase() {
         trackedEvents.add(event)
       }
     }
-    return CompletionFileLogger("installation-uid", "completion-uid", eventLogger)
+    return CompletionFileLogger("installation-uid", "completion-uid", "0", eventLogger)
   }
 
   override fun setUp() {

@@ -20,6 +20,7 @@ class CompletionStartedEvent(
         @JvmField var userFactors: Map<String, String>,
         @JvmField var contextFactors: Map<String, String>,
         @JvmField var queryLength: Int,
+        bucket: String,
         timestamp: Long)
 
     : LookupStateLogData(
@@ -27,6 +28,7 @@ class CompletionStartedEvent(
         sessionId,
         Action.COMPLETION_STARTED,
         lookupState,
+        bucket,
         timestamp)
 {
 

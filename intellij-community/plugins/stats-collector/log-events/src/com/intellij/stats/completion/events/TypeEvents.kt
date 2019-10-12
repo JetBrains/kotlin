@@ -4,7 +4,6 @@ package com.intellij.stats.completion.events
 
 import com.intellij.stats.completion.Action
 import com.intellij.stats.completion.LogEventVisitor
-import com.intellij.stats.completion.LookupEntryInfo
 import com.intellij.stats.completion.LookupState
 
 
@@ -13,8 +12,9 @@ class BackspaceEvent(
         sessionId: String,
         lookupState: LookupState,
         @JvmField var queryLength: Int,
+        bucket: String,
         timestamp: Long)
-    : LookupStateLogData(userId, sessionId, Action.BACKSPACE, lookupState, timestamp) {
+    : LookupStateLogData(userId, sessionId, Action.BACKSPACE, lookupState, bucket, timestamp) {
 
     override fun accept(visitor: LogEventVisitor) {
         visitor.visit(this)
@@ -27,8 +27,9 @@ class TypeEvent(
         sessionId: String,
         lookupState: LookupState,
         @JvmField var queryLength: Int,
+        bucket: String,
         timestamp: Long)
-    : LookupStateLogData(userId, sessionId, Action.TYPE, lookupState, timestamp) {
+    : LookupStateLogData(userId, sessionId, Action.TYPE, lookupState, bucket, timestamp) {
 
     override fun accept(visitor: LogEventVisitor) {
         visitor.visit(this)

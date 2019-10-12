@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.completion
 
+import com.intellij.internal.statistic.eventLog.EventLogConfiguration
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.service
 import com.intellij.stats.logger.ClientSessionValidator
@@ -18,7 +19,7 @@ class CompletionFileLoggerProvider : Disposable, CompletionLoggerProvider() {
   override fun newCompletionLogger(): CompletionLogger {
     val installationUID = service<InstallationIdProvider>().installationId()
     val completionUID = UUID.randomUUID().toString()
-    return CompletionFileLogger(installationUID.shortedUUID(), completionUID.shortedUUID(), eventLogger)
+    return CompletionFileLogger(installationUID.shortedUUID(), completionUID.shortedUUID(), "-1", eventLogger)
   }
 }
 

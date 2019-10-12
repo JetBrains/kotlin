@@ -10,6 +10,7 @@ import com.intellij.stats.storage.factors.LookupStorage
 
 class CompletionFileLogger(private val installationUID: String,
                            private val completionUID: String,
+                           private val bucket: String,
                            private val eventLogger: CompletionEventLogger) : CompletionLogger() {
 
     private val stateManager = LookupStateManager()
@@ -29,13 +30,13 @@ class CompletionFileLogger(private val installationUID: String,
         val contextFactors = lookupStorage?.contextFactors?: emptyMap()
 
         val event = CompletionStartedEvent(
-                ideVersion, pluginVersion, mlRankingVersion,
-                installationUID, completionUID,
-                language?.displayName,
-                isExperimentPerformed, experimentVersion,
-                state, userFactors, contextFactors,
-                queryLength = lookup.prefixLength(),
-                timestamp = lookupStorage?.startedTimestamp ?: timestamp)
+          ideVersion, pluginVersion, mlRankingVersion,
+          installationUID, completionUID,
+          language?.displayName,
+          isExperimentPerformed, experimentVersion,
+          state, userFactors, contextFactors,
+          queryLength = lookup.prefixLength(), bucket = bucket,
+          timestamp = lookupStorage?.startedTimestamp ?: timestamp)
 
         val shownTimestamp = CompletionUtil.getShownTimestamp(lookup)
         if (shownTimestamp != null) {
@@ -50,13 +51,13 @@ class CompletionFileLogger(private val installationUID: String,
     }
 
     override fun customMessage(message: String, timestamp: Long) {
-        val event = CustomMessageEvent(installationUID, completionUID, message, timestamp)
+        val event = CustomMessageEvent(installationUID, completionUID, message, bucket, timestamp)
         eventLogger.log(event)
     }
 
     override fun afterCharTyped(c: Char, lookup: LookupImpl, timestamp: Long) {
         val state = stateManager.update(lookup, true)
-        val event = TypeEvent(installationUID, completionUID, state, lookup.prefixLength(), timestamp)
+        val event = TypeEvent(installationUID, completionUID, state, lookup.prefixLength(), bucket, timestamp)
         event.fillCompletionParameters()
 
         eventLogger.log(event)
@@ -64,7 +65,7 @@ class CompletionFileLogger(private val installationUID: String,
 
     override fun downPressed(lookup: LookupImpl, timestamp: Long) {
         val state = stateManager.update(lookup, false)
-        val event = DownPressedEvent(installationUID, completionUID, state, timestamp)
+        val event = DownPressedEvent(installationUID, completionUID, state, bucket, timestamp)
         event.fillCompletionParameters()
 
         eventLogger.log(event)
@@ -72,21 +73,21 @@ class CompletionFileLogger(private val installationUID: String,
 
     override fun upPressed(lookup: LookupImpl, timestamp: Long) {
         val state = stateManager.update(lookup, false)
-        val event = UpPressedEvent(installationUID, completionUID, state, timestamp)
+        val event = UpPressedEvent(installationUID, completionUID, state, bucket, timestamp)
         event.fillCompletionParameters()
 
         eventLogger.log(event)
     }
 
     override fun completionCancelled(performance: Map<String, Long>, timestamp: Long) {
-        val event = CompletionCancelledEvent(installationUID, completionUID, performance, timestamp)
+        val event = CompletionCancelledEvent(installationUID, completionUID, performance, bucket, timestamp)
         eventLogger.log(event)
     }
 
     override fun itemSelectedByTyping(lookup: LookupImpl, performance: Map<String, Long>, timestamp: Long) {
         val state = stateManager.update(lookup, true)
 
-        val event = TypedSelectEvent(installationUID, completionUID, state, state.selectedId, performance, timestamp)
+        val event = TypedSelectEvent(installationUID, completionUID, state, state.selectedId, performance, bucket, timestamp)
         event.fillCompletionParameters()
 
         eventLogger.log(event)
@@ -94,7 +95,7 @@ class CompletionFileLogger(private val installationUID: String,
 
     override fun itemSelectedCompletionFinished(lookup: LookupImpl, performance: Map<String, Long>, timestamp: Long) {
         val state = stateManager.update(lookup, true)
-        val event = ExplicitSelectEvent(installationUID, completionUID, state, state.selectedId, performance, timestamp)
+        val event = ExplicitSelectEvent(installationUID, completionUID, state, state.selectedId, performance, bucket, timestamp)
         event.fillCompletionParameters()
 
         eventLogger.log(event)
@@ -103,7 +104,7 @@ class CompletionFileLogger(private val installationUID: String,
     override fun afterBackspacePressed(lookup: LookupImpl, timestamp: Long) {
         val state = stateManager.update(lookup, true)
 
-        val event = BackspaceEvent(installationUID, completionUID, state, lookup.prefixLength(), timestamp)
+        val event = BackspaceEvent(installationUID, completionUID, state, lookup.prefixLength(), bucket, timestamp)
         event.fillCompletionParameters()
 
         eventLogger.log(event)

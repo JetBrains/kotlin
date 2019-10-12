@@ -12,8 +12,9 @@ class UpPressedEvent(
         userId: String,
         sessionId: String,
         lookupState: LookupState,
+        bucket: String,
         timestamp: Long)
-    : LookupStateLogData(userId, sessionId, Action.UP, lookupState, timestamp) {
+    : LookupStateLogData(userId, sessionId, Action.UP, lookupState, bucket, timestamp) {
 
     override fun accept(visitor: LogEventVisitor) {
         visitor.visit(this)
@@ -25,8 +26,9 @@ class DownPressedEvent(
         userId: String,
         sessionId: String,
         lookupState: LookupState,
+        bucket: String,
         timestamp: Long)
-    : LookupStateLogData(userId, sessionId, Action.DOWN, lookupState, timestamp) {
+    : LookupStateLogData(userId, sessionId, Action.DOWN, lookupState, bucket, timestamp) {
 
     override fun accept(visitor: LogEventVisitor) {
         visitor.visit(this)
