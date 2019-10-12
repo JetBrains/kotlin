@@ -19,7 +19,8 @@ class CompletionFileLoggerProvider : Disposable, CompletionLoggerProvider() {
   override fun newCompletionLogger(): CompletionLogger {
     val installationUID = service<InstallationIdProvider>().installationId()
     val completionUID = UUID.randomUUID().toString()
-    return CompletionFileLogger(installationUID.shortedUUID(), completionUID.shortedUUID(), "-1", eventLogger)
+    val bucket = EventLogConfiguration.bucket.toString()
+    return CompletionFileLogger(installationUID.shortedUUID(), completionUID.shortedUUID(), bucket, eventLogger)
   }
 }
 
