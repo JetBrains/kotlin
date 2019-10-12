@@ -3,7 +3,6 @@ package com.intellij.stats.completion
 
 
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.completion.tracker.LookupElementPositionTracker
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.stats.completion.events.*
 import com.intellij.stats.storage.factors.LookupStorage
@@ -87,9 +86,7 @@ class CompletionFileLogger(private val installationUID: String,
     override fun itemSelectedByTyping(lookup: LookupImpl, performance: Map<String, Long>, timestamp: Long) {
         val state = stateManager.update(lookup, true)
 
-        val history = lookup.itemsHistory()
-
-        val event = TypedSelectEvent(installationUID, completionUID, state, state.selectedId, history, performance, timestamp)
+        val event = TypedSelectEvent(installationUID, completionUID, state, state.selectedId, performance, timestamp)
         event.fillCompletionParameters()
 
         eventLogger.log(event)
@@ -97,17 +94,10 @@ class CompletionFileLogger(private val installationUID: String,
 
     override fun itemSelectedCompletionFinished(lookup: LookupImpl, performance: Map<String, Long>, timestamp: Long) {
         val state = stateManager.update(lookup, true)
-        val history = lookup.itemsHistory()
-
-        val event = ExplicitSelectEvent(installationUID, completionUID, state, state.selectedId, history, performance, timestamp)
+        val event = ExplicitSelectEvent(installationUID, completionUID, state, state.selectedId, performance, timestamp)
         event.fillCompletionParameters()
 
         eventLogger.log(event)
-    }
-
-    private fun LookupImpl.itemsHistory(): Map<Int, ElementPositionHistory> {
-        val positionTracker = LookupElementPositionTracker.getInstance()
-        return items.map { stateManager.getElementId(it)!! to ElementPositionHistory(positionTracker.positionsHistory(this, it)) }.toMap()
     }
 
     override fun afterBackspacePressed(lookup: LookupImpl, timestamp: Long) {

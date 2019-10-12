@@ -52,9 +52,6 @@ object Fixtures {
       "sorting" to 300L,
       "log" to 35L
     )
-
-    val history = mapOf(10 to ElementPositionHistory(listOf(StagePosition(0, 1))))
-
 }
 
 class EventSerializeDeserializeTest {
@@ -102,7 +99,7 @@ class EventSerializeDeserializeTest {
     @Test
     fun `item selected by typing event`() {
         val event = TypedSelectEvent(Fixtures.userId, "xx", Fixtures.initialState.withoutNewItems(),
-                                     0, Fixtures.history, Fixtures.performance, System.currentTimeMillis())
+                                     0, Fixtures.performance, System.currentTimeMillis())
         serializeDeserializeAndCheck(event)
     }
     
@@ -110,7 +107,7 @@ class EventSerializeDeserializeTest {
     fun `explicit select event`() {
         val state = Fixtures.initialState.withoutNewItems()
         val event = ExplicitSelectEvent(Fixtures.userId, "xx", state, 0,
-                                        Fixtures.history, Fixtures.performance, System.currentTimeMillis())
+                                        Fixtures.performance, System.currentTimeMillis())
         serializeDeserializeAndCheck(event)
     }
 

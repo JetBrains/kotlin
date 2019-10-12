@@ -2,7 +2,6 @@
 package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.completion.tracker.PositionTrackingListener
 import com.intellij.reporting.isUnitTestMode
 import com.intellij.stats.personalization.UserFactorDescriptions
 import com.intellij.stats.personalization.UserFactorStorage
@@ -47,8 +46,5 @@ class CompletionFactorsInitializer : LookupTracker() {
 
     lookup.setPrefixChangeListener(SessionPrefixTracker(lookupStorage.sessionFactors))
     lookup.addLookupListener(LookupSelectionTracker(lookupStorage))
-
-    val shownTimesTracker = PositionTrackingListener(lookup)
-    lookup.setPrefixChangeListener(shownTimesTracker)
   }
 }

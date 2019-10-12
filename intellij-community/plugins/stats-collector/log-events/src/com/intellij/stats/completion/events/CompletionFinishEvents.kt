@@ -18,7 +18,6 @@ class ExplicitSelectEvent(
         sessionId: String,
         lookupState: LookupState,
         @JvmField var selectedId: Int,
-        @JvmField var history: Map<Int, ElementPositionHistory>,
         @JvmField var performance: Map<String, Long>,
         timestamp: Long
 ) : LookupStateLogData(
@@ -41,7 +40,6 @@ class TypedSelectEvent(
         sessionId: String,
         lookupState: LookupState,
         @JvmField var selectedId: Int,
-        @JvmField var history: Map<Int, ElementPositionHistory>,
         @JvmField var performance: Map<String, Long>,
         timestamp: Long
 ) : LookupStateLogData(userId, sessionId, Action.TYPED_SELECT, lookupState, timestamp) {

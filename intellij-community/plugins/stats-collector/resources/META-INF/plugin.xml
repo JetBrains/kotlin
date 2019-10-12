@@ -53,9 +53,6 @@
 
     <codeCompletionConfigurable provider="com.intellij.completion.settings.MLRankingConfigurableProvider"/>
 
-    <applicationService serviceInterface="com.intellij.completion.tracker.LookupElementPositionTracker"
-                        serviceImplementation="com.intellij.completion.tracker.UserDataLookupElementPositionTracker"/>
-
     <applicationService serviceImplementation="com.intellij.stats.personalization.impl.ApplicationUserFactorStorage"/>
 
     <applicationService serviceInterface="com.intellij.stats.personalization.UserFactorsManager"
