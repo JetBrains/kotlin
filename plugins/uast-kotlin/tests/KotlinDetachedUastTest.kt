@@ -133,6 +133,20 @@ class KotlinDetachedUastTest : KotlinLightCodeInsightFixtureTestCase() {
 
     }
 
+    fun testAnonymousInnerClassWithIDELightClasses() {
+
+        val detachedClass = myFixture.configureByText("MyClass.kt","""
+            class MyClass() {
+              private val obj = object : MyClass() {}
+            }
+        """)
+
+        val anonymousClass = detachedClass.findUElementByTextFromPsi<UObjectLiteralExpression>("object : MyClass() {}")
+            .let { uObjectLiteralExpression -> uObjectLiteralExpression.declaration }
+        TestCase.assertEquals("UClass (name = null), UObjectLiteralExpression, UField (name = obj), UClass (name = MyClass), UFile (package = )", generateSequence<UElement>(anonymousClass, { it.uastParent }).joinToString { it.asLogString() })
+
+    }
+
 }
 
 fun <T> T?.orFail(msg: String): T = this ?: error(msg)
