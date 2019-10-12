@@ -4,7 +4,6 @@ package com.intellij.stats.completion.events
 
 import com.intellij.stats.completion.Action
 import com.intellij.stats.completion.LogEventVisitor
-import com.intellij.stats.completion.LookupEntryInfo
 import com.intellij.stats.completion.LookupState
 
 

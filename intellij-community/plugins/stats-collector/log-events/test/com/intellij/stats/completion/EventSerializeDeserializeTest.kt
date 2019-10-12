@@ -31,9 +31,9 @@ object Fixtures {
     private val relevance = mapOf(Pair("sort", 1.0.toString()), Pair("proximity", 2.0.toString()))
     
     val lookupList = listOf(
-            LookupEntryInfo(0, 5, relevance),
-            LookupEntryInfo(1, 9, relevance),
-            LookupEntryInfo(2, 7, relevance)
+      LookupEntryInfo(0, 5, 0, relevance),
+      LookupEntryInfo(1, 9, 1, relevance),
+      LookupEntryInfo(2, 7, 2, relevance)
     )
 
     val initialState = LookupState(lookupList.map { it.id }, lookupList, emptyList(), 0)

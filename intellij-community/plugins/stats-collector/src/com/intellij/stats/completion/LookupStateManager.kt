@@ -23,6 +23,7 @@ import com.intellij.stats.storage.factors.LookupStorage
 class LookupStateManager {
     private val elementToId = mutableMapOf<String, Int>()
     private val idToEntryInfo = mutableMapOf<Int, LookupEntryInfo>()
+    private val lookupStringToHash = mutableMapOf<String, Int>()
 
     fun update(lookup: LookupImpl, factorsUpdated: Boolean): LookupState {
         val ids = mutableListOf<Int>()
@@ -74,7 +75,9 @@ class LookupStateManager {
     private fun List<LookupElement>.toLookupInfos(lookup: LookupImpl, elementToId: Map<LookupElement, Int>): List<LookupEntryInfo> {
         val item2relevance = calculateRelevance(lookup, this)
         return this.map { lookupElement ->
-            LookupEntryInfo(elementToId.getValue(lookupElement), lookupElement.lookupString.length, item2relevance.getValue(lookupElement))
+            val lookupString = lookupElement.lookupString
+            val itemHash = getLookupStringHash(lookupString)
+            LookupEntryInfo(elementToId.getValue(lookupElement), lookupString.length, itemHash, item2relevance.getValue(lookupElement))
         }
     }
 
@@ -107,5 +110,9 @@ class LookupStateManager {
         }
 
         return result
+    }
+
+    private fun getLookupStringHash(lookupString: String): Int {
+        return lookupStringToHash.computeIfAbsent(lookupString) { lookupStringToHash.size }
     }
 }
