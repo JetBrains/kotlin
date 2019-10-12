@@ -43,7 +43,7 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
     protected open fun convertParent(): UElement? {
         @Suppress("DEPRECATION")
         val psi = psi //TODO: `psi` is deprecated but it seems that it couldn't be simply replaced for this case
-        var parent = psi?.parent ?: psi?.containingFile
+        var parent = psi?.parent ?: sourcePsi?.parent ?: psi?.containingFile
 
         if (psi is KtLightClassForLocalDeclaration) {
             val originParent = psi.kotlinOrigin.parent
