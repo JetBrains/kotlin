@@ -65,6 +65,8 @@
     <weigher key="completion" id="ml_weigh" implementationClass="com.intellij.completion.ml.MLCompletionWeigher" order="last"/>
     <completion.contributor language="any" order="first" id="ml_context"
                             implementationClass="com.intellij.stats.completion.ContextFeaturesContributor"/>
+    <completion.contributor language="any" id="ml_diff" order="after ml_context"
+                            implementationClass="com.intellij.stats.completion.ItemsDiffCustomizingContributor"/>
 
     <registryKey key="completion.stats.exit.experiment" defaultValue="false"
                  description="Do not perform A/B experiment for code completion on this installation"/>

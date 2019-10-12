@@ -5,8 +5,6 @@ package com.intellij.completion.sorting
 import com.intellij.codeInsight.completion.CompletionFinalSorter
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementDecorator
-import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.lang.Language
@@ -14,12 +12,11 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.stats.PerformanceTracker
+import com.intellij.stats.completion.ItemsDiffCustomizingContributor
 import com.intellij.stats.completion.RelevanceUtil
 import com.intellij.stats.completion.prefixLength
 import com.intellij.stats.personalization.session.SessionFactorsUtils
 import com.intellij.stats.storage.factors.MutableLookupStorage
-import com.intellij.ui.JBColor
-import java.awt.Color
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -164,13 +161,10 @@ class MLSorter : CompletionFinalSorter() {
 
   private fun Iterable<LookupElement>.addDiagnosticsIfNeeded(positionsBefore: Map<LookupElement, Int>): Iterable<LookupElement> {
     if (Registry.`is`("completion.stats.show.ml.ranking.diff")) {
-      return this.mapIndexed { position, element ->
+      this.forEachIndexed { position, element ->
         val diff = position - positionsBefore.getValue(element)
         if (diff != 0) {
-          MyMovedLookupElement(element, diff)
-        }
-        else {
-          element
+          element.putUserData(ItemsDiffCustomizingContributor.DIFF_KEY, diff)
         }
       }
     }
@@ -220,26 +214,6 @@ class MLSorter : CompletionFinalSorter() {
 
     fun finished(performanceTracker: PerformanceTracker) {
       performanceTracker.itemsScored(itemsScored, timeSpent / 1000)
-    }
-  }
-}
-
-private class MyMovedLookupElement(delegate: LookupElement,
-                                   private val diff: Int) : LookupElementDecorator<LookupElement>(delegate) {
-  private companion object {
-    val ML_RANK_DIFF_GREEN_COLOR = JBColor(JBColor.GREEN.darker(), JBColor.GREEN.brighter())
-  }
-
-  override fun renderElement(presentation: LookupElementPresentation) {
-    super.renderElement(presentation)
-    if (!presentation.isReal) return
-    val text = if (diff < 0) " ↑${-diff} " else " ↓$diff "
-    val color: Color = if (diff < 0) ML_RANK_DIFF_GREEN_COLOR else JBColor.RED
-
-    val fragments = presentation.tailFragments
-    presentation.setTailText(text, color)
-    for (fragment in fragments) {
-      presentation.appendTailText(fragment.text, fragment.isGrayed)
     }
   }
 }
