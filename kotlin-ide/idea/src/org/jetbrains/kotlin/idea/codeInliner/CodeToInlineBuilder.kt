@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
@@ -175,10 +176,12 @@ class CodeToInlineBuilder(
             }
 
             if (expression.getReceiverExpression() == null) {
-                if (target is ValueParameterDescriptor && target.containingDeclaration == targetCallable) {
-                    expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
-                } else if (target is TypeParameterDescriptor && target.containingDeclaration == targetCallable) {
-                    expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
+                (targetCallable.safeAs<ImportedFromObjectCallableDescriptor<*>>()?.callableFromObject ?: targetCallable).let {
+                    if (target is ValueParameterDescriptor && target.containingDeclaration == it) {
+                        expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
+                    } else if (target is TypeParameterDescriptor && target.containingDeclaration == it) {
+                        expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
+                    }
                 }
 
                 if (targetCallable !is ImportedFromObjectCallableDescriptor<*>) {

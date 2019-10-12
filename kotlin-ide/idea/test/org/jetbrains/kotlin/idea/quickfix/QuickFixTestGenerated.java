@@ -5559,6 +5559,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/deprecatedSymbolUsage/importedObjectFunction.kt");
         }
 
+        @TestMetadata("importedObjectFunctionAddReceiver.kt")
+        public void testImportedObjectFunctionAddReceiver() throws Exception {
+            runTest("testData/quickfix/deprecatedSymbolUsage/importedObjectFunctionAddReceiver.kt");
+        }
+
         @TestMetadata("importedObjectProperty.kt")
         public void testImportedObjectProperty() throws Exception {
             runTest("testData/quickfix/deprecatedSymbolUsage/importedObjectProperty.kt");
