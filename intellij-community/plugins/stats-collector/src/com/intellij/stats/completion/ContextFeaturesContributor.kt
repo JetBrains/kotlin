@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.stats.storage.factors.MutableLookupStorage
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 
 class ContextFeaturesContributor : CompletionContributor() {
   override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
@@ -46,7 +47,7 @@ class ContextFeaturesContributor : CompletionContributor() {
         }
 
         val timeSpent = System.nanoTime() - start
-        storage.performanceTracker.contextFeaturesCalculated(providerName, timeSpent / 1000)
+        storage.performanceTracker.contextFeaturesCalculated(providerName, TimeUnit.NANOSECONDS.toMillis(timeSpent))
       }
 
       ContextFeaturesStorage.setContextFeatures(file, contextFeatures, context)

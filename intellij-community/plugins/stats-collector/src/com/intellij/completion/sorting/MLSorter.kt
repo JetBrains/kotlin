@@ -18,6 +18,7 @@ import com.intellij.stats.completion.prefixLength
 import com.intellij.stats.personalization.session.SessionFactorsUtils
 import com.intellij.stats.storage.factors.MutableLookupStorage
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 @Suppress("DEPRECATION")
 class MLSorterFactory : CompletionFinalSorter.Factory {
@@ -213,7 +214,7 @@ class MLSorter : CompletionFinalSorter() {
     }
 
     fun finished(performanceTracker: PerformanceTracker) {
-      performanceTracker.itemsScored(itemsScored, timeSpent / 1000)
+      performanceTracker.itemsScored(itemsScored, TimeUnit.NANOSECONDS.toMillis(timeSpent))
     }
   }
 }
