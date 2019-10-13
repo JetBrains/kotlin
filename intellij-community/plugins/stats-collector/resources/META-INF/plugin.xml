@@ -68,6 +68,9 @@
     <completion.contributor language="any" id="ml_diff" order="after ml_context"
                             implementationClass="com.intellij.stats.completion.ItemsDiffCustomizingContributor"/>
 
+    <registryKey key="completion.ml.reorder.only.top.items" defaultValue="true"
+                 description="Reorder only a few items on the top in the lookup to preserve a proper grouping for the items below"/>
+
     <registryKey key="completion.stats.exit.experiment" defaultValue="false"
                  description="Do not perform A/B experiment for code completion on this installation"/>
 

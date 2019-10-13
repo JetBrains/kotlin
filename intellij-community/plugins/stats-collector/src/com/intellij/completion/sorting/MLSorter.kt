@@ -27,8 +27,13 @@ class MLSorterFactory : CompletionFinalSorter.Factory {
 
 
 class MLSorter : CompletionFinalSorter() {
-  private val LOG = Logger.getInstance("#com.intellij.completion.sorting.MLSorter")
+  private companion object {
+    private val LOG = Logger.getInstance("#com.intellij.completion.sorting.MLSorter")
+    private const val REORDER_ONLY_TOP_K = 7
+  }
+
   private val cachedScore: MutableMap<LookupElement, ItemRankInfo> = IdentityHashMap()
+  private val reorderOnlyTopItems: Boolean = Registry.`is`("completion.ml.reorder.only.top.items", true)
 
   override fun getRelevanceObjects(items: MutableIterable<LookupElement>): Map<LookupElement, List<Pair<String, Any>>> {
     if (cachedScore.isEmpty()) {
@@ -143,7 +148,8 @@ class MLSorter : CompletionFinalSorter() {
     }
 
     if (mlScoresUsed) {
-      return items.sortedByDescending { element2score.getValue(it) }.addDiagnosticsIfNeeded(positionsBefore)
+      val topItemsCount = if (reorderOnlyTopItems) REORDER_ONLY_TOP_K else Int.MAX_VALUE
+      return items.reorderByMLScores(element2score, topItemsCount).addDiagnosticsIfNeeded(positionsBefore, topItemsCount)
     }
 
     return items
@@ -164,12 +170,21 @@ class MLSorter : CompletionFinalSorter() {
     additionalMap["invocation_count"] = parameters.invocationCount
   }
 
-  private fun Iterable<LookupElement>.addDiagnosticsIfNeeded(positionsBefore: Map<LookupElement, Int>): Iterable<LookupElement> {
+  private fun Iterable<LookupElement>.reorderByMLScores(element2score: Map<LookupElement, Double?>, toReorder: Int): Iterable<LookupElement> {
+    val result = this.sortedByDescending { element2score.getValue(it) }.take(toReorder).toCollection(linkedSetOf())
+    result.addAll(this)
+    return result
+  }
+
+  private fun Iterable<LookupElement>.addDiagnosticsIfNeeded(positionsBefore: Map<LookupElement, Int>, reordered: Int): Iterable<LookupElement> {
     if (Registry.`is`("completion.stats.show.ml.ranking.diff")) {
       this.forEachIndexed { position, element ->
-        val diff = position - positionsBefore.getValue(element)
-        if (diff != 0) {
-          element.putUserData(ItemsDiffCustomizingContributor.DIFF_KEY, diff)
+        val before = positionsBefore.getValue(element)
+        if (before < reordered || position < reordered) {
+          val diff = position - before
+          if (diff != 0) {
+            element.putUserData(ItemsDiffCustomizingContributor.DIFF_KEY, diff)
+          }
         }
       }
     }
