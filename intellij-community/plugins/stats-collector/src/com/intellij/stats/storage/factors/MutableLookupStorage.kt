@@ -19,7 +19,7 @@ import com.intellij.stats.personalization.session.LookupSessionFactorsStorage
 class MutableLookupStorage(
   override val startedTimestamp: Long,
   override val language: Language,
-  override val model: RankingModelWrapper)
+  override val model: RankingModelWrapper?)
   : LookupStorage {
   private var _userFactors: Map<String, String>? = null
   override val userFactors: Map<String, String>

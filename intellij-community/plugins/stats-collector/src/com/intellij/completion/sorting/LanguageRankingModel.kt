@@ -5,7 +5,7 @@ import com.intellij.internal.ml.DecisionFunction
 
 class LanguageRankingModel(private val model: DecisionFunction) : RankingModelWrapper {
   private val featuresArrayBuilder = CachingFeaturesArrayBuilder(model.featuresOrder)
-  override fun shouldSort(features: RankingFeatures): Boolean {
+  override fun canScore(features: RankingFeatures): Boolean {
     return model.requiredFeatures.all { features.hasFeature(it) }
            && model.getUnknownFeatures(features.relevanceFeatures()).isEmpty()
   }

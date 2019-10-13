@@ -15,9 +15,9 @@ object RankingSupport {
   private val EP_NAME: ExtensionPointName<RankingModelProvider> = ExtensionPointName("com.intellij.completion.ml.model")
   private val LOG = logger<RankingSupport>()
 
-  fun getRankingModel(language: Language): RankingModelWrapper {
+  fun getRankingModel(language: Language): RankingModelWrapper? {
     val provider = findProviderForLanguage(language)
-    return if (provider != null && shouldSortByML(provider)) tryGetModel(provider) else RankingModelWrapper.DISABLED
+    return if (provider != null && shouldSortByML(provider)) tryGetModel(provider) else null
   }
 
   fun availableLanguages(): List<String> {
@@ -34,13 +34,13 @@ object RankingSupport {
     return suitableProviders.singleOrNull()
   }
 
-  private fun tryGetModel(provider: RankingModelProvider): RankingModelWrapper {
+  private fun tryGetModel(provider: RankingModelProvider): RankingModelWrapper? {
     try {
       return LanguageRankingModel(provider.model)
     }
     catch (e: Exception) {
       LOG.error("Could not create ranking model '${provider.displayNameInSettings}'", e)
-      return RankingModelWrapper.DISABLED
+      return null
     }
   }
 

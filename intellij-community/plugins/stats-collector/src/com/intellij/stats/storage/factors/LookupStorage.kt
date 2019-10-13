@@ -12,7 +12,7 @@ interface LookupStorage {
     fun get(lookup: LookupImpl): LookupStorage? = MutableLookupStorage.get(lookup)
   }
 
-  val model: RankingModelWrapper
+  val model: RankingModelWrapper?
   val language: Language
   val startedTimestamp: Long
   val sessionFactors: LookupSessionFactorsStorage

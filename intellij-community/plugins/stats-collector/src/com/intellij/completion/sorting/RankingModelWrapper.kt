@@ -4,17 +4,7 @@ package com.intellij.completion.sorting
 interface RankingModelWrapper {
   fun version(): String?
 
-  fun shouldSort(features: RankingFeatures): Boolean
+  fun canScore(features: RankingFeatures): Boolean
 
   fun score(features: RankingFeatures): Double?
-
-  companion object {
-    val DISABLED = object : RankingModelWrapper {
-      override fun shouldSort(features: RankingFeatures): Boolean = false
-
-      override fun score(features: RankingFeatures): Double? = null
-
-      override fun version(): String? = null
-    }
-  }
 }

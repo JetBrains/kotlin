@@ -116,8 +116,11 @@ class MLSorter : CompletionFinalSorter() {
       val (relevance, additional) = RelevanceUtil.asRelevanceMaps(relevanceObjects.getOrDefault(element, emptyList()))
       SessionFactorsUtils.saveElementFactorsTo(additional, lookupStorage, element)
       calculateAdditionalFeaturesTo(additional, element, prefixLength, position, parameters)
-      val score = tracker.measure {
-        calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), prefixLength)
+      val score = when {
+        rankingModel != null -> tracker.measure {
+          calculateElementScore(rankingModel, element, position, features.withElementFeatures(relevance, additional), prefixLength)
+        }
+        else -> null
       }
       element2score[element] = score
 
@@ -188,7 +191,7 @@ class MLSorter : CompletionFinalSorter() {
                                     position: Int,
                                     features: RankingFeatures,
                                     prefixLength: Int): Double? {
-    val mlRank: Double? = if (ranker.shouldSort(features)) ranker.score(features) else null
+    val mlRank: Double? = if (ranker.canScore(features)) ranker.score(features) else null
     val info = ItemRankInfo(position, mlRank, prefixLength)
     cachedScore[element] = info
 
@@ -213,7 +216,9 @@ class MLSorter : CompletionFinalSorter() {
     }
 
     fun finished(performanceTracker: PerformanceTracker) {
-      performanceTracker.itemsScored(itemsScored, TimeUnit.NANOSECONDS.toMillis(timeSpent))
+      if (itemsScored != 0) {
+        performanceTracker.itemsScored(itemsScored, TimeUnit.NANOSECONDS.toMillis(timeSpent))
+      }
     }
   }
 }
