@@ -36,7 +36,7 @@ object Fixtures {
       LookupEntryInfo(2, 7, 2, relevance)
     )
 
-    val initialState = LookupState(lookupList.map { it.id }, lookupList, emptyList(), 0)
+    val initialState = LookupState(lookupList.map { it.id }, lookupList, emptyList(), 0, emptyMap())
 
     val userFactors: Map<String, String> = mapOf(
       "avgTimeToType" to "0.6",

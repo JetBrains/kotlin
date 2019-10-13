@@ -14,7 +14,7 @@ class MutableElementStorage : LookupElementStorage {
     if (score != null) {
       factors[FeatureUtils.ML_RANK] = score
     }
-    factors.putAll(sessionFactors.lastUsedLookupFactors())
+
     this.factors = factors
   }
 

@@ -74,8 +74,8 @@ class MLSorter : CompletionFinalSorter() {
 
     val positionsBefore = elements.withIndex().associate { it.value to it.index }
 
-    fillCachedScores(element2score, elements, prefixLength)
-    val itemsForScoring = elements.filter { it !in element2score }
+    tryFillFromCache(element2score, elements, prefixLength)
+    val itemsForScoring = if (element2score.size == elements.size) emptyList() else elements
     calculateScores(element2score, itemsForScoring, positionsBefore,
                     prefixLength, lookup, lookupStorage, parameters)
     val finalRanking = sortByMlScores(elements, element2score, positionsBefore, lookupStorage.language)
@@ -85,14 +85,13 @@ class MLSorter : CompletionFinalSorter() {
     return finalRanking
   }
 
-  private fun fillCachedScores(element2score: MutableMap<LookupElement, Double?>,
+  private fun tryFillFromCache(element2score: MutableMap<LookupElement, Double?>,
                                items: List<LookupElement>,
                                prefixLength: Int) {
     for ((position, element) in items.withIndex()) {
       val cachedInfo = getCachedRankInfo(element, prefixLength, position)
-      if (cachedInfo != null) {
-        element2score[element] = cachedInfo.mlRank
-      }
+      if (cachedInfo == null) return
+      element2score[element] = cachedInfo.mlRank
     }
   }
 

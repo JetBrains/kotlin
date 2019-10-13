@@ -5,6 +5,8 @@ class LookupSessionFactorsStorage(val startedTimestamp: Long) {
   private var visibleSize: Int = -1
   private var sortingCount: Int = 0
 
+  private var factors: Map<String, String> = emptyMap()
+
   val queryTracker: CompletionQueryTrackerImpl = CompletionQueryTrackerImpl(startedTimestamp)
   fun getVisibleSize(): Int = visibleSize
   fun getSortingOrder(): Int = sortingCount
@@ -12,5 +14,13 @@ class LookupSessionFactorsStorage(val startedTimestamp: Long) {
   fun fireSortingPerforming(visibleSize: Int) {
     this.visibleSize = visibleSize
     sortingCount += 1
+  }
+
+  fun updateLastUsedFactors(lookupFactors: Map<String, Any>) {
+    factors = lookupFactors.mapValues { it.value.toString() }
+  }
+
+  fun getLastUsedCommonFactors(): Map<String, String> {
+    return factors
   }
 }

@@ -10,7 +10,7 @@ object LogEventFixtures {
     private const val sessionId = "session-id-xxx"
     private const val userId = "user-id-xxx"
     private const val bucket = "0"
-    private val EMPTY_STATE = LookupState(emptyList(), emptyList(), emptyList(), 0)
+    private val EMPTY_STATE = lookupState(emptyList(), -1)
     private val TEST_STATE = Fixtures.initialState
     private val NO_NEW_ITEMS_TEST_STATE = TEST_STATE.withoutNewItems()
 
@@ -19,9 +19,9 @@ object LogEventFixtures {
 
     val completion_cancelled = CompletionCancelledEvent(userId, sessionId, Fixtures.performance, bucket, System.currentTimeMillis())
 
-    val type_event_current_pos_0_left_ids_1_2 = TypeEvent(userId, sessionId, LookupState(listOf(1, 2), emptyList(), emptyList(), 0), 1, bucket, System.currentTimeMillis())
-    val type_event_current_pos_0_left_ids_0_1 = TypeEvent(userId, sessionId, LookupState(listOf(0, 1), emptyList(), emptyList(), 0), 1, bucket, System.currentTimeMillis())
-    val type_event_current_pos_0_left_id_0 = TypeEvent(userId, sessionId, LookupState(listOf(0), emptyList(), emptyList(), 0), 1, bucket, System.currentTimeMillis())
+    val type_event_current_pos_0_left_ids_1_2 = TypeEvent(userId, sessionId, lookupState(listOf(1, 2), 0), 1, bucket, System.currentTimeMillis())
+    val type_event_current_pos_0_left_ids_0_1 = TypeEvent(userId, sessionId, lookupState(listOf(0, 1), 0), 1, bucket, System.currentTimeMillis())
+    val type_event_current_pos_0_left_id_0 = TypeEvent(userId, sessionId, lookupState(listOf(0), 0), 1, bucket, System.currentTimeMillis())
 
     val up_pressed_new_pos_0 = UpPressedEvent(userId, sessionId, EMPTY_STATE.withSelected(0), bucket, System.currentTimeMillis())
     val up_pressed_new_pos_1 = UpPressedEvent(userId, sessionId, EMPTY_STATE.withSelected(1), bucket, System.currentTimeMillis())
@@ -32,7 +32,7 @@ object LogEventFixtures {
     val down_event_new_pos_2 = DownPressedEvent(userId, sessionId, EMPTY_STATE.withSelected(2), bucket, System.currentTimeMillis())
 
     val backspace_event_pos_0_left_0_1_2 = BackspaceEvent(userId, sessionId, NO_NEW_ITEMS_TEST_STATE, 1, bucket, System.currentTimeMillis())
-    val backspace_event_pos_0_left_1 = BackspaceEvent(userId, sessionId, LookupState(listOf(1), emptyList(), emptyList(), 0), 0,
+    val backspace_event_pos_0_left_1 = BackspaceEvent(userId, sessionId, lookupState(listOf(1), 0), 0,
                                                       bucket, System.currentTimeMillis())
 
     val explicit_select_position_0 = ExplicitSelectEvent(userId, sessionId, EMPTY_STATE.withSelected(0), 0, Fixtures.performance,
@@ -45,4 +45,7 @@ object LogEventFixtures {
     val selected_by_typing_0 = TypedSelectEvent(userId, sessionId, EMPTY_STATE, 0, Fixtures.performance, bucket, System.currentTimeMillis())
     val selected_by_typing_1 = TypedSelectEvent(userId, sessionId, EMPTY_STATE, 1, Fixtures.performance, bucket, System.currentTimeMillis())
 
+    private fun lookupState(ids: List<Int>, selectedPosition: Int): LookupState {
+        return LookupState(ids, emptyList(), emptyList(), selectedPosition, emptyMap())
+    }
 }

@@ -39,9 +39,10 @@ object SessionFactorsUtils {
     val sessionFactors = lookupStorage.sessionFactors
     sessionFactors.fireSortingPerforming(items.size)
     val lookupFactors = calculateLookupFactors(sessionFactors)
+    lookupStorage.sessionFactors.updateLastUsedFactors(lookupFactors)
     items.forEachIndexed { i, item ->
       val storage = lookupStorage.getItemStorage(item.idString())
-      storage.sessionFactors.updateUsedSessionFactors(i, lookupFactors, calculateElementFactors(storage.sessionFactors))
+      storage.sessionFactors.updateUsedSessionFactors(i, calculateElementFactors(storage.sessionFactors))
     }
 
     return lookupFactors

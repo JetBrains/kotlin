@@ -29,7 +29,7 @@ import java.util.concurrent.LinkedBlockingQueue
  */
 class ValidationOnClientTest : HeavyPlatformTestCase() {
     private companion object {
-        val EMPTY_STATE = LookupState(emptyList(), emptyList(), emptyList(), 1)
+        val EMPTY_STATE = LookupState(emptyList(), emptyList(), emptyList(), 1, emptyMap())
         const val bucket = "0"
     }
 

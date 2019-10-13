@@ -5,12 +5,13 @@ package com.intellij.stats.completion
 data class LookupState(val ids: List<Int>,
                        val newItems: List<LookupEntryInfo>,
                        val itemsDiff: List<LookupEntryDiff>,
-                       val selectedPosition: Int)
+                       val selectedPosition: Int,
+                       val commonSessionFactors: Map<String, String>)
 
 fun LookupState.withSelected(position: Int): LookupState {
-    return LookupState(ids, newItems, itemsDiff, position)
+    return LookupState(ids, newItems, itemsDiff, position, commonSessionFactors)
 }
 
 fun LookupState.withoutNewItems(): LookupState {
-    return LookupState(ids, emptyList(), itemsDiff, selectedPosition)
+    return LookupState(ids, emptyList(), itemsDiff, selectedPosition, commonSessionFactors)
 }

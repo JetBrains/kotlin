@@ -48,6 +48,7 @@ abstract class LookupStateLogData(
     @JvmField var newCompletionListItems: List<LookupEntryInfo> = state.newItems
     @JvmField var itemsDiff: List<LookupEntryDiff> = state.itemsDiff
     @JvmField var currentPosition: Int = state.selectedPosition
+    @JvmField var commonSessionFactors: Map<String, String> = state.commonSessionFactors
 
     @JvmField var originalCompletionType: String = ""
     @JvmField var originalInvokationCount: Int = -1
