@@ -1,4 +1,4 @@
-open class ParentClass() {
+open  class ParentClass() {
     var x: Int = 5
     constructor(x: Int) : this() {
         this.x = x

@@ -8,10 +8,10 @@ fun box(): String  {
     val tmp: Int = 42
     val tmp0_subject: Int = myClass.prop
     when {
-        tmp0_subject == tmp ->  {
+        tmp0_subject == tmp -> {
             return "OK"
         }
-        else ->  {
+        else -> {
             return "FAIL"
         }
     }

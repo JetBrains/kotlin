@@ -11,6 +11,6 @@ fun box(): String  {
         "OK"
     }
     finally  {
-        "OK"
+        "FAIL"
     }
 }

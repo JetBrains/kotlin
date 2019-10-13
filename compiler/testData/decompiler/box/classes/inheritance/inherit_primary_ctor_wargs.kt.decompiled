@@ -1,4 +1,4 @@
-open class ParentClass(x: Int) {
+open  class ParentClass(x: Int) {
     val anotherX: Int = x
 }
 class ChildClass() : ParentClass(9) {

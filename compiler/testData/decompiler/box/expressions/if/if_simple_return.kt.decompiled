@@ -4,7 +4,7 @@ fun foo(): Int  {
 
 fun box(): String  {
     val f: Int = foo()
-    return     if (f == 40) {
+    return if (f == 40) {
         "FAIL"
     }
     else {

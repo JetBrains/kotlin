@@ -5,23 +5,17 @@
 - FAKE_OVERRIDE если из наследника залезаем в пропертю из родительского Primary конструктора
 
 ## TODO-лист
-Пятница:
+
+- Дженерики (https://kotlinlang.org/docs/reference/generics.html)
 - аргументы по-умолчанию в методах и конструкторах, именованые вызовы с перестановкой аргументов
 - кастомные геттер и сеттер
+- varargs
 - package, import, import as (https://kotlinlang.org/docs/reference/packages.html)
+- companion object, именованный object, top-level object
 
-Суббота:
 - функции высших порядков
 - typealias со стрелкой (для функций высших порядков)
 - inner, nested классы
-- companion object, именованный object, top-level object
-- рефакторинг
-
-Воскресенье:
-
-- Дженерики (https://kotlinlang.org/docs/reference/generics.html)
-
-
 - делегирование (https://kotlinlang.org/docs/reference/delegation.html, https://kotlinlang.org/docs/reference/delegated-properties.html)
 - Safe и Unsafe cast operator, Smart casts
 - Работа со scope functions - https://kotlinlang.org/docs/reference/scope-functions.html
@@ -38,7 +32,7 @@
 
 ## DONE
 
-
+- рефакторинг
 - секции инициализации
 - super и instance вызовы в конструкторе/методе
 - primary конструкторы

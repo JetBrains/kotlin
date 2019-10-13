@@ -1,5 +1,5 @@
-open class MyParentClass() {
-    open fun blaBlaBla(bla: Int): Int  {
+open  class MyParentClass() {
+    open  fun blaBlaBla(bla: Int): Int  {
         return bla * 2
     }
 
@@ -21,10 +21,10 @@ fun box(): String  {
     val res: Int = myChildClass.blaBlaBla(3)
     val tmp0_subject: Int = res
     when {
-        tmp0_subject == -12 ->  {
+        tmp0_subject == -12 -> {
             return "OK"
         }
-        else ->  {
+        else -> {
             return "FAIL"
         }
     }

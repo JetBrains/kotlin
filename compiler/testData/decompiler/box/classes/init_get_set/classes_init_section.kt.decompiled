@@ -9,10 +9,10 @@ class ClassWithInit() {
 fun box(): String  {
     val classWithInit: ClassWithInit = ClassWithInit()
     when {
-        (classWithInit.anotherProp == 42) || (classWithInit.someProp == "someProp") ->  {
+        classWithInit.anotherProp == 42 -> {
             return "OK"
         }
-        else ->  {
+        else -> {
             return "FAIL"
         }
     }

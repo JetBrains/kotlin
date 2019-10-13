@@ -6,13 +6,13 @@ fun box(): String  {
     val f: Int = bar()
     val tmp0_subject: Int = f
     when {
-        (tmp0_subject is kotlin.Int).not() ->  {
+        (tmp0_subject is Int).not() -> {
             return "FAIL"
         }
-        (tmp0_subject is kotlin.Int) ->  {
+        (tmp0_subject is Int) -> {
             return "OK"
         }
-        else ->  {
+        else -> {
             return "FAIL"
         }
     }

@@ -1,4 +1,4 @@
-open class ParentClass() {
+open  class ParentClass() {
 }
 class ChildClass() : ParentClass() {
 }
