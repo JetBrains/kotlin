@@ -52,9 +52,11 @@ object RelevanceUtil {
 
   private fun MutableMap<String, Any>.addProperties(prefix: String, properties: List<String>) {
     properties.forEach {
-      val key = "${prefix}_${it.substringBefore('=').trim()}"
-      val value = it.substringAfter('=').trim()
-      this[key] = value
+      if (it.isNotBlank()) {
+        val key = "${prefix}_${it.substringBefore('=').trim()}"
+        val value = it.substringAfter('=').trim()
+        this[key] = value
+      }
     }
   }
 }
