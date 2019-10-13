@@ -12,7 +12,7 @@ fun fn_answer(): Int  {
 }
 
 fun box(): String  {
-    val  answer: Int = fn_answer()
+    val answer: Int = fn_answer()
     if (answer == 42) {
         return "OK"
     }

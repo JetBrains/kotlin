@@ -63,14 +63,24 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes/ctor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("classes_instance_ctor.kt")
-            public void testClasses_instance_ctor() throws Exception {
-                runTest("compiler/testData/decompiler/box/classes/ctor/classes_instance_ctor.kt");
+            @TestMetadata("default_param_ctor.kt")
+            public void testDefault_param_ctor() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/ctor/default_param_ctor.kt");
             }
 
-            @TestMetadata("classes_instance_different_ctors.kt")
-            public void testClasses_instance_different_ctors() throws Exception {
-                runTest("compiler/testData/decompiler/box/classes/ctor/classes_instance_different_ctors.kt");
+            @TestMetadata("instance_ctor.kt")
+            public void testInstance_ctor() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/ctor/instance_ctor.kt");
+            }
+
+            @TestMetadata("instance_different_ctors.kt")
+            public void testInstance_different_ctors() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/ctor/instance_different_ctors.kt");
+            }
+
+            @TestMetadata("named_params_ctor.kt")
+            public void testNamed_params_ctor() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/ctor/named_params_ctor.kt");
             }
         }
 
@@ -86,9 +96,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes/delegating_calls"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("classes_super_this_calls.kt")
-            public void testClasses_super_this_calls() throws Exception {
-                runTest("compiler/testData/decompiler/box/classes/delegating_calls/classes_super_this_calls.kt");
+            @TestMetadata("super_this_calls.kt")
+            public void testSuper_this_calls() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/delegating_calls/super_this_calls.kt");
             }
         }
 
@@ -160,9 +170,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes/init_get_set"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("classes_init_section.kt")
-            public void testClasses_init_section() throws Exception {
-                runTest("compiler/testData/decompiler/box/classes/init_get_set/classes_init_section.kt");
+            @TestMetadata("init_section.kt")
+            public void testInit_section() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/init_get_set/init_section.kt");
             }
         }
 
@@ -178,14 +188,14 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes/interface_implement"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("classes_multiple_implement.kt")
-            public void testClasses_multiple_implement() throws Exception {
-                runTest("compiler/testData/decompiler/box/classes/interface_implement/classes_multiple_implement.kt");
+            @TestMetadata("multiple_implement.kt")
+            public void testMultiple_implement() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/interface_implement/multiple_implement.kt");
             }
 
-            @TestMetadata("classes_simple_implement.kt")
-            public void testClasses_simple_implement() throws Exception {
-                runTest("compiler/testData/decompiler/box/classes/interface_implement/classes_simple_implement.kt");
+            @TestMetadata("simple_implement.kt")
+            public void testSimple_implement() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/interface_implement/simple_implement.kt");
             }
         }
     }
@@ -366,6 +376,44 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             public void testSimpleOperators() throws Exception {
                 runTest("compiler/testData/decompiler/box/functions/simple/simpleOperators.kt");
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/decompiler/box/generics")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Generics extends AbstractIrDecompilerBlackBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInGenerics() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/generics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("custom_gen_class.kt")
+        public void testCustom_gen_class() throws Exception {
+            runTest("compiler/testData/decompiler/box/generics/custom_gen_class.kt");
+        }
+
+        @TestMetadata("decl_site_variance_in.kt")
+        public void testDecl_site_variance_in() throws Exception {
+            runTest("compiler/testData/decompiler/box/generics/decl_site_variance_in.kt");
+        }
+
+        @TestMetadata("decl_site_variance_out.kt")
+        public void testDecl_site_variance_out() throws Exception {
+            runTest("compiler/testData/decompiler/box/generics/decl_site_variance_out.kt");
+        }
+
+        @TestMetadata("invoke_generic_fun.kt")
+        public void testInvoke_generic_fun() throws Exception {
+            runTest("compiler/testData/decompiler/box/generics/invoke_generic_fun.kt");
+        }
+
+        @TestMetadata("upper_bound_fun.kt")
+        public void testUpper_bound_fun() throws Exception {
+            runTest("compiler/testData/decompiler/box/generics/upper_bound_fun.kt");
         }
     }
 }

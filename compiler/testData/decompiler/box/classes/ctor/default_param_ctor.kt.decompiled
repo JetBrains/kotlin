@@ -1,0 +1,12 @@
+class TestClass(val paramDef: String = "DEFAULT") {
+}
+fun box(): String  {
+    val testClassDef: TestClass = TestClass()
+    val testClassNonDef: TestClass = TestClass("NON_DEF")
+    if ((testClassDef.paramDef == testClassNonDef.paramDef).not()) {
+        return "OK"
+    }
+    else {
+        return "FAIL"
+    }
+}

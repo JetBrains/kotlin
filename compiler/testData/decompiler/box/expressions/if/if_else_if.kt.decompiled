@@ -5,13 +5,13 @@ fun foo(): Int  {
 fun box(): String  {
     val f: Int = foo()
     when {
-        f == 40 ->  {
+        f == 40 -> {
             return "FAIL"
         }
-        f == 41 ->  {
+        f == 41 -> {
             return "FAIL"
         }
-        else ->  {
+        else -> {
             return "OK"
         }
     }

@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 
@@ -53,7 +52,7 @@ const val INNER_TOKEN = "inner"
 const val INLINE_TOKEN = "inline"
 const val DATA_TOKEN = "data"
 const val EXTERNAL_TOKEN = "external"
-const val ANNOTATION_TOKEN = "annotation"
+const val ANNOTATION_TOKEN = "annotation class"
 const val ENUM_TOKEN = "enum"
 const val IF_TOKEN = "if"
 const val WHEN_TOKEN = "when"
@@ -141,9 +140,11 @@ internal fun IrCall.obtainBinaryOperatorCall(): String {
     return "$result ${getValueArgument(0)?.decompile()}"
 }
 
+//TODO разобраться когда тут вызов compareTo, а когда реальное сравнение
 internal fun IrCall.obtainComparisonOperatorCall(): String {
-    var result = getValueArgument(0)?.decompile()
-    result += " " + when (origin) {
+    val leftOperand = if (dispatchReceiver == null) dispatchReceiver else getValueArgument(0)
+    val rightOperand = if (dispatchReceiver != null) getValueArgument(0) else getValueArgument(1)
+    val sign = " " + when (origin) {
         EQEQ -> EQEQ_TOKEN
         GT -> GT_TOKEN
         LT -> LT_TOKEN
@@ -151,7 +152,7 @@ internal fun IrCall.obtainComparisonOperatorCall(): String {
         LTEQ -> LTEQ_TOKEN
         else -> TODO("Not implemented for ${origin.toString()} comparison operator")
     }
-    return "$result ${getValueArgument(1)?.decompile()}"
+    return "${leftOperand?.decompile()} $sign ${rightOperand?.decompile()}"
 }
 
 internal fun IrCall.obtainNotEqCall(): String =
@@ -209,13 +210,24 @@ internal fun IrCall.obtainGetPropertyCall(): String {
     val matchResult = regex.find(fullName)
     val propName = matchResult?.groups?.get(1)?.value
 
-    val primaryCtor = symbol.owner.parentAsClass
-    return if (!propName.isNullOrEmpty() && primaryCtor.isPrimaryCtorArg(propName)) {
-        propName
-    } else {
-        "${dispatchReceiver?.decompile()}.$propName"
-    }
+    return "${dispatchReceiver?.decompile()}.$propName" //if (!propName.isNullOrEmpty()) { && primaryCtor.isPrimaryCtorArg(propName)) {
+//        propName
+//    } else {
+//        "${dispatchReceiver?.decompile()}.$propName"
+//    }
 }
+
+internal fun IrConstructor.obtainValueParameterTypes(): String =
+    ArrayList<String>().apply {
+        valueParameters.mapTo(this) {
+            var argDefinition = "${"val ".takeIf { isPrimary }.orEmpty()}${it.name}: ${it.type.toKotlinType()}"
+            if (it.hasDefaultValue()) {
+                argDefinition += " = ${it.defaultValue!!.decompile()}"
+            }
+            argDefinition
+        }
+    }.joinToString(separator = ", ", prefix = "(", postfix = ")")
+
 
 internal fun IrFunction.obtainValueParameterTypes(): String =
     ArrayList<String>().apply {
@@ -278,7 +290,7 @@ internal fun IrClass.obtainDeclarationStr(): String =
         add(obtainVisibility())
         add(obtainModality())
         add(obtainClassFlags())
-        add(name())
+        add("${name()}${obtainTypeParameters()}")
     }.filterNot { it.isNullOrEmpty() }.joinToString(" ")
 
 internal fun IrClass.obtainClassFlags() =
@@ -324,11 +336,23 @@ internal fun IrValueParameter.obtainValueParameterFlags(): String =
         "noinline".takeIf { isNoinline }
     )
 
-internal fun IrFunction.obtainTypeParameters(): String =
+internal fun IrTypeParametersContainer.obtainTypeParameters(): String =
     if (typeParameters.isEmpty())
         ""
     else
-        typeParameters.joinToString(separator = ", ", prefix = "<", postfix = ">") { it.name() }
+        typeParameters.joinToString(separator = ", ", prefix = "<", postfix = ">") {
+            it.obtain()
+        }.trim()
+
+internal fun IrTypeParameter.obtain() = "${if (variance.label.isNotEmpty()) variance.label + " " else ""}${name()}"
+
+//TODO посмотреть где это используется (особенно с IrTypeAbbreviation)
+internal fun IrTypeArgument.obtain() =
+    when (this) {
+        is IrStarProjection -> "*"
+        is IrTypeProjection -> "${if (variance.label.isNotEmpty()) variance.label + " " else ""}${type.toKotlinType()}"
+        else -> throw AssertionError("Unexpected IrTypeArgument: $this")
+    }
 
 internal fun IrSimpleFunction.isOverriden() =
     overriddenSymbols.isNotEmpty() && overriddenSymbols.map { it.owner.name() }.contains(name())
@@ -341,8 +365,21 @@ internal fun IrSimpleFunction.obtainSimpleFunctionFlags(): String =
         "suspend".takeIf { isSuspend }
     )
 
-internal fun IrSimpleFunction.obtainCustomGetter() = ""
-internal fun IrSimpleFunction.obtainCustomSetter() = ""
+internal fun IrSimpleFunction.obtainCustomGetter() {
+    when (origin) {
+        IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR -> {
+        }
+        else -> TODO("Not yet implemented for custom getter!")
+    }
+}
+
+internal fun IrSimpleFunction.obtainCustomSetter() {
+    when (origin) {
+        IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR -> {
+        }
+        else -> TODO("Not yet implemented for custom setter!")
+    }
+}
 
 internal fun decompileAnnotations(element: IrAnnotationContainer) {
     //TODO правильно рендерить аннотации

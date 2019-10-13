@@ -1,4 +1,5 @@
-class TestClass(val paramDef: String = "DEFAULT")
+class TestClass(val paramDef: String = "DEFAULT") {
+}
 
 fun box(): String {
     val testClassDef = TestClass()

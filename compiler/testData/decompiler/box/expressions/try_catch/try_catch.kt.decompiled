@@ -3,7 +3,7 @@ fun fail(message: String): Nothing  {
 }
 
 fun box(): String  {
-    try  {
+    try {
         fail("Testing fail")
         return "FAIL"
     }

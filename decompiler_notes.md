@@ -6,18 +6,18 @@
 
 ## TODO-лист
 
-- Дженерики (https://kotlinlang.org/docs/reference/generics.html)
-- аргументы по-умолчанию в методах и конструкторах, именованые вызовы с перестановкой аргументов
 - кастомные геттер и сеттер
 - varargs
+- аргументы по-умолчанию в методах, именованые вызовы с перестановкой аргументов
+- продолжить дженерики (https://kotlinlang.org/docs/reference/generics.html)
+- inner, nested классы
 - package, import, import as (https://kotlinlang.org/docs/reference/packages.html)
 - companion object, именованный object, top-level object
 
 - функции высших порядков
 - typealias со стрелкой (для функций высших порядков)
-- inner, nested классы
 - делегирование (https://kotlinlang.org/docs/reference/delegation.html, https://kotlinlang.org/docs/reference/delegated-properties.html)
-- Safe и Unsafe cast operator, Smart casts
+- cast операторы
 - Работа со scope functions - https://kotlinlang.org/docs/reference/scope-functions.html
 
 ## LATER
@@ -32,6 +32,7 @@
 
 ## DONE
 
+- аргументы по-умолчанию в конструкторах, именованые вызовы с перестановкой аргументов
 - рефакторинг
 - секции инициализации
 - super и instance вызовы в конструкторе/методе

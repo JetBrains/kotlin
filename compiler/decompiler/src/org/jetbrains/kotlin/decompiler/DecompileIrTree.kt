@@ -56,33 +56,44 @@ class DecompileIrTreeVisitor(
 
     override fun visitClass(declaration: IrClass, data: String) {
         printer.print(declaration.obtainDeclarationStr())
-        if (declaration.kind == ClassKind.CLASS) {
-            declaration.primaryConstructor?.obtainPrimaryCtor()
-            withBracesLn {
-                declaration.declarations
-                    .filterIsInstance<IrProperty>()
-                    .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
-                    .decompileElements()
+        when (declaration.kind) {
+            ClassKind.CLASS -> {
+                declaration.primaryConstructor?.obtainPrimaryCtor()
+                withBracesLn {
+                    declaration.declarations
+                        .filterIsInstance<IrProperty>()
+                        .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+                        .decompileElements()
 
-                val secondaryCtors = declaration.constructors.filterNot { it.isPrimary }
-                secondaryCtors.forEach {
-                    it.obtainSecondaryCtor()
+                    val secondaryCtors = declaration.constructors.filterNot { it.isPrimary }
+                    secondaryCtors.forEach {
+                        it.obtainSecondaryCtor()
+                    }
+                    declaration.declarations
+                        .filterNot { it is IrConstructor || it is IrProperty }
+                        .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+                        .decompileElements()
                 }
-                declaration.declarations
-                    .filterNot { it is IrConstructor || it is IrProperty }
-                    .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
-                    .decompileElements()
             }
-        } else {
-            val implStr = declaration.obtainInheritance()
-            if (implStr.isNotEmpty()) {
-                printer.printWithNoIndent(", $implStr")
+            ClassKind.ANNOTATION_CLASS -> {
+                withBracesLn {
+                    declaration.declarations
+                        .filterNot { it is IrConstructor }
+                        .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+                        .decompileElements()
+                }
             }
-            withBracesLn {
-                declaration.declarations
-                    .filterNot { it is IrConstructor }
-                    .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
-                    .decompileElements()
+            else -> {
+                val implStr = declaration.obtainInheritance()
+                if (implStr.isNotEmpty()) {
+                    printer.printWithNoIndent(", $implStr")
+                }
+                withBracesLn {
+                    declaration.declarations
+                        .filterNot { it is IrConstructor }
+                        .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+                        .decompileElements()
+                }
             }
         }
     }
@@ -168,11 +179,15 @@ class DecompileIrTreeVisitor(
     override fun visitVariable(declaration: IrVariable, data: String) {
         var result = run {
             with(declaration) {
-                if (origin == IrDeclarationOrigin.CATCH_PARAMETER) {
-                    "${name()}: ${type.toKotlinType()}"
-                } else {
-                    "${obtainVariableFlags()} ${name()}: ${type.toKotlinType()} = " +
-                            "${initializer?.decompile()}"
+                when {
+                    origin == IrDeclarationOrigin.CATCH_PARAMETER -> "${name()}: ${type.toKotlinType()}"
+                    initializer is IrBlock -> {
+                        val variableDeclarations = (initializer as IrBlock).statements.filterIsInstance<IrVariable>()
+                        variableDeclarations.forEach { it.accept(this@DecompileIrTreeVisitor, "") }
+                        val lastStatement = (initializer as IrBlock).statements.last()
+                        "${obtainVariableFlags()} ${name()}: ${type.toKotlinType()} = ${lastStatement.decompile()}"
+                    }
+                    else -> "${obtainVariableFlags()} ${name()}: ${type.toKotlinType()} = ${initializer?.decompile()}"
                 }
             }
         }
@@ -360,8 +375,10 @@ class DecompileIrTreeVisitor(
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: String) {
         var result = expression.type.toKotlinType().toString()
+        var irConstructor = expression.symbol.owner
         //TODO добавить проверку наличия defaultValue и именнованных вызовов
         result += ((0 until expression.valueArgumentsCount).map { expression.getValueArgument(it)?.decompile() }
+            .filterNotNull()
             .joinToString(", ", "(", ")"))
         printer.printWithNoIndent(result)
     }
@@ -400,9 +417,9 @@ class DecompileIrTreeVisitor(
 
     override fun visitTry(aTry: IrTry, data: String) {
         if (data == RETURN_TOKEN) {
-            printer.printWithNoIndent("$TRY_TOKEN ")
+            printer.printWithNoIndent(TRY_TOKEN)
         } else {
-            printer.print("$TRY_TOKEN ")
+            printer.print(TRY_TOKEN)
         }
         withBracesLn {
             aTry.tryResult.accept(this, "")
@@ -425,14 +442,13 @@ class DecompileIrTreeVisitor(
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: String) {
         with(expression) {
-            printer.print(
-                when (operator) {
-                    IMPLICIT_COERCION_TO_UNIT -> argument.accept(this@DecompileIrTreeVisitor, "")
-                    INSTANCEOF -> "(${argument.decompile()} is ${typeOperand.toKotlinType()})"
-                    NOT_INSTANCEOF -> "${argument.decompile()} !is ${typeOperand.toKotlinType()}"
-                    else -> TODO("Unexpected type operator ${operator.toString()} ")
-                }
-            )
+            when (operator) {
+                IMPLICIT_COERCION_TO_UNIT -> printer.println(argument.decompile())
+                INSTANCEOF -> printer.print("(${argument.decompile()} is ${typeOperand.toKotlinType()})")
+                NOT_INSTANCEOF -> printer.print("${argument.decompile()} !is ${typeOperand.toKotlinType()}")
+                else -> TODO("Unexpected type operator $operator!")
+            }
+
         }
     }
 

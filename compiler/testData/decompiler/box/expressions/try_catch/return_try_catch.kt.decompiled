@@ -3,7 +3,7 @@ fun fail(message: String): Nothing  {
 }
 
 fun box(): String  {
-    return try  {
+    return try {
         val x: Nothing = fail("Testing fail")
         "FAIL"
     }
@@ -12,5 +12,5 @@ fun box(): String  {
     }
     finally  {
         "FAIL"
-    }
+        kotlin.Unit    }
 }

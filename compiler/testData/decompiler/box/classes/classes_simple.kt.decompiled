@@ -1,4 +1,4 @@
-class TestClass {
+class TestClass() {
     fun foo(): Unit  {
     }
 
@@ -7,7 +7,7 @@ class TestClass {
 
 }
 interface TestInterface {
-    abstract fun foo(): Unit
+    abstract  fun foo(): Unit
 }
 object TestObject {
 }
