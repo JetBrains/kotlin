@@ -29,6 +29,10 @@ class PerformanceTracker {
     addByKey("model.time.$sortingCount", timeSpent)
   }
 
+  fun reorderedByML() {
+    addByKey("reordered.by.ml", 1)
+  }
+
   fun measurements(): Map<String, Long> = measures.mapValues { it.value.toLong() }
 
   private fun addByKey(key: String, value: Long) {

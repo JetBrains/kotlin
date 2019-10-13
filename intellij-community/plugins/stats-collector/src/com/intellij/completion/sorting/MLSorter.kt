@@ -7,7 +7,6 @@ import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.lang.Language
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.registry.Registry
@@ -69,11 +68,11 @@ class MLSorter : CompletionFinalSorter() {
   }
 
   override fun sort(items: MutableIterable<LookupElement>, parameters: CompletionParameters): Iterable<LookupElement?> {
-    val startedTimestamp = System.currentTimeMillis()
     val lookup = LookupManager.getActiveLookup(parameters.editor) as? LookupImpl ?: return items
     val lookupStorage = MutableLookupStorage.get(lookup) ?: return items
     // Do nothing if unable to reorder items or to log the weights
     if (!lookupStorage.shouldComputeFeatures()) return items
+    val startedTimestamp = System.currentTimeMillis()
     val prefixLength = lookup.prefixLength()
 
     val element2score = mutableMapOf<LookupElement, Double?>()
@@ -85,7 +84,7 @@ class MLSorter : CompletionFinalSorter() {
     val itemsForScoring = if (element2score.size == elements.size) emptyList() else elements
     calculateScores(element2score, itemsForScoring, positionsBefore,
                     prefixLength, lookup, lookupStorage, parameters)
-    val finalRanking = sortByMlScores(elements, element2score, positionsBefore, lookupStorage.language)
+    val finalRanking = sortByMlScores(elements, element2score, positionsBefore, lookupStorage)
 
     lookupStorage.performanceTracker.sortingPerformed(itemsForScoring.size, System.currentTimeMillis() - startedTimestamp)
 
@@ -141,13 +140,14 @@ class MLSorter : CompletionFinalSorter() {
   private fun sortByMlScores(items: List<LookupElement>,
                              element2score: Map<LookupElement, Double?>,
                              positionsBefore: Map<LookupElement, Int>,
-                             language: Language): Iterable<LookupElement> {
+                             lookupStorage: MutableLookupStorage): Iterable<LookupElement> {
     val mlScoresUsed = element2score.values.none { it == null }
     if (LOG.isDebugEnabled) {
-      LOG.debug("ML sorting in completion used=$mlScoresUsed for language=${language.id}" )
+      LOG.debug("ML sorting in completion used=$mlScoresUsed for language=${lookupStorage.language.id}")
     }
 
     if (mlScoresUsed) {
+      lookupStorage.performanceTracker.reorderedByML()
       val topItemsCount = if (reorderOnlyTopItems) REORDER_ONLY_TOP_K else Int.MAX_VALUE
       return items.reorderByMLScores(element2score, topItemsCount).addDiagnosticsIfNeeded(positionsBefore, topItemsCount)
     }
