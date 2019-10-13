@@ -40,6 +40,7 @@ class CompletionLoggerInitializer(private val actionListener: LookupActionsListe
       actionListener.listener = tracker
       lookup.addLookupListener(tracker)
       lookup.setPrefixChangeListener(tracker)
+      storage.markLoggingEnabled()
     }
     else {
       actionListener.listener = CompletionPopupListener.Adapter()

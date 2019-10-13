@@ -67,6 +67,8 @@ class MLSorter : CompletionFinalSorter() {
     val startedTimestamp = System.currentTimeMillis()
     val lookup = LookupManager.getActiveLookup(parameters.editor) as? LookupImpl ?: return items
     val lookupStorage = MutableLookupStorage.get(lookup) ?: return items
+    // Do nothing if unable to reorder items or to log the weights
+    if (!lookupStorage.shouldComputeFeatures()) return items
     val prefixLength = lookup.prefixLength()
 
     val element2score = mutableMapOf<LookupElement, Double?>()

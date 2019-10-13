@@ -30,6 +30,7 @@ class MutableLookupStorage(
   override val contextFactors: Map<String, String>
     get() = _contextFactors ?: emptyMap()
 
+  private var _loggingEnabled: Boolean = false
   override val performanceTracker: PerformanceTracker = PerformanceTracker()
 
   companion object {
@@ -56,6 +57,8 @@ class MutableLookupStorage(
   override fun getItemStorage(id: String): MutableElementStorage = item2storage.computeIfAbsent(id) {
     MutableElementStorage()
   }
+
+  override fun shouldComputeFeatures(): Boolean = model != null || _loggingEnabled
 
   fun isContextFactorsInitialized(): Boolean = _contextFactors != null
 
@@ -88,5 +91,9 @@ class MutableLookupStorage(
     else {
       _contextFactors = contextFactors
     }
+  }
+
+  fun markLoggingEnabled() {
+    _loggingEnabled = true
   }
 }
