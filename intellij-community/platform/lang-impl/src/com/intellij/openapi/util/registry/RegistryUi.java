@@ -2,14 +2,13 @@
 package com.intellij.openapi.util.registry;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.ui.RegistryBooleanOptionDescriptor;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.application.Experiments;
-import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.ShadowAction;
@@ -367,15 +366,7 @@ public class RegistryUi implements Disposable {
   }
 
   private void processClose() {
-    if (Registry.getInstance().isRestartNeeded()) {
-      ApplicationEx app = (ApplicationEx) ApplicationManager.getApplication();
-      String message = "You need to restart " + ApplicationNamesInfo.getInstance().getFullProductName() + " for the changes to take effect";
-      String action = app.isRestartCapable() ? "Restart" : "Shutdown";
-      int r = Messages.showOkCancelDialog(myContent, message, "Restart Required", action + " Now", action + " Later", Messages.getQuestionIcon());
-      if (r == Messages.OK) {
-        ApplicationManager.getApplication().invokeLater(() -> app.restart(true), ModalityState.NON_MODAL);
-      }
-    }
+    RegistryBooleanOptionDescriptor.suggestRestartIfNecessary(myContent);
   }
 
   private void restoreDefaults() {
