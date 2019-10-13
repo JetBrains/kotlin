@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.idea.codeInliner
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.asExpression
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
@@ -185,18 +189,19 @@ class CodeToInlineBuilder(
                 } else if (target is TypeParameterDescriptor && target.containingDeclaration == targetCallable) {
                     expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
                 }
-
-                val resolvedCall = expression.getResolvedCall(bindingContext)
-                if (resolvedCall != null && resolvedCall.isReallySuccess()) {
-                    val receiver = if (resolvedCall.resultingDescriptor.isExtension)
-                        resolvedCall.extensionReceiver
-                    else
-                        resolvedCall.dispatchReceiver
-                    if (receiver is ImplicitReceiver) {
-                        val resolutionScope = expression.getResolutionScope(bindingContext, resolutionFacade)
-                        val receiverExpression = receiver.asExpression(resolutionScope, psiFactory)
-                        if (receiverExpression != null) {
-                            receiversToAdd.add(Triple(expression, receiverExpression, receiver.type))
+                if (targetCallable !is ImportedFromObjectCallableDescriptor<*>) {
+                    val resolvedCall = expression.getResolvedCall(bindingContext)
+                    if (resolvedCall != null && resolvedCall.isReallySuccess()) {
+                        val receiver = if (resolvedCall.resultingDescriptor.isExtension)
+                            resolvedCall.extensionReceiver
+                        else
+                            resolvedCall.dispatchReceiver
+                        if (receiver is ImplicitReceiver) {
+                            val resolutionScope = expression.getResolutionScope(bindingContext, resolutionFacade)
+                            val receiverExpression = receiver.asExpression(resolutionScope, psiFactory)
+                            if (receiverExpression != null) {
+                                receiversToAdd.add(Triple(expression, receiverExpression, receiver.type))
+                            }
                         }
                     }
                 }
