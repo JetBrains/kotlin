@@ -36,6 +36,7 @@ class CompletionStartedEvent(
 
     @JvmField var lookupShownTime: Long = -1
     @JvmField var isAutoPopup: Boolean? = null
+    @JvmField val additionalDetails: MutableMap<String, String> = mutableMapOf()
 
     override fun accept(visitor: LogEventVisitor) {
         visitor.visit(this)
