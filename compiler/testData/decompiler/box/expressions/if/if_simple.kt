@@ -2,7 +2,8 @@ fun foo() = 42
 
 fun box(): String {
     val f = foo()
-    if (f == 40) {
+    val b = 50
+    if (f > foo()) {
         return "FAIL"
     } else {
         return "OK"

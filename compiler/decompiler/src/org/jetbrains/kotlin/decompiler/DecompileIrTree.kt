@@ -137,7 +137,7 @@ class DecompileIrTreeVisitor(
                     add(obtainVisibility())
                     add(TYPEALIAS_TOKEN)
                     add(name())
-                    add(EQ_TOKEN)
+                    add("=")
                     add(expandedType.toKotlinType().toString())
                 }.filterNot { it.isNullOrEmpty() }.joinToString(" ")
             )
@@ -205,7 +205,7 @@ class DecompileIrTreeVisitor(
                     if (backingField != null) {
                         add("${backingField!!.name()}: ${backingField!!.type.toKotlinType()}")
                         if (backingField!!.initializer != null) {
-                            add(EQ_TOKEN)
+                            add("=")
                             add(backingField!!.initializer!!.decompile())
                         }
                     } else {
@@ -450,6 +450,10 @@ class DecompileIrTreeVisitor(
             }
 
         }
+    }
+
+    override fun visitVararg(expression: IrVararg, data: String) {
+        printer.print(expression.elements.map { it.decompile() }.joinToString(", "))
     }
 
     override fun visitBody(body: IrBody, data: String) {

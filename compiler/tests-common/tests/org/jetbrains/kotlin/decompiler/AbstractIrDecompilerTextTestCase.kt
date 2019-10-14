@@ -42,7 +42,7 @@ abstract class AbstractIrDecompilerBlackBoxTest : AbstractIrDecompilerTextTestCa
         KotlinTestUtils.assertEqualsToFile(decompiledFileSources, decompiledSources)
 
         blackBoxTestRunner.runTest(decompiledFileSources.absolutePath)
-        decompiledFileSources.copyTo(File(decompiledFileSources.absolutePath.replace(".decompiled.kt", ".kt.decompiled")), true)
+//        decompiledFileSources.copyTo(File(decompiledFileSources.absolutePath.replace(".decompiled.kt", ".kt.decompiled")), true)
         assert(decompiledFileSources.delete())
     }
 }

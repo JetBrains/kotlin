@@ -11,13 +11,13 @@
 - аргументы по-умолчанию в методах, именованые вызовы с перестановкой аргументов
 - продолжить дженерики (https://kotlinlang.org/docs/reference/generics.html)
 - inner, nested классы
-- package, import, import as (https://kotlinlang.org/docs/reference/packages.html)
 - companion object, именованный object, top-level object
 
 - функции высших порядков
 - typealias со стрелкой (для функций высших порядков)
 - делегирование (https://kotlinlang.org/docs/reference/delegation.html, https://kotlinlang.org/docs/reference/delegated-properties.html)
 - cast операторы
+- enum
 - Работа со scope functions - https://kotlinlang.org/docs/reference/scope-functions.html
 
 ## LATER

@@ -1,3 +1,5 @@
+// WITH_RUNTIME
+
 fun <T : Comparable<T>> max(list: List<T>): T {
     var max = list.get(0)
     for (i in list) {
@@ -9,5 +11,9 @@ fun <T : Comparable<T>> max(list: List<T>): T {
 }
 
 fun box(): String {
-    return "OK"
+    val mx = max(listOf(1, 2, 3, 4))
+    if (mx == 4) {
+        return "OK"
+    }
+    return "FAIL"
 }

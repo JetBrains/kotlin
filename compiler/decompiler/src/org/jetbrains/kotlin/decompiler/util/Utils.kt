@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
@@ -20,21 +21,41 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 
+val OPERATOR_TOKENS = mutableMapOf<IrStatementOrigin, String>().apply {
+    set(OROR, "||")
+    set(ANDAND, "&&")
+    set(PLUS, "+")
+    set(MINUS, "-")
+    set(UPLUS, "+")
+    set(UMINUS, "-")
+    set(MUL, "*")
+    set(DIV, "/")
+    set(PERC, "%")
+    set(EQ, "=")
+    set(PLUSEQ, "+=")
+    set(MINUSEQ, "-=")
+    set(MULTEQ, "*=")
+    set(DIVEQ, "/=")
+    set(PERCEQ, "%=")
+    set(EQEQ, "==")
+    set(EQEQEQ, "===")
+    set(EXCLEQ, "!=")
+    set(EXCLEQEQ, "!==")
+    set(GT, ">")
+    set(LT, "<")
+    set(GTEQ, ">=")
+    set(LTEQ, "<=")
+    set(ELVIS, "?:")
+    set(RANGE, "..")
+    set(PREFIX_INCR, "++")
+    set(PREFIX_DECR, "--")
+    set(POSTFIX_INCR, "++")
+    set(POSTFIX_DECR, "--")
+}
+
+val OPERATOR_NAMES = setOf("less", "lessOrEqual", "greater", "greaterOrEqual", "EQEQ", "EQEQEQ")
+
 const val EMPTY_TOKEN = ""
-const val OROR_TOKEN = "||"
-const val ANDAND_TOKEN = "&&"
-const val EQ_TOKEN = "="
-const val PLUS_TOKEN = "+"
-const val MINUS_TOKEN = "-"
-const val MUL_TOKEN = "*"
-const val DIV_TOKEN = "/"
-const val PERC_TOKEN = "%"
-const val EQEQ_TOKEN = "=="
-const val EQEQEQ_TOKEN = "==="
-const val GT_TOKEN = ">"
-const val LT_TOKEN = "<"
-const val GTEQ_TOKEN = ">="
-const val LTEQ_TOKEN = "<="
 const val THIS_TOKEN = "this"
 const val TRY_TOKEN = "try"
 const val CATCH_TOKEN = "catch"
@@ -87,7 +108,7 @@ internal fun obtainFlagsList(vararg flags: String?) =
         if (isNotEmpty())
             joinToString(separator = " ")
         else
-            ""
+            EMPTY_TOKEN
     }
 
 internal inline fun IrDeclaration.name(): String = descriptor.name.asString()
@@ -116,50 +137,30 @@ internal fun IrSimpleFunction.obtainModality(): String? =
     }
 
 
-internal fun IrCall.obtainUnaryOperatorCall(): String {
-    var result = when (origin) {
-        UPLUS -> PLUS_TOKEN
-        UMINUS -> MINUS_TOKEN
-        else -> TODO("Not implemented for ${origin.toString()} unary operator")
-    }
-    return "$result${dispatchReceiver?.decompile() ?: ""}"
-}
+internal fun IrCall.obtainUnaryOperatorCall(): String = "${OPERATOR_TOKENS[origin]}${dispatchReceiver?.decompile() ?: EMPTY_TOKEN}"
 
-internal fun IrCall.obtainBinaryOperatorCall(): String {
-    var result = dispatchReceiver?.decompile() ?: ""
-    result += " " + when (origin) {
-        PLUS -> PLUS_TOKEN
-        MINUS -> MINUS_TOKEN
-        MUL -> MUL_TOKEN
-        DIV -> DIV_TOKEN
-        PERC -> PERC_TOKEN
-        ANDAND -> ANDAND_TOKEN
-        OROR -> OROR_TOKEN
-        else -> TODO("Not implemented for ${origin.toString()} binary operator")
-    }
-    return "$result ${getValueArgument(0)?.decompile()}"
-}
+
+internal fun IrCall.obtainBinaryOperatorCall(): String =
+    "${dispatchReceiver?.decompile() ?: EMPTY_TOKEN} ${OPERATOR_TOKENS[origin]} ${getValueArgument(0)?.decompile()}"
+
 
 //TODO разобраться когда тут вызов compareTo, а когда реальное сравнение
 internal fun IrCall.obtainComparisonOperatorCall(): String {
-    val leftOperand = if (dispatchReceiver == null) dispatchReceiver else getValueArgument(0)
+    val leftOperand = if (dispatchReceiver != null) dispatchReceiver else getValueArgument(0)
     val rightOperand = if (dispatchReceiver != null) getValueArgument(0) else getValueArgument(1)
-    val sign = " " + when (origin) {
-        EQEQ -> EQEQ_TOKEN
-        GT -> GT_TOKEN
-        LT -> LT_TOKEN
-        GTEQ -> GTEQ_TOKEN
-        LTEQ -> LTEQ_TOKEN
-        else -> TODO("Not implemented for ${origin.toString()} comparison operator")
+    if (symbol.owner.name() in OPERATOR_NAMES) {
+        val sign = OPERATOR_TOKENS[origin]
+        return "${leftOperand?.decompile()} $sign ${rightOperand?.decompile()}"
+    } else {
+        return "${leftOperand?.decompile()}.${symbol.owner.name()}(${rightOperand?.decompile()})"
     }
-    return "${leftOperand?.decompile()} $sign ${rightOperand?.decompile()}"
 }
 
 internal fun IrCall.obtainNotEqCall(): String =
     if (symbol.owner.name().toLowerCase() != "not") {
-        "${getValueArgument(0)?.decompile()} $EQEQ_TOKEN ${getValueArgument(1)?.decompile()}"
+        "${getValueArgument(0)?.decompile()} ${OPERATOR_TOKENS[origin]} ${getValueArgument(1)?.decompile()}"
     } else {
-        "(${dispatchReceiver?.decompile()}).${obtainNameWithArgs()}"
+        dispatchReceiver?.decompile() ?: EMPTY_TOKEN
     }
 
 internal fun IrCall.obtainNameWithArgs(): String {
@@ -180,11 +181,11 @@ internal fun IrCall.obtainCall(): String {
         EXCLEQ -> obtainNotEqCall()
         GET_PROPERTY -> obtainGetPropertyCall()
         // сюда прилетает только правая часть, левая разбирается в visitSetVariable
-        PLUSEQ, MINUSEQ, MULTEQ, DIVEQ -> getValueArgument(0)?.decompile() ?: ""
+        PLUSEQ, MINUSEQ, MULTEQ, DIVEQ -> getValueArgument(0)?.decompile() ?: EMPTY_TOKEN
         // Для присваивания свойстам в конструкторах
         EQ -> obtainEqCall()
         else -> {
-            var result = ""
+            var result = EMPTY_TOKEN
             if (dispatchReceiver != null) {
                 result += if (superQualifierSymbol != null) {
                     "$SUPER_TOKEN."
@@ -257,25 +258,14 @@ internal fun IrClass.obtainInheritance(): String {
 }
 
 internal fun concatenateConditions(condition: IrExpression): String {
-    var result = ""
+    var result = EMPTY_TOKEN
     when (condition) {
         is IrIfThenElseImpl -> {
             val firstBranch = condition.branches[0]
             result += "(${concatenateConditions(firstBranch.condition)})"
             if (firstBranch.result !is IrConst<*>) {
-                when (condition.origin) {
-                    ANDAND -> {
-                        result += " $ANDAND_TOKEN "
-                        result += "(${concatenateConditions(firstBranch.result)})"
-                    }
-                    OROR -> {
-                        result += " $OROR_TOKEN "
-                        result += "(${concatenateConditions(firstBranch.result)})"
-                    }
-                    else -> {
-                        TODO()
-                    }
-                }
+                result += " ${OPERATOR_TOKENS[condition.origin]} "
+                result += "(${concatenateConditions(firstBranch.result)})"
             }
         }
         is IrCallImpl -> {
@@ -338,19 +328,23 @@ internal fun IrValueParameter.obtainValueParameterFlags(): String =
 
 internal fun IrTypeParametersContainer.obtainTypeParameters(): String =
     if (typeParameters.isEmpty())
-        ""
+        EMPTY_TOKEN
     else
         typeParameters.joinToString(separator = ", ", prefix = "<", postfix = ">") {
             it.obtain()
         }.trim()
 
-internal fun IrTypeParameter.obtain() = "${if (variance.label.isNotEmpty()) variance.label + " " else ""}${name()}"
+private fun IrTypeParameter.variance() = if (variance.label.isNotEmpty()) variance.label + " " else EMPTY_TOKEN
+private fun IrTypeParameter.bound() = if (superTypes.isNotEmpty())
+    superTypes.map { it.toKotlinType().toString() }.joinToString(", ", prefix = " : ") + " " else EMPTY_TOKEN
+
+internal fun IrTypeParameter.obtain() = "${variance()}${name()}${bound()}"
 
 //TODO посмотреть где это используется (особенно с IrTypeAbbreviation)
 internal fun IrTypeArgument.obtain() =
     when (this) {
         is IrStarProjection -> "*"
-        is IrTypeProjection -> "${if (variance.label.isNotEmpty()) variance.label + " " else ""}${type.toKotlinType()}"
+        is IrTypeProjection -> "${if (variance.label.isNotEmpty()) variance.label + " " else EMPTY_TOKEN}${type.toKotlinType()}"
         else -> throw AssertionError("Unexpected IrTypeArgument: $this")
     }
 
@@ -387,7 +381,7 @@ internal fun decompileAnnotations(element: IrAnnotationContainer) {
 
 
 internal fun IrFunction.obtainFunctionName(): String {
-    var result = ""
+    var result = EMPTY_TOKEN
     if (extensionReceiverParameter != null) {
         result += extensionReceiverParameter?.type?.toKotlinType().toString()
         result += "."
