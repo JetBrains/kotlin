@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 
 inline fun inlineMe() = assert(true)

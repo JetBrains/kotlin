@@ -665,9 +665,24 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineLambdaDeclarationSite.kt");
         }
 
+        @TestMetadata("jvmCrossinlineLambdaDeclarationSiteOnly.kt")
+        public void testJvmCrossinlineLambdaDeclarationSiteOnly() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineLambdaDeclarationSiteOnly.kt");
+        }
+
+        @TestMetadata("jvmCrossinlineSAMDeclarationSite.kt")
+        public void testJvmCrossinlineSAMDeclarationSite() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmCrossinlineSAMDeclarationSite.kt");
+        }
+
         @TestMetadata("jvmDoubleInline.kt")
         public void testJvmDoubleInline() throws Exception {
             runTest("compiler/testData/codegen/boxInline/assert/jvmDoubleInline.kt");
+        }
+
+        @TestMetadata("jvmInlineUsedAsNoinline.kt")
+        public void testJvmInlineUsedAsNoinline() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmInlineUsedAsNoinline.kt");
         }
     }
 
