@@ -296,14 +296,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     }
 
     private fun importMemset(): LLVMValueRef {
-        val parameterTypes = cValuesOf(int8TypePtr, int8Type, int32Type, int1Type)
-        val functionType = LLVMFunctionType(LLVMVoidType(), parameterTypes, 4, 0)
+        val functionType = functionType(voidType, false, int8TypePtr, int8Type, int32Type, int1Type)
         return LLVMAddFunction(llvmModule, "llvm.memset.p0i8.i32", functionType)!!
     }
 
     private fun importMemcpy(): LLVMValueRef {
-        val parameterTypes = cValuesOf(int8TypePtr, int8TypePtr, int32Type, int1Type)
-        val functionType = LLVMFunctionType(LLVMVoidType(), parameterTypes, 4, 0)
+        val functionType = functionType(voidType, false, int8TypePtr, int8TypePtr, int32Type, int1Type)
         return LLVMAddFunction(llvmModule, "llvm.memcpy.p0i8.p0i8.i32", functionType)!!
     }
 
@@ -550,12 +548,12 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
             override fun getValue(thisRef: Llvm, property: KProperty<*>): LLVMValueRef = value
         }
     }
-    val llvmInt8 = LLVMInt8Type()!!
-    val llvmInt16 = LLVMInt16Type()!!
-    val llvmInt32 = LLVMInt32Type()!!
-    val llvmInt64 = LLVMInt64Type()!!
-    val llvmFloat = LLVMFloatType()!!
-    val llvmDouble = LLVMDoubleType()!!
+    val llvmInt8 = int8Type
+    val llvmInt16 = int16Type
+    val llvmInt32 = int32Type
+    val llvmInt64 = int64Type
+    val llvmFloat = floatType
+    val llvmDouble = doubleType
 }
 
 class IrStaticInitializer(val file: IrFile, val initializer: LLVMValueRef)

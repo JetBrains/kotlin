@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import llvm.LLVMDumpModule
-import llvm.LLVMModuleRef
+import llvm.*
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedTypeParameterDescriptor
@@ -327,6 +326,20 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     lateinit var llvmDeclarations: LlvmDeclarations
     lateinit var bitcodeFileName: String
     lateinit var library: KonanLibraryLayout
+
+    private var llvmDisposed = false
+
+    fun disposeLlvm() {
+        if (llvmDisposed) return
+        if (::debugInfo.isInitialized)
+            DIDispose(debugInfo.builder)
+        if (llvmModule != null)
+            LLVMDisposeModule(llvmModule)
+        if (::llvm.isInitialized)
+            LLVMDisposeModule(llvm.runtime.llvmModule)
+        tryDisposeLLVMContext()
+        llvmDisposed = true
+    }
 
     val cStubsManager = CStubsManager(config.target)
 

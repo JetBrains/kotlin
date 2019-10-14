@@ -4723,4 +4723,4 @@ private external fun kniBridge335(p0: NativePtr, p1: Int, p2: NativePtr): Unit
 private external fun kniBridge336(p0: NativePtr): Int
 private external fun kniBridge337(p0: NativePtr): Int
 private external fun kniBridge338(p0: NativePtr): Int
-private val loadLibrary = System.loadLibrary("clangstubs")
+private val loadLibrary = loadKonanLibrary("clangstubs")

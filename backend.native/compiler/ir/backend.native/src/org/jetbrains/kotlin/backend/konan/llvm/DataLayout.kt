@@ -12,22 +12,19 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 
-private val primitiveToLlvm = PrimitiveBinaryType.values().associate {
-    it to when (it) {
-        PrimitiveBinaryType.BOOLEAN -> LLVMInt1Type()
-        PrimitiveBinaryType.BYTE -> LLVMInt8Type()
-        PrimitiveBinaryType.SHORT -> LLVMInt16Type()
-        PrimitiveBinaryType.INT -> LLVMInt32Type()
-        PrimitiveBinaryType.LONG -> LLVMInt64Type()
-        PrimitiveBinaryType.FLOAT -> LLVMFloatType()
-        PrimitiveBinaryType.DOUBLE -> LLVMDoubleType()
+private fun RuntimeAware.getLlvmType(primitiveBinaryType: PrimitiveBinaryType?) = when (primitiveBinaryType) {
+    null -> this.kObjHeaderPtr
 
-        PrimitiveBinaryType.POINTER -> int8TypePtr
-    }!!
+    PrimitiveBinaryType.BOOLEAN -> int1Type
+    PrimitiveBinaryType.BYTE -> int8Type
+    PrimitiveBinaryType.SHORT -> int16Type
+    PrimitiveBinaryType.INT -> int32Type
+    PrimitiveBinaryType.LONG -> int64Type
+    PrimitiveBinaryType.FLOAT -> floatType
+    PrimitiveBinaryType.DOUBLE -> doubleType
+
+    PrimitiveBinaryType.POINTER -> int8TypePtr
 }
-
-private fun RuntimeAware.getLlvmType(primitiveBinaryType: PrimitiveBinaryType?) =
-        primitiveBinaryType?.let { primitiveToLlvm[it]!! } ?: this.kObjHeaderPtr
 
 internal fun RuntimeAware.getLLVMType(type: IrType): LLVMTypeRef =
         getLlvmType(type.computePrimitiveBinaryTypeOrNull())
@@ -37,7 +34,7 @@ internal fun RuntimeAware.getLLVMType(type: DataFlowIR.Type) =
 
 internal fun RuntimeAware.getLLVMReturnType(type: IrType): LLVMTypeRef {
     return when {
-        type.isUnit() || type.isNothing() -> LLVMVoidType()!!
+        type.isUnit() || type.isNothing() -> voidType
         else -> getLLVMType(type)
     }
 }

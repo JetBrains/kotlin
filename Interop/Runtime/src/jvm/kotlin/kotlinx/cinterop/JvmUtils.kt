@@ -16,6 +16,10 @@
 
 package kotlinx.cinterop
 
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
+
 internal fun decodeFromUtf8(bytes: ByteArray) = String(bytes)
 internal fun encodeToUtf8(str: String) = str.toByteArray()
 
@@ -82,4 +86,23 @@ inline fun <reified R : Number> Long.narrow(): R = when (R::class.java) {
 
 inline fun <reified R : Number> Number.invalidNarrowing(): R {
     throw Error("unable to narrow ${this.javaClass.simpleName} \"${this}\" to ${R::class.java.simpleName}")
+}
+
+fun loadKonanLibrary(name: String) {
+    try {
+        System.loadLibrary(name)
+    } catch (e: UnsatisfiedLinkError) {
+        val fullLibraryName = System.mapLibraryName(name)
+        val dir = "${System.getProperty("konan.home")}/konan/nativelib"
+        try {
+            System.load("$dir/$fullLibraryName")
+        } catch (e: UnsatisfiedLinkError) {
+            val tempDir = createTempDir(directory = File(dir)).absolutePath
+            Files.createLink(Paths.get(tempDir, fullLibraryName), Paths.get(dir, fullLibraryName))
+            // TODO: Does not work on Windows. May be use FILE_FLAG_DELETE_ON_CLOSE?
+            File(tempDir).deleteOnExit()
+            File("$tempDir/$fullLibraryName").deleteOnExit()
+            System.load("$tempDir/$fullLibraryName")
+        }
+    }
 }

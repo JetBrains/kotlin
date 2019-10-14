@@ -1310,8 +1310,8 @@ private val ObjCValueType.llvmType: LLVMTypeRef get() = when (this) {
     ObjCValueType.UNSIGNED_SHORT -> int16Type
     ObjCValueType.UNSIGNED_INT -> int32Type
     ObjCValueType.UNSIGNED_LONG_LONG -> int64Type
-    ObjCValueType.FLOAT -> LLVMFloatType()!!
-    ObjCValueType.DOUBLE -> LLVMDoubleType()!!
+    ObjCValueType.FLOAT -> floatType
+    ObjCValueType.DOUBLE -> doubleType
     ObjCValueType.POINTER -> kInt8Ptr
 }
 

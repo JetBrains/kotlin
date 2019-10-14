@@ -74,10 +74,15 @@ linkerOpts.mingw = -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lL
 # ld: -r and -shared may not be used together
 excludedFunctions.mingw = LLVMDumpType
 
-
+# Functions from LLVMIntPtrType to LLVMModuleCreateWithName are excluded because they work with the GlobalContext.
+# This might not be safe if the compiler is called from a daemon process.
 excludedFunctions = LLVMInitializeAllAsmParsers LLVMInitializeAllAsmPrinters LLVMInitializeAllDisassemblers \
     LLVMInitializeAllTargetInfos LLVMInitializeAllTargetMCs LLVMInitializeAllTargets LLVMInitializeNativeTarget \
     LLVMInitializeNativeAsmParser LLVMInitializeNativeAsmPrinter LLVMInitializeNativeDisassembler \
-    LLVMConstInBoundsGEP2 LLVMConstGEP2
+    LLVMConstInBoundsGEP2 LLVMConstGEP2 LLVMIntPtrType LLVMIntPtrTypeForAS LLVMGetMDKindID LLVMInt1Type LLVMInt8Type \
+    LLVMInt16Type LLVMInt32Type LLVMInt64Type LLVMInt128Type LLVMIntType LLVMHalfType LLVMFloatType LLVMDoubleType \
+    LLVMX86FP80Type LLVMFP128Type LLVMPPCFP128Type LLVMX86MMXType LLVMStructType LLVMVoidType LLVMLabelType \
+    LLVMMDString LLVMMDNode LLVMConstString LLVMConstStruct LLVMAppendBasicBlock LLVMInsertBasicBlock LLVMCreateBuilder \
+    LLVMParseBitcode LLVMParseBitcode2 LLVMGetBitcodeModule LLVMGetBitcodeModule2 LLVMGetGlobalContext LLVMModuleCreateWithName
 
 strictEnums = LLVMIntPredicate LLVMOpcode LLVMDLLStorageClass LLVMCallConv LLVMThreadLocalMode LLVMAtomicOrdering

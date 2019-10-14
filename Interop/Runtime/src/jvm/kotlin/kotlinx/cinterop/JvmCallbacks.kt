@@ -371,11 +371,7 @@ private class CEnumType(private val rawValueCType: CType<Any>) : CType<CEnum>(ra
 private typealias FfiClosureImpl = LongConsumer
 private typealias UserData = FfiClosureImpl
 
-private fun loadCallbacksLibrary() {
-    System.loadLibrary("callbacks")
-}
-
-private val topLevelInitializer = loadCallbacksLibrary()
+private val topLevelInitializer = loadKonanLibrary("callbacks")
 
 
 /**

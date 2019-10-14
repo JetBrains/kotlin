@@ -149,30 +149,30 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     private val arrayClasses = mapOf(
             "kotlin.Array"              to kObjHeaderPtr,
-            "kotlin.ByteArray"          to LLVMInt8Type()!!,
-            "kotlin.CharArray"          to LLVMInt16Type()!!,
-            "kotlin.ShortArray"         to LLVMInt16Type()!!,
-            "kotlin.IntArray"           to LLVMInt32Type()!!,
-            "kotlin.LongArray"          to LLVMInt64Type()!!,
-            "kotlin.FloatArray"         to LLVMFloatType()!!,
-            "kotlin.DoubleArray"        to LLVMDoubleType()!!,
-            "kotlin.BooleanArray"       to LLVMInt8Type()!!,
-            "kotlin.String"             to LLVMInt16Type()!!,
-            "kotlin.native.ImmutableBlob" to LLVMInt8Type()!!,
+            "kotlin.ByteArray"          to int8Type,
+            "kotlin.CharArray"          to int16Type,
+            "kotlin.ShortArray"         to int16Type,
+            "kotlin.IntArray"           to int32Type,
+            "kotlin.LongArray"          to int64Type,
+            "kotlin.FloatArray"         to floatType,
+            "kotlin.DoubleArray"        to doubleType,
+            "kotlin.BooleanArray"       to int8Type,
+            "kotlin.String"             to int16Type,
+            "kotlin.native.ImmutableBlob" to int8Type,
             "kotlin.native.internal.NativePtrArray" to kInt8Ptr
     )
 
     // Keep in sync with Konan_RuntimeType.
     private val runtimeTypeMap = mapOf(
             kObjHeaderPtr to 1,
-            LLVMInt8Type()!! to 2,
-            LLVMInt16Type()!! to 3,
-            LLVMInt32Type()!! to 4,
-            LLVMInt64Type()!! to 5,
-            LLVMFloatType()!! to 6,
-            LLVMDoubleType()!! to 7,
+            int8Type to 2,
+            int16Type to 3,
+            int32Type to 4,
+            int64Type to 5,
+            floatType to 6,
+            doubleType to 7,
             kInt8Ptr to 8,
-            LLVMInt1Type()!! to 9
+            int1Type to 9
     )
 
     private fun getInstanceSize(classType: LLVMTypeRef?, className: FqName) : Int {

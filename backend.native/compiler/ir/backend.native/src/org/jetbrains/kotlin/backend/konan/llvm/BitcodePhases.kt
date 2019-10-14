@@ -26,13 +26,28 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
             // (see Llvm class in ContextUtils)
             // Which in turn is determined by the clang flags
             // used to compile runtime.bc.
-            val llvmModule = LLVMModuleCreateWithName("out")!! // TODO: dispose
+            llvmContext = LLVMContextCreate()!!
+            val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
             context.llvmModule = llvmModule
             context.debugInfo.builder = DICreateBuilder(llvmModule)
+        }
+)
+
+internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase(
+        name = "CreateLLVMDeclarations",
+        description = "Map IR declarations to LLVM",
+        prerequisite = setOf(contextLLVMSetupPhase),
+        op = { context, _ ->
             context.llvmDeclarations = createLlvmDeclarations(context)
             context.lifetimes = mutableMapOf()
             context.codegenVisitor = CodeGeneratorVisitor(context, context.lifetimes)
         }
+)
+
+internal val disposeLLVMPhase = makeKonanModuleOpPhase(
+        name = "DisposeLLVM",
+        description = "Dispose LLVM",
+        op = { context, _ -> context.disposeLlvm() }
 )
 
 internal val RTTIPhase = makeKonanModuleOpPhase(
