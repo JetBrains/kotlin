@@ -246,11 +246,14 @@ if (flags.includeCidrPlugins) {
     include ":kotlin-ultimate:ide:cidr-gradle-tooling",
             ":kotlin-ultimate:ide:common-native",
             ":kotlin-ultimate:ide:common-cidr-native",
+            ":kotlin-ultimate:ide:common-noncidr-native",
             ":kotlin-ultimate:ide:clion-native",
             ":kotlin-ultimate:ide:appcode-native",
+            ":kotlin-ultimate:ide:android-studio-native",
             ":kotlin-ultimate:prepare:cidr-plugin",
             ":kotlin-ultimate:prepare:clion-plugin",
-            ":kotlin-ultimate:prepare:appcode-plugin"
+            ":kotlin-ultimate:prepare:appcode-plugin",
+            ":kotlin-ultimate:prepare:mobile-mpp-plugin"
 } else {
     logger.info("NOT including CIDR plugins in settings.gradle")
 }
@@ -259,6 +262,7 @@ if (flags.includeUltimate) {
     include ":kotlin-ultimate:ultimate",
             ":kotlin-ultimate:ultimate:ultimate-runner",
             ":kotlin-ultimate:ide:common-native",
+            ":kotlin-ultimate:ide:common-noncidr-native",
             ":kotlin-ultimate:ide:ultimate-native"
     logger.info("Including extension for IJ Ultimate in settings.gradle")
 } else {
