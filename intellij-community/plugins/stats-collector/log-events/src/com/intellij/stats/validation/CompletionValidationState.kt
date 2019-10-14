@@ -24,6 +24,7 @@ import org.jetbrains.annotations.TestOnly
 class CompletionValidationState(event: CompletionStartedEvent) : LogEventVisitor() {
     private var currentPosition = event.currentPosition
     private var completionList = event.completionListIds
+    private var bucket: String = event.bucket
     private var currentId = getSafeCurrentId(completionList, currentPosition)
 
     private var idToFactorNames = event.newCompletionListItems
@@ -47,6 +48,8 @@ class CompletionValidationState(event: CompletionStartedEvent) : LogEventVisitor
         completionList = nextEvent.completionListIds
 
         updateFactors(nextEvent.itemsDiff)
+        updateValid(nextEvent.bucket == bucket,
+                    "All events inside a session should have the same bucket. But ${bucket} != ${nextEvent.bucket}")
 
         currentId = getSafeCurrentId(completionList, currentPosition)
     }
