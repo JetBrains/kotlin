@@ -5,6 +5,3 @@ import kotlinx.serialization.*
 
 <!PLUGIN_ERROR("@Serializable annotation is ignored because it is impossible to serialize automatically interfaces or enums. Provide serializer manually via e.g. companion object")!>@Serializable<!>
 interface INonSerializable
-
-<!PLUGIN_ERROR("@Serializable annotation is ignored because it is impossible to serialize automatically interfaces or enums. Provide serializer manually via e.g. companion object")!>@Serializable<!>
-enum class ENonSerializable { A, B }

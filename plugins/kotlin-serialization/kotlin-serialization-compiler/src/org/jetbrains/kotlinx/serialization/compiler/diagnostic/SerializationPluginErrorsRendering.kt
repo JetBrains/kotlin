@@ -24,6 +24,10 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
                     "Make sure that you've setup your buildscript correctly and re-import project."
         )
         MAP.put(
+            SerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED,
+            "Explicit @Serializable annotation on enum class is required when @SerialName or @SerialInfo annotations are used on its members."
+        )
+        MAP.put(
             SerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED,
             "@Serializable annotation is ignored because it is impossible to serialize automatically interfaces or enums. " +
                     "Provide serializer manually via e.g. companion object"

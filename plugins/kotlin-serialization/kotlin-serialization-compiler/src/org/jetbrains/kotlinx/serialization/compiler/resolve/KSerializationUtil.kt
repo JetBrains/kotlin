@@ -119,11 +119,6 @@ internal val ClassDescriptor.isInternalSerializable: Boolean //todo normal check
 internal fun ClassDescriptor.isSerializableEnum(): Boolean {
     if (this.kind != ClassKind.ENUM_CLASS) return false
     if (hasSerializableAnnotationWithoutArgs) return true
-    if (annotations.hasAnySerialAnnotation) return true
-//   todo:   check entries without 'recursive call in lazy class member scope'
-//   for (enumEntry in enumEntries()) {
-//        if (enumEntry.annotations.hasAnySerialAnnotation) return true
-//    }
     return false
 }
 
@@ -138,7 +133,7 @@ internal fun ClassDescriptor.enumEntries(): List<ClassDescriptor> {
         .toList()
 }
 
-private val Annotations.hasAnySerialAnnotation: Boolean
+internal val Annotations.hasAnySerialAnnotation: Boolean
     get() = serialNameValue != null || any { it.annotationClass?.isSerialInfoAnnotation == true }
 
 internal val ClassDescriptor.hasSerializableAnnotationWithoutArgs: Boolean
