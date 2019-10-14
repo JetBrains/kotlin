@@ -29,7 +29,7 @@ class KotlinBuildProperties(
     private operator fun get(key: String): Any? = localProperties.getProperty(key) ?: propertiesProvider.getProperty(key)
 
     private fun getBoolean(key: String, default: Boolean = false): Boolean =
-        (this[key]?.toString()?.toBoolean() ?: default) == true
+        this[key]?.toString()?.trim()?.toBoolean() ?: default
 
     val isJpsBuildEnabled: Boolean = getBoolean("jpsBuild")
 

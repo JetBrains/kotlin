@@ -59,7 +59,7 @@ class LocalBuildPropertiesProvider {
     }
     
     Boolean getBoolean(String name) {
-        return Boolean.parseBoolean(getString(name))
+        return Boolean.parseBoolean(getString(name).trim())
     }
 }
 
