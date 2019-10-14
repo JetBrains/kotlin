@@ -3657,9 +3657,11 @@ def targetName = target.name
 
 if (isAppleTarget(project)) {
     task testValuesFramework(type: FrameworkTest) {
-        frameworkName = 'Values'
+        final String frameworkName = 'Values'
+        testName = frameworkName
+        frameworkNames = [frameworkName]
 
-        final String dir = "$testOutputFramework/$frameworkName"
+        final String dir = "$testOutputFramework/$testName"
         final File lazyHeader = file("$dir/$target-lazy.h")
 
         doLast {
@@ -3693,12 +3695,14 @@ if (isAppleTarget(project)) {
     }
 
     task testValuesGenericsFramework(type: FrameworkTest) {
-        frameworkName = 'ValuesGenerics'
+        final String frameworkName = 'ValuesGenerics'
+        testName = frameworkName
+        frameworkNames = [frameworkName]
         konanArtifacts {
             framework(frameworkName, targets: [ target ]) {
                 srcDir 'framework/values'
                 srcDir 'framework/values_generics'
-                baseDir "$testOutputFramework/$frameworkName"
+                baseDir "$testOutputFramework/$testName"
 
                 if (!useCustomDist) {
                     dependsOn ":${target}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
@@ -3712,12 +3716,14 @@ if (isAppleTarget(project)) {
     }
 
     task testStdlibFramework(type: FrameworkTest) {
-        frameworkName = 'Stdlib'
+        final String frameworkName = 'Stdlib'
+        testName = frameworkName
+        frameworkNames = [frameworkName]
         fullBitcode = true
         konanArtifacts {
             framework(frameworkName, targets: [ targetName ]) {
                 srcDir 'framework/stdlib'
-                baseDir "$testOutputFramework/$frameworkName"
+                baseDir "$testOutputFramework/$testName"
 
                 if (!useCustomDist) {
                     dependsOn ":${targetName}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
