@@ -17,6 +17,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.ui.AutoScrollFromSourceHandler;
 import com.intellij.ui.AutoScrollToSourceHandler;
+import com.intellij.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.Promise;
 import org.jetbrains.concurrency.Promises;
@@ -50,7 +51,7 @@ class ServiceViewSourceScrollHelper {
   }
 
   private static boolean isAutoScrollFromSourceEnabled(@NotNull Project project) {
-    return PropertiesComponent.getInstance(project).getBoolean(AUTO_SCROLL_FROM_SOURCE_PROPERTY);
+    return PropertiesComponent.getInstance(project).getBoolean(AUTO_SCROLL_FROM_SOURCE_PROPERTY, PlatformUtils.isDataGrip());
   }
 
   private static class ServiceViewAutoScrollToSourceHandler extends AutoScrollToSourceHandler {
