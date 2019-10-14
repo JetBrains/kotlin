@@ -54,6 +54,11 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/ParamIsNotProperty.kt");
     }
 
+    @TestMetadata("SerializableEnums.kt")
+    public void testSerializableEnums() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/SerializableEnums.kt");
+    }
+
     @TestMetadata("SerializableIgnored.kt")
     public void testSerializableIgnored() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/SerializableIgnored.kt");

@@ -20,6 +20,8 @@ public interface SerializationErrors {
     DiagnosticFactory0<PsiElement> INLINE_CLASSES_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PLUGIN_IS_NOT_ENABLED = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<PsiElement> EXPLICIT_SERIALIZABLE_IS_REQUIRED = DiagnosticFactory0.create(WARNING);
+
     DiagnosticFactory0<KtAnnotationEntry> SERIALIZABLE_ANNOTATION_IGNORED = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> PRIMARY_CONSTRUCTOR_PARAMETER_IS_NOT_A_PROPERTY = DiagnosticFactory0.create(ERROR);
