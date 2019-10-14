@@ -12,16 +12,16 @@ import org.junit.Test
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.nio.file.Files
 import java.security.MessageDigest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.*
-import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.util.KotlinJars
-import kotlin.script.experimental.jvmhost.*
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
+import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 
 class CachingTest : TestCase() {
 
@@ -259,13 +259,4 @@ private fun File.readCompiledScript(scriptCompilationConfiguration: ScriptCompil
 }
 
 private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
-
-private fun <R> withTempDir(keyName: String = "tmp", body: (File) -> R) {
-    val tempDir = Files.createTempDirectory(keyName).toFile()
-    try {
-        body(tempDir)
-    } finally {
-        tempDir.deleteRecursively()
-    }
-}
 
