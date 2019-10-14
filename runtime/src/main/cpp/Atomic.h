@@ -39,6 +39,15 @@ ALWAYS_INLINE inline bool compareAndSet(volatile T* where, T expectedValue, T ne
 #endif
 }
 
+#pragma clang diagnostic push
+
+#if KONAN_ANDROID && (KONAN_ARM32 || KONAN_X86)
+// On 32-bit Android clang generates library calls for "large" atomic operations
+// and warns about "significant performance penalty". See more details here:
+// https://github.com/llvm/llvm-project/blob/ce56e1a1cc5714f4af5675dd963cfebed766d9e1/clang/lib/CodeGen/CGAtomic.cpp#L775
+// Ignore these warnings:
+#pragma clang diagnostic ignored "-Watomic-alignment"
+#endif
 
 template <typename T>
 ALWAYS_INLINE inline void atomicSet(volatile T* where, T what) {
@@ -59,6 +68,8 @@ ALWAYS_INLINE inline T atomicGet(volatile T* where) {
   return *where;
 #endif
 }
+
+#pragma clang diagnostic pop
 
 static ALWAYS_INLINE inline void synchronize() {
 #ifndef KONAN_NO_THREADS
