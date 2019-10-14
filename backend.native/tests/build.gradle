@@ -3735,6 +3735,42 @@ if (isAppleTarget(project)) {
         }
         swiftSources = ['framework/stdlib/stdlib.swift']
     }
+
+    task testMultipleFrameworks(type: FrameworkTest) {
+        testName = "MultipleFrameworks"
+        final String firstFrameworkName = 'First'
+        final String secondFrameworkName = 'Second'
+        frameworkNames = [firstFrameworkName, secondFrameworkName]
+
+        final String dir = "$testOutputFramework/$testName"
+
+        konanArtifacts {
+            framework(firstFrameworkName, targets: [ targetName ]) {
+                srcDir 'framework/multiple/framework1'
+                srcDir 'framework/multiple/shared'
+                baseDir dir
+
+                if (!useCustomDist) {
+                    dependsOn ":${targetName}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                }
+
+                extraOpts project.globalTestArgs
+            }
+
+            framework(secondFrameworkName, targets: [ targetName ]) {
+                srcDir 'framework/multiple/framework2'
+                srcDir 'framework/multiple/shared'
+                baseDir dir
+
+                if (!useCustomDist) {
+                    dependsOn ":${targetName}CrossDistRuntime", ':commonDistRuntime', ':distCompiler'
+                }
+
+                extraOpts project.globalTestArgs
+            }
+        }
+        swiftSources = ['framework/multiple/multiple.swift']
+    }
 }
 
 /**
