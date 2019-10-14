@@ -34,9 +34,10 @@ class CStyleCommentBlock(comment: ASTNode, private val indent: Indent?): Abstrac
   override fun isLeaf(): Boolean = ranges.isEmpty()
 
   private val ranges: List<TextRange> by lazy {
-    val result = mutableListOf<TextRange>()
-
     val text = node.chars
+    if (!text.startsWith("/*")) return@lazy emptyList<TextRange>()
+
+    val result = mutableListOf<TextRange>()
     var start = 0
     for (i in 2 until text.length) {
       val c = text[i]
@@ -60,7 +61,6 @@ class CStyleCommentBlock(comment: ASTNode, private val indent: Indent?): Abstrac
         start = -1
       }
     }
-
     result
   }
 }
