@@ -8,8 +8,8 @@ data class LookupState(val ids: List<Int>,
                        val selectedPosition: Int,
                        val commonSessionFactors: Map<String, String>)
 
-fun LookupState.withSelected(position: Int): LookupState {
-    return LookupState(ids, newItems, itemsDiff, position, commonSessionFactors)
+fun LookupState.withSelected(position: Int, withNewItems: Boolean = false): LookupState {
+    return LookupState(ids, if (withNewItems) newItems else emptyList(), itemsDiff, position, commonSessionFactors)
 }
 
 fun LookupState.withoutNewItems(): LookupState {
