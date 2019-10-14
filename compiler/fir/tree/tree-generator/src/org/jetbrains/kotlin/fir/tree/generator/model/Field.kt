@@ -93,7 +93,7 @@ class FieldWithDefault(val origin: Field) : Field() {
     }
 }
 
-open class SimpleField(
+class SimpleField(
     override val name: String,
     override val type: String,
     override val packageName: String?,
@@ -105,7 +105,7 @@ open class SimpleField(
     override val fullQualifiedName: String?
         get() = customType?.fullQualifiedName ?: super.fullQualifiedName
 
-    override var isMutable: Boolean = false
+    override var isMutable: Boolean = withReplace
 
     override fun internalCopy(): Field {
         return SimpleField(

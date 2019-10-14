@@ -473,6 +473,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "null"
                 withGetter = true
             }
+            default("boundSymbol") {
+                isMutable = false
+            }
         }
 
         impl(superReference, "FirExplicitSuperReference")
