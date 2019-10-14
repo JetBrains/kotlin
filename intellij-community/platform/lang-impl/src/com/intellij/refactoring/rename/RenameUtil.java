@@ -37,6 +37,7 @@ import com.intellij.psi.meta.PsiMetaData;
 import com.intellij.psi.meta.PsiMetaOwner;
 import com.intellij.psi.meta.PsiWritableMetaData;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.PsiSearchHelper;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.RefactoringBundle;
@@ -82,8 +83,10 @@ public class RenameUtil {
     List<UsageInfo> result = Collections.synchronizedList(new ArrayList<>());
 
     RenamePsiElementProcessor processor = RenamePsiElementProcessor.forElement(element);
-    SearchScope useScope = searchScope.intersectWith(
-      PsiSearchHelper.getInstance(element.getProject()).getUseScope(element));
+    SearchScope useScope = PsiSearchHelper.getInstance(element.getProject()).getUseScope(element);
+    if (!(useScope instanceof LocalSearchScope)) {
+      useScope = searchScope.intersectWith(useScope);
+    }
     Collection<PsiReference> refs = processor.findReferences(element, useScope, searchInStringsAndComments);
     for (final PsiReference ref : refs) {
       if (ref == null) {
