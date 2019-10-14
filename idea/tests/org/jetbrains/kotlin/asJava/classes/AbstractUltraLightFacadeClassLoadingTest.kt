@@ -33,7 +33,10 @@ abstract class AbstractUltraLightFacadeClassTest : KotlinLightCodeInsightFixture
         val facades = KotlinAsJavaSupport.getInstance(project).getFacadeNames(FqName.ROOT, scope)
 
         for (facadeName in facades) {
-            UltraLightChecker.checkFacadeEquivalence(FqName(facadeName), scope, project)
+            val ultraLightClass = UltraLightChecker.checkFacadeEquivalence(FqName(facadeName), scope, project)
+            if (ultraLightClass != null) {
+                UltraLightChecker.checkDescriptorsLeak(ultraLightClass)
+            }
         }
     }
 }

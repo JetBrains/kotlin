@@ -82,10 +82,10 @@ internal open class KtUltraLightFieldImpl protected constructor(
 
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
-    private val propertyDescriptor: PropertyDescriptor? by lazyPub { declaration.resolve() as? PropertyDescriptor }
+    private val propertyDescriptor: PropertyDescriptor? get() = declaration.resolve() as? PropertyDescriptor
 
-    private val kotlinType: KotlinType? by lazyPub {
-        when {
+    private val kotlinType: KotlinType?
+        get() = when {
             declaration is KtProperty && declaration.hasDelegate() ->
                 propertyDescriptor?.let {
                     val context = LightClassGenerationSupport.getInstance(project).analyze(declaration)
@@ -100,11 +100,13 @@ internal open class KtUltraLightFieldImpl protected constructor(
                 declaration.getKotlinType()
             }
         }
-    }
 
-    override val kotlinTypeForNullabilityAnnotation: KotlinType?
-        // We don't generate nullability annotations for non-backing fields in backend
-        get() = kotlinType?.takeUnless { declaration is KtEnumEntry || declaration is KtObjectDeclaration }
+    override val qualifiedNameForNullabilityAnnotation: String?
+        get() {
+            // We don't generate nullability annotations for non-backing fields in backend
+            val typeForAnnotation = kotlinType?.takeUnless { declaration is KtEnumEntry || declaration is KtObjectDeclaration }
+            return computeQualifiedNameForNullabilityAnnotation(typeForAnnotation)
+        }
 
     override val psiTypeForNullabilityAnnotation: PsiType?
         get() = type

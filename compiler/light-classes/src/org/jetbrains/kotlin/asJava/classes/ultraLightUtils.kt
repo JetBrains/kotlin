@@ -51,53 +51,55 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.text.StringCharacterIterator
 
-internal fun buildTypeParameterList(
-    declaration: CallableMemberDescriptor,
-    owner: PsiTypeParameterListOwner,
-    support: KtUltraLightSupport
-): PsiTypeParameterList = buildTypeParameterList(
-    declaration, owner, support,
-    object : TypeParametersSupport<CallableMemberDescriptor, TypeParameterDescriptor> {
-        override fun parameters(declaration: CallableMemberDescriptor) = declaration.typeParameters
-
-        override fun name(typeParameter: TypeParameterDescriptor) = typeParameter.name.asString()
-
-        override fun hasNonTrivialBounds(
-            declaration: CallableMemberDescriptor,
-            typeParameter: TypeParameterDescriptor
-        ) = typeParameter.upperBounds.any { !KotlinBuiltIns.isDefaultBound(it) }
-
-        override fun asDescriptor(typeParameter: TypeParameterDescriptor) = typeParameter
-    }
-)
-
-internal fun buildTypeParameterList(
-    declaration: KtTypeParameterListOwner,
-    owner: PsiTypeParameterListOwner,
-    support: KtUltraLightSupport
-): PsiTypeParameterList = buildTypeParameterList(
-    declaration, owner, support,
-    object : TypeParametersSupport<KtTypeParameterListOwner, KtTypeParameter> {
-        override fun parameters(declaration: KtTypeParameterListOwner) = declaration.typeParameters
-        override fun name(typeParameter: KtTypeParameter) = typeParameter.name
-
-        override fun hasNonTrivialBounds(
-            declaration: KtTypeParameterListOwner,
-            typeParameter: KtTypeParameter
-        ) = typeParameter.extendsBound != null || declaration.typeConstraints.isNotEmpty()
-
-        override fun asDescriptor(typeParameter: KtTypeParameter) = typeParameter.resolve() as? TypeParameterDescriptor
-    }
-)
-
-interface TypeParametersSupport<D, T> {
+private interface TypeParametersSupport<D, T> {
     fun parameters(declaration: D): List<T>
     fun name(typeParameter: T): String?
     fun hasNonTrivialBounds(declaration: D, typeParameter: T): Boolean
     fun asDescriptor(typeParameter: T): TypeParameterDescriptor?
 }
 
-internal fun <D, T> buildTypeParameterList(
+private val supportForDescriptor = object : TypeParametersSupport<CallableMemberDescriptor, TypeParameterDescriptor> {
+
+    override fun parameters(declaration: CallableMemberDescriptor) = declaration.typeParameters
+
+    override fun name(typeParameter: TypeParameterDescriptor) = typeParameter.name.asString()
+
+    override fun hasNonTrivialBounds(
+        declaration: CallableMemberDescriptor,
+        typeParameter: TypeParameterDescriptor
+    ) = typeParameter.upperBounds.any { !KotlinBuiltIns.isDefaultBound(it) }
+
+    override fun asDescriptor(typeParameter: TypeParameterDescriptor) = typeParameter
+}
+
+private val supportForSourceDeclaration = object : TypeParametersSupport<KtTypeParameterListOwner, KtTypeParameter> {
+
+    override fun parameters(declaration: KtTypeParameterListOwner) = declaration.typeParameters
+
+    override fun name(typeParameter: KtTypeParameter) = typeParameter.name
+
+    override fun hasNonTrivialBounds(
+        declaration: KtTypeParameterListOwner,
+        typeParameter: KtTypeParameter
+    ) = typeParameter.extendsBound != null || declaration.typeConstraints.isNotEmpty()
+
+    override fun asDescriptor(typeParameter: KtTypeParameter) = typeParameter.resolve() as? TypeParameterDescriptor
+}
+
+internal fun buildTypeParameterListForDescriptor(
+    declaration: CallableMemberDescriptor,
+    owner: PsiTypeParameterListOwner,
+    support: KtUltraLightSupport
+): PsiTypeParameterList = buildTypeParameterList(declaration, owner, support, supportForDescriptor)
+
+
+internal fun buildTypeParameterListForSourceDeclaration(
+    declaration: KtTypeParameterListOwner,
+    owner: PsiTypeParameterListOwner,
+    support: KtUltraLightSupport
+): PsiTypeParameterList = buildTypeParameterList(declaration, owner, support, supportForSourceDeclaration)
+
+private fun <D, T> buildTypeParameterList(
     declaration: D,
     owner: PsiTypeParameterListOwner,
     support: KtUltraLightSupport,
@@ -226,35 +228,15 @@ fun KtUltraLightClass.createGeneratedMethodFromDescriptor(
     descriptor: FunctionDescriptor,
     declarationForOrigin: KtDeclaration? = null
 ): KtLightMethod {
-    val lightMethod = lightMethod(descriptor)
+
     val kotlinOrigin =
         declarationForOrigin
             ?: DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtDeclaration
             ?: kotlinOrigin
 
     val lightMemberOrigin = LightMemberOriginForDeclaration(kotlinOrigin, JvmDeclarationOriginKind.OTHER)
-    val wrapper = KtUltraLightMethodForDescriptor(descriptor, lightMethod, lightMemberOrigin, support, this)
 
-    descriptor.extensionReceiverParameter?.let { receiver ->
-        lightMethod.addParameter(KtUltraLightParameterForDescriptor(receiver, support, wrapper))
-    }
-
-    for (valueParameter in descriptor.valueParameters) {
-        lightMethod.addParameter(KtUltraLightParameterForDescriptor(valueParameter, support, wrapper))
-    }
-
-    if (descriptor is ConstructorDescriptor) {
-        lightMethod.isConstructor = true
-        lightMethod.setMethodReturnType(PsiType.VOID)
-    } else {
-        lightMethod.setMethodReturnType {
-            support.mapType(wrapper) { typeMapper, signatureWriter ->
-                typeMapper.mapReturnType(descriptor, signatureWriter)
-            }
-        }
-    }
-
-    return wrapper
+    return KtUltraLightMethodForDescriptor(descriptor, lightMethod(descriptor), lightMemberOrigin, support, this)
 }
 
 private fun KtUltraLightClass.lightMethod(

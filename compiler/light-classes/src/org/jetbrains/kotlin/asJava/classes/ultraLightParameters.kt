@@ -27,16 +27,19 @@ internal class KtUltraLightSuspendContinuationParameter(
     KtLightParameter,
     KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter> {
 
-    override val kotlinTypeForNullabilityAnnotation: KotlinType? get() = ktType
+    override val qualifiedNameForNullabilityAnnotation: String?
+        get() = computeQualifiedNameForNullabilityAnnotation(ktType)
+
     override val psiTypeForNullabilityAnnotation: PsiType? get() = psiType
     override val kotlinOrigin: KtParameter? = null
     override val clsDelegate: PsiParameter get() = invalidAccess()
 
-    private val ktType by lazyPub {
-        val descriptor = ktFunction.resolve() as? FunctionDescriptor
-        val returnType = descriptor?.returnType ?: return@lazyPub null
-        support.moduleDescriptor.getContinuationOfTypeOrAny(returnType, support.isReleasedCoroutine)
-    }
+    private val ktType: KotlinType?
+        get() {
+            val descriptor = ktFunction.resolve() as? FunctionDescriptor
+            val returnType = descriptor?.returnType ?: return null
+            return support.moduleDescriptor.getContinuationOfTypeOrAny(returnType, support.isReleasedCoroutine)
+        }
 
     private val psiType by lazyPub {
         ktType?.asPsiType(support, TypeMappingMode.DEFAULT, method) ?: PsiType.NULL
@@ -68,12 +71,12 @@ internal abstract class KtUltraLightParameter(
     name: String,
     override val kotlinOrigin: KtParameter?,
     protected val support: KtUltraLightSupport,
-    method: KtUltraLightMethod
+    private val ultraLightMethod: KtUltraLightMethod
 ) : org.jetbrains.kotlin.asJava.elements.LightParameter(
     name,
     PsiType.NULL,
-    method,
-    method.language
+    ultraLightMethod,
+    ultraLightMethod.language
 ), KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter>, KtLightParameter {
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = kotlinOrigin == another
@@ -89,41 +92,31 @@ internal abstract class KtUltraLightParameter(
 
     override fun isValid() = parent.isValid
 
-    protected abstract val kotlinType: KotlinType?
-    protected abstract val containingDescriptor: CallableDescriptor?
-
-    override val kotlinTypeForNullabilityAnnotation: KotlinType?
-        get() {
-            val type = kotlinType
-            return if (isVarArgs && type != null && KotlinBuiltIns.isArray(type)) {
-                type.arguments[0].type
-            } else {
-                type
-            }
-        }
+    override fun computeQualifiedNameForNullabilityAnnotation(kotlinType: KotlinType?): String? {
+        val typeForAnnotation =
+            if (isVarArgs && kotlinType != null && KotlinBuiltIns.isArray(kotlinType)) kotlinType.arguments[0].type else kotlinType
+        return super.computeQualifiedNameForNullabilityAnnotation(typeForAnnotation)
+    }
 
     override val psiTypeForNullabilityAnnotation: PsiType?
         get() = type
 
 
-    private val _type: PsiType by lazyPub {
-        val kotlinType = kotlinType ?: return@lazyPub PsiType.NULL
+    protected fun computeParameterType(kotlinType: KotlinType?, containingDeclaration: CallableDescriptor?): PsiType {
+        kotlinType ?: return PsiType.NULL
 
         if (kotlinType.isSuspendFunctionType) {
-            kotlinType.asPsiType(support, TypeMappingMode.DEFAULT, this)
+            return kotlinType.asPsiType(support, TypeMappingMode.DEFAULT, this)
         } else {
-            val containingDescriptor = containingDescriptor ?: return@lazyPub PsiType.NULL
+            val containingDescriptor = containingDeclaration ?: return PsiType.NULL
             val mappedType = support.mapType(this) { typeMapper, sw ->
                 typeMapper.writeParameterType(sw, kotlinType, containingDescriptor)
             }
-
-            if (method.checkNeedToErasureParametersTypes)
-                TypeConversionUtil.erasure(mappedType)
-            else mappedType
+            return if (ultraLightMethod.checkNeedToErasureParametersTypes) TypeConversionUtil.erasure(mappedType) else mappedType
         }
     }
 
-    override fun getType(): PsiType = _type
+    abstract override fun getType(): PsiType
 
     override fun getContainingFile(): PsiFile = method.containingFile
     override fun getParent(): PsiElement = method.parameterList
@@ -143,7 +136,21 @@ internal abstract class KtAbstractUltraLightParameterForDeclaration(
     method: KtUltraLightMethod,
     protected val containingDeclaration: KtCallableDeclaration
 ) : KtUltraLightParameter(name, kotlinOrigin, support, method) {
-    override val containingDescriptor: CallableDescriptor? = containingDeclaration.resolve() as? CallableMemberDescriptor
+
+    protected fun tryGetContainingDescriptor(): CallableDescriptor? =
+        containingDeclaration.resolve() as? CallableMemberDescriptor
+
+    protected abstract fun tryGetKotlinType(): KotlinType?
+
+    private val _parameterType: PsiType by lazyPub {
+        computeParameterType(tryGetKotlinType(), tryGetContainingDescriptor())
+    }
+
+    override fun getType(): PsiType = _parameterType
+
+    override val qualifiedNameForNullabilityAnnotation: String? by lazyPub {
+        computeQualifiedNameForNullabilityAnnotation(tryGetKotlinType())
+    }
 }
 
 internal class KtUltraLightParameterForSource(
@@ -154,9 +161,7 @@ internal class KtUltraLightParameterForSource(
     containingDeclaration: KtCallableDeclaration
 ) : KtAbstractUltraLightParameterForDeclaration(name, kotlinOrigin, support, method, containingDeclaration) {
 
-    override val kotlinType: KotlinType? by lazyPub {
-        kotlinOrigin.getKotlinType()
-    }
+    override fun tryGetKotlinType(): KotlinType? = kotlinOrigin.getKotlinType()
 
     override fun isVarArgs(): Boolean = kotlinOrigin.isVarArg && method.parameterList.parameters.last() == this
 
@@ -175,7 +180,7 @@ internal class KtUltraLightParameterForSetterParameter(
     containingDeclaration: KtCallableDeclaration
 ) : KtAbstractUltraLightParameterForDeclaration(name, null, support, method, containingDeclaration) {
 
-    override val kotlinType: KotlinType? by lazyPub { property.getKotlinType() }
+    override fun tryGetKotlinType(): KotlinType? = property.getKotlinType()
 
     override fun isVarArgs(): Boolean = false
 }
@@ -188,24 +193,51 @@ internal class KtUltraLightReceiverParameter(
 
     override fun isVarArgs(): Boolean = false
 
-    override val kotlinType: KotlinType? by lazyPub { containingDescriptor?.extensionReceiverParameter?.type }
+    override fun tryGetKotlinType(): KotlinType? =
+        tryGetContainingDescriptor()?.extensionReceiverParameter?.type
 }
 
 internal class KtUltraLightParameterForDescriptor(
-    private val descriptor: ParameterDescriptor,
+    descriptor: ParameterDescriptor,
     support: KtUltraLightSupport,
     method: KtUltraLightMethod
 ) : KtUltraLightParameter(
     if (descriptor.name.isSpecial) "\$self" else descriptor.name.identifier,
     null, support, method
 ) {
-    override val kotlinType: KotlinType?
-        get() = descriptor.type
+    // This is greedy realization of UL class.
+    // This means that all data that depends on descriptor evaluated in ctor so the descriptor will be released on the end.
+    // Be aware to save descriptor in class instance or any depending references
 
-    override val containingDescriptor: CallableDescriptor? = descriptor.containingDeclaration as? CallableMemberDescriptor
+    private val lazyInitializers = mutableListOf<Lazy<*>>()
+    private inline fun <T> getAndAddLazy(crossinline initializer: () -> T): Lazy<T> =
+        lazyPub { initializer() }.also { lazyInitializers.add(it) }
 
-    override fun isVarArgs() = (descriptor as? ValueParameterDescriptor)?.varargElementType != null
+    override val qualifiedNameForNullabilityAnnotation: String? by getAndAddLazy {
+        computeQualifiedNameForNullabilityAnnotation(descriptor.type)
+    }
 
-    override val givenAnnotations: List<KtLightAbstractAnnotation>
-        get() = descriptor.obtainLightAnnotations(support, this)
+    private val _isVarArgs: Boolean by getAndAddLazy {
+        (descriptor as? ValueParameterDescriptor)?.varargElementType != null
+    }
+
+    override fun isVarArgs() = _isVarArgs
+
+    override val givenAnnotations: List<KtLightAbstractAnnotation> by getAndAddLazy {
+        descriptor.obtainLightAnnotations(support, this)
+    }
+
+    private val _parameterType by getAndAddLazy {
+        computeParameterType(descriptor.type, descriptor.containingDeclaration as? CallableMemberDescriptor)
+    }
+
+    override fun getType(): PsiType = _parameterType
+
+    init {
+        //We should force computations on all lazy delegates to release descriptor on the end of ctor call
+        with(lazyInitializers) {
+            forEach { it.value }
+            clear()
+        }
+    }
 }

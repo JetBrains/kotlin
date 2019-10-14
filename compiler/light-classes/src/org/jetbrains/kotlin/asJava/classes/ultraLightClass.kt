@@ -160,7 +160,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         return forExtendsList == !JvmCodegenUtil.isJvmInterface(supertype)
     }
 
-    override fun buildTypeParameterList(): PsiTypeParameterList = buildTypeParameterList(classOrObject, this, support)
+    override fun buildTypeParameterList(): PsiTypeParameterList = buildTypeParameterListForSourceDeclaration(classOrObject, this, support)
 
     // the following logic should be in the platform (super), overrides can be removed once that happens
     override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)

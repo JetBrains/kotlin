@@ -8,23 +8,29 @@ package org.jetbrains.kotlin.idea.perf
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.PairProcessor
+import com.intellij.util.ref.DebugReflectionUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiArrayInitializerMemberValue
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
+import kotlin.test.assertFails
 
 fun UsefulTestCase.forceUsingOldLightClassesForTest() {
     KtUltraLightSupport.forceUsingOldLightClasses = true
@@ -263,4 +269,29 @@ object UltraLightChecker {
     }
 
     private fun String.prependDefaultIndent() = prependIndent("  ")
+
+    private fun checkDescriptorLeakOnElement(element: PsiElement) {
+        DebugReflectionUtil.walkObjects(
+            10,
+            mapOf(element to element.javaClass.name),
+            Any::class.java,
+            Conditions.alwaysTrue(),
+            PairProcessor { value, backLink ->
+                if (value is DeclarationDescriptor) {
+                    assertFails {
+                        """Leaked descriptor ${value.javaClass.name} in ${element.javaClass.name}\n$backLink"""
+                    }
+                }
+                true
+            })
+    }
+
+    fun checkDescriptorsLeak(lightClass: KtLightClass) {
+        checkDescriptorLeakOnElement(lightClass)
+        lightClass.methods.forEach {
+            checkDescriptorLeakOnElement(it)
+            it.parameterList.parameters.forEach { parameter -> checkDescriptorLeakOnElement(parameter) }
+        }
+        lightClass.fields.forEach { checkDescriptorLeakOnElement(it) }
+    }
 }
