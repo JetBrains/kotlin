@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
 internal val propertyReferencePhase = makeIrFilePhase(
@@ -227,7 +228,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 val superClass = propertyReferenceKindFor(expression).interfaceSymbol.owner
                 val referenceClass = buildClass {
                     setSourceRange(expression)
-                    name = Name.special("<property reference to ${(expression.symbol.owner as IrDeclarationWithName).fqNameWhenAvailable}>")
+                    name = SpecialNames.NO_NAME_PROVIDED
                     origin = JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
                     visibility = Visibilities.LOCAL
                 }.apply {

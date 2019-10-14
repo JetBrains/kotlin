@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 internal val callableReferencePhase = makeIrFilePhase(
@@ -175,7 +176,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             // A callable reference results in a synthetic class, while a lambda is not synthetic.
             // We don't produce GENERATED_SAM_IMPLEMENTATION, which is always synthetic.
             origin = if (isLambda) JvmLoweredDeclarationOrigin.LAMBDA_IMPL else JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
-            name = Name.special("<function reference to ${callee.fqNameWhenAvailable}>")
+            name = SpecialNames.NO_NAME_PROVIDED
         }.apply {
             parent = currentDeclarationParent
             superTypes += superType

@@ -49,8 +49,7 @@ open class FunctionCodegen(
         val flags = calculateMethodFlags(functionView.isStatic)
         var methodVisitor = createMethod(flags, signature)
 
-        val hasSyntheticFlag = flags.and(Opcodes.ACC_SYNTHETIC) != 0
-        if (state.generateParametersMetadata && !hasSyntheticFlag) {
+        if (state.generateParametersMetadata && flags.and(Opcodes.ACC_SYNTHETIC) == 0) {
             generateParameterNames(irFunction, methodVisitor, signature, state)
         }
 
@@ -65,7 +64,7 @@ open class FunctionCodegen(
         // super constructor arguments, there shouldn't be any annotations on them other than @NonNull,
         // and those are meaningless on synthetic parameters. (Also, the inliner cannot handle them and
         // will throw an exception if we generate any.)
-        if (irFunction !is IrConstructor || (!hasSyntheticFlag && !irFunction.parentAsClass.isAnonymousObject)) {
+        if (irFunction !is IrConstructor || !irFunction.parentAsClass.isAnonymousObject) {
             generateParameterAnnotations(functionView, methodVisitor, signature, classCodegen, context)
         }
 
