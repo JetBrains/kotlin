@@ -139,6 +139,11 @@ public class FirCfgBuildingTestGenerated extends AbstractFirCfgBuildingTest {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/equalsToBoolean.kt");
         }
 
+        @TestMetadata("implicitReceiverAsWhenSubject.kt")
+        public void testImplicitReceiverAsWhenSubject() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/implicitReceiverAsWhenSubject.kt");
+        }
+
         @TestMetadata("implicitReceivers.kt")
         public void testImplicitReceivers() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/implicitReceivers.kt");

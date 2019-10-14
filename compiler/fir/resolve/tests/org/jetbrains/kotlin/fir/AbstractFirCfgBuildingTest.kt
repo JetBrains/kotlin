@@ -40,8 +40,8 @@ abstract class AbstractFirCfgBuildingTest : AbstractFirResolveTestCase() {
 
     override fun doTest(path: String) {
         val firFiles = processInputFile(path)
-        checkCfg(path, firFiles)
         checkFir(path, firFiles)
+        checkCfg(path, firFiles)
     }
 
     fun checkCfg(path: String, firFiles: List<FirFile>) {
