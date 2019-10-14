@@ -44,9 +44,7 @@ class CompletionValidationState(event: CompletionStartedEvent) : LogEventVisitor
             idToFactorNames[it.id] = factorNames.toMutableSet()
         }
 
-        if (nextEvent.completionListIds.isNotEmpty()) {
-            completionList = nextEvent.completionListIds
-        }
+        completionList = nextEvent.completionListIds
 
         updateFactors(nextEvent.itemsDiff)
 
