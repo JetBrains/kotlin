@@ -220,7 +220,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
               .forEach(module -> context.addDirtyOutputPathsProvider(moduleOutputPathsProvider(module)));
           }
           runner
-            .run(myProject, context, pair.second)
+            .run(myProject, context, pair.second.toArray(EMPTY_TASKS_ARRAY))
             .onSuccess(runnerResultConsumer)
             .onError(throwable -> runnerResultConsumer.accept(TaskRunnerResults.ABORTED));
         }
@@ -318,7 +318,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     @Override
     public Promise<Result> run(@NotNull Project project,
                                @NotNull ProjectTaskContext context,
-                               @NotNull Collection<? extends ProjectTask> tasks) {
+                               @NotNull ProjectTask... tasks) {
       return Promises.resolvedPromise(TaskRunnerResults.SUCCESS);
     }
 
