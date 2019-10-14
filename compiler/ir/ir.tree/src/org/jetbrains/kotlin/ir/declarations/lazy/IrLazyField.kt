@@ -61,7 +61,11 @@ class IrLazyField(
         symbol.bind(this)
     }
 
-    override val annotations: MutableList<IrConstructorCall> = mutableListOf()
+    override val annotations: MutableList<IrConstructorCall> by lazy {
+        descriptor.backingField?.annotations
+            ?.mapNotNullTo(mutableListOf(), typeTranslator.constantValueGenerator::generateAnnotationConstructorCall)
+            ?: mutableListOf()
+    }
 
     override val descriptor: PropertyDescriptor = symbol.descriptor
 
