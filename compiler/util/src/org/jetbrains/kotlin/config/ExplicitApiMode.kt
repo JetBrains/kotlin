@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.config
 
-enum class ApiMode(val state: String) {
+enum class ExplicitApiMode(val state: String) {
     DISABLED("disable"),
-    ENABLED("enable"),
-    MIGRATION("migration");
+    STRICT("strict"),
+    WARNING("warning");
 
     companion object {
-        fun fromString(string: String): ApiMode? = values().find { it.state == string }
+        fun fromString(string: String): ExplicitApiMode? = values().find { it.state == string }
 
         fun availableValues() = values().joinToString(prefix = "{", postfix = "}") { it.state }
     }

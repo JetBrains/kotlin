@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.config.ApiMode
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return declarationVisitor(fun(declaration: KtDeclaration) {
-            val isInApiMode = declaration.languageVersionSettings.getFlag(AnalysisFlags.apiMode) != ApiMode.DISABLED
+            val isInApiMode = declaration.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode) != ExplicitApiMode.DISABLED
             if (isInApiMode) return@declarationVisitor
 
             if (declaration is KtPropertyAccessor && declaration.isGetter) return // There is a quick fix for REDUNDANT_MODIFIER_IN_GETTER

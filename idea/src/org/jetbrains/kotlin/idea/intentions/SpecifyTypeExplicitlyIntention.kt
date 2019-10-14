@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.idea.util.getResolvableApproximations
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.checkers.ApiModeDeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.ExplicitApiDeclarationChecker
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -51,7 +51,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
 ), HighPriorityAction {
 
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
-        if (!ApiModeDeclarationChecker.returnTypeCheckIsApplicable(element)) return null
+        if (!ExplicitApiDeclarationChecker.returnTypeCheckIsApplicable(element)) return null
 
         text = if (element is KtFunction) "Specify return type explicitly" else "Specify type explicitly"
 

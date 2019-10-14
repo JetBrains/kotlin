@@ -39,7 +39,7 @@ class AnalysisFlag<out T> internal constructor(
         }
 
         object ApiModeDisabledByDefault {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ApiMode.DISABLED)
+            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ExplicitApiMode.DISABLED)
         }
 
         object ListOfStrings {

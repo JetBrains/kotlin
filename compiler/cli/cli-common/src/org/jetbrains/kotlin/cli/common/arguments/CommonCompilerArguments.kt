@@ -317,12 +317,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xapi-mode",
-        valueDescription = "{enable|disable|migration}",
-        description = "Enable api mode, force compiler to report errors an all public API declarations without explicit visibility.\n" +
-                "Use 'migration' level to issue warnings instead of errors."
+        value = "-Xexplicit-api",
+        valueDescription = "{strict|warning|disable}",
+        description = "Force compiler to report errors an all public API declarations without explicit visibility.\n" +
+                "Use 'warning' level to issue warnings instead of errors."
     )
-    var apiMode: String by FreezableVar(ApiMode.DISABLED.state)
+    var explicitApi: String by FreezableVar(ExplicitApiMode.DISABLED.state)
 
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -332,9 +332,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty())
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
-            ApiMode.fromString(apiMode)?.also { put(AnalysisFlags.apiMode, it) } ?: collector.report(
+            ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(
                 CompilerMessageSeverity.ERROR,
-                "Unknown value for parameter -Xapi-mode: '$apiMode'. Value should be one of ${ApiMode.availableValues()}"
+                "Unknown value for parameter -Xexplicit-api: '$explicitApi'. Value should be one of ${ExplicitApiMode.availableValues()}"
             )
         }
     }
