@@ -30,8 +30,8 @@ fun field(type: Type, nullable: Boolean = false, withReplace: Boolean = false): 
     return SimpleField(type.type.decapitalize(), type.typeWithArguments, type.packageName, null, nullable, withReplace)
 }
 
-fun booleanField(name: String): Field {
-    return field(name, AbstractFirTreeBuilder.boolean, null)
+fun booleanField(name: String, withReplace: Boolean = false): Field {
+    return field(name, AbstractFirTreeBuilder.boolean, null, withReplace = withReplace)
 }
 
 fun stringField(name: String, nullable: Boolean = false): Field {
