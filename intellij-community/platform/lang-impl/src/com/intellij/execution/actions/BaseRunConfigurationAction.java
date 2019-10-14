@@ -9,10 +9,13 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.LocatableConfiguration;
 import com.intellij.execution.configurations.LocatableConfigurationBase;
 import com.intellij.execution.configurations.RunConfiguration;
+import com.intellij.execution.lineMarker.RunLineMarkerProvider;
+import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.macro.MacroManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -21,7 +24,9 @@ import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.ThreeState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +36,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class BaseRunConfigurationAction extends ActionGroup {
   protected static final Logger LOG = Logger.getInstance(BaseRunConfigurationAction.class);
@@ -139,7 +145,7 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
             }
 
             @Override
-            public PopupStep onChosen(final ConfigurationFromContext producer, final boolean finalChoice) {
+            public PopupStep<?> onChosen(ConfigurationFromContext producer, boolean finalChoice) {
               perform(producer, context);
               return FINAL_CHOICE;
             }
@@ -182,7 +188,48 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
   protected abstract void perform(ConfigurationContext context);
 
   @Override
-  public void update(@NotNull final AnActionEvent event){
+  public void beforeActionPerformedUpdate(@NotNull AnActionEvent e) {
+    fullUpdate(e);
+  }
+
+  @Nullable private static Integer ourLastTimeoutStamp = null;
+
+  @Override
+  public void update(@NotNull final AnActionEvent event) {
+    VirtualFile vFile = event.getDataContext().getData(CommonDataKeys.VIRTUAL_FILE);
+    ThreeState hadAnythingRunnable = vFile == null ? ThreeState.UNSURE : RunLineMarkerProvider.hadAnythingRunnable(vFile);
+    if (hadAnythingRunnable == ThreeState.UNSURE) {
+      fullUpdate(event);
+      return;
+    }
+
+    boolean success =
+      !alreadyExceededTimeoutOnSimilarAction() &&
+      ProgressIndicatorUtils.withTimeout(Registry.intValue("run.configuration.update.timeout"), () -> {
+        fullUpdate(event);
+        return true;
+      }) != null;
+    if (!success) {
+      recordUpdateTimeout();
+      approximatePresentationByPreviousAvailability(event, hadAnythingRunnable);
+    }
+  }
+
+  private static boolean alreadyExceededTimeoutOnSimilarAction() {
+    return Objects.equals(IdeEventQueue.getInstance().getEventCount(), ourLastTimeoutStamp);
+  }
+
+  private static void recordUpdateTimeout() {
+    ourLastTimeoutStamp = IdeEventQueue.getInstance().getEventCount();
+  }
+
+  // we assume that presence of anything runnable in a file changes rarely, so using last recorded state is mostly OK 
+  private void approximatePresentationByPreviousAvailability(AnActionEvent event, ThreeState hadAnythingRunnable) {
+    event.getPresentation().copyFrom(getTemplatePresentation());
+    event.getPresentation().setEnabledAndVisible(hadAnythingRunnable == ThreeState.YES);
+  }
+
+  protected void fullUpdate(@NotNull AnActionEvent event) {
     final ConfigurationContext context = ConfigurationContext.getFromContext(event.getDataContext());
     final Presentation presentation = event.getPresentation();
     final RunnerAndConfigurationSettings existing = context.findExisting();
@@ -195,6 +242,10 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
     }
     else{
       presentation.setEnabledAndVisible(true);
+      VirtualFile vFile = event.getDataContext().getData(CommonDataKeys.VIRTUAL_FILE);
+      if (vFile != null) {
+        RunLineMarkerProvider.markRunnable(vFile);
+      }
       final List<ConfigurationFromContext> fromContext = getConfigurationsFromContext(context);
       if (existing == null && !fromContext.isEmpty()) {
         //todo[nik,anna] it's dirty fix. Otherwise wrong configuration will be returned from context.getConfiguration()
@@ -213,7 +264,7 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
   @NotNull
   public static String suggestRunActionName(final LocatableConfiguration configuration) {
     if (configuration instanceof LocatableConfigurationBase && configuration.isGeneratedName()) {
-      String actionName = ((LocatableConfigurationBase)configuration).getActionName();
+      String actionName = ((LocatableConfigurationBase<?>)configuration).getActionName();
       if (actionName != null) {
         return actionName;
       }
@@ -230,7 +281,7 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
     if (configurationFromContext.isFromAlternativeLocation()) {
       String locationDisplayName = configurationFromContext.getAlternativeLocationDisplayName();
       if (locationDisplayName != null) {
-        return ((LocatableConfigurationBase)configuration).getActionName() + " " + locationDisplayName;
+        return ((LocatableConfigurationBase<?>)configuration).getActionName() + " " + locationDisplayName;
       }
     }
 

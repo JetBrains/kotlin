@@ -2,28 +2,36 @@
 package com.intellij.execution.lineMarker;
 
 import com.intellij.codeHighlighting.Pass;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProviderDescriptor;
+import com.intellij.codeInsight.daemon.LineMarkerSettings;
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.execution.lineMarker.RunLineMarkerContributor.Info;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Separator;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.markup.GutterIconRenderer;
 import com.intellij.openapi.editor.markup.MarkupEditorFilter;
 import com.intellij.openapi.editor.markup.MarkupEditorFilterFactory;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.TextEditor;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
+import com.intellij.util.ThreeState;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Dmitry Avdeev
@@ -99,35 +107,42 @@ public class RunLineMarkerProvider extends LineMarkerProviderDescriptor {
 
       return tooltip.length() == 0 ? null : tooltip.toString();
     };
-    return new LineMarkerInfo<PsiElement>(element, element.getTextRange(), icon, Pass.LINE_MARKERS,
-                                          tooltipProvider, null,
-                                          GutterIconRenderer.Alignment.CENTER) {
-      @Override
-      public GutterIconRenderer createGutterRenderer() {
-        return new LineMarkerGutterIconRenderer<PsiElement>(this) {
-          @Override
-          public AnAction getClickAction() {
-            return null;
-          }
+    return new RunLineMarkerInfo(element, icon, tooltipProvider, actionGroup);
+  }
 
-          @Override
-          public boolean isNavigateAction() {
-            return true;
-          }
+  private static class RunLineMarkerInfo extends LineMarkerInfo<PsiElement> {
+    private final DefaultActionGroup myActionGroup;
 
-          @Override
-          public ActionGroup getPopupMenuActions() {
-            return actionGroup;
-          }
-        };
-      }
+    RunLineMarkerInfo(PsiElement element, Icon icon, Function<PsiElement, String> tooltipProvider, DefaultActionGroup actionGroup) {
+      super(element, element.getTextRange(), icon, Pass.LINE_MARKERS, tooltipProvider, null, GutterIconRenderer.Alignment.CENTER);
+      myActionGroup = actionGroup;
+    }
 
-      @NotNull
-      @Override
-      public MarkupEditorFilter getEditorFilter() {
-        return MarkupEditorFilterFactory.createIsNotDiffFilter();
-      }
-    };
+    @Override
+    public GutterIconRenderer createGutterRenderer() {
+      return new LineMarkerGutterIconRenderer<PsiElement>(this) {
+        @Override
+        public AnAction getClickAction() {
+          return null;
+        }
+
+        @Override
+        public boolean isNavigateAction() {
+          return true;
+        }
+
+        @Override
+        public ActionGroup getPopupMenuActions() {
+          return myActionGroup;
+        }
+      };
+    }
+
+    @NotNull
+    @Override
+    public MarkupEditorFilter getEditorFilter() {
+      return MarkupEditorFilterFactory.createIsNotDiffFilter();
+    }
   }
 
   @NotNull
@@ -141,4 +156,39 @@ public class RunLineMarkerProvider extends LineMarkerProviderDescriptor {
   public Icon getIcon() {
     return AllIcons.RunConfigurations.TestState.Run;
   }
+
+  static class RunnableStatusListener implements DaemonCodeAnalyzer.DaemonListener {
+
+    @Override
+    public void daemonFinished(@NotNull Collection<FileEditor> fileEditors) {
+      if (!LineMarkerSettings.getSettings().isEnabled(new RunLineMarkerProvider())) return;
+
+      for (FileEditor fileEditor : fileEditors) {
+        if (fileEditor instanceof TextEditor) {
+          Editor editor = ((TextEditor)fileEditor).getEditor();
+          Project project = editor.getProject();
+          VirtualFile file = fileEditor.getFile();
+          if (file != null && project != null) {
+            boolean hasRunMarkers = ContainerUtil.findInstance(
+              DaemonCodeAnalyzerImpl.getLineMarkers(editor.getDocument(), project),
+              RunLineMarkerInfo.class) != null;
+            file.putUserData(HAS_ANYTHING_RUNNABLE, hasRunMarkers);
+          }
+        }
+      }
+    }
+  }
+
+  private static final Key<Boolean> HAS_ANYTHING_RUNNABLE = Key.create("HAS_ANYTHING_RUNNABLE");
+
+  @NotNull
+  public static ThreeState hadAnythingRunnable(@NotNull VirtualFile file) {
+    Boolean data = file.getUserData(HAS_ANYTHING_RUNNABLE);
+    return data == null ? ThreeState.UNSURE : ThreeState.fromBoolean(data);
+  }
+
+  public static void markRunnable(@NotNull VirtualFile file) {
+    file.putUserData(HAS_ANYTHING_RUNNABLE, true);
+  }
+
 }
