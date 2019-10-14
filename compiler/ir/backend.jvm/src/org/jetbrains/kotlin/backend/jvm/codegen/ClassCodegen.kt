@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
+import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
+import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
@@ -20,7 +22,12 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.*
@@ -91,6 +98,9 @@ open class ClassCodegen protected constructor(
         }
     }
 
+    private var classInitializer: IrSimpleFunction? = null
+    private var generatingClInit: Boolean = false
+
     fun generate(): ReifiedTypeParametersUsages {
         if (withinInline) {
             getOrCreateSourceMapper() //initialize default mapping that would be later written in class file
@@ -128,8 +138,16 @@ open class ClassCodegen protected constructor(
             visitor.visitSource(shortName, null)
         }
 
+        // Delay generation of <clinit> until the end because inline function calls
+        // might need to generate the `$assertionsDisabled` field initializer.
+        classInitializer = irClass.functions.singleOrNull { it.name.asString() == "<clinit>" }
         for (declaration in irClass.declarations) {
-            generateDeclaration(declaration)
+            if (declaration != classInitializer)
+                generateDeclaration(declaration)
+        }
+        classInitializer?.let {
+            generatingClInit = true
+            generateMethod(it)
         }
 
         // Generate nested classes at the end, to ensure that codegen for companion object will have the necessary JVM signatures in its
@@ -146,6 +164,41 @@ open class ClassCodegen protected constructor(
             done()
         }
         return reifiedTypeParametersUsages
+    }
+
+    private var hasAssertField = irClass.hasAssertionsDisabledField(context)
+
+    fun generateAssertFieldIfNeeded(): IrExpression? {
+        if (hasAssertField)
+            return null
+        hasAssertField = true
+        val topLevelClass = generateSequence(this) { it.parentClassCodegen }.last().irClass
+        val field = irClass.buildAssertionsDisabledField(context, topLevelClass)
+        generateField(field)
+        // Normally, `InitializersLowering` would move the initializer to <clinit>, but
+        // it's obviously too late for that.
+        val init = IrSetFieldImpl(
+            field.startOffset, field.endOffset, field.symbol, null,
+            field.initializer!!.expression, context.irBuiltIns.unitType
+        )
+        if (classInitializer == null) {
+            classInitializer = buildFun {
+                name = Name.special("<clinit>")
+                returnType = context.irBuiltIns.unitType
+            }.apply {
+                parent = irClass
+                body = IrBlockBodyImpl(startOffset, endOffset)
+            }
+            // Do not add it to `irClass.declarations` to avoid a concurrent modification error.
+        } else if (generatingClInit) {
+            // Not only `classInitializer` is non-null, we're in fact generating it right now.
+            // Attempting to do `body.statements.add` will cause a concurrent modification error,
+            // so the currently active ExpressionCodegen needs to be asked to generate this
+            // initializer directly.
+            return init
+        }
+        (classInitializer!!.body as IrBlockBody).statements.add(0, init)
+        return null
     }
 
     private fun generateKotlinMetadataAnnotation() {

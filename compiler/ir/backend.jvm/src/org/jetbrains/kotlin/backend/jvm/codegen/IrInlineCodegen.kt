@@ -41,7 +41,13 @@ class IrInlineCodegen(
     codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
 ), IrCallGenerator {
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
-        // TODO: JVM assertions are not implemented yet in IR backend
+        if (info.generateAssertField && (sourceCompiler as IrSourceCompilerForInline).isPrimaryCopy) {
+            codegen.classCodegen.generateAssertFieldIfNeeded()?.let {
+                // Generating <clinit> right now, so no longer can insert the initializer into it.
+                // Instead, ask ExpressionCodegen to generate the code for it directly.
+                it.accept(codegen, BlockInfo()).discard()
+            }
+        }
     }
 
     override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {

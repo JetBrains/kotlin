@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.fields
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -38,7 +39,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal val assertionPhase = makeIrFilePhase(
     ::AssertionLowering,
     name = "Assertion",
-    description = "Lower assert calls depending on the assertions mode"
+    description = "Lower assert calls depending on the assertions mode",
+    // Necessary to place the `$assertionsDisabled` field into the reference's class, not the
+    // class that contains it.
+    prerequisite = setOf(callableReferencePhase)
 )
 
 private class AssertionLowering(private val context: JvmBackendContext) :
@@ -125,34 +129,37 @@ private class AssertionLowering(private val context: JvmBackendContext) :
             +irIfThen(irNot(assertCondition), throwError)
         }
 
-    fun getAssertionDisabled(irBuilder: IrBuilderWithScope, data: ClassInfo): IrExpression {
+    private fun getAssertionDisabled(irBuilder: IrBuilderWithScope, data: ClassInfo): IrExpression {
         if (data.assertionsDisabledField == null)
-            data.assertionsDisabledField = buildAssertionsDisabledField(data.irClass, data.topLevelClass)
+            data.assertionsDisabledField = data.irClass.buildAssertionsDisabledField(context, data.topLevelClass)
         return irBuilder.irGetField(null, data.assertionsDisabledField!!)
     }
-
-    private fun buildAssertionsDisabledField(irClass: IrClass, topLevelClass: IrClass) =
-        buildField {
-            name = Name.identifier(ASSERTIONS_DISABLED_FIELD_NAME)
-            origin = JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
-            type = context.irBuiltIns.booleanType
-            isFinal = true
-            isStatic = true
-        }.apply {
-            parent = irClass
-            initializer = context.createIrBuilder(irClass.symbol).run {
-                at(this@apply)
-                irExprBody(irNot(irCall(this@AssertionLowering.context.ir.symbols.desiredAssertionStatus).apply {
-                    dispatchReceiver = getJavaClass(topLevelClass)
-                }))
-            }
-        }
-
-    private fun IrBuilderWithScope.getJavaClass(irClass: IrClass) =
-        with(CallableReferenceLowering) {
-            javaClassReference(irClass.typeWith(), this@AssertionLowering.context)
-        }
 
     private val IrFunction.isAssert: Boolean
         get() = name.asString() == "assert" && getPackageFragment()?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 }
+
+private fun IrBuilderWithScope.getJavaClass(backendContext: JvmBackendContext, irClass: IrClass) =
+    with(CallableReferenceLowering) {
+        javaClassReference(irClass.typeWith(), backendContext)
+    }
+
+fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topLevelClass: IrClass) =
+    buildField {
+        name = Name.identifier(ASSERTIONS_DISABLED_FIELD_NAME)
+        origin = JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
+        type = backendContext.irBuiltIns.booleanType
+        isFinal = true
+        isStatic = true
+    }.apply {
+        parent = this@buildAssertionsDisabledField
+        initializer = backendContext.createIrBuilder(this@buildAssertionsDisabledField.symbol).run {
+            at(this@apply)
+            irExprBody(irNot(irCall(backendContext.ir.symbols.desiredAssertionStatus).apply {
+                dispatchReceiver = getJavaClass(backendContext, topLevelClass)
+            }))
+        }
+    }
+
+fun IrClass.hasAssertionsDisabledField(context: JvmBackendContext) =
+    fields.any { it.name.asString() == ASSERTIONS_DISABLED_FIELD_NAME && it.type == context.irBuiltIns.booleanType && it.isStatic }

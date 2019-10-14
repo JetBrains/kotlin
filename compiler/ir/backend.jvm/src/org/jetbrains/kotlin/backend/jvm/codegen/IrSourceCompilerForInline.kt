@@ -164,6 +164,9 @@ class IrSourceCompilerForInline(
         return setOf(name)
     }
 
+    internal val isPrimaryCopy: Boolean
+        get() = codegen.classCodegen !is FakeClassCodegen
+
     private class FakeClassCodegen(irFunction: IrFunction, codegen: ClassCodegen) :
         ClassCodegen(irFunction.parent as IrClass, codegen.context) {
 
