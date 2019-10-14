@@ -72,6 +72,16 @@ private fun getTasksToRun(testRootDisposable: Disposable): ProjectTaskList {
       callback?.finished(ProjectTaskResult(false, 0, 0))
     }
   }
-  maskExtensions(ProjectTaskRunner.EP_NAME, listOf(runner1, runner2, runner3), testRootDisposable)
-  return ProjectTaskList.asList(task1, task2, task3, DummyTask())
+  val task4 = DummyTask()
+  val runner4 = object : ProjectTaskRunner() {
+    override fun canRun(projectTask: ProjectTask) = projectTask == task4
+    override fun run(project: Project,
+                     context: ProjectTaskContext,
+                     callback: ProjectTaskNotification?,
+                     tasks: Collection<ProjectTask>) {
+      callback?.finished(context, ProjectTaskResult(false, 0, 0))
+    }
+  }
+  maskExtensions(ProjectTaskRunner.EP_NAME, listOf(runner1, runner2, runner3, runner4), testRootDisposable)
+  return ProjectTaskList.asList(task1, task2, task3, task4, DummyTask())
 }
