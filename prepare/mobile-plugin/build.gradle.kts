@@ -41,7 +41,9 @@ dependencies {
     runtime("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
     runtime("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
     runtime("com.jetbrains.intellij.cidr:cidr-xctest:$clionVersion") { isTransitive = false }
-    runtime("com.android.tools.ddms:ddmlib:26.0.0")
+    runtime("com.android.tools.ddms:ddmlib:26.0.0") {
+        exclude("com.google.guava", "guava")
+    }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
 }
 

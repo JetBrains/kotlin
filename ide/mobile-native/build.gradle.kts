@@ -29,7 +29,9 @@ dependencies {
     compile("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
     compile("com.jetbrains.intellij.cidr:cidr-xctest:$clionVersion") { isTransitive = false }
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
-    compile("com.android.tools.ddms:ddmlib:26.0.0")
+    compile("com.android.tools.ddms:ddmlib:26.0.0") {
+        exclude("com.google.guava", "guava")
+    }
     compile(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))
 
     if (!isStandaloneBuild) {
