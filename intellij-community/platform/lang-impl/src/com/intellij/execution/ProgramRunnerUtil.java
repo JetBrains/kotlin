@@ -80,10 +80,10 @@ public class ProgramRunnerUtil {
             return;
           }
         }
-      }
 
-      // corresponding runner can be changed after configuration edit
-      runner = getRunner(environment.getExecutor().getId(), runnerAndConfigurationSettings);
+        // corresponding runner can be changed after configuration edit
+        runner = getRunner(environment.getExecutor().getId(), runnerAndConfigurationSettings);
+      }
     }
 
     try {
