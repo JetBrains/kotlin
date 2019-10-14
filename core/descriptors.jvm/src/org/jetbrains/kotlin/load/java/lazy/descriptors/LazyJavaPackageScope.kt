@@ -174,11 +174,11 @@ class LazyJavaPackageScope(
         // combined computeDescriptors() and computeClassNames()
         // computeFunctionNames and computePropertyNames return always emptySet
         // therefore don't need to check if kindFilter anything else but CLASSIFIERS
-        if (!kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK))
-            emptyList<DeclarationDescriptor>()
-
-        // we don't use implementation from super which caches all descriptors and does not use filters
-        val allContributedDescriptors = allDescriptors()
-        return allContributedDescriptors.filter { it is ClassDescriptor && nameFilter(it.name) }.toList()
+        return if (!kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)) {
+            emptyList()
+        } else {
+            // we don't use implementation from super which caches all descriptors and does not use filters
+            allDescriptors().filter { it is ClassDescriptor && nameFilter(it.name) }.toList()
+        }
     }
 }
