@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -121,11 +122,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         (if (function is IrLazyFunctionBase)
             getJvmModuleNameForDeserializedDescriptor(function.descriptor)
         else null) ?: context.state.moduleName
-
-    private fun IrDeclaration.getJvmNameFromAnnotation(): String? {
-        val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*>
-        return const?.value as? String
-    }
 
     private fun IrFunction.isPublishedApi(): Boolean =
         propertyIfAccessor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)

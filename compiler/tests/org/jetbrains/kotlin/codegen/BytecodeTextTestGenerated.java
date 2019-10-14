@@ -3438,6 +3438,39 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/parameterlessMain")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ParameterlessMain extends AbstractBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInParameterlessMain() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("dontGenerateOnJvmNameMain.kt")
+        public void testDontGenerateOnJvmNameMain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnJvmNameMain.kt");
+        }
+
+        @TestMetadata("dontGenerateOnMain.kt")
+        public void testDontGenerateOnMain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnMain.kt");
+        }
+
+        @TestMetadata("dontGenerateOnMainExtension.kt")
+        public void testDontGenerateOnMainExtension() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnMainExtension.kt");
+        }
+
+        @TestMetadata("dontGenerateOnNullableArray.kt")
+        public void testDontGenerateOnNullableArray() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnNullableArray.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/properties")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
