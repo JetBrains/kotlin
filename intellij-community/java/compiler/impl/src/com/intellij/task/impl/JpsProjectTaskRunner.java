@@ -340,7 +340,7 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
 
     synchronized private void notifyFinished() {
       if (myTaskNotification != null) {
-        myTaskNotification.finished(myContext, new ProjectTaskResult(myAborted, myErrors, myWarnings));
+        myTaskNotification.finished(new ProjectTaskResult(myAborted, myErrors, myWarnings));
       }
       myOnFinished.run();
     }

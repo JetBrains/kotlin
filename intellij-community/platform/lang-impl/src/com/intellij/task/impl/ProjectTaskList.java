@@ -11,7 +11,7 @@ import java.util.Collection;
 /**
  * @author Vladislav.Soroka
  */
-public class ProjectTaskList extends SmartList<ProjectTask> implements ProjectTask {
+public final class ProjectTaskList extends SmartList<ProjectTask> implements ProjectTask {
   public ProjectTaskList() {
   }
 

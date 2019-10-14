@@ -25,13 +25,15 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.KeyWithDefaultValue;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.task.*;
+import com.intellij.task.ProjectTaskManager;
+import com.intellij.task.ProjectTaskRunner;
+import com.intellij.task.impl.ProjectTaskManagerImpl;
 import com.intellij.testFramework.ExtensionTestUtil;
 import com.intellij.testFramework.HeavyPlatformTestCase;
-import com.intellij.util.concurrency.Semaphore;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.Promise;
 
 import java.util.Collections;
 import java.util.List;
@@ -101,25 +103,13 @@ public class ExternalSystemTaskActivatorTest extends HeavyPlatformTestCase {
   }
 
   private static void build(@NotNull Module module) {
-    Semaphore semaphore = new Semaphore(1);
-    ProjectTaskManager.getInstance(module.getProject()).build(new Module[]{module}, new ProjectTaskNotification() {
-      @Override
-      public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult executionResult) {
-        semaphore.up();
-      }
-    });
-    semaphore.waitFor();
+    Promise<ProjectTaskManager.Result> promise = ProjectTaskManager.getInstance(module.getProject()).build(module);
+    ProjectTaskManagerImpl.waitForPromise(promise);
   }
 
   private static void rebuild(@NotNull Module module) {
-    Semaphore semaphore = new Semaphore(1);
-    ProjectTaskManager.getInstance(module.getProject()).rebuild(new Module[]{module}, new ProjectTaskNotification() {
-      @Override
-      public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult executionResult) {
-        semaphore.up();
-      }
-    });
-    semaphore.waitFor();
+    Promise<ProjectTaskManager.Result> promise = ProjectTaskManager.getInstance(module.getProject()).rebuild(module);
+    ProjectTaskManagerImpl.waitForPromise(promise);
   }
 
   private static class TestTaskConfigurationType extends AbstractExternalSystemTaskConfigurationType {

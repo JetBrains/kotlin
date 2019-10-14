@@ -3,7 +3,7 @@ package com.intellij.task.impl;
 
 import com.intellij.execution.ExecutionException;
 import com.intellij.task.ProjectTaskContext;
-import com.intellij.task.ProjectTaskResult;
+import com.intellij.task.ProjectTaskManager;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,5 +11,5 @@ import org.jetbrains.annotations.NotNull;
 public interface ProjectTaskManagerListener {
   void beforeRun(@NotNull ProjectTaskContext context) throws ExecutionException;
 
-  void afterRun(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult result) throws ExecutionException;
+  void afterRun(@NotNull ProjectTaskManager.Result result) throws ExecutionException;
 }

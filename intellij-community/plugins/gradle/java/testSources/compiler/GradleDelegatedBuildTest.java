@@ -3,9 +3,7 @@ package org.jetbrains.plugins.gradle.compiler;
 
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.task.ProjectTaskContext;
-import com.intellij.task.ProjectTaskListener;
-import com.intellij.task.ProjectTaskResult;
+import com.intellij.task.*;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.PathsList;
@@ -139,8 +137,8 @@ public class GradleDelegatedBuildTest extends GradleDelegatedBuildTestCase {
       }
 
       @Override
-      public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult executionResult) {
-        context.getDirtyOutputPaths()
+      public void finished(@NotNull ProjectTaskManager.Result result) {
+        result.getContext().getDirtyOutputPaths()
           .ifPresent(paths -> dirtyOutputRoots.addAll(paths.map(PathUtil::toSystemIndependentName).collect(Collectors.toList())));
       }
     });

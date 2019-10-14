@@ -9,21 +9,21 @@ import com.intellij.execution.impl.ExecutionManagerImpl;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.compiler.CompilerBundle;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Ref;
 import com.intellij.packaging.artifacts.*;
-import com.intellij.task.*;
-import com.intellij.util.concurrency.Semaphore;
+import com.intellij.task.ProjectTask;
+import com.intellij.task.ProjectTaskContext;
+import com.intellij.task.ProjectTaskManager;
+import com.intellij.task.impl.ProjectTaskManagerImpl;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.concurrency.Promise;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -112,9 +112,6 @@ public abstract class BuildArtifactsBeforeRunTaskProviderBase<T extends BuildArt
                              @NotNull RunConfiguration configuration,
                              @NotNull final ExecutionEnvironment env,
                              @NotNull final T task) {
-    final Ref<Boolean> result = Ref.create(false);
-    final Semaphore finished = new Semaphore();
-
     final List<Artifact> artifacts = new ArrayList<>();
     ReadAction.run(() -> {
       List<ArtifactPointer> pointers = task.getArtifactPointers();
@@ -123,28 +120,17 @@ public abstract class BuildArtifactsBeforeRunTaskProviderBase<T extends BuildArt
       }
     });
 
-    final ProjectTaskNotification callback = new ProjectTaskNotification() {
-      @Override
-      public void finished(@NotNull ProjectTaskContext context, @NotNull ProjectTaskResult executionResult) {
-        result.set(!executionResult.isAborted() && executionResult.getErrors() == 0);
-        finished.up();
-      }
-    };
-
-    ApplicationManager.getApplication().invokeAndWait(() -> {
-      if (myProject.isDisposed()) {
-        return;
-      }
-      ProjectTask artifactsBuildProjectTask = createProjectTask(myProject, artifacts);
-      finished.down();
-      Object sessionId = ExecutionManagerImpl.EXECUTION_SESSION_ID_KEY.get(env);
-      ProjectTaskContext projectTaskContext = new ProjectTaskContext(sessionId);
-      env.copyUserDataTo(projectTaskContext);
-      ProjectTaskManager.getInstance(myProject).run(projectTaskContext, artifactsBuildProjectTask, callback);
-    }, ModalityState.NON_MODAL);
-
-    finished.waitFor();
-    return result.get();
+    if (myProject.isDisposed()) {
+      return false;
+    }
+    ProjectTask artifactsBuildProjectTask = createProjectTask(myProject, artifacts);
+    Object sessionId = ExecutionManagerImpl.EXECUTION_SESSION_ID_KEY.get(env);
+    ProjectTaskContext projectTaskContext = new ProjectTaskContext(sessionId);
+    env.copyUserDataTo(projectTaskContext);
+    Promise<ProjectTaskManager.Result> resultPromise = ProjectTaskManager.getInstance(myProject)
+      .run(projectTaskContext, artifactsBuildProjectTask);
+    ProjectTaskManager.Result taskResult = ProjectTaskManagerImpl.waitForPromise(resultPromise);
+    return taskResult != null && !taskResult.isAborted() && !taskResult.hasErrors();
   }
 
   protected void setBuildArtifactBeforeRunOption(@NotNull JComponent runConfigurationEditorComponent,

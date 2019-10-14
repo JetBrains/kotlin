@@ -148,7 +148,7 @@ public class GradleProjectTaskRunner extends ProjectTaskRunner {
               }
             }
           }
-          callback.finished(context, new ProjectTaskResult(false, errors, 0));
+          callback.finished(new ProjectTaskResult(false, errors, 0));
         }
       }
     };
