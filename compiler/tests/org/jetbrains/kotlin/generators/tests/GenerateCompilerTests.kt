@@ -111,6 +111,10 @@ fun main(args: Array<String>) {
             model("diagnostics/testsWithUnsignedTypes")
         }
 
+        testClass<AbstractDiagnosticsWithExplicitApi> {
+            model("diagnostics/testsWithExplicitApi")
+        }
+
         testClass<AbstractMultiPlatformIntegrationTest> {
             model("multiplatform", extension = null, recursive = true, excludeParentDirs = true)
         }

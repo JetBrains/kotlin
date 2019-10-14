@@ -1,0 +1,7 @@
+package
+
+public fun bar(): kotlin.Int
+public fun bar2(): kotlin.Int
+public fun bar3(): kotlin.Int
+public fun foo(): kotlin.Unit
+public fun foo2(): kotlin.Unit
