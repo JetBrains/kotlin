@@ -59,8 +59,8 @@ class RealDataValidation {
 
         val validSessions = sessionStatuses.count { it.value }
 
-        Assert.assertEquals(7, validSessions)
-        Assert.assertEquals(6, invalidSessions)
+        Assert.assertEquals(21, validSessions)
+        Assert.assertEquals(0, invalidSessions)
     }
 
     private fun file(path: String): File {

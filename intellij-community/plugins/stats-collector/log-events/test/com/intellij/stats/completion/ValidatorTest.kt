@@ -26,7 +26,7 @@ import java.io.File
 
 class ValidatorTest {
     private companion object {
-        const val SESSION_ID = "d09b94c2c1aa"
+        const val SESSION_ID = "b8923e4103d4"
     }
 
     lateinit var validator: InputSessionValidator
@@ -77,4 +77,6 @@ class ValidatorTest {
     @Test
     fun testWrongFactorsDiff() = doTest("wrong_factors_diff.txt", false)
 
+    @Test
+    fun testDifferentBucket() = doTest("different_bucket.txt", false)
 }
