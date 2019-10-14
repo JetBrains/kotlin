@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
@@ -389,9 +390,10 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     if (irFunction.extensionReceiverParameter != null) {
                         it.extensionReceiver = irNull()
                     }
-                    for (i in irFunction.valueParameters.indices) {
-                        // TODO: also support primitives
-                        it.putValueArgument(i, irNull())
+                    for ((i, parameter) in irFunction.valueParameters.withIndex()) {
+                        val defaultValueForParameter = IrConstImpl.defaultValueForType(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type)
+                        it.putValueArgument(i, defaultValueForParameter)
                     }
                 })
             }

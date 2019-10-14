@@ -396,17 +396,8 @@ open class DefaultParameterInjector(
             nullConst(startOffset, endOffset, irParameter.type)
         }
 
-    protected open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression = when {
-        type.isFloat() -> IrConstImpl.float(startOffset, endOffset, type, 0.0F)
-        type.isDouble() -> IrConstImpl.double(startOffset, endOffset, type, 0.0)
-        type.isBoolean() -> IrConstImpl.boolean(startOffset, endOffset, type, false)
-        type.isByte() -> IrConstImpl.byte(startOffset, endOffset, type, 0)
-        type.isChar() -> IrConstImpl.char(startOffset, endOffset, type, 0.toChar())
-        type.isShort() -> IrConstImpl.short(startOffset, endOffset, type, 0)
-        type.isInt() -> IrConstImpl.int(startOffset, endOffset, type, 0)
-        type.isLong() -> IrConstImpl.long(startOffset, endOffset, type, 0)
-        else -> IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
-    }
+    protected open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression =
+        IrConstImpl.defaultValueForType(startOffset, endOffset, type)
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
 }

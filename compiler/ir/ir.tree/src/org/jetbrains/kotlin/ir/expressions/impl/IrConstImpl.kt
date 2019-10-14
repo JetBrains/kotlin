@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrConstImpl<T>(
@@ -74,5 +74,17 @@ class IrConstImpl<T>(
 
         fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrExpression =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
+
+        fun defaultValueForType(startOffset: Int, endOffset: Int, type: IrType) = when {
+            type.isFloat() -> float(startOffset, endOffset, type, 0.0F)
+            type.isDouble() -> double(startOffset, endOffset, type, 0.0)
+            type.isBoolean() -> boolean(startOffset, endOffset, type, false)
+            type.isByte() -> byte(startOffset, endOffset, type, 0)
+            type.isChar() -> char(startOffset, endOffset, type, 0.toChar())
+            type.isShort() -> short(startOffset, endOffset, type, 0)
+            type.isInt() -> int(startOffset, endOffset, type, 0)
+            type.isLong() -> long(startOffset, endOffset, type, 0)
+            else -> constNull(startOffset, endOffset, type)
+        }
     }
 }
