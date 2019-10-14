@@ -337,7 +337,13 @@ fun applyCompilerArgumentsToFacet(
         val oldPluginOptions = compilerArguments.pluginOptions
 
         val emptyArgs = compilerArguments::class.java.newInstance()
-        copyBeanTo(arguments, compilerArguments) { property, value -> value != property.get(emptyArgs) }
+
+        // Ad-hoc work-around for android compilations: middle source sets could be actualized up to
+        // Android target, meanwhile compiler arguments are of type K2Metadata
+        // TODO(auskov): merge classpath once compiler arguments are removed from KotlinFacetSettings
+        if (arguments.javaClass == compilerArguments.javaClass) {
+            copyBeanTo(arguments, compilerArguments) { property, value -> value != property.get(emptyArgs) }
+        }
         compilerArguments.pluginOptions = joinPluginOptions(oldPluginOptions, arguments.pluginOptions)
 
         compilerArguments.convertPathsToSystemIndependent()

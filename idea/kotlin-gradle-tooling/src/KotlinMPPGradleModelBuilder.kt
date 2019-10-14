@@ -332,7 +332,12 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
 
         val gradleCompilations = getCompilations(gradleTarget) ?: return null
         val compilations = gradleCompilations.mapNotNull {
-            buildCompilation(it, disambiguationClassifier, sourceSetMap, dependencyResolver, project, dependencyMapper)
+            val compilation = buildCompilation(it, disambiguationClassifier, sourceSetMap, dependencyResolver, project, dependencyMapper)
+            if (compilation == null || platform != KotlinPlatform.ANDROID) {
+                compilation
+            } else {
+                compilation.addDependsOnSourceSetsToCompilation(sourceSetMap)
+            }
         }
         val jar = buildTargetJar(gradleTarget, project)
         val testTasks = buildTestTasks(project, gradleTarget)
@@ -352,6 +357,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             it.platform = target.platform
         }
         return target
+    }
+
+    private fun KotlinCompilationImpl.addDependsOnSourceSetsToCompilation(sourceSetMap: Map<String, KotlinSourceSet>): KotlinCompilationImpl {
+        val closedSourceSets = this.sourceSets.union(this.sourceSets.flatMap { it.dependsOnSourceSets }.mapNotNull { sourceSetMap[it] })
+        return KotlinCompilationImpl(this.name, closedSourceSets, this.dependencies, this.output, this.arguments, this.dependencyClasspath, this.kotlinTaskProperties, this.nativeExtensions)
     }
 
     private fun buildTestTasks(project: Project, gradleTarget: Named): Collection<KotlinTestTask> {
