@@ -1,5 +1,3 @@
-import kotlin.reflect.full.memberExtensionFunctions
-
 plugins {
     kotlin("jvm")
 }
@@ -33,6 +31,7 @@ dependencies {
         exclude("com.google.guava", "guava")
     }
     compile(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))
+    compile("com.jetbrains.intellij.swift:swift:$clionVersion") { isTransitive = false }
 
     if (!isStandaloneBuild) {
         compileOnly("org.jetbrains:markdown:${rootProject.extra["versions.markdown"]}")

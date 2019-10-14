@@ -60,7 +60,7 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
         val runManager = RunManager.getInstance(project)
         var runConfigurationToSelect: RunnerAndConfigurationSettings? = null
 
-        val configurationProducer = GradleKonanTargetRunConfigurationProducer.getGradleKonanInstance(project)!!
+        val configurationProducer = GradleKonanTargetRunConfigurationProducer.getGradleKonanInstance(project) ?: return
         val gradleAppRunConfigurationType = GradleKonanAppRunConfigurationType.instance
 
         workspace.buildTargets.map {

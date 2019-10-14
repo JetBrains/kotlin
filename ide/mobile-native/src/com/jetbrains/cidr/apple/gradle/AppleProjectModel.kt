@@ -4,13 +4,18 @@ import java.io.File
 import java.io.Serializable
 
 interface AppleProjectModel : Serializable {
-    val sourceSets: Map<String, AppleSourceSetModel>
+    val targets: Map<String, AppleTargetModel>
 }
 
-interface AppleSourceSetModel : Serializable {
+interface AppleTargetModel : Serializable {
     val name: String
-    val folderPaths: Set<File>
+    val sourceFolders: Set<File>
+    val bridgingHeader: File?
 }
 
-internal data class AppleProjectModelImpl(override val sourceSets: Map<String, AppleSourceSetModel>) : AppleProjectModel
-internal data class AppleSourceSetModelImpl(override val name: String, override val folderPaths: Set<File>) : AppleSourceSetModel
+internal data class AppleProjectModelImpl(override val targets: Map<String, AppleTargetModel>) : AppleProjectModel
+internal data class AppleTargetModelImpl(
+    override val name: String,
+    override val sourceFolders: Set<File>,
+    override val bridgingHeader: File?
+) : AppleTargetModel

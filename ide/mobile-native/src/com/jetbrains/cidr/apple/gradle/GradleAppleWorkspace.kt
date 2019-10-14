@@ -1,5 +1,6 @@
 package com.jetbrains.cidr.apple.gradle
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.components.ServiceManager
@@ -10,13 +11,20 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.pointers.VirtualFilePointer
+import com.intellij.openapi.vfs.pointers.VirtualFilePointerManager
 import com.intellij.util.containers.MultiMap
+import com.jetbrains.cidr.lang.CLanguageKind
 import com.jetbrains.cidr.lang.OCFileTypeHelpers
 import com.jetbrains.cidr.lang.OCLanguageKindProvider
 import com.jetbrains.cidr.lang.toolchains.CidrSwitchBuilder
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.lang.workspace.OCLanguageKindCalculator
+import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.cidr.lang.workspace.OCVariant
 import com.jetbrains.cidr.lang.workspace.OCWorkspace
 import com.jetbrains.cidr.lang.workspace.compiler.CompilerInfoCache
@@ -28,6 +36,10 @@ import java.io.File
 
 class GradleAppleWorkspace(private val project: Project) {
     private val reloadsQueue = BackgroundTaskQueue(project, LOADING_GRADLE_APPLE_PROJECT)
+    private var disposable: Disposable = Disposer.newDisposable()
+    private var configurationData: Map<String, Data> = emptyMap()
+
+    private data class Data(val bridgingHeader: VirtualFilePointer?)
 
     init {
         ExternalProjectsManager.getInstance(project).runWhenInitialized { update() }
@@ -45,6 +57,10 @@ class GradleAppleWorkspace(private val project: Project) {
     }
 
     private fun updateOCWorkspace() {
+        var committed = false
+        val newDisposable = Disposer.newDisposable()
+        val configData = mutableMapOf<String, Data>()
+
         val workspace = OCWorkspace.getInstance(project).getModifiableModel(true)
         val compilerInfoSession = CompilerInfoCache().createSession<String>(ProgressIndicatorProvider.getGlobalProgressIndicator()!!)
 
@@ -57,22 +73,27 @@ class GradleAppleWorkspace(private val project: Project) {
 
             val alreadyAddedConfigurations = mutableSetOf<String>()
             AppleProjectDataService.forEachProject(project) { appleProject, moduleData, rootProjectPath ->
-                for ((name, sourceSet) in appleProject.sourceSets) {
+                for ((name, target) in appleProject.targets) {
                     val buildConfig = "Debug"
                     // TODO Enable different variants (= build configurations, architectures, …)
                     val id = "${moduleData.id}:$name:$buildConfig"
                     assert(alreadyAddedConfigurations.add(id)) { "Duplicate configuration id" }
 
                     val config = workspace.addConfiguration(id, name, OCVariant(buildConfig))
+                    configData[id] = Data(target.bridgingHeader?.let {
+                        VirtualFilePointerManager.getInstance().create(VfsUtil.fileToUrl(it), newDisposable, null)
+                    })
 
                     // TODO Proper compiler detection and switch building
                     val compilerKind = OCCompilerKind.CLANG
-                    val switches = CidrSwitchBuilder()
-                        //.addSingleRaw("-arch").addSingleRaw(architectures.get(0))
-                        .addSingleRaw("-isysroot").addSingleRaw(sdk.homePath)
-                        .addSingleRaw("-fmodules") // Enable modules support (@import)
 
                     for (kind in OCLanguageKindProvider.getAllLanguageKinds()) {
+                        if (kind !is CLanguageKind) continue
+
+                        val switches = CidrSwitchBuilder()
+                            //.addSingleRaw("-arch").addSingleRaw(architectures.get(0))
+                            .addSingleRaw("-isysroot").addSingleRaw(sdk.homePath)
+                            .addSingleRaw("-fmodules") // Enable modules support (@import)
                         if (kind.isObjC) switches.addSingleRaw("-fobjc-arc")
 
                         val langSettings = config.getLanguageCompilerSettings(kind)
@@ -80,7 +101,7 @@ class GradleAppleWorkspace(private val project: Project) {
                         langSettings.setCompilerSwitches(switches.build())
                     }
 
-                    for (file in sourceSet.folderPaths.flatMap {
+                    for (file in target.sourceFolders.flatMap {
                         it.listFiles()?.asList() ?: emptyList()
                     }) { // don't flatten
                         if (OCFileTypeHelpers.isHeaderFile(file.name)) continue
@@ -102,20 +123,35 @@ class GradleAppleWorkspace(private val project: Project) {
                 ApplicationManager.getApplication().runWriteAction {
                     if (project.isDisposed) {
                         workspace.dispose()
+                        Disposer.dispose(newDisposable)
                         return@runWriteAction
                     }
                     workspace.commit()
+                    synchronized(this) {
+                        disposable = newDisposable
+                        configurationData = configData
+                        committed = true
+                    }
                 }
             }
         } finally {
             compilerInfoSession.dispose()
             workspace.dispose()
+            if (!committed) Disposer.dispose(newDisposable)
         }
 
         messages.values().forEach { each ->
             LOG.warn(each.getType().toString() + ": " + each.getText())
             // todo send messages to the build view (sync tab)
         }
+    }
+
+    fun isOwnerOf(config: OCResolveConfiguration): Boolean = synchronized(this) {
+        configurationData.containsKey(config.uniqueId)
+    }
+
+    fun getBridgingHeader(config: OCResolveConfiguration): VirtualFile? = synchronized(this) {
+        configurationData[config.uniqueId]?.bridgingHeader?.file
     }
 
     companion object {

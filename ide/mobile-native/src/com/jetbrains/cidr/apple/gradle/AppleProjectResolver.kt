@@ -28,17 +28,17 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
         resolverCtx.getExtraProject(gradleModule, AppleProjectModel::class.java)?.let { apple ->
             val contentRoots = mutableMapOf<String, ContentRootData>()
 
-            val sourceSets = mutableMapOf<String, AppleSourceSetModel>()
-            for (sourceSet in apple.sourceSets.values) {
-                for (folder in sourceSet.folderPaths) {
+            val targets = mutableMapOf<String, AppleTargetModel>()
+            for (target in apple.targets.values) {
+                for (folder in target.sourceFolders) {
                     val contentRoot = ContentRootData(GradleConstants.SYSTEM_ID, folder.path)
                     if (contentRoots.putIfAbsent(contentRoot.rootPath, contentRoot) == null) {
                         contentRoot.storePath(ExternalSystemSourceType.SOURCE, contentRoot.rootPath)
                     }
                 }
-                sourceSets[sourceSet.name] = AppleSourceSetModelImpl(sourceSet.name, sourceSet.folderPaths)
+                targets[target.name] = AppleTargetModelImpl(target.name, target.sourceFolders, target.bridgingHeader)
             }
-            ideModule.createChild(APPLE_PROJECT, AppleProjectModelImpl(sourceSets))
+            ideModule.createChild(APPLE_PROJECT, AppleProjectModelImpl(targets))
 
             for (contentRoot in contentRoots.values) {
                 ideModule.createChild(ProjectKeys.CONTENT_ROOT, contentRoot)

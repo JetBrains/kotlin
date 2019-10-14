@@ -18,6 +18,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.getValue
 import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.process.internal.ExecActionFactory
 import java.io.*
@@ -37,15 +38,11 @@ private class DefaultAppleSourceSet(@Suppress("ACCIDENTAL_OVERRIDE") override va
 
 private open class AppleBuildTask @Inject constructor(
         private val target: AppleTarget,
-        private val sourceSetProvider: NamedDomainObjectProvider<AppleSourceSet>,
         private val execActionFactory: ExecActionFactory
 ) : DefaultTask() {
     init {
         group = BasePlugin.BUILD_GROUP
     }
-
-    val sourceSet: AppleSourceSet
-        get() = sourceSetProvider.get()
 
     private fun getQualifiedName(targetName: String): String = listOfNotNull(
             project.group.toString().takeIf { it.isNotBlank() },
@@ -111,12 +108,14 @@ private open class AppleBuildTask @Inject constructor(
         val platform = AppleSdkManager.getInstance().findPlatformByType(ApplePlatform.Type.IOS)
                 ?: throw RuntimeException("Could not find SDK.")
         val mainGroup = pbxProjectFile.projectObject.mainGroup!!
-        val symRoot = sourceSet.apple.outputDir
+
+        val sourceDirectorySet = target.sourceSet.apple
+        val symRoot = sourceDirectorySet.outputDir
 
         with(pbxProjectFile.manipulator) {
             addConfiguration(configName, emptyMap(), null)
 
-            val sourcesGroupDir = sourceSet.apple.srcDirs.firstOrNull { it.isDirectory && it.exists() }
+            val sourcesGroupDir = sourceDirectorySet.srcDirs.firstOrNull { it.isDirectory && it.exists() }
                     ?: baseDir.resolve("Sources")
             val sourcesGroup = addGroup("SOURCE_ROOT", "Sources", sourcesGroupDir.path)
             val frameworksGroupDir = frameworkDirs.firstOrNull() ?: baseDir.resolve("Frameworks")
@@ -162,7 +161,9 @@ private open class AppleBuildTask @Inject constructor(
             addFile(infoPlistFile.path, emptyArray(), mainGroup, false)
 
             val targetMemberships = arrayOf(pbxTarget)
-            for (file in sourceSet.apple.srcDirs.flatMap { it.listFiles()?.apply { sort() }?.asList() ?: emptyList() }) { // don't flatten
+            for (file in sourceDirectorySet.srcDirs.flatMap {
+                it.listFiles()?.apply { sort() }?.asList() ?: emptyList()
+            }) { // don't flatten
                 addFile(file.path, targetMemberships, sourcesGroup, false)
             }
 
@@ -207,29 +208,26 @@ private open class AppleTargetFactory @Inject constructor(
         private val project: Project,
         private val objects: ObjectFactory
 ) : NamedDomainObjectFactory<AppleTarget> {
-    override fun create(name: String): AppleTarget = objects.newInstance(DefaultAppleTarget::class.java, name).also { target ->
-        //project.components.add(target)
-
-        val sourceSet = project.apple.sourceSets.register("${name}Main") {
-            apple.outputDir = project.buildDir.resolve("bin/$name")
-        }
-
-        val buildTask =
-                project.tasks.register("build${name.capitalize()}Main", AppleBuildTask::class.java, target, sourceSet)
-        buildTask.configure {
-            dependsOn(target.configuration.incoming.files)
-        }
-
-        project.tasks.named(BasePlugin.ASSEMBLE_TASK_NAME) {
-            dependsOn(buildTask)
-        }
-    }
+    override fun create(name: String): AppleTarget = objects.newInstance(DefaultAppleTarget::class.java, project, name)
 }
 
 @Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED")
-private open class DefaultAppleTarget @Inject constructor(@Suppress("ACCIDENTAL_OVERRIDE") final override val name: String,
+private open class DefaultAppleTarget @Inject constructor(project: Project,
+                                                          @Suppress("ACCIDENTAL_OVERRIDE") final override val name: String,
                                                           configurations: ConfigurationContainer) : Named, AppleTarget {
-    override val configuration: Configuration = configurations.create(Names.of(name).withSuffix("implementation"))
+    override val configuration: Configuration by configurations.register(Names.of(name).withSuffix("implementation"))
+    override val sourceSet: AppleSourceSet by project.apple.sourceSets.register("${name}Main") {
+        apple.outputDir = project.buildDir.resolve("bin/$name")
+    }
+    override val buildTask: AppleBuildTask by project.tasks.register("build${name.capitalize()}Main", AppleBuildTask::class.java, this).also {
+        it.configure {
+            dependsOn(configuration.incoming.files)
+        }
+
+        project.tasks.named(BasePlugin.ASSEMBLE_TASK_NAME) {
+            dependsOn(it)
+        }
+    }
     override var launchStoryboard: String? = null
     override var mainStoryboard: String? = null
     override var bridgingHeader: String? = null

@@ -45,6 +45,7 @@ dependencies {
         exclude("com.google.guava", "guava")
     }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
+    runtime("com.jetbrains.intellij.swift:swift:$clionVersion") { isTransitive = false }
 }
 
 val preparePluginXmlTask: Task = preparePluginXml(

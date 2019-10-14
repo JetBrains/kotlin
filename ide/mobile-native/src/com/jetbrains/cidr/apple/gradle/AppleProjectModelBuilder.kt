@@ -2,6 +2,7 @@ package com.jetbrains.cidr.apple.gradle
 
 import AppleProjectExtension
 import AppleSourceSet
+import AppleTarget
 import org.gradle.api.Project
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
@@ -15,19 +16,29 @@ class AppleProjectModelBuilder : ModelBuilderService {
     override fun canBuild(modelName: String?): Boolean = modelName == AppleProjectModel::class.java.name
     override fun buildAll(modelName: String?, project: Project): AppleProjectModel? {
         val projectExtension = project.extensions.findByName("apple")?.dynamic<AppleProjectExtension>() ?: return null
-        val sourceSetsModels = mutableMapOf<String, AppleSourceSetModel>()
-        for (value: Any in projectExtension.sourceSets) {
-            with(value.dynamic<AppleSourceSet>()) {
-                sourceSetsModels[name] = AppleSourceSetModelImpl(name, apple.srcDirs)
+        val targetModels = mutableMapOf<String, AppleTargetModel>()
+        for (value: Any in projectExtension.targets) {
+            val target = value.dynamic<AppleTarget>()
+            val srcDirs = target.sourceSet.dynamic<AppleSourceSet>().apple.srcDirs
+            val bridgingHeader = target.bridgingHeader?.let { bridgingHeader ->
+                srcDirs.firstOrNull { it.isDirectory && it.exists() }?.resolve(bridgingHeader)
             }
+            target.name.let { name -> targetModels[name] = AppleTargetModelImpl(name, srcDirs, bridgingHeader) }
         }
-        return AppleProjectModelImpl(sourceSetsModels)
+        return AppleProjectModelImpl(targetModels)
     }
 }
 
-private inline fun <reified T> Any.dynamic() =
-    Proxy.newProxyInstance(T::class.java.classLoader, arrayOf(T::class.java)) { _, method, args ->
-        (method.takeIf { this is T }
-            ?: Class.forName(T::class.java.name, true, javaClass.classLoader).getMethod(method.name, *method.parameterTypes))
-            .invoke(this, *(args ?: emptyArray()))
+private inline fun <reified T> Any.dynamic(): T = dynamic(T::class.java)
+
+@Suppress("UNCHECKED_CAST")
+private fun <T> Any.dynamic(clazz: Class<T>): T =
+    Proxy.newProxyInstance(clazz.classLoader, arrayOf(clazz)) { _, method, args ->
+        val targetMethod = method.takeIf { clazz.isInstance(it) }
+            ?: Class.forName(clazz.name, true, javaClass.classLoader).getMethod(method.name, *method.parameterTypes)
+        val returnValue = targetMethod.invoke(this, *(args ?: emptyArray()))
+        when {
+            returnValue == null || method.returnType.isInstance(returnValue) -> returnValue
+            else -> returnValue.dynamic(method.returnType)
+        }
     } as T
