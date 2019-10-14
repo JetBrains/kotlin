@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 
 /**
@@ -81,6 +83,12 @@ val IrType.erasedUpperBound: IrClass
         is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
         else -> throw IllegalStateException()
     }
+
+
+fun IrDeclaration.getJvmNameFromAnnotation(): String? {
+    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*>
+    return const?.value as? String
+}
 
 val IrFunction.propertyIfAccessor: IrDeclaration
     get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this

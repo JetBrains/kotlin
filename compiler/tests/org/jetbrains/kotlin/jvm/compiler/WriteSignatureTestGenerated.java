@@ -613,4 +613,42 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             runTest("compiler/testData/writeSignature/nothing/nullableNothing.kt");
         }
     }
+
+    @TestMetadata("compiler/testData/writeSignature/parameterlessMain")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ParameterlessMain extends AbstractWriteSignatureTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInParameterlessMain() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("arrayWithContravariantStringIsNotMainMethod.kt")
+        public void testArrayWithContravariantStringIsNotMainMethod() throws Exception {
+            runTest("compiler/testData/writeSignature/parameterlessMain/arrayWithContravariantStringIsNotMainMethod.kt");
+        }
+
+        @TestMetadata("impostorMains.kt")
+        public void testImpostorMains() throws Exception {
+            runTest("compiler/testData/writeSignature/parameterlessMain/impostorMains.kt");
+        }
+
+        @TestMetadata("main.kt")
+        public void testMain() throws Exception {
+            runTest("compiler/testData/writeSignature/parameterlessMain/main.kt");
+        }
+
+        @TestMetadata("notJvmMainName.kt")
+        public void testNotJvmMainName() throws Exception {
+            runTest("compiler/testData/writeSignature/parameterlessMain/notJvmMainName.kt");
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/writeSignature/parameterlessMain/simple.kt");
+        }
+    }
 }
