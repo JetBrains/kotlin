@@ -1,2 +1,0 @@
-public abstract interface MyIterable<T> : R|java/lang/Iterable<T>| {
-}

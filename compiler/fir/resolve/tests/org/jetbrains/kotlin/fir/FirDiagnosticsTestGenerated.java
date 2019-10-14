@@ -86,6 +86,21 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/KotlinClassParameterGeneric.kt");
         }
 
+        @TestMetadata("MyException.kt")
+        public void testMyException() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/MyException.kt");
+        }
+
+        @TestMetadata("MyIterable.kt")
+        public void testMyIterable() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/MyIterable.kt");
+        }
+
+        @TestMetadata("MyMap.kt")
+        public void testMyMap() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/MyMap.kt");
+        }
+
         @TestMetadata("outerInnerClasses.kt")
         public void testOuterInnerClasses() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/outerInnerClasses.kt");

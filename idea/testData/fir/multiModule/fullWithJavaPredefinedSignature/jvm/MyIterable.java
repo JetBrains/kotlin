@@ -1,1 +1,0 @@
-public interface MyIterable<T> extends Iterable<T>

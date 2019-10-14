@@ -1,0 +1,10 @@
+FILE: MyException.kt
+    public final class MyException : R|kotlin/Exception| {
+        public constructor(): R|MyException| {
+            super<R|kotlin/Exception|>()
+        }
+
+    }
+    public final fun test(e: R|MyException|): R|kotlin/Unit| {
+        R|<local>/e|.R|kotlin/printStackTrace|()
+    }
