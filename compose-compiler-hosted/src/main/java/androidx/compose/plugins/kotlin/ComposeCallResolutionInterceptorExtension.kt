@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
@@ -42,8 +43,10 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.PackageQualifier
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
@@ -151,14 +154,21 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         if (!isComposableContext) return candidates
 
         // use the call resolver to find any variable that would resolve with "composer" in scope.
-        val composerCall = callResolver.resolveComposer(resolutionContext)
-        val composer = composerCall?.resultingDescriptor as? VariableDescriptor
+        var tmpComposerCall = callResolver.resolveComposer(resolutionContext)
+        var tmpComposer = tmpComposerCall?.resultingDescriptor as? VariableDescriptor
 
-        // If there is no composer in scope, then we cannot intercept. This means that we need to
-        // remove any @Composable from the candidates
-        if (composer == null) {
-            return nonComposablesNonConstructors + constructors
+        // If there is no composer in scope, then we decide to fall back to the
+        // androidx.compose.composer as a default. When we are properly threading the composer
+        // through the functions as parameters, this step should no longer be needed. This provides
+        // a better user experience currently though since users won't be required to import the
+        // composer into scope.
+        if (tmpComposer == null) {
+            tmpComposerCall = callResolver.fallbackComposerCall(resolutionContext)
+            tmpComposer = tmpComposerCall?.resultingDescriptor as? VariableDescriptor
         }
+
+        val composerCall = tmpComposerCall ?: return nonComposablesNonConstructors + constructors
+        val composer = tmpComposer ?: return nonComposablesNonConstructors + constructors
 
         val psiFactory = KtPsiFactory(project, markGenerated = false)
 
@@ -277,6 +287,56 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
                 } +
                 constructors.filter { !composerMetadata.isEmittable(it.returnType) } +
                 emitCandidates
+    }
+
+    private fun CallResolver.fallbackComposerCall(
+        context: BasicCallResolutionContext
+    ): ResolvedCall<CallableDescriptor>? {
+        val composePackage = context
+            .scope
+            .ownerDescriptor
+            .module
+            .getPackage(ComposeFqNames.Package)
+
+        val call = makeCall(
+            callElement = context.call.callElement,
+            calleeExpression = context.call.calleeExpression,
+            receiver = PackageQualifier(
+                referenceExpression = context.call.calleeExpression as? KtSimpleNameExpression
+                    ?: return null,
+                descriptor = composePackage
+            )
+        )
+
+        val temporaryForVariable = TemporaryTraceAndCache.create(
+            context,
+            "trace to resolve variable",
+            context.call.callElement as KtExpression
+        )
+        val contextForVariable = BasicCallResolutionContext.create(
+            context.replaceTraceAndCache(temporaryForVariable),
+            call,
+            CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+            DataFlowInfoForArgumentsImpl(context.dataFlowInfo, call)
+
+        )
+        contextForVariable.trace.record(
+            ComposeWritableSlices.IGNORE_COMPOSABLE_INTERCEPTION,
+            call,
+            true
+        )
+        val resolvedComposer = computeTasksAndResolveCall<CallableDescriptor>(
+            contextForVariable,
+            KtxNameConventions.COMPOSER,
+            TracingStrategy.EMPTY,
+            NewResolutionOldInference.ResolutionKind.Variable
+        )
+
+        if (!resolvedComposer.isSuccess) {
+            return null
+        }
+
+        return resolvedComposer.resultingCall
     }
 
     private fun CallResolver.resolveVar(
