@@ -758,7 +758,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
             throw new ServiceNotReadyException();
           }
           forceUpdate(project, filter, restrictedFile);
-          indexUnsavedDocuments(indexId, project, filter, restrictedFile);
+          if (!areUnsavedDocumentsIndexed(indexId)) { // todo: check scope ?
+            indexUnsavedDocuments(indexId, project, filter, restrictedFile);
+          }
         }
         catch (RuntimeException e) {
           final Throwable cause = e.getCause();
@@ -774,6 +776,10 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     finally {
       myReentrancyGuard.set(Boolean.FALSE);
     }
+  }
+
+  private boolean areUnsavedDocumentsIndexed(@NotNull ID<?, ?> indexId) {
+    return myUpToDateIndicesForUnsavedOrTransactedDocuments.contains(indexId);
   }
 
   private static void handleDumbMode(@Nullable Project project) {
@@ -1215,10 +1221,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
                                      @Nullable Project project,
                                      final GlobalSearchScope filter,
                                      final VirtualFile restrictedFile) {
-    if (myUpToDateIndicesForUnsavedOrTransactedDocuments.contains(indexId)) {
-      return; // no need to index unsaved docs        // todo: check scope ?
-    }
-
     Collection<Document> documents = getUnsavedDocuments();
     boolean psiBasedIndex = myPsiDependentIndices.contains(indexId);
     if(psiBasedIndex) {
