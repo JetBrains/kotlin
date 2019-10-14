@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 
 private class K2NativeCompilerPerformanceManager: CommonCompilerPerformanceManager("Kotlin to Native Compiler")
 class K2Native : CLICompiler<K2NativeCompilerArguments>() {
+
+    override fun MutableList<String>.addPlatformOptions(arguments: K2NativeCompilerArguments) {}
+
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = KlibMetadataVersion(*versionArray)
 
     override val performanceManager:CommonCompilerPerformanceManager by lazy {
