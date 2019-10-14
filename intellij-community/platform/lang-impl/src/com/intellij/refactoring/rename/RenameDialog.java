@@ -3,16 +3,22 @@ package com.intellij.refactoring.rename;
 
 import com.intellij.find.FindBundle;
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.lang.findUsages.DescriptiveNameUtil;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileTypes;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiBundle;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.SuggestedNameInfo;
@@ -184,8 +190,59 @@ public class RenameDialog extends RefactoringDialog {
 
   @NotNull
   public SearchScope getRefactoringScope() {
+    logScopeStatistics();
     SearchScope scope = myScopeCombo.getSelectedScope();
     return scope != null ? scope : GlobalSearchScope.projectScope(myProject);
+  }
+
+  private void logScopeStatistics() {
+    Class<? extends RenamePsiElementProcessor> renameProcessor = RenamePsiElementProcessor.forElement(getPsiElement()).getClass();
+    FUCounterUsageLogger.getInstance().logEvent(
+      myProject,
+      "rename.usages",
+      "search.scope",
+      new FeatureUsageData()
+        .addData("scope_type", getStatisticsCompatibleScopeName())
+        .addData("rename_processor", PluginInfoDetectorKt.getPluginInfo(renameProcessor).isSafeToReport()
+                                     ? renameProcessor.getName()
+                                     : "third.party")
+        .addLanguage(getPsiElement().getLanguage())
+    );
+  }
+
+  private String getStatisticsCompatibleScopeName() {
+    SearchScope selectedScope = myScopeCombo.getSelectedScope();
+    if (selectedScope != null) {
+      String displayName = selectedScope.getDisplayName();
+      if (displayName.equals(PsiBundle.message("psi.search.scope.project"))) {
+        return "project";
+      }
+
+      if (displayName.equals(PsiBundle.message("psi.search.scope.test.files"))) {
+        return "tests";
+      }
+
+      if (displayName.equals(PsiBundle.message("psi.search.scope.production.files"))) {
+        return "production";
+      }
+
+      if (selectedScope instanceof LocalSearchScope) {
+        return "current file";
+      }
+
+      Module module = ModuleUtilCore.findModuleForPsiElement(getPsiElement());
+      if (module != null && selectedScope.equals(module.getModuleScope())) {
+        return "module";
+      }
+
+      if (!PluginInfoDetectorKt.getPluginInfo(selectedScope.getClass()).isSafeToReport()) {
+        return "third.party";
+      }
+
+      return "unknown";
+    }
+
+    return "default";
   }
 
   public boolean isSearchInComments() {
