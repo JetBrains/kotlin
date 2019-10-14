@@ -3,9 +3,12 @@ package org.jetbrains.plugins.gradle.importing
 
 import com.intellij.compiler.CompilerConfiguration
 import com.intellij.compiler.CompilerConfigurationImpl
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import org.assertj.core.api.BDDAssertions.then
+import org.jetbrains.plugins.gradle.GradleManager
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.Test
 
 class AnnotationProcessorConfigImportingTest: GradleImportingTestCase() {
@@ -170,6 +173,8 @@ class AnnotationProcessorConfigImportingTest: GradleImportingTestCase() {
     assertSources("project.main", ideaGeneratedDir)
     assertGeneratedSources("project.main", ideaGeneratedDir)
 
+    // subscribe to build delegation changes in current project
+    (ExternalSystemApiUtil.getManager(GradleConstants.SYSTEM_ID) as GradleManager).runActivity(myProject)
     // switch delegation to gradle
     currentExternalProjectSettings.delegatedBuild = true
     GradleSettings.getInstance(myProject).publisher.onBuildDelegationChange(true, projectPath)
