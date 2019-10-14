@@ -24,7 +24,7 @@ class CStyleCommentBlock(comment: ASTNode, private val indent: Indent?): Abstrac
 
     val children = ArrayList<Block>(ranges.size)
     val nodeStart = node.startOffset
-    for (i in 0 until ranges.size) {
+    for (i in ranges.indices) {
       val indent = if (i == 0) Indent.getNoneIndent() else Indent.getSpaceIndent(1)
       children += TextLineBlock(ranges[i].shiftRight(nodeStart), null, indent, null)
     }
