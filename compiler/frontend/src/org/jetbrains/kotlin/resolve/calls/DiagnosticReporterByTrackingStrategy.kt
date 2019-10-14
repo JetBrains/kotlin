@@ -145,6 +145,7 @@ class DiagnosticReporterByTrackingStrategy(
                 val candidates = ambiguityDiagnostic.candidates.map { it.candidate }
                 reportIfNonNull(expression) {
                     trace.report(CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY.on(it.callableReference, candidates))
+                    trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, it.callableReference, candidates)
                 }
             }
 
