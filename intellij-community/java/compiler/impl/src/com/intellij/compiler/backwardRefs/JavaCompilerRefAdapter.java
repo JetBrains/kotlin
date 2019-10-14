@@ -41,7 +41,7 @@ public class JavaCompilerRefAdapter implements LanguageCompilerRefAdapter {
         if (aClass == null || aClass instanceof PsiAnonymousClass) return null;
         final String jvmOwnerName = ClassUtil.getJVMClassName(aClass);
         final String name = field.getName();
-        if (name == null || jvmOwnerName == null) return null;
+        if (jvmOwnerName == null) return null;
         final int ownerId = names.tryEnumerate(jvmOwnerName);
         if (ownerId == 0) return null;
         final int nameId = names.tryEnumerate(name);
