@@ -43,6 +43,31 @@ import kotlin.reflect.KClass
 class ComposeCallLoweringTests : AbstractCodegenTest() {
 
     @Test
+    fun testNoComposerImport(): Unit = ensureSetup {
+        codegenNoImports(
+            """
+        import androidx.compose.Composable
+        import android.widget.LinearLayout
+
+        @Composable
+        fun Foo() {
+            // emits work
+            LinearLayout {
+                // nested calls work
+                Bar()
+            }
+            // calls work
+            Bar()
+        }
+
+        @Composable
+        fun Bar() {}
+
+            """.trimIndent()
+        )
+    }
+
+    @Test
     fun testInlineNoinline(): Unit = ensureSetup {
         codegen(
             """
@@ -1174,10 +1199,7 @@ fun WebComponent(
     }
 
     fun codegen(text: String, dumpClasses: Boolean = false): Unit = ensureSetup {
-        val className = "Test_${uniqueNumber++}"
-        val fileName = "$className.kt"
-
-        classLoader(
+        codegenNoImports(
             """
            import android.content.Context
            import android.widget.*
@@ -1185,8 +1207,14 @@ fun WebComponent(
 
            $text
 
-        """, fileName, dumpClasses
-        )
+        """, dumpClasses)
+    }
+
+    fun codegenNoImports(text: String, dumpClasses: Boolean = false): Unit = ensureSetup {
+        val className = "Test_${uniqueNumber++}"
+        val fileName = "$className.kt"
+
+        classLoader(text, fileName, dumpClasses)
     }
 
     fun assertInterceptions(srcText: String) = ensureSetup {

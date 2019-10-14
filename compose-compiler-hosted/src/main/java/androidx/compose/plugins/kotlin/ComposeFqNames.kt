@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
@@ -36,6 +37,7 @@ object ComposeFqNames {
     val Pivotal = ComposeUtils.composeFqName("Pivotal")
     val StableMarker = ComposeUtils.composeFqName("StableMarker")
     val HiddenAttribute = ComposeUtils.composeFqName("HiddenAttribute")
+    val Package = FqName.fromSegments(listOf("androidx", "compose"))
 
     fun makeComposableAnnotation(module: ModuleDescriptor): AnnotationDescriptor =
         object : AnnotationDescriptor {
