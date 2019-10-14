@@ -170,9 +170,9 @@ class KotlinCompletionContributor : CompletionContributor() {
     private fun isInClassHeader(tokenBefore: PsiElement?): Boolean {
         val classOrObject = tokenBefore?.parents?.firstIsInstanceOrNull<KtClassOrObject>() ?: return false
         val name = classOrObject.nameIdentifier ?: return false
-        val body = classOrObject.getBody() ?: return false
+        val headerEnd = classOrObject.body?.startOffset ?: classOrObject.endOffset
         val offset = tokenBefore.startOffset
-        return name.endOffset <= offset && offset <= body.startOffset
+        return name.endOffset <= offset && offset <= headerEnd
     }
 
     private fun specialLambdaSignatureDummyIdentifier(tokenBefore: PsiElement?): String? {
