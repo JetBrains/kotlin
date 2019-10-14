@@ -30,6 +30,7 @@ import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.containers.ConcurrentIntObjectMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.impl.MapIndexStorage;
+import com.intellij.util.indexing.impl.UpdatableValueContainer;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.*;
 import gnu.trove.TIntHashSet;
@@ -146,7 +147,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
   }
 
   @Override
-  public boolean processKeys(@NotNull final Processor<? super Key> processor, GlobalSearchScope scope, final IdFilter idFilter) throws StorageException {
+  public boolean processKeys(@NotNull Processor<? super Key> processor, GlobalSearchScope scope, final IdFilter idFilter) throws StorageException {
     l.lock();
     try {
       myCache.clear(); // this will ensure that all new keys are made into the map
@@ -201,12 +202,12 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
           LOG.debug("Scanned keyHashToVirtualFileMapping of " + myBaseStorageFile + " for " + (System.currentTimeMillis() - l));
         }
         final TIntHashSet finalHashMaskSet = hashMaskSet;
-        return myMap.processKeys(key -> {
+        return doProcessKeys(key -> {
           if (!finalHashMaskSet.contains(myKeyDescriptor.getHashCode(key))) return true;
           return processor.process(key);
         });
       }
-      return myMap.processKeys(processor);
+      return doProcessKeys(processor);
     }
     catch (IOException e) {
       throw new StorageException(e);
@@ -217,6 +218,14 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
     finally {
       l.unlock();
     }
+  }
+
+  private boolean doProcessKeys(@NotNull Processor<? super Key> processor) throws IOException {
+    return myMap instanceof PersistentHashMap && PersistentEnumeratorBase.inlineKeyStorage(myKeyDescriptor)
+           // process keys and check that they're already present in map because we don't have separated key storage we must check keys
+           ? ((PersistentHashMap<Key, UpdatableValueContainer<Value>>)myMap).processKeysWithExistingMapping(processor)
+           // optimization: process all keys, some of them might be already deleted but we don't care. We just read key storage file here
+           : myMap.processKeys(processor);
   }
 
   @NotNull
