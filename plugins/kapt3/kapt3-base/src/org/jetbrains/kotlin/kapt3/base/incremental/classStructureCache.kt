@@ -9,6 +9,7 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
+import java.lang.IllegalArgumentException
 import java.net.URI
 import java.util.regex.Pattern
 
@@ -73,7 +74,23 @@ class JavaClassCache() : Serializable {
         output.writeObject(generatedTypes)
     }
 
-    fun isAlreadyProcessed(sourceFile: URI) = sourceCache.containsKey(sourceFile) || generatedTypes.containsKey(File(sourceFile))
+    fun isAlreadyProcessed(sourceFile: URI): Boolean {
+        if (!sourceFile.isAbsolute) {
+            // we never want to process non-absolute URIs, see https://youtrack.jetbrains.com/issue/KT-33617
+            return true
+        }
+        if (sourceFile.isOpaque) {
+            // we never want to process non-hierarchical URIs, https://youtrack.jetbrains.com/issue/KT-33617
+            return true
+        }
+        return try {
+            val fileFromUri = File(sourceFile)
+            sourceCache.containsKey(sourceFile) || generatedTypes.containsKey(fileFromUri)
+        } catch (e: IllegalArgumentException) {
+            // unable to create File instance, avoid processing these files
+            true
+        }
+    }
 
     /** Used for testing only. */
     internal fun getStructure(sourceFile: File) = sourceCache[sourceFile.toURI()]
