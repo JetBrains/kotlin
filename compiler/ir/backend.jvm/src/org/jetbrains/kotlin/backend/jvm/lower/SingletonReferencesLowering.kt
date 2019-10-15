@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val singletonReferencesPhase = makeIrFilePhase(
@@ -26,13 +21,11 @@ internal val singletonReferencesPhase = makeIrFilePhase(
     description = "Handle singleton references"
 )
 
-private class SingletonReferencesLowering(val context: JvmBackendContext) : ClassLoweringPass, IrElementTransformerVoid() {
-    private lateinit var containingClass: IrClass
+private class SingletonReferencesLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     private val constructingEnums = arrayListOf<IrDeclarationParent>()
 
-    override fun lower(irClass: IrClass) {
-        containingClass = irClass
-        irClass.transformChildrenVoid(this)
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(this)
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
@@ -44,14 +37,14 @@ private class SingletonReferencesLowering(val context: JvmBackendContext) : Clas
 
     override fun visitGetEnumValue(expression: IrGetEnumValue): IrExpression {
         val candidate = expression.symbol.owner.correspondingClass
-
-        return if (candidate != null && isInScope(candidate) && !isVisitingSuperConstructor(candidate)) {
+        val appropriateThis = thisOfClass(candidate)
+        return if (candidate != null && appropriateThis != null && !isVisitingSuperConstructor(candidate)) {
             // Replace `SomeEnumClass.SomeEnumEntry` with `this`, if possible.
             //
             // SomeEnumEntry is a singleton, which is assigned (SETFIELD) to SomeEnumClass after the construction of the singleton is done.
             // Therefore, during the construction of SomeEnumEntry, SomeEnumClass.SomeEnumEntry isn't available yet. All references to it
             // must be replaced with `SomeEnumEntry.this`.
-            IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, candidate.thisReceiver!!.symbol)
+            IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, appropriateThis.symbol)
         } else {
             val entrySymbol = context.declarationFactory.getFieldForEnumEntry(expression.symbol.owner, expression.type)
             IrGetFieldImpl(expression.startOffset, expression.endOffset, entrySymbol.symbol, expression.type)
@@ -64,13 +57,16 @@ private class SingletonReferencesLowering(val context: JvmBackendContext) : Clas
     }
 
     // `this` is generally available while the reference is within the lexical scope of the containing enum entry.
-    private fun isInScope(symbol: IrSymbolOwner?): Boolean {
-        var candidate: IrDeclaration? = containingClass
-
-        while (candidate != null && symbol != candidate)
-            candidate = candidate.parent as? IrDeclaration
-
-        return candidate != null
+    private fun thisOfClass(declaration: IrClass?): IrValueParameter? {
+        if (declaration == null) return null
+        for (scope in allScopes.reversed()) {
+            when (val element = scope.irElement) {
+                is IrFunction ->
+                    element.dispatchReceiverParameter?.let { if (it.type.classOrNull == declaration.symbol) return it }
+                is IrClass -> if (element == declaration) return element.thisReceiver
+            }
+        }
+        return null
     }
 
     // `this` isn't usable before `super.<init>`. Consider the example,
