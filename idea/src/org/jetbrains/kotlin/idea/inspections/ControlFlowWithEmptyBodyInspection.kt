@@ -18,10 +18,11 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 class ControlFlowWithEmptyBodyInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = object : KtVisitorVoid() {
         override fun visitIfExpression(expression: KtIfExpression) {
-            if (expression.then.isEmptyBodyOrNull()) {
+            val then = expression.then
+            val elseKeyword = expression.elseKeyword
+            if (then.isEmptyBodyOrNull() && (elseKeyword == null || then?.hasComments() != true)) {
                 holder.registerProblem(expression, expression.ifKeyword)
             }
-            val elseKeyword = expression.elseKeyword
             if (elseKeyword != null && expression.`else`.isEmptyBodyOrNull()) {
                 holder.registerProblem(expression, elseKeyword)
             }

@@ -2730,6 +2730,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/blockHasComment.kt");
             }
 
+            @TestMetadata("blockHasCommentWithElse.kt")
+            public void testBlockHasCommentWithElse() throws Exception {
+                runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/blockHasCommentWithElse.kt");
+            }
+
             @TestMetadata("blockHasElse.kt")
             public void testBlockHasElse() throws Exception {
                 runTest("idea/testData/inspectionsLocal/controlFlowWithEmptyBody/if/blockHasElse.kt");
