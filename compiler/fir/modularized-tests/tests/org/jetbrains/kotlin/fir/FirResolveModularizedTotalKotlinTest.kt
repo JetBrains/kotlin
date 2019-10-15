@@ -31,12 +31,12 @@ import java.util.*
 
 
 private const val FAIL_FAST = true
-private const val DUMP_FIR = true
 
 private const val FIR_DUMP_PATH = "tmp/firDump"
 private const val FIR_HTML_DUMP_PATH = "tmp/firDump-html"
 private const val FIR_LOGS_PATH = "tmp/fir-logs"
 
+private val DUMP_FIR = System.getProperty("fir.bench.dump", "true") == "true"
 internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
 internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false") == "true"
 
