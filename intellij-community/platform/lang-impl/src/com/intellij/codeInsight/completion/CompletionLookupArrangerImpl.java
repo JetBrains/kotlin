@@ -287,7 +287,11 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
   @NotNull
   private Pair<List<LookupElement>, Integer> doArrangeItems(@NotNull LookupElementListPresenter lookup, boolean onExplicitAction) {
     List<LookupElement> items = getMatchingItems();
-    Iterable<LookupElement> sortedByRelevance = sortByRelevance(groupItemsBySorter(items));
+    Iterable<? extends LookupElement> sortedByRelevance = sortByRelevance(groupItemsBySorter(items));
+
+    if (sortedByRelevance.iterator().hasNext()) {
+      sortedByRelevance = myFinalSorter.sort(sortedByRelevance, Objects.requireNonNull(myProcess.getParameters()));
+    }
 
     LookupElement relevantSelection = findMostRelevantItem(sortedByRelevance);
     List<LookupElement> listModel = isAlphaSorted() ?
@@ -304,12 +308,7 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
                                                    Set<? extends LookupElement> items,
                                                    Iterable<? extends LookupElement> sortedElements,
                                                    @Nullable LookupElement relevantSelection) {
-    if (!sortedElements.iterator().hasNext()) {
-      return Collections.emptyList();
-    }
-
-    Iterator<? extends LookupElement> byRelevance =
-      myFinalSorter.sort(sortedElements, Objects.requireNonNull(myProcess.getParameters())).iterator();
+    Iterator<? extends LookupElement> byRelevance = sortedElements.iterator();
 
     final LinkedHashSet<LookupElement> model = new LinkedHashSet<>();
 
