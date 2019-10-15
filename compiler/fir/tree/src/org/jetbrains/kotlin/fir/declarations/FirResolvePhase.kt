@@ -9,6 +9,7 @@ enum class FirResolvePhase {
     RAW_FIR,
     IMPORTS,
     SUPER_TYPES,
+    SEALED_CLASS_INHERITORS,
     TYPES,
     STATUS,
     IMPLICIT_TYPES_BODY_RESOLVE,
