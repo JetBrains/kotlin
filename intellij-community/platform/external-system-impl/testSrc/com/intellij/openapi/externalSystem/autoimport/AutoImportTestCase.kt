@@ -174,12 +174,12 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   }
 
 
-  protected fun assertNotificationAware(vararg projects: ExternalSystemProjectId, notified: Boolean, event: String) {
-    val message = when (notified) {
-      true -> "Notification must be notified for $projects"
-      else -> "Notification must be expired"
+  protected fun assertNotificationAware(vararg projects: ExternalSystemProjectId, event: String) {
+    val message = when (projects.isEmpty()) {
+      true -> "Notification must be expired"
+      else -> "Notification must be notified for $projects"
     }
-    assertEquals("$message on $event", notified, notificationAware.isNotificationNotified(*projects))
+    assertEquals("$message on $event", projects.toSet(), notificationAware.getProjectsWithNotification())
   }
 
   protected fun modification(action: () -> Unit) {
@@ -240,7 +240,10 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
                     notified: Boolean,
                     event: String) {
       assertProjectAware(projectAware, refresh, subscribe, unsubscribe, event)
-      assertNotificationAware(notified = notified, event = event)
+      when (notified) {
+        true -> assertNotificationAware(projectAware.projectId, event = event)
+        else -> assertNotificationAware(event = event)
+      }
     }
   }
 }

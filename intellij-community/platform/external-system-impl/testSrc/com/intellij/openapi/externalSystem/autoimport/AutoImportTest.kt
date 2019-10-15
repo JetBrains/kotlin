@@ -139,38 +139,38 @@ class AutoImportTest : AutoImportTestCase() {
 
     assertProjectAware(projectAware1, refresh = 1, event = "register project without cache")
     assertProjectAware(projectAware2, refresh = 1, event = "register project without cache")
-    assertNotificationAware(notified = false, event = "register project without cache")
+    assertNotificationAware(event = "register project without cache")
 
     scriptFile1.appendString("println 1")
     assertProjectAware(projectAware1, refresh = 1, event = "modification of first settings")
     assertProjectAware(projectAware2, refresh = 1, event = "modification of first settings")
-    assertNotificationAware(projectId1, notified = true, event = "modification of first settings")
+    assertNotificationAware(projectId1, event = "modification of first settings")
 
     scriptFile2.appendString("println 2")
     assertProjectAware(projectAware1, refresh = 1, event = "modification of second settings")
     assertProjectAware(projectAware2, refresh = 1, event = "modification of second settings")
-    assertNotificationAware(projectId1, projectId2, notified = true, event = "modification of second settings")
+    assertNotificationAware(projectId1, projectId2, event = "modification of second settings")
 
     scriptFile1.removeContent()
     assertProjectAware(projectAware1, refresh = 1, event = "revert changes at second settings")
     assertProjectAware(projectAware2, refresh = 1, event = "revert changes at second settings")
-    assertNotificationAware(projectId2, notified = true, event = "revert changes at second settings")
+    assertNotificationAware(projectId2, event = "revert changes at second settings")
 
     refreshProject()
     assertProjectAware(projectAware1, refresh = 1, event = "project refresh")
     assertProjectAware(projectAware2, refresh = 2, event = "project refresh")
-    assertNotificationAware(notified = false, event = "project refresh")
+    assertNotificationAware(event = "project refresh")
 
     scriptFile1.replaceContent("println 'script 1'")
     scriptFile2.replaceContent("println 'script 2'")
     assertProjectAware(projectAware1, refresh = 1, event = "modification of both settings")
     assertProjectAware(projectAware2, refresh = 2, event = "modification of both settings")
-    assertNotificationAware(projectId1, projectId2, notified = true, event = "modification of both settings")
+    assertNotificationAware(projectId1, projectId2, event = "modification of both settings")
 
     refreshProject()
     assertProjectAware(projectAware1, refresh = 2, event = "project refresh")
     assertProjectAware(projectAware2, refresh = 3, event = "project refresh")
-    assertNotificationAware(notified = false, event = "project refresh")
+    assertNotificationAware(event = "project refresh")
   }
 
   @Test
