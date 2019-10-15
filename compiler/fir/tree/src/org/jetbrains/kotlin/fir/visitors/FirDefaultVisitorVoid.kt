@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.*
 
@@ -80,5 +81,9 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression) {
         return visitWrappedArgumentExpression(namedArgumentExpression)
+    }
+
+    override fun visitSealedClass(sealedClass: FirSealedClass) {
+        return visitRegularClass(sealedClass)
     }
 }

@@ -289,7 +289,7 @@ fun PrintWriter.printImplementation(implementation: Implementation) {
             }
         }
 
-        element.allFields.filter { it.type.contains("Symbol") }
+        element.allFields.filter { it.type.contains("Symbol") && it !is FieldList }
             .takeIf { it.isNotEmpty() && !isInterface && !element.type.contains("Reference")}
             ?.let { symbolFields ->
                 indent(1)
@@ -338,7 +338,7 @@ fun PrintWriter.printImplementation(implementation: Implementation) {
                         }
 
                         else -> {
-                            if (type == "FirClassImpl" && field.name == "declarations") {
+                            if (type in setOf("FirClassImpl", "FirSealedClassImpl") && field.name == "declarations") {
                                 indent(2)
                                 println("(declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.forEach { it.accept(visitor, data) }")
                             }
@@ -413,7 +413,7 @@ fun PrintWriter.printImplementation(implementation: Implementation) {
                     }
                     field.name in setOf("dispatchReceiver", "extensionReceiver") -> {
                     }
-                    type == "FirClassImpl" && field.name == "declarations" -> {
+                    type in setOf("FirClassImpl", "FirSealedClassImpl") && field.name == "declarations" -> {
                         indent(2)
                         println("(declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.transformInplace(transformer, data)")
                         indent(2)

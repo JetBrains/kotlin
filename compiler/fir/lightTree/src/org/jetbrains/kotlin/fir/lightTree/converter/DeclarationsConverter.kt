@@ -372,15 +372,25 @@ class DeclarationsConverter(
                 isData = modifiers.isDataClass() && classKind != ClassKind.OBJECT
                 isInline = modifiers.hasInline()
             }
-            val firClass = FirClassImpl(
-                null,
-                session,
-                className,
-                status,
-                classKind,
-                FirClassSymbol(context.currentClassId)
-
-            )
+            val firClass = if (status.modality == Modality.SEALED) {
+                FirSealedClassImpl(
+                    null,
+                    session,
+                    className,
+                    status,
+                    classKind,
+                    FirClassSymbol(context.currentClassId)
+                )
+            } else {
+                FirClassImpl(
+                    null,
+                    session,
+                    className,
+                    status,
+                    classKind,
+                    FirClassSymbol(context.currentClassId)
+                )
+            }
             firClass.annotations += modifiers.annotations
             firClass.typeParameters += firTypeParameters
             firClass.joinTypeParameters(typeConstraints)

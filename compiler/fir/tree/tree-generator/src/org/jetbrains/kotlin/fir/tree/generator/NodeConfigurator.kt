@@ -220,6 +220,10 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +superTypeRefs(withReplace = true)
         }
 
+        sealedClass.configure {
+            +fieldList("inheritors", classIdType, withReplace = true)
+        }
+
         typeAlias.configure {
             parentArg(classLikeDeclaration, "F", typeAlias)
             +symbol("FirTypeAliasSymbol")

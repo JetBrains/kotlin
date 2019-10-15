@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -238,6 +239,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitRegularClass(regularClass: FirRegularClass) {
         visitElement(regularClass)
+    }
+
+    open fun visitSealedClass(sealedClass: FirSealedClass) {
+        visitElement(sealedClass)
     }
 
     open fun visitTypeAlias(typeAlias: FirTypeAlias) {
@@ -662,6 +667,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
         visitRegularClass(regularClass)
+    }
+
+    final override fun visitSealedClass(sealedClass: FirSealedClass, data: Nothing?) {
+        visitSealedClass(sealedClass)
     }
 
     final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {

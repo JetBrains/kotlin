@@ -43,6 +43,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val klass = element("Class", Declaration, declaration, statement, annotationContainer)
     val classLikeDeclaration = element("ClassLikeDeclaration", Declaration, statement, memberDeclaration, symbolOwner, typeParametersOwner)
     val regularClass = element("RegularClass", Declaration, namedDeclaration, classLikeDeclaration, klass)
+    val sealedClass = element("SealedClass", Declaration, regularClass)
     val typeAlias = element("TypeAlias", Declaration, classLikeDeclaration)
     val enumEntry = element("EnumEntry", Declaration, regularClass)
 

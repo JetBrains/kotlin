@@ -288,6 +288,10 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         regularClass.declarations.renderDeclarations()
     }
 
+    override fun visitSealedClass(sealedClass: FirSealedClass) {
+        visitRegularClass(sealedClass)
+    }
+
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
         anonymousObject.annotations.renderAnnotations()
         print("object : ")

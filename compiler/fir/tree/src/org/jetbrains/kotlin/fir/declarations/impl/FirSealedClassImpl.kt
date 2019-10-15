@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.SupertypesComputationStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -26,14 +28,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirClassImpl(
+class FirSealedClassImpl(
     override val psi: PsiElement?,
     override val session: FirSession,
     override val name: Name,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
     override val symbol: FirClassSymbol
-) : FirRegularClass, FirModifiableRegularClass, FirAbstractAnnotatedElement {
+) : FirSealedClass, FirModifiableRegularClass, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
@@ -41,6 +43,7 @@ class FirClassImpl(
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
     override var companionObject: FirRegularClass? = null
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
+    override val inheritors: MutableList<ClassId> = mutableListOf()
 
     init {
         symbol.bind(this)
@@ -55,7 +58,7 @@ class FirClassImpl(
         superTypeRefs.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirClassImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSealedClassImpl {
         annotations.transformInplace(transformer, data)
         typeParameters.transformInplace(transformer, data)
         status = status.transformSingle(transformer, data)
@@ -77,5 +80,10 @@ class FirClassImpl(
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSuperTypeRefs)
+    }
+
+    override fun replaceInheritors(newInheritors: List<ClassId>) {
+        inheritors.clear()
+        inheritors.addAll(newInheritors)
     }
 }

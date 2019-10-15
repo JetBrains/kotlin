@@ -61,12 +61,20 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             kind = Interface
         }
 
-        impl(regularClass, "FirClassImpl") {
+        val modifiableRegularClass = impl(regularClass, "FirModifiableRegularClass") {
             parents += modifiableClass
             parents += modifiableTypeParametersOwner
+            kind = Interface
+        }
+
+        val regularClassConfig: ImplementationContext.() -> Unit = {
+            parents += modifiableRegularClass
             defaultNull("companionObject")
             defaultSupertypesComputationStatus()
         }
+        impl(regularClass, "FirClassImpl", regularClassConfig)
+
+        impl(sealedClass, config = regularClassConfig)
 
         impl(anonymousObject) {
             parents += modifiableClass

@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.addDeclaration
-import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.impl.FirImplicitThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
@@ -29,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 
 fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
-    session: FirSession, firClass: FirClassImpl, packageFqName: FqName, classFqName: FqName,
+    session: FirSession, firClass: FirModifiableRegularClass, packageFqName: FqName, classFqName: FqName,
     firPrimaryConstructor: FirConstructor
 ) {
     var componentIndex = 1
@@ -81,7 +78,7 @@ fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
 private val copyName = Name.identifier("copy")
 
 fun List<Pair<KtParameter?, FirProperty>>.generateCopyFunction(
-    session: FirSession, classOrObject: KtClassOrObject?, firClass: FirClassImpl, packageFqName: FqName, classFqName: FqName,
+    session: FirSession, classOrObject: KtClassOrObject?, firClass: FirModifiableRegularClass, packageFqName: FqName, classFqName: FqName,
     firPrimaryConstructor: FirConstructor
 ) {
     val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
