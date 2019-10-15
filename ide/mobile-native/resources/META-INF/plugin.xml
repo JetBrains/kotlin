@@ -1,7 +1,7 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <!--suppress XmlPathReference -->
   <xi:include href="/META-INF/CocoaCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <!--suppress XmlPathReference -->
   <xi:include href="/META-INF/SwiftLangPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <id>org.jetbrains.kotlin.mobile.plugin</id>
@@ -14,14 +14,9 @@
   <change-notes/>
 
   <depends>com.intellij.modules.clion</depends>
-  <!--java_plugin_dependency-->
+  <depends>org.jetbrains.kotlin.native.clion</depends>
 
   <application-components>
-    <component>
-      <interface-class>com.jetbrains.konan.KonanIconProvider</interface-class>
-      <implementation-class>org.jetbrains.konan.GenericIconProvider</implementation-class>
-    </component>
-
     <!-- swift -->
     <component>
       <interface-class>com.jetbrains.swift.codeinsight.resolve.module.SwiftModuleIOCache</interface-class>
@@ -33,19 +28,9 @@
     </component>
   </application-components>
 
-  <extensions defaultExtensionNs="org.jetbrains.kotlin.native">
-<!--    <gradleLauncherProvider implementation="org.jetbrains.konan.gradle.execution.CLionGradleKonanLauncherProvider"/>-->
-  </extensions>
   <extensions defaultExtensionNs="com.intellij">
-<!--    <directoryProjectGenerator implementation="org.jetbrains.konan.KonanGradleProjectGenerator"/>-->
-    <projectTaskRunner implementation="org.jetbrains.konan.gradle.execution.GradleKonanProjectTaskRunner"/>
-
     <configurationType implementation="org.jetbrains.konan.execution.MobileAppRunConfigurationType"/>
     <configurationType implementation="org.jetbrains.konan.execution.testing.MobileTestRunConfigurationType"/>
-    <runLineMarkerContributor language="ObjectiveC"
-                              implementationClass="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunLineMarkerProvider"/>
-
-    <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanBuildBeforeRunTaskProvider"/>
     <programRunner implementation="org.jetbrains.konan.execution.MobileRunner" order="first"/>
 
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
@@ -76,10 +61,6 @@
 
     <!--<externalAnnotator implementationClass="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator"
                        language="Swift"/>-->
-  </extensions>
-
-  <extensions defaultExtensionNs="clion">
-<!--    <buildConfigurationProvider id="CLionKonanBuildConfigurationProvider" implementation="org.jetbrains.konan.gradle.execution.CLionKonanBuildConfigurationProvider" />-->
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">

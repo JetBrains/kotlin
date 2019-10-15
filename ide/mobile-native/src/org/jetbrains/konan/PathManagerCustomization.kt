@@ -12,7 +12,7 @@ import java.io.File
 
 class PathManagerCustomization : OCPathManagerCustomization() {
     override fun getBinFile(relativePath: String): File =
-        File(FileUtil.join(PathManager.getPluginsPath(), "Kotlin", "native", "mac", relativePath)).also {
+        File(FileUtil.join(PathManager.getPluginsPath(), "Mobile", "native", "mac", relativePath)).also {
             FileUtil.setExecutable(it) // FIXME do this in CLion build script
         }
 }

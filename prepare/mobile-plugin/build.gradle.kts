@@ -9,7 +9,6 @@ plugins {
 val cidrPluginTools: Map<String, Any> by rootProject.extensions
 val pluginJar: (Project, Configuration, List<Task>) -> Jar by cidrPluginTools
 val preparePluginXml: (Project, String, String, Boolean, String, Boolean) -> Copy by cidrPluginTools
-val packageCidrPlugin: (Project, String, File, List<Task>) -> Copy by cidrPluginTools
 val zipCidrPlugin: (Project, Task, File) -> Zip by cidrPluginTools
 val cidrUpdatePluginsXml: (Project, Task, String, File, URL, URL?) -> Task by cidrPluginTools
 
@@ -35,9 +34,7 @@ repositories {
 }
 
 dependencies {
-    cidrPlugin(project(":kotlin-ultimate:prepare:cidr-plugin"))
-    embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
-    runtime(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false } // we need our own jar, so we can register additional gradle model builder service
+    embedded(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false }
     runtime("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
     runtime("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
     runtime("com.jetbrains.intellij.cidr:cidr-xctest:$clionVersion") { isTransitive = false }
@@ -57,7 +54,23 @@ val preparePluginXmlTask: Task = preparePluginXml(
         true
 )
 
-val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXmlTask))
+val pluginXmlPath = "META-INF/plugin.xml"
+val pluginJarTask: Task by tasks.named<Jar>("jar") {
+    dependsOn(preparePluginXmlTask)
+    from(preparePluginXmlTask)
+
+    configurations.findByName("embedded")?.let { embedded ->
+        dependsOn(embedded)
+        from(provider { embedded.map(::zipTree) }) { exclude(pluginXmlPath) }
+    }
+
+    archiveBaseName.set(project.the<BasePluginConvention>().archivesBaseName)
+    archiveFileName.set("mobile-plugin.jar")
+    manifest.attributes.apply {
+        put("Implementation-Vendor", "JetBrains")
+        put("Implementation-Title", archiveBaseName.get())
+    }
+}
 
 val copyNativeDeps: Task by tasks.creating(Copy::class) {
     from(clionCocoaCommonBinariesDir)
@@ -73,18 +86,24 @@ val copyRuntimeDeps: Task by tasks.creating(Copy::class) {
     into(File(mobilePluginDir, "lib"))
 }
 
-val mobilePluginTask: Task = packageCidrPlugin(
-        project,
-        ":kotlin-ultimate:ide:mobile-native",
-        mobilePluginDir,
-        listOf(pluginJarTask)
-)
-mobilePluginTask.dependsOn(
-    copyNativeDeps,
-    copyRuntimeDeps
-)
+val mobilePlugin: Task by tasks.creating(Copy::class) {
+    duplicatesStrategy = DuplicatesStrategy.FAIL
 
-val zipMobilePluginTask: Task = zipCidrPlugin(project, mobilePluginTask, mobilePluginZipPath)
+    into(mobilePluginDir)
+
+    into("lib") {
+        dependsOn(pluginJarTask)
+        from(pluginJarTask)
+    }
+
+    dependsOn(
+        copyNativeDeps,
+        copyRuntimeDeps,
+        ":kotlin-ultimate:prepare:clion-plugin:clionPlugin"
+    )
+}
+
+val zipMobilePluginTask: Task = zipCidrPlugin(project, mobilePlugin, mobilePluginZipPath)
 
 val mobileUpdatePluginsXmlTask: Task = cidrUpdatePluginsXml(
         project,

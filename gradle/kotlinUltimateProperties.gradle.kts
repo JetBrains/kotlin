@@ -129,7 +129,7 @@ val artifactsForCidrDir: File by rootProject.extra(rootProject.rootDir.resolve("
 val clionPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("clionPlugin/Kotlin"))
 val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("appcodePlugin/Kotlin"))
 val mobileMppPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobileMppPlugin/mobile-mpp"))
-val mobilePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobilePlugin/Kotlin"))
+val mobilePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobilePlugin/Mobile"))
 
 val useAppCodeForCommon = findProperty("useAppCodeForCommon").toBoolean()
 val cidrVersion: String by rootProject.extra(if (useAppCodeForCommon) appcodeVersion else clionVersion)
