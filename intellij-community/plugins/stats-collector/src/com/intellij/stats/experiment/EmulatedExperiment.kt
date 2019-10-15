@@ -4,6 +4,7 @@ package com.intellij.stats.experiment
 import com.intellij.internal.statistic.DeviceIdManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.registry.Registry
+import kotlin.math.abs
 
 /*
  * For now, we decide about AB experiment inside IDE using user id and salt
@@ -26,7 +27,7 @@ class EmulatedExperiment {
         }
 
         val userId = DeviceIdManager.getOrGenerateId()
-        val hash = (userId + salt).hashCode() % 16
+        val hash = abs((userId + salt).hashCode()) % 8
         return when (hash) {
             3 -> GROUP_A_EXPERIMENT_VERSION
             4 -> GROUP_B_EXPERIMENT_VERSION
