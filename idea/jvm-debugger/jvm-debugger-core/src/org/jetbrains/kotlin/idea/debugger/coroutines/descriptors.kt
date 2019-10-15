@@ -164,10 +164,6 @@ class SuspendStackFrameDescriptor(
     override fun getName(): String {
         return frame.methodName
     }
-
-    override fun getIcon(): Icon {
-        return IconLoader.getIcon("org/jetbrains/kotlin/idea/icons/suspendCall.${IconExtensionChooser.iconExtension()}")
-    }
 }
 
 class AsyncStackFrameDescriptor(val state: CoroutineState, val frame: StackFrameItem, proxy: StackFrameProxyImpl) :

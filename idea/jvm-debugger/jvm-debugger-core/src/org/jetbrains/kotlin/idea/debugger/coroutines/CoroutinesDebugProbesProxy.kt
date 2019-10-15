@@ -41,13 +41,15 @@ object CoroutinesDebugProbesProxy {
     @Synchronized
     fun dumpCoroutines(context: ExecutionContext): Either<Throwable, List<CoroutineState>> {
         try {
-            if (context.debugProcess.references == null) {
-                context.debugProcess.references = ProcessReferences(context)
+            var refs = context.debugProcess.references
+            if (refs == null) {
+                refs = ProcessReferences(context)
+                context.debugProcess.references = refs
             }
-            val refs = context.debugProcess.references!! // already initialized if it was null
-
             // get dump
-            val infoList = context.invokeMethod(refs.instance, refs.dumpMethod, emptyList()) as ObjectReference
+            val infoList = context.invokeMethod(refs.instance, refs.dumpMethod, emptyList()) as? ObjectReference
+                ?: return Either.right(emptyList())
+
             context.keepReference(infoList)
             val size = (context.invokeMethod(infoList, refs.getSize, emptyList()) as IntegerValue).value()
 
@@ -132,7 +134,7 @@ object CoroutinesDebugProbesProxy {
                 mergedFrameList, refs.getElement,
                 listOf(context.vm.virtualMachine.mirrorOf(it))
             ) as ObjectReference
-            val clazz = (frame.getValue(refs.className) as StringReference).value()
+            val clazz = (frame.getValue(refs.className) as? StringReference)?.value()
             list.add(
                 0, // add in the beginning
                 StackTraceElement(
