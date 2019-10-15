@@ -14993,14 +14993,34 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/simplifyBooleanWithConstants/inapplicableUsesVals3.kt");
         }
 
-        @TestMetadata("minusDoubleZero.kt")
-        public void testMinusDoubleZero() throws Exception {
-            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusDoubleZero.kt");
+        @TestMetadata("minusDoubleZeroCompareTo.kt")
+        public void testMinusDoubleZeroCompareTo() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusDoubleZeroCompareTo.kt");
         }
 
-        @TestMetadata("minusDoubleZero2.kt")
-        public void testMinusDoubleZero2() throws Exception {
-            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusDoubleZero2.kt");
+        @TestMetadata("minusDoubleZeroEquals.kt")
+        public void testMinusDoubleZeroEquals() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusDoubleZeroEquals.kt");
+        }
+
+        @TestMetadata("minusDoubleZeroEquals2.kt")
+        public void testMinusDoubleZeroEquals2() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusDoubleZeroEquals2.kt");
+        }
+
+        @TestMetadata("minusFloatZeroCompareTo.kt")
+        public void testMinusFloatZeroCompareTo() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusFloatZeroCompareTo.kt");
+        }
+
+        @TestMetadata("minusFloatZeroEquals.kt")
+        public void testMinusFloatZeroEquals() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusFloatZeroEquals.kt");
+        }
+
+        @TestMetadata("minusFloatZeroEquals2.kt")
+        public void testMinusFloatZeroEquals2() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusFloatZeroEquals2.kt");
         }
 
         @TestMetadata("notEqualsFalse.kt")

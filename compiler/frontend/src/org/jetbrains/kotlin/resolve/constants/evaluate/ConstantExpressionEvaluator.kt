@@ -431,15 +431,7 @@ private class ConstantExpressionEvaluatorVisitor(
         if (nodeElementType == KtNodeTypes.NULL) return NullValue().wrap()
 
         val result: Any? = when (nodeElementType) {
-            KtNodeTypes.INTEGER_CONSTANT -> parseNumericLiteral(text, nodeElementType)
-            KtNodeTypes.FLOAT_CONSTANT -> {
-                val prefix = expression.parent as? KtPrefixExpression
-                if (prefix != null && prefix.operationToken == KtTokens.MINUS) {
-                    parseNumericLiteral(prefix.text, nodeElementType)
-                } else {
-                    parseNumericLiteral(text, nodeElementType)
-                }
-            }
+            KtNodeTypes.INTEGER_CONSTANT, KtNodeTypes.FLOAT_CONSTANT -> parseNumericLiteral(text, nodeElementType)
             KtNodeTypes.BOOLEAN_CONSTANT -> parseBoolean(text)
             KtNodeTypes.CHARACTER_CONSTANT -> CompileTimeConstantChecker.parseChar(expression)
             else -> throw IllegalArgumentException("Unsupported constant: " + expression)
@@ -662,8 +654,7 @@ private class ConstantExpressionEvaluatorVisitor(
             }
 
             val result =
-                evaluateBinaryAndCheck(argumentForReceiver, argumentForParameter, resultingDescriptorName.asString(), callExpression)
-                        ?: return null
+                evaluateBinaryAndCheck(argumentForReceiver, argumentForParameter, resultingDescriptorName, callExpression) ?: return null
 
             val areArgumentsPure = isPureConstant(argumentForReceiver.expression) && isPureConstant(argumentForParameter.expression)
             val canBeUsedInAnnotation =
@@ -708,10 +699,26 @@ private class ConstantExpressionEvaluatorVisitor(
     private fun evaluateBinaryAndCheck(
         receiver: OperationArgument,
         parameter: OperationArgument,
-        name: String,
+        name: Name,
         callExpression: KtExpression
     ): Any? {
-        return evaluateBinaryAndCheck(name, receiver.ctcType, receiver.value, parameter.ctcType, parameter.value) {
+        val (receiverValue, parameterValue) = when (name) {
+            OperatorNameConventions.COMPARE_TO, OperatorNameConventions.EQUALS -> {
+                val receiverValue = when (val value = receiver.value) {
+                    -0.0 -> 0.0
+                    -0.0f -> 0.0f
+                    else -> value
+                }
+                val parameterValue = when (val value = parameter.value) {
+                    -0.0 -> 0.0
+                    -0.0f -> 0.0f
+                    else -> value
+                }
+                receiverValue to parameterValue
+            }
+            else -> receiver.value to parameter.value
+        }
+        return evaluateBinaryAndCheck(name.asString(), receiver.ctcType, receiverValue, parameter.ctcType, parameterValue) {
             trace.report(Errors.INTEGER_OVERFLOW.on(callExpression.getStrictParentOfType<KtExpression>() ?: callExpression))
         }
     }
