@@ -1,0 +1,13 @@
+class GetTestClass<T>(val t :  T) {
+    var value: T = t
+}
+fun box(): String  {
+    val implicitInstance: GetTestClass<Int> = GetTestClass<Int>(1)
+    val explicitInstance: GetTestClass<Int> = GetTestClass<Int>(1)
+    if (implicitInstance.value == explicitInstance.value) {
+        return "OK"
+    }
+    else {
+        return "FAIL"
+    }
+}

@@ -1,4 +1,4 @@
-class TestClass(val namedString: String, val namedInt: Int) {
+class TestClass(val namedString :  String, val namedInt :  Int) {
 }
 fun box(): String  {
     val testClassOrderedWoutNames: TestClass = TestClass("String", 4)

@@ -2,7 +2,7 @@ fun box(): String  {
     val x: Int = 42
     val y: Int = 777
     val z: Int = 3
-    if (((x == 42) && (y == 777)) && (z == 3)) {
+    if (((y == 777) || (x == 42)) && (z == 3)) {
         return "OK"
     }
     else {

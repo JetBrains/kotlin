@@ -285,6 +285,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/expressions/other"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("custom_package.kt")
+            public void testCustom_package() throws Exception {
+                runTest("compiler/testData/decompiler/box/expressions/other/custom_package.kt");
+            }
+
             @TestMetadata("typealias.kt")
             public void testTypealias() throws Exception {
                 runTest("compiler/testData/decompiler/box/expressions/other/typealias.kt");
@@ -414,6 +419,24 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         @TestMetadata("upper_bound_fun.kt")
         public void testUpper_bound_fun() throws Exception {
             runTest("compiler/testData/decompiler/box/generics/upper_bound_fun.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/decompiler/box/varargs")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Varargs extends AbstractIrDecompilerBlackBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInVarargs() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/varargs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("different_varargs.kt")
+        public void testDifferent_varargs() throws Exception {
+            runTest("compiler/testData/decompiler/box/varargs/different_varargs.kt");
         }
     }
 }

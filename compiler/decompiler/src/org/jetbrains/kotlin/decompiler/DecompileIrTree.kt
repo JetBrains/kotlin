@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.Printer
 
@@ -160,8 +161,8 @@ class DecompileIrTreeVisitor(
                         add(obtainModality().takeIf { !isOverriden() })
                         add(obtainVisibility())
                         add(FUN_TOKEN)
+                        add(obtainTypeParameters())
                         add(obtainFunctionName()
-                                    + obtainTypeParameters()
                                     + obtainValueParameterTypes()
                                     + returnType.toKotlinType().takeIf { !it.isUnit() }.let { ": ${returnType.toKotlinType()} " })
                     }.filterNot { it.isNullOrEmpty() }
@@ -261,7 +262,7 @@ class DecompileIrTreeVisitor(
                     } else {
                         printer.print(IF_TOKEN)
                     }
-                    printer.printWithNoIndent(" (${concatenateConditions(expression.branches[0].condition)})")
+                    printer.printWithNoIndent(" (${concatenateConditions(expression.branches[0])})")
                     withBracesLn {
                         expression.branches[0].result.accept(this, "")
                     }
@@ -469,12 +470,20 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitFile(declaration: IrFile, data: String) {
+        if (declaration.fqName != FqName.ROOT) {
+            printer.println("package ${declaration.fqName.asString()}\n")
+        }
         declaration.acceptChildren(this, data)
     }
 
     override fun visitComposite(expression: IrComposite, data: String) {
         expression.acceptChildren(this, "")
     }
+
+    override fun visitSpreadElement(spread: IrSpreadElement, data: String) {
+        printer.print("*${spread.expression.decompile()}")
+    }
+
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: String) = TODO()
 

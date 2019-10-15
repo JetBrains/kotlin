@@ -10,16 +10,16 @@ import org.jetbrains.kotlin.decompiler.decompile
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.typeUtil.isInterface
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 val OPERATOR_TOKENS = mutableMapOf<IrStatementOrigin, String>().apply {
     set(OROR, "||")
@@ -221,7 +221,15 @@ internal fun IrCall.obtainGetPropertyCall(): String {
 internal fun IrConstructor.obtainValueParameterTypes(): String =
     ArrayList<String>().apply {
         valueParameters.mapTo(this) {
-            var argDefinition = "${"val ".takeIf { isPrimary }.orEmpty()}${it.name}: ${it.type.toKotlinType()}"
+            var argDefinition =
+                listOf(
+                    it.obtainValueParameterFlags(),
+                    "val".takeIf { isPrimary }.orEmpty(),
+                    it.name(),
+                    ": ",
+                    (it.varargElementType?.toKotlinType() ?: it.type.toKotlinType()).toString()
+                )
+                    .filterNot { it.isEmpty() }.joinToString(" ")
             if (it.hasDefaultValue()) {
                 argDefinition += " = ${it.defaultValue!!.decompile()}"
             }
@@ -233,7 +241,12 @@ internal fun IrConstructor.obtainValueParameterTypes(): String =
 internal fun IrFunction.obtainValueParameterTypes(): String =
     ArrayList<String>().apply {
         valueParameters.mapTo(this) {
-            var argDefinition = "${it.name}: ${it.type.toKotlinType()}"
+            var argDefinition = listOf(
+                it.obtainValueParameterFlags(),
+                "${it.name()}:",
+                (it.varargElementType?.toKotlinType() ?: it.type.toKotlinType()).toString()
+            )
+                .filter { it.isNotEmpty() }.joinToString(" ")
             if (it.defaultValue != null) {
                 argDefinition += " = ${it.defaultValue!!.decompile()}"
             }
@@ -257,22 +270,33 @@ internal fun IrClass.obtainInheritance(): String {
     return implementedInterfaces.joinToString(", ")
 }
 
-internal fun concatenateConditions(condition: IrExpression): String {
-    var result = EMPTY_TOKEN
-    when (condition) {
+internal fun concatenateConditions(branch: IrBranch): String {
+    when (branch.condition) {
         is IrIfThenElseImpl -> {
-            val firstBranch = condition.branches[0]
-            result += "(${concatenateConditions(firstBranch.condition)})"
-            if (firstBranch.result !is IrConst<*>) {
-                result += " ${OPERATOR_TOKENS[condition.origin]} "
-                result += "(${concatenateConditions(firstBranch.result)})"
+            val irIfThenElseImplBranch = branch.condition as IrIfThenElseImpl
+            val firstBranch = irIfThenElseImplBranch.branches[0]
+            val secondBranch = irIfThenElseImplBranch.branches[1]
+            when (irIfThenElseImplBranch.origin) {
+                OROR -> return listOf(
+                    "(${secondBranch.result.decompile()})",
+                    OPERATOR_TOKENS[irIfThenElseImplBranch.origin],
+                    "(${concatenateConditions(firstBranch)})"
+                ).joinToString(" ")
+                ANDAND -> {
+                    var result = "(${concatenateConditions(firstBranch)})"
+                    if (firstBranch.result !is IrConst<*>) {
+                        result += " ${OPERATOR_TOKENS[irIfThenElseImplBranch.origin]} "
+                        result += "(${firstBranch.result.decompile()})"
+                    }
+                    return result
+                }
+                else -> TODO()
             }
         }
-        is IrCallImpl -> {
-            return condition.decompile()
+        else -> {
+            return branch.condition.decompile()
         }
     }
-    return result
 }
 
 internal fun IrClass.obtainDeclarationStr(): String =
@@ -334,11 +358,17 @@ internal fun IrTypeParametersContainer.obtainTypeParameters(): String =
             it.obtain()
         }.trim()
 
-private fun IrTypeParameter.variance() = if (variance.label.isNotEmpty()) variance.label + " " else EMPTY_TOKEN
-private fun IrTypeParameter.bound() = if (superTypes.isNotEmpty())
-    superTypes.map { it.toKotlinType().toString() }.joinToString(", ", prefix = " : ") + " " else EMPTY_TOKEN
+private fun IrTypeParameter.variance() = variance.label
+private fun IrTypeParameter.bound() =
+    superTypes
+        .filterNot { it.isNullableAny() }
+        .map { it.toKotlinType().toString() }
+        .ifNotEmpty { joinToString(", ", prefix = " : ") } ?: EMPTY_TOKEN
 
-internal fun IrTypeParameter.obtain() = "${variance()}${name()}${bound()}"
+internal fun IrTypeParameter.obtain() =
+    listOf(variance(), name(), bound())
+        .filter { it.isNotEmpty() }
+        .joinToString(" ")
 
 //TODO посмотреть где это используется (особенно с IrTypeAbbreviation)
 internal fun IrTypeArgument.obtain() =

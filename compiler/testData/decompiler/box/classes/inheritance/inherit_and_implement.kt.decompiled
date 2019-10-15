@@ -1,4 +1,4 @@
-open  class ParentClass(val x: Int) {
+open  class ParentClass(val x :  Int) {
     val anotherX: Int = this.x
 }
 interface MyInterface {

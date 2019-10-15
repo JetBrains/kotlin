@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun <T : Comparable<T>> max(list: List<T>): T {
     var max = list.get(0)
     for (i in list) {
