@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.j2k.ast
 import org.jetbrains.kotlin.j2k.CodeBuilder
 
 class NewClassExpression(
-        val name: ReferenceElement?,
-        val argumentList: ArgumentList,
-        val qualifier: Expression = Expression.Empty,
-        val anonymousClass: AnonymousClassBody? = null
+    val name: ReferenceElement?,
+    val argumentList: ArgumentList,
+    val qualifier: Expression = Empty,
+    val anonymousClass: AnonymousClassBody? = null
 ) : Expression() {
 
     override fun generateCode(builder: CodeBuilder) {

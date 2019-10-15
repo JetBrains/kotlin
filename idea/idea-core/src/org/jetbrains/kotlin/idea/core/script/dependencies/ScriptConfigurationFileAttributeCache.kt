@@ -76,7 +76,7 @@ class ScriptConfigurationFileAttributeCache : ScriptDependenciesLoader {
             file.scriptDependencies = null
             file.scriptCompilationConfiguration = null
         } else {
-            if (value is ScriptCompilationConfigurationWrapper.FromLegacy) {
+            if (value is FromLegacy) {
                 file.scriptDependencies = value.legacyDependencies
             } else {
                 if (file.scriptDependencies != null) file.scriptDependencies = null
