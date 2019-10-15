@@ -14,8 +14,6 @@ FILE: boundSmartcasts.kt
                 R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
             }
-            else ->  {
-            }
         }
 
     }
@@ -26,8 +24,6 @@ FILE: boundSmartcasts.kt
                 R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
             }
-            else ->  {
-            }
         }
 
     }
@@ -37,16 +33,12 @@ FILE: boundSmartcasts.kt
             (R|<local>/x| is R|A|) ->  {
                 R|<local>/z|.R|/A.foo|()
             }
-            else ->  {
-            }
         }
 
         R|<local>/z| = R|<local>/y|
         when () {
             (R|<local>/y| is R|B|) ->  {
                 R|<local>/z|.<Unresolved name: bar>#()
-            }
-            else ->  {
             }
         }
 
@@ -61,8 +53,6 @@ FILE: boundSmartcasts.kt
             (R|<local>/y| is R|A|) ->  {
                 R|<local>/x|.<Unresolved name: foo>#()
                 R|<local>/y|.R|/A.foo|()
-            }
-            else ->  {
             }
         }
 

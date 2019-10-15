@@ -4,8 +4,6 @@ FILE: booleanOperatorsWithConsts.kt
             R|<local>/b| || Boolean(false) ->  {
                 Int(1)
             }
-            else ->  {
-            }
         }
 
     }
@@ -13,8 +11,6 @@ FILE: booleanOperatorsWithConsts.kt
         when () {
             Boolean(false) || R|<local>/b| ->  {
                 Int(1)
-            }
-            else ->  {
             }
         }
 
@@ -24,8 +20,6 @@ FILE: booleanOperatorsWithConsts.kt
             R|<local>/b| || Boolean(true) ->  {
                 Int(1)
             }
-            else ->  {
-            }
         }
 
     }
@@ -33,8 +27,6 @@ FILE: booleanOperatorsWithConsts.kt
         when () {
             Boolean(true) || R|<local>/b| ->  {
                 Int(1)
-            }
-            else ->  {
             }
         }
 
@@ -44,8 +36,6 @@ FILE: booleanOperatorsWithConsts.kt
             R|<local>/b| && Boolean(false) ->  {
                 Int(1)
             }
-            else ->  {
-            }
         }
 
     }
@@ -53,8 +43,6 @@ FILE: booleanOperatorsWithConsts.kt
         when () {
             Boolean(false) && R|<local>/b| ->  {
                 Int(1)
-            }
-            else ->  {
             }
         }
 
@@ -64,8 +52,6 @@ FILE: booleanOperatorsWithConsts.kt
             R|<local>/b| && Boolean(true) ->  {
                 Int(1)
             }
-            else ->  {
-            }
         }
 
     }
@@ -73,8 +59,6 @@ FILE: booleanOperatorsWithConsts.kt
         when () {
             Boolean(true) && R|<local>/b| ->  {
                 Int(1)
-            }
-            else ->  {
             }
         }
 

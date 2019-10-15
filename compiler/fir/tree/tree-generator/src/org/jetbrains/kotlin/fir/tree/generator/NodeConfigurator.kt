@@ -500,6 +500,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +field("subject", expression, nullable = true).withTransform()
             +field("subjectVariable", variable.withArgs("F" to "*"), nullable = true)
             +fieldList("branches", whenBranch).withTransform()
+            +booleanField("isExhaustive", withReplace = true)
             needTransformOtherChildren()
         }
 

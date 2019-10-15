@@ -15,8 +15,6 @@ FILE: when.kt
             (R|<local>/x| is R|B|) ->  {
                 R|<local>/x|.R|/B.bar|()
             }
-            else ->  {
-            }
         }
 
         when () {
@@ -44,8 +42,6 @@ FILE: when.kt
             }
             ($subj$ is R|B|) ->  {
                 R|<local>/x|.R|/B.bar|()
-            }
-            else ->  {
             }
         }
 
@@ -77,8 +73,6 @@ FILE: when.kt
                 R|<local>/x|.R|/B.bar|()
                 R|<local>/y|.R|/B.bar|()
             }
-            else ->  {
-            }
         }
 
         when (lval y: R|kotlin/Any?| = R|<local>/x|) {
@@ -109,8 +103,6 @@ FILE: when.kt
         when ((R|<local>/x| as R|kotlin/Int|)) {
             ==($subj$, Int(1)) ->  {
                 R|<local>/x|.R|kotlin/Int.inc|()
-            }
-            else ->  {
             }
         }
 

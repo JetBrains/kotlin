@@ -27,16 +27,12 @@ FILE: tryCatch.kt
                     R|<local>/b| ->  {
                         ^test_3 Unit
                     }
-                    else ->  {
-                    }
                 }
 
                 lval x: R|kotlin/Int| = Int(1)
                 when () {
                     R|<local>/b|.R|kotlin/Boolean.not|() ->  {
                         break@@@[Boolean(true)]
-                    }
-                    else ->  {
                     }
                 }
 

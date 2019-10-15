@@ -60,8 +60,6 @@ FILE: nullability.kt
             ==(R|<local>/x|?.R|/A.getA|(), Null(null)) ->  {
                 ^test_4 Unit
             }
-            else ->  {
-            }
         }
 
         R|<local>/x|.R|/A.foo|()
@@ -72,8 +70,6 @@ FILE: nullability.kt
                 R|<local>/q|.R|/Q.data|
                 R|<local>/q|.R|/Q.data|.R|/MyData.s|
                 R|<local>/q|.R|/Q.data|.R|/MyData.s|.R|kotlin/Int.inc|()
-            }
-            else ->  {
             }
         }
 
@@ -99,8 +95,6 @@ FILE: nullability.kt
                 R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#()
                 R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#().<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
             }
-            else ->  {
-            }
         }
 
     }
@@ -108,8 +102,6 @@ FILE: nullability.kt
         when () {
             ==(R|<local>/b|, Boolean(true)) ->  {
                 R|<local>/b|.R|kotlin/Boolean.not|()
-            }
-            else ->  {
             }
         }
 
@@ -119,16 +111,12 @@ FILE: nullability.kt
             ==(R|<local>/a|, R|<local>/b|) ->  {
                 R|<local>/b|.R|kotlin/Int.inc|()
             }
-            else ->  {
-            }
         }
 
         R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
         when () {
             ===(R|<local>/a|, R|<local>/b|) ->  {
                 R|<local>/b|.R|kotlin/Int.inc|()
-            }
-            else ->  {
             }
         }
 
@@ -137,16 +125,12 @@ FILE: nullability.kt
             ==(R|<local>/b|, R|<local>/a|) ->  {
                 R|<local>/b|.R|kotlin/Int.inc|()
             }
-            else ->  {
-            }
         }
 
         R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
         when () {
             ===(R|<local>/b|, R|<local>/a|) ->  {
                 R|<local>/b|.R|kotlin/Int.inc|()
-            }
-            else ->  {
             }
         }
 
@@ -157,16 +141,12 @@ FILE: nullability.kt
             ==(R|<local>/a|, R|<local>/b|) ->  {
                 R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
             }
-            else ->  {
-            }
         }
 
         R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
         when () {
             ===(R|<local>/a|, R|<local>/b|) ->  {
                 R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
-            }
-            else ->  {
             }
         }
 
@@ -175,16 +155,12 @@ FILE: nullability.kt
             ==(R|<local>/b|, R|<local>/a|) ->  {
                 R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
             }
-            else ->  {
-            }
         }
 
         R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
         when () {
             ===(R|<local>/b|, R|<local>/a|) ->  {
                 R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
-            }
-            else ->  {
             }
         }
 

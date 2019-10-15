@@ -149,7 +149,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
       VALUE_PARAMETER name:g index:0 type:kotlin.String
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -159,7 +159,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=1
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="1"
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -169,7 +169,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=2
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="2"
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -178,7 +178,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=3
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="3"
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -190,7 +190,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
         receiver: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
         value: CONST Int type=kotlin.Int value=5
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -199,7 +199,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=5
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="5"
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -208,7 +208,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=6
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="6"
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -219,7 +219,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST String type=kotlin.String value="7"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="7"
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -228,7 +228,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST String type=kotlin.String value="8"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="8"
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -238,7 +238,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=9
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="9"
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -247,7 +247,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST String type=kotlin.String value="10"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="10"
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ

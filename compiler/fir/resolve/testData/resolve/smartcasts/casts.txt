@@ -8,8 +8,6 @@ FILE: casts.kt
             (R|<local>/x| as R|kotlin/Boolean|) ->  {
                 R|<local>/x|.R|kotlin/Boolean.not|()
             }
-            else ->  {
-            }
         }
 
         R|<local>/x|.R|kotlin/Boolean.not|()
@@ -19,8 +17,6 @@ FILE: casts.kt
             R|<local>/b| && (R|<local>/x| as R|kotlin/Boolean|) ->  {
                 R|<local>/x|.R|kotlin/Boolean.not|()
             }
-            else ->  {
-            }
         }
 
         R|<local>/x|.<Unresolved name: not>#()
@@ -28,16 +24,12 @@ FILE: casts.kt
             R|<local>/b| && ==((R|<local>/x| as R|kotlin/Boolean|), Boolean(true)) ->  {
                 R|<local>/x|.R|kotlin/Boolean.not|()
             }
-            else ->  {
-            }
         }
 
         R|<local>/x|.<Unresolved name: not>#()
         when () {
             R|<local>/b| || (R|<local>/x| as R|kotlin/Boolean|) ->  {
                 R|<local>/x|.<Unresolved name: not>#()
-            }
-            else ->  {
             }
         }
 

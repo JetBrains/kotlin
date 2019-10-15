@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -90,6 +91,7 @@ open class FirBodyResolveTransformer(
 
     private val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
     private val dataFlowAnalyzer: FirDataFlowAnalyzer = FirDataFlowAnalyzer(this)
+    private val whenExhaustivenessTransformer = FirWhenExhaustivenessTransformer(this)
 
     override val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() {
@@ -528,27 +530,35 @@ open class FirBodyResolveTransformer(
             if (whenExpression.subjectVariable != null) {
                 localScopes += FirLocalScope()
             }
-            whenExpression.transformSubject(this, noExpectedType)
-            if (whenExpression.isOneBranch()) {
-                whenExpression.transformBranches(this, noExpectedType)
-                whenExpression.resultType = whenExpression.branches.first().result.resultType
-                dataFlowAnalyzer.exitWhenExpression(whenExpression)
-                return@with whenExpression.compose()
-            }
-            whenExpression.transformBranches(this, null)
-
             @Suppress("NAME_SHADOWING")
-            val whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression) ?: run {
-                dataFlowAnalyzer.exitWhenExpression(whenExpression)
-                whenExpression.resultType = FirErrorTypeRefImpl(null, "")
-                return@with whenExpression.compose()
-            }
+            var whenExpression = whenExpression.transformSubject(this, noExpectedType)
+            if (whenExpression.isOneBranch()) {
+                whenExpression = whenExpression.transformBranches(this, noExpectedType)
+                whenExpression.resultType = whenExpression.branches.first().result.resultType
+            } else {
+                whenExpression = whenExpression.transformBranches(this, null)
 
-            val expectedTypeRef = data as FirTypeRef?
-            val result = callCompleter.completeCall(whenExpression, expectedTypeRef)
-            dataFlowAnalyzer.exitWhenExpression(result)
-            result.compose()
+                whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression) ?: run {
+                    dataFlowAnalyzer.exitWhenExpression(whenExpression)
+                    whenExpression.resultType = FirErrorTypeRefImpl(null, "")
+                    return@with whenExpression.compose()
+                }
+
+                val expectedTypeRef = data as FirTypeRef?
+                whenExpression = callCompleter.completeCall(whenExpression, expectedTypeRef)
+            }
+            whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
+            dataFlowAnalyzer.exitWhenExpression(whenExpression)
+            whenExpression = whenExpression.replaceReturnTypeIfNotExhaustive()
+            whenExpression.compose()
         }
+    }
+
+    private fun FirWhenExpression.replaceReturnTypeIfNotExhaustive(): FirWhenExpression {
+        if (!isExhaustive) {
+            resultType = resultType.resolvedTypeFromPrototype(session.builtinTypes.nullableAnyType.type)
+        }
+        return this
     }
 
     private fun FirWhenExpression.isOneBranch(): Boolean {

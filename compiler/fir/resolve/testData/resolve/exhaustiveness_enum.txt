@@ -1,0 +1,116 @@
+FILE: exhaustiveness_enum.kt
+    public final enum class Enum : R|kotlin/Enum| {
+        private constructor(): R|Enum| {
+            super<R|kotlin/Enum|>()
+        }
+
+        public final enum entry A : R|kotlin/Any| {
+            public constructor(): R|Enum.A| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final enum entry B : R|kotlin/Any| {
+            public constructor(): R|Enum.B| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final enum entry C : R|kotlin/Any| {
+            public constructor(): R|Enum.C| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun test_1(e: R|Enum|): R|kotlin/Unit| {
+        lval a: R|kotlin/Any?| = when (R|<local>/e|) {
+            ==($subj$, Q|Enum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|Enum.B|) ->  {
+                Int(2)
+            }
+        }
+
+        lval b: R|kotlin/Any?| = when (R|<local>/e|) {
+            ==($subj$, Q|Enum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|Enum.B|) ->  {
+                Int(2)
+            }
+            ($subj$ is R|kotlin/String|) ->  {
+                Int(3)
+            }
+        }
+
+        lval c: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|Enum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|Enum.B|) ->  {
+                Int(2)
+            }
+            ==($subj$, Q|Enum.C|) ->  {
+                Int(3)
+            }
+        }
+
+        lval d: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|Enum.A|) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(2)
+            }
+        }
+
+    }
+    public final fun test_2(e: R|Enum?|): R|kotlin/Unit| {
+        lval a: R|kotlin/Any?| = when (R|<local>/e|) {
+            ==($subj$, Q|Enum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|Enum.B|) ->  {
+                Int(2)
+            }
+            ==($subj$, Q|Enum.C|) ->  {
+                Int(3)
+            }
+        }
+
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|Enum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|Enum.B|) ->  {
+                Int(2)
+            }
+            ==($subj$, Q|Enum.C|) ->  {
+                Int(3)
+            }
+            ==($subj$, Null(null)) ->  {
+                Int(4)
+            }
+        }
+
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|Enum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|Enum.B|) ->  {
+                Int(2)
+            }
+            ==($subj$, Q|Enum.C|) ->  {
+                Int(3)
+            }
+            else ->  {
+                Int(4)
+            }
+        }
+
+    }

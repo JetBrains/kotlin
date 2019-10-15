@@ -10,8 +10,6 @@ FILE: lambdas.kt
                 }
                 )
             }
-            else ->  {
-            }
         }
 
     }
@@ -22,8 +20,6 @@ FILE: lambdas.kt
                     R|<local>/x|.R|kotlin/Int.inc|()
                 }
 
-            }
-            else ->  {
             }
         }
 

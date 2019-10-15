@@ -59,6 +59,21 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/enum.kt");
     }
 
+    @TestMetadata("exhaustiveness_boolean.kt")
+    public void testExhaustiveness_boolean() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/exhaustiveness_boolean.kt");
+    }
+
+    @TestMetadata("exhaustiveness_enum.kt")
+    public void testExhaustiveness_enum() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/exhaustiveness_enum.kt");
+    }
+
+    @TestMetadata("exhaustiveness_sealedClass.kt")
+    public void testExhaustiveness_sealedClass() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/exhaustiveness_sealedClass.kt");
+    }
+
     @TestMetadata("extension.kt")
     public void testExtension() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/extension.kt");

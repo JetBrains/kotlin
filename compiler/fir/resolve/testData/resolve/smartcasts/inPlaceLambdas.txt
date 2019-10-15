@@ -18,8 +18,6 @@ FILE: inPlaceLambdas.kt
                 }
                 )
             }
-            else ->  {
-            }
         }
 
     }
@@ -39,8 +37,6 @@ FILE: inPlaceLambdas.kt
                 }
                 )
                 R|<local>/x|.R|/B.bar|()
-            }
-            else ->  {
             }
         }
 

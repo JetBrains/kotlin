@@ -4,8 +4,6 @@ FILE: simpleIf.kt
             (R|<local>/x| is R|kotlin/String|) ->  {
                 R|<local>/x|.R|kotlin/String.length|
             }
-            else ->  {
-            }
         }
 
         R|<local>/x|.<Unresolved name: length>#
@@ -15,8 +13,6 @@ FILE: simpleIf.kt
         when () {
             R|<local>/b| ->  {
                 R|<local>/x|.R|kotlin/String.length|
-            }
-            else ->  {
             }
         }
 

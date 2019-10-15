@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
@@ -60,3 +61,8 @@ val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.co
 val FirRegularClass.classId get() = symbol.classId
 
 val FirClass.superConeTypes get() = superTypeRefs.mapNotNull { it.coneTypeSafe<ConeClassLikeType>() }
+
+fun FirRegularClass.collectEnumEntries(): Collection<FirEnumEntry> {
+    assert(classKind == ClassKind.ENUM_CLASS)
+    return declarations.filterIsInstance<FirEnumEntry>()
+}

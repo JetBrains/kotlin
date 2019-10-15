@@ -325,42 +325,31 @@ digraph complex_kt {
                 111 [label="Type operator: element is T"];
                 112 [label="Exit when branch condition"];
               }
+              113 [label="Synthetic else branch"];
+              114 [label="Enter when branch result"];
               subgraph cluster_33 {
                 color=blue
-                113 [label="Enter when branch condition else"];
-                114 [label="Exit when branch condition"];
+                115 [label="Enter block"];
+                116 [label="Access variable R|<local>/element|"];
+                117 [label="Jump: ^firstIsInstanceOrNull R|<local>/element|"];
+                118 [label="Stub" style="filled" fillcolor=gray];
+                119 [label="Exit block" style="filled" fillcolor=gray];
               }
-              115 [label="Enter when branch result"];
-              subgraph cluster_34 {
-                color=blue
-                116 [label="Enter block"];
-                117 [label="Exit block"];
-              }
-              118 [label="Exit when branch result"];
-              119 [label="Enter when branch result"];
-              subgraph cluster_35 {
-                color=blue
-                120 [label="Enter block"];
-                121 [label="Access variable R|<local>/element|"];
-                122 [label="Jump: ^firstIsInstanceOrNull R|<local>/element|"];
-                123 [label="Stub" style="filled" fillcolor=gray];
-                124 [label="Exit block" style="filled" fillcolor=gray];
-              }
-              125 [label="Exit when branch result" style="filled" fillcolor=gray];
-              126 [label="Exit when"];
+              120 [label="Exit when branch result" style="filled" fillcolor=gray];
+              121 [label="Exit when"];
             }
-            127 [label="Exit block"];
+            122 [label="Exit block"];
           }
-          128 [label="Exit loop block"];
+          123 [label="Exit loop block"];
         }
-        129 [label="Exit whileloop"];
+        124 [label="Exit whileloop"];
       }
-      130 [label="Const: Null(null)"];
-      131 [label="Jump: ^firstIsInstanceOrNull Null(null)"];
-      132 [label="Stub" style="filled" fillcolor=gray];
-      133 [label="Exit block" style="filled" fillcolor=gray];
+      125 [label="Const: Null(null)"];
+      126 [label="Jump: ^firstIsInstanceOrNull Null(null)"];
+      127 [label="Stub" style="filled" fillcolor=gray];
+      128 [label="Exit block" style="filled" fillcolor=gray];
     }
-    134 [label="Exit function firstIsInstanceOrNull" style="filled" fillcolor=red];
+    129 [label="Exit function firstIsInstanceOrNull" style="filled" fillcolor=red];
   }
 
   91 -> {92};
@@ -374,7 +363,7 @@ digraph complex_kt {
   99 -> {100};
   100 -> {101};
   101 -> {102};
-  102 -> {129 103};
+  102 -> {124 103};
   103 -> {104};
   104 -> {105};
   105 -> {106};
@@ -384,29 +373,24 @@ digraph complex_kt {
   109 -> {110};
   110 -> {111};
   111 -> {112};
-  112 -> {119 113};
-  113 -> {114};
+  112 -> {114 113};
+  113 -> {121};
   114 -> {115};
   115 -> {116};
   116 -> {117};
-  117 -> {118};
-  118 -> {126};
-  119 -> {120};
-  120 -> {121};
+  117 -> {129};
+  117 -> {118} [style=dotted];
+  118 -> {119} [style=dotted];
+  119 -> {120} [style=dotted];
+  120 -> {121} [style=dotted];
   121 -> {122};
-  122 -> {134};
-  122 -> {123} [style=dotted];
-  123 -> {124} [style=dotted];
-  124 -> {125} [style=dotted];
-  125 -> {126} [style=dotted];
-  126 -> {127};
-  127 -> {128};
-  128 -> {99};
-  129 -> {130};
-  130 -> {131};
-  131 -> {134};
-  131 -> {132} [style=dotted];
-  132 -> {133} [style=dotted];
-  133 -> {134} [style=dotted];
+  122 -> {123};
+  123 -> {99};
+  124 -> {125};
+  125 -> {126};
+  126 -> {129};
+  126 -> {127} [style=dotted];
+  127 -> {128} [style=dotted];
+  128 -> {129} [style=dotted];
 
 }

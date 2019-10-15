@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/whileDoWhile.kt
     BLOCK_BODY
       VAR name:a type:kotlin.Any? [val]
         CONST Null type=kotlin.Nothing? value=null
-      WHEN type=kotlin.Unit origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Boolean
             GET_VAR 'val a: kotlin.Any? [val] declared in <root>.testSmartcastInCondition' type=kotlin.Any? origin=null

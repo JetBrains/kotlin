@@ -94,6 +94,7 @@ fun CFGNode<*>.render(): String =
                 is WhenBranchConditionExitNode -> "Exit when branch condition"
                 is WhenBranchResultEnterNode -> "Enter when branch result"
                 is WhenBranchResultExitNode -> "Exit when branch result"
+                is WhenSyntheticElseBranchNode -> "Synthetic else branch"
                 is WhenExitNode -> "Exit when"
 
                 is LoopEnterNode -> "Enter ${fir.type()} loop"

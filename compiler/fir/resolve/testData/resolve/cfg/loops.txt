@@ -36,8 +36,6 @@ FILE: loops.kt
                 R|<local>/b| ->  {
                     break@@@[Boolean(true)]
                 }
-                else ->  {
-                }
             }
 
         }
@@ -63,8 +61,6 @@ FILE: loops.kt
             when () {
                 R|<local>/b| ->  {
                     break@@@[Boolean(true)]
-                }
-                else ->  {
                 }
             }
 

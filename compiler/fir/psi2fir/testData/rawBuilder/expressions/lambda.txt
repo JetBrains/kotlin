@@ -43,8 +43,6 @@ FILE: lambda.kt
                 ==(it#.x#, Int(0)) ->  {
                     ^foo Int(0)
                 }
-                else ->  {
-                }
             }
 
             ^@use it#.y#
@@ -56,8 +54,6 @@ FILE: lambda.kt
             when () {
                 ==(it#.x#, Int(0)) ->  {
                     ^bar Int(0)
-                }
-                else ->  {
                 }
             }
 

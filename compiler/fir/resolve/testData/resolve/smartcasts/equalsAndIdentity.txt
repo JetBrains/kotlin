@@ -9,16 +9,12 @@ FILE: equalsAndIdentity.kt
                 R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
             }
-            else ->  {
-            }
         }
 
         when () {
             ===(R|<local>/x|, R|<local>/y|) ->  {
                 R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
-            }
-            else ->  {
             }
         }
 
@@ -29,16 +25,12 @@ FILE: equalsAndIdentity.kt
                 R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
                 R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
             }
-            else ->  {
-            }
         }
 
         when () {
             ===(R|<local>/x|, R|<local>/y|) ->  {
                 R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
                 R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
-            }
-            else ->  {
             }
         }
 
@@ -48,8 +40,6 @@ FILE: equalsAndIdentity.kt
             ==(R|<local>/y|, Null(null)) ->  {
                 ^test_3 Unit
             }
-            else ->  {
-            }
         }
 
         when () {
@@ -57,16 +47,12 @@ FILE: equalsAndIdentity.kt
                 R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
             }
-            else ->  {
-            }
         }
 
         when () {
             ===(R|<local>/x|, R|<local>/y|) ->  {
                 R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
-            }
-            else ->  {
             }
         }
 

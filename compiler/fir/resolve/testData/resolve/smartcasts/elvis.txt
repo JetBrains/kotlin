@@ -19,7 +19,28 @@ FILE: elvis.kt
              ->  {
                 R|<local>/x|.R|/A.foo|()
             }
+        }
+
+    }
+    public final fun test2(a: R|kotlin/Any?|, b: R|kotlin/Any?|): R|kotlin/String| {
+        when () {
+            (R|<local>/b| !is R|kotlin/String|) ->  {
+                ^test2 String()
+            }
+        }
+
+        when () {
+            (R|<local>/a| !is R|kotlin/String?|) ->  {
+                ^test2 String()
+            }
+        }
+
+        ^test2 when (lval <elvis>: R|kotlin/String?| = R|<local>/a|) {
+            ==($subj$, Null(null)) ->  {
+                R|<local>/b|
+            }
             else ->  {
+                R|<local>/<elvis>|
             }
         }
 

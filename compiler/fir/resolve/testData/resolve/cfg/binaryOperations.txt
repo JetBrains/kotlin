@@ -4,8 +4,6 @@ FILE: binaryOperations.kt
             R|<local>/b1| || R|<local>/b2| ->  {
                 Int(1)
             }
-            else ->  {
-            }
         }
 
     }
@@ -13,8 +11,6 @@ FILE: binaryOperations.kt
         when () {
             R|<local>/b1| && R|<local>/b2| ->  {
                 Int(1)
-            }
-            else ->  {
             }
         }
 
@@ -24,8 +20,6 @@ FILE: binaryOperations.kt
             R|<local>/b1| && R|<local>/b2| || R|<local>/b3| ->  {
                 Int(1)
             }
-            else ->  {
-            }
         }
 
     }
@@ -33,8 +27,6 @@ FILE: binaryOperations.kt
         when () {
             R|<local>/b1| || R|<local>/b2| && R|<local>/b3| ->  {
                 Int(1)
-            }
-            else ->  {
             }
         }
 

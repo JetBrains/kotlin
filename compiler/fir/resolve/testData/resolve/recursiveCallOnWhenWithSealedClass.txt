@@ -27,15 +27,13 @@ FILE: recursiveCallOnWhenWithSealedClass.kt
 
         }
 
-        public final fun unwrap(): R|kotlin/Any?| {
+        public final fun unwrap(): R|T| {
             ^unwrap when (this@R|/Maybe|) {
                 ($subj$ is R|Maybe.Nope|) ->  {
                     throw R|java/lang/Exception.Exception|(String())
                 }
                 ($subj$ is R|Maybe.Yeah|) ->  {
                     this@R|/Maybe.Yeah|.R|/Maybe.Yeah.meat|
-                }
-                else ->  {
                 }
             }
 

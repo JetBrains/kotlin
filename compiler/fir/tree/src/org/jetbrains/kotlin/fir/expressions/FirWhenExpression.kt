@@ -24,8 +24,11 @@ interface FirWhenExpression : FirExpression, FirResolvable {
     val subject: FirExpression?
     val subjectVariable: FirVariable<*>?
     val branches: List<FirWhenBranch>
+    val isExhaustive: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenExpression(this, data)
+
+    fun replaceIsExhaustive(newIsExhaustive: Boolean)
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirWhenExpression
 

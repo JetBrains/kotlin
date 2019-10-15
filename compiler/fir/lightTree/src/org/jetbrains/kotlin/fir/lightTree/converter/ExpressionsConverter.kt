@@ -521,7 +521,6 @@ class ExpressionsConverter(
             if (hasSubject) {
                 subject.bind(this)
             }
-            var thereIsElse = false
             for (entry in whenEntries) {
                 val branch = entry.firBlock
                 branches += if (!entry.isElse) {
@@ -533,14 +532,10 @@ class ExpressionsConverter(
                         FirWhenBranchImpl(null, firCondition, branch)
                     }
                 } else {
-                    thereIsElse = true
                     FirWhenBranchImpl(
                         null, FirElseIfTrueCondition(null), branch
                     )
                 }
-            }
-            if (!thereIsElse) {
-                branches += FirWhenBranchImpl(null, FirElseIfTrueCondition(null), FirEmptyExpressionBlock())
             }
         }
     }
@@ -865,10 +860,12 @@ class ExpressionsConverter(
         return FirWhenExpressionImpl(null, null, null).apply {
             val trueBranch = convertLoopBody(thenBlock)
             branches += FirWhenBranchImpl(null, firCondition, trueBranch)
-            val elseBranch = convertLoopBody(elseBlock)
-            branches += FirWhenBranchImpl(
-                null, FirElseIfTrueCondition(null), elseBranch
-            )
+            elseBlock?.let {
+                val elseBranch = convertLoopBody(it)
+                branches += FirWhenBranchImpl(
+                    null, FirElseIfTrueCondition(null), elseBranch
+                )
+            }
         }
     }
 

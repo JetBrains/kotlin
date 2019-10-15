@@ -10,8 +10,6 @@ FILE: endlessLoops.kt
                 R|<local>/b| ->  {
                     break@@@[Boolean(true)]
                 }
-                else ->  {
-                }
             }
 
         }
@@ -24,8 +22,6 @@ FILE: endlessLoops.kt
                 R|<local>/b| ->  {
                     (R|<local>/x| as R|A|)
                     break@@@[Boolean(true)]
-                }
-                else ->  {
                 }
             }
 
@@ -40,15 +36,11 @@ FILE: endlessLoops.kt
                 R|<local>/b| ->  {
                     break@@@[Boolean(true)]
                 }
-                else ->  {
-                }
             }
 
             when () {
                 R|<local>/b| ->  {
                     break@@@[Boolean(true)]
-                }
-                else ->  {
                 }
             }
 
@@ -62,8 +54,6 @@ FILE: endlessLoops.kt
                 R|<local>/b| ->  {
                     (R|<local>/x| as R|A|)
                     break@@@[Boolean(true)]
-                }
-                else ->  {
                 }
             }
 
@@ -79,8 +69,6 @@ FILE: endlessLoops.kt
                     (R|<local>/x| as R|A|)
                     break@@@[Boolean(true)]
                 }
-                else ->  {
-                }
             }
 
         }
@@ -93,8 +81,6 @@ FILE: endlessLoops.kt
             when () {
                 R|<local>/b| ->  {
                     break@@@[Boolean(true)]
-                }
-                else ->  {
                 }
             }
 

@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/throw.kt
   FUN name:testImplicitCast visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      WHEN type=kotlin.Nothing origin=IF
+      WHEN type=kotlin.Any? origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Throwable
             GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Any origin=null

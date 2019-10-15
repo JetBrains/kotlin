@@ -304,47 +304,36 @@ digraph returns_kt {
           105 [label="Type operator: x is C"];
           106 [label="Exit when branch condition"];
         }
+        107 [label="Synthetic else branch"];
+        108 [label="Enter when branch result"];
         subgraph cluster_31 {
           color=blue
-          107 [label="Enter when branch condition else"];
-          108 [label="Exit when branch condition"];
+          109 [label="Enter block"];
+          110 [label="Access variable R|<local>/x|"];
+          111 [label="Function call: R|<local>/x|.R|/C.baz|()"];
+          112 [label="Exit block"];
         }
-        109 [label="Enter when branch result"];
+        113 [label="Exit when branch result"];
+        114 [label="Enter when branch result"];
         subgraph cluster_32 {
           color=blue
-          110 [label="Enter block"];
-          111 [label="Exit block"];
+          115 [label="Enter block"];
+          116 [label="Access variable R|<local>/x|"];
+          117 [label="Function call: R|<local>/x|.R|/B.bar|()"];
+          118 [label="Exit block"];
         }
-        112 [label="Exit when branch result"];
-        113 [label="Enter when branch result"];
-        subgraph cluster_33 {
-          color=blue
-          114 [label="Enter block"];
-          115 [label="Access variable R|<local>/x|"];
-          116 [label="Function call: R|<local>/x|.R|/C.baz|()"];
-          117 [label="Exit block"];
-        }
-        118 [label="Exit when branch result"];
-        119 [label="Enter when branch result"];
-        subgraph cluster_34 {
-          color=blue
-          120 [label="Enter block"];
-          121 [label="Access variable R|<local>/x|"];
-          122 [label="Function call: R|<local>/x|.R|/B.bar|()"];
-          123 [label="Exit block"];
-        }
-        124 [label="Exit when branch result"];
-        125 [label="Exit when"];
+        119 [label="Exit when branch result"];
+        120 [label="Exit when"];
       }
-      126 [label="Access variable R|<local>/x|"];
-      127 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
-      128 [label="Access variable R|<local>/x|"];
-      129 [label="Function call: R|<local>/x|.<Unresolved name: bar>#()"];
-      130 [label="Access variable R|<local>/x|"];
-      131 [label="Function call: R|<local>/x|.<Unresolved name: baz>#()"];
-      132 [label="Exit block"];
+      121 [label="Access variable R|<local>/x|"];
+      122 [label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+      123 [label="Access variable R|<local>/x|"];
+      124 [label="Function call: R|<local>/x|.<Unresolved name: bar>#()"];
+      125 [label="Access variable R|<local>/x|"];
+      126 [label="Function call: R|<local>/x|.<Unresolved name: baz>#()"];
+      127 [label="Exit block"];
     }
-    133 [label="Exit function test_3" style="filled" fillcolor=red];
+    128 [label="Exit function test_3" style="filled" fillcolor=red];
   }
 
   96 -> {97};
@@ -353,23 +342,23 @@ digraph returns_kt {
   99 -> {100};
   100 -> {101};
   101 -> {102};
-  102 -> {119 103};
+  102 -> {114 103};
   103 -> {104};
   104 -> {105};
   105 -> {106};
-  106 -> {113 107};
-  107 -> {108};
+  106 -> {108 107};
+  107 -> {120};
   108 -> {109};
   109 -> {110};
   110 -> {111};
   111 -> {112};
-  112 -> {125};
-  113 -> {114};
+  112 -> {113};
+  113 -> {120};
   114 -> {115};
   115 -> {116};
   116 -> {117};
   117 -> {118};
-  118 -> {125};
+  118 -> {119};
   119 -> {120};
   120 -> {121};
   121 -> {122};
@@ -379,10 +368,5 @@ digraph returns_kt {
   125 -> {126};
   126 -> {127};
   127 -> {128};
-  128 -> {129};
-  129 -> {130};
-  130 -> {131};
-  131 -> {132};
-  132 -> {133};
 
 }
