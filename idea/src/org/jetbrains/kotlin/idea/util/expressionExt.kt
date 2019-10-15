@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import com.intellij.lang.jvm.JvmModifier
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -49,3 +51,12 @@ fun KtDotQualifiedExpression.calleeTextRangeInThis(): TextRange? = callExpressio
 fun KtNamedDeclaration.nameIdentifierTextRangeInThis(): TextRange? = nameIdentifier?.textRangeIn(this)
 
 fun PsiElement.hasComments(): Boolean = anyDescendantOfType<PsiComment>()
+
+fun KtDotQualifiedExpression.hasNotReceiver(): Boolean {
+    val element = getQualifiedElementSelector()?.mainReference?.resolve() ?: return false
+    return element is KtClassOrObject ||
+            element is KtConstructor<*> ||
+            element is KtCallableDeclaration && element.receiverTypeReference == null && (element.containingClassOrObject is KtObjectDeclaration?) ||
+            element is PsiMember && element.hasModifier(JvmModifier.STATIC) ||
+            element is PsiMethod && element.isConstructor
+}
