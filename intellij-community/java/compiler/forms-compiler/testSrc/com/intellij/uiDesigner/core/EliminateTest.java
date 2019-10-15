@@ -198,7 +198,7 @@ public final class EliminateTest extends TestCase{
         for (int j = 0; j < spans.length; j++) {
           System.out.println("i=" + j + " expected ("+expected[j][0] + "," + expected[j][1] +"), result (" + cells[j] + "," + spans[j]+")");
         }
-        assertTrue(false);
+        fail();
       }
     }
   }
