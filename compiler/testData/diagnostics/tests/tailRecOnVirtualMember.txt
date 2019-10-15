@@ -1,0 +1,125 @@
+package
+
+public val z: A
+
+public open class A {
+    public constructor A()
+    internal final tailrec fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
+    internal open tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit
+    protected open tailrec fun baz(/*0*/ y: kotlin.Int): kotlin.Unit
+    private final tailrec fun boo(/*0*/ y: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open tailrec fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class B : A {
+    public constructor B()
+    internal final override /*1*/ tailrec /*fake_override*/ fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
+    internal final override /*1*/ tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit
+    protected final override /*1*/ tailrec fun baz(/*0*/ y: kotlin.Int): kotlin.Unit
+    invisible_fake final override /*1*/ tailrec /*fake_override*/ fun boo(/*0*/ y: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ tailrec fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class C : A {
+    public constructor C()
+    internal final override /*1*/ tailrec /*fake_override*/ fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
+    internal open override /*1*/ tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit
+    protected open override /*1*/ tailrec fun baz(/*0*/ y: kotlin.Int): kotlin.Unit
+    invisible_fake final override /*1*/ tailrec /*fake_override*/ fun boo(/*0*/ y: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ tailrec fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object D : A {
+    private constructor D()
+    internal final override /*1*/ tailrec /*fake_override*/ fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
+    internal open override /*1*/ tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit
+    protected open override /*1*/ tailrec fun baz(/*0*/ y: kotlin.Int): kotlin.Unit
+    invisible_fake final override /*1*/ tailrec /*fake_override*/ fun boo(/*0*/ y: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ tailrec fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public sealed class E : A {
+    private constructor E()
+    internal final override /*1*/ tailrec /*fake_override*/ fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
+    internal open override /*1*/ tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit
+    protected open override /*1*/ tailrec fun baz(/*0*/ y: kotlin.Int): kotlin.Unit
+    invisible_fake final override /*1*/ tailrec /*fake_override*/ fun boo(/*0*/ y: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ tailrec fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class E1 : E {
+        public constructor E1()
+        internal final override /*1*/ tailrec /*fake_override*/ fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
+        internal open override /*1*/ tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit
+        protected open override /*1*/ tailrec fun baz(/*0*/ y: kotlin.Int): kotlin.Unit
+        invisible_fake final override /*1*/ tailrec /*fake_override*/ fun boo(/*0*/ y: kotlin.Int): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ tailrec fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public final enum class F : kotlin.Enum<F> {
+    enum entry F0
+
+    enum entry F1
+
+    private constructor F()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    internal final tailrec fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
+    internal open tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit
+    protected open tailrec fun baz(/*0*/ y: kotlin.Int): kotlin.Unit
+    private final tailrec fun boo(/*0*/ y: kotlin.Int): kotlin.Unit
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: F): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public open tailrec fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<F!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): F
+    public final /*synthesized*/ fun values(): kotlin.Array<F>
+}
+
+public final enum class G : kotlin.Enum<G> {
+    enum entry G1
+
+    private constructor G()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    internal final tailrec fun baa(/*0*/ y: kotlin.Int): kotlin.Unit
+    internal open tailrec fun bar(/*0*/ y: kotlin.Int): kotlin.Unit
+    protected open tailrec fun baz(/*0*/ y: kotlin.Int): kotlin.Unit
+    private final tailrec fun boo(/*0*/ y: kotlin.Int): kotlin.Unit
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: G): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public open tailrec fun foo(/*0*/ x: kotlin.Int): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<G!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): G
+    public final /*synthesized*/ fun values(): kotlin.Array<G>
+}
