@@ -56,7 +56,7 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
 
     private fun wrapInIncrementalProcessor(processors: List<Processor>, classpath: Iterable<File>): List<IncrementalProcessor> {
         if (options.incrementalCache == null) {
-            return processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL) }
+            return processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL, logger) }
         }
 
         val processorNames = processors.map {it.javaClass.name}.toSet()
@@ -72,7 +72,7 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
                     DeclaredProcType.INCREMENTAL_BUT_OTHER_APS_ARE_NOT
                 }
             } ?: DeclaredProcType.NON_INCREMENTAL
-            IncrementalProcessor(it, procType)
+            IncrementalProcessor(it, procType, logger)
         }
     }
 
