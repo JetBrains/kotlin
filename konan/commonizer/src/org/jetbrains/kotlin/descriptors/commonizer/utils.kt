@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.konan.library.KonanFactories.DefaultDeserializedDescriptorFactory
 import org.jetbrains.kotlin.konan.library.KonanFactories.createDefaultKonanResolvedModuleDescriptorsFactory
 import org.jetbrains.kotlin.name.FqName
@@ -125,3 +128,20 @@ internal fun createKotlinNativeForwardDeclarationsModule(
             builtIns = builtIns,
             storageManager = storageManager
         )
+
+// similar to org.jetbrains.kotlin.descriptors.DescriptorUtilKt#resolveClassByFqName, but resolves also type aliases
+internal fun ModuleDescriptor.resolveClassOrTypeAliasByFqName(
+    fqName: FqName,
+    lookupLocation: LookupLocation
+): ClassifierDescriptorWithTypeParameters? {
+    if (fqName.isRoot) return null
+
+    (getPackage(fqName.parent()).memberScope.getContributedClassifier(
+        fqName.shortName(),
+        lookupLocation
+    ) as? ClassifierDescriptorWithTypeParameters)?.let { return it }
+
+    return (resolveClassOrTypeAliasByFqName(fqName.parent(), lookupLocation) as? ClassDescriptor)
+        ?.unsubstitutedInnerClassesScope
+        ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassifierDescriptorWithTypeParameters
+}

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSimpleTypeKind.Companion.areCompatible
+import org.jetbrains.kotlin.descriptors.commonizer.resolveClassOrTypeAliasByFqName
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.KotlinTypeFactory.flexibleType
 import org.jetbrains.kotlin.types.KotlinTypeFactory.simpleType
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal fun List<CirTypeParameter>.buildDescriptorsAndTypeParameterResolver(
     targetComponents: TargetDeclarationsBuilderComponents,
@@ -142,10 +142,7 @@ internal fun findClassOrTypeAlias(
         val builtInsModule = targetComponents.builtIns.builtInsModule
 
         // TODO: this works fine for Native as far as built-ins module contains full Native stdlib, but this is not enough for JVM and JS
-        builtInsModule.getPackage(fqName.parent())
-            .memberScope
-            .getContributedClassifier(fqName.shortName(), NoLookupLocation.FOR_ALREADY_TRACKED)
-            ?.cast()
+        builtInsModule.resolveClassOrTypeAliasByFqName(fqName, NoLookupLocation.FOR_ALREADY_TRACKED)
             ?: error("Classifier $fqName not found in built-ins module $builtInsModule")
     }
 
