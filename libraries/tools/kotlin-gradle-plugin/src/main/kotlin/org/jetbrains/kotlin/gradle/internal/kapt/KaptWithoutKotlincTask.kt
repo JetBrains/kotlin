@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.internal.Kapt3KotlinGradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
+import org.jetbrains.kotlin.gradle.plugin.CompositeSubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.utils.PathUtil
@@ -40,11 +40,21 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
     @get:Input
     lateinit var annotationProcessorFqNames: List<String>
 
-    @get:Input
-    lateinit var processorOptions: Map<String, String>
+    @get:Internal
+    internal val processorOptions = CompilerPluginOptions()
 
     @get:Input
     lateinit var javacOptions: Map<String, String>
+
+    private fun getAnnotationProcessorOptions(): Map<String, String> {
+        val options = processorOptions.subpluginOptionsByPluginId[Kapt3KotlinGradleSubplugin.KAPT_SUBPLUGIN_ID] ?: return emptyMap()
+
+        val result = mutableMapOf<String, String>()
+        for (option in options) {
+            result[option.key] = option.value
+        }
+        return result
+    }
 
     @TaskAction
     fun compile(inputs: IncrementalTaskInputs) {
@@ -86,7 +96,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
             kaptClasspath.files.toList(),
             annotationProcessorFqNames,
 
-            processorOptions,
+            getAnnotationProcessorOptions(),
             javacOptions,
 
             kaptFlagsForWorker
