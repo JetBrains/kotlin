@@ -1,10 +1,8 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.allKotlinFiles
-import org.jetbrains.kotlin.gradle.util.findFileByName
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
+import kotlin.test.assertEquals
 
 open class KaptIncrementalIT : BaseGradleIT() {
     companion object {
@@ -201,6 +199,35 @@ open class KaptIncrementalIT : BaseGradleIT() {
             val affectedElements = arrayOf("B", "funB", "valB", "useB")
             checkGenerated(*(annotatedElements.toSet() - affectedElements).toTypedArray())
             checkNotGenerated(*affectedElements)
+        }
+    }
+
+    @Test
+    fun testRemoveAllKotlinSources() {
+        val project = getProject()
+        val kapt3StubsPath = "build/tmp/kapt3/stubs/main"
+
+        project.build("build") {
+            assertSuccessful()
+            assertKapt3FullyExecuted()
+        }
+
+        with(project.projectDir) {
+            resolve("src/main/java").deleteRecursively()
+            resolve("src/main/java/bar").mkdirs()
+            resolve("src/main/java/bar/MyClass.java").writeText(
+                """
+                package bar;
+                public class MyClass {}
+            """.trimIndent()
+            )
+        }
+
+        project.build("build") {
+            assertSuccessful()
+
+            // Make sure all stubs are removed
+            assertEquals(emptyList(), fileInWorkingDir(kapt3StubsPath).walk().filter { it.extension == "java" }.toList())
         }
     }
 
