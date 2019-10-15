@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralTextToKotlinCopy
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
 import org.jetbrains.kotlin.idea.debugger.*
-import org.jetbrains.kotlin.idea.debugger.coroutines.AbstractCoroutineDumpTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.debugger.test.sequence.exec.AbstractSequenceTraceTestCase
 import org.jetbrains.kotlin.idea.debugger.test.*
@@ -225,6 +224,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractAsyncStackTraceTest> {
             model("asyncStackTrace")
+        }
+
+        testClass<AbstractCoroutineDumpTest> {
+            model("coroutines")
         }
 
         testClass<AbstractSequenceTraceTestCase> {

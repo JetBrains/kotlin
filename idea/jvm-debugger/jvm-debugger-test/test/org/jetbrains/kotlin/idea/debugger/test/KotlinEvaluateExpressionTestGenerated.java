@@ -305,6 +305,21 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/kt31709.kt");
         }
 
+        @TestMetadata("kt32691.kt")
+        public void testKt32691() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/kt32691.kt");
+        }
+
+        @TestMetadata("kt33093.kt")
+        public void testKt33093() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/kt33093.kt");
+        }
+
+        @TestMetadata("kt33181.kt")
+        public void testKt33181() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/kt33181.kt");
+        }
+
         @TestMetadata("kt5554OnlyIntsShouldBeCoerced.kt")
         public void testKt5554OnlyIntsShouldBeCoerced() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/kt5554OnlyIntsShouldBeCoerced.kt");
@@ -834,9 +849,19 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/frameLambda.kt");
             }
 
+            @TestMetadata("frameLambdaNotAccessible.kt")
+            public void testFrameLambdaNotAccessible() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/frameLambdaNotAccessible.kt");
+            }
+
             @TestMetadata("frameLambdaNotUsed.kt")
             public void testFrameLambdaNotUsed() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/frameLambdaNotUsed.kt");
+            }
+
+            @TestMetadata("frameLambdaVariableFromCorrectFrame.kt")
+            public void testFrameLambdaVariableFromCorrectFrame() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/frameLambdaVariableFromCorrectFrame.kt");
             }
 
             @TestMetadata("frameLocalVariable.kt")
@@ -937,6 +962,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("nestedInlineFun2.kt")
             public void testNestedInlineFun2() throws Exception {
                 runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/nestedInlineFun2.kt");
+            }
+
+            @TestMetadata("nonCapturedThisInLambda.kt")
+            public void testNonCapturedThisInLambda() throws Exception {
+                runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/frame/nonCapturedThisInLambda.kt");
             }
 
             @TestMetadata("remapThis.kt")

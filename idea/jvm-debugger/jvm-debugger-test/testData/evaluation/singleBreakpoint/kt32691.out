@@ -1,0 +1,11 @@
+LineBreakpoint created at kt32691.kt:5
+Run Java
+Connected to the target VM
+kt32691.kt:5
+Compile bytecode for {}.toString()
+Compile bytecode for {i: Int -> }.toString()
+Compile bytecode for {i: Int, d: Double -> "239" }.toString()
+Compile bytecode for {m : L<in String, out Int> -> ""}.toString()
+Disconnected from the target VM
+
+Process finished with exit code 0

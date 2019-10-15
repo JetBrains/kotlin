@@ -1,0 +1,13 @@
+LineBreakpoint created at frameLambdaVariableFromCorrectFrame.kt:10
+Run Java
+Connected to the target VM
+frameLambdaVariableFromCorrectFrame.kt:10
+Compile bytecode for k
+Compile bytecode for j
+ frame    = invoke:10, FrameLambdaVariableFromCorrectFrameKt$main$1$1 {frameLambdaVariableFromCorrectFrame}
+   this     = this = {frameLambdaVariableFromCorrectFrame.FrameLambdaVariableFromCorrectFrameKt$main$1$1@uniqueID}Function0<kotlin.Unit>
+     field    = arity: int = 0 (sp = Lambda.!EXT!)
+   local    = l: int = 5 (sp = frameLambdaVariableFromCorrectFrame.kt, 8)
+Disconnected from the target VM
+
+Process finished with exit code 0

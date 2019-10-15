@@ -1,0 +1,9 @@
+LineBreakpoint created at kt33181.kt:16
+Run Java
+Connected to the target VM
+kt33181.kt:16
+Compile bytecode for super.foo()
+Compile bytecode for for (i in 1..1) { super.foo()}
+Disconnected from the target VM
+
+Process finished with exit code 0
