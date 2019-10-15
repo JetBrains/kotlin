@@ -72,7 +72,7 @@ class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiP
 
             dependencies {
                 compile "org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version"
-                compile 'org.codehaus.groovy:groovy-all:2.4.7'
+                compile 'org.codehaus.groovy:groovy-all:2.4.8'
             }
             """.trimIndent()
         }
