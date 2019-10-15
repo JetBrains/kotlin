@@ -7,28 +7,40 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class MakePrivateAndOverrideMemberFix(
     propertyOrParameter: KtDeclaration,
-    private val memberNameToOverride: String,
-    private val makePrivate: Boolean,
-    private val implement: Boolean
+    private val memberToOverride: OverrideMemberChooserObject
 ) : KotlinQuickFixAction<KtDeclaration>(propertyOrParameter) {
+    private val makePrivate = !propertyOrParameter.hasModifier(KtTokens.PRIVATE_KEYWORD)
+
     override fun getText(): String {
+        val descriptor = memberToOverride.descriptor
+        val implement = (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE
+        val name = descriptor.name.asString()
         return if (makePrivate) {
-            "Make private and ${if (implement) "implements" else "overrides"} '$memberNameToOverride'"
+            "Make private and ${if (implement) "implements" else "overrides"} '$name'"
         } else {
-            "${if (implement) "Implements" else "Overrides"} '$memberNameToOverride'"
+            "${if (implement) "Implements" else "Overrides"} '$name'"
         }
     }
 
@@ -38,11 +50,7 @@ class MakePrivateAndOverrideMemberFix(
         if (editor == null) return
         val element = element ?: return
         val containingClassOrObject = element.containingClassOrObject ?: return
-        val memberToOverride = memberToOverride(containingClassOrObject, memberNameToOverride) ?: return
-
         if (makePrivate) {
-            element.removeModifier(KtTokens.PUBLIC_KEYWORD)
-            element.removeModifier(KtTokens.PROTECTED_KEYWORD)
             element.addModifier(KtTokens.PRIVATE_KEYWORD)
         }
         OverrideImplementMembersHandler.generateMembers(editor, containingClassOrObject, listOf(memberToOverride), false)
@@ -55,14 +63,22 @@ class MakePrivateAndOverrideMemberFix(
             if (element !is KtProperty && element !is KtParameter) return null
             val containingClassOrObject = element.containingClassOrObject ?: return null
             val memberNameToOverride = casted.a.signature.name
-            val memberToOverride = memberToOverride(containingClassOrObject, memberNameToOverride) ?: return null
-            val makePrivate = !element.hasModifier(KtTokens.PRIVATE_KEYWORD)
-            val implement = (memberToOverride.descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE
-            return MakePrivateAndOverrideMemberFix(element, memberNameToOverride, makePrivate, implement)
-        }
-    }
-}
+            val returnType = (element.descriptor as? CallableDescriptor)?.returnType ?: return null
 
-private fun memberToOverride(classOrObject: KtClassOrObject, memberName: String): OverrideMemberChooserObject? {
-    return ImplementMembersHandler().collectMembersToGenerate(classOrObject).firstOrNull { it.descriptor.name.asString() == memberName }
+            val isGetter = JvmAbi.isGetterName(memberNameToOverride)
+            val isSetter = JvmAbi.isSetterName(memberNameToOverride)
+            val memberToOverride = implementMembersHandler.collectMembersToGenerate(containingClassOrObject).firstOrNull {
+                val descriptor = it.descriptor
+                if (descriptor.name.asString() != memberNameToOverride) return@firstOrNull false
+                val accessorReturnType = descriptor.returnType?.makeNotNullable() ?: return@firstOrNull false
+                val params = descriptor.valueParameters
+                (isGetter && params.isEmpty() && accessorReturnType == returnType) ||
+                        (isSetter && params.singleOrNull()?.type?.makeNotNullable() == returnType && accessorReturnType.isUnit())
+            } ?: return null
+
+            return MakePrivateAndOverrideMemberFix(element, memberToOverride)
+        }
+
+        private val implementMembersHandler = ImplementMembersHandler()
+    }
 }

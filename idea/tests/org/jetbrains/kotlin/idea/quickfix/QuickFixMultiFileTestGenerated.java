@@ -3059,6 +3059,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         public void testProperty() throws Exception {
             runTest("idea/testData/quickfix/makePrivateAndOverrideMember/property.before.Main.kt");
         }
+
+        @TestMetadata("setter.before.Main.kt")
+        public void testSetter() throws Exception {
+            runTest("idea/testData/quickfix/makePrivateAndOverrideMember/setter.before.Main.kt");
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/makeTypeParameterReified")
