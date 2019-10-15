@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -160,7 +161,14 @@ class CodeToInlineBuilder(
 
             //TODO: other types of references ('[]' etc)
             if (expression.canBeResolvedViaImport(target, bindingContext)) {
-                codeToInline.fqNamesToImport.add(target.importableFqName!!)
+                val importableFqName = if (target.isCompanionObject()) {
+                    target.containingDeclaration?.importableFqName
+                } else {
+                    target.importableFqName
+                }
+                if (importableFqName != null) {
+                    codeToInline.fqNamesToImport.add(importableFqName)
+                }
             }
 
             if (expression.getReceiverExpression() == null) {
