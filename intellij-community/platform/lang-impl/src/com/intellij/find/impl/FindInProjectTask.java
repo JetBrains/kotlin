@@ -369,8 +369,7 @@ class FindInProjectTask {
   }
 
   private static boolean hasTrigrams(@NotNull String text) {
-    return TrigramIndex.ENABLED &&
-           !TrigramBuilder.processTrigrams(text, new TrigramBuilder.TrigramProcessor() {
+    return !TrigramBuilder.processTrigrams(text, new TrigramBuilder.TrigramProcessor() {
              @Override
              public boolean execute(int value) {
                return false;
@@ -397,28 +396,26 @@ class FindInProjectTask {
     final GlobalSearchScope scope = GlobalSearchScopeUtil.toGlobalSearchScope(FindInProjectUtil.getScopeFromModel(myProject, myFindModel),
                                                                               myProject);
 
-    if (TrigramIndex.ENABLED) {
-      final Set<Integer> keys = new THashSet<>();
-      TrigramBuilder.processTrigrams(stringToFind, new TrigramBuilder.TrigramProcessor() {
-        @Override
-        public boolean execute(int value) {
-          keys.add(value);
-          return true;
-        }
-      });
-
-      if (!keys.isEmpty()) {
-        final List<VirtualFile> hits = new ArrayList<>();
-        FileBasedIndex.getInstance().getFilesWithKey(TrigramIndex.INDEX_ID, keys, Processors.cancelableCollectProcessor(hits), scope);
-
-        for (VirtualFile hit : hits) {
-          if (myFileMask.value(hit)) {
-            resultFiles.add(hit);
-          }
-        }
-
-        return resultFiles;
+    final Set<Integer> keys = new THashSet<>();
+    TrigramBuilder.processTrigrams(stringToFind, new TrigramBuilder.TrigramProcessor() {
+      @Override
+      public boolean execute(int value) {
+        keys.add(value);
+        return true;
       }
+    });
+
+    if (!keys.isEmpty()) {
+      final List<VirtualFile> hits = new ArrayList<>();
+      FileBasedIndex.getInstance().getFilesWithKey(TrigramIndex.INDEX_ID, keys, Processors.cancelableCollectProcessor(hits), scope);
+
+      for (VirtualFile hit : hits) {
+        if (myFileMask.value(hit)) {
+          resultFiles.add(hit);
+        }
+      }
+
+      return resultFiles;
     }
 
     PsiSearchHelperImpl helper = (PsiSearchHelperImpl)PsiSearchHelper.getInstance(myProject);
