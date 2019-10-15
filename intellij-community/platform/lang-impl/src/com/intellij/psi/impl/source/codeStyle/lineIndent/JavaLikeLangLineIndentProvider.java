@@ -174,7 +174,8 @@ public abstract class JavaLikeLangLineIndentProvider implements LineIndentProvid
           return false;
         }
       )) {
-        return myFactory.createIndentCalculator(NONE, position -> position.findStartOf(BlockComment));
+        int offsetBeforeComment = getPosition(editor, offset).findStartOf(BlockComment);
+        return getIndent(project, editor, language, offsetBeforeComment);
       }
       else if (getPosition(editor, offset).before().isAt(DocBlockEnd)) {
         return myFactory.createIndentCalculator(NONE, position -> position.findStartOf(DocBlockStart));
