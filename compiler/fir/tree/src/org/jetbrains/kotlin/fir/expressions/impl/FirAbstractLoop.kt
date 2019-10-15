@@ -25,33 +25,11 @@ interface FirAbstractLoop : FirLoop, FirAbstractAnnotatedElement {
     override var block: FirBlock
     override var condition: FirExpression
     override var label: FirLabel?
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        annotations.forEach { it.accept(visitor, data) }
-        block.accept(visitor, data)
-        condition.accept(visitor, data)
-        label?.accept(visitor, data)
-    }
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractLoop
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractLoop {
-        transformBlock(transformer, data)
-        transformCondition(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
+    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirAbstractLoop
 
-    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirAbstractLoop {
-        block = block.transformSingle(transformer, data)
-        return this
-    }
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirAbstractLoop
 
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirAbstractLoop {
-        condition = condition.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirAbstractLoop {
-        annotations.transformInplace(transformer, data)
-        label = label?.transformSingle(transformer, data)
-        return this
-    }
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirAbstractLoop
 }

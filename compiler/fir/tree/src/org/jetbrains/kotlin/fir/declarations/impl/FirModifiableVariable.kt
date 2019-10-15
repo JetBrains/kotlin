@@ -40,48 +40,15 @@ interface FirModifiableVariable<F : FirVariable<F>>  : FirVariable<F>, FirAbstra
     override var getter: FirPropertyAccessor?
     override var setter: FirPropertyAccessor?
     override val annotations: MutableList<FirAnnotationCall>
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
-        initializer?.accept(visitor, data)
-        delegate?.accept(visitor, data)
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-    }
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F>
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F> {
-        transformReturnTypeRef(transformer, data)
-        transformGetter(transformer, data)
-        transformSetter(transformer, data)
-        transformOtherChildren(transformer, data)
-        return this
-    }
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F>
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F> {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
-        return this
-    }
+    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F>
 
-    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F> {
-        getter = getter?.transformSingle(transformer, data)
-        return this
-    }
+    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F>
 
-    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F> {
-        setter = setter?.transformSingle(transformer, data)
-        return this
-    }
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F>
 
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirModifiableVariable<F> {
-        receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
-        initializer = initializer?.transformSingle(transformer, data)
-        delegate = delegate?.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
-    }
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 }

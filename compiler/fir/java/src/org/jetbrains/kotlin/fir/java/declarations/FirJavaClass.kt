@@ -67,6 +67,10 @@ class FirJavaClass internal constructor(
         supertypesComputationStatus = newSupertypesComputationStatus
     }
 
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
+        resolvePhase = newResolvePhase
+    }
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }

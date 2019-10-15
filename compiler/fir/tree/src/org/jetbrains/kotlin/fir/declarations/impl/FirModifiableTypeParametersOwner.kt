@@ -18,12 +18,5 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirModifiableTypeParametersOwner : FirTypeParametersOwner {
     override val psi: PsiElement?
     override val typeParameters: MutableList<FirTypeParameter>
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableTypeParametersOwner {
-        typeParameters.transformInplace(transformer, data)
-        return this
-    }
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableTypeParametersOwner
 }

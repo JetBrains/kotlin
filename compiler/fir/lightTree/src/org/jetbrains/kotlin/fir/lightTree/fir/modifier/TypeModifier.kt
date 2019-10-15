@@ -9,6 +9,8 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.lexer.KtTokens
 
 class TypeModifier(
@@ -25,5 +27,11 @@ class TypeModifier(
 
     fun hasNoAnnotations(): Boolean {
         return annotations.isEmpty()
+    }
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractAnnotatedElement {
+        return this
     }
 }

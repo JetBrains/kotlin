@@ -46,47 +46,13 @@ interface FirModifiableConstructor : FirConstructor, FirModifiableTypeParameters
     override val symbol: FirConstructorSymbol
     override var delegatedConstructor: FirDelegatedConstructorCall?
     override val isPrimary: Boolean
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
-        typeParameters.forEach { it.accept(visitor, data) }
-        valueParameters.forEach { it.accept(visitor, data) }
-        body?.accept(visitor, data)
-        status.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-        delegatedConstructor?.accept(visitor, data)
-    }
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableConstructor
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableConstructor {
-        transformReturnTypeRef(transformer, data)
-        receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
-        typeParameters.transformInplace(transformer, data)
-        transformValueParameters(transformer, data)
-        body = body?.transformSingle(transformer, data)
-        status = status.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
-        delegatedConstructor = delegatedConstructor?.transformSingle(transformer, data)
-        return this
-    }
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirModifiableConstructor
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirModifiableConstructor {
-        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
-        return this
-    }
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirModifiableConstructor
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirModifiableConstructor {
-        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
-        return this
-    }
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirModifiableConstructor
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirModifiableConstructor {
-        valueParameters.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
-    }
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 }

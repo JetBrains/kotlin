@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.REIFICATION_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.VARIANCE_MODIFIER
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.Variance
 
 class TypeParameterModifier(
@@ -39,5 +41,11 @@ class TypeParameterModifier(
 
     fun hasReified(): Boolean {
         return reificationModifier == ReificationModifier.REIFIED
+    }
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractAnnotatedElement {
+        return this
     }
 }

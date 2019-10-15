@@ -25,18 +25,7 @@ interface FirAbstractLoopJump : FirLoopJump, FirAbstractAnnotatedElement {
     override var typeRef: FirTypeRef
     override val annotations: MutableList<FirAnnotationCall>
     override var target: FirTarget<FirLoop>
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
-        annotations.forEach { it.accept(visitor, data) }
-    }
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractLoopJump
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractLoopJump {
-        typeRef = typeRef.transformSingle(transformer, data)
-        annotations.transformInplace(transformer, data)
-        return this
-    }
-
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        typeRef = newTypeRef
-    }
+    override fun replaceTypeRef(newTypeRef: FirTypeRef)
 }

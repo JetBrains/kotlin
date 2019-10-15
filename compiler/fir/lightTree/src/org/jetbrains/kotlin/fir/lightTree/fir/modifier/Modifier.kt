@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PARAMETER_MO
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PLATFORM_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PROPERTY_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.VISIBILITY_MODIFIER
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class Modifier(
     override val psi: PsiElement? = null,
@@ -154,5 +156,11 @@ class Modifier(
 
     fun hasActual(): Boolean {
         return platformModifiers.contains(PlatformModifier.ACTUAL) || platformModifiers.contains(PlatformModifier.IMPL)
+    }
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractAnnotatedElement {
+        return this
     }
 }

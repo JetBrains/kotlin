@@ -29,25 +29,9 @@ interface FirModifiableClass : FirClass, FirAbstractAnnotatedElement {
     override val superTypeRefs: MutableList<FirTypeRef>
     override val declarations: MutableList<FirDeclaration>
     override val annotations: MutableList<FirAnnotationCall>
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        superTypeRefs.forEach { it.accept(visitor, data) }
-        declarations.forEach { it.accept(visitor, data) }
-        annotations.forEach { it.accept(visitor, data) }
-    }
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableClass
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableClass {
-        superTypeRefs.transformInplace(transformer, data)
-        declarations.transformInplace(transformer, data)
-        annotations.transformInplace(transformer, data)
-        return this
-    }
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
-    }
-
-    override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
-        superTypeRefs.clear()
-        superTypeRefs.addAll(newSuperTypeRefs)
-    }
+    override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 }
