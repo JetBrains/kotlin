@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.kapt.base.test.org.jetbrains.kotlin.kapt3.base.incr
 import org.jetbrains.kotlin.kapt3.base.incremental.AnnotationProcessorDependencyCollector
 import org.jetbrains.kotlin.kapt3.base.incremental.RuntimeProcType
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 
 class AnnotationProcessorDependencyCollectorTest {
     @Test
     fun testAggregating() {
-        val aggregating = AnnotationProcessorDependencyCollector(RuntimeProcType.AGGREGATING)
+        val aggregating = AnnotationProcessorDependencyCollector(RuntimeProcType.AGGREGATING) {}
         val generated = listOf("GeneratedA.java", "GeneratedB.java", "GeneratedC.java").map { File(it).toURI() }
         generated.forEach { aggregating.add(it, emptyArray()) }
 
@@ -24,16 +25,18 @@ class AnnotationProcessorDependencyCollectorTest {
 
     @Test
     fun testIsolatingWithoutOrigin() {
-        val isolating = AnnotationProcessorDependencyCollector(RuntimeProcType.ISOLATING)
+        val warnings = mutableListOf<String>()
+        val isolating = AnnotationProcessorDependencyCollector(RuntimeProcType.ISOLATING) { s -> warnings.add(s) }
         isolating.add(File("GeneratedA.java").toURI(), emptyArray())
 
         assertEquals(isolating.getRuntimeType(), RuntimeProcType.NON_INCREMENTAL)
         assertEquals(isolating.getGeneratedToSources(), emptyMap<File, File?>())
+        assertTrue(warnings.single().contains("Expected 1 originating source file when generating"))
     }
 
     @Test
     fun testNonIncremental() {
-        val nonIncremental = AnnotationProcessorDependencyCollector(RuntimeProcType.NON_INCREMENTAL)
+        val nonIncremental = AnnotationProcessorDependencyCollector(RuntimeProcType.NON_INCREMENTAL) {}
         nonIncremental.add(File("GeneratedA.java").toURI(), emptyArray())
         nonIncremental.add(File("GeneratedB.java").toURI(), emptyArray())
 

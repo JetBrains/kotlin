@@ -11,6 +11,7 @@ import com.sun.tools.javac.api.JavacTaskImpl
 import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt3.base.incremental.RuntimeProcType
+import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.Filer
@@ -69,10 +70,12 @@ fun compileSources(srcFiles: Iterable<File>, outputDir: File) {
     }
 }
 
-fun SimpleProcessor.toAggregating() = IncrementalProcessor(this, DeclaredProcType.AGGREGATING)
-fun SimpleProcessor.toIsolating() = IncrementalProcessor(this, DeclaredProcType.ISOLATING)
-fun SimpleProcessor.toNonIncremental() = IncrementalProcessor(this, DeclaredProcType.NON_INCREMENTAL)
-fun DynamicProcessor.toDynamic() = IncrementalProcessor(this, DeclaredProcType.DYNAMIC)
+fun SimpleProcessor.toAggregating() = IncrementalProcessor(this, DeclaredProcType.AGGREGATING, WriterBackedKaptLogger(isVerbose = true))
+fun SimpleProcessor.toIsolating() = IncrementalProcessor(this, DeclaredProcType.ISOLATING, WriterBackedKaptLogger(isVerbose = true))
+fun SimpleProcessor.toNonIncremental() =
+    IncrementalProcessor(this, DeclaredProcType.NON_INCREMENTAL, WriterBackedKaptLogger(isVerbose = true))
+
+fun DynamicProcessor.toDynamic() = IncrementalProcessor(this, DeclaredProcType.DYNAMIC, WriterBackedKaptLogger(isVerbose = true))
 
 open class SimpleProcessor(private val wrongOrigin: Boolean = false, private val generatedSuffix: String = "") : AbstractProcessor() {
     lateinit var filer: Filer
