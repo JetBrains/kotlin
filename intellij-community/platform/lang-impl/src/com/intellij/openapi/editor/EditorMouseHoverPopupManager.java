@@ -627,10 +627,12 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       component.setData(element, quickDocMessage, null, null, null);
       component.setToolwindowCallback(() -> {
         PsiElement docElement = component.getElement();
-        documentationManager.createToolWindow(docElement, extractOriginalElement(docElement));
-        ToolWindow createdToolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.DOCUMENTATION);
-        if (createdToolWindow != null) {
-          createdToolWindow.setAutoHide(false);
+        if (docElement != null) {
+          documentationManager.createToolWindow(docElement, extractOriginalElement(docElement));
+          ToolWindow createdToolWindow = ToolWindowManager.getInstance(project).getToolWindow(ToolWindowId.DOCUMENTATION);
+          if (createdToolWindow != null) {
+            createdToolWindow.setAutoHide(false);
+          }
         }
         AbstractPopup popup = popupBridge.getPopup();
         if (popup != null) {

@@ -180,7 +180,7 @@ public final class DocumentationManager extends DockablePopupManager<Documentati
   }
 
   @Override
-  public void createToolWindow(PsiElement element, PsiElement originalElement) {
+  public void createToolWindow(@NotNull PsiElement element, PsiElement originalElement) {
     super.createToolWindow(element, originalElement);
 
     if (myToolWindow != null) {
@@ -1049,7 +1049,7 @@ public final class DocumentationManager extends DockablePopupManager<Documentati
   }
 
   @Override
-  protected void doUpdateComponent(PsiElement element, PsiElement originalElement, DocumentationComponent component) {
+  protected void doUpdateComponent(@NotNull PsiElement element, PsiElement originalElement, DocumentationComponent component) {
     cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null, false));
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.documentation;
 
 import com.intellij.icons.AllIcons;
@@ -51,7 +51,7 @@ public abstract class DockablePopupManager<T extends JComponent & Disposable> {
   protected abstract String getAutoUpdateDescription();
 
   protected abstract T createComponent();
-  protected abstract void doUpdateComponent(PsiElement element, PsiElement originalElement, T component);
+  protected abstract void doUpdateComponent(@NotNull PsiElement element, PsiElement originalElement, T component);
   protected void doUpdateComponent(Editor editor, PsiFile psiFile, boolean requestFocus) { doUpdateComponent(editor, psiFile); }
   protected abstract void doUpdateComponent(Editor editor, PsiFile psiFile);
   protected abstract void doUpdateComponent(@NotNull PsiElement element);
@@ -74,7 +74,7 @@ public abstract class DockablePopupManager<T extends JComponent & Disposable> {
     return content;
   }
 
-  public void createToolWindow(final PsiElement element, PsiElement originalElement) {
+  public void createToolWindow(@NotNull final PsiElement element, PsiElement originalElement) {
     assert myToolWindow == null;
 
     final T component = createComponent();
