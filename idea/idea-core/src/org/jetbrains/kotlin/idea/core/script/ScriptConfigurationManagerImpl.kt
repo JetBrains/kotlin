@@ -236,7 +236,9 @@ class ScriptConfigurationManagerImpl internal constructor(private val project: P
                     if (oldConfiguration != null) {
                         file.removeScriptDependenciesNotificationPanel(project)
                     }
-                    saveChangedConfiguration(file, newConfiguration, skipSaveToAttributes)
+                    rootsManager.transaction {
+                        saveChangedConfiguration(file, newConfiguration, skipSaveToAttributes)
+                    }
                 } else {
                     debug(file) {
                         "configuration changed, notification is shown: old = $oldConfiguration, new = $newConfiguration"
