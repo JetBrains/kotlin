@@ -609,6 +609,16 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
         runTest("compiler/testData/diagnostics/tests/SyntaxErrorInTestHighlightingEof.kt");
     }
 
+    @TestMetadata("tailRecOnVirtualMember.kt")
+    public void testTailRecOnVirtualMember() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/tailRecOnVirtualMember.kt");
+    }
+
+    @TestMetadata("tailRecOnVirtualMemberError.kt")
+    public void testTailRecOnVirtualMemberError() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/tailRecOnVirtualMemberError.kt");
+    }
+
     @TestMetadata("tailRecOverridden.kt")
     public void testTailRecOverridden() throws Exception {
         runTest("compiler/testData/diagnostics/tests/tailRecOverridden.kt");
