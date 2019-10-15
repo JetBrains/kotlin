@@ -18,7 +18,9 @@ dependencies {
     testCompile(project(":js:js.engines"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "log4j", "picocontainer-1.2", "guava-25.1-jre", "jdom") }
+    testRuntimeOnly(intellijDep()) {
+        includeJars("openapi", "idea", "idea_rt", "log4j", "picocontainer", "guava", "jdom", rootProject = rootProject)
+    }
     testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 }
 
