@@ -10,7 +10,7 @@ import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.layout.*
 
 class MLRankingConfigurable(private val supportedLanguages: List<String>)
-  : BoundConfigurable("ML Ranking"), CodeCompletionOptionsCustomSection {
+  : BoundConfigurable("ML Ranking") {
   private val settings = CompletionMLRankingSettings.getInstance()
 
   override fun createPanel(): DialogPanel {
