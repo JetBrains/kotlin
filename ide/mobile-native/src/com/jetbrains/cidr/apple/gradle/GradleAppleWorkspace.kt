@@ -58,7 +58,7 @@ class GradleAppleWorkspace(private val project: Project) {
 
     private fun updateOCWorkspace() {
         var committed = false
-        val newDisposable = Disposer.newDisposable()
+        val newDisposable = Disposer.newDisposable("GradleAppleWorkspaceState").also { Disposer.register(project, it) }
         val configData = mutableMapOf<String, Data>()
 
         val workspace = OCWorkspace.getInstance(project).getModifiableModel(true)
