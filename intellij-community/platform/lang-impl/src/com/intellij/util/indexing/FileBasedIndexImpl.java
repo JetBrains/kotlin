@@ -72,6 +72,8 @@ import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.indexing.provided.ProvidedIndexExtensionLocator;
+import com.intellij.util.indexing.snapshot.ContentHashesSupport;
+import com.intellij.util.indexing.snapshot.UpdatableSnapshotInputMappingIndex;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.storage.HeavyProcessLatch;
@@ -1606,8 +1608,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
 
             if (FileBasedIndex.ourSnapshotMappingsEnabled) {
               FileType substituteFileType = SubstitutedFileType.substituteFileType(file, fileType, finalProject);
-              byte[] hash = calculateHash(currentBytes, fc.getCharset(), fileType, substituteFileType);
-              fc.setHash(hash);
+              fc.setHash(ContentHashesSupport.calculateHash(currentBytes, fc.getCharset(), fileType, substituteFileType));
             }
 
             psiFile = content.getUserData(IndexingDataKeys.PSI_FILE);
@@ -1642,16 +1643,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       }
     });
     return setIndexedStatus.get();
-  }
-
-  @NotNull
-  public static byte[] calculateHash(@NotNull byte[] currentBytes,
-                                     @NotNull Charset charset,
-                                     @NotNull FileType fileType,
-                                     @NotNull FileType substituteFileType) {
-    return fileType.isBinary() ?
-           ContentHashesSupport.calcContentHash(currentBytes, substituteFileType) :
-           ContentHashesSupport.calcContentHashWithFileType(currentBytes, charset, substituteFileType);
   }
 
   public boolean isIndexingCandidate(@NotNull VirtualFile file, @NotNull ID<?, ?> indexId) {
@@ -2615,7 +2606,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   }
 
   private static final boolean INDICES_ARE_PSI_DEPENDENT_BY_DEFAULT = SystemProperties.getBooleanProperty("idea.indices.psi.dependent.default", true);
-  static boolean isPsiDependentIndex(@NotNull IndexExtension<?, ?, ?> extension) {
+  public static boolean isPsiDependentIndex(@NotNull IndexExtension<?, ?, ?> extension) {
     if (INDICES_ARE_PSI_DEPENDENT_BY_DEFAULT) {
       return extension instanceof FileBasedIndexExtension &&
              ((FileBasedIndexExtension<?, ?>)extension).dependsOnFileContent() &&

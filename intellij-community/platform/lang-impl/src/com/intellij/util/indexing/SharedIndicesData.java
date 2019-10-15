@@ -37,8 +37,8 @@ public class SharedIndicesData {
   private static IndexedStateMap ourSharedFileInputs;
   private static IndexedStateMap ourSharedFileContentIndependentInputs;
   private static IndexedStateMap ourSharedContentInputs;
-  static final boolean ourFileSharedIndicesEnabled = SystemProperties.getBooleanProperty("idea.shared.input.index.enabled", false);
-  static final boolean DO_CHECKS =
+  public static final boolean ourFileSharedIndicesEnabled = SystemProperties.getBooleanProperty("idea.shared.input.index.enabled", false);
+  public static final boolean DO_CHECKS =
     ourFileSharedIndicesEnabled && SystemProperties.getBooleanProperty("idea.shared.input.index.checked", false);
 
   private static final Logger LOG = Logger.getInstance("#com.intellij.util.indexing.impl.MapReduceIndex");
@@ -309,7 +309,7 @@ public class SharedIndicesData {
   // Record:  (<chunkSize> <indexId> <indexStamp> <SavedData>)*
 
   @Nullable
-  static <Key, Value> Value recallFileData(int id, @NotNull ID<Key, ?> indexId, @NotNull DataExternalizer<Value> externalizer)
+  public static <Key, Value> Value recallFileData(int id, @NotNull ID<Key, ?> indexId, @NotNull DataExternalizer<Value> externalizer)
     throws IOException {
     int type = ourRegisteredIndices.get(indexId.getUniqueId());
     if (type == 0) return null;
@@ -320,7 +320,7 @@ public class SharedIndicesData {
   }
 
   @Nullable
-  static <Key, Value> Value recallContentData(int id, @NotNull ID<Key, ?> indexId, @NotNull DataExternalizer<Value> externalizer)
+  public static <Key, Value> Value recallContentData(int id, @NotNull ID<Key, ?> indexId, @NotNull DataExternalizer<Value> externalizer)
     throws IOException {
     return doRecallData(id, indexId, externalizer, ourSharedContentInputs);
   }
@@ -353,7 +353,7 @@ public class SharedIndicesData {
                     contentlessIndex ? ourSharedFileContentIndependentInputs : ourSharedFileInputs);
   }
 
-  static <Key, Value> void associateContentData(int id, @NotNull ID<Key, ?> indexId, Value keys, @NotNull DataExternalizer<Value> externalizer)
+  public static <Key, Value> void associateContentData(int id, @NotNull ID<Key, ?> indexId, Value keys, @NotNull DataExternalizer<Value> externalizer)
     throws IOException {
     doAssociateData(id, indexId, keys, externalizer, ourSharedContentInputs);
   }

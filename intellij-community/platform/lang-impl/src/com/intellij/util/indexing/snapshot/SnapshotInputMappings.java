@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package com.intellij.util.indexing;
+package com.intellij.util.indexing.snapshot;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
@@ -13,6 +13,7 @@ import com.intellij.util.CompressionUtil;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.SystemProperties;
+import com.intellij.util.indexing.*;
 import com.intellij.util.indexing.impl.DebugAssertions;
 import com.intellij.util.indexing.impl.InputData;
 import com.intellij.util.indexing.impl.forward.AbstractForwardIndexAccessor;
@@ -29,9 +30,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInputMappingIndex<Key, Value, Input> {
+public class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInputMappingIndex<Key, Value, Input> {
   private static final Logger LOG = Logger.getInstance(SnapshotInputMappings.class);
 
+  public static final boolean ourSnapshotMappingsEnabled = SystemProperties.getBooleanProperty("idea.index.snapshot.mappings.enabled", true);
   private static final boolean USE_MANUAL_COMPRESSION = SystemProperties.getBooleanProperty("snapshots.use.manual.compression", false);
 
   private final ID<Key, Value> myIndexId;
@@ -45,7 +47,7 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
 
   private final boolean myIsPsiBackedIndex;
 
-  SnapshotInputMappings(IndexExtension<Key, Value, Input> indexExtension) throws IOException {
+  public SnapshotInputMappings(IndexExtension<Key, Value, Input> indexExtension) throws IOException {
     myIndexId = (ID<Key, Value>)indexExtension.getName();
     myIsPsiBackedIndex = FileBasedIndexImpl.isPsiDependentIndex(indexExtension);
 
@@ -59,11 +61,11 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
     myIndexingTrace = DebugAssertions.EXTRA_SANITY_CHECKS ? createIndexingTrace() : null;
   }
 
-  HashIdForwardIndexAccessor<Key, Value, Input> getForwardIndexAccessor() {
+  public HashIdForwardIndexAccessor<Key, Value, Input> getForwardIndexAccessor() {
     return myHashIdForwardIndexAccessor;
   }
 
-  File getInputIndexStorageFile() {
+  public File getInputIndexStorageFile() {
     return new File(IndexInfrastructure.getIndexRootDir(myIndexId), "fileIdToHashId");
   }
 
@@ -116,7 +118,7 @@ class SnapshotInputMappings<Key, Value, Input> implements UpdatableSnapshotInput
       assert myValueExternalizer != null;
       Value value = AbstractForwardIndexAccessor.deserializeFromByteSeq(byteSequence, myValueExternalizer);
       //noinspection unchecked
-      return Collections.singletonMap((Key)Long.valueOf(0), value);
+      return Collections.singletonMap((Key)Integer.valueOf(0), value);
     }
   }
 
