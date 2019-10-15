@@ -53,6 +53,8 @@ class CodeConformanceTest : TestCase() {
             "libraries/tools/kotlinp/src",
             "libraries/tools/kotlin-test-js-runner/node_modules",
             "libraries/tools/kotlin-test-js-runner/.gradle",
+            "libraries/tools/kotlin-source-map-loader/node_modules",
+            "libraries/tools/kotlin-source-map-loader/.gradle",
             "compiler/testData/psi/kdoc",
             "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
@@ -83,6 +85,8 @@ class CodeConformanceTest : TestCase() {
             "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
             "libraries/tools/kotlin-test-js-runner/node_modules",
             "libraries/tools/kotlin-test-js-runner/.gradle",
+            "libraries/tools/kotlin-source-map-loader/node_modules",
+            "libraries/tools/kotlin-source-map-loader/.gradle",
             "buildSrc/prepare-deps/build",
             "compiler/ir/serialization.js/build"
         )
