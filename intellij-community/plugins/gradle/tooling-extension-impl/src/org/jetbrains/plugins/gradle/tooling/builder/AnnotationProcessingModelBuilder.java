@@ -8,8 +8,11 @@ import org.gradle.api.tasks.SourceSet;
 import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.compile.CompileOptions;
 import org.gradle.api.tasks.compile.JavaCompile;
+import org.gradle.plugins.ide.idea.IdeaPlugin;
+import org.gradle.plugins.ide.idea.model.IdeaModule;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.AnnotationProcessingConfig;
 import org.jetbrains.plugins.gradle.model.AnnotationProcessingModel;
 import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService;
@@ -45,6 +48,12 @@ public class AnnotationProcessingModelBuilder extends AbstractModelBuilderServic
 
     Map<String, AnnotationProcessingConfig> sourceSetConfigs = new HashMap<String, AnnotationProcessingConfig>();
 
+    IdeaModule ideaModule = null;
+    IdeaPlugin plugin = project.getPlugins().findPlugin(IdeaPlugin.class);
+    if (plugin != null) {
+      ideaModule = plugin.getModel().getModule();
+    }
+
     for (final SourceSet sourceSet : container) {
       String compileTaskName = sourceSet.getCompileJavaTaskName();
       Task compileTask = project.getTasks().findByName(compileTaskName);
@@ -68,8 +77,7 @@ public class AnnotationProcessingModelBuilder extends AbstractModelBuilderServic
 
             File generatedSourcesDirectory = isAtLeastGradle4_3 ? options.getAnnotationProcessorGeneratedSourcesDirectory() : null;
             String output = generatedSourcesDirectory != null ? generatedSourcesDirectory.getAbsolutePath() : null;
-            boolean isTest = SourceSet.TEST_SOURCE_SET_NAME.equals(sourceSet.getName());
-            sourceSetConfigs.put(sourceSet.getName(), new AnnotationProcessingConfigImpl(paths, annotationProcessorArgs, output, isTest));
+            sourceSetConfigs.put(sourceSet.getName(), new AnnotationProcessingConfigImpl(paths, annotationProcessorArgs, output, isTestSourceSet(sourceSet, ideaModule)));
           }
         }
       }
@@ -80,6 +88,16 @@ public class AnnotationProcessingModelBuilder extends AbstractModelBuilderServic
     }
 
     return null;
+  }
+
+  private static boolean isTestSourceSet(@NotNull SourceSet sourceSet, @Nullable IdeaModule module) {
+    if (SourceSet.TEST_SOURCE_SET_NAME.equals(sourceSet.getName())) {
+      return true;
+    }
+    if (module != null) {
+      return module.getTestSourceDirs().containsAll(sourceSet.getAllJava().getSrcDirs());
+    }
+    return false;
   }
 
   @Override
