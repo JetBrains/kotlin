@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
     val targetLabel = getTargetLabel()
@@ -133,12 +134,16 @@ fun <T : PsiElement> KtElement.getParentOfTypeCodeFragmentAware(vararg parentCla
 }
 
 fun getEnclosingDescriptor(context: BindingContext, element: KtElement): DeclarationDescriptor {
-    val declaration = element.getParentOfTypeCodeFragmentAware(KtNamedDeclaration::class.java)
+    val declaration =
+        element.getParentOfTypeCodeFragmentAware(KtNamedDeclaration::class.java)
+            ?: throw KotlinExceptionWithAttachments("No parent KtNamedDeclaration for of type ${element.javaClass}")
+                .withAttachment("element.kt", element.text)
     return if (declaration is KtFunctionLiteral) {
         getEnclosingDescriptor(context, declaration)
     } else {
         context.get(DECLARATION_TO_DESCRIPTOR, declaration)
-            ?: error("No descriptor for named declaration: " + declaration?.text + "\n(of type " + declaration?.javaClass + ")")
+            ?: throw KotlinExceptionWithAttachments("No descriptor for named declaration of type ${declaration?.javaClass}")
+                .withAttachment("declaration.kt", declaration.text)
     }
 }
 
