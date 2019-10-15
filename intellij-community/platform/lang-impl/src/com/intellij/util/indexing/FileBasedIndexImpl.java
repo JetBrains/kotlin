@@ -1359,7 +1359,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
           }
           else {
             newFc = new FileContentImpl(vFile, contentText, currentDocStamp);
-            if (IdIndex.ourSnapshotMappingsEnabled) {
+            if (FileBasedIndex.ourSnapshotMappingsEnabled) {
               newFc.putUserData(UpdatableSnapshotInputMappingIndex.FORCE_IGNORE_MAPPING_INDEX_UPDATE, Boolean.TRUE);
             }
             document.putUserData(ourFileContentKey, new WeakReference<>(newFc));
@@ -1604,7 +1604,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
             }
             fc = new FileContentImpl(file, currentBytes);
 
-            if (IdIndex.ourSnapshotMappingsEnabled) {
+            if (FileBasedIndex.ourSnapshotMappingsEnabled) {
               FileType substituteFileType = SubstitutedFileType.substituteFileType(file, fileType, finalProject);
               byte[] hash = calculateHash(currentBytes, fc.getCharset(), fileType, substituteFileType);
               fc.setHash(hash);

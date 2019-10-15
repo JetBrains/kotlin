@@ -89,7 +89,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   private static <Key, Value> boolean hasSnapshotMapping(@NotNull IndexExtension<Key, Value, ?> indexExtension) {
     return indexExtension instanceof FileBasedIndexExtension &&
            ((FileBasedIndexExtension<Key, Value>)indexExtension).hasSnapshotMapping() &&
-           IdIndex.ourSnapshotMappingsEnabled;
+           FileBasedIndex.ourSnapshotMappingsEnabled;
   }
 
   @NotNull
