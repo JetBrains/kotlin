@@ -36,8 +36,9 @@ import java.util.*;
 public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key, Value> {
   private final Map<Key, ChangeTrackingValueContainer<Value>> myMap = new HashMap<>();
   @NotNull
-  private final IndexStorage<Key, Value> myBackendStorage;
+  private final VfsAwareIndexStorage<Key, Value> myBackendStorage;
   private final List<BufferingStateListener> myListeners = ContainerUtil.createLockFreeCopyOnWriteList();
+  @NotNull
   private final ID<?, ?> myIndexId;
   private boolean myBufferingEnabled;
 
@@ -47,13 +48,14 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
     void memoryStorageCleared();
   }
 
-  public MemoryIndexStorage(@NotNull IndexStorage<Key, Value> backend) {
-    this(backend, null);
+  public MemoryIndexStorage(@NotNull IndexStorage<Key, Value> backend, @NotNull ID<?, ?> indexId) {
+    myBackendStorage = (VfsAwareIndexStorage<Key, Value>)backend;
+    myIndexId = indexId;
   }
 
-  public MemoryIndexStorage(@NotNull IndexStorage<Key, Value> backend, ID<?, ?> indexId) {
-    myBackendStorage = backend;
-    myIndexId = indexId;
+  @NotNull
+  VfsAwareIndexStorage<Key, Value> getBackendStorage() {
+    return myBackendStorage;
   }
 
   public void addBufferingStateListener(@NotNull BufferingStateListener listener) {
@@ -95,7 +97,7 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
       if (myMap.size() == 0) return;
 
       if (DebugAssertions.DEBUG) {
-        String message = "Dropping caches for " + (myIndexId != null ? myIndexId : this) + ", number of items:" + myMap.size();
+        String message = "Dropping caches for " + myIndexId + ", number of items:" + myMap.size();
         FileBasedIndexImpl.LOG.info(message);
       }
 
@@ -143,7 +145,7 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
       }
       stopList.add(key);
     }
-    return ((VfsAwareIndexStorage<Key, Value>) myBackendStorage).processKeys(stopList.isEmpty() && myMap.isEmpty() ? processor : decoratingProcessor, scope, idFilter);
+    return myBackendStorage.processKeys(stopList.isEmpty() && myMap.isEmpty() ? processor : decoratingProcessor, scope, idFilter);
   }
 
   @Override

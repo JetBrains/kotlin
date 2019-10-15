@@ -73,6 +73,7 @@ import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
 import com.intellij.util.indexing.provided.ProvidedIndexExtension;
 import com.intellij.util.indexing.provided.ProvidedIndexExtensionLocator;
 import com.intellij.util.indexing.snapshot.ContentHashesSupport;
+import com.intellij.util.indexing.snapshot.SnapshotSingleValueIndexStorage;
 import com.intellij.util.indexing.snapshot.UpdatableSnapshotInputMappingIndex;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.IOUtil;
@@ -375,7 +376,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
                                               int version,
                                               @NotNull IndexConfiguration state)
     throws IOException {
-    VfsAwareMapIndexStorage<K, V> storage = null;
+    VfsAwareIndexStorage<K, V> storage = null;
     final ID<K, V> name = extension.getName();
     boolean contentHashesEnumeratorOk = false;
 
@@ -386,14 +387,19 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
           contentHashesEnumeratorOk = true;
         }
 
-        storage = new VfsAwareMapIndexStorage<>(
-          IndexInfrastructure.getStorageFile(name),
-          extension.getKeyDescriptor(),
-          extension.getValueExternalizer(),
-          extension.getCacheSize(),
-          extension.keyIsUniqueForIndexedFile(),
-          extension.traceKeyHashToVirtualFileMapping()
-        );
+        boolean createSnapshotStorage = VfsAwareMapReduceIndex.hasSnapshotMapping(extension) && extension instanceof SingleEntryFileBasedIndexExtension;
+        if (createSnapshotStorage) {
+          storage = new SnapshotSingleValueIndexStorage<K, V, FileContent>();
+        } else {
+          storage = new VfsAwareMapIndexStorage<>(
+            IndexInfrastructure.getStorageFile(name),
+            extension.getKeyDescriptor(),
+            extension.getValueExternalizer(),
+            extension.getCacheSize(),
+            extension.keyIsUniqueForIndexedFile(),
+            extension.traceKeyHashToVirtualFileMapping()
+          );
+        }
 
         final InputFilter inputFilter = extension.getInputFilter();
 
@@ -1223,6 +1229,10 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
                                      @Nullable Project project,
                                      final GlobalSearchScope filter,
                                      final VirtualFile restrictedFile) {
+    if (myUpToDateIndicesForUnsavedOrTransactedDocuments.contains(indexId)) {
+      return; // no need to index unsaved docs        // todo: check scope ?
+    }
+
     Collection<Document> documents = getUnsavedDocuments();
     boolean psiBasedIndex = myPsiDependentIndices.contains(indexId);
     if(psiBasedIndex) {

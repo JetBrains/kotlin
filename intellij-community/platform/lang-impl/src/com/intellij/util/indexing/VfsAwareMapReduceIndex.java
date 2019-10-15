@@ -17,10 +17,7 @@ import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.impl.*;
 import com.intellij.util.indexing.impl.forward.*;
-import com.intellij.util.indexing.snapshot.IndexImporterMappingIndex;
-import com.intellij.util.indexing.snapshot.SnapshotInputMappingIndex;
-import com.intellij.util.indexing.snapshot.SnapshotInputMappings;
-import com.intellij.util.indexing.snapshot.UpdatableSnapshotInputMappingIndex;
+import com.intellij.util.indexing.snapshot.*;
 import gnu.trove.THashSet;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
@@ -78,19 +75,26 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
                                 @NotNull IndexStorage<Key, Value> storage,
                                 @Nullable ForwardIndex forwardIndexMap,
                                 @Nullable ForwardIndexAccessor<Key, Value> forwardIndexAccessor,
-                                @Nullable SnapshotInputMappingIndex<Key, Value, Input> snapshotInputMappings,
+                                @Nullable SnapshotInputMappings<Key, Value, Input> snapshotInputMappings,
                                 @Nullable ReadWriteLock lock) {
     super(extension, storage, forwardIndexMap, forwardIndexAccessor, lock);
     if (myIndexId instanceof ID) {
       SharedIndicesData.registerIndex((ID<Key, Value>)myIndexId, extension);
     }
+    if (storage instanceof MemoryIndexStorage && snapshotInputMappings != null) {
+      VfsAwareIndexStorage<Key, Value> backendStorage = ((MemoryIndexStorage<Key, Value>)storage).getBackendStorage();
+      if (backendStorage instanceof SnapshotSingleValueIndexStorage) {
+        LOG.assertTrue(forwardIndexMap instanceof IntForwardIndex);
+        ((SnapshotSingleValueIndexStorage<Key, Value, Input>)backendStorage).init(snapshotInputMappings, ((IntForwardIndex)forwardIndexMap));
+      }
+    }
     mySnapshotInputMappings = IndexImporterMappingIndex.wrap(snapshotInputMappings, extension);
-    myUpdateMappings = snapshotInputMappings instanceof UpdatableSnapshotInputMappingIndex;
+    myUpdateMappings = mySnapshotInputMappings instanceof UpdatableSnapshotInputMappingIndex;
     mySingleEntryIndex = extension instanceof SingleEntryFileBasedIndexExtension;
     installMemoryModeListener();
   }
 
-  private static <Key, Value> boolean hasSnapshotMapping(@NotNull IndexExtension<Key, Value, ?> indexExtension) {
+  static <Key, Value> boolean hasSnapshotMapping(@NotNull IndexExtension<Key, Value, ?> indexExtension) {
     return indexExtension instanceof FileBasedIndexExtension &&
            ((FileBasedIndexExtension<Key, Value>)indexExtension).hasSnapshotMapping() &&
            FileBasedIndex.ourSnapshotMappingsEnabled;
