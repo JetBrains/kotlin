@@ -251,9 +251,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib-js",
-    // Local builds are disabled at the request of the lib team
-    // TODO: Enable when tests are fixed
-    ":kotlin-stdlib-js-ir".takeIf { isTeamcityBuild },
+    ":kotlin-stdlib-js-ir",
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-test:kotlin-test-common",
