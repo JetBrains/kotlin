@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.util.isKotlinBinary
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.sure
@@ -176,21 +177,22 @@ private fun <T> PsiElement.collectInfos(c: ModuleInfoCollector<T>): T {
 
     if (containingKtFile is KtCodeFragment) {
         val context = containingKtFile.getContext()
-                ?: return c.onFailure("Analyzing code fragment of type ${containingKtFile::class.java} with no context element\nText:\n${containingKtFile.getText()}")
+            ?: return c.onFailure("Analyzing code fragment of type ${containingKtFile::class.java} with no context element\nText:\n${containingKtFile.getText()}")
         return context.collectInfos(c)
     }
 
     val virtualFile = containingFile.originalFile.virtualFile
-            ?: return c.onFailure("Analyzing element of type ${this::class.java} in non-physical file $containingFile of type ${containingFile::class.java}\nText:\n$text")
+        ?: return c.onFailure("Analyzing element of type ${this::class.java} in non-physical file $containingFile of type ${containingFile::class.java}\nText:\n$text")
 
-    if (containingKtFile?.isScript() == true) {
+    val isScript = runReadAction { containingKtFile?.isScript() == true }
+    if (isScript) {
         getModuleRelatedModuleInfo(project, virtualFile)?.let {
             return c.onResult(it)
         }
-        containingKtFile.script?.let {
-            val definition = containingKtFile.findScriptDefinition()
-            if (definition != null) {
-                return c.onResult(ScriptModuleInfo(project, virtualFile, definition))
+        val script = runReadAction { containingKtFile?.script }
+        script?.let {
+            containingKtFile?.findScriptDefinition()?.let {
+                return c.onResult(ScriptModuleInfo(project, virtualFile, it))
             }
         }
     }
