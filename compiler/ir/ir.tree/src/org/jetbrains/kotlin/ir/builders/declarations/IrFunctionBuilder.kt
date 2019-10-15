@@ -22,6 +22,7 @@ class IrFunctionBuilder : IrDeclarationBuilder() {
     var modality: Modality = Modality.FINAL
     var isTailrec: Boolean = false
     var isSuspend: Boolean = false
+    var isExpect: Boolean = false
 
     var isPrimary: Boolean = false
 
@@ -30,6 +31,7 @@ class IrFunctionBuilder : IrDeclarationBuilder() {
 
         isInline = from.isInline
         isExternal = from.isExternal
+        isExpect = from.isExpect
 
         if (from is IrSimpleFunction) {
             modality = from.modality

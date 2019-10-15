@@ -26,6 +26,7 @@ abstract class IrLazyFunctionBase(
     override var visibility: Visibility,
     override val isInline: Boolean,
     override val isExternal: Boolean,
+    override val isExpect: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator
 ) :

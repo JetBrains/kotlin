@@ -15,4 +15,5 @@ class IrPropertyBuilder : IrDeclarationBuilder() {
     var isLateinit: Boolean = false
     var isDelegated: Boolean = false
     var isExternal: Boolean = false
+    var isExpect: Boolean = false
 }

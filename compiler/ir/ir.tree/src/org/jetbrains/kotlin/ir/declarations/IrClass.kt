@@ -38,6 +38,7 @@ interface IrClass :
     val isData: Boolean
     val isExternal: Boolean
     val isInline: Boolean
+    val isExpect: Boolean
 
     val superTypes: MutableList<IrType>
 

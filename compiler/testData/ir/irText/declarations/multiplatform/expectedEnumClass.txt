@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/expectedEnumClass.kt
-  CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.MyEnum>]
+  CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public [expect] superTypes:[kotlin.Enum<<root>.MyEnum>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum
     ENUM_ENTRY name:FOO
     ENUM_ENTRY name:BAR

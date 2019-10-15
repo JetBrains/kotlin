@@ -37,11 +37,14 @@ class IrConstructorImpl(
     returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
-    override val isPrimary: Boolean
+    override val isPrimary: Boolean,
+    isExpect: Boolean
 ) :
     IrFunctionBase(
         startOffset, endOffset, origin, name,
-        visibility, isInline, isExternal, returnType
+        visibility,
+        isInline, isExternal, isExpect,
+        returnType
     ),
     IrConstructor {
 
@@ -57,9 +60,10 @@ class IrConstructorImpl(
         symbol.descriptor.name,
         symbol.descriptor.visibility,
         returnType,
-        symbol.descriptor.isInline,
-        symbol.descriptor.isEffectivelyExternal(),
-        symbol.descriptor.isPrimary
+        isInline = symbol.descriptor.isInline,
+        isExternal = symbol.descriptor.isEffectivelyExternal(),
+        isPrimary = symbol.descriptor.isPrimary,
+        isExpect = symbol.descriptor.isExpect
     ) {
         this.body = body
     }

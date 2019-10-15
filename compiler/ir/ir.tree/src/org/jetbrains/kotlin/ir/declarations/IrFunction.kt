@@ -31,6 +31,8 @@ interface IrFunction :
 
     val isInline: Boolean // NB: there's an inline constructor for Array and each primitive array class
     val isExternal: Boolean
+    val isExpect: Boolean
+
     var returnType: IrType
 
     var dispatchReceiverParameter: IrValueParameter?
