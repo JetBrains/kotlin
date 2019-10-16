@@ -20,10 +20,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMember
-import com.intellij.psi.SmartPointerManager
-import com.intellij.psi.SmartPsiElementPointer
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
@@ -90,6 +87,7 @@ fun addDelayedImportRequest(elementToImport: PsiElement, file: KtFile) {
 fun performDelayedRefactoringRequests(project: Project) {
     project.delayedRefactoringRequests?.let { requests ->
         project.delayedRefactoringRequests = null
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
 
         val shorteningRequests = ArrayList<ShorteningRequest>()
         val importRequests = ArrayList<ImportRequest>()
