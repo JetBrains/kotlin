@@ -390,7 +390,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
             Map<Integer, SerializedStubTree> data = stubUpdatingIndex.getIndexedFileData(id);
             LOG.assertTrue(data.size() == 1);
             SerializedStubTree tree = data.values().iterator().next();
-            return tree.restoreIndexedStubs(StubForwardIndexExternalizer.IdeStubForwardIndexesExternalizer.INSTANCE, indexKey, key);
+            return tree.restoreIndexedStubs(SerializedStubTree.IDE_USED_EXTERNALIZER, indexKey, key);
           }
           catch (StorageException | IOException e) {
             forceRebuild(e);

@@ -66,37 +66,11 @@ open class HashCodeExternalizers : DataExternalizer<HashCode> {
 
 class FullStubExternalizer : SerializedStubTreeDataExternalizer()
 
-val FILE_LOCAL_STUB_FORWARD_INDEX_EXTERNALIZER: StubForwardIndexExternalizer<*> = FileLocalStubForwardIndexExternalizer()
-
-private class FileLocalStubForwardIndexExternalizer : StubForwardIndexExternalizer<FileLocalStringEnumerator>() {
-  override fun createStubIndexKeySerializationState(out: DataOutput,
-                                                    set: MutableSet<StubIndexKey<Any, PsiElement>>): FileLocalStringEnumerator {
-    val enumerator = FileLocalStringEnumerator(true)
-    set.map { it.name }.forEach { enumerator.enumerate(it)}
-    enumerator.write(out)
-    return enumerator
-  }
-
-  override fun writeStubIndexKey(out: DataOutput, key: StubIndexKey<*, *>, state: FileLocalStringEnumerator?) {
-    DataInputOutputUtil.writeINT(out, state!!.enumerate(key.name))
-  }
-
-  override fun createStubIndexKeySerializationState(input: DataInput, stubIndexKeyCount: Int): FileLocalStringEnumerator {
-    val enumerator = FileLocalStringEnumerator(false)
-    FileLocalStringEnumerator.readEnumeratedStrings(enumerator, input, UnaryOperator.identity())
-    return enumerator
-  }
-
-  override fun readStubIndexKey(input: DataInput, stubKeySerializationState: FileLocalStringEnumerator?): ID<*, *> {
-    return ID.findByName<Any, Any>(stubKeySerializationState!!.valueOf(DataInputOutputUtil.readINT(input))!!)!!
-  }
-}
-
 abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedStubTree>(), PrebuiltStubsProvider {
 
   private var mySerializationManager: SerializationManagerImpl? = null
   private val myIdeSerializationManager = SerializationManager.getInstance() as SerializationManagerImpl
-  private val myIndexedStubsSerializer = FileLocalStubForwardIndexExternalizer()
+  private val myIndexedStubsSerializer = StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE
 
   protected abstract val stubVersion: Int
 
@@ -142,7 +116,7 @@ abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedS
     try {
       val stubTree = get(fileContent)
       if (stubTree != null) {
-        return stubTree.reSerialize(mySerializationManager!!, myIdeSerializationManager, myIndexedStubsSerializer, StubForwardIndexExternalizer.IdeStubForwardIndexesExternalizer.INSTANCE)
+        return stubTree.reSerialize(mySerializationManager!!, myIdeSerializationManager, myIndexedStubsSerializer, StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer.INSTANCE)
       }
     }
     catch (e: IOException) {

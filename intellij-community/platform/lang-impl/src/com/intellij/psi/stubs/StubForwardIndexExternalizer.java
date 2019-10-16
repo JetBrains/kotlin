@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 
 public abstract class StubForwardIndexExternalizer<StubKeySerializationState> implements DataExternalizer<Map<StubIndexKey, Map<Object, StubIdList>>> {
   private volatile boolean myEnsuredStubElementTypesLoaded;
@@ -82,9 +83,7 @@ public abstract class StubForwardIndexExternalizer<StubKeySerializationState> im
     return Collections.emptyMap();
   }
 
-  static class IdeStubForwardIndexesExternalizer extends StubForwardIndexExternalizer<Void> {
-    static final IdeStubForwardIndexesExternalizer INSTANCE = new IdeStubForwardIndexesExternalizer();
-
+  static final class IdeStubForwardIndexesExternalizer extends StubForwardIndexExternalizer<Void> {
     @Override
     protected void writeStubIndexKey(@NotNull DataOutput out, @NotNull StubIndexKey key, Void aVoid) throws IOException {
       DataInputOutputUtil.writeINT(out, key.getUniqueId());
@@ -103,6 +102,44 @@ public abstract class StubForwardIndexExternalizer<StubKeySerializationState> im
     @Override
     protected Void createStubIndexKeySerializationState(@NotNull DataInput input, int stubIndexKeyCount) {
       return null;
+    }
+  }
+
+  public static final class FileLocalStubForwardIndexExternalizer extends StubForwardIndexExternalizer<FileLocalStringEnumerator> {
+    public static final FileLocalStubForwardIndexExternalizer INSTANCE = new FileLocalStubForwardIndexExternalizer();
+
+    @Override
+    protected FileLocalStringEnumerator createStubIndexKeySerializationState(@NotNull DataOutput out, @NotNull Set<StubIndexKey> set) {
+      FileLocalStringEnumerator enumerator = new FileLocalStringEnumerator(true);
+      for (StubIndexKey<?, ?> key : set) {
+        enumerator.enumerate(key.getName());
+      }
+      return enumerator;
+    }
+
+    @Override
+    protected void writeStubIndexKey(@NotNull DataOutput out, @NotNull StubIndexKey key, FileLocalStringEnumerator enumerator)
+      throws IOException {
+      DataInputOutputUtil.writeINT(out, enumerator.enumerate(key.getName()));
+
+    }
+
+    @Override
+    protected FileLocalStringEnumerator createStubIndexKeySerializationState(@NotNull DataInput input, int stubIndexKeyCount)
+      throws IOException {
+      FileLocalStringEnumerator enumerator = new FileLocalStringEnumerator(false);
+      FileLocalStringEnumerator.readEnumeratedStrings(enumerator, input, UnaryOperator.identity());
+      return enumerator;
+    }
+
+    @Override
+    protected ID<?, ?> readStubIndexKey(@NotNull DataInput input, FileLocalStringEnumerator enumerator) throws IOException {
+      int idx = DataInputOutputUtil.readINT(input);
+      String name = enumerator.valueOf(idx);
+      if (name == null) {
+        throw new IOException("corrupted data: no value for idx = " + idx + " in local enumerator");
+      }
+      return ID.findByName(name);
     }
   }
 }

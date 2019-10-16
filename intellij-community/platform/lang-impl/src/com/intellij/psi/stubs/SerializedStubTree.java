@@ -35,6 +35,10 @@ import java.security.MessageDigest;
 import java.util.Map;
 
 public class SerializedStubTree {
+  static final StubForwardIndexExternalizer<?> IDE_USED_EXTERNALIZER = System.getProperty("idea.uses.shareable.serialized.stubs") == null
+                                                              ? new StubForwardIndexExternalizer.IdeStubForwardIndexesExternalizer()
+                                                              : new StubForwardIndexExternalizer.FileLocalStubForwardIndexExternalizer();
+
   private static final Logger LOG = Logger.getInstance(SerializedStubTree.class);
   private static final ThreadLocalCachedValue<MessageDigest> HASHER = new ThreadLocalCachedValue<MessageDigest>() {
     @NotNull
@@ -135,7 +139,7 @@ public class SerializedStubTree {
 
   @TestOnly
   public Map<StubIndexKey, Map<Object, StubIdList>> readStubIndicesValueMap() throws IOException {
-    restoreIndexedStubs(StubForwardIndexExternalizer.IdeStubForwardIndexesExternalizer.INSTANCE);
+    restoreIndexedStubs(IDE_USED_EXTERNALIZER);
     return myIndexedStubs;
   }
 
