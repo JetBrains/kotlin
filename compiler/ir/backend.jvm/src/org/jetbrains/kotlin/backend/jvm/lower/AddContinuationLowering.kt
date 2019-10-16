@@ -182,6 +182,13 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         }
                     }
 
+                    // If the suspend lambda body contains declarations of other classes (for other lambdas),
+                    // do not rewrite those. In particular, that could lead to rewriting of returns in nested
+                    // lambdas to unintended non-local returns.
+                    override fun visitClass(declaration: IrClass): IrStatement {
+                        return declaration
+                    }
+
                     override fun visitReturn(expression: IrReturn): IrExpression {
                         val ret = super.visitReturn(expression) as IrReturn
                         return IrReturnImpl(ret.startOffset, ret.endOffset, context.irBuiltIns.anyType, function.symbol, ret.value)
