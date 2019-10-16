@@ -90,7 +90,7 @@ open class CommonInjectedFileChangesHandler(
   }
 
   protected fun updateInjectionHostElement(host: PsiLanguageInjectionHost, insideHost: ProperTextRange, content: String) {
-    ElementManipulators.getManipulator(host).handleContentChange(host, insideHost, content)
+    ElementManipulators.handleContentChange(host, insideHost, content)
   }
 
   override fun dispose() {
@@ -193,7 +193,7 @@ inline val PsiLanguageInjectionHost.Shred.innerRange: TextRange
                            this.range.endOffset - this.suffix.length)
 
 val PsiLanguageInjectionHost.contentRange
-  get() = ElementManipulators.getManipulator(this).getRangeInElement(this).shiftRight(textRange.startOffset)
+  get() = ElementManipulators.getValueTextRange(this).shiftRight(textRange.startOffset)
 
 private val PsiElement.withNextSiblings: Sequence<PsiElement>
   get() = generateSequence(this) { it.nextSibling }
