@@ -38,6 +38,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -90,6 +91,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import static com.intellij.ui.SimpleTextAttributes.STYLE_PLAIN;
+import static com.intellij.util.FontUtil.spaceAndThinSpace;
+
 public class FindPopupPanel extends JBPanel implements FindUI {
   private static final Logger LOG = Logger.getInstance(FindPopupPanel.class);
 
@@ -136,6 +140,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
   private JPanel myScopeDetailsPanel;
 
   private JBTable myResultsPreviewTable;
+  private SimpleColoredComponent myUsagePreviewTitle;
   private UsagePreviewPanel myUsagePreviewPanel;
   private DialogWrapper myDialog;
   private LoadingDecorator myLoadingDecorator;
@@ -669,7 +674,8 @@ public class FindPopupPanel extends JBPanel implements FindUI {
         findPreviousAction.registerCustomShortcutSet(findPreviousShortcutSet, component);
       }
     }
-
+    myUsagePreviewTitle = new SimpleColoredComponent();
+    myUsagePreviewTitle.setBorder(JBUI.Borders.empty(3, 8, 4, 8));
     myUsageViewPresentation = new UsageViewPresentation();
     myUsagePreviewPanel = new UsagePreviewPanel(myProject, myUsageViewPresentation, Registry.is("ide.find.as.popup.editable.code")) {
       @Override
@@ -690,15 +696,22 @@ public class FindPopupPanel extends JBPanel implements FindUI {
           selection.addAll(Arrays.asList(adapter.getMergedInfos()));
         }
       }
-      String title = getTitle(file);
       myReplaceSelectedButton.setText(FindBundle.message("find.popup.replace.selected.button", selection.size()));
       FindInProjectUtil.setupViewPresentation(myUsageViewPresentation, myHelper.getModel().clone());
       myUsagePreviewPanel.updateLayout(selection);
-      if (myUsagePreviewPanel.getCannotPreviewMessage(selection) == null && title != null) {
-        myUsagePreviewPanel.setBorder(IdeBorderFactory.createTitledBorder(title, false, new JBInsets(8, 0, 0, 0)).setShowLine(false));
-      }
-      else {
-        myUsagePreviewPanel.setBorder(JBUI.Borders.empty());
+      myUsagePreviewTitle.clear();
+      if (myUsagePreviewPanel.getCannotPreviewMessage(selection) == null && file != null) {
+        myUsagePreviewTitle.append(file.getName(), SimpleTextAttributes.REGULAR_ATTRIBUTES);
+        VirtualFile location = file.getParent();
+        if (location != null) {
+          String locationPath = VfsUtilCore.isAncestor(myProject.getBaseDir(), location, true)
+                                ? VfsUtilCore.getRelativeLocation(location, myProject.getBaseDir())
+                                : FileUtil.getLocationRelativeToUserHome(location.getPath());
+          if (locationPath != null) {
+            myUsagePreviewTitle.append(spaceAndThinSpace() + StringUtil.trimMiddle(locationPath, 120),
+                                       new SimpleTextAttributes(STYLE_PLAIN, UIUtil.getContextHelpForeground()));
+          }
+        }
       }
     };
     myResultsPreviewTable.getSelectionModel().addListSelectionListener(e -> {
@@ -762,7 +775,10 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     bottomPanel.add(myReplaceSelectedButton, btnGapLeft);
 
     myCodePreviewComponent = myUsagePreviewPanel.createComponent();
-    splitter.setSecondComponent(myCodePreviewComponent);
+    JPanel previewPanel = new JPanel(new BorderLayout());
+    previewPanel.add(myUsagePreviewTitle, BorderLayout.NORTH);
+    previewPanel.add(myCodePreviewComponent, BorderLayout.CENTER);
+    splitter.setSecondComponent(previewPanel);
     JPanel scopesPanel = new JPanel(new MigLayout("flowx, gap 26, ins 0"));
     scopesPanel.add(myScopeSelectionToolbar.getComponent());
     scopesPanel.add(myScopeDetailsPanel, "growx, pushx");
@@ -902,18 +918,6 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     }
     myIsPinned.set(false);
     myDialog.doCancelAction();
-  }
-
-  @Nullable
-  private String getTitle(@Nullable VirtualFile file) {
-    if (file == null) return null;
-    String path = VfsUtilCore.getRelativePath(file, myProject.getBaseDir());
-    if (path == null) path = file.getPath();
-    path = StringUtil.trimMiddle(path, 120);
-    if (SystemInfo.isMacOSCatalina) {
-      return "<html><body>&nbsp;&nbsp;&nbsp;" + path + "</body></html>";
-    }
-    return "<html><body>&nbsp;&nbsp;&nbsp;" + path.replace(file.getName(), "<b>" + file.getName() + "</b>") + "</body></html>";
   }
 
   @NotNull
@@ -1686,8 +1690,8 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     };
 
     private final ColoredTableCellRenderer myFileAndLineNumber = new ColoredTableCellRenderer() {
-      private final SimpleTextAttributes REPEATED_FILE_ATTRIBUTES = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, new JBColor(0xCCCCCC, 0x5E5E5E));
-      private final SimpleTextAttributes ORDINAL_ATTRIBUTES = new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, new JBColor(0x999999, 0x999999));
+      private final SimpleTextAttributes REPEATED_FILE_ATTRIBUTES = new SimpleTextAttributes(STYLE_PLAIN, new JBColor(0xCCCCCC, 0x5E5E5E));
+      private final SimpleTextAttributes ORDINAL_ATTRIBUTES = new SimpleTextAttributes(STYLE_PLAIN, new JBColor(0x999999, 0x999999));
 
       @Override
       protected void customizeCellRenderer(JTable table, Object value, boolean selected, boolean hasFocus, int row, int column) {
