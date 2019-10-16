@@ -320,7 +320,7 @@ abstract class KotlinIrLinker(
 
                     resolvedForwardDeclarations[key]?.let {
                         val fdState = getStateForID(it)
-                        fdState.addUniqID(it)
+                        if (it !in fdState) fdState.addUniqID(it)
                     }
 
                     referenceDeserializedSymbol(proto, descriptor)
