@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.resolve
 
 import com.intellij.mock.MockProject
-import com.intellij.pom.PomManager
 import com.intellij.pom.PomModel
 import com.intellij.pom.core.impl.PomModelImpl
 import com.intellij.pom.tree.TreeAspect
@@ -45,12 +44,8 @@ abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescrip
     }
 
     override fun tearDown() {
-        (project.picoContainer as MutablePicoContainer).unregisterComponentByInstance(
-            KotlinCodeBlockModificationListener.getInstance(project)
-        )
-
-        val pomModel = PomManager.getModel(project)
-        (project.picoContainer as MutablePicoContainer).unregisterComponentByInstance(pomModel)
+        (project.picoContainer as MutablePicoContainer).unregisterComponent(KotlinCodeBlockModificationListener::class.java)
+        (project.picoContainer as MutablePicoContainer).unregisterComponent(PomModel::class.java)
 
         super.tearDown()
     }
