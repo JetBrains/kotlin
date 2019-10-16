@@ -386,15 +386,7 @@ public abstract class InplaceRefactoring {
   }
 
   private void startTemplate(final TemplateBuilderImpl builder) {
-    final Disposable disposable = Disposer.newDisposable();
-    DaemonCodeAnalyzer.getInstance(myProject).disableUpdateByTimer(disposable);
-
-    final MyTemplateListener templateListener = new MyTemplateListener() {
-      @Override
-      protected void restoreDaemonUpdateState() {
-        Disposer.dispose(disposable);
-      }
-    };
+    final MyTemplateListener templateListener = new MyTemplateListener();
 
     final int offset = myEditor.getCaretModel().getOffset();
 
@@ -412,6 +404,11 @@ public abstract class InplaceRefactoring {
     TemplateManager.getInstance(myProject).startTemplate(topLevelEditor, template, templateListener);
     restoreOldCaretPositionAndSelection(offset);
     highlightTemplateVariables(template, topLevelEditor);
+
+    final TemplateState templateState = TemplateManagerImpl.getTemplateState(topLevelEditor);
+    if (templateState != null) {
+      DaemonCodeAnalyzer.getInstance(myProject).disableUpdateByTimer(templateState);
+    }
   }
 
   private void highlightTemplateVariables(Template template, Editor topLevelEditor) {
@@ -916,33 +913,25 @@ public abstract class InplaceRefactoring {
     ourShowBalloonInHeadlessMode = showBalloonInHeadlessMode;
   }
 
-  private abstract class MyTemplateListener extends TemplateEditingAdapter {
-
-    protected abstract void restoreDaemonUpdateState();
-
+  private class MyTemplateListener extends TemplateEditingAdapter {
     @Override
     public void beforeTemplateFinished(@NotNull final TemplateState templateState, Template template) {
-      try {
-        final TextResult value = templateState.getVariableValue(PRIMARY_VARIABLE_NAME);
-        myInsertedName = value != null ? value.toString().trim() : null;
+      final TextResult value = templateState.getVariableValue(PRIMARY_VARIABLE_NAME);
+      myInsertedName = value != null ? value.toString().trim() : null;
 
-        TextRange range = templateState.getCurrentVariableRange();
-        final int currentOffset = myEditor.getCaretModel().getOffset();
-        if (range == null && myRenameOffset != null) {
-          range = new TextRange(myRenameOffset.getStartOffset(), myRenameOffset.getEndOffset());
-        }
-        myBeforeRevert =
-          range != null && range.getEndOffset() >= currentOffset && range.getStartOffset() <= currentOffset
-          ? myEditor.getDocument().createRangeMarker(range.getStartOffset(), currentOffset)
-          : null;
-        if (myBeforeRevert != null) {
-          myBeforeRevert.setGreedyToRight(true);
-        }
-        finish(true);
+      TextRange range = templateState.getCurrentVariableRange();
+      final int currentOffset = myEditor.getCaretModel().getOffset();
+      if (range == null && myRenameOffset != null) {
+        range = new TextRange(myRenameOffset.getStartOffset(), myRenameOffset.getEndOffset());
       }
-      finally {
-        restoreDaemonUpdateState();
+      myBeforeRevert =
+        range != null && range.getEndOffset() >= currentOffset && range.getStartOffset() <= currentOffset
+        ? myEditor.getDocument().createRangeMarker(range.getStartOffset(), currentOffset)
+        : null;
+      if (myBeforeRevert != null) {
+        myBeforeRevert.setGreedyToRight(true);
       }
+      finish(true);
     }
 
     @Override
@@ -980,12 +969,7 @@ public abstract class InplaceRefactoring {
         moveOffsetAfter(false);
       }
       finally {
-        try {
-          restoreDaemonUpdateState();
-        }
-        finally {
-          FinishMarkAction.finish(myProject, myEditor, myMarkAction);
-        }
+        FinishMarkAction.finish(myProject, myEditor, myMarkAction);
       }
     }
   }
