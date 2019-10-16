@@ -49,7 +49,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         }
 
     @Input
-    var mode: Mode = Mode.PRODUCTION
+    var mode: Mode = Mode.DEVELOPMENT
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
@@ -108,6 +108,9 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Optional
     var devServer: KotlinWebpackConfig.DevServer? = null
 
+    @Input
+    var devtool: KotlinWebpackConfig.Devtool = KotlinWebpackConfig.Devtool.EVAL_SOURCE_MAP
+
     private fun createRunner() = KotlinWebpackRunner(
         compilation.npmProject,
         configFile,
@@ -122,6 +125,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             configDirectory = configDirectory,
             bundleAnalyzerReportDir = if (report) reportDir else null,
             devServer = devServer,
+            devtool = devtool,
             sourceMaps = sourceMaps
         )
     )
