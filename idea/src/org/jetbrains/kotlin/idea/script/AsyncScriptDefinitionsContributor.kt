@@ -76,10 +76,15 @@ abstract class AsyncScriptDefinitionsContributor(protected val project: Project)
                     shouldStartNewUpdate = false
                 }
 
-                val wasRunning = definitionsLock.isWriteLocked
+                val previousDefinitions = definitionsLock.read {
+                    if (!forceStartUpdate && _definitions != null) return
+
+                    _definitions
+                }
+
+                val newDefinitions = loadScriptDefinitions(previousDefinitions)
+
                 val needReload = definitionsLock.write {
-                    if (wasRunning && !forceStartUpdate && _definitions != null) return@write false
-                    val newDefinitions = loadScriptDefinitions(_definitions)
                     if (newDefinitions != _definitions) {
                         _definitions = newDefinitions
                         return@write true

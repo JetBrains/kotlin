@@ -581,6 +581,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             public void testTypeParameterBoundedBySubclass() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/parameters/typeParameterBoundedBySubclass.kt");
             }
+
+            @TestMetadata("useNextParamInLambda.kt")
+            public void testUseNextParamInLambda() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/parameters/useNextParamInLambda.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/ir/irText/declarations/provideDelegate")
@@ -745,6 +750,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("breakContinueInLoopHeader.kt")
         public void testBreakContinueInLoopHeader() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/breakContinueInLoopHeader.kt");
+        }
+
+        @TestMetadata("breakContinueInWhen.kt")
+        public void testBreakContinueInWhen() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/breakContinueInWhen.kt");
         }
 
         @TestMetadata("callWithReorderedArguments.kt")

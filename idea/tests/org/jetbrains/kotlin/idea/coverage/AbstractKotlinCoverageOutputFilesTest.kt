@@ -14,23 +14,19 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-abstract class AbstractKotlinCoverageOutputFilesTest(): KotlinLightCodeInsightFixtureTestCase() {
-    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/coverage/outputFiles"
-
-    override fun getTestDataPath(): String = TEST_DATA_PATH
-
+abstract class AbstractKotlinCoverageOutputFilesTest: KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
-        val kotlinFile = myFixture.configureByFile(path) as KtFile
+        val kotlinFile = myFixture.configureByFile(fileName()) as KtFile
         val outDir = myFixture.tempDirFixture.findOrCreateDir("coverageTestOut")
         try {
-            FileUtil.loadLines(File(path.replace(".kt", ".classes.txt"))).forEach {
+            FileUtil.loadLines(File(testPath().replace(".kt", ".classes.txt"))).forEach {
                 runWriteAction {
                     createEmptyFile(outDir, it)
                 }
             }
 
             val actualClasses = KotlinCoverageExtension.collectGeneratedClassQualifiedNames(outDir, kotlinFile)
-            KotlinTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.txt")), actualClasses!!.joinToString("\n"))
+            KotlinTestUtils.assertEqualsToFile(File(testPath().replace(".kt", ".expected.txt")), actualClasses!!.joinToString("\n"))
         }
         finally {
             runWriteAction {

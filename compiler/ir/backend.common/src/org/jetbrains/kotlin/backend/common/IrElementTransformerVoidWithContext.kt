@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 
@@ -71,7 +68,15 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
         return result
     }
 
+    final override fun visitScript(declaration: IrScript): IrStatement {
+        scopeStack.push(createScope(declaration))
+        val result = visitScriptNew(declaration)
+        scopeStack.pop()
+        return result
+    }
+
     protected val currentFile get() = scopeStack.lastOrNull { it.irElement is IrFile }!!.irElement as IrFile
+    protected val currentScript get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrScriptSymbol }
     protected val currentClass get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrClassSymbol }
     protected val currentFunction get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrFunctionSymbol }
     protected val currentProperty get() = scopeStack.lastOrNull { it.scope.scopeOwnerSymbol is IrPropertySymbol }
@@ -101,6 +106,10 @@ abstract class IrElementTransformerVoidWithContext : IrElementTransformerVoid() 
 
     open fun visitFieldNew(declaration: IrField): IrStatement {
         return super.visitField(declaration)
+    }
+
+    open fun visitScriptNew(declaration: IrScript): IrStatement {
+        return super.visitScript(declaration)
     }
 }
 

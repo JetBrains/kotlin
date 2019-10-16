@@ -21,7 +21,7 @@ import java.io.File
 
 abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
-        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(backend, wholeFile)
+        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(backend, wholeFile, ignoreBackendDirectivePrefix)
         val (factory1, factory2) = doTwoFileTest(
             files.filter { it.name.endsWith(".kt") },
             !isIgnored
@@ -38,4 +38,6 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKot
             throw e
         }
     }
+
+    override fun getIgnoreBackendDirectivePrefix(): String = "// IGNORE_BACKEND_MULTI_MODULE: "
 }

@@ -48,10 +48,20 @@ interface KotlinTarget : Named, HasAttributes {
     fun mavenPublication(action: Closure<Unit>)
     fun mavenPublication(action: Action<MavenPublication>)
 
-    fun attributes(configure: AttributeContainer.() -> Unit) = configure(attributes)
+    fun attributes(configure: AttributeContainer.() -> Unit) = attributes.configure()
     fun attributes(configure: Closure<*>) = attributes { ConfigureUtil.configure(configure, this) }
 
     val preset: KotlinTargetPreset<out KotlinTarget>?
 
     override fun getName(): String = targetName
+}
+
+interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinTargetTestRun<E>> : KotlinTarget {
+    /** The container with the test run executions.
+     * A target may automatically create and configure a test run by the name [DEFAULT_TEST_RUN_NAME]. */
+    val testRuns: NamedDomainObjectContainer<T>
+
+    companion object {
+        const val DEFAULT_TEST_RUN_NAME = "test"
+    }
 }

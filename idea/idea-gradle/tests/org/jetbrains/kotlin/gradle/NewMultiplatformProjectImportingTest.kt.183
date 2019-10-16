@@ -602,6 +602,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             exhaustiveModuleList,
             exhaustiveSourceSourceRootList,
             exhaustiveDependencyList,
+            false,
             body)
     }
 

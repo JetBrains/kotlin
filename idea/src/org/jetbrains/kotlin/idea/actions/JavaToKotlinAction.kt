@@ -48,6 +48,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
+import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -105,6 +106,7 @@ class JavaToKotlinAction : AnAction() {
                         virtualFile.pathBeforeJ2K = virtualFile.path
                         virtualFile.rename(this, fileName)
                     }
+                    result += virtualFile
                 } catch (e: IOException) {
                     MessagesEx.error(psiFile.project, e.message ?: "").showLater()
                 }
@@ -165,7 +167,7 @@ class JavaToKotlinAction : AnAction() {
             ) return emptyList()
 
 
-            var externalCodeUpdate: (() -> Unit)? = null
+            var externalCodeUpdate: ((List<KtFile>) -> Unit)? = null
 
             if (enableExternalCodeProcessing && converterResult!!.externalCodeProcessing != null) {
                 val question =
@@ -196,23 +198,26 @@ class JavaToKotlinAction : AnAction() {
                 CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
 
                 val newFiles = saveResults(javaFiles, converterResult!!.results)
+                    .map { it.toPsiFile(project) as KtFile }
+                    .onEach { it.commitAndUnblockDocument() }
 
-                externalCodeUpdate?.invoke()
+                externalCodeUpdate?.invoke(newFiles)
 
                 PsiDocumentManager.getInstance(project).commitAllDocuments()
 
                 newFiles.singleOrNull()?.let {
-                    FileEditorManager.getInstance(project).openFile(it, true)
+                    FileEditorManager.getInstance(project).openFile(it.virtualFile, true)
                 }
 
-                newFiles.map { it.toPsiFile(project) as KtFile }
+                newFiles
             }
         }
     }
 
     override fun actionPerformed(e: AnActionEvent) {
         val javaFiles = selectedJavaFiles(e).filter { it.isWritable }.toList()
-        val project = CommonDataKeys.PROJECT.getData(e.dataContext)!!
+        val project = CommonDataKeys.PROJECT.getData(e.dataContext) ?: return
+        val module = e.getData(LangDataKeys.MODULE) ?: return
 
         if (javaFiles.isEmpty()) {
             val statusBar = WindowManager.getInstance().getStatusBar(project)
@@ -222,8 +227,6 @@ class JavaToKotlinAction : AnAction() {
                 .showInCenterOf(statusBar.component)
         }
 
-
-        val module = e.getData(LangDataKeys.MODULE)!!
         if (!J2kConverterExtension.extension().doCheckBeforeConversion(project, module)) return
 
         val firstSyntaxError = javaFiles.asSequence().map { PsiTreeUtil.findChildOfType(it, PsiErrorElement::class.java) }.firstOrNull()
@@ -261,6 +264,7 @@ class JavaToKotlinAction : AnAction() {
         if (isRunningInCidrIde) return false
         val virtualFiles = e.getData(CommonDataKeys.VIRTUAL_FILE_ARRAY) ?: return false
         val project = e.project ?: return false
+        e.getData(LangDataKeys.MODULE) ?: return false
         return isAnyJavaFileSelected(project, virtualFiles)
     }
 

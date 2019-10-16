@@ -134,6 +134,11 @@ public class CommonConstraintCollectorTestGenerated extends AbstractCommonConstr
         runTest("nj2k/testData/inference/common/memberCall.kt");
     }
 
+    @TestMetadata("newExpression.kt")
+    public void testNewExpression() throws Exception {
+        runTest("nj2k/testData/inference/common/newExpression.kt");
+    }
+
     @TestMetadata("returnFromLambda.kt")
     public void testReturnFromLambda() throws Exception {
         runTest("nj2k/testData/inference/common/returnFromLambda.kt");

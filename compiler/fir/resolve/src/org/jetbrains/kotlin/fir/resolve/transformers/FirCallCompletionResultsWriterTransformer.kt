@@ -9,17 +9,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substituteOrNull
+import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeProjectionWithVarianceImpl
@@ -90,21 +88,28 @@ class FirCallCompletionResultsWriterTransformer(
                         val typeRef = argument.typeRef as FirResolvedTypeRef
                         FirTypeProjectionWithVarianceImpl(
                             argument.psi,
-                            argument.variance,
-                            typeRef.withReplacedConeType(type)
+                            typeRef.withReplacedConeType(type),
+                            argument.variance
                         )
                     }
                     else -> {
                         FirTypeProjectionWithVarianceImpl(
                             argument?.psi,
-                            Variance.INVARIANT,
-                            FirResolvedTypeRefImpl(null, type, emptyList())
+                            FirResolvedTypeRefImpl(null, type),
+                            Variance.INVARIANT
                         )
                     }
                 }
             }
 
-        val typeRef = typeCalculator.tryCalculateReturnType(declaration)
+        val typeRef = typeCalculator.tryCalculateReturnType(declaration).let {
+            if (functionCall.safe) {
+                val nullableType = it.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
+                it.withReplacedConeType(nullableType)
+            } else {
+                it
+            }
+        }
 
         val initialType = subCandidate.substitutor.substituteOrNull(typeRef.type)
         val finalType = finalSubstitutor.substituteOrNull(initialType)
@@ -118,7 +123,9 @@ class FirCallCompletionResultsWriterTransformer(
                 calleeReference.psi,
                 calleeReference.name,
                 calleeReference.candidateSymbol
-            )
+            ),
+            dispatchReceiver = subCandidate.dispatchReceiverExpression(),
+            extensionReceiver = subCandidate.extensionReceiverExpression()
         ).compose()
 
     }
@@ -126,7 +133,7 @@ class FirCallCompletionResultsWriterTransformer(
     override fun transformAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         data: Nothing?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): CompositeTransformResult<FirStatement> {
         val initialType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         if (initialType != null) {
             val finalType = finalSubstitutor.substituteOrNull(initialType)
@@ -137,7 +144,7 @@ class FirCallCompletionResultsWriterTransformer(
 
             anonymousFunction.replaceTypeRef(anonymousFunction.constructFunctionalTypeRef(session))
         }
-        return super.transformAnonymousFunction(anonymousFunction, data)
+        return transformElement(anonymousFunction, data)
     }
 
     override fun transformBlock(block: FirBlock, data: Nothing?): CompositeTransformResult<FirStatement> {
@@ -147,7 +154,7 @@ class FirCallCompletionResultsWriterTransformer(
             val resultType = block.resultType.withReplacedConeType(finalType)
             block.replaceTypeRef(resultType)
         }
-        return super.transformBlock(block, data)
+        return transformElement(block, data)
     }
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Nothing?): CompositeTransformResult<FirStatement> {

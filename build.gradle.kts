@@ -6,14 +6,13 @@ import proguard.gradle.ProGuardTask
 
 buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
+    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
-    // when updating please also update JPS artifacts configuration: https://jetbrains.quip.com/zzGUAYSJ6gv3/JPS-Build-update-bootstrap
-    kotlinBootstrapFrom(BootstrapOption.TeamCity("1.3.60-dev-770", onlySuccessBootstrap = false))
+    kotlinBootstrapFrom(BootstrapOption.BintrayBootstrap("1.3.60-dev-770", cacheRedirectorEnabled))
 
     repositories {
         bootstrapKotlinRepo?.let(::maven)
 
-        val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
         if (cacheRedirectorEnabled) {
             maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2")
         } else {
@@ -170,7 +169,7 @@ extra["versions.trove4j"] = "1.0.20181211"
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.3.50-dev-11052"
+    extra["versions.kotlin-native"] = "1.3.60-eap-12915"
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -216,6 +215,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:ir.serialization.js",
     ":kotlin-util-io",
     ":kotlin-util-klib",
+    ":kotlin-util-klib-metadata",
     ":compiler:backend-common",
     ":compiler:backend",
     ":compiler:plugin-api",
@@ -235,6 +235,7 @@ extra["compilerModules"] = arrayOf(
     ":core:metadata.jvm",
     ":core:descriptors",
     ":core:descriptors.jvm",
+    ":core:descriptors.runtime",
     ":core:deserialization",
     ":core:util.runtime",
     ":core:type-system",
@@ -250,9 +251,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib-js",
-    // Local builds are disabled at the request of the lib team
-    // TODO: Enable when tests are fixed
-    ":kotlin-stdlib-js-ir".takeIf { isTeamcityBuild },
+    ":kotlin-stdlib-js-ir",
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-test:kotlin-test-common",
@@ -501,6 +500,13 @@ tasks {
         dependsOn(":plugins:jvm-abi-gen:test")
     }
 
+    register("jvmCompilerIntegrationTest") {
+        dependsOn(
+            ":kotlin-compiler-embeddable:test",
+            ":kotlin-compiler-client-embeddable:test"
+        )
+    }
+
     register("jsCompilerTest") {
         dependsOn(":js:js.tests:test")
         dependsOn(":js:js.tests:runMocha")
@@ -516,11 +522,17 @@ tasks {
         dependsOn(":compiler:fir:fir2ir:test")
         dependsOn(":compiler:fir:lightTree:test")
     }
+    
+    register("compilerFrontendVisualizerTest") {
+        dependsOn("compiler:visualizer:test")
+    }
 
     register("scriptingTest") {
         dependsOn("dist")
         dependsOn(":kotlin-script-util:test")
         dependsOn(":kotlin-scripting-compiler:test")
+        dependsOn(":kotlin-scripting-common:test")
+        dependsOn(":kotlin-scripting-jvm:test")
         dependsOn(":kotlin-scripting-jvm-host-test:test")
         dependsOn(":kotlin-scripting-jsr223-test:test")
         dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
@@ -538,6 +550,8 @@ tasks {
         dependsOn(":kotlin-build-common:test")
         dependsOn(":compiler:incremental-compilation-impl:test")
         dependsOn(":core:descriptors.runtime:test")
+
+        dependsOn("jvmCompilerIntegrationTest")
     }
 
     register("toolsTest") {
@@ -572,6 +586,14 @@ tasks {
         dependsOn(":jps-plugin:test")
     }
 
+    register("konan-tests") {
+        dependsOn("dist")
+        dependsOn(
+            ":kotlin-native:kotlin-native-library-reader:test",
+            ":kotlin-native:commonizer:test"
+        )
+    }
+
     register("idea-plugin-main-tests") {
         dependsOn("dist")
         dependsOn(":idea:test")
@@ -588,7 +610,8 @@ tasks {
             ":idea:jvm-debugger:jvm-debugger-core:test",
             ":idea:jvm-debugger:jvm-debugger-evaluation:test",
             ":idea:jvm-debugger:jvm-debugger-sequence:test",
-            ":idea:jvm-debugger:eval4j:test"
+            ":idea:jvm-debugger:eval4j:test",
+            ":idea:scripting-support:test"
         )
     }
 
@@ -620,7 +643,8 @@ tasks {
             ":plugins:uast-kotlin:test",
             ":kotlin-annotation-processing-gradle:test",
             ":kotlinx-serialization-compiler-plugin:test",
-            ":kotlinx-serialization-ide-plugin:test"
+            ":kotlinx-serialization-ide-plugin:test",
+            ":idea:jvm-debugger:jvm-debugger-test:test"
         )
     }
 
@@ -629,6 +653,7 @@ tasks {
         dependsOn(
             "idea-plugin-tests",
             "jps-tests",
+            "konan-tests",
             "plugins-tests",
             "android-ide-tests",
             ":generators:test"

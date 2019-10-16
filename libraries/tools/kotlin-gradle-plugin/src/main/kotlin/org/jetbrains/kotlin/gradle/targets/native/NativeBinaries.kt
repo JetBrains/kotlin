@@ -32,6 +32,9 @@ sealed class NativeBinary(
     var compilation: KotlinNativeCompilation
 ) : Named {
 
+    internal val konanTarget: KonanTarget
+        get() = compilation.konanTarget
+
     val target: KotlinNativeTarget
         get() = compilation.target
 
@@ -58,7 +61,11 @@ sealed class NativeBinary(
     }
 
     /** Additional arguments passed to the Kotlin/Native compiler. */
-    var freeCompilerArgs: MutableList<String> = mutableListOf()
+    var freeCompilerArgs: List<String>
+        get() = linkTask.kotlinOptions.freeCompilerArgs
+        set(value) {
+            linkTask.kotlinOptions.freeCompilerArgs = value
+        }
 
     // Link task access.
     val linkTaskName: String
@@ -116,7 +123,7 @@ class Executable constructor(
      * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
      */
     val runTaskName: String?
-        get() = if (target.konanTarget in listOf(KonanTarget.MACOS_X64, KonanTarget.LINUX_X64, KonanTarget.MINGW_X64)) {
+        get() = if (konanTarget in listOf(KonanTarget.MACOS_X64, KonanTarget.LINUX_X64, KonanTarget.MINGW_X64)) {
             lowerCamelCaseName("run", name, compilation.target.targetName)
         } else {
             null
@@ -211,12 +218,7 @@ class Framework(
     /**
      * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
      */
-    var embedBitcode: BitcodeEmbeddingMode =
-        if (target.konanTarget == KonanTarget.IOS_ARM64 || target.konanTarget == KonanTarget.IOS_ARM32) {
-            buildType.iosEmbedBitcode
-        } else {
-            BitcodeEmbeddingMode.DISABLE
-        }
+    var embedBitcode: BitcodeEmbeddingMode = buildType.embedBitcode(konanTarget)
 
     /**
      * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].

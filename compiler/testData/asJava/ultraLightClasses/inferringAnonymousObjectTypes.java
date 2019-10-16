@@ -6,11 +6,27 @@ public final class Prop /* Prop*/ {
 
 }
 
+final class null /* null*/ {
+  @null()
+  public static final java.lang.Object INSTANCE;
+
+  private  ();
+
+}
+
 public final class Fun /* Fun*/ {
   @null()
   public  Fun();
 
   private final java.lang.Object someFun();
+
+}
+
+final class null /* null*/ {
+  @null()
+  public static final java.lang.Object INSTANCE;
+
+  private  ();
 
 }
 
@@ -22,6 +38,19 @@ public final class ArrayOfAnonymous /* ArrayOfAnonymous*/ {
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.Object[] getA1();
+
+}
+
+final class null /* null*/ {
+  @null()
+  public static final java.lang.Object INSTANCE;
+
+  private static final java.lang.String fy /* constant value text */;
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getFy();
+
+  private  ();
 
 }
 
@@ -37,6 +66,17 @@ final class C /* C*/ {
   public final kotlin.jvm.functions.Function0<java.lang.Object> getInitChild();
 
   public final int getY();
+
+}
+
+final class null /* null*/ {
+  @null()
+  public static final java.lang.Object INSTANCE;
+
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.String toString();
+
+  private  ();
 
 }
 
@@ -60,6 +100,19 @@ public final class Sub /* Sub*/ extends Super {
 
 }
 
+final class null /* null*/ {
+  @null()
+  public static final java.lang.Object INSTANCE;
+
+  private static final java.lang.String fy /* constant value text */;
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getFy();
+
+  private  ();
+
+}
+
 public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
   private final java.lang.Runnable x;
 
@@ -71,6 +124,26 @@ public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.Runnable getX();
+
+}
+
+final class null /* null*/ implements java.lang.Runnable {
+  @null()
+  public static final java.lang.Runnable INSTANCE;
+
+  private  ();
+
+  public void run();
+
+}
+
+final class null /* null*/ implements java.lang.Runnable {
+  @null()
+  public static final java.lang.Runnable INSTANCE;
+
+  private  ();
+
+  public void run();
 
 }
 
@@ -88,5 +161,25 @@ public final class InvalidPublicSupertype /* InvalidPublicSupertype*/ {
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.Runnable getX();
+
+}
+
+final class null /* null*/ implements I, java.lang.Runnable {
+  @null()
+  public static final java.lang.Runnable INSTANCE;
+
+  private  ();
+
+  public void run();
+
+}
+
+final class null /* null*/ implements I, java.lang.Runnable {
+  @null()
+  public static final java.lang.Runnable INSTANCE;
+
+  private  ();
+
+  public void run();
 
 }

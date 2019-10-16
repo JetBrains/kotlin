@@ -25,7 +25,7 @@ class KotlinType private constructor(
     /**
      * Constructs KotlinType from reflected [kclass]
      */
-    constructor(kclass: KClass<*>) : this(kclass.qualifiedName!!, kclass)
+    constructor(kclass: KClass<*>) : this(kclass.java.name, kclass)
 
     // TODO: implement other approach for non-class types
     /**

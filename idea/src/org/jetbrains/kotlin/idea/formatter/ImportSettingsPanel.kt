@@ -70,9 +70,9 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     private val starImportPackageTable = ImportLayoutPanel.createTableForPackageEntries(starImportPackageEntryTable, dummyImportLayoutPanel)
 
     private val nameCountToUseStarImportSelector = NameCountToUseStarImportSelector(
-        "Top-level Symbols", KotlinCodeStyleSettings.DEFAULT.NAME_COUNT_TO_USE_STAR_IMPORT)
+        "Top-level Symbols", KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT)
     private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector(
-        "Java Statics and Enum Members", KotlinCodeStyleSettings.DEFAULT.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS)
+        "Java Statics and Enum Members", KotlinCodeStyleSettings.defaultSettings().NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS)
 
     init {
         layout = BorderLayout()

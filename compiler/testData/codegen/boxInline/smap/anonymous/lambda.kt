@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // FILE: 1.kt
 
 package builders
@@ -38,7 +39,7 @@ Kotlin
 + 1 1.kt
 builders/_1Kt$call$1
 *L
-1#1,11:1
+1#1,12:1
 *E
 
 // FILE: 2.smap
@@ -54,7 +55,7 @@ _2Kt
 builders/_1Kt
 *L
 1#1,21:1
-6#2:22
+7#2:22
 *E
 *S KotlinDebug
 *F
@@ -74,6 +75,6 @@ builders/_1Kt$call$1
 + 2 2.kt
 _2Kt
 *L
-1#1,11:1
-10#2,2:12
+1#1,12:1
+10#2,2:13
 *E

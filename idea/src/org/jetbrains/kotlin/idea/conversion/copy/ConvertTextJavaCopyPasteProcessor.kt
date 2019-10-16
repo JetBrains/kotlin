@@ -33,10 +33,12 @@ import com.intellij.util.LocalTimeCounter
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.j2k.ConversionType
+import org.jetbrains.kotlin.j2k.J2kConverterExtension
 import org.jetbrains.kotlin.j2k.logJ2kConversionStatistics
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -107,10 +109,10 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         val text = (values.single() as MyTransferableData).text
 
         val psiDocumentManager = PsiDocumentManager.getInstance(project)
-        psiDocumentManager.commitDocument(editor.document)
         val targetFile = psiDocumentManager.getPsiFile(editor.document) as? KtFile ?: return
-        val useNewJ2k = checkUseNewJ2k(targetFile)
+        psiDocumentManager.commitDocument(editor.document)
 
+        val useNewJ2k = checkUseNewJ2k(targetFile)
         val targetModule = targetFile.module
         val pasteTarget = detectPasteTarget(targetFile, bounds.startOffset, bounds.endOffset) ?: return
         val conversionContext = detectConversionContext(pasteTarget.pasteContext, text, project) ?: return
@@ -140,11 +142,19 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
                 val endOffsetAfterCopy = startOffset + convertedText.length
                 editor.caretModel.moveToOffset(endOffsetAfterCopy)
 
-                TextRange(startOffset, startOffset + convertedText.length)
+                editor.document.createRangeMarker(startOffset, startOffset + convertedText.length)
             }
 
             psiDocumentManager.commitAllDocuments()
-            runPostProcessing(project, targetFile, newBounds, convertedResult.converterContext, useNewJ2k)
+
+            if (useNewJ2k) {
+                val postProcessor = J2kConverterExtension.extension(useNewJ2k).createPostProcessor(formatCode = true)
+                convertedResult.importsToAdd.forEach { fqName ->
+                    postProcessor.insertImport(targetFile, fqName)
+                }
+            }
+
+            runPostProcessing(project, targetFile, newBounds.range, convertedResult.converterContext, useNewJ2k)
 
             conversionPerformed = true
         }

@@ -6,81 +6,61 @@
 package org.jetbrains.kotlin.nj2k.inference.common
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.idea.refactoring.isAbstract
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtTypeElement
+import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 import org.jetbrains.kotlin.types.KotlinType
 
 sealed class TypeVariable {
     abstract val classReference: ClassReference
     abstract val typeParameters: List<TypeParameter>
+    abstract val owner: TypeVariableOwner
     abstract var state: State
 }
 
+sealed class TypeVariableOwner
+
+class FunctionParameter(val owner: KtFunction) : TypeVariableOwner()
+class FunctionReturnType(val function: KtFunction) : TypeVariableOwner()
+class Property(val property: KtProperty) : TypeVariableOwner()
+object TypeArgument : TypeVariableOwner()
+object OtherTarget : TypeVariableOwner()
+
+
 sealed class TypeElementData {
     abstract val typeElement: KtTypeElement
+    abstract val type: KotlinType
 }
 
-data class TypeElementDataImpl(override val typeElement: KtTypeElement) : TypeElementData()
+data class TypeElementDataImpl(
+    override val typeElement: KtTypeElement,
+    override val type: KotlinType
+) : TypeElementData()
+
 data class TypeParameterElementData(
     override val typeElement: KtTypeElement,
+    override val type: KotlinType,
     val typeParameterDescriptor: TypeParameterDescriptor
 ) : TypeElementData()
 
-data class TypeElementBasedTypeVariable(
+class TypeElementBasedTypeVariable(
     override val classReference: ClassReference,
     override val typeParameters: List<TypeParameter>,
     val typeElement: TypeElementData,
+    override val owner: TypeVariableOwner,
     override var state: State
-) : TypeVariable() {
+) : TypeVariable()
 
-    //ignore state as it is mutable
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as TypeElementBasedTypeVariable
-
-        if (classReference != other.classReference) return false
-        if (typeParameters != other.typeParameters) return false
-        if (typeElement != other.typeElement) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = classReference.hashCode()
-        result = 31 * result + typeParameters.hashCode()
-        result = 31 * result + typeElement.hashCode()
-        return result
-    }
-}
-
-data class TypeBasedTypeVariable(
+class TypeBasedTypeVariable(
     override val classReference: ClassReference,
     override val typeParameters: List<TypeParameter>,
     val type: KotlinType,
     override var state: State
 ) : TypeVariable() {
-
-    //ignore state as it is mutable
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as TypeBasedTypeVariable
-
-        if (classReference != other.classReference) return false
-        if (typeParameters != other.typeParameters) return false
-        if (type != other.type) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = classReference.hashCode()
-        result = 31 * result + typeParameters.hashCode()
-        result = 31 * result + type.hashCode()
-        return result
-    }
+    override val owner = OtherTarget
 }
 
 val TypeVariable.isFixed: Boolean

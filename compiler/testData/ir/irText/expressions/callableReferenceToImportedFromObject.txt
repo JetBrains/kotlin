@@ -6,7 +6,7 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:a visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           CONST String type=kotlin.String value=""
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> ($this:test.Foo) returnType:kotlin.String
@@ -14,7 +14,7 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
         $this: VALUE_PARAMETER name:<this> type:test.Foo
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.String declared in test.Foo'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: test.Foo declared in test.Foo.<get-a>' type=test.Foo origin=null
     FUN name:foo visibility:public modality:FINAL <> ($this:test.Foo) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:test.Foo
@@ -35,7 +35,7 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KProperty0<kotlin.String> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KProperty0<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'public final a: kotlin.String [val]' field=null getter='public final fun <get-a> (): kotlin.String declared in test.Foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=test.Foo
@@ -43,9 +43,9 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.reflect.KProperty0<kotlin.String> declared in test'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KProperty0<kotlin.String> visibility:public [final,static]' type=kotlin.reflect.KProperty0<kotlin.String> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KProperty0<kotlin.String> visibility:private [final,static]' type=kotlin.reflect.KProperty0<kotlin.String> origin=null
   PROPERTY name:test1a visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1a type:kotlin.reflect.KProperty0<kotlin.String> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1a type:kotlin.reflect.KProperty0<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'public final a: kotlin.String [val]' field=null getter='public final fun <get-a> (): kotlin.String declared in test.Foo' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=test.Foo
@@ -53,9 +53,9 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
       correspondingProperty: PROPERTY name:test1a visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1a> (): kotlin.reflect.KProperty0<kotlin.String> declared in test'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1a type:kotlin.reflect.KProperty0<kotlin.String> visibility:public [final,static]' type=kotlin.reflect.KProperty0<kotlin.String> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1a type:kotlin.reflect.KProperty0<kotlin.String> visibility:private [final,static]' type=kotlin.reflect.KProperty0<kotlin.String> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KFunction0<kotlin.String> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KFunction0<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun foo (): kotlin.String declared in test.Foo' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=test.Foo
@@ -63,9 +63,9 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.reflect.KFunction0<kotlin.String> declared in test'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KFunction0<kotlin.String> visibility:public [final,static]' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KFunction0<kotlin.String> visibility:private [final,static]' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
   PROPERTY name:test2a visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2a type:kotlin.reflect.KFunction0<kotlin.String> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2a type:kotlin.reflect.KFunction0<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun foo (): kotlin.String declared in test.Foo' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=test.Foo
@@ -73,4 +73,4 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
       correspondingProperty: PROPERTY name:test2a visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2a> (): kotlin.reflect.KFunction0<kotlin.String> declared in test'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2a type:kotlin.reflect.KFunction0<kotlin.String> visibility:public [final,static]' type=kotlin.reflect.KFunction0<kotlin.String> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2a type:kotlin.reflect.KFunction0<kotlin.String> visibility:private [final,static]' type=kotlin.reflect.KFunction0<kotlin.String> origin=null

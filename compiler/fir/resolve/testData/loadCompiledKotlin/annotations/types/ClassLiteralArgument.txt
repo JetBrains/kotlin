@@ -28,7 +28,7 @@ public final class InnerGeneric<A, B> : R|kotlin/Any| {
     public constructor<A, B>(): R|test/InnerGeneric<A, B>|
 
     public final inner class Inner<in C, D : R|A|> : R|kotlin/Any| {
-        public constructor<C, D : R|A|>(): R|test/InnerGeneric.Inner<C, D>|
+        public constructor<in C, D : R|A|>(): R|test/InnerGeneric.Inner<C, D>|
 
     }
 

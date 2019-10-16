@@ -1,1 +1,1 @@
-internal abstract val noofGears: Int
+abstract val noofGears: Int

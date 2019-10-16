@@ -26,11 +26,12 @@ abstract class AbstractNullabilityInferenceTest : AbstractConstraintCollectorTes
         val typeEnhancer = NullabilityBoundTypeEnhancer(resolutionFacade)
         return InferenceFacade(
             object : ContextCollector(resolutionFacade) {
-                override fun ClassReference.getState(typeElement: KtTypeElement?): State? =
+                override fun ClassReference.getState(typeElement: KtTypeElement?): State =
                     State.UNKNOWN
             },
             ConstraintsCollectorAggregator(
                 resolutionFacade,
+                NullabilityConstraintBoundProvider(),
                 listOf(
                     CommonConstraintsCollector(),
                     CallExpressionConstraintCollector(),
@@ -40,6 +41,7 @@ abstract class AbstractNullabilityInferenceTest : AbstractConstraintCollectorTes
             ),
             BoundTypeCalculatorImpl(resolutionFacade, typeEnhancer),
             NullabilityStateUpdater(),
+            NullabilityDefaultStateProvider(),
             renderDebugTypes = true
         )
     }
@@ -69,4 +71,5 @@ abstract class AbstractNullabilityInferenceTest : AbstractConstraintCollectorTes
     }
 
     override fun getProjectDescriptor() =
-        descriptorByFileDirective(File(testDataPath, fileName()), isAllFilesPresentInTest())}
+        descriptorByFileDirective(File(testDataPath, fileName()), isAllFilesPresentInTest())
+}

@@ -1,5 +1,5 @@
 open class A<T> {
-    open fun foo(): /*T3@*/Map</*T0@*/T, /*T2@*/List</*T1@*/T>>? {
+    open fun foo(): /*T3@*/Map</*T0@*/T, /*T2@*/List</*T1@*/T>?>? {
         TODO()
     }
 
@@ -9,7 +9,7 @@ open class A<T> {
 }
 
 class B : A</*T10@*/Int>() {
-    override fun foo(): /*T8@*/Map</*T5@*/Int, /*T7@*/List</*T6@*/Int>>? {
+    override fun foo(): /*T8@*/Map</*T5@*/Int, /*T7@*/List</*T6@*/Int>?>? {
         return null/*NULL!!U*/
     }
     override fun bar(): /*T9@*/Int {

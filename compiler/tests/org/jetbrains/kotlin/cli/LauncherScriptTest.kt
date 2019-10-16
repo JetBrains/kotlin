@@ -79,6 +79,33 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    fun testKotlincJvmScriptWithClassPathFromSysProp() {
+        runProcess(
+            "kotlinc-jvm",
+            "-script",
+            "$testDataDirectory/classPathPropTest.kts",
+            expectedStdout = "kotlin-compiler.jar\n"
+        )
+    }
+
+    fun testKotlinJvmContextClassLoader() {
+        val kotlinTestJar = File(PathUtil.kotlinPathsForDistDirectory.homePath, "lib/kotlin-test.jar")
+        assertTrue("kotlin-main-kts.jar not found, run dist task: ${kotlinTestJar.absolutePath}", kotlinTestJar.exists())
+        runProcess(
+            "kotlinc",
+            "-cp", kotlinTestJar.path,
+            "$testDataDirectory/contextClassLoaderTester.kt",
+            "-d", tmpdir.path
+        )
+
+        runProcess(
+            "kotlin",
+            "-cp", listOf(tmpdir.path, kotlinTestJar.path).joinToString(File.pathSeparator),
+            "ContextClassLoaderTester",
+            expectedStdout = "${kotlinTestJar.name}\n"
+        )
+    }
+
     fun testKotlincJsSimple() {
         runProcess(
                 "kotlinc-js",

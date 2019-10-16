@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
@@ -20,7 +20,7 @@ abstract class FirScope {
     open fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (ConeClassifierSymbol) -> Boolean
+        processor: (FirClassifierSymbol<*>) -> Boolean
     ): Boolean = true
 
     open fun processFunctionsByName(
@@ -39,7 +39,7 @@ abstract class FirScope {
 inline fun FirScope.processClassifiersByNameWithAction(
     name: Name,
     position: FirPosition,
-    crossinline processor: (ConeClassifierSymbol) -> ProcessorAction
+    crossinline processor: (FirClassifierSymbol<*>) -> ProcessorAction
 ): ProcessorAction {
     val result = processClassifiersByName(name, position) {
         processor(it).next()
@@ -54,15 +54,17 @@ enum class FirPosition(val allowTypeParameters: Boolean = true) {
 
 enum class ProcessorAction {
     STOP,
-    NEXT;
+    NEXT,
+    NONE;
 
     operator fun not(): Boolean {
         return when (this) {
             STOP -> true
             NEXT -> false
+            NONE -> false
         }
     }
 
     fun stop() = this == STOP
-    fun next() = this == NEXT
+    fun next() = this != STOP
 }

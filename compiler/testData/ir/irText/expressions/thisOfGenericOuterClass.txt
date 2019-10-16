@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Outer visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Outer visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: T of <root>.Outer declared in <root>.Outer.<init>' type=T of <root>.Outer origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Outer<T of <root>.Outer>) returnType:T of <root>.Outer
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Outer<T of <root>.Outer>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): T of <root>.Outer declared in <root>.Outer'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Outer visibility:public [final]' type=T of <root>.Outer origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Outer visibility:private [final]' type=T of <root>.Outer origin=null
               receiver: GET_VAR '<this>: <root>.Outer<T of <root>.Outer> declared in <root>.Outer.<get-x>' type=<root>.Outer<T of <root>.Outer> origin=null
     CLASS CLASS name:Inner modality:OPEN visibility:public [inner] superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner<T of <root>.Outer>
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:OPEN visibility:public [inner] superTypes:[kotlin.Any]'
       PROPERTY name:y visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final]
+        FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'y: kotlin.Int declared in <root>.Outer.Inner.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner<T of <root>.Outer>) returnType:kotlin.Int
@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner<T of <root>.Outer>
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.Outer.Inner'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 receiver: GET_VAR '<this>: <root>.Outer.Inner<T of <root>.Outer> declared in <root>.Outer.Inner.<get-y>' type=<root>.Outer.Inner<T of <root>.Outer> origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
         overridden:
@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
                   y: CONST Int type=kotlin.Int value=42
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner<kotlin.Int>]'
             PROPERTY name:xx visibility:public modality:FINAL [val]
-              FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:public [final]
+              FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:private [final]
                 EXPRESSION_BODY
                   CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
                     $this: CALL 'public final fun <get-x> (): T of <root>.Outer declared in <root>.Outer' type=kotlin.Int origin=GET_PROPERTY
@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/thisOfGenericOuterClass.kt
                 $this: VALUE_PARAMETER name:<this> type:<root>.test.<no name provided>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='public final fun <get-xx> (): kotlin.Int declared in <root>.test.<no name provided>'
-                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                       receiver: GET_VAR '<this>: <root>.test.<no name provided> declared in <root>.test.<no name provided>.<get-xx>' type=<root>.test.<no name provided> origin=null
             PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [val]
               FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner<kotlin.Int>) returnType:kotlin.Int

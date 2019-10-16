@@ -1,6 +1,5 @@
 class C {
     private var x = ""
-
     fun getX(): String {
         return x
     }
@@ -10,7 +9,7 @@ class C {
         this.x = x
     }
 
-    internal fun foo() {
+    fun foo() {
         x = "a"
     }
 }

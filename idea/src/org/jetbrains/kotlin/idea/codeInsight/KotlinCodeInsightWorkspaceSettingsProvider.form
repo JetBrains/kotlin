@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form bind-to-class="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettingsProvider" version="1" xmlns="http://www.intellij.com/uidesigner/form/">
+  <grid column-count="1" hgap="-1" id="ccd61" layout-manager="GridLayoutManager" row-count="1" same-size-horizontally="false" same-size-vertically="false" vgap="-1">
+    <margin bottom="0" left="0" right="0" top="0"/>
+    <constraints/>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid binding="myPanel" column-count="1" hgap="-1" id="ccd62" layout-manager="GridLayoutManager" row-count="2" same-size-horizontally="false" same-size-vertically="false" vgap="-1">
+        <margin bottom="0" left="0" right="0" top="0"/>
+        <constraints>
+          <grid anchor="9" col-span="1" column="0" fill="0" hsize-policy="0" indent="0" row="0" row-span="1" use-parent-layout="false" vsize-policy="3"/>
+        </constraints>
+        <properties/>
+        <clientProperties>
+          <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
+        </clientProperties>
+        <border title="Kotlin" type="etched"/>
+        <children>
+          <component binding="myAddUnambiguousImportsOnTheFly" class="javax.swing.JCheckBox" default-binding="true" id="ccd64">
+            <constraints>
+              <grid anchor="8" col-span="1" column="0" fill="0" hsize-policy="3" indent="0" row="0" row-span="1" use-parent-layout="false" vsize-policy="0"/>
+            </constraints>
+            <properties>
+              <text key="checkbox.add.unambiguous.imports.on.the.fly" resource-bundle="messages/ApplicationBundle"/>
+            </properties>
+          </component>
+          <component binding="myOptimizeImportsOnTheFly" class="javax.swing.JCheckBox" default-binding="true" id="ccd63">
+            <constraints>
+              <grid anchor="8" col-span="1" column="0" fill="0" hsize-policy="3" indent="0" row="1" row-span="1" use-parent-layout="false" vsize-policy="0"/>
+            </constraints>
+            <properties>
+              <text key="checkbox.optimize.imports.on.the.fly" resource-bundle="messages/ApplicationBundle"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

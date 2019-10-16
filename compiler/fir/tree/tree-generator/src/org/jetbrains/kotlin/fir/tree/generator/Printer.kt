@@ -1,0 +1,725 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.tree.generator
+
+import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
+import org.jetbrains.kotlin.fir.tree.generator.model.*
+import java.io.File
+import java.io.PrintWriter
+import java.util.*
+
+val COPYRIGHT = """
+/*
+ * Copyright 2010-${GregorianCalendar()[Calendar.YEAR]} JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+""".trimIndent()
+
+const val BASE_PACKAGE = "org.jetbrains.kotlin.fir"
+//const val BASE_PATH = "compiler/fir/tree/src/"
+private const val VISITOR_PACKAGE = "org.jetbrains.kotlin.fir.visitors"
+private const val INDENT = "    "
+val GENERATED_MESSAGE = """
+    /*
+     * This file was generated automatically
+     * DO NOT MODIFY IT MANUALLY
+     */
+     """.trimIndent()
+
+fun printElements(builder: AbstractFirTreeBuilder, generationPath: String) {
+    builder.elements.forEach { it.generateCode(generationPath) }
+    builder.elements.flatMap { it.allImplementations }.forEach { it.generateCode(generationPath) }
+
+    printVisitor(builder.elements, generationPath)
+    printVisitorVoid(builder.elements, generationPath)
+    printTransformer(builder.elements, generationPath)
+}
+
+fun PrintWriter.printCopyright() {
+    println(COPYRIGHT)
+    println()
+}
+
+fun PrintWriter.printGeneratedMessage() {
+    println(GENERATED_MESSAGE)
+    println()
+}
+
+fun printVisitor(elements: List<Element>, generationPath: String) {
+    val dir = File(generationPath + VISITOR_PACKAGE.replace(".", "/"))
+    dir.mkdirs()
+    File(dir, "FirVisitor.kt").printWriter().use { printer ->
+        with(printer) {
+            printCopyright()
+            println("package $VISITOR_PACKAGE")
+            println()
+            elements.forEach { println("import ${it.fullQualifiedName}") }
+            println()
+            printGeneratedMessage()
+
+            println("abstract class FirVisitor<out R, in D> {")
+
+            indent()
+            println("abstract fun visitElement(element: FirElement, data: D): R")
+            println()
+            for (element in elements) {
+                if (element == AbstractFirTreeBuilder.baseFirElement) continue
+                with(element) {
+                    indent()
+                    val varName = safeDecapitalizedName
+                    println("open fun ${typeParameters}visit$name($varName: $typeWithArguments, data: D): R${multipleUpperBoundsList()} = visitElement($varName, data)")
+                    println()
+                }
+            }
+            println("}")
+        }
+    }
+}
+
+fun printVisitorVoid(elements: List<Element>, generationPath: String) {
+    val dir = File(generationPath + VISITOR_PACKAGE.replace(".", "/"))
+    dir.mkdirs()
+    File(dir, "FirVisitorVoid.kt").printWriter().use { printer ->
+        with(printer) {
+            printCopyright()
+            println("package $VISITOR_PACKAGE")
+            println()
+            elements.forEach { println("import ${it.fullQualifiedName}") }
+            println()
+            printGeneratedMessage()
+
+            println("abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {")
+
+            indent()
+            println("abstract fun visitElement(element: FirElement)")
+            println()
+            for (element in elements) {
+                if (element == AbstractFirTreeBuilder.baseFirElement) continue
+                with(element) {
+                    indent()
+                    val varName = safeDecapitalizedName
+                    println("open fun ${typeParameters}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()}{")
+                    indent(2)
+                    println("visitElement($varName)")
+                    indent()
+                    println("}")
+                    println()
+                }
+            }
+
+            for (element in elements) {
+                with(element) {
+                    indent()
+                    val varName = safeDecapitalizedName
+                    println("final override fun ${typeParameters}visit$name($varName: $typeWithArguments, data: Nothing?)${multipleUpperBoundsList()}{")
+                    indent(2)
+                    println("visit$name($varName)")
+                    indent()
+                    println("}")
+                    println()
+                }
+            }
+            println("}")
+        }
+    }
+}
+
+fun Element.generateCode(generationPath: String) {
+    val dir = File(generationPath + packageName.replace(".", "/"))
+    dir.mkdirs()
+    val file = File(dir, "$type.kt")
+    file.printWriter().use { printer ->
+        with(printer) {
+            printCopyright()
+            println("package $packageName")
+            println()
+            val imports = collectImports()
+            imports.forEach { println("import $it") }
+            if (imports.isNotEmpty()) {
+                println()
+            }
+            printGeneratedMessage()
+            printElement(this@generateCode)
+        }
+    }
+}
+
+fun Implementation.generateCode(generationPath: String) {
+    val dir = File(generationPath + packageName.replace(".", "/"))
+    dir.mkdirs()
+    val file = File(dir, "$type.kt")
+    file.printWriter().use { printer ->
+        with(printer) {
+            printCopyright()
+            println("package $packageName")
+            println()
+            val imports = collectImports()
+            imports.forEach { println("import $it") }
+            if (imports.isNotEmpty()) {
+                println()
+            }
+            printGeneratedMessage()
+            printImplementation(this@generateCode)
+        }
+    }
+}
+
+fun Implementation.collectImports(): List<String> {
+    return element.collectImportsInternal(
+        listOf(element.fullQualifiedName) + usedTypes.mapNotNull { it.fullQualifiedName } + parents.mapNotNull { it.fullQualifiedName },
+        isImpl = true
+    )
+}
+
+fun Element.collectImports(): List<String> {
+    val baseTypes = parents.mapTo(mutableListOf()) { it.fullQualifiedName }
+    baseTypes += parentsArguments.values.flatMap { it.values }.mapNotNull { it.fullQualifiedName }
+    val isBaseFirElement = this == AbstractFirTreeBuilder.baseFirElement
+    if (isBaseFirElement) {
+        baseTypes += compositeTransformResultType.fullQualifiedName!!
+    }
+    return collectImportsInternal(
+        baseTypes,
+        isImpl = false
+    )
+}
+
+fun Element.collectImportsInternal(base: List<String>, isImpl: Boolean): List<String> {
+    val fqns = base + allFields.mapNotNull { it.fullQualifiedName } +
+            allFields.flatMap { it.arguments.mapNotNull { it.fullQualifiedName } } +
+            typeArguments.flatMap { it.upperBounds.mapNotNull { it.fullQualifiedName } }
+    val realPackageName = if (isImpl) "$packageName.impl." else "$packageName."
+    return fqns.filter { fqn ->
+        fqn.dropLastWhile { it != '.' } != realPackageName
+    }.distinct().sorted() + "$VISITOR_PACKAGE.*"
+}
+
+val Field.isVal: Boolean get() = this is FieldList || (this is FieldWithDefault && origin is FieldList) || !isMutable
+
+fun PrintWriter.printFieldWithDefaultInImplementation(field: Field) {
+    val defaultValue = field.defaultValue
+    indent()
+    print("override ")
+    if (field.isLateinit) {
+        print("lateinit ")
+    }
+    if (field.isVal) {
+        print("val")
+    } else {
+        print("var")
+    }
+    print(" ${field.name}: ${field.mutableType}")
+    if (field.isLateinit) {
+        println()
+        return
+    } else {
+        print(" ")
+    }
+    if (field.withGetter) {
+        if (field.customSetter != null) {
+            println()
+            indent(2)
+        }
+        print("get() ")
+    }
+    requireNotNull(defaultValue) {
+        "No default value for $field"
+    }
+    println("= $defaultValue")
+    field.customSetter?.let {
+        indent(2)
+        println("set(value) {")
+        indent(3)
+        println(it)
+        indent(2)
+        println("}")
+    }
+}
+
+fun PrintWriter.printImplementation(implementation: Implementation) {
+    fun Field.transform() {
+        when (this) {
+            is FieldWithDefault -> origin.transform()
+
+            is FirField ->
+                println("$name = ${name}${call()}transformSingle(transformer, data)")
+
+            is FieldList -> {
+                println("${name}.transformInplace(transformer, data)")
+            }
+
+            else -> throw IllegalStateException()
+        }
+    }
+
+    with(implementation) {
+        print("${kind.title} $type")
+        print(element.typeParameters)
+        val fieldsWithoutDefault = allFields.filter { it.defaultValue == null && !it.isLateinit }
+        val fieldsWithDefault = allFields.filter { it.defaultValue != null || it.isLateinit }
+
+        if (kind != Implementation.Kind.Interface && fieldsWithoutDefault.isNotEmpty()) {
+            println("(")
+            fieldsWithoutDefault.forEachIndexed { i, field ->
+                val end = if (i == fieldsWithoutDefault.size - 1) "" else ","
+                printField(field, isImplementation = true, override = true, end = end)
+            }
+            print(")")
+        }
+
+        print(" : ${element.typeWithArguments}")
+        parents.forEach {
+            print(", ${it.typeWithArguments}")
+        }
+        println(" {")
+
+        if (kind == Implementation.Kind.Interface) {
+            allFields.forEach { printField(it, isImplementation = true, override = true, end = "") }
+        } else {
+            fieldsWithDefault.forEach {
+                printFieldWithDefaultInImplementation(it)
+            }
+            if (fieldsWithDefault.isNotEmpty()) {
+                println()
+            }
+        }
+
+        element.allFields.filter { it.type.contains("Symbol") }
+            .takeIf { it.isNotEmpty() && kind != Implementation.Kind.Interface && !element.type.contains("Reference")}
+            ?.let { symbolFields ->
+                indent(1)
+                println("init {")
+                for (symbolField in symbolFields) {
+                    indent(2)
+                    println("${symbolField.name}${symbolField.call()}bind(this)")
+                }
+                indent(1)
+                println("}")
+                println()
+            }
+
+        indent(1)
+        print("override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {")
+
+        fun Field.acceptString(): String = "${name}${call()}accept(visitor, data)"
+
+        if (element.allFirFields.isNotEmpty()) {
+            println()
+            for (field in allFields.filter { it.isFirType }) {
+                if (field.withGetter || !field.needAcceptAndTransform) continue
+                when (field.name) {
+                    "explicitReceiver" -> {
+                        val explicitReceiver = implementation["explicitReceiver"]!!
+                        val dispatchReceiver = implementation["dispatchReceiver"]!!
+                        val extensionReceiver = implementation["extensionReceiver"]!!
+                        println("""
+                |        ${explicitReceiver.acceptString()}
+                |        if (dispatchReceiver !== explicitReceiver) {
+                |            ${dispatchReceiver.acceptString()}
+                |        }
+                |        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
+                |            ${extensionReceiver.acceptString()}
+                |        }
+                    """.trimMargin())
+                    }
+
+                    "dispatchReceiver", "extensionReceiver", "subjectVariable" -> {}
+                    "companionObject" -> {}
+
+                    else -> {
+                        if (type == "FirClassImpl" && field.name == "declarations") {
+                            indent(2)
+                            println("(declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.forEach { it.accept(visitor, data) }")
+                        }
+                        if (type == "FirWhenExpressionImpl" && field.name == "subject") {
+                            println(
+                                """
+            |        if (subjectVariable != null) {
+            |            subjectVariable.accept(visitor, data)
+            |        } else {
+            |            subject?.accept(visitor, data)
+            |        }
+                """.trimMargin()
+                            )
+                        } else {
+                            indent(2)
+                            when (field.origin) {
+                                is FirField -> {
+                                    println(field.acceptString())
+                                }
+
+                                is FieldList -> {
+                                    println("${field.name}.forEach { it.accept(visitor, data) }")
+                                }
+
+                                else -> throw IllegalStateException()
+                            }
+                        }
+                    }
+
+                }
+            }
+            indent()
+        }
+        println("}")
+        println()
+
+        indent()
+        println("override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): $typeWithArguments {")
+        for (field in allFields) {
+            when {
+                !field.isMutable || !field.isFirType || field.withGetter || !field.needAcceptAndTransform -> {}
+                field.name == "explicitReceiver" -> {
+                    val explicitReceiver = implementation["explicitReceiver"]!!
+                    val dispatchReceiver = implementation["dispatchReceiver"]!!
+                    val extensionReceiver = implementation["extensionReceiver"]!!
+                    if (explicitReceiver.isMutable) {
+                        indent(2)
+                        println("explicitReceiver = explicitReceiver${explicitReceiver.call()}transformSingle(transformer, data)")
+                    }
+                    if (dispatchReceiver.isMutable) {
+                        println("""
+                            |        if (dispatchReceiver !== explicitReceiver) {
+                            |            dispatchReceiver = dispatchReceiver.transformSingle(transformer, data)
+                            |        }
+                        """.trimMargin())
+                    }
+                    if (extensionReceiver.isMutable) {
+                        println("""
+                            |        if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
+                            |            extensionReceiver = extensionReceiver.transformSingle(transformer, data)
+                            |        }
+                        """.trimMargin())
+                    }
+                }
+                field.name in setOf("dispatchReceiver", "extensionReceiver") -> {}
+                type == "FirClassImpl" && field.name == "declarations" -> {
+                    indent(2)
+                    println("(declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.transformInplace(transformer, data)")
+                    indent(2)
+                    println("declarations.transformInplace(transformer, data)")
+                }
+                field.name == "companionObject" -> {
+                    indent(2)
+                    println("companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }")
+                }
+                field.needsSeparateTransform -> {
+                    indent(2)
+                    println("transform${field.name.capitalize()}(transformer, data)")
+                }
+                !element.needTransformOtherChildren -> {
+                    indent(2)
+                    field.transform()
+                }
+                else -> {}
+            }
+        }
+        if (element.needTransformOtherChildren) {
+            indent(2)
+            println("transformOtherChildren(transformer, data)")
+        }
+        indent(2)
+        println("return this")
+        indent()
+        println("}")
+
+        for (field in allFields) {
+            if (!field.needsSeparateTransform) continue
+            println()
+            indent()
+            print("override ${field.transformFunctionDeclaration(typeWithArguments)} {")
+            println()
+            if (field.isMutable && field.isFirType) {
+                // TODO: replace with smth normal
+                if (type == "FirWhenExpressionImpl" && field.name == "subject") {
+                    println("""
+            |        if (subjectVariable != null) {
+            |            subjectVariable = subjectVariable?.transformSingle(transformer, data)
+            |        } else {
+            |            subject = subject?.transformSingle(transformer, data)
+            |        }
+                """.trimMargin())
+                } else {
+                    indent(2)
+                    field.transform()
+                }
+            }
+            indent(2)
+            println("return this")
+            indent()
+            println("}")
+        }
+
+        if (element.needTransformOtherChildren) {
+            println()
+            indent()
+            println("override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): $typeWithArguments {")
+            for (field in allFields) {
+                if (!field.isMutable || !field.isFirType || field.name == "subjectVariable") continue
+                if (!field.needsSeparateTransform) {
+                    indent(2)
+                    field.transform()
+                }
+            }
+            indent(2)
+            println("return this")
+            indent()
+            println("}")
+        }
+
+        for (field in allFields.filter { it.withReplace }) {
+            println()
+            indent()
+            print("override ${field.replaceFunctionDeclaration()} {")
+            if (!field.isMutable) {
+                println("}")
+                continue
+            }
+            println()
+            indent(2)
+            val newValue = "new${field.name.capitalize()}"
+            when {
+                field.withGetter -> {
+                }
+
+                field.origin is FieldList -> {
+                    println("${field.name}.clear()")
+                    indent(2)
+                    println("${field.name}.addAll($newValue)")
+                }
+
+                else -> {
+                    println("${field.name} = $newValue")
+                }
+            }
+            indent()
+            println("}")
+        }
+
+        println("}")
+    }
+}
+
+fun Field.transformFunctionDeclaration(returnType: String): String {
+    return transformFunctionDeclaration(name.capitalize(), returnType)
+}
+
+fun transformFunctionDeclaration(transformName: String, returnType: String): String {
+    return "fun <D> transform$transformName(transformer: FirTransformer<D>, data: D): $returnType"
+}
+
+fun Field.replaceFunctionDeclaration(): String {
+    val capName = name.capitalize()
+    return "fun replace$capName(new$capName: $typeWithArgumentsWithoutNullablity)"
+}
+
+fun printTransformer(elements: List<Element>, generationPath: String) {
+    val dir = File(generationPath + VISITOR_PACKAGE.replace(".", "/"))
+    dir.mkdirs()
+    File(dir, "FirTransformer.kt").printWriter().use { printer ->
+        with(printer) {
+            printCopyright()
+            println("package $VISITOR_PACKAGE")
+            println()
+            elements.forEach { println("import ${it.fullQualifiedName}") }
+            println("import ${compositeTransformResultType.fullQualifiedName}")
+            println()
+            printGeneratedMessage()
+
+            println("abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirElement>, D>() {")
+            println()
+            indent()
+            println("abstract fun <E : FirElement> transformElement(element: E, data: D): CompositeTransformResult<E>")
+            println()
+            for (element in elements) {
+                if (element == AbstractFirTreeBuilder.baseFirElement) continue
+                indent()
+                val varName = element.safeDecapitalizedName
+                print("open fun ")
+                element.typeParameters.takeIf { it.isNotBlank() }?.let { print(it) }
+                println("transform${element.name}($varName: ${element.typeWithArguments}, data: D): CompositeTransformResult<${element.transformerType.typeWithArguments}>${element.multipleUpperBoundsList()}{")
+                indent(2)
+                println("return transformElement($varName, data)")
+                indent()
+                println("}")
+                println()
+            }
+
+            for (element in elements) {
+                indent()
+                val varName = element.safeDecapitalizedName
+                print("final override fun ")
+                element.typeParameters.takeIf { it.isNotBlank() }?.let { print(it) }
+
+                println("visit${element.name}($varName: ${element.typeWithArguments}, data: D): CompositeTransformResult<${element.transformerType.typeWithArguments}>${element.multipleUpperBoundsList()}{")
+                indent(2)
+                println("return transform${element.name}($varName, data)")
+                indent()
+                println("}")
+                println()
+            }
+            println("}")
+        }
+    }
+}
+
+fun PrintWriter.printField(field: Field, isImplementation: Boolean, override: Boolean, end: String) {
+    indent()
+    if (override) {
+        print("override ")
+    }
+    if (!isImplementation || field.isVal) {
+        print("val")
+    } else {
+        print("var")
+    }
+    val type = if (isImplementation) field.mutableType else field.typeWithArguments
+    println(" ${field.name}: $type$end")
+}
+
+val Field.mutableType: String get() = when (this) {
+        is FieldList -> if (isMutable) "Mutable$typeWithArguments" else typeWithArguments
+        is FieldWithDefault -> if (isMutable) origin.mutableType else typeWithArguments
+        else -> typeWithArguments
+    }
+
+fun Field.call(): String = if (nullable) "?." else "."
+
+fun Element.multipleUpperBoundsList(): String {
+    return typeArguments.filterIsInstance<TypeArgumentWithMultipleUpperBounds>().takeIf { it.isNotEmpty() }?.let { arguments ->
+        val upperBoundsList = arguments.joinToString(", ", postfix = " ") { argument ->
+            argument.upperBounds.joinToString(", ") { upperBound -> "${argument.name} : ${upperBound.typeWithArguments}" }
+        }
+        " where $upperBoundsList"
+    } ?: " "
+}
+
+fun PrintWriter.printElement(element: Element) {
+    fun Element.override() {
+        indent()
+        if (this != AbstractFirTreeBuilder.baseFirElement) {
+            print("override ")
+        }
+    }
+
+    with(element) {
+        print("interface $type")
+        if (typeArguments.isNotEmpty()) {
+            print(typeArguments.joinToString(", ", "<", ">") { it.toString() })
+        }
+        if (parents.isNotEmpty()) {
+            print(" : ")
+            print(parents.joinToString(", ") {
+                var result = it.type
+                parentsArguments[it]?.let { arguments ->
+                    result += arguments.values.joinToString(", ", "<", ">") { it.typeWithArguments }
+                }
+                result
+            })
+        }
+        print(multipleUpperBoundsList())
+        println("{")
+        allFields.forEach {
+            printField(it, isImplementation = false, override = it.fromParent, end = "")
+        }
+        if (allFields.isNotEmpty()) {
+            println()
+        }
+
+        override()
+        println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visit$name(this, data)")
+
+        fields.filter { it.withReplace }.forEach {
+            println()
+            indent()
+            if (it.fromParent) print("override ")
+            println(it.replaceFunctionDeclaration())
+        }
+
+        for (field in allFields) {
+            if (!field.needsSeparateTransform) continue
+            println()
+            indent()
+            if (field.fromParent) {
+                print("override ")
+            }
+            println(field.transformFunctionDeclaration(typeWithArguments))
+        }
+        if (needTransformOtherChildren) {
+            println()
+            indent()
+            if (element.parents.any { it.needTransformOtherChildren }) {
+                print("override ")
+            }
+            println(transformFunctionDeclaration("OtherChildren", typeWithArguments))
+        }
+
+        if (element == AbstractFirTreeBuilder.baseFirElement) {
+            println()
+            indent()
+            println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
+            println()
+            indent()
+            println("fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)")
+            println()
+            indent()
+            println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
+            println()
+            indent()
+            println("@Suppress(\"UNCHECKED_CAST\")")
+            indent()
+            println("fun <E : FirElement, D> transform(visitor: FirTransformer<D>, data: D): CompositeTransformResult<E> =")
+            indent(2)
+            println("accept(visitor, data) as CompositeTransformResult<E>")
+            println()
+            indent()
+            println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
+        }
+        println("}")
+    }
+}
+
+// --------------------------------------- Helpers ---------------------------------------
+
+fun PrintWriter.indent(n: Int = 1) {
+    print(INDENT.repeat(n))
+}
+
+val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.decapitalize()
+
+val Importable.typeWithArguments: String
+    get() = when (this) {
+        is AbstractElement -> type + generics
+        is Implementation -> type + element.generics
+        is FirField -> element.typeWithArguments + if (nullable) "?" else ""
+        is Field -> type + generics + if (nullable) "?" else ""
+        is Type -> type + generics
+        is ImplementationWithArg -> type + generics
+        else -> throw IllegalArgumentException()
+    }
+
+val Importable.typeWithArgumentsWithoutNullablity: String get() = typeWithArguments.dropLastWhile { it == '?' }
+
+val ImplementationWithArg.generics: String
+    get() = argument?.let { "<${it.type}>" } ?: ""
+
+val AbstractElement.generics: String
+    get() = typeArguments.takeIf { it.isNotEmpty() }
+        ?.let { it.joinToString(", ", "<", ">") { it.name } }
+        ?: ""
+
+val Field.generics: String
+    get() = arguments.takeIf { it.isNotEmpty() }
+        ?.let { it.joinToString(", ", "<", ">") { it.typeWithArguments } }
+        ?: ""
+
+val Element.typeParameters: String
+    get() = typeArguments.takeIf { it.isNotEmpty() }
+        ?.joinToString(", ", "<", "> ")
+        ?: ""
+
+val Type.generics: String
+    get() = arguments.takeIf { it.isNotEmpty() }?.joinToString(",", "<", ">") ?: ""

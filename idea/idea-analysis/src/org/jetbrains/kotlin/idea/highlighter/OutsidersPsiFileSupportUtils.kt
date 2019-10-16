@@ -16,7 +16,7 @@ object OutsidersPsiFileSupportUtils {
 
         val originalFilePath = OutsidersPsiFileSupportWrapper.getOriginalFilePath(virtualFile) ?: return null
 
-        return generateSequence(VfsUtil.findFile(Paths.get(originalFilePath), true)) {
+        return generateSequence(VfsUtil.findFile(Paths.get(originalFilePath), false)) {
             if (it == project.baseDir) null else it.parent
         }.filter { it.exists() }.firstOrNull()
     }

@@ -34,15 +34,13 @@ kotlin.target.compilations {
 
     val benchmark by creating {
         defaultSourceSet.dependencies {
-            implementation(main.compileDependencyFiles + main.output.allOutputs)
-            runtimeOnly(main.runtimeDependencyFiles)
-
+            associateWith(main)
             implementation(kotlin("reflect"))
         }
     }
 }
 
-val runBenchmark by tasks.registering<JavaExec> {
+val runBenchmark by tasks.registering(JavaExec::class) {
     classpath = kotlin.target.compilations["benchmark"].run { runtimeDependencyFiles + output.allOutputs }
     main = "com.example.ABenchmarkKt"
 }

@@ -1,6 +1,5 @@
 class C {
     private var myX = ""
-
     var x: String
         get() {
             println("getter invoked")
@@ -10,7 +9,7 @@ class C {
             myX = x
         }
 
-    internal fun foo() {
+    fun foo() {
         println("myX = $myX")
     }
 }

@@ -5,8 +5,8 @@ FILE: jvm.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            lval x: R|kotlin/String| = R|/AnnotatedDerived.foo|(String(123))
-            lval y: R|kotlin/String| = R|/AnnotatedDerived.foo|(Null(null))
+            lval x: R|kotlin/String| = this@R|/AnnotatedDerived|.R|/AnnotatedDerived.foo|(String(123))
+            lval y: R|kotlin/String| = this@R|/AnnotatedDerived|.R|/AnnotatedDerived.foo|(Null(null))
         }
 
     }

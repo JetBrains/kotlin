@@ -1,29 +1,24 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.name.Name
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirQualifierPart : FirTypeProjectionContainer {
-    val name: Name
-}
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 interface FirUserTypeRef : FirTypeRefWithNullability {
+    override val psi: PsiElement?
+    override val annotations: List<FirAnnotationCall>
+    override val isMarkedNullable: Boolean
     val qualifier: List<FirQualifierPart>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitUserTypeRef(this, data)
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super.acceptChildren(visitor, data)
-        for (qualifier in qualifier.reversed()) {
-            for (argument in qualifier.typeArguments) {
-                argument.accept(visitor, data)
-            }
-        }
-    }
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitUserTypeRef(this, data)
 }

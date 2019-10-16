@@ -3,11 +3,9 @@ package test
 object Test {
     @JvmStatic
     fun main(args: Array<String>) {
-        println()// Comment
-
-        // Comment1
-        foo()
-                // Comment2
+        println() // Comment
+        foo() // Comment1
+// Comment2
                 .indexOf("s")
     }
 

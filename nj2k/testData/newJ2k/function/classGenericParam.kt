@@ -1,2 +1,2 @@
-val t: T?
+val t: T
     get() {}

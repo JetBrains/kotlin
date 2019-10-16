@@ -6,10 +6,7 @@
 package kotlin.script.experimental.jvm
 
 import kotlinx.coroutines.runBlocking
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.ScriptEvaluationConfiguration
-import kotlin.script.experimental.api.baseClass
-import kotlin.script.experimental.api.onFailure
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.createEvaluationConfigurationFromTemplate
 import kotlin.script.experimental.jvm.impl.createScriptFromClassLoader
 
@@ -17,10 +14,12 @@ import kotlin.script.experimental.jvm.impl.createScriptFromClassLoader
 fun runCompiledScript(scriptClass: Class<*>, vararg args: String) {
     val script = createScriptFromClassLoader(scriptClass.name, scriptClass.classLoader)
     val evaluator = BasicJvmScriptEvaluator()
+    val hostConfiguration = script.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]
+        ?: defaultJvmScriptingHostConfiguration
     val baseEvaluationConfiguration =
         createEvaluationConfigurationFromTemplate(
             script.compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!,
-            defaultJvmScriptingHostConfiguration,
+            hostConfiguration,
             scriptClass.kotlin
         )
     val evaluationConfiguration = ScriptEvaluationConfiguration(baseEvaluationConfiguration) {

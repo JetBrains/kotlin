@@ -17,7 +17,7 @@ class NullabilityConstraintsCollector : ConstraintsCollector() {
         boundTypeCalculator: BoundTypeCalculator,
         inferenceContext: InferenceContext,
         resolutionFacade: ResolutionFacade
-    ) = with(boundTypeCalculator) {
+    ) {
         when {
             element is KtBinaryExpression &&
                     (element.left?.isNullExpression() == true
@@ -50,6 +50,5 @@ class NullabilityConstraintsCollector : ConstraintsCollector() {
                 element.right?.isTheSameTypeAs(State.LOWER, ConstraintPriority.USE_AS_RECEIVER)
             }
         }
-        Unit
     }
 }

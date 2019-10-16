@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.handlers
@@ -29,9 +18,12 @@ import org.jetbrains.kotlin.idea.completion.LambdaSignatureTemplates
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
 import org.jetbrains.kotlin.types.KotlinType
 
 class GenerateLambdaInfo(val lambdaType: KotlinType, val explicitParameters: Boolean)
@@ -79,6 +71,18 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             val element = context.file.findElementAt(startOffset) ?: return
 
             addArguments(context, element)
+
+            // hack for KT-31902
+            if (callType == CallType.DEFAULT) {
+                context.file
+                    .findElementAt(startOffset)
+                    ?.parent?.getLastParentOfTypeInRow<KtDotQualifiedExpression>()
+                    ?.createSmartPointer()?.let {
+                        psiDocumentManager.commitDocument(document)
+                        val dotQualifiedExpression = it.element ?: return@let
+                        SHORTEN_REFERENCES.process(dotQualifiedExpression)
+                    }
+            }
         }
 
         private fun addArguments(context: InsertionContext, offsetElement: PsiElement) {
@@ -104,11 +108,12 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
 
             var insertTypeArguments = inputTypeArguments && (isNormalCompletion || isReplaceCompletion || isSmartEnterCompletion)
 
+            val psiDocumentManager = PsiDocumentManager.getInstance(project)
             if (isReplaceCompletion) {
                 val offset1 = chars.skipSpaces(offset)
                 if (offset1 < chars.length) {
                     if (chars[offset1] == '<') {
-                        PsiDocumentManager.getInstance(project).commitDocument(document)
+                        psiDocumentManager.commitDocument(document)
                         val token = context.file.findElementAt(offset1)!!
                         if (token.node.elementType == KtTokens.LT) {
                             val parent = token.parent
@@ -159,7 +164,7 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
                         document.insertString(offset, "()")
                     }
                 }
-                PsiDocumentManager.getInstance(project).commitDocument(document)
+                psiDocumentManager.commitDocument(document)
 
                 openingBracketOffset = document.charsSequence.indexOfSkippingSpace(openingBracket, offset)!!
                 closeBracketOffset = document.charsSequence.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)

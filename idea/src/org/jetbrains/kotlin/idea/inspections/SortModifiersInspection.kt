@@ -73,10 +73,11 @@ private class SortModifiersFix(private val modifiers: List<KtModifierKeywordToke
         val list = descriptor.psiElement as? KtModifierList ?: return
         val owner = list.parent as? KtModifierListOwner ?: return
 
-        modifiers.forEach { owner.removeModifier(it) }
+        val existingModifiers = modifiers.filter { owner.hasModifier(it) }
+        existingModifiers.forEach { owner.removeModifier(it) }
         // We add visibility / modality modifiers after all others,
         // because they can be redundant or not depending on others (e.g. override)
-        modifiers
+        existingModifiers
             .partition { it in KtTokens.VISIBILITY_MODIFIERS || it in KtTokens.MODALITY_MODIFIERS }
             .let { it.second + it.first }
             .forEach { owner.addModifier(it) }

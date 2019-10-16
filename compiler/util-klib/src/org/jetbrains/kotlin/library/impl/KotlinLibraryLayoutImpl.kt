@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.file
 import org.jetbrains.kotlin.konan.file.withZipFileSystem
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.konan.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.nio.file.FileSystem
 
 open class KotlinLibraryLayoutImpl(val klib: File) : KotlinLibraryLayout {
@@ -111,7 +111,7 @@ fun KotlinLibraryLayoutImpl.extractDir(directory: File): File = this.klib.withZi
 }
 
 open class ExtractingKotlinLibraryLayout(zipped: KotlinLibraryLayoutImpl) : KotlinLibraryLayout {
-    override val libDir get() = error("Extracting layout doesn't extract its own root")
+    override val libDir: File get() = error("Extracting layout doesn't extract its own root")
     override val libraryName = zipped.libraryName
 }
 
@@ -139,6 +139,10 @@ class ExtractingIrLibraryImpl(val zipped: IrLibraryLayoutImpl) :
     override val irTypes: File by lazy { zipped.extract(zipped.irTypes) }
 
     override val irStrings: File by lazy { zipped.extract(zipped.irStrings) }
+
+    override val irBodies: File by lazy { zipped.extract(zipped.irBodies) }
+
+    override val irFiles: File by lazy { zipped.extract(zipped.irFiles) }
 }
 
 internal fun zippedKotlinLibraryChecks(klibFile: File) {

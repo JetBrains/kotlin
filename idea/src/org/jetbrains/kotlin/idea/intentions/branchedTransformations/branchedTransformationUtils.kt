@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -36,7 +37,7 @@ fun KtWhenCondition.toExpression(subject: KtExpression?): KtExpression {
     }
 }
 
-fun KtWhenExpression.getSubjectToIntroduce(): KtExpression? {
+fun KtWhenExpression.getSubjectToIntroduce(checkConstants: Boolean = true): KtExpression? {
     if (subjectExpression != null) return null
 
     var lastCandidate: KtExpression? = null
@@ -47,8 +48,11 @@ fun KtWhenExpression.getSubjectToIntroduce(): KtExpression? {
         for (condition in conditions) {
             if (condition !is KtWhenConditionWithExpression) return null
 
-            val candidate = condition.expression?.getWhenConditionSubjectCandidate() ?: return null
-            if (candidate !is KtNameReferenceExpression && candidate !is KtThisExpression) return null
+            val candidate = condition.expression?.getWhenConditionSubjectCandidate(checkConstants) ?: return null
+            if (candidate !is KtNameReferenceExpression
+                && (candidate as? KtQualifiedExpression)?.selectorExpression !is KtNameReferenceExpression
+                && candidate !is KtThisExpression
+            ) return null
 
             if (lastCandidate == null) {
                 lastCandidate = candidate
@@ -61,17 +65,20 @@ fun KtWhenExpression.getSubjectToIntroduce(): KtExpression? {
     return lastCandidate
 }
 
-private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? = when (this) {
+private fun KtExpression?.getWhenConditionSubjectCandidate(checkConstants: Boolean): KtExpression? = when (this) {
     is KtIsExpression -> leftHandSide
 
     is KtBinaryExpression -> {
         val lhs = left
+        val rhs = right
         when (operationToken) {
             KtTokens.IN_KEYWORD, KtTokens.NOT_IN -> lhs
-            KtTokens.EQEQ -> lhs as? KtNameReferenceExpression ?: right
+            KtTokens.EQEQ ->
+                lhs?.takeIf { it.hasCandidateNameReferenceExpression(checkConstants) }
+                    ?: rhs?.takeIf { it.hasCandidateNameReferenceExpression(checkConstants) }
             KtTokens.OROR -> {
-                val leftCandidate = lhs.getWhenConditionSubjectCandidate()
-                val rightCandidate = right.getWhenConditionSubjectCandidate()
+                val leftCandidate = lhs.getWhenConditionSubjectCandidate(checkConstants)
+                val rightCandidate = rhs.getWhenConditionSubjectCandidate(checkConstants)
                 if (leftCandidate.matches(rightCandidate)) leftCandidate else null
             }
             else -> null
@@ -82,8 +89,20 @@ private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? = wh
     else -> null
 }
 
-fun KtWhenExpression.introduceSubject(): KtWhenExpression? {
-    val subject = getSubjectToIntroduce() ?: return null
+private fun KtExpression.hasCandidateNameReferenceExpression(checkConstants: Boolean): Boolean {
+    val nameReferenceExpression = this as? KtNameReferenceExpression
+        ?: (this as? KtQualifiedExpression)?.selectorExpression as? KtNameReferenceExpression
+        ?: return false
+    if (!checkConstants) {
+        return true
+    }
+    val resolved = nameReferenceExpression.mainReference.resolve()
+    if (resolved is KtObjectDeclaration || (resolved as? KtProperty)?.hasModifier(KtTokens.CONST_KEYWORD) == true) return false
+    return true
+}
+
+fun KtWhenExpression.introduceSubject(checkConstants: Boolean = true): KtWhenExpression? {
+    val subject = getSubjectToIntroduce(checkConstants) ?: return null
 
     val commentSaver = CommentSaver(this, saveLineBreaks = true)
 

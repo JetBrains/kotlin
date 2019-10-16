@@ -7,7 +7,7 @@ FILE: localObject.kt
 
     }
     public final fun tesLambda(x: R|kotlin/Int|): R|kotlin/Int| {
-        ^tesLambda R|/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| {
+        ^tesLambda R|/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             lval obj: R|Foo| = object : R|Foo| {
                 private constructor(): R|kotlin/Any| {
                     super<R|kotlin/Any|>()
@@ -40,12 +40,12 @@ FILE: localObject.kt
                     }
 
                     public final override fun foo(): R|kotlin/Int| {
-                        ^foo R|/TestProperty.intConst|.R|kotlin/Int.plus|(Int(1))
+                        ^foo this@R|/TestProperty|.R|/TestProperty.intConst|.R|kotlin/Int.plus|(Int(1))
                     }
 
                 }
 
-                F|/TestProperty.x| = R|<local>/value|
+                this@R|/TestProperty|.F|/TestProperty.x| = R|<local>/value|
             }
 
         public final val y: R|kotlin/Int|
@@ -56,7 +56,7 @@ FILE: localObject.kt
                     }
 
                     public final override fun foo(): R|kotlin/Int| {
-                        ^foo R|/TestProperty.intConst|.R|kotlin/Int.plus|(Int(1))
+                        ^foo this@R|/TestProperty|.R|/TestProperty.intConst|.R|kotlin/Int.plus|(Int(1))
                     }
 
                 }
@@ -64,14 +64,14 @@ FILE: localObject.kt
                 Int(1)
             }
 
-        public final val z: R|kotlin/Int| = R|/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| {
+        public final val z: R|kotlin/Int| = R|/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             lval obj: R|Foo| = object : R|Foo| {
                 private constructor(): R|kotlin/Any| {
                     super<R|kotlin/Any|>()
                 }
 
                 public final override fun foo(): R|kotlin/Int| {
-                    ^foo R|/TestProperty.x|.R|kotlin/Int.plus|(Int(1))
+                    ^foo this@R|/TestProperty|.R|/TestProperty.x|.R|kotlin/Int.plus|(Int(1))
                 }
 
             }

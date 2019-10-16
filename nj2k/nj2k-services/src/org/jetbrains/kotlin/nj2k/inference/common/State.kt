@@ -6,7 +6,14 @@
 package org.jetbrains.kotlin.nj2k.inference.common
 
 enum class State {
+    // lower state in the terms of subtyping relation,
+    // e.g., for nullability this is not null type as T <: T?
+    // for mutability this is MutableCollection as MutableCollection <: Collection
     LOWER,
+    // the same as with lower but upper
     UPPER,
-    UNKNOWN
+    // the type variable state is needed to be calculated
+    UNKNOWN,
+    // we don't need to infer state of that type variable
+    UNUSED
 }

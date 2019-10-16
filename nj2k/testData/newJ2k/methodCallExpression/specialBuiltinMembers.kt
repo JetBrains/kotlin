@@ -1,8 +1,11 @@
 import java.util.HashMap
 
-internal enum class E { A, B, C }
+internal enum class E {
+    A, B, C
+}
+
 internal class A {
-    fun foo(list: List<String?>, collection: Collection<Int?>, map: Map<Int, Int>) {
+    fun foo(list: List<String?>, collection: Collection<Int?>, map: Map<Int, Int?>) {
         val a = "".length
         val b = E.A.name
         val c = E.A.ordinal
@@ -14,7 +17,7 @@ internal class A {
         val i = map.entries.iterator().next().key + 1
     }
 
-    fun bar(list: MutableList<String>, map: HashMap<String, Int>) {
+    fun bar(list: MutableList<String?>, map: HashMap<String, Int>) {
         val c = "a"[0]
         val b = 10.toByte()
         val i = 10.1.toInt()
@@ -34,7 +37,7 @@ internal class A {
             entry.setValue(value + 1)
         }
     }
-    
+
     fun kt21504() {
         val b = "1".toByte()
         val s = "1".toShort()
@@ -42,10 +45,30 @@ internal class A {
         val l = "1".toLong()
         val f = "1".toFloat()
         val d = "1".toDouble()
-
         val b2 = "1".toByte(10)
         val s2 = "1".toShort(10)
         val i2 = "1".toInt(10)
         val l2 = "1".toLong(10)
+    }
+
+    fun kt7940() {
+        val b1 = Byte.MIN_VALUE
+        val b2 = Byte.MAX_VALUE
+        val s1 = Short.MIN_VALUE
+        val s2 = Short.MAX_VALUE
+        val i1 = Int.MIN_VALUE
+        val i2 = Int.MAX_VALUE
+        val l1 = Long.MIN_VALUE
+        val l2 = Long.MAX_VALUE
+        val f1 = Float.MIN_VALUE
+        val f2 = Float.MAX_VALUE
+        val f3 = Float.POSITIVE_INFINITY
+        val f4 = Float.NEGATIVE_INFINITY
+        val f5 = Float.NaN
+        val d1 = Double.MIN_VALUE
+        val d2 = Double.MAX_VALUE
+        val d3 = Double.POSITIVE_INFINITY
+        val d4 = Double.NEGATIVE_INFINITY
+        val d5 = Double.NaN
     }
 }

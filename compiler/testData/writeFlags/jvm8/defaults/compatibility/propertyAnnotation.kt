@@ -1,5 +1,4 @@
 // !JVM_DEFAULT_MODE: compatibility
-// IGNORE_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
 

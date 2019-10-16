@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AnalysisResult
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.container.tryGetService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -57,7 +54,7 @@ internal class ModuleResolutionFacadeImpl(
     }
 
     override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext {
-        ResolveInWriteActionManager.assertNoResolveUnderWriteAction()
+        ResolveInDispatchThreadManager.assertNoResolveInDispatchThread()
 
         if (elements.isEmpty()) return BindingContext.EMPTY
         val resolveElementCache = getFrontendService(elements.first(), ResolveElementCache::class.java)
@@ -65,7 +62,7 @@ internal class ModuleResolutionFacadeImpl(
     }
 
     override fun analyzeWithAllCompilerChecks(elements: Collection<KtElement>): AnalysisResult {
-        ResolveInWriteActionManager.assertNoResolveUnderWriteAction()
+        ResolveInDispatchThreadManager.assertNoResolveInDispatchThread()
 
         return projectFacade.getAnalysisResultsForElements(elements)
     }
@@ -76,7 +73,7 @@ internal class ModuleResolutionFacadeImpl(
             bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
                 ?: getFrontendService(moduleInfo, AbsentDescriptorHandler::class.java).diagnoseDescriptorNotFound(declaration)
         } else {
-            ResolveInWriteActionManager.assertNoResolveUnderWriteAction()
+            ResolveInDispatchThreadManager.assertNoResolveInDispatchThread()
 
             val resolveSession = projectFacade.resolverForElement(declaration).componentProvider.get<ResolveSession>()
             resolveSession.resolveToDescriptor(declaration)

@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.idea.references
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -26,8 +28,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinFunctionShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinPropertyShortNameIndex
+import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
@@ -35,12 +42,18 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.FunctionImportedFromObject
+import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedTypeAliasDescriptor
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.constant
@@ -52,12 +65,9 @@ import java.util.*
 // For property accessor return enclosing property
 val PsiReference.unwrappedTargets: Set<PsiElement>
     get() {
-        fun PsiElement.adjust(): PsiElement? {
-            val target = unwrapped?.originalElement
-            return when {
-                target is KtPropertyAccessor -> target.getNonStrictParentOfType<KtProperty>()
-                else -> target
-            }
+        fun PsiElement.adjust(): PsiElement? = when (val target = unwrapped?.originalElement) {
+            is KtPropertyAccessor -> target.getNonStrictParentOfType<KtProperty>()
+            else -> target
         }
 
         return when (this) {
@@ -71,6 +81,20 @@ fun PsiReference.canBeReferenceTo(candidateTarget: PsiElement): Boolean {
     // optimization
     return element.containingFile == candidateTarget.containingFile
             || ProjectRootsUtil.isInProjectOrLibSource(element, includeScriptsOutsideSourceRoots = true)
+}
+
+fun DeclarationDescriptor.findPsiDeclarations(project: Project, resolveScope: GlobalSearchScope): Collection<PsiElement> {
+    val fqName = importableFqName ?: return emptyList()
+
+    fun Collection<KtNamedDeclaration>.fqNameFilter() = filter { it.fqName == fqName }
+    return when (this) {
+        is DeserializedClassDescriptor -> KotlinFullClassNameIndex.getInstance()[fqName.asString(), project, resolveScope]
+        is DeserializedTypeAliasDescriptor -> KotlinTypeAliasShortNameIndex.getInstance()[fqName.shortName().asString(), project, resolveScope].fqNameFilter()
+        is DeserializedSimpleFunctionDescriptor, is FunctionImportedFromObject -> KotlinFunctionShortNameIndex.getInstance()[fqName.shortName().asString(), project, resolveScope].fqNameFilter()
+        is DeserializedPropertyDescriptor, is PropertyImportedFromObject -> KotlinPropertyShortNameIndex.getInstance()[fqName.shortName().asString(), project, resolveScope].fqNameFilter()
+        is DeclarationDescriptorWithSource -> listOfNotNull(source.getPsi())
+        else -> emptyList()
+    }
 }
 
 fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
@@ -103,12 +127,18 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
         val importableTargets = unwrappedTargets.mapNotNull {
             if (it is KtConstructor<*>) it.containingClassOrObject else it
         }
-        return importedDescriptors.any { (it as? DeclarationDescriptorWithSource)?.source?.getPsi() in importableTargets }
+
+        val project = element.project
+        val resolveScope = element.resolveScope
+        return importedDescriptors.any {
+            it.findPsiDeclarations(project, resolveScope).any { declaration ->
+                declaration in importableTargets
+            }
+        }
     }
 
     if (element is KtLabelReferenceExpression) {
-        val labelParent = (element.parent as? KtContainerNode)?.parent
-        when (labelParent) {
+        when ((element.parent as? KtContainerNode)?.parent) {
             is KtReturnExpression -> unwrappedTargets.forEach {
                 if (it !is KtFunctionLiteral && !(it is KtNamedFunction && it.name.isNullOrEmpty())) return@forEach
                 it as KtFunction
@@ -136,7 +166,7 @@ fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     if (this is KtReference) {
         return targets.any {
             it.isConstructorOf(unwrappedCandidate)
-            || it is KtObjectDeclaration && it.isCompanion() && it.getNonStrictParentOfType<KtClass>() == unwrappedCandidate
+                    || it is KtObjectDeclaration && it.isCompanion() && it.getNonStrictParentOfType<KtClass>() == unwrappedCandidate
         }
     }
     // TODO: Workaround for Kotlin constructor search in Java code. To be removed after refactoring of the search API
@@ -205,12 +235,10 @@ val KDocName.mainReference: KDocReference
     get() = references.firstIsInstance()
 
 val KtElement.mainReference: KtReference?
-    get() {
-        return when {
-            this is KtReferenceExpression -> mainReference
-            this is KDocName -> mainReference
-            else -> references.firstIsInstanceOrNull<KtReference>()
-        }
+    get() = when (this) {
+        is KtReferenceExpression -> mainReference
+        is KDocName -> mainReference
+        else -> references.firstIsInstanceOrNull<KtReference>()
     }
 
 fun KtElement.resolveMainReferenceToDescriptors(): Collection<DeclarationDescriptor> {
@@ -229,8 +257,7 @@ fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean) = readWriteAcc
 fun KtExpression.readWriteAccessWithFullExpression(useResolveForReadWrite: Boolean): Pair<ReferenceAccess, KtExpression> {
     var expression = getQualifiedExpressionForSelectorOrThis()
     loop@ while (true) {
-        val parent = expression.parent
-        when (parent) {
+        when (val parent = expression.parent) {
             is KtParenthesizedExpression, is KtAnnotatedExpression, is KtLabeledExpression -> expression = parent as KtExpression
             else -> break@loop
         }
@@ -288,8 +315,8 @@ fun KtElement.canBeResolvedViaImport(target: DeclarationDescriptor, bindingConte
 fun KtFunction.getCalleeByLambdaArgument(): KtSimpleNameExpression? {
     val argument = getParentOfTypeAndBranch<KtValueArgument> { getArgumentExpression() } ?: return null
     val callExpression = when (argument) {
-                             is KtLambdaArgument -> argument.parent as? KtCallExpression
-                             else -> (argument.parent as? KtValueArgumentList)?.parent as? KtCallExpression
-                         } ?: return null
+        is KtLambdaArgument -> argument.parent as? KtCallExpression
+        else -> (argument.parent as? KtValueArgumentList)?.parent as? KtCallExpression
+    } ?: return null
     return callExpression.calleeExpression as? KtSimpleNameExpression
 }

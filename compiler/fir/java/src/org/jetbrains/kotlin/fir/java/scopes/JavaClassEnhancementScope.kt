@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.*
@@ -20,7 +23,6 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConePropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -85,8 +87,8 @@ class JavaClassEnhancementScope(
                 val symbol = FirFieldSymbol(original.callableId)
                 with(firElement) {
                     FirJavaField(
-                        this@JavaClassEnhancementScope.session,
                         firElement.psi,
+                        this@JavaClassEnhancementScope.session,
                         symbol,
                         name,
                         visibility,
@@ -107,7 +109,7 @@ class JavaClassEnhancementScope(
                 ) as FirAccessorSymbol
             }
             else -> {
-                if (original is ConePropertySymbol) return original
+                if (original is FirPropertySymbol) return original
                 error("Can't make enhancement for $original: `${firElement.render()}`")
             }
         }
@@ -173,8 +175,9 @@ class JavaClassEnhancementScope(
             val (newTypeRef, newDefaultValue) = newInfo
             with(valueParameter) {
                 FirValueParameterImpl(
-                    this@JavaClassEnhancementScope.session, psi,
-                    this.name, newTypeRef,
+                    psi, this@JavaClassEnhancementScope.session,
+                    newTypeRef, this.name,
+                    FirVariableSymbol(this.name),
                     defaultValue ?: newDefaultValue, isCrossinline, isNoinline, isVararg
                 ).apply {
                     resolvePhase = FirResolvePhase.DECLARATIONS
@@ -182,22 +185,31 @@ class JavaClassEnhancementScope(
                 }
             }
         }
-        val function: FirMemberFunction<*> = when (firMethod) {
+        val function = when (firMethod) {
             is FirJavaConstructor -> {
                 val symbol = FirConstructorSymbol(methodId)
+                val status = FirDeclarationStatusImpl(firMethod.visibility, Modality.FINAL).apply {
+                    isExpect = false
+                    isActual = false
+                    isInner = firMethod.isInner
+                }
                 if (firMethod.isPrimary) {
                     FirPrimaryConstructorImpl(
-                        this@JavaClassEnhancementScope.session, firMethod.psi, symbol,
-                        firMethod.visibility,
-                        isExpect = false,
-                        isActual = false,
-                        delegatedSelfTypeRef = newReturnTypeRef,
-                        delegatedConstructor = null
+                        firMethod.psi,
+                        this@JavaClassEnhancementScope.session,
+                        newReturnTypeRef,
+                        null,
+                        status,
+                        symbol
                     )
                 } else {
                     FirConstructorImpl(
-                        this@JavaClassEnhancementScope.session, firMethod.psi, symbol,
-                        newReceiverTypeRef, newReturnTypeRef
+                        firMethod.psi,
+                        this@JavaClassEnhancementScope.session,
+                        newReturnTypeRef,
+                        newReceiverTypeRef,
+                        firMethod.status,
+                        symbol
                     )
                 }.apply {
                     resolvePhase = FirResolvePhase.DECLARATIONS
@@ -205,21 +217,22 @@ class JavaClassEnhancementScope(
                     this.typeParameters += firMethod.typeParameters
                 }
             }
-            else -> FirMemberFunctionImpl(
-                this@JavaClassEnhancementScope.session, firMethod.psi,
+            else -> FirSimpleFunctionImpl(
+                firMethod.psi,
+                this@JavaClassEnhancementScope.session,
+                newReturnTypeRef,
+                newReceiverTypeRef,
+                name,
+                firMethod.status,
                 if (!isAccessor) FirNamedFunctionSymbol(methodId)
-                else FirAccessorSymbol(callableId = propertyId!!, accessorId = methodId),
-                name, newReceiverTypeRef, newReturnTypeRef
+                else FirAccessorSymbol(callableId = propertyId!!, accessorId = methodId)
             ).apply {
                 resolvePhase = FirResolvePhase.DECLARATIONS
                 this.valueParameters += newValueParameters
                 this.typeParameters += firMethod.typeParameters
             }
         }
-        (function as FirAbstractCallableMember<*>).apply {
-            status = firMethod.status as FirDeclarationStatusImpl
-            annotations += firMethod.annotations
-        }
+        function.annotations += firMethod.annotations
         return function.symbol
     }
 

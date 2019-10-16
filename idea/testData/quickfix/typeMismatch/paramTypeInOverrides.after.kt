@@ -1,4 +1,4 @@
-// "Change parameter 'a' type of function 'test.B.foo' to 'String'" "true"
+// "Change parameter 'a' type of function 'foo' to 'String'" "true"
 // DISABLE-ERRORS
 package test
 

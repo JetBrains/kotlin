@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -33,10 +32,6 @@ import org.junit.Assert
 import java.io.File
 
 abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase() {
-
-    override fun getBasePath(): String {
-        return PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE + "/codeInsight/lineMarker"
-    }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
@@ -56,14 +51,14 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
     }
 
     fun doTest(path: String, additionalCheck: () -> Unit) {
-        val fileText = FileUtil.loadFile(File(path))
+        val fileText = FileUtil.loadFile(testDataFile())
         try {
             ConfigLibraryUtil.configureLibrariesByDirective(myFixture.module, PlatformTestUtil.getCommunityPath(), fileText)
             if (InTextDirectivesUtils.findStringWithPrefixes(fileText, "METHOD_SEPARATORS") != null) {
                 DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = true
             }
 
-            myFixture.configureByFile(path)
+            myFixture.configureByFile(fileName())
             val project = myFixture.project
             val document = myFixture.editor.document
 
@@ -72,7 +67,7 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-            val markers = doAndCheckHighlighting(myFixture.project, document, data, File(path))
+            val markers = doAndCheckHighlighting(myFixture.project, document, data, testDataFile())
 
             assertNavigationElements(myFixture.project, myFixture.file as KtFile, markers)
             additionalCheck()

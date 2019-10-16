@@ -239,3 +239,9 @@ val ResolvedCallAtom.freshReturnType: UnwrappedType?
         val returnType = candidateDescriptor.returnType ?: return null
         return substitutor.safeSubstitute(returnType.unwrap())
     }
+
+class PartialCallContainer(val result: PartialCallResolutionResult?) {
+    companion object {
+        val empty = PartialCallContainer(null)
+    }
+}

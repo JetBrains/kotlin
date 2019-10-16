@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
-import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.testTaskNameSuffix
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.TaskHolder
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
@@ -17,19 +17,23 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
-import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
+import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import javax.inject.Inject
 
-class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
-    KotlinOnlyTarget<KotlinJsCompilation>(project, platformType), KotlinJsTargetDsl {
+open class KotlinJsTarget @Inject constructor(project: Project, platformType: KotlinPlatformType) :
+    KotlinOnlyTarget<KotlinJsCompilation>(project, platformType),
+    KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
+    KotlinJsTargetDsl
+{
+    override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
+        internal set
 
-    val testTaskName get() = lowerCamelCaseName(disambiguationClassifier, testTaskNameSuffix)
-    val testTask: TaskHolder<KotlinTestReport>
-        get() = project.kotlinTestRegistry.getOrCreateAggregatedTestTask(
-            name = testTaskName,
-            description = "Run JS tests for all platforms"
-        )
+    val testTaskName get() = testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).testTaskName
+    val testTask: TaskProvider<KotlinTestReport>
+        get() = checkNotNull(project.locateTask(testTaskName))
 
     val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
     val runTask
@@ -37,23 +41,56 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
             it.description = "Run js on all configured platforms"
         }
 
-    val browser by lazy {
-        KotlinBrowserJs(this).also {
+    private val browserLazyDelegate = lazy {
+        project.objects.newInstance(KotlinBrowserJs::class.java, this).also {
             it.configure()
+            browserConfiguredHandlers.forEach { handler -> handler(it) }
+            browserConfiguredHandlers.clear()
         }
     }
-    val nodejs by lazy {
-        KotlinNodeJs(this).also {
-            it.configure()
-        }
-    }
+
+    private val browserConfiguredHandlers = mutableListOf<KotlinJsBrowserDsl.() -> Unit>()
+
+    val browser by browserLazyDelegate
+
+    internal val isBrowserConfigured: Boolean = browserLazyDelegate.isInitialized()
 
     override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
-        browser.body()
+        body(browser)
     }
 
+    private val nodejsLazyDelegate = lazy {
+        project.objects.newInstance(KotlinNodeJs::class.java, this).also {
+            it.configure()
+            nodejsConfiguredHandlers.forEach { handler -> handler(it) }
+            nodejsConfiguredHandlers.clear()
+        }
+    }
+
+    private val nodejsConfiguredHandlers = mutableListOf<KotlinJsNodeDsl.() -> Unit>()
+
+    val nodejs by nodejsLazyDelegate
+
+    internal val isNodejsConfigured: Boolean = nodejsLazyDelegate.isInitialized()
+
     override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
-        nodejs.body()
+        body(nodejs)
+    }
+
+    fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit) {
+        if (browserLazyDelegate.isInitialized()) {
+            browser(body)
+        } else {
+            browserConfiguredHandlers += body
+        }
+    }
+
+    fun whenNodejsConfigured(body: KotlinJsNodeDsl.() -> Unit) {
+        if (nodejsLazyDelegate.isInitialized()) {
+            nodejs(body)
+        } else {
+            nodejsConfiguredHandlers += body
+        }
     }
 
     fun useCommonJs() {

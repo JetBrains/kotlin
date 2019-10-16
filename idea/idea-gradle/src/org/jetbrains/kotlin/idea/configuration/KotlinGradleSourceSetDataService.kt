@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.inspections.gradle.getResolvedVersionByModuleData
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
-import org.jetbrains.kotlin.konan.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
 import org.jetbrains.kotlin.platform.impl.isJavaScript
@@ -292,9 +292,7 @@ fun configureFacetByGradleModule(
         compilerVersion,
         coroutinesProperty,
         platform,
-        modelsProvider,
-        moduleNode.isHmpp,
-        moduleNode.pureKotlinSourceFolders
+        modelsProvider
     )
 
     if (sourceSetNode == null) {

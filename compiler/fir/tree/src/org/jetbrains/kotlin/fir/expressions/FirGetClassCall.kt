@@ -6,12 +6,22 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeCallWithArgumentList
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirGetClassCall(psi: PsiElement?) : FirUnknownTypeCallWithArgumentList(psi) {
-    val argument: FirExpression get() = arguments.first()
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitGetClassCall(this, data)
+interface FirGetClassCall : FirExpression, FirCall {
+    override val psi: PsiElement?
+    override val typeRef: FirTypeRef
+    override val annotations: List<FirAnnotationCall>
+    override val arguments: List<FirExpression>
+    val argument: FirExpression
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitGetClassCall(this, data)
+
+    override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirGetClassCall
 }

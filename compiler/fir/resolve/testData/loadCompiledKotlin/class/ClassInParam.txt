@@ -1,4 +1,4 @@
 public final class Wine<in T> : R|kotlin/Any| {
-    public constructor<T>(): R|test/Wine<T>|
+    public constructor<in T>(): R|test/Wine<T>|
 
 }

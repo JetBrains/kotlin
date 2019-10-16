@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -42,7 +41,7 @@ fun ConeTypeContext.hasNullableSuperType(type: ConeKotlinType): Boolean {
     return false
 }
 
-class ConeTypeVariableTypeConstructor(val debugName: String) : ConeSymbol, ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {
+class ConeTypeVariableTypeConstructor(val debugName: String) : ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {
     override val name: Name get() = Name.identifier(debugName)
 }
 

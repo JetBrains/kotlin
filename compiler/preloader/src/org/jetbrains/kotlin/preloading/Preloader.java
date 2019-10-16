@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class Preloader {
@@ -63,6 +64,10 @@ public class Preloader {
         Class<?> mainClass = preloaded.loadClass(options.mainClass);
         Method mainMethod = mainClass.getMethod("main", String[].class);
 
+        Thread.currentThread().setContextClassLoader(preloaded);
+        String classPathString = options.classpath.stream().map(File::getPath).collect(Collectors.joining(File.pathSeparator));
+        String savedClasspathProperty = System.setProperty("java.class.path", classPathString);
+
         Runtime.getRuntime().addShutdownHook(
                 new Thread(new Runnable() {
                     @Override
@@ -77,8 +82,14 @@ public class Preloader {
                 })
         );
 
-        //noinspection SSBasedInspection
-        mainMethod.invoke(0, (Object) options.arguments.toArray(new String[options.arguments.size()]));
+        try {
+            //noinspection SSBasedInspection
+            mainMethod.invoke(0, (Object) options.arguments.toArray(new String[options.arguments.size()]));
+        }
+        finally {
+            if (savedClasspathProperty == null) System.clearProperty("java.class.path");
+            else System.setProperty("java.class.path", savedClasspathProperty);
+        }
     }
 
     private static ClassLoader createClassLoader(Options options) throws MalformedURLException {

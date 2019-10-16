@@ -6,32 +6,44 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirAbstractElement
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCatch
-import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 class FirCatchImpl(
-    psi: PsiElement?,
+    override val psi: PsiElement?,
     override var parameter: FirValueParameter,
     override var block: FirBlock
-) : FirAbstractElement(psi), FirCatch {
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+) : FirCatch {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        parameter.accept(visitor, data)
+        block.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirCatchImpl {
         transformParameter(transformer, data)
         transformBlock(transformer, data)
+        transformOtherChildren(transformer, data)
         return this
     }
 
-    override fun <D> transformParameter(transformer: FirTransformer<D>, data: D): FirCatch {
+    override fun <D> transformParameter(transformer: FirTransformer<D>, data: D): FirCatchImpl {
         parameter = parameter.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCatch {
+    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCatchImpl {
         block = block.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirCatchImpl {
         return this
     }
 }

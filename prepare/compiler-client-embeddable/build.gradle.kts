@@ -5,9 +5,8 @@ plugins {
     kotlin("jvm")
 }
 
-val testRuntimeCompilerJar by configurations.creating
-val testStdlibJar by configurations.creating
-val testScriptRuntimeJar by configurations.creating
+val testCompilerClasspath by configurations.creating
+val testCompilationClasspath by configurations.creating
 
 dependencies {
     embedded(project(":compiler:cli-common")) { isTransitive = false }
@@ -22,27 +21,23 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testRuntimeCompilerJar(project(":kotlin-compiler"))
-    testStdlibJar(kotlinStdlib())
-    testScriptRuntimeJar(project(":kotlin-script-runtime"))
+    testCompilerClasspath(project(":kotlin-compiler"))
+    testCompilerClasspath(project(":kotlin-scripting-compiler"))
+    testCompilerClasspath(project(":kotlin-daemon"))
+    testCompilationClasspath(kotlinStdlib())
+    testCompilationClasspath(project(":kotlin-script-runtime"))
 }
 
 sourceSets {
     "main" {}
-    "test" {
-        // TODO: move closer
-        java.srcDir("../../libraries/tools/kotlin-compiler-client-embeddable-test/src")
-    }
+    "test" { projectDefault() }
 }
 
 projectTest {
-    dependsOn(":dist")
-    workingDir = File(rootDir, "libraries/tools/kotlin-compiler-client-embeddable-test/src")
     doFirst {
         systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-        systemProperty("compilerJar", testRuntimeCompilerJar.singleFile.canonicalPath)
-        systemProperty("stdlibJar", testStdlibJar.singleFile.canonicalPath)
-        systemProperty("scriptRuntimeJar", testScriptRuntimeJar.singleFile.canonicalPath)
+        systemProperty("compilerClasspath", testCompilerClasspath.asPath)
+        systemProperty("compilationClasspath", testCompilationClasspath.asPath)
     }
 }
 

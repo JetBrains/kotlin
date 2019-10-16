@@ -31,11 +31,14 @@ interface IncrementalDataProvider {
 
     /** gets non-dirty package metadata from previous compilation */
     val packageMetadata: Map<String, ByteArray>
+
+    val serializedIrFiles: Map<File, IrTranslationResultValue>
 }
 
 class IncrementalDataProviderImpl(
     override val headerMetadata: ByteArray,
     override val compiledPackageParts: Map<File, TranslationResultValue>,
     override val metadataVersion: IntArray,
-    override val packageMetadata: Map<String, ByteArray>
+    override val packageMetadata: Map<String, ByteArray>,
+    override val serializedIrFiles: Map<File, IrTranslationResultValue>
 ) : IncrementalDataProvider

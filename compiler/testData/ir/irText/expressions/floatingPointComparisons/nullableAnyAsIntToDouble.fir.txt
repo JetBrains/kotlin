@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/nullableAnyAsIntToDouble.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
               GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
-            then: ERROR_CALL 'Comparison of arguments with different types: kotlin/Any?, kotlin/Double' type=kotlin.Boolean
+            then: ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Double' type=kotlin.Boolean
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false

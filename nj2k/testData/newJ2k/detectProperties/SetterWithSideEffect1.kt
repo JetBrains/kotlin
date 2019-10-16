@@ -1,6 +1,5 @@
 class C {
     private var myX = ""
-
     var x: String
         get() = myX
         set(x) {
@@ -8,7 +7,7 @@ class C {
             myX = x
         }
 
-    internal fun foo() {
+    fun foo() {
         myX = "a"
     }
 }

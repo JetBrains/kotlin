@@ -312,6 +312,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addSemicolonBeforeLambdaExpression")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddSemicolonBeforeLambdaExpression extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAddSemicolonBeforeLambdaExpression() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addSemicolonBeforeLambdaExpression"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addStarProjections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -543,6 +556,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             runTest("idea/testData/quickfix/autoImports/delegateExtensionGet.test");
         }
 
+        @TestMetadata("delegateExtensionProvideDelegate.test")
+        public void testDelegateExtensionProvideDelegate() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/delegateExtensionProvideDelegate.test");
+        }
+
         @TestMetadata("delegateExtensionSet.test")
         public void testDelegateExtensionSet() throws Exception {
             runTest("idea/testData/quickfix/autoImports/delegateExtensionSet.test");
@@ -761,6 +779,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         @TestMetadata("invokeExtension.test")
         public void testInvokeExtension() throws Exception {
             runTest("idea/testData/quickfix/autoImports/invokeExtension.test");
+        }
+
+        @TestMetadata("invokeExtension2.test")
+        public void testInvokeExtension2() throws Exception {
+            runTest("idea/testData/quickfix/autoImports/invokeExtension2.test");
         }
 
         @TestMetadata("invokeExtensionNoOperator.test")
@@ -1171,6 +1194,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
         public void testAllFilesPresentInChangeFeatureSupport() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeFeatureSupport"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/changeObjectToClass")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeObjectToClass extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInChangeObjectToClass() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeObjectToClass"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
         }
     }
 
@@ -2011,6 +2047,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 @TestMetadata("companionMember.before.Main.java")
                 public void testCompanionMember() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createFunction/fromJava/companionMember.before.Main.java");
+                }
+
+                @TestMetadata("nullType.before.Main.java")
+                public void testNullType() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createFunction/fromJava/nullType.before.Main.java");
                 }
 
                 @TestMetadata("topLevel.before.Main.java")
@@ -3647,6 +3688,19 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
         public void testAllFilesPresentInRemoveRedundantInitializer() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeRedundantInitializer"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/removeRedundantLabel")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveRedundantLabel extends AbstractQuickFixMultiFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestWithExtraFile, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRemoveRedundantLabel() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeRedundantLabel"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), TargetBackend.ANY, true);
         }
     }
 

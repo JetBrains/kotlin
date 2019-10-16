@@ -25,6 +25,8 @@ class KotlinCleanupInspectionTest(): KotlinLightCodeInsightFixtureTestCase() {
 
     private fun doTest(result: String, vararg files: String) {
         myFixture.enableInspections(KotlinCleanupInspection::class.java)
+        myFixture.enableInspections(SortModifiersInspection::class.java)
+        myFixture.enableInspections(RedundantModalityModifierInspection::class.java)
         myFixture.configureByFiles(*files)
 
         val project = myFixture.project

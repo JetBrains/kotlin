@@ -17,8 +17,13 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.inline.NameGenerator
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putReifiedOperationMarker
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 interface BaseExpressionCodegen {
@@ -28,6 +33,8 @@ interface BaseExpressionCodegen {
     val visitor: InstructionAdapter
 
     val inlineNameGenerator: NameGenerator
+
+    val typeSystem: TypeSystemCommonBackendContext
 
     val lastLineNumber: Int
 
@@ -41,4 +48,17 @@ interface BaseExpressionCodegen {
     )
 
     fun markLineNumberAfterInlineIfNeeded()
+
+    fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker)
+
+    @JvmDefault
+    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(type: KotlinTypeMarker, operationKind: OperationKind) {
+        with(typeSystem) {
+            val (typeParameter, second) = extractReificationArgument(type) ?: return
+            if (typeParameter.isReified()) {
+                consumeReifiedOperationMarker(typeParameter)
+                putReifiedOperationMarker(operationKind, second, visitor)
+            }
+        }
+    }
 }

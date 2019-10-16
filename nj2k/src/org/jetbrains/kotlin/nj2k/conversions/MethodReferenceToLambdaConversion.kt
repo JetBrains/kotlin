@@ -6,17 +6,22 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import com.intellij.lang.jvm.JvmModifier
+import com.intellij.psi.PsiModifier
+import org.jetbrains.kotlin.codegen.kotlinType
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.nullIfStubExpression
 import org.jetbrains.kotlin.nj2k.qualified
 import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.*
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 
-class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKMethodReferenceExpression) return recurse(element)
         val symbol = element.identifier
@@ -32,11 +37,11 @@ class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterCont
             ?.safeAs<JKClassAccessExpression>()
             ?.takeIf { symbol.safeAs<JKMethodSymbol>()?.isStatic == false && !element.isConstructorCall }
             ?.let { classAccessExpression ->
-                JKParameterImpl(
-                    JKTypeElementImpl(
-                        parametersTypesByFunctionalInterface?.firstOrNull() ?: JKClassTypeImpl(classAccessExpression.identifier)
+                JKParameter(
+                    JKTypeElement(
+                        parametersTypesByFunctionalInterface?.firstOrNull() ?: JKClassType(classAccessExpression.identifier)
                     ),
-                    JKNameIdentifierImpl(RECEIVER_NAME),
+                    JKNameIdentifier(RECEIVER_NAME),
                     isVarArgs = false
                 )
             }
@@ -50,47 +55,45 @@ class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterCont
                 (symbol.parameterNames ?: return recurse(element)).zip(
                     explicitParameterTypesByFunctionalInterface ?: symbol.parameterTypes ?: return recurse(element)
                 ) { name, type ->
-                    JKParameterImpl(
-                        JKTypeElementImpl(type),
-                        JKNameIdentifierImpl(name),
+                    JKParameter(
+                        JKTypeElement(type),
+                        JKNameIdentifier(name),
                         isVarArgs = false
                     )
                 }
             } else emptyList()
 
         val arguments = parameters.map { parameter ->
-            val parameterSymbol = context.symbolProvider.provideUniverseSymbol(parameter)
-            JKArgumentImpl(JKFieldAccessExpressionImpl(parameterSymbol))
+            val parameterSymbol = symbolProvider.provideUniverseSymbol(parameter)
+            JKArgumentImpl(JKFieldAccessExpression(parameterSymbol))
         }
         val callExpression =
             when (symbol) {
                 is JKMethodSymbol ->
-                    JKKtCallExpressionImpl(
+                    JKCallExpressionImpl(
                         symbol,
-                        JKArgumentListImpl(arguments)
+                        JKArgumentList(arguments)
                     )
-                is JKClassSymbol -> JKJavaNewExpressionImpl(symbol, JKArgumentListImpl(), JKTypeArgumentListImpl())
-                is JKUnresolvedSymbol -> return recurse(element)
-                else -> error("Symbol should be either method symbol or class symbol, but it is ${symbol::class}")
+                is JKClassSymbol -> JKNewExpression(symbol, JKArgumentList(), JKTypeArgumentList())
+                else -> return recurse(element)
             }
         val qualifier = when {
             receiverParameter != null ->
-                JKFieldAccessExpressionImpl(context.symbolProvider.provideUniverseSymbol(receiverParameter))
+                JKFieldAccessExpression(symbolProvider.provideUniverseSymbol(receiverParameter))
             element.isConstructorCall -> element.qualifier.safeAs<JKQualifiedExpression>()?.let { it::receiver.detached() }
             else -> element::qualifier.detached().nullIfStubExpression()
         }
 
 
-        val lambda = JKLambdaExpressionImpl(
-            JKExpressionStatementImpl(callExpression.qualified(qualifier)),
+        val lambda = JKLambdaExpression(
+            JKExpressionStatement(callExpression.qualified(qualifier)),
             listOfNotNull(receiverParameter) + parameters,
             element::functionalType.detached(),
-            JKTypeElementImpl(
+            JKTypeElement(
                 when (symbol) {
-                    is JKMethodSymbol -> symbol.returnType ?: JKNoTypeImpl
-                    is JKClassSymbol -> JKClassTypeImpl(symbol)
-                    is JKUnresolvedSymbol -> return recurse(element)
-                    else -> error("Symbol should be either method symbol or class symbol, but it is ${symbol::class}")
+                    is JKMethodSymbol -> symbol.returnType ?: JKNoType
+                    is JKClassSymbol -> JKClassType(symbol)
+                    else -> return recurse(element)
                 }
             )
         )
@@ -111,18 +114,38 @@ class MethodReferenceToLambdaConversion(private val context: NewJ2kConverterCont
                 .firstOrNull { !it.hasModifier(JvmModifier.STATIC) }
                 ?.parameterList
                 ?.parameters
-                ?.map { it.type.toJK(context.symbolProvider).substituteTypeParameters(this) }
+                ?.map { typeFactory.fromPsiType(it.type).substituteTypeParameters(this) }
             is JKMultiverseKtClassSymbol -> reference.target.body
                 ?.functions
                 ?.singleOrNull()
                 ?.valueParameters
-                ?.map { it.typeReference?.toJK(context.symbolProvider)?.substituteTypeParameters(this) ?: return null }
+                ?.map { typeFactory.fromKotlinType(it.kotlinType(it.analyze()) ?: return null).substituteTypeParameters(this) }
             is JKUniverseClassSymbol -> reference.target.classBody.declarations.firstIsInstanceOrNull<JKMethod>()
                 ?.parameters
                 ?.map { it.type.type.substituteTypeParameters(this) }
             else -> null
         }
     }
+
+
+    private val JKMethodSymbol.isStatic: Boolean
+        get() = when (this) {
+            is JKMultiverseFunctionSymbol -> target.parent is KtObjectDeclaration
+            is JKMultiverseMethodSymbol -> target.hasModifierProperty(PsiModifier.STATIC)
+            is JKUniverseMethodSymbol -> target.parent?.parent?.safeAs<JKClass>()?.classKind == JKClass.ClassKind.COMPANION
+            is JKUnresolvedMethod -> false
+        }
+
+    private val JKMethodSymbol.parameterNames: List<String>?
+        get() {
+            return when (this) {
+                is JKMultiverseFunctionSymbol -> target.valueParameters.map { it.name ?: return null }
+                is JKMultiverseMethodSymbol -> target.parameters.map { it.name ?: return null }
+                is JKUniverseMethodSymbol -> target.parameters.map { it.name.value }
+                is JKUnresolvedMethod -> null
+            }
+        }
+
 
     companion object {
         private const val RECEIVER_NAME = "obj" //name taken from old j2k

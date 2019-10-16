@@ -48,62 +48,28 @@ import java.util.*
 abstract class TranslationResult protected constructor(val diagnostics: Diagnostics) {
     class Fail(diagnostics: Diagnostics) : TranslationResult(diagnostics)
 
-    class Success(
-            private val config: JsConfig,
-            private val files: List<KtFile>,
-            val program: JsProgram,
-            diagnostics: Diagnostics,
-            private val importedModules: List<String>,
-            val moduleDescriptor: ModuleDescriptor,
-            val bindingContext: BindingContext,
-            val packageMetadata: Map<FqName, ByteArray>
+    abstract class SuccessBase(
+        protected val config: JsConfig,
+        protected val files: List<KtFile>,
+        diagnostics: Diagnostics,
+        protected val importedModules: List<String>,
+        val moduleDescriptor: ModuleDescriptor,
+        val bindingContext: BindingContext,
+        val packageMetadata: Map<FqName, ByteArray>
     ) : TranslationResult(diagnostics) {
-        @Suppress("unused") // Used in kotlin-web-demo in WebDemoTranslatorFacade
-        fun getCode(): String {
-            val output = TextOutputImpl()
-            getCode(output, sourceLocationConsumer = null)
-            return output.toString()
+
+        abstract fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection
+
+        protected val sourceFiles = files.map {
+            val virtualFile = it.originalFile.virtualFile
+
+            when {
+                virtualFile == null -> File(it.name)
+                else -> VfsUtilCore.virtualToIoFile(virtualFile)
+            }
         }
 
-        fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
-            val output = TextOutputImpl()
-
-            val sourceMapBuilder = SourceMap3Builder(outputFile, output, config.sourceMapPrefix)
-            val sourceMapBuilderConsumer =
-                    if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
-                        val sourceMapContentEmbedding = config.sourceMapContentEmbedding
-                        val pathResolver = SourceFilePathResolver.create(config)
-                        SourceMapBuilderConsumer(
-                                File("."),
-                                sourceMapBuilder,
-                                pathResolver,
-                                sourceMapContentEmbedding == SourceMapSourceEmbedding.ALWAYS,
-                                sourceMapContentEmbedding != SourceMapSourceEmbedding.NEVER)
-                    }
-                    else {
-                        null
-                    }
-
-            getCode(output, sourceMapBuilderConsumer)
-            if (sourceMapBuilderConsumer != null) {
-                sourceMapBuilder.addLink()
-            }
-            val code = output.toString()
-
-            val prefix = outputPrefixFile?.readText() ?: ""
-            val postfix = outputPostfixFile?.readText() ?: ""
-            val sourceFiles = files.map {
-                val virtualFile = it.originalFile.virtualFile
-
-                when {
-                    virtualFile == null -> File(it.name)
-                    else -> VfsUtilCore.virtualToIoFile(virtualFile)
-                }
-            }
-
-            val jsFile = SimpleOutputFile(sourceFiles, outputFile.name, prefix + code + postfix)
-            val outputFiles = arrayListOf<OutputFile>(jsFile)
-
+        protected fun metadataFiles(outputFile: File): List<OutputFile> {
             if (config.configuration.getBoolean(JSConfigurationKeys.META_INFO)) {
                 val metaFileName = KotlinJavascriptMetadataUtils.replaceSuffix(outputFile.name)
                 val moduleDescription = JsModuleDescriptor(
@@ -121,12 +87,74 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                 val metaFileContent = serializedMetadata.asString()
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
-                outputFiles.add(jsMetaFile)
 
-                for (serializedPackage in serializedMetadata.serializedPackages()) {
-                    outputFiles.add(kjsmFileForPackage(serializedPackage.fqName, serializedPackage.bytes))
+                return listOf(jsMetaFile) + serializedMetadata.serializedPackages().map { serializedPackage ->
+                    kjsmFileForPackage(serializedPackage.fqName, serializedPackage.bytes)
                 }
+            } else {
+                return emptyList()
             }
+        }
+
+        private fun kjsmFileForPackage(packageFqName: FqName, bytes: ByteArray): SimpleOutputBinaryFile {
+            val ktFiles = (bindingContext.get(BindingContext.PACKAGE_TO_FILES, packageFqName) ?: emptyList())
+            val sourceFiles = ktFiles.map { VfsUtilCore.virtualToIoFile(it.virtualFile) }
+            val relativePath = config.moduleId +
+                    VfsUtilCore.VFS_SEPARATOR_CHAR +
+                    JsSerializerProtocol.getKjsmFilePath(packageFqName)
+            return SimpleOutputBinaryFile(sourceFiles, relativePath, bytes)
+        }
+    }
+
+    class Success(
+        config: JsConfig,
+        files: List<KtFile>,
+        val program: JsProgram,
+        diagnostics: Diagnostics,
+        importedModules: List<String>,
+        moduleDescriptor: ModuleDescriptor,
+        bindingContext: BindingContext,
+        packageMetadata: Map<FqName, ByteArray>
+    ) : SuccessBase(config, files, diagnostics, importedModules, moduleDescriptor, bindingContext, packageMetadata) {
+        @Suppress("unused") // Used in kotlin-web-demo in WebDemoTranslatorFacade
+        fun getCode(): String {
+            val output = TextOutputImpl()
+            getCode(output, sourceLocationConsumer = null)
+            return output.toString()
+        }
+
+        override fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
+            val output = TextOutputImpl()
+
+            val sourceMapBuilder = SourceMap3Builder(outputFile, output, config.sourceMapPrefix)
+            val sourceMapBuilderConsumer =
+                if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
+                    val sourceMapContentEmbedding = config.sourceMapContentEmbedding
+                    val pathResolver = SourceFilePathResolver.create(config)
+                    SourceMapBuilderConsumer(
+                        File("."),
+                        sourceMapBuilder,
+                        pathResolver,
+                        sourceMapContentEmbedding == SourceMapSourceEmbedding.ALWAYS,
+                        sourceMapContentEmbedding != SourceMapSourceEmbedding.NEVER
+                    )
+                } else {
+                    null
+                }
+
+            getCode(output, sourceMapBuilderConsumer)
+            if (sourceMapBuilderConsumer != null) {
+                sourceMapBuilder.addLink()
+            }
+            val code = output.toString()
+
+            val prefix = outputPrefixFile?.readText() ?: ""
+            val postfix = outputPostfixFile?.readText() ?: ""
+
+            val jsFile = SimpleOutputFile(sourceFiles, outputFile.name, prefix + code + postfix)
+            val outputFiles = arrayListOf<OutputFile>(jsFile)
+
+            outputFiles += metadataFiles(outputFile)
 
             if (sourceMapBuilderConsumer != null) {
                 sourceMapBuilder.skipLinesAtBeginning(StringUtil.getLineBreakCount(prefix))
@@ -138,17 +166,23 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
             return SimpleOutputFileCollection(outputFiles)
         }
 
-        private fun kjsmFileForPackage(packageFqName: FqName, bytes: ByteArray): SimpleOutputBinaryFile {
-            val ktFiles = (bindingContext.get(BindingContext.PACKAGE_TO_FILES, packageFqName) ?: emptyList())
-            val sourceFiles = ktFiles.map { VfsUtilCore.virtualToIoFile(it.virtualFile) }
-            val relativePath = config.moduleId +
-                    VfsUtilCore.VFS_SEPARATOR_CHAR +
-                    JsSerializerProtocol.getKjsmFilePath(packageFqName)
-            return SimpleOutputBinaryFile(sourceFiles, relativePath, bytes)
-        }
-
         private fun getCode(output: TextOutput, sourceLocationConsumer: SourceLocationConsumer?) {
             program.accept(JsToStringGenerationVisitor(output, sourceLocationConsumer ?: NoOpSourceLocationConsumer))
+        }
+    }
+
+    class SuccessNoCode(
+        config: JsConfig,
+        files: List<KtFile>,
+        diagnostics: Diagnostics,
+        importedModules: List<String>,
+        moduleDescriptor: ModuleDescriptor,
+        bindingContext: BindingContext,
+        packageMetadata: Map<FqName, ByteArray>
+    ) : SuccessBase(config, files, diagnostics, importedModules, moduleDescriptor, bindingContext, packageMetadata) {
+
+        override fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
+            return SimpleOutputFileCollection(metadataFiles(outputFile))
         }
     }
 }

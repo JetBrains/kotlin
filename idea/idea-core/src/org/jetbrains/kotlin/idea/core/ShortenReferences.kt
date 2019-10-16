@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,17 +13,19 @@ import com.intellij.psi.impl.source.PostprocessReformattingAspect
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
-import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInWriteAction
+import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInDispatchThread
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.Companion.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.findFirstClassifierWithDeprecationStatus
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import org.jetbrains.kotlin.resolve.source.getPsi
-import java.util.*
 
 class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT }) {
     data class Options(
@@ -64,6 +65,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                 is KtDotQualifiedExpression -> receiver.selectorExpression as? KtNameReferenceExpression ?: return false
                 else -> return false
             }
+            if (nameRef.name == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) return true
+
             when (val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]) {
                 is ClassDescriptor -> {
                     if (targetDescriptor.kind != ClassKind.OBJECT) return true
@@ -96,43 +99,45 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         return process(listOf(element), elementFilter).single()
     }
 
-    fun process(file: KtFile, startOffset: Int, endOffset: Int) {
+    @JvmOverloads
+    fun process(file: KtFile, startOffset: Int, endOffset: Int, additionalFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }) {
         val documentManager = PsiDocumentManager.getInstance(file.project)
         val document = file.viewProvider.document!!
-        if (!documentManager.isCommitted(document)) {
-            throw IllegalStateException("Document should be committed to shorten references in range")
-        }
+        check(documentManager.isCommitted(document)) { "Document should be committed to shorten references in range" }
 
         val rangeMarker = document.createRangeMarker(startOffset, endOffset)
         rangeMarker.isGreedyToLeft = true
         rangeMarker.isGreedyToRight = true
+
+        val rangeFilter = { element: PsiElement ->
+            if (rangeMarker.isValid) {
+                val range = TextRange(rangeMarker.startOffset, rangeMarker.endOffset)
+
+                val elementRange = element.textRange!!
+                when {
+                    range.contains(elementRange) -> FilterResult.PROCESS
+
+                    range.intersects(elementRange) -> {
+                        // for qualified call expression allow to shorten only the part without parenthesis
+                        val calleeExpression = ((element as? KtDotQualifiedExpression)
+                            ?.selectorExpression as? KtCallExpression)
+                            ?.calleeExpression
+                        if (calleeExpression != null) {
+                            val rangeWithoutParenthesis = TextRange(elementRange.startOffset, calleeExpression.textRange!!.endOffset)
+                            if (range.contains(rangeWithoutParenthesis)) FilterResult.PROCESS else FilterResult.GO_INSIDE
+                        } else {
+                            FilterResult.GO_INSIDE
+                        }
+                    }
+                    else -> FilterResult.SKIP
+                }
+            } else {
+                FilterResult.SKIP
+            }
+        }
         try {
             process(listOf(file)) { element ->
-                if (rangeMarker.isValid) {
-                    val range = TextRange(rangeMarker.startOffset, rangeMarker.endOffset)
-
-                    val elementRange = element.textRange!!
-                    when {
-                        range.contains(elementRange) -> FilterResult.PROCESS
-
-                        range.intersects(elementRange) -> {
-                            // for qualified call expression allow to shorten only the part without parenthesis
-                            val calleeExpression = ((element as? KtDotQualifiedExpression)
-                                ?.selectorExpression as? KtCallExpression)
-                                ?.calleeExpression
-                            if (calleeExpression != null) {
-                                val rangeWithoutParenthesis = TextRange(elementRange.startOffset, calleeExpression.textRange!!.endOffset)
-                                if (range.contains(rangeWithoutParenthesis)) FilterResult.PROCESS else FilterResult.GO_INSIDE
-                            } else {
-                                FilterResult.GO_INSIDE
-                            }
-                        }
-
-                        else -> FilterResult.SKIP
-                    }
-                } else {
-                    FilterResult.SKIP
-                }
+                minOf(rangeFilter(element), additionalFilter(element))
             }
         } finally {
             rangeMarker.dispose()
@@ -194,30 +199,36 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
 
             // step 2: analyze collected elements with resolve and decide which can be shortened now and which need descriptors to be imported before shortening
-            val allElementsToAnalyze = visitors.flatMap { visitor -> visitor.getElementsToAnalyze().map { it.element } }
-            val bindingContext = allowResolveInWriteAction {
+            val allElementsToAnalyze = visitors.flatMap { visitor -> visitor.getElementsToAnalyze().map { it.element } }.toSet()
+            val bindingContext = allowResolveInDispatchThread {
                 file.getResolutionFacade().analyze(allElementsToAnalyze, BodyResolveMode.PARTIAL_WITH_CFA)
             }
 
             processors.forEach { it.analyzeCollectedElements(bindingContext) }
 
             // step 3: shorten elements that can be shortened right now
-            processors.forEach { it.shortenElements(elementSetToUpdate = elementsToUse, options = options) }
+            runWriteAction {
+                processors.forEach { it.shortenElements(elementSetToUpdate = elementsToUse, options = options) }
+            }
 
             // step 4: try to import descriptors needed to shorten other elements
             val descriptorsToImport = processors.flatMap { it.getDescriptorsToImport() }.toSet()
             var anyChange = false
-            for (descriptor in descriptorsToImport) {
-                assert(descriptor !in failedToImportDescriptors)
+            runWriteAction {
+                for (descriptor in descriptorsToImport) {
+                    assert(descriptor !in failedToImportDescriptors)
 
-                val result = helper.importDescriptor(file, descriptor)
-                if (result != ImportDescriptorResult.ALREADY_IMPORTED) {
-                    anyChange = true
+                    val result = helper.importDescriptor(file, descriptor)
+                    if (result != ImportDescriptorResult.ALREADY_IMPORTED) {
+                        anyChange = true
+                    }
+                    if (result == ImportDescriptorResult.FAIL) {
+                        failedToImportDescriptors.add(descriptor)
+                    }
                 }
-                if (result == ImportDescriptorResult.FAIL) {
-                    failedToImportDescriptors.add(descriptor)
-                }
+                if (!anyChange) processors.forEach { it.removeRootPrefixes() }
             }
+
             if (!anyChange) break
         }
 
@@ -240,6 +251,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         var options: Options = Options.DEFAULT
 
         private val elementsToAnalyze = ArrayList<ElementToAnalyze<TElement>>()
+        private val elementsWithRootPrefix = mutableListOf<SmartPsiElementPointer<TElement>>()
 
         private var level = 0
 
@@ -256,7 +268,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
          * Should be invoked by implementors when visiting the PSI tree for those elements that can potentially be shortened
          */
         protected fun addQualifiedElementToAnalyze(element: TElement) {
-            elementsToAnalyze.add(ElementToAnalyze(element, level))
+            if (element.isRootPrefix())
+                elementsWithRootPrefix += element.createSmartPointer()
+            else
+                elementsToAnalyze += ElementToAnalyze(element, level)
         }
 
         override fun visitElement(element: PsiElement) {
@@ -266,6 +281,7 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
 
         fun getElementsToAnalyze(): List<ElementToAnalyze<TElement>> = elementsToAnalyze
+        fun getElementsWithRootPrefix(): Collection<SmartPsiElementPointer<TElement>> = elementsWithRootPrefix
     }
 
     private abstract class ShorteningProcessor<TElement : KtElement>(
@@ -350,6 +366,13 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                     elementSetToUpdate.remove(element)
                     elementSetToUpdate.add(newElement!!)
                 }
+            }
+        }
+
+        fun removeRootPrefixes() {
+            for (pointer in collectElementsVisitor.getElementsWithRootPrefix()) {
+                val element = pointer.element ?: continue
+                shortenElement(element, Options.DEFAULT)
             }
         }
 
@@ -469,12 +492,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             element: KtDotQualifiedExpression,
             bindingContext: BindingContext
         ): AnalyzeQualifiedElementResult {
-            if (!canBePossibleToDropReceiver(element, bindingContext)) return AnalyzeQualifiedElementResult.Skip
-
             if (PsiTreeUtil.getParentOfType(
                     element,
                     KtImportDirective::class.java, KtPackageDirective::class.java
-                ) != null
+                ) != null || !canBePossibleToDropReceiver(element, bindingContext)
             ) return AnalyzeQualifiedElementResult.Skip
 
             val selector = element.selectorExpression ?: return AnalyzeQualifiedElementResult.Skip
@@ -727,4 +748,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             }
         }
     }
+}
+
+private fun PsiElement.isRootPrefix(): Boolean = when (this) {
+    is KtDotQualifiedExpression -> receiverExpression.text == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+    is KtUserType -> qualifier?.text == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
+    else -> false
 }

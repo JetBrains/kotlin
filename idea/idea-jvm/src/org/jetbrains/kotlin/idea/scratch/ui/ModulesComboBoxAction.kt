@@ -16,13 +16,14 @@ import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.vcs.changes.committed.LabeledComboBoxAction
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.isKotlinWorksheet
 import javax.swing.JComponent
 
-class ModulesComboBoxAction(private val scratchFile: ScratchFile) : LabeledComboBoxAction("Use classpath of module") {
+class ModulesComboBoxAction(private val scratchFile: ScratchFile) : LabeledComboBoxAction(KotlinBundle.message("scratch.module.combobox")) {
     override fun createPopupActionGroup(button: JComponent): DefaultActionGroup {
         val actionGroup = DefaultActionGroup()
         actionGroup.add(ModuleIsNotSelectedAction(ConfigurationModuleSelector.NO_MODULE_TEXT))

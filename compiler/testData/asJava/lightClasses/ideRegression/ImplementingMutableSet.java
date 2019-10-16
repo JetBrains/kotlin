@@ -15,8 +15,6 @@ public final class SmartSet <T> extends kotlin.collections.AbstractSet<T> implem
 
     public void clear() { /* compiled code */ }
 
-    public boolean contains(java.lang.Object element) { /* compiled code */ }
-
     private SmartSet() { /* compiled code */ }
 
     @kotlin.jvm.JvmStatic

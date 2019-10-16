@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtParameterList
@@ -85,8 +86,10 @@ open class SpecifyExplicitLambdaSignatureIntention : SelfTargetingOffsetIndepend
             val psiFactory = KtPsiFactory(element)
             val functionLiteral = element.functionLiteral
             val newParameterList = psiFactory.createLambdaParameterListIfAny(parameterString)
-            functionLiteral.setParameterListIfAny(psiFactory, newParameterList)
-            ShortenReferences.DEFAULT.process(element.valueParameters)
+            runWriteAction {
+                functionLiteral.setParameterListIfAny(psiFactory, newParameterList)
+                ShortenReferences.DEFAULT.process(element.valueParameters)
+            }
         }
     }
 }

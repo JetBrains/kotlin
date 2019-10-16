@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
+import org.jetbrains.kotlin.resolve.calls.model.PartialCallContainer;
 import org.jetbrains.kotlin.resolve.calls.model.PartialCallResolutionResult;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -106,6 +107,8 @@ public interface BindingContext {
     WritableSlice<KtExpression, LeakingThisDescriptor> LEAKING_THIS = Slices.createSimpleSlice();
     WritableSlice<KtParameter, Boolean> UNUSED_MAIN_PARAMETER = Slices.createSimpleSlice();
 
+    WritableSlice<VariableDescriptor, Boolean> UNUSED_DELEGATED_PROPERTY_OPERATOR_PARAMETER = Slices.createSimpleSlice();
+
     /**
      * A qualifier corresponds to a receiver expression (if any). For 'A.B' qualifier is recorded for 'A'.
      */
@@ -121,7 +124,7 @@ public interface BindingContext {
             new BasicWritableSlice<>(DO_NOTHING);
 
     WritableSlice<Call, ResolvedCall<?>> RESOLVED_CALL = new BasicWritableSlice<>(DO_NOTHING);
-    WritableSlice<Call, PartialCallResolutionResult> ONLY_RESOLVED_CALL = new BasicWritableSlice<>(DO_NOTHING);
+    WritableSlice<Call, PartialCallContainer> ONLY_RESOLVED_CALL = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<Call, BasicCallResolutionContext> PARTIAL_CALL_RESOLUTION_CONTEXT = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<KtExpression, Call> DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL = new BasicWritableSlice<>(DO_NOTHING);
     WritableSlice<Call, TailRecursionKind> TAIL_RECURSION_CALL = Slices.createSimpleSlice();

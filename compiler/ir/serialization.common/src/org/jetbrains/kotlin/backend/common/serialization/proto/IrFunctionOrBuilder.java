@@ -44,28 +44,27 @@ public interface IrFunctionOrBuilder extends
   boolean getIsSuspend();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol overridden = 5;</code>
+   * <code>repeated int32 overridden = 5;</code>
    *
    * <pre>
    *optional UniqId corresponding_property = 7;
    * </pre>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol> 
-      getOverriddenList();
+  java.util.List<java.lang.Integer> getOverriddenList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol overridden = 5;</code>
-   *
-   * <pre>
-   *optional UniqId corresponding_property = 7;
-   * </pre>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getOverridden(int index);
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol overridden = 5;</code>
+   * <code>repeated int32 overridden = 5;</code>
    *
    * <pre>
    *optional UniqId corresponding_property = 7;
    * </pre>
    */
   int getOverriddenCount();
+  /**
+   * <code>repeated int32 overridden = 5;</code>
+   *
+   * <pre>
+   *optional UniqId corresponding_property = 7;
+   * </pre>
+   */
+  int getOverridden(int index);
 }

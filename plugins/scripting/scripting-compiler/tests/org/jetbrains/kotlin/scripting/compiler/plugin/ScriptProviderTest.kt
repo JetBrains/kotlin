@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -18,6 +19,10 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ScriptProviderTest {
+
+    init {
+        setIdeaIoUseFallback()
+    }
 
     @Test
     fun testLazyScriptDefinitionsProvider() {

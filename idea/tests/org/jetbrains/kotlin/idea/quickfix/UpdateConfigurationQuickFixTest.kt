@@ -35,9 +35,6 @@ import java.io.File
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase() {
-
-    val module: Module get() = myModule
-
     fun testDisableInlineClasses() {
         configureRuntime("mockRuntime11")
         resetProjectSettings(LanguageVersion.KOTLIN_1_3)

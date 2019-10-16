@@ -15,8 +15,8 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
         CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int, init: kotlin.Function1<kotlin.Int, T of kotlin.Array>) declared in kotlin.Array' type=kotlin.Array<T of <root>.testArray> origin=null
           <class: T>: <none>
           size: GET_VAR 'n: kotlin.Int declared in <root>.testArray' type=kotlin.Int origin=null
-          init: FUN_EXPR type=kotlin.Function1<kotlin.Int, T of kotlin.Array> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:T of kotlin.Array
+          init: FUN_EXPR type=kotlin.Function1<kotlin.Int, T of <root>.testArray> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:T of <root>.testArray
               VALUE_PARAMETER name:it index:0 type:kotlin.Int
               BLOCK_BODY
                 CALL 'public abstract fun invoke (): T of <root>.testArray declared in kotlin.Function0' type=T of <root>.testArray origin=null
@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Box modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Box visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Box visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'value: T of <uninitialized parent> declared in <root>.Box.<init>' type=T of <uninitialized parent> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Box) returnType:T of <root>.Box
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/genericConstructorCallWithTypeArguments.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Box
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): T of <root>.Box declared in <root>.Box'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Box visibility:public [final]' type=T of <root>.Box origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Box visibility:private [final]' type=T of <root>.Box origin=null
               receiver: GET_VAR '<this>: <root>.Box declared in <root>.Box.<get-value>' type=<root>.Box origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

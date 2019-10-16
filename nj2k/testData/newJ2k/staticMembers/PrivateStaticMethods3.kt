@@ -1,6 +1,6 @@
 internal class A {
     class Nested {
-        internal fun foo() {
+        fun foo() {
             privateStatic1()
         }
     }
@@ -10,7 +10,6 @@ internal class A {
     }
 
     companion object {
-
         private fun privateStatic1() {}
         private fun privateStatic2() {}
     }

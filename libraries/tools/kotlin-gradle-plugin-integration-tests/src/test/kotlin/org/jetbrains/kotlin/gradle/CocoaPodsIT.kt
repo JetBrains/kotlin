@@ -17,7 +17,7 @@ import kotlin.test.fail
 class CocoaPodsIT : BaseGradleIT() {
 
     // We use Kotlin DSL. Earlier Gradle versions fail at accessors codegen.
-    val gradleVersion = GradleVersionRequired.AtLeast("4.9")
+    val gradleVersion = GradleVersionRequired.None
 
     val PODFILE_IMPORT_DIRECTIVE_PLACEHOLDER = "<import_mode_directive>"
 

@@ -26,7 +26,8 @@ class ClasspathAnalyzerTest {
             dir.resolve("test").mkdirs()
             dir.resolve("test/A.class").writeBytes(emptyClass("test/A"))
             dir.resolve("test/B.class").writeBytes(emptyClass("test/B"))
-            dir.resolve("ignore.txt").writeBytes(emptyClass("test/B"))
+            dir.resolve("ignore.txt").writeText("")
+            dir.resolve("module-info.class").writeText("")
             dir.resolve("META-INF/versions/9/A.class").also {
                 it.parentFile.mkdirs()
                 it.writeBytes(emptyClass("A"))
@@ -58,6 +59,9 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
 
                 it.putNextEntry(ZipEntry("ignored.txt"))
+                it.closeEntry()
+
+                it.putNextEntry(ZipEntry("module-info.class"))
                 it.closeEntry()
 
                 it.putNextEntry(ZipEntry("META-INF/versions/9/test/A.class"))

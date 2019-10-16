@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.jvm.CloneableClassScope
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.runtime.structure.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
@@ -50,7 +51,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
-import kotlin.reflect.jvm.internal.structure.*
 
 internal sealed class JvmFunctionSignature {
     abstract fun asString(): String

@@ -6,19 +6,18 @@
 package org.jetbrains.kotlin.nj2k.postProcessing
 
 import com.intellij.codeInsight.intention.IntentionAction
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.psi.PsiElement
-import kotlinx.coroutines.withContext
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.quickfix.AddExclExclCallFix
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class DiagnosticBasedPostProcessingGroup(diagnosticBasedProcessings: List<DiagnosticBasedProcessing>) : ProcessingGroup {
+class DiagnosticBasedPostProcessingGroup(diagnosticBasedProcessings: List<DiagnosticBasedProcessing>) : FileBasedPostProcessing() {
     constructor(vararg diagnosticBasedProcessings: DiagnosticBasedProcessing) : this(diagnosticBasedProcessings.toList())
 
     private val diagnosticToFix =
@@ -36,17 +35,16 @@ class DiagnosticBasedPostProcessingGroup(diagnosticBasedProcessings: List<Diagno
             list.map { it.second }
         }
 
-    override suspend fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
-        withContext(EDT) {
-            CommandProcessor.getInstance().runUndoTransparentAction {
-                val diagnostics = runWriteAction { analyzeFileRange(file, rangeMarker) }
-                for (diagnostic in diagnostics.all()) {
-                    val range = rangeMarker?.range ?: file.textRange
-                    if (diagnostic.psiElement.isInRange(range)) {
-                        diagnosticToFix[diagnostic.factory]?.forEach { fix ->
-                            if (diagnostic.psiElement.isValid) {
-                                runWriteAction { fix(diagnostic) }
-                            }
+    override fun runProcessing(file: KtFile, allFiles: List<KtFile>, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
+        val resolutionFacade = runReadAction { KotlinCacheService.getInstance(converterContext.project).getResolutionFacade(allFiles) }
+        val diagnostics = runReadAction { analyzeFileRange(file, rangeMarker, resolutionFacade).all() }
+        runUndoTransparentActionInEdt(inWriteAction = true) {
+            for (diagnostic in diagnostics) {
+                val range = rangeMarker?.range ?: file.textRange
+                if (diagnostic.psiElement.isInRange(range)) {
+                    diagnosticToFix[diagnostic.factory]?.forEach { fix ->
+                        if (diagnostic.psiElement.isValid) {
+                            fix(diagnostic)
                         }
                     }
                 }
@@ -54,7 +52,7 @@ class DiagnosticBasedPostProcessingGroup(diagnosticBasedProcessings: List<Diagno
         }
     }
 
-    private fun analyzeFileRange(file: KtFile, rangeMarker: RangeMarker?): Diagnostics {
+    private fun analyzeFileRange(file: KtFile, rangeMarker: RangeMarker?, resolutionFacade: ResolutionFacade): Diagnostics {
         val elements = when {
             rangeMarker == null -> listOf(file)
             rangeMarker.isValid -> file.elementsInRange(rangeMarker.range!!).filterIsInstance<KtElement>()
@@ -62,7 +60,7 @@ class DiagnosticBasedPostProcessingGroup(diagnosticBasedProcessings: List<Diagno
         }
 
         return if (elements.isNotEmpty())
-            file.getResolutionFacade().analyzeWithAllCompilerChecks(elements).bindingContext.diagnostics
+            resolutionFacade.analyzeWithAllCompilerChecks(elements).bindingContext.diagnostics
         else Diagnostics.EMPTY
     }
 }

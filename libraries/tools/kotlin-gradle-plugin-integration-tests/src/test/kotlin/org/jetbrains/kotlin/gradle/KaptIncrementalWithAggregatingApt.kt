@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assume
 import org.junit.Test
+import java.io.File
 import kotlin.test.assertFalse
 
 class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
@@ -69,6 +71,32 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath
                 ),
                 getProcessedSources(output)
+            )
+        }
+    }
+
+    @Test
+    fun testIncrementalChangesWithJdk9() {
+        val javaHome = File(System.getProperty("jdk9Home")!!)
+        Assume.assumeTrue("JDK 9 isn't available", javaHome.isDirectory)
+        val options = defaultBuildOptions().copy(javaHome = javaHome)
+        val project = getProject()
+
+        project.build("clean", "build", options = options) {
+            assertSuccessful()
+        }
+
+        project.projectFile("useB.kt").modify { current -> "$current\nfun otherFunction() {}" }
+        project.build("build", options = options) {
+            assertSuccessful()
+
+            assertEquals(
+                setOf(
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath
+                ), getProcessedSources(output)
             )
         }
     }

@@ -17,17 +17,15 @@
 package org.jetbrains.kotlin.idea.scratch.ui
 
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.util.messages.Topic
-import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
+import org.jetbrains.kotlin.idea.scratch.ScratchFileAutoRunner
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.StopScratchAction
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
-import javax.swing.JComponent
 
 class ScratchTopPanel(val scratchFile: ScratchFile) {
     private val moduleChooserAction: ModulesComboBoxAction = ModulesComboBoxAction(scratchFile)
@@ -79,10 +77,13 @@ class ScratchTopPanel(val scratchFile: ScratchFile) {
         }
     }
 
-    private inner class IsMakeBeforeRunAction : SmallBorderCheckboxAction("Make module before Run") {
+    private inner class IsMakeBeforeRunAction : SmallBorderCheckboxAction(KotlinBundle.message("scratch.make.before.run.checkbox")) {
         override fun update(e: AnActionEvent) {
             super.update(e)
             e.presentation.isVisible = scratchFile.module != null
+            e.presentation.description = scratchFile.module?.let { selectedModule ->
+                KotlinBundle.message("scratch.make.before.run.checkbox.description", selectedModule.name)
+            }
         }
 
         override fun isSelected(e: AnActionEvent): Boolean {
@@ -94,7 +95,10 @@ class ScratchTopPanel(val scratchFile: ScratchFile) {
         }
     }
 
-    private inner class IsInteractiveCheckboxAction : SmallBorderCheckboxAction("Interactive mode") {
+    private inner class IsInteractiveCheckboxAction : SmallBorderCheckboxAction(
+        text = KotlinBundle.message("scratch.is.interactive.checkbox"),
+        description = KotlinBundle.message("scratch.is.interactive.checkbox.description", ScratchFileAutoRunner.AUTO_RUN_DELAY_IN_SECONDS)
+    ) {
         override fun isSelected(e: AnActionEvent): Boolean {
             return scratchFile.options.isInteractiveMode
         }
@@ -104,7 +108,10 @@ class ScratchTopPanel(val scratchFile: ScratchFile) {
         }
     }
 
-    private inner class IsReplCheckboxAction : SmallBorderCheckboxAction("Use REPL") {
+    private inner class IsReplCheckboxAction : SmallBorderCheckboxAction(
+        text = KotlinBundle.message("scratch.is.repl.checkbox"),
+        description = KotlinBundle.message("scratch.is.repl.checkbox.description")
+    ) {
         override fun isSelected(e: AnActionEvent): Boolean {
             return scratchFile.options.isRepl
         }

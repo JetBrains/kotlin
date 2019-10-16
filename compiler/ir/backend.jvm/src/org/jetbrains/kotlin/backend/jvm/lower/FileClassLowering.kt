@@ -101,6 +101,9 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                     it.backingField?.let { it.parent = this }
                 }
             }
+
+            annotations += irFile.annotations
+
             metadata = irFile.metadata
 
             val partClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.fileClassFqName)
@@ -114,6 +117,5 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 context.multifileFacadesToAdd.getOrPut(jvmClassName) { ArrayList() }.add(this)
             }
         }
-        // TODO file annotations
     }
 }

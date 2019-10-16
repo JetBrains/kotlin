@@ -416,7 +416,7 @@ internal fun addFakeContinuationConstructorCallMarker(v: InstructionAdapter, isS
  * In such cases we just generate the marker which is going to be replaced with real continuation on generating state machine.
  * See [CoroutineTransformerMethodVisitor] for more info.
  */
-internal fun addFakeContinuationMarker(v: InstructionAdapter) {
+fun addFakeContinuationMarker(v: InstructionAdapter) {
     v.emitInlineMarker(INLINE_MARKER_FAKE_CONTINUATION)
     v.aconst(null)
 }

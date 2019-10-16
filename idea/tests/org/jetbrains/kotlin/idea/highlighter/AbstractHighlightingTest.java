@@ -18,14 +18,14 @@ import java.util.List;
 
 public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFixtureTestCase {
 
-    protected void doTest(String filePath) throws Exception {
-        String fileText = FileUtil.loadFile(new File(filePath), true);
+    protected void doTest(String unused) throws Exception {
+        String fileText = FileUtil.loadFile(new File(testPath()), true);
         boolean checkInfos = !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_CHECK_INFOS");
         boolean checkWeakWarnings = !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_CHECK_WEAK_WARNINGS");
         boolean checkWarnings = !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_CHECK_WARNINGS");
         boolean expectedDuplicatedHighlighting = InTextDirectivesUtils.isDirectiveDefined(fileText, "// EXPECTED_DUPLICATED_HIGHLIGHTING");
 
-        myFixture.configureByFile(filePath);
+        myFixture.configureByFile(fileName());
 
         withExpectedDuplicatedHighlighting(expectedDuplicatedHighlighting, () -> {
             try {

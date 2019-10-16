@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.incremental.js
 
-import org.jetbrains.kotlin.name.FqName
 import java.io.File
 import java.io.Serializable
 import java.security.MessageDigest
@@ -42,6 +41,17 @@ interface IncrementalResultsConsumer {
     fun processInlineFunctions(functions: Collection<JsInlineFunctionHash>)
 
     fun processPackageMetadata(packageName: String, metadata: ByteArray)
+
+    fun processIrFile(
+        sourceFile: File,
+        fileData: ByteArray,
+        symbols: ByteArray,
+        types: ByteArray,
+        strings: ByteArray,
+        declarations: ByteArray,
+        bodies: ByteArray,
+        fqn: ByteArray
+    )
 }
 
 class JsInlineFunctionHash(val sourceFilePath: String, val fqName: String, val inlineFunctionMd5Hash: Long): Serializable
@@ -107,6 +117,24 @@ class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
 
     override fun processPackageMetadata(packageName: String, metadata: ByteArray) {
         _packageMetadata[packageName] = metadata
+    }
+
+//    class IrFileData(fileData: ByteArray, symbols: ByteArray, types: ByteArray, strings: ByteArray, bodies: ByteArray, declarations: ByteArray)
+    private val _irFileData = hashMapOf<File, IrTranslationResultValue>()
+    val irFileData: Map<File, IrTranslationResultValue>
+        get() = _irFileData
+
+    override fun processIrFile(
+        sourceFile: File,
+        fileData: ByteArray,
+        symbols: ByteArray,
+        types: ByteArray,
+        strings: ByteArray,
+        declarations: ByteArray,
+        bodies: ByteArray,
+        fqn: ByteArray
+    ) {
+        _irFileData[sourceFile] = IrTranslationResultValue(fileData, symbols, types, strings, declarations, bodies, fqn)
     }
 }
 

@@ -74,7 +74,7 @@ internal class KotlinCompilationNpmResolver(
     @Synchronized
     fun getResolutionOrResolveIfForced(): KotlinCompilationNpmResolution? {
         if (resolution != null) return resolution
-        if (packageJsonTaskHolder.doGetTask().state.upToDate) return resolve(skipWriting = true)
+        if (packageJsonTaskHolder.get().state.upToDate) return resolve(skipWriting = true)
         if (resolver.forceFullResolve && resolution == null) return resolve()
         return null
     }

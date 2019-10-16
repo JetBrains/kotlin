@@ -22,6 +22,7 @@ import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import com.intellij.openapi.util.JDOMUtil
@@ -86,7 +87,7 @@ sealed class PluginUpdateStatus {
     }
 }
 
-class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) : Disposable {
+class KotlinPluginUpdater : Disposable {
     private var updateDelay = INITIAL_UPDATE_DELAY
     private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, this)
     private val notificationGroup = NotificationGroup("Kotlin plugin updates", NotificationDisplayType.STICKY_BALLOON, true)
@@ -101,7 +102,7 @@ class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) 
         if (ApplicationManager.getApplication().isUnitTestMode || ApplicationManager.getApplication().isHeadlessEnvironment) return
         if (!UpdateSettings.getInstance().isCheckNeeded) return
 
-        val lastUpdateTime = java.lang.Long.parseLong(propertiesComponent.getValue(PROPERTY_NAME, "0"))
+        val lastUpdateTime = java.lang.Long.parseLong(PropertiesComponent.getInstance().getValue(PROPERTY_NAME, "0"))
         if (lastUpdateTime == 0L || System.currentTimeMillis() - lastUpdateTime > CACHED_REQUEST_DELAY) {
             queueUpdateCheck { updateStatus ->
                 when (updateStatus) {
@@ -233,7 +234,7 @@ class KotlinPluginUpdater(private val propertiesComponent: PropertiesComponent) 
     }
 
     private fun recordSuccessfulUpdateCheck() {
-        propertiesComponent.setValue(PROPERTY_NAME, System.currentTimeMillis().toString())
+        PropertiesComponent.getInstance().setValue(PROPERTY_NAME, System.currentTimeMillis().toString())
         updateDelay = INITIAL_UPDATE_DELAY
     }
 

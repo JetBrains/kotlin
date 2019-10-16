@@ -15,13 +15,13 @@ package org.jetbrains.kotlin.idea.statistics
 enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf()) {
 
     GradleTarget("gradle.target", gradleTargetEvents),
-    MavenTarget("maven.target", mavenTargetEvents),
-    JPSTarget("jps.target", JPSTargetEvents),
     Refactoring("ide.action.refactoring", refactoringEvents),
     NewFileTemplate("ide.newFileTempl", newFileTemplateEvents),
     NPWizards("ide.npwizards", NPWizardsEvents),
-    DebugEval("ide.debugger.eval", debugEvalEvents),
-    J2K("ide.j2k");
+    Debug("ide.debugger"),
+    J2K("ide.j2k"),
+    Editor("ide.editor"),
+    Settings("ide.settings");
 
     val GROUP_ID: String = "kotlin.$groupIdSuffix"
 }
@@ -56,17 +56,6 @@ val gradleTargetEvents = setOf(
     "MPP.native.mingwX86",
     "MPP.native.wasm32",
     "MPP.native.zephyrStm32f4Disco"
-)
-val mavenTargetEvents = setOf(
-    "common",
-    "js",
-    "jvm"
-)
-val JPSTargetEvents = setOf(
-    "common",
-    "js",
-    "jvm",
-    "native"
 )
 val refactoringEvents = setOf(
     "RenameKotlinFileProcessor",
@@ -113,18 +102,4 @@ val NPWizardsEvents = setOf(
     "KotlinDslGradleKotlinJSFrameworkSupportProvider",
     "KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider",
     "KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"
-)
-val debugEvalEvents = setOf(
-    "Success",
-    "NoFrameProxy",
-    "ThreadNotAvailable",
-    "ThreadNotSuspended",
-    "ProcessCancelledException",
-    "InterpretingException",
-    "EvaluateException",
-    "SpecialException",
-    "GenericException",
-    "FrontendException",
-    "BackendException",
-    "ErrorsInCode"
 )

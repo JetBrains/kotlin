@@ -1,0 +1,14 @@
+// "Create enum constant 'D'" "true"
+enum class Test {
+    A,
+    B,
+    C,
+    <caret>D;
+
+    fun test() {
+    }
+}
+
+fun main() {
+    Test.D
+}

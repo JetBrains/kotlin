@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.contains
@@ -24,3 +27,11 @@ fun FunctionDescriptor.isFunctionForExpectTypeFromCastFeature(): Boolean {
 
     return true
 }
+
+
+internal fun CallableMemberDescriptor.isEffectivelyFinal(ignoreEnumClassFinality: Boolean): Boolean =
+    modality == Modality.FINAL ||
+            containingDeclaration.let { parent ->
+                (ignoreEnumClassFinality || !DescriptorUtils.isEnumClass(parent)) &&
+                        parent is ClassDescriptor && parent.modality == Modality.FINAL
+            }

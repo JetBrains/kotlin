@@ -17,22 +17,22 @@ public interface IrFieldOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 2;</code>
+   * <code>optional int32 initializer = 2;</code>
    */
   boolean hasInitializer();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 2;</code>
+   * <code>optional int32 initializer = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getInitializer();
+  int getInitializer();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+   * <code>required int32 name = 3;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+   * <code>required int32 name = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getName();
+  int getName();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 4;</code>
@@ -71,11 +71,11 @@ public interface IrFieldOrBuilder extends
   boolean getIsStatic();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type = 8;</code>
+   * <code>required int32 type = 8;</code>
    */
   boolean hasType();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type = 8;</code>
+   * <code>required int32 type = 8;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex getType();
+  int getType();
 }

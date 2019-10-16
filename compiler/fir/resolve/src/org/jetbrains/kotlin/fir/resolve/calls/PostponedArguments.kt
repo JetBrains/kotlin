@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
@@ -43,11 +43,10 @@ fun preprocessLambdaArgument(
 }
 
 
-private val ConeKotlinType.isBuiltinFunctionalType: Boolean
-    get () {
-        val type = this
-        return when (type) {
-            is ConeClassType -> type.lookupTag.classId.asString().startsWith("kotlin/Function")
+val ConeKotlinType.isBuiltinFunctionalType: Boolean
+    get() {
+        return when (this) {
+            is ConeClassType -> this.lookupTag.classId.asString().startsWith("kotlin/Function")
             else -> false
         }
     }
@@ -107,7 +106,7 @@ private fun extraLambdaInfo(
     val isSuspend = expectedType?.isSuspendFunctionType ?: false
 
     val isFunctionSupertype =
-        expectedType != null && expectedType.isBuiltinFunctionalType//isNotNullOrNullableFunctionSupertype(expectedType)
+        expectedType != null && expectedType.lowerBoundIfFlexible().isBuiltinFunctionalType//isNotNullOrNullableFunctionSupertype(expectedType)
     val argumentAsFunctionExpression = argument//.safeAs<FunctionExpression>()
 
     val typeVariable = TypeVariableForLambdaReturnType(argument, "_L")
@@ -118,7 +117,7 @@ private fun extraLambdaInfo(
             ?: expectedType?.typeArguments?.singleOrNull()?.safeAs<ConeTypedProjection>()?.type?.takeIf { isFunctionSupertype }
             ?: typeVariable.defaultType
 
-    val nothingType = StandardClassIds.Nothing(argument.session.service()).constructType(emptyArray(), false)
+    val nothingType = StandardClassIds.Nothing(argument.session.firSymbolProvider).constructType(emptyArray(), false)
     val parameters = argument.valueParameters?.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: nothingType
     } ?: emptyList()
@@ -134,7 +133,9 @@ internal fun extractLambdaInfoFromFunctionalType(
     expectedTypeRef: FirTypeRef,
     argument: FirAnonymousFunction
 ): ResolvedLambdaAtom? {
-    if (expectedType == null || !expectedType.isBuiltinFunctionalType) return null
+    if (expectedType == null) return null
+    if (expectedType is ConeFlexibleType) return extractLambdaInfoFromFunctionalType(expectedType.lowerBound, expectedTypeRef, argument)
+    if (!expectedType.isBuiltinFunctionalType) return null
     val parameters = extractLambdaParameters(expectedType, argument)
 
     val argumentAsFunctionExpression = argument//.safeAs<FunctionExpression>()
@@ -155,7 +156,7 @@ private fun extractLambdaParameters(expectedType: ConeKotlinType, argument: FirA
     val parameters = argument.valueParameters
     val expectedParameters = expectedType.valueParameterTypes
 
-    val nullableAnyType = StandardClassIds.Any(argument.session.service()).constructType(emptyArray(), true)
+    val nullableAnyType = StandardClassIds.Any(argument.session.firSymbolProvider).constructType(emptyArray(), true)
 
     if (parameters.isEmpty()) {
         return expectedParameters.map { it?.type ?: nullableAnyType }

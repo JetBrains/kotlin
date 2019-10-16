@@ -7,17 +7,13 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.gradle.plugin.TaskHolder
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
 
 open class KotlinPackageJsonTask : DefaultTask() {
@@ -49,7 +45,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
     }
 
     companion object {
-        fun create(compilation: KotlinJsCompilation): TaskHolder<KotlinPackageJsonTask> {
+        fun create(compilation: KotlinJsCompilation): TaskProvider<KotlinPackageJsonTask> {
             val target = compilation.target
             val project = target.project
             val npmProject = compilation.npmProject
@@ -58,7 +54,7 @@ open class KotlinPackageJsonTask : DefaultTask() {
             val rootClean = project.rootProject.tasks.getByName(BasePlugin.CLEAN_TASK_NAME)
             val npmInstallTask = nodeJs.npmInstallTask
             val packageJsonTaskName = npmProject.packageJsonTaskName
-            val packageJsonTask = project.createOrRegisterTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
+            val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
                 task.nodeJs = nodeJs
                 task.compilation = compilation
                 task.description = "Create package.json file for $compilation"
@@ -68,11 +64,11 @@ open class KotlinPackageJsonTask : DefaultTask() {
                 task.mustRunAfter(rootClean)
             }
 
-            npmInstallTask.mustRunAfter(rootClean, packageJsonTask.getTaskOrProvider())
+            npmInstallTask.mustRunAfter(rootClean, packageJsonTask)
 
             compilation.compileKotlinTask.dependsOn(
                 npmInstallTask,
-                packageJsonTask.getTaskOrProvider()
+                packageJsonTask
             )
 
             return packageJsonTask

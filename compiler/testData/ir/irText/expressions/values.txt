@@ -75,14 +75,14 @@ FILE fqName:<root> fileName:/values.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:a visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   CLASS CLASS name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z
     CONSTRUCTOR visibility:public <> () returnType:<root>.Z [primary]

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.stubs
 
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.stubs.StubElement
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 
 import java.io.File
 
-abstract class AbstractStubBuilderTest : LightCodeInsightFixtureTestCase() {
-    protected fun doTest(sourcePath: String) {
-        val file = myFixture.configureByFile(sourcePath) as KtFile
-        val jetStubBuilder = KtFileStubBuilder()
-        val lighterTree = jetStubBuilder.buildStubTree(file)
+abstract class AbstractStubBuilderTest : KotlinLightCodeInsightFixtureTestCase() {
+    protected fun doTest(unused: String) {
+        val file = myFixture.configureByFile(fileName()) as KtFile
+        val ktStubBuilder = KtFileStubBuilder()
+        val lighterTree = ktStubBuilder.buildStubTree(file)
         val stubTree = serializeStubToString(lighterTree)
-        val expectedFile = sourcePath.replace(".kt", ".expected")
+        val expectedFile = testPath().replace(".kt", ".expected")
         KotlinTestUtils.assertEqualsToFile(File(expectedFile), stubTree)
     }
 

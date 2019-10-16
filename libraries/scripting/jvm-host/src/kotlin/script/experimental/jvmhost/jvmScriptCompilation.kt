@@ -7,21 +7,21 @@
 
 package kotlin.script.experimental.jvmhost
 
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptJvmCompilerProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvmhost.impl.withDefaults
 
 open class JvmScriptCompiler(
     baseHostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
-    compilerProxy: ScriptJvmCompilerProxy? = null
+    compilerProxy: ScriptCompilerProxy? = null
 ) : ScriptCompiler {
 
-    val hostConfiguration = baseHostConfiguration.withDefaults()
+    val hostConfiguration = baseHostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration)
 
-    val compilerProxy: ScriptJvmCompilerProxy = compilerProxy ?: ScriptJvmCompilerIsolated(hostConfiguration)
+    val compilerProxy: ScriptCompilerProxy = compilerProxy ?: ScriptJvmCompilerIsolated(hostConfiguration)
 
     override suspend operator fun invoke(
         script: SourceCode,
@@ -30,7 +30,7 @@ open class JvmScriptCompiler(
         compilerProxy.compile(
             script,
             scriptCompilationConfiguration.with {
-                hostConfiguration(this@JvmScriptCompiler.hostConfiguration)
+                hostConfiguration.update { it.withDefaultsFrom(this@JvmScriptCompiler.hostConfiguration) }
             }
         )
 }

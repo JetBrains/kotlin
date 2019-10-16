@@ -10,10 +10,10 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.Query;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractSearcherTest extends KotlinLightCodeInsightFixtureTestCase {
     @Override
-    public void setUp() throws Exception {
+    public void setUp() {
         super.setUp();
         TestUtilsKt.invalidateLibraryCache(getProject());
     }
@@ -75,14 +75,14 @@ public abstract class AbstractSearcherTest extends LightCodeInsightFixtureTestCa
         assertOrderedEquals(actualModified, expected);
     }
 
-    protected void checkClassWithDirectives(@NotNull String path) throws IOException {
-        myFixture.configureByFile(path);
+    protected void checkClassWithDirectives(@NotNull String unused) throws IOException {
+        myFixture.configureByFile(fileName());
         List<String> directives = InTextDirectivesUtils.findListWithPrefixes(
-                FileUtil.loadFile(new File(path), true), "// CLASS: ");
+                FileUtil.loadFile(testDataFile(), true), "// CLASS: ");
         assertFalse("Specify CLASS directive in test file", directives.isEmpty());
         String superClassName = directives.get(0);
         PsiClass psiClass = getPsiClass(superClassName);
-        checkResult(path, ClassInheritorsSearch.search(psiClass, getProjectScope(), false));
+        checkResult(testPath(), ClassInheritorsSearch.search(psiClass, getProjectScope(), false));
     }
 
     private static String stringRepresentation(Object member) {

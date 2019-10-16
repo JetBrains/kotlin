@@ -711,7 +711,7 @@ fun PomFile.changeFeatureConfiguration(
         }
 
     argsSubTag.findSubTags("arg").filter { feature.name in it.value.text }.forEach { it.deleteCascade() }
-    val featureArgumentString = feature.buildArgumentString(state)
+    val featureArgumentString = feature.buildArgumentString(state, kotlinPlugin.version.stringValue)
     val childTag = argsSubTag.createChildTag("arg", featureArgumentString)
     return argsSubTag.add(childTag)
 }

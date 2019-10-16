@@ -169,4 +169,17 @@ public class IrJsTextTestCaseGenerated extends AbstractIrJsTextTestCase {
             runTest("compiler/testData/ir/irJsText/native/nativeNativeKotlin.kt");
         }
     }
+
+    @TestMetadata("compiler/testData/ir/irJsText/scripting")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Scripting extends AbstractIrJsTextTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInScripting() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irJsText/scripting"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+    }
 }

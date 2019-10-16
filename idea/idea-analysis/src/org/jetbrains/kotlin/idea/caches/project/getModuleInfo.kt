@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.scriptRelatedModuleName
 import org.jetbrains.kotlin.idea.highlighter.OutsidersPsiFileSupportUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -240,7 +240,7 @@ private inline fun <T> collectInfosByVirtualFile(
     }
 
     val isBinary = virtualFile.fileType.isKotlinBinary()
-    val scriptConfigurationManager = ScriptDependenciesManager.getInstance(project)
+    val scriptConfigurationManager = ScriptConfigurationManager.getInstance(project)
     if (isBinary && virtualFile in scriptConfigurationManager.getAllScriptsDependenciesClassFilesScope()) {
         if (treatAsLibrarySource) {
             onOccurrence(ScriptDependenciesSourceInfo.ForProject(project))

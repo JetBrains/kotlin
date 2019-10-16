@@ -12,10 +12,10 @@ internal class Bar {
 }
 
 internal class Test {
-    fun test(barNotNull: Bar, barNullable: Bar?) {
+    fun test(barNotNull: Bar, barNullable: Bar) {
         barNotNull.fooNotNull.execute()
         barNotNull.fooNullable!!.execute()
-        barNullable!!.fooNotNull.execute()
+        barNullable.fooNotNull.execute()
         barNullable.fooNullable!!.execute()
     }
 }

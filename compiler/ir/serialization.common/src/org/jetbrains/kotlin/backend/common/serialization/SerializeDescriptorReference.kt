@@ -6,21 +6,22 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.String as ProtoString
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isAccessor
 import org.jetbrains.kotlin.ir.util.isGetter
 import org.jetbrains.kotlin.ir.util.isSetter
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 
 open class DescriptorReferenceSerializer(
     val declarationTable: DeclarationTable,
-    val serializeString: (String) -> ProtoString,
-    mangler: KotlinMangler): KotlinMangler by mangler {
+    val serializeString: (String) -> Int,
+    val serializeFqName: (FqName) -> List<Int>
+) {
 
     private fun isEnumSpecialMember(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor !is SimpleFunctionDescriptor) return false
@@ -28,14 +29,14 @@ open class DescriptorReferenceSerializer(
         return DescriptorFactory.isEnumValueOfMethod(descriptor) || DescriptorFactory.isEnumValuesMethod(descriptor)
     }
 
-    fun extractPackageAndClassFqns(descriptor: DeclarationDescriptor): Pair<String, String>? {
+    fun extractPackageAndClassFqns(descriptor: DeclarationDescriptor): Pair<FqName, FqName>? {
         val containingDeclaration = descriptor.containingDeclaration
         return when (containingDeclaration) {
             is ClassDescriptor -> {
                 val classId = containingDeclaration.classId ?: return null
-                Pair(classId.packageFqName.toString(), classId.relativeClassName.toString())
+                Pair(classId.packageFqName, classId.relativeClassName)
             }
-            is PackageFragmentDescriptor -> Pair(containingDeclaration.fqName.toString(), "")
+            is PackageFragmentDescriptor -> Pair(containingDeclaration.fqName, FqName.ROOT)
             is PropertyDescriptor -> if (descriptor !is TypeParameterDescriptor) null else {
                 extractPackageAndClassFqns(containingDeclaration)
             }
@@ -51,7 +52,7 @@ open class DescriptorReferenceSerializer(
 
         val descriptor = declaration.descriptor
 
-        if (!declaration.isExported() &&
+        if (!declarationTable.isExportedDeclaration(declaration) &&
             !((declaration as? IrDeclarationWithVisibility)?.visibility == Visibilities.INVISIBLE_FAKE)) {
             return null
         }
@@ -108,39 +109,24 @@ open class DescriptorReferenceSerializer(
         } else descriptor.name.toString()
 
         val uniqId = discoverableDescriptorsDeclaration?.let { declarationTable.uniqIdByDeclaration(it) }
-        uniqId?.let { declarationTable.descriptors.put(discoverableDescriptorsDeclaration.descriptor, it) }
 
         val proto = ProtoDescriptorReference.newBuilder()
-            .setPackageFqName(serializeString(packageFqName))
-            .setClassFqName(serializeString(classFqName))
+            .addAllPackageFqName(serializeFqName(packageFqName))
+            .addAllClassFqName(serializeFqName(classFqName))
             .setName(serializeString(nameString))
 
-        if (uniqId != null) proto.setUniqId(protoUniqId(uniqId))
+        val flags = DescriptorReferenceFlags.IS_FAKE_OVERRIDE.encode(isFakeOverride) or
+                DescriptorReferenceFlags.IS_BACKING_FIELD.encode(isBackingField) or
+                DescriptorReferenceFlags.IS_GETTER.encode(declaration.isGetter) or
+                DescriptorReferenceFlags.IS_SETTER.encode(declaration.isSetter) or
+                DescriptorReferenceFlags.IS_DEFAULT_CONSTRUCTOR.encode(isDefaultConstructor) or
+                DescriptorReferenceFlags.IS_ENUM_ENTRY.encode(isEnumEntry) or
+                DescriptorReferenceFlags.IS_ENUM_SPECIAL.encode(isEnumSpecial) or
+                DescriptorReferenceFlags.IS_TYPE_PARAMETER.encode(isTypeParameter)
 
-        if (isFakeOverride) {
-            proto.setIsFakeOverride(true)
-        }
+        proto.flags = flags
 
-        if (isBackingField) {
-            proto.setIsBackingField(true)
-        }
-
-        if (isAccessor) {
-            if (declaration.isGetter)
-                proto.setIsGetter(true)
-            else if (declaration.isSetter)
-                proto.setIsSetter(true)
-            else
-                error("A property accessor which is neither a getter, nor a setter: $descriptor")
-        } else if (isDefaultConstructor) {
-            proto.setIsDefaultConstructor(true)
-        } else if (isEnumEntry) {
-            proto.setIsEnumEntry(true)
-        } else if (isEnumSpecial) {
-            proto.setIsEnumSpecial(true)
-        } else if (isTypeParameter) {
-            proto.setIsTypeParameter(true)
-        }
+        if (uniqId != null) proto.uniqIdIndex = uniqId.index
 
         return proto.build()
     }

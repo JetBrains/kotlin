@@ -19,7 +19,7 @@ class WorkersIT : BaseGradleIT() {
     }
 
     private fun parallelTasksImpl(isParallel: Boolean) =
-        with(Project("new-mpp-parallel", GradleVersionRequired.AtLeast("4.7"))) {
+        with(Project("new-mpp-parallel")) {
             val options = defaultBuildOptions().copy(parallelTasksInProject = isParallel, withDaemon = false)
             val traceLoading = "-Dorg.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWork.trace.loading=true"
             build("assemble", traceLoading, options = options) {

@@ -6,17 +6,27 @@
 package org.jetbrains.kotlin.nj2k
 
 import com.intellij.codeInsight.generation.GenerateEqualsHelper.getEqualsSignature
+import com.intellij.lang.jvm.JvmClassKind
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.CommandProcessor
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.InheritanceUtil
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.PsiUtil
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.j2k.ClassKind
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.isNullLiteral
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKModalityModifierElementImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKVisibilityModifierElementImpl
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+
+
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 //copied from old j2k
 fun canKeepEqEq(left: PsiExpression, right: PsiExpression?): Boolean {
@@ -45,7 +55,7 @@ fun canKeepEqEq(left: PsiExpression, right: PsiExpression?): Boolean {
 
 internal fun PsiMember.visibility(
     referenceSearcher: ReferenceSearcher,
-    assignNonCodeElements: ((JKNonCodeElementsListOwner, PsiElement) -> Unit)?
+    assignNonCodeElements: ((JKFormattingOwner, PsiElement) -> Unit)?
 ): JKVisibilityModifierElement =
     modifierList?.children?.mapNotNull { child ->
         if (child !is PsiKeyword) return@mapNotNull null
@@ -57,14 +67,14 @@ internal fun PsiMember.visibility(
 
             else -> null
         }?.let {
-            JKVisibilityModifierElementImpl(it)
+            JKVisibilityModifierElement(it)
         }?.also { modifier ->
             assignNonCodeElements?.also { it(modifier, child) }
         }
-    }?.firstOrNull() ?: JKVisibilityModifierElementImpl(Visibility.INTERNAL)
+    }?.firstOrNull() ?: JKVisibilityModifierElement(Visibility.INTERNAL)
 
 
-fun PsiMember.modality(assignNonCodeElements: ((JKNonCodeElementsListOwner, PsiElement) -> Unit)?) =
+fun PsiMember.modality(assignNonCodeElements: ((JKFormattingOwner, PsiElement) -> Unit)?) =
     modifierList?.children?.mapNotNull { child ->
         if (child !is PsiKeyword) return@mapNotNull null
         when (child.text) {
@@ -73,12 +83,19 @@ fun PsiMember.modality(assignNonCodeElements: ((JKNonCodeElementsListOwner, PsiE
 
             else -> null
         }?.let {
-            JKModalityModifierElementImpl(it)
+            JKModalityModifierElement(it)
         }?.also { modifier ->
             assignNonCodeElements?.let { it(modifier, child) }
         }
-    }?.firstOrNull() ?: JKModalityModifierElementImpl(Modality.OPEN)
+    }?.firstOrNull() ?: JKModalityModifierElement(Modality.OPEN)
 
+
+fun JvmClassKind.toJk() = when (this) {
+    JvmClassKind.CLASS -> JKClass.ClassKind.CLASS
+    JvmClassKind.INTERFACE ->  JKClass.ClassKind.INTERFACE
+    JvmClassKind.ANNOTATION ->  JKClass.ClassKind.ANNOTATION
+    JvmClassKind.ENUM ->  JKClass.ClassKind.ENUM
+}
 
 private fun PsiMember.handleProtectedVisibility(referenceSearcher: ReferenceSearcher): Visibility {
     val originalClass = containingClass ?: return Visibility.PROTECTED
@@ -121,3 +138,22 @@ fun PsiClass.classKind(): JKClass.ClassKind =
         isInterface -> JKClass.ClassKind.INTERFACE
         else -> JKClass.ClassKind.CLASS
     }
+
+val KtDeclaration.fqNameWithoutCompanions
+    get() = generateSequence(this) { it.containingClassOrObject }
+        .filter { it.safeAs<KtObjectDeclaration>()?.isCompanion() != true && it.name != null }
+        .toList()
+        .foldRight(containingKtFile.packageFqName) { container, acc -> acc.child(Name.identifier(container.name!!)) }
+
+internal fun <T> runUndoTransparentActionInEdt(inWriteAction: Boolean, action: () -> T): T {
+    var result: T? = null
+    ApplicationManager.getApplication().invokeAndWait {
+        CommandProcessor.getInstance().runUndoTransparentAction {
+            result = when {
+                inWriteAction -> runWriteAction(action)
+                else -> action()
+            }
+        }
+    }
+    return result!!
+}

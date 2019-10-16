@@ -267,6 +267,15 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker =
         TODO("IrTypeSystemContext doesn't support constraint system resolution")
 
+    override fun nullableAnyType(): SimpleTypeMarker =
+        irBuiltIns.anyNType as IrSimpleType
+
+    override fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker =
+        irBuiltIns.arrayClass.typeWith(componentType as IrType)
+
+    override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean =
+        (this as IrType).isArray() || isNullableArray()
+
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val symbol = this as IrClassifierSymbol
         return symbol is IrClassSymbol && symbol.owner.let {
@@ -339,6 +348,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeParameterMarker.getName(): Name =
         (this as IrTypeParameterSymbol).owner.name
+
+    override fun TypeParameterMarker.isReified(): Boolean =
+        (this as IrTypeParameterSymbol).owner.isReified
 
     override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {
         val irClass = (this as IrType).classOrNull?.owner

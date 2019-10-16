@@ -64,7 +64,7 @@ abstract class LazyJavaScope(
 
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
     // but is placed in the base class to not duplicate code
-    private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
+    protected val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
         { computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER) },
         // This is to avoid the following recursive case:
         //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo

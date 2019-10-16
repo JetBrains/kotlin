@@ -5,111 +5,87 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiVariable
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.j2k.*
-import org.jetbrains.kotlin.j2k.ast.Mutability
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.j2k.toKotlinMutableTypesMap
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.kotlinTypeByName
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.*
+import org.jetbrains.kotlin.psi.KtClass
 
-class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
-    private val typeFlavorCalculator = TypeFlavorCalculator(object : TypeFlavorConverterFacade {
-        override val referenceSearcher: ReferenceSearcher
-            get() = context.converter.converterServices.oldServices.referenceSearcher
-        override val javaDataFlowAnalyzerFacade: JavaDataFlowAnalyzerFacade
-            get() = context.converter.converterServices.oldServices.javaDataFlowAnalyzerFacade
-        override val resolverForConverter: ResolverForConverter
-            get() = context.converter.converterServices.oldServices.resolverForConverter
-
-        override fun inConversionScope(element: PsiElement): Boolean = context.inConversionContext(element)
-    })
-
+class TypeMappingConversion(
+    context: NewJ2kConverterContext,
+    inline val filter: (typeElement: JKTypeElement) -> Boolean = { true }
+) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        return when (element) {
+        when (element) {
             is JKTypeElement -> {
-                val newType = element.type.mapType(element)
-                JKTypeElementImpl(newType).withNonCodeElementsFrom(element)
+                if (filter(element)) {
+                    element.type = element.type.mapType(element)
+                }
             }
-            is JKJavaNewExpression -> {
-                val newClassSymbol = element.classSymbol.mapClassSymbol(null)
-                recurse(
-                    JKJavaNewExpressionImpl(
+            is JKNewExpression -> {
+                val newClassSymbol = element.classSymbol.mapClassSymbol()
+                return recurse(
+                    JKNewExpression(
                         newClassSymbol,
                         element::arguments.detached(),
                         element::typeArgumentList.detached().fixTypeArguments(newClassSymbol),
-                        element::classBody.detached()
-                    ).withNonCodeElementsFrom(element)
+                        element::classBody.detached(),
+                        element.isAnonymousClass
+                    ).withFormattingFrom(element)
                 )
             }
-            else -> recurse(element)
         }
+        return recurse(element)
     }
 
     private fun JKTypeArgumentList.fixTypeArguments(classSymbol: JKClassSymbol): JKTypeArgumentList {
         if (typeArguments.isNotEmpty()) {
-            return JKTypeArgumentListImpl(
+            return JKTypeArgumentList(
                 typeArguments.map { typeArgument ->
-                    JKTypeElementImpl(typeArgument.type.mapType(null))
+                    JKTypeElement(typeArgument.type.mapType(null))
                 }
             )
         }
-        val typeParametersCount = classSymbol.expectedTypeParametersCount()
-        return when (typeParametersCount) {
+        return when (val typeParametersCount = classSymbol.expectedTypeParametersCount()) {
             0 -> this
-            else -> JKTypeArgumentListImpl(List(typeParametersCount) {
-                JKTypeElementImpl(
-                    kotlinTypeByName(
-                        KotlinBuiltIns.FQ_NAMES.any.toSafe().asString(),
-                        context.symbolProvider,
-                        Nullability.Nullable
-                    )
-                )
+            else -> JKTypeArgumentList(List(typeParametersCount) {
+                JKTypeElement(typeFactory.types.nullableAny)
             })
         }
     }
 
-
     private fun JKType.fixRawType(typeElement: JKTypeElement?) =
         when (typeElement?.parent) {
             is JKClassLiteralExpression -> this
-            is JKKtIsExpression ->
-                addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl())
+            is JKIsExpression ->
+                addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl)
                     .updateNullability(Nullability.NotNull)
-            is JKTypeCastExpression ->
-                addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl())
+            is JKInheritanceInfo ->
+                addTypeParametersToRawProjectionType(typeFactory.types.nullableAny)
             else ->
-                addTypeParametersToRawProjectionType(
-                    JKStarProjectionTypeImpl()
-                )
+                addTypeParametersToRawProjectionType(JKStarProjectionTypeImpl)
         }
 
     private fun JKType.mapType(typeElement: JKTypeElement?): JKType =
         when (this) {
             is JKJavaPrimitiveType -> mapPrimitiveType()
-            is JKClassType -> mapClassType(typeElement)
-            is JKJavaVoidType ->
-                kotlinTypeByName(
-                    KotlinBuiltIns.FQ_NAMES.unit.toSafe().asString(),
-                    context.symbolProvider,
-                    Nullability.NotNull
-                )
+            is JKClassType -> mapClassType()
+            is JKJavaVoidType -> typeFactory.types.unit
+
             is JKJavaArrayType ->
-                JKClassTypeImpl(
-                    context.symbolProvider.provideClassSymbol(type.arrayFqName()),
+                JKClassType(
+                    symbolProvider.provideClassSymbol(type.arrayFqName()),
                     if (type is JKJavaPrimitiveType) emptyList() else listOf(type.mapType(typeElement)),
                     nullability
                 )
             is JKVarianceTypeParameterType ->
-                JKVarianceTypeParameterTypeImpl(
+                JKVarianceTypeParameterType(
                     variance,
                     boundType.mapType(null)
                 )
@@ -122,54 +98,53 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
             else -> this
         }.fixRawType(typeElement)
 
-    private fun JKClassSymbol.mapClassSymbol(typeElement: JKTypeElement?): JKClassSymbol {
+    private fun JKClassSymbol.mapClassSymbol(): JKClassSymbol {
         if (this is JKUniverseClassSymbol) return this
-        val newFqName = typeElement?.let { kotlinCollectionClassName(it) }
+        val newFqName = kotlinCollectionClassName()
             ?: kotlinStandardType()
             ?: fqName
-        return context.symbolProvider.provideClassSymbol(newFqName)
+        return symbolProvider.provideClassSymbol(newFqName)
     }
 
-    private fun JKClassType.mapClassType(typeElement: JKTypeElement?): JKClassType =
-        JKClassTypeImpl(
-            classReference.mapClassSymbol(typeElement),
+    private fun JKClassType.mapClassType(): JKClassType =
+        JKClassType(
+            classReference.mapClassSymbol(),
             parameters.map { it.mapType(null) },
             nullability
         )
 
-
-    private fun JKClassSymbol.kotlinCollectionClassName(typeElement: JKTypeElement?): String? {
-        val isStructureMutable = calculateStructureMutability(typeElement)
-        return if (isStructureMutable) toKotlinMutableTypesMap[fqName]
-        else toKotlinTypesMap[fqName]
-    }
+    private fun JKClassSymbol.kotlinCollectionClassName(): String? =
+        toKotlinMutableTypesMap[fqName]
 
     private fun JKClassSymbol.kotlinStandardType(): String? {
         if (isKtFunction(fqName)) return fqName
         return JavaToKotlinClassMap.mapJavaToKotlin(FqName(fqName))?.asString()
     }
 
-    private fun JKJavaPrimitiveType.mapPrimitiveType(): JKClassType {
-        val fqName = jvmPrimitiveType.primitiveType.typeFqName
-        return JKClassTypeImpl(
-            context.symbolProvider.provideClassSymbol(fqName),
-            nullability = Nullability.NotNull
-        )
-    }
+    private fun JKJavaPrimitiveType.mapPrimitiveType(): JKClassType =
+        typeFactory.fromPrimitiveType(this)
 
-    private fun calculateStructureMutability(typeElement: JKTypeElement?): Boolean {
-        val parent = typeElement?.parent ?: return false
-        val psi = parent.psi ?: return false
-        return when (parent) {
-            is JKVariable -> typeFlavorCalculator.variableMutability(psi as PsiVariable) == Mutability.Mutable
-            is JKMethod -> typeFlavorCalculator.methodMutability(psi as PsiMethod) == Mutability.Mutable
-            else -> false
+    private inline fun <reified T : JKType> T.addTypeParametersToRawProjectionType(typeParameter: JKType): T =
+        if (this is JKClassType && parameters.isEmpty()) {
+            val parametersCount = classReference.expectedTypeParametersCount()
+            val typeParameters = List(parametersCount) { typeParameter }
+            JKClassType(
+                classReference,
+                typeParameters,
+                nullability
+            ) as T
+        } else this
+
+    private fun JKClassSymbol.expectedTypeParametersCount(): Int =
+        when (val resolvedClass = target) {
+            is PsiClass -> resolvedClass.typeParameters.size
+            is KtClass -> resolvedClass.typeParameters.size
+            is JKClass -> resolvedClass.typeParameterList.typeParameters.size
+            else -> 0
         }
-    }
 
     companion object {
         private val ktFunctionRegex = "kotlin\\.jvm\\.functions\\.Function\\d+".toRegex()
-        private fun isKtFunction(fqName: String) =
-            ktFunctionRegex.matches(fqName)
+        private fun isKtFunction(fqName: String) = ktFunctionRegex.matches(fqName)
     }
 }

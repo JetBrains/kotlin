@@ -1,5 +1,5 @@
-// FIR_IDENTICAL
 // WITH_RUNTIME
+// FIR_IDENTICAL
 @file:JvmName("FileWithAnnotations")
 
 fun foo() {}

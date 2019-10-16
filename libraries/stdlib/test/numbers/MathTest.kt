@@ -361,6 +361,15 @@ class FloatMathTest {
         const val E = kotlin.math.E.toFloat()
     }
 
+    // TODO: ensure it passes in kotlin-stdlib-js-ir after implementing KT-24975
+    @Ignore
+    @Test
+    fun floatRangeConversion() {
+        // expected run-time conversion to produce the same result as compile-time one
+        assertEquals(kotlin.math.E.toFloat(), E)
+        assertEquals(kotlin.math.PI.toFloat(), PI)
+    }
+
     @Test fun trigonometric() {
         assertEquals(0.0F, sin(0.0F))
         assertAlmostEquals(0.0F, sin(PI))
@@ -480,7 +489,7 @@ class FloatMathTest {
         assertTrue(sqrt(Float.NaN).isNaN())
 
         assertTrue(exp(Float.NaN).isNaN())
-        assertAlmostEquals(E, exp(1.0F))
+        assertAlmostEquals(kotlin.math.E.toFloat(), exp(1.0F))
         assertEquals(1.0F, exp(0.0F))
         assertEquals(0.0F, exp(Float.NEGATIVE_INFINITY))
         assertEquals(Float.POSITIVE_INFINITY, exp(Float.POSITIVE_INFINITY))

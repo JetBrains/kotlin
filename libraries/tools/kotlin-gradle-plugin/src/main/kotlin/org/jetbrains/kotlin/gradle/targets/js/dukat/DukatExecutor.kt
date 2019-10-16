@@ -39,7 +39,7 @@ class DukatExecutor(
 
             args.addAll(dTsFiles.map { it.absolutePath })
 
-            compilation.npmProject.useTool(exec, ".bin/dukat", *args.toTypedArray())
+            compilation.npmProject.useTool(exec, "dukat/bin/dukat-cli.js", *args.toTypedArray())
         }
     }
 }

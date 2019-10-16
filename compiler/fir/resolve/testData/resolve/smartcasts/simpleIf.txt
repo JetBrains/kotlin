@@ -1,0 +1,37 @@
+FILE: simpleIf.kt
+    public final fun test_1(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|kotlin/String|) ->  {
+                R|<local>/x|.R|kotlin/String.length|
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/x|.<Unresolved name: length>#
+    }
+    public final fun test_2(x: R|kotlin/Any|): R|kotlin/Unit| {
+        lval b: R|kotlin/Boolean| = (R|<local>/x| is R|kotlin/String|)
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/x|.R|kotlin/String.length|
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/x|.<Unresolved name: length>#
+    }
+    public final fun test_3(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| !is R|kotlin/String|) ->  {
+            }
+            (R|<local>/x| !is R|kotlin/Int|) ->  {
+            }
+            else ->  {
+                R|<local>/x|.R|kotlin/String.length|
+                R|<local>/x|.R|kotlin/Int.inc|()
+            }
+        }
+
+    }

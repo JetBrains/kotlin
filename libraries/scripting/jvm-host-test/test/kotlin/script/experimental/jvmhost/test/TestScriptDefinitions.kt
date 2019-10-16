@@ -8,10 +8,19 @@ package kotlin.script.experimental.jvmhost.test
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
-import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.updateClasspath
+import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmCompilationConfigurationFromTemplate
+
+@KotlinScript(fileExtension = "simplescript.kts")
+abstract class SimpleScript
+
+val simpleScriptompilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScript> {
+    updateClasspath(classpathFromClass<SimpleScript>())
+}
+
+val simpleScriptEvaluationConfiguration = ScriptEvaluationConfiguration()
 
 @KotlinScript(fileExtension = "withboth.kts", compilationConfiguration = ReceiverAndPropertiesConfiguration::class)
 abstract class ScriptWithBoth
@@ -24,7 +33,7 @@ abstract class ScriptWithImplicitReceiver
 
 object ReceiverAndPropertiesConfiguration : ScriptCompilationConfiguration(
     {
-        jvm { dependenciesFromCurrentContext(wholeClasspath = true) }
+        updateClasspath(classpathFromClass<ScriptWithBoth>())
 
         providedProperties("providedString" to String::class)
 
@@ -34,7 +43,7 @@ object ReceiverAndPropertiesConfiguration : ScriptCompilationConfiguration(
 
 object ProvidedPropertiesConfiguration : ScriptCompilationConfiguration(
     {
-        jvm { dependenciesFromCurrentContext(wholeClasspath = true) }
+        updateClasspath(classpathFromClass<ScriptWithProvidedProperties>())
 
         providedProperties("providedString" to String::class)
     }
@@ -42,7 +51,7 @@ object ProvidedPropertiesConfiguration : ScriptCompilationConfiguration(
 
 object ImplicitReceiverConfiguration : ScriptCompilationConfiguration(
     {
-        jvm { dependenciesFromCurrentContext(wholeClasspath = true) }
+        updateClasspath(classpathFromClass<ScriptWithImplicitReceiver>())
 
         implicitReceivers(ImplicitReceiverClass::class)
     }

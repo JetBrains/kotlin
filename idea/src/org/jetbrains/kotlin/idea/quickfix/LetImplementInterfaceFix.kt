@@ -28,15 +28,16 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 
 class LetImplementInterfaceFix(
-        element: KtClassOrObject,
-        expectedType: KotlinType,
-        expressionType: KotlinType
+    element: KtClassOrObject,
+    expectedType: KotlinType,
+    expressionType: KotlinType
 ) : KotlinQuickFixAction<KtClassOrObject>(element), LowPriorityAction {
 
     private fun KotlinType.renderShort() = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.renderType(this)
@@ -47,10 +48,10 @@ class LetImplementInterfaceFix(
 
     private val prefix: String
 
-    private val validExpectedType = with (expectedType) {
+    private val validExpectedType = with(expectedType) {
         isInterface() &&
-        !containsStarProjections() &&
-        constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::constructor)
+                !containsStarProjections() &&
+                constructor !in TypeUtils.getAllSupertypes(expressionType).map(KotlinType::constructor)
     }
 
     init {
@@ -73,14 +74,17 @@ class LetImplementInterfaceFix(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
+        val point = element.createSmartPointer()
+
         val superTypeEntry = KtPsiFactory(element).createSuperTypeEntry(expectedTypeNameSourceCode)
         runWriteAction {
             val entryElement = element.addSuperTypeListEntry(superTypeEntry)
             ShortenReferences.DEFAULT.process(entryElement)
         }
 
+        val newElement = point.element ?: return
         val implementMembersHandler = ImplementMembersHandler()
-        if (implementMembersHandler.collectMembersToGenerate(element).isEmpty()) return
+        if (implementMembersHandler.collectMembersToGenerate(newElement).isEmpty()) return
 
         if (editor != null) {
             editor.caretModel.moveToOffset(element.textRange.startOffset)

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.daemon.common.PackageMetadata
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
@@ -36,6 +35,8 @@ import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.dce.DeadCodeElimination
 import org.jetbrains.kotlin.js.dce.InputFile
 import org.jetbrains.kotlin.js.dce.InputResource
+import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
+import org.jetbrains.kotlin.js.engine.ScriptEngineV8Lazy
 import org.jetbrains.kotlin.js.facade.*
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
@@ -44,12 +45,9 @@ import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapParser
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapSuccess
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
-import org.jetbrains.kotlin.js.test.interop.ScriptEngineNashorn
-import org.jetbrains.kotlin.js.test.interop.ScriptEngineV8Lazy
 import org.jetbrains.kotlin.js.test.utils.*
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.metadata.DebugProtoBuf
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -200,8 +198,14 @@ abstract class BasicBoxTest(
                 additionalFiles += additionalJsFile
             }
 
+            val additionalMainFiles = mutableListOf<String>()
+            val additionalMainJsFile = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + "__main.js"
+            if (File(additionalMainJsFile).exists()) {
+                additionalMainFiles += additionalMainJsFile
+            }
+
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
-                             additionalCommonFiles
+                             additionalCommonFiles + additionalMainFiles
 
             val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file)
 
@@ -217,7 +221,7 @@ abstract class BasicBoxTest(
             }
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
-
+            performAdditionalChecks(file, File(mainModule.outputFileName(outputDir)))
             val expectedReachableNodesMatcher = EXPECTED_REACHABLE_NODES.matcher(fileContent)
             val expectedReachableNodesFound = expectedReachableNodesMatcher.find()
 
@@ -277,6 +281,7 @@ abstract class BasicBoxTest(
     }
 
     protected open fun performAdditionalChecks(generatedJsFiles: List<String>, outputPrefixFile: File?, outputPostfixFile: File?) {}
+    protected open fun performAdditionalChecks(inputFile: File, outputFile: File) {}
 
     private fun generateNodeRunner(
             files: Collection<String>,
@@ -649,7 +654,7 @@ abstract class BasicBoxTest(
             if (header != null) {
                 configuration.put(
                     JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER,
-                    IncrementalDataProviderImpl(header, incrementalData.translatedFiles, JsMetadataVersion.INSTANCE.toArray(), incrementalData.packageMetadata)
+                    IncrementalDataProviderImpl(header, incrementalData.translatedFiles, JsMetadataVersion.INSTANCE.toArray(), incrementalData.packageMetadata, emptyMap())
                 )
             }
 
@@ -864,6 +869,8 @@ abstract class BasicBoxTest(
         private val OLD_MODULE_SUFFIX = "-old"
 
         const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
-        private val engineForMinifier = if (runTestInNashorn) ScriptEngineNashorn() else ScriptEngineV8Lazy()
+        private val engineForMinifier =
+            if (runTestInNashorn) ScriptEngineNashorn()
+            else ScriptEngineV8Lazy(KotlinTestUtils.tmpDirForReusableFolder("j2v8_library_path").path)
     }
 }

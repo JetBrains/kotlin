@@ -1,7 +1,7 @@
 fun a(lst: /*T1@*/List</*T0@*/String>) {
     val newList: /*T8@*/List</*T7@*/Int> = lst/*T1@List<T0@String>*/
         .asSequence</*T2@*/String>()/*Sequence<T2@String>!!L*/
-        .map</*T4@*/String, /*T5@*/Int>({ x: /*T3@*/String -> 1/*LIT*/ }/*Function1<T3@String, T9@Int>!!L*/)/*Sequence<T5@Int>!!L*/
+        .map</*T4@*/String, /*T5@*/Int>({ x: /*T3@*/String? -> 1/*LIT*/ }/*Function1<T3@String, T9@Int>!!L*/)/*Sequence<T5@Int>!!L*/
         .toList</*T6@*/Int>()/*List<T6@Int>!!L*/
 }
 

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping.isMappedIntrinsicCompanionObject
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -135,7 +134,7 @@ class JvmDeclarationFactory(
         return defaultImplsMethods.getOrPut(interfaceFun) {
             val defaultImpls = getDefaultImplsClass(interfaceFun.parentAsClass)
 
-            val name = Name.identifier(methodSignatureMapper.mapFunctionName(interfaceFun, OwnerKind.IMPLEMENTATION))
+            val name = Name.identifier(methodSignatureMapper.mapFunctionName(interfaceFun))
             createStaticFunctionWithReceivers(
                 defaultImpls, name, interfaceFun,
                 dispatchReceiverType = parent.defaultType,

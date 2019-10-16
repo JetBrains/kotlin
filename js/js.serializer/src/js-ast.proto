@@ -465,6 +465,7 @@ enum SpecialFunction {
     COROUTINE_RECEIVER = 8;
     SET_COROUTINE_RESULT = 9;
     GET_KCLASS = 10;
+    GET_REIFIED_TYPE_PARAMETER_KTYPE = 11;
 }
 
 

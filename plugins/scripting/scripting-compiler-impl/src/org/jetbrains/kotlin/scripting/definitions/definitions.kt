@@ -25,18 +25,20 @@ inline fun <T> runReadAction(crossinline runnable: () -> T): T {
 fun PsiFile.findScriptDefinition(): ScriptDefinition? {
     // Do not use psiFile.script, see comments in findScriptDefinition
     if (this !is KtFile/* || this.script == null*/) return null
-    val file = virtualFile ?: originalFile.virtualFile ?: return null
-    if (file.isNonScript()) return null
 
-    return findScriptDefinitionByFilePath(project, File(file.path))
+    val virtualFile = this.virtualFile ?: this.originalFile.virtualFile ?: return null
+    if (virtualFile.isNonScript()) return null
+
+    return findScriptDefinitionByFilePath(project, File(virtualFile.path))
 }
 
+@Deprecated("Use PsiFile.findScriptDefinition() instead")
 fun VirtualFile.findScriptDefinition(project: Project): ScriptDefinition? {
     if (!isValid || isNonScript()) return null
+
     // Do not use psiFile.script here because this method can be called during indexes access
     // and accessing stubs may cause deadlock
     // TODO: measure performance effect and if necessary consider detecting indexing here or using separate logic for non-IDE operations to speed up filtering
-
     if (runReadAction { PsiManager.getInstance(project).findFile(this) as? KtFile }/*?.script*/ == null) return null
 
     return findScriptDefinitionByFilePath(project, File(path))

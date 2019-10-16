@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.inspections.RedundantSamConstructorInspection
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi.*
@@ -157,21 +158,22 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
             appendFixedText("}")
         }
 
-        val replaced = element.replaced(newExpression)
+        val replaced = runWriteAction { element.replaced(newExpression) }
         val callee = replaced.getCalleeExpressionIfAny()!! as KtNameReferenceExpression
         val callExpression = callee.parent as KtCallExpression
         val functionLiteral = callExpression.lambdaArguments.single().getLambdaExpression()!!
 
         val returnLabel = callee.getReferencedNameAsName()
-        returnSaver.restore(functionLiteral, returnLabel)
-        commentSaver.restore(replaced, forceAdjustIndent = true/* by some reason lambda body is sometimes not properly indented */)
-
+        runWriteAction {
+            returnSaver.restore(functionLiteral, returnLabel)
+            commentSaver.restore(replaced, forceAdjustIndent = true/* by some reason lambda body is sometimes not properly indented */)
+        }
         val parentCall = ((replaced.parent as? KtValueArgument)
                              ?.parent as? KtValueArgumentList)
                                  ?.parent as? KtCallExpression
         if (parentCall != null && RedundantSamConstructorInspection.samConstructorCallsToBeConverted(parentCall).singleOrNull() == callExpression) {
             RedundantSamConstructorInspection.replaceSamConstructorCall(callExpression)
-            if (parentCall.canMoveLambdaOutsideParentheses()) {
+            if (parentCall.canMoveLambdaOutsideParentheses()) runWriteAction {
                 parentCall.moveFunctionLiteralOutsideParentheses()
             }
         }

@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
 import org.jetbrains.kotlin.codegen.binding.MutableClosure
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor
+import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -32,7 +33,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import kotlin.properties.Delegates
 
 interface FunctionalArgument
@@ -51,7 +51,7 @@ abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgu
 
     lateinit var node: SMAPAndMethodNode
 
-    abstract fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner)
+    abstract fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>)
 
     open val hasDispatchReceiver = true
 
@@ -108,7 +108,7 @@ class DefaultLambda(
     var originalBoundReceiverType: Type? = null
         private set
 
-    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner) {
+    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
         val classReader = buildClassReaderByInternalName(sourceCompiler.state, lambdaClassType.internalName)
         var isPropertyReference = false
         var isFunctionReference = false
@@ -189,15 +189,17 @@ internal fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, typeMappe
     AsmUtil.boxType(this, kotlinType, typeMapper)
 
 abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
-    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner) {
+    override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
         node = sourceCompiler.generateLambdaBody(this)
     }
+
+    abstract fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor
 }
 
 class PsiExpressionLambda(
     expression: KtExpression,
-    typeMapper: KotlinTypeMapper,
-    languageVersionSettings: LanguageVersionSettings,
+    private val typeMapper: KotlinTypeMapper,
+    private val languageVersionSettings: LanguageVersionSettings,
     isCrossInline: Boolean,
     override val isBoundCallableReference: Boolean
 ) : ExpressionLambda(isCrossInline) {
@@ -294,4 +296,12 @@ class PsiExpressionLambda(
 
     val isPropertyReference: Boolean
         get() = propertyReferenceInfo != null
+
+    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor {
+        return getOrCreateJvmSuspendFunctionView(
+            invokeMethodDescriptor,
+            languageVersionSettings.isReleaseCoroutines(),
+            typeMapper.bindingContext
+        )
+    }
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -20,10 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isSuspendFunctionTypeOrSubtype
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 
 /**
@@ -109,10 +107,17 @@ class JvmIrBuilder(
     Scope(symbol),
     startOffset,
     endOffset
-)
+) {
+    val irSymbols: JvmSymbols
+        get() = backendContext.ir.symbols
+}
 
 fun JvmBackendContext.createJvmIrBuilder(
     symbol: IrSymbol,
     startOffset: Int = UNDEFINED_OFFSET,
     endOffset: Int = UNDEFINED_OFFSET
 ) = JvmIrBuilder(this, symbol, startOffset, endOffset)
+
+
+fun IrDeclaration.isInCurrentModule(): Boolean =
+    getPackageFragment() is IrFile

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
+import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.utils.decodePluginOptions
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -186,7 +187,7 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         val kapt3AnalysisCompletedHandlerExtension = ClasspathBasedKapt3Extension(options, logger, configuration)
 
         AnalysisHandlerExtension.registerExtension(project, kapt3AnalysisCompletedHandlerExtension)
-        StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor())
+        StorageComponentContainerContributor.registerExtension(project, KaptComponentContributor(kapt3AnalysisCompletedHandlerExtension))
     }
 
     private fun KaptOptions.Builder.checkOptions(project: MockProject, logger: KaptLogger, configuration: CompilerConfiguration): Boolean {
@@ -235,14 +236,14 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         return true
     }
 
-    class KaptComponentContributor : StorageComponentContainerContributor {
+    class KaptComponentContributor(private val analysisExtension: PartialAnalysisHandlerExtension) : StorageComponentContainerContributor {
         override fun registerModuleComponents(
             container: StorageComponentContainer,
             platform: TargetPlatform,
             moduleDescriptor: ModuleDescriptor
         ) {
             if (!platform.isJvm()) return
-            container.useInstance(KaptAnonymousTypeTransformer())
+            container.useInstance(KaptAnonymousTypeTransformer(analysisExtension))
         }
     }
 

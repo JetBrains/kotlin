@@ -5,7 +5,7 @@
 
 // a package is omitted to get declarations directly under the module
 
-import kotlin.reflect.KClass
+import kotlin.reflect.*
 import kotlin.reflect.js.internal.*
 
 @JsName("getKClass")
@@ -62,4 +62,3 @@ private fun <T : Any> getOrCreateKClass(jClass: JsClass<T>): KClass<T> {
         SimpleKClassImpl(jClass)
     }
 }
-

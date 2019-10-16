@@ -11,7 +11,7 @@ import org.junit.Test
 class JavaUpToDateIT : BaseGradleIT() {
     @Test
     fun testKotlinMethodBodyIsChanged() {
-        val project = Project("javaUpToDate", GradleVersionRequired.AtLeast("4.3"))
+        val project = Project("javaUpToDate")
 
         project.build("build") {
             assertSuccessful()
@@ -33,7 +33,7 @@ class JavaUpToDateIT : BaseGradleIT() {
 
     @Test
     fun testKotlinNewLineAdded() {
-        val project = Project("javaUpToDate", GradleVersionRequired.AtLeast("4.3"))
+        val project = Project("javaUpToDate")
 
         project.build("build") {
             assertSuccessful()
@@ -50,7 +50,7 @@ class JavaUpToDateIT : BaseGradleIT() {
 
     @Test
     fun testPrivateMethodSignatureChanged() {
-        val project = Project("javaUpToDate", GradleVersionRequired.AtLeast("4.3"))
+        val project = Project("javaUpToDate")
 
         project.build("build") {
             assertSuccessful()

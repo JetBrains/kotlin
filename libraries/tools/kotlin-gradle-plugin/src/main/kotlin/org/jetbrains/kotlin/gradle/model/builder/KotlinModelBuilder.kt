@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.KOTLIN_JS_DSL_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.getConvention
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 /**
@@ -128,7 +129,9 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
 
         private fun AbstractKotlinCompile<*>.findFriendSourceSets(): Collection<String> {
             val friendSourceSets = ArrayList<String>()
-            friendTask?.sourceSetName?.let { friendSourceSets.add(it) }
+            taskData.compilation.associateWithTransitiveClosure.forEach { associateCompilation ->
+                friendSourceSets.add(associateCompilation.name)
+            }
             return friendSourceSets
         }
 

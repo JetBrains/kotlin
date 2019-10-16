@@ -14,15 +14,14 @@ import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.javac.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.debugInformation.AbstractIrSteppingTest
+import org.jetbrains.kotlin.codegen.debugInformation.AbstractSteppingTest
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
-import org.jetbrains.kotlin.fir.AbstractFirDiagnosticsSmokeTest
-import org.jetbrains.kotlin.fir.AbstractFirLoadCompiledKotlin
-import org.jetbrains.kotlin.fir.AbstractFir2IrTextTest
-import org.jetbrains.kotlin.fir.AbstractFirResolveTestCase
-import org.jetbrains.kotlin.fir.AbstractFirResolveTestCaseWithStdlib
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.java.AbstractFirLightClassesTest
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
 import org.jetbrains.kotlin.fir.java.AbstractOwnFirTypeEnhancementTest
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
@@ -54,6 +53,8 @@ import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTes
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
+import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
+import org.jetbrains.kotlin.visualizer.fir.AbstractFirVisualizer
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -169,10 +170,6 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractBlackBoxInlineCodegenTest> {
-            model("codegen/boxInline", targetBackend = TargetBackend.JVM)
-        }
-
-        testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
             model("codegen/boxInline", targetBackend = TargetBackend.JVM)
         }
 
@@ -347,6 +344,10 @@ fun main(args: Array<String>) {
             model("lineNumber")
         }
 
+        testClass<AbstractSteppingTest>(useJunit4 = true) {
+            model("debug/stepping", targetBackend = TargetBackend.JVM)
+        }
+
         testClass<AbstractLocalClassProtoTest> {
             model("serialization/local")
         }
@@ -424,6 +425,10 @@ fun main(args: Array<String>) {
             model("lineNumber", targetBackend = TargetBackend.JVM_IR)
         }
 
+        testClass<AbstractIrSteppingTest>(useJunit4 = true) {
+            model("debug/stepping", targetBackend = TargetBackend.JVM_IR)
+        }
+
         testClass<AbstractIrBlackBoxInlineCodegenTest> {
             model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
         }
@@ -433,6 +438,20 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup(
+        "compiler/tests", "compiler/testData",
+        testRunnerMethodName = "runTestWithCustomIgnoreDirective",
+        additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_MULTI_MODULE:\"")
+    ) {
+        testClass<AbstractCompileKotlinAgainstInlineKotlinTest> {
+            model("codegen/boxInline", targetBackend = TargetBackend.JVM)
+        }
+        testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
+            model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
+        }
+    }
+
+
     testGroup("compiler/fir/psi2fir/tests", "compiler/fir/psi2fir/testData") {
         testClass<AbstractRawFirBuilderTestCase> {
             model("rawBuilder", testMethod = "doRawFirTest")
@@ -441,11 +460,16 @@ fun main(args: Array<String>) {
 
     testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
         testClass<AbstractFirResolveTestCase> {
-            model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib"))
+            model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib", "cfg", "smartcasts"))
         }
 
         testClass<AbstractFirResolveTestCaseWithStdlib> {
             model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractFirCfgBuildingTest> {
+            model("resolve/cfg", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("resolve/smartcasts", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 
@@ -474,10 +498,42 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+
+        testClass<AbstractFirDiagnosticsTest> {
+            model("diagnostics")
+        }
+    }
+
+    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
+        testClass<AbstractFirLightClassesTest> {
+            model("lightClasses")
+        }
+    }
+
     testGroup("compiler/fir/fir2ir/tests", "compiler/testData") {
         testClass<AbstractFir2IrTextTest> {
             model("ir/irText")
         }
     }
 
+    testGroup("compiler/visualizer/tests", "compiler/fir/psi2fir/testData") {
+        testClass<AbstractPsiVisualizer>("PsiVisualizerForRawFirDataGenerated") {
+            model("rawBuilder", testMethod = "doFirBuilderDataTest")
+        }
+
+        testClass<AbstractFirVisualizer>("FirVisualizerForRawFirDataGenerated") {
+            model("rawBuilder", testMethod = "doFirBuilderDataTest")
+        }
+    }
+
+    testGroup("compiler/visualizer/tests", "compiler/visualizer/testData") {
+        testClass<AbstractPsiVisualizer>("PsiVisualizerForUncommonCasesGenerated") {
+            model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
+        }
+
+        testClass<AbstractFirVisualizer>("FirVisualizerForUncommonCasesGenerated") {
+            model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
+        }
+    }
 }

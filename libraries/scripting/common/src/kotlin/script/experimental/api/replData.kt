@@ -8,6 +8,7 @@ package kotlin.script.experimental.api
 import java.io.Serializable
 import kotlin.script.experimental.util.PropertiesCollection
 
+// Warning: during the transition to the new REPL infrastructure, should be kept in sync with REPL_CODE_LINE_FIRST_NO/REPL_CODE_LINE_FIRST_GEN
 const val REPL_SNIPPET_FIRST_NO = 1
 const val REPL_SNIPPET_FIRST_GEN = 1
 
@@ -47,4 +48,18 @@ val ScriptCompilationConfigurationKeys.repl
  * see also ScriptCompilationConfigurationKeys.resultField
  */
 val ReplScriptCompilationConfigurationKeys.resultFieldPrefix by PropertiesCollection.key<String>("res")
+
+typealias MakeSnippetIdentifier = (ScriptCompilationConfiguration, ReplSnippetId) -> String
+
+/**
+ * The REPL snippet class identifier generation function
+ */
+val ReplScriptCompilationConfigurationKeys.makeSnippetIdentifier by PropertiesCollection.key<MakeSnippetIdentifier>(
+    { _, snippetId ->
+        makeDefaultSnippetIdentifier(snippetId)
+    })
+
+fun makeDefaultSnippetIdentifier(snippetId: ReplSnippetId) =
+    "Line_${snippetId.no}${if (snippetId.generation > REPL_SNIPPET_FIRST_GEN) "_gen_${snippetId.generation}" else ""}"
+
 

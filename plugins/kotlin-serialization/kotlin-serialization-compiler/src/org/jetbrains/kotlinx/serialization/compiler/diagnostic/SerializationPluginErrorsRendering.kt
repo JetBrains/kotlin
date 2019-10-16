@@ -45,13 +45,13 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             SerializationErrors.SERIALIZER_NOT_FOUND,
             "Serializer has not been found for type ''{0}''. " +
                     "To use context serializer as fallback, explicitly annotate type or property with @ContextualSerialization",
-            Renderers.RENDER_TYPE
+            Renderers.RENDER_TYPE_WITH_ANNOTATIONS
         )
         MAP.put(
             SerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE,
             "Type ''{1}'' is non-nullable and therefore can not be serialized with serializer for nullable type ''{0}''",
-            Renderers.RENDER_TYPE,
-            Renderers.RENDER_TYPE
+            Renderers.RENDER_TYPE_WITH_ANNOTATIONS,
+            Renderers.RENDER_TYPE_WITH_ANNOTATIONS
         )
         MAP.put(
             SerializationErrors.TRANSIENT_MISSING_INITIALIZER,

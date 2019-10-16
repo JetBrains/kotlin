@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.psi.KtImportInfo
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
-import kotlin.script.experimental.api.valueOrNull
 
 class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
 
@@ -29,7 +28,8 @@ class ScriptExtraImportsProviderExtension : ExtraImportsProviderExtension {
 
     override fun getExtraImports(ktFile: KtFile): Collection<KtImportInfo> =
         ktFile.takeIf { it.isScript() }?.let { file ->
-            val refinedConfiguration = ScriptDependenciesProvider.getInstance(file.project)?.getScriptConfigurationResult(file.originalFile)?.valueOrNull()
+            val refinedConfiguration = ScriptDependenciesProvider.getInstance(file.project)
+                ?.getScriptConfiguration(file.originalFile as KtFile)
             refinedConfiguration?.defaultImports?.map {
                 ScriptExtraImportImpl(
                     ImportPath.fromString(it)

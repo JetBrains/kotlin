@@ -187,6 +187,8 @@ abstract class SequentialScratchExecutor(file: ScratchFile) : ScratchExecutor(fi
         stopExecution {
             lock.release()
         }
-        lock.tryAcquire(2, TimeUnit.SECONDS)
+        check(lock.tryAcquire(2, TimeUnit.SECONDS)) {
+            "Couldn't stop REPL process in 2 seconds"
+        }
     }
 }

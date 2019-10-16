@@ -5,10 +5,36 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirVariableAssignment : FirAssignment {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitVariableAssignment(this, data)
+interface FirVariableAssignment : FirQualifiedAccess {
+    override val psi: PsiElement?
+    override val annotations: List<FirAnnotationCall>
+    override val safe: Boolean
+    override val explicitReceiver: FirExpression?
+    override val dispatchReceiver: FirExpression
+    override val extensionReceiver: FirExpression
+    override val calleeReference: FirReference
+    val lValue: FirReference
+    val rValue: FirExpression
+    val operation: FirOperation
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVariableAssignment(this, data)
+
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment
+
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment
+
+    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirVariableAssignment
+
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirVariableAssignment
+
+    fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirVariableAssignment
 }

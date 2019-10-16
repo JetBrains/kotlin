@@ -6,22 +6,38 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
-import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 class FirWrappedDelegateExpressionImpl(
-    psi: PsiElement?,
+    override val psi: PsiElement?,
     override var expression: FirExpression
-) : FirWrappedDelegateExpression(psi) {
+) : FirWrappedDelegateExpression, FirAbstractAnnotatedElement {
+    override val typeRef: FirTypeRef get() = expression.typeRef
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var delegateProvider: FirExpression
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        annotations.forEach { it.accept(visitor, data) }
+        expression.accept(visitor, data)
+        delegateProvider.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpressionImpl {
+        annotations.transformInplace(transformer, data)
         expression = expression.transformSingle(transformer, data)
         delegateProvider = delegateProvider.transformSingle(transformer, data)
-
-        return super.transformChildren(transformer, data)
+        return this
     }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

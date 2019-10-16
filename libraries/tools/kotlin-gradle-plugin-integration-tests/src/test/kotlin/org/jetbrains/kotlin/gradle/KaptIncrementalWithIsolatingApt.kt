@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert.assertEquals
+import org.junit.Assume
 import org.junit.Test
+import test.kt33617.MyClass
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -84,6 +86,73 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         project.build("build") {
             assertSuccessful()
             assertContains("Unable to use existing data, re-initializing classpath information for KAPT.")
+        }
+    }
+
+    @Test
+    fun testNonIncrementalWithUnrecognizedInputs() {
+        val project = getProject()
+
+        val additionalInputs = project.projectDir.resolve("additionalInputs").also { it.mkdirs() }
+        project.gradleBuildScript().appendText(
+            """
+            
+            tasks.whenTaskAdded {
+                if (it.name == "kaptKotlin") {
+                  it.getInputs().files("${additionalInputs.invariantSeparatorsPath}")
+                }
+            }
+        """.trimIndent()
+        )
+
+        project.build("clean", "build") {
+            assertSuccessful()
+        }
+
+        additionalInputs.resolve("layout.xml").createNewFile()
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Incremental annotation processing (apt mode): false")
+        }
+    }
+
+    /** Regression test for https://youtrack.jetbrains.com/issue/KT-33617. */
+    @Test
+    fun testSourcesInCompileClasspathJars() {
+        val javaHome = File(System.getProperty("jdk9Home")!!)
+        Assume.assumeTrue("JDK 9 isn't available", javaHome.isDirectory)
+        val options = defaultBuildOptions().copy(javaHome = javaHome)
+
+        val project = getProject()
+        // create jar with .class and .java file for the same type
+        ZipOutputStream(project.projectDir.resolve("lib-with-sources.jar").outputStream()).use {
+            it.putNextEntry(ZipEntry("test/kt33617/MyClass.class"))
+            MyClass::class.java.classLoader.getResourceAsStream("test/kt33617/MyClass.class").use { input ->
+                it.write(input!!.readBytes())
+            }
+            it.closeEntry()
+
+            it.putNextEntry(ZipEntry("test/kt33617/MyClass.java"))
+            it.write(
+                """
+                package test.kt33617;
+                public class MyClass {}
+            """.trimIndent().toByteArray(Charsets.UTF_8)
+            )
+            it.closeEntry()
+        }
+        project.gradleBuildScript().appendText(
+            """
+                
+            dependencies {
+                implementation files('lib-with-sources.jar')
+            }
+        """.trimIndent()
+        )
+        project.projectFile("useB.kt").modify { current -> "$current\nfun otherFunction(param: test.kt33617.MyClass) {}" }
+
+        project.build("clean", "kaptKotlin", options = options) {
+            assertSuccessful()
         }
     }
 }

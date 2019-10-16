@@ -5,9 +5,10 @@
 
 package test.io
 
+import test.assertArrayContentEquals
 import java.io.*
-import java.util.*
 import kotlin.io.walkTopDown
+import kotlin.random.Random
 import kotlin.test.*
 
 class FilesTest {
@@ -360,6 +361,71 @@ class FilesTest {
         assertEquals("log", File("/my.dir/log").nameWithoutExtension)
     }
 
+    private class FixedLengthFile(path: String, private val length: Long) : File(path) {
+        override fun length(): Long = length
+    }
+
+    @Test fun writeReadText() {
+        val file = createTempFile()
+        try {
+            val expected = String(CharArray(DEFAULT_BUFFER_SIZE * 2) { Random.nextInt(0, 1024).toChar() })
+            file.writeText(expected)
+            run {
+                val actual1 = file.readText()
+                assertEquals(expected.length, actual1.length)
+                assertTrue(expected.equals(actual1), "Expected to read the same content back")
+            }
+
+            val fileLength = file.length()
+            val testLengths = listOf(0L, *Array(3) { Random.nextLong(fileLength) })
+
+            for (length in testLengths) {
+                val shorterFile = FixedLengthFile(file.path, length)
+                val actual2 = shorterFile.readText()
+                assertEquals(expected.length, actual2.length)
+                assertTrue(expected.equals(actual2), "Expected to read the same content back")
+            }
+        } finally {
+            file.delete()
+        }
+    }
+
+    @Test fun writeReadBytes() {
+        val file = createTempFile()
+        try {
+            val expected = Random.nextBytes(DEFAULT_BUFFER_SIZE * 4)
+            file.writeBytes(expected)
+            run {
+                val actual1 = file.readBytes()
+                assertArrayContentEquals(expected, actual1, "Expected to read the same content back")
+            }
+
+            val fileLength = file.length()
+            val testLengths = listOf(0L, *Array(3) { Random.nextLong(fileLength) })
+
+            for (length in testLengths) {
+                val shorterFile = FixedLengthFile(file.path, length)
+                val actual2 = shorterFile.readBytes()
+                assertEquals(actual2.size, expected.size)
+                assertArrayContentEquals(expected, actual2, "Expected to read the same content back")
+            }
+        } finally {
+            file.delete()
+        }
+    }
+
+    @Test fun readVirtualFile() {
+        val virtualFile = File("/proc/self/cmdline")
+        if (virtualFile.exists() && virtualFile.length() == 0L) {
+            val allBytes = virtualFile.readBytes()
+            assertNotEquals(0, allBytes.size)
+
+            val allText = virtualFile.readText()
+            assertNotEquals(0, allText.length)
+            println(allText)
+        }
+    }
+
     @Test fun testCopyTo() {
         val srcFile = createTempFile()
         val dstFile = createTempFile()
@@ -486,7 +552,7 @@ class FilesTest {
         assertTrue(dst.exists())
         assertEquals(src.isFile, dst.isFile, message)
         if (dst.isFile) {
-            assertTrue(Arrays.equals(src.readBytes(), dst.readBytes()), message)
+            assertArrayContentEquals(src.readBytes(), dst.readBytes(), message)
         }
     }
 

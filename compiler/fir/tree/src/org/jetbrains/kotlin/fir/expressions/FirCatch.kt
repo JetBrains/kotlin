@@ -5,27 +5,26 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.BaseTransformedType
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.*
 
-@BaseTransformedType
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
 interface FirCatch : FirElement {
+    override val psi: PsiElement?
     val parameter: FirValueParameter
-
     val block: FirBlock
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitCatch(this, data)
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        parameter.accept(visitor, data)
-        block.accept(visitor, data)
-    }
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCatch(this, data)
 
     fun <D> transformParameter(transformer: FirTransformer<D>, data: D): FirCatch
 
     fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCatch
+
+    fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirCatch
 }

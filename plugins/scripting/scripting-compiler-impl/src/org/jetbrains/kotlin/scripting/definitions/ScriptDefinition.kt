@@ -31,6 +31,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     abstract fun isScript(file: File): Boolean
     abstract val fileExtension: String
     abstract val name: String
+    open val defaultClassName: String = "Script"
     // TODO: used in settings, find out the reason and refactor accordingly
     abstract val definitionId: String
 
@@ -44,6 +45,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     abstract val baseClassType: KotlinType
     abstract val compilerOptions: Iterable<String>
+    abstract val annotationsForSamWithReceivers: List<String>
 
     @Suppress("DEPRECATION")
     inline fun <reified T : KotlinScriptDefinition> asLegacyOrNull(): T? =
@@ -93,6 +95,9 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         override val compilerOptions: Iterable<String>
             get() = legacyDefinition.additionalCompilerArguments ?: emptyList()
 
+        override val annotationsForSamWithReceivers: List<String>
+            get() = legacyDefinition.annotationsForSamWithReceivers
+
         override fun equals(other: Any?): Boolean = this === other || legacyDefinition == (other as? FromLegacy)?.legacyDefinition
 
         override fun hashCode(): Int = legacyDefinition.hashCode()
@@ -138,6 +143,9 @@ abstract class ScriptDefinition : UserDataHolderBase() {
                 compilationConfiguration[ScriptCompilationConfiguration.displayName]?.takeIf { it.isNotBlank() }
                     ?: compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!.typeName.substringAfterLast('.')
 
+        override val defaultClassName: String
+            get() = compilationConfiguration[ScriptCompilationConfiguration.defaultIdentifier] ?: super.defaultClassName
+
         override val definitionId: String get() = compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!.typeName
 
         override val contextClassLoader: ClassLoader? by lazy {
@@ -145,11 +153,17 @@ abstract class ScriptDefinition : UserDataHolderBase() {
                 ?: hostConfiguration[ScriptingHostConfiguration.jvm.baseClassLoader]
         }
 
+        override val platform: String
+            get() = compilationConfiguration[ScriptCompilationConfiguration.platform] ?: super.platform
+
         override val baseClassType: KotlinType
             get() = compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!
 
         override val compilerOptions: Iterable<String>
             get() = compilationConfiguration[ScriptCompilationConfiguration.compilerOptions].orEmpty()
+
+        override val annotationsForSamWithReceivers: List<String>
+            get() = compilationConfiguration[ScriptCompilationConfiguration.annotationsForSamWithReceivers].orEmpty().map { it.typeName }
 
         override fun equals(other: Any?): Boolean = this === other ||
                 (other as? FromConfigurations)?.let {

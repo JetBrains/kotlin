@@ -18,6 +18,7 @@ object IdeaSystemPropertiesForParallelRunConfigurator {
         FileUtil.createTempDirectory(File(System.getProperty("java.io.tmpdir")), "testRoot", "GW$GRADLE_WORKER", false).path
     private val IDEA_SYSTEM = FileUtil.createTempDirectory(File(PROCESS_TMP_ROOT_FOLDER), "idea-system", "", false).path
     private val IDEA_CONFIG = FileUtil.createTempDirectory(File(PROCESS_TMP_ROOT_FOLDER), "idea-config", "", false).path
+    private val ANDROID_HOME = FileUtil.createTempDirectory(File(PROCESS_TMP_ROOT_FOLDER), ".android", "", false).path
 
     init {
         // UsefulTestCase temp dir construction could cause folder clash on parallel test execution:
@@ -27,6 +28,7 @@ object IdeaSystemPropertiesForParallelRunConfigurator {
         System.setProperty("java.io.tmpdir", PROCESS_TMP_ROOT_FOLDER)
         System.setProperty(PROPERTY_SYSTEM_PATH, IDEA_SYSTEM)
         System.setProperty(PROPERTY_CONFIG_PATH, IDEA_CONFIG)
+        System.setProperty("ANDROID_SDK_HOME", ANDROID_HOME)
     }
 
     @JvmStatic

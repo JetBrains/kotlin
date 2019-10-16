@@ -154,6 +154,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         runTest("compiler/testData/diagnostics/testsWithStdLib/shadowingInDestructuring.kt");
     }
 
+    @TestMetadata("streams.kt")
+    public void testStreams() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/streams.kt");
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -164,6 +169,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
 
         public void testAllFilesPresentInAnnotations() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotationsTargetingLateinitAccessors.kt")
+        public void testAnnotationsTargetingLateinitAccessors() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationsTargetingLateinitAccessors.kt");
         }
 
         @TestMetadata("annotationsTargetingNonExistentAccessor.kt")

@@ -1,18 +1,25 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirWhenSubject
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirWhenSubjectExpression(psi: PsiElement?) : FirUnknownTypeExpression(psi) {
-    abstract val whenSubject: FirWhenSubject
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitWhenSubjectExpression(this, data)
+interface FirWhenSubjectExpression : FirExpression {
+    override val psi: PsiElement?
+    override val typeRef: FirTypeRef
+    override val annotations: List<FirAnnotationCall>
+    val whenSubject: FirWhenSubject
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenSubjectExpression(this, data)
 }

@@ -6,32 +6,36 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.export.ExportModelGenerator
+import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToJsStatements
+import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
+import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
 import org.jetbrains.kotlin.ir.backend.js.utils.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
     private val mainFunction: IrSimpleFunction?,
-    private val mainArguments: List<String>?
-) : BaseIrElementToJsNodeTransformer<JsNode, Nothing?> {
-
+    private val mainArguments: List<String>?,
+    private val generateScriptModule: Boolean = false,
+    var namer: NameTables = NameTables(emptyList())
+) {
     val moduleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
 
     private fun generateModuleBody(module: IrModuleFragment, context: JsGenerationContext): List<JsStatement> {
-        val statements = mutableListOf<JsStatement>(
-            JsStringLiteral("use strict").makeStmt()
-        )
+        val statements = mutableListOf<JsStatement>().also {
+            if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
+        }
 
         val preDeclarationBlock = JsBlock()
         val postDeclarationBlock = JsBlock()
@@ -56,68 +60,7 @@ class IrModuleToJsTransformer(
         return statements
     }
 
-    private fun generateExportStatements(
-        module: IrModuleFragment,
-        context: JsGenerationContext,
-        internalModuleName: JsName
-    ): List<JsStatement> {
-        val exports = mutableListOf<JsExpressionStatement>()
-
-        for (file in module.files) {
-            for (declaration in file.declarations) {
-                exports.addIfNotNull(
-                    generateExportStatement(declaration, context, internalModuleName)
-                )
-            }
-        }
-
-        return exports
-    }
-
-    private fun generateExportStatement(
-        declaration: IrDeclaration,
-        context: JsGenerationContext,
-        internalModuleName: JsName
-    ): JsExpressionStatement? {
-        if (declaration !is IrDeclarationWithVisibility ||
-            declaration !is IrDeclarationWithName ||
-            declaration.visibility != Visibilities.PUBLIC) {
-            return null
-        }
-
-        if (!declaration.isExported())
-            return null
-
-        if (declaration.isEffectivelyExternal())
-            return null
-
-        if (declaration is IrClass && declaration.isCompanion)
-            return null
-
-        val name: JsName = when (declaration) {
-            is IrSimpleFunction -> context.getNameForStaticFunction(declaration)
-            is IrClass -> context.getNameForClass(declaration)
-            // TODO: Fields must be exported as properties
-            is IrField -> context.getNameForField(declaration)
-            else -> return null
-        }
-
-        val exportName = sanitizeName(declaration.getJsNameOrKotlinName().asString())
-
-        val expression =
-            if (declaration is IrClass && declaration.isObject) {
-                // TODO: Use export names for properties
-                val instanceGetter = backendContext.objectToGetInstanceFunction[declaration.symbol]!!
-                val instanceGetterName: JsName = context.getNameForStaticFunction(instanceGetter)
-                defineProperty(internalModuleName.makeRef(), name.ident, getter = JsNameRef(instanceGetterName))
-            } else {
-                jsAssignment(JsNameRef(exportName, internalModuleName.makeRef()), name.makeRef())
-            }
-
-        return JsExpressionStatement(expression)
-    }
-
-    private fun generateModule(module: IrModuleFragment): JsProgram {
+    fun generateModule(module: IrModuleFragment): CompilerResult {
         val additionalPackages = with(backendContext) {
             externalPackageFragment.values + listOf(
                 bodilessBuiltInsPackageFragment,
@@ -125,7 +68,12 @@ class IrModuleToJsTransformer(
             ) + packageLevelJsModules
         }
 
-        val namer = NameTables(module.files + additionalPackages)
+        val exportedModule = ExportModelGenerator(backendContext).generateExport(module)
+        val dts = exportedModule.toTypeScript()
+
+        module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
+
+        namer.merge(module.files, additionalPackages)
 
         val program = JsProgram()
 
@@ -151,29 +99,38 @@ class IrModuleToJsTransformer(
             )
 
         val moduleBody = generateModuleBody(module, rootContext)
-        val exportStatements = generateExportStatements(module, rootContext, internalModuleName)
+        val exportStatements = ExportModelToJsStatements(internalModuleName, namer)
+            .generateModuleExport(exportedModule)
 
-        with(rootFunction) {
-            parameters += JsParameter(internalModuleName)
-            parameters += importedJsModules.map { JsParameter(it.internalName) }
-            with(body) {
+        if (generateScriptModule) {
+            with(program.globalBlock) {
                 statements += importStatements
                 statements += moduleBody
                 statements += exportStatements
-                statements += generateCallToMain(rootContext)
-                statements += JsReturn(internalModuleName.makeRef())
             }
+        } else {
+            with(rootFunction) {
+                parameters += JsParameter(internalModuleName)
+                parameters += importedJsModules.map { JsParameter(it.internalName) }
+                with(body) {
+                    statements += importStatements
+                    statements += moduleBody
+                    statements += exportStatements
+                    statements += generateCallToMain(rootContext)
+                    statements += JsReturn(internalModuleName.makeRef())
+                }
+            }
+
+            program.globalBlock.statements += ModuleWrapperTranslation.wrap(
+                moduleName,
+                rootFunction,
+                importedJsModules,
+                program,
+                kind = moduleKind
+            )
         }
 
-        program.globalBlock.statements += ModuleWrapperTranslation.wrap(
-            moduleName,
-            rootFunction,
-            importedJsModules,
-            program,
-            kind = moduleKind
-        )
-
-        return program
+        return CompilerResult(program.toString(), dts)
     }
 
     private fun generateMainArguments(mainFunction: IrSimpleFunction, rootContext: JsGenerationContext): List<JsExpression> {
@@ -247,9 +204,6 @@ class IrModuleToJsTransformer(
         return Pair(importStatements, importedJsModules)
     }
 
-    override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): JsNode =
-        generateModule(declaration)
-
     private fun processClassModels(
         classModelMap: Map<IrClassSymbol, JsIrClassModel>,
         preDeclarationBlock: JsBlock,
@@ -270,29 +224,5 @@ class IrModuleToJsTransformer(
             { klass -> classModelMap[klass]?.superClasses ?: emptyList() },
             declarationHandler
         )
-    }
-
-    fun IrDeclarationWithName.isExported(): Boolean {
-        if (fqNameWhenAvailable in backendContext.additionalExportedDeclarations)
-            return true
-
-        // Hack to support properties
-        val correspondingProperty = when {
-            this is IrField -> correspondingPropertySymbol
-            this is IrSimpleFunction -> correspondingPropertySymbol
-            else -> null
-        }
-        correspondingProperty?.let {
-            return it.owner.isExported()
-        }
-
-        if (isJsExport())
-            return true
-
-        return when (val parent = parent) {
-            is IrDeclarationWithName -> parent.isExported()
-            is IrAnnotationContainer -> parent.isJsExport()
-            else -> false
-        }
     }
 }

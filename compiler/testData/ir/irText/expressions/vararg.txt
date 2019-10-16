@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/vararg.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Array<kotlin.String> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Array<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
           <T>: kotlin.String
@@ -8,9 +8,9 @@ FILE fqName:<root> fileName:/vararg.kt
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Array<kotlin.String> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Array<kotlin.String> visibility:public [final,static]' type=kotlin.Array<kotlin.String> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Array<kotlin.String> visibility:private [final,static]' type=kotlin.Array<kotlin.String> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Array<kotlin.String> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Array<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
           <T>: kotlin.String
@@ -22,9 +22,9 @@ FILE fqName:<root> fileName:/vararg.kt
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Array<kotlin.String> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Array<kotlin.String> visibility:public [final,static]' type=kotlin.Array<kotlin.String> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Array<kotlin.String> visibility:private [final,static]' type=kotlin.Array<kotlin.String> origin=null
   PROPERTY name:test3 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<kotlin.String> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.Array<kotlin.String> origin=null
           <T>: kotlin.String
@@ -39,4 +39,4 @@ FILE fqName:<root> fileName:/vararg.kt
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Array<kotlin.String> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<kotlin.String> visibility:public [final,static]' type=kotlin.Array<kotlin.String> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Array<kotlin.String> visibility:private [final,static]' type=kotlin.Array<kotlin.String> origin=null

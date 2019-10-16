@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractProviderBasedScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 class JavaClassUseSiteScope(
     klass: FirRegularClass,
     session: FirSession,
-    private val superTypesScope: FirScope,
+    private val superTypesScope: FirSuperTypeScope,
     private val declaredMemberScope: FirScope
 ) : FirAbstractProviderBasedScope(session, lookupInFir = true) {
     internal val symbol = klass.symbol
@@ -58,7 +59,7 @@ class JavaClassUseSiteScope(
             substitutor
         )
 
-    private fun isOverriddenFunCheck(overriddenInJava: FirNamedFunction, base: FirNamedFunction): Boolean {
+    private fun isOverriddenFunCheck(overriddenInJava: FirSimpleFunction, base: FirSimpleFunction): Boolean {
         val receiverTypeRef = base.receiverTypeRef
         val baseParameterTypes = listOfNotNull(receiverTypeRef) + base.valueParameters.map { it.returnTypeRef }
 
@@ -82,7 +83,7 @@ class JavaClassUseSiteScope(
         }
     }
 
-    private fun isOverriddenPropertyCheck(overriddenInJava: FirNamedFunction, base: FirProperty): Boolean {
+    private fun isOverriddenPropertyCheck(overriddenInJava: FirSimpleFunction, base: FirProperty): Boolean {
         val receiverTypeRef = base.receiverTypeRef
         if (receiverTypeRef == null) {
             // TODO: setters

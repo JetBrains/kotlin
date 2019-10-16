@@ -15,7 +15,7 @@ FILE: simpleClass.kt
             private get(): R|kotlin/Int|
 
         public final override fun foo(x: R|kotlin/Int|, y: R|kotlin/String|): R|kotlin/String| {
-            ^foo R|<local>/y|.R|kotlin/String.plus|(R|<local>/x|).R|kotlin/String.plus|(R|/SomeClass.baz|)
+            ^foo R|<local>/y|.R|kotlin/String.plus|(R|<local>/x|).R|kotlin/String.plus|(this@R|/SomeClass|.R|/SomeClass.baz|)
         }
 
         public final override var bar: R|kotlin/Boolean|

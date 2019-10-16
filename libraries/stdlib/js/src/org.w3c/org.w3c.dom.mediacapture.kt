@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
-// See libraries/tools/idl2k for details
+// See github.com/kotlin/dukat for details
 
-@file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.dom.mediacapture
 
 import kotlin.js.*
@@ -41,8 +40,8 @@ public external open class MediaStream() : EventTarget {
     fun getVideoTracks(): Array<MediaStreamTrack>
     fun getTracks(): Array<MediaStreamTrack>
     fun getTrackById(trackId: String): MediaStreamTrack?
-    fun addTrack(track: MediaStreamTrack): Unit
-    fun removeTrack(track: MediaStreamTrack): Unit
+    fun addTrack(track: MediaStreamTrack)
+    fun removeTrack(track: MediaStreamTrack)
     fun clone(): MediaStream
 }
 
@@ -61,7 +60,7 @@ public external abstract class MediaStreamTrack : EventTarget {
     open var onended: ((Event) -> dynamic)?
     open var onoverconstrained: ((Event) -> dynamic)?
     fun clone(): MediaStreamTrack
-    fun stop(): Unit
+    fun stop()
     fun getCapabilities(): MediaTrackCapabilities
     fun getConstraints(): MediaTrackConstraints
     fun getSettings(): MediaTrackSettings
@@ -125,7 +124,6 @@ public external interface MediaTrackSupportedConstraints {
 @kotlin.internal.InlineOnly
 public inline fun MediaTrackSupportedConstraints(width: Boolean? = true, height: Boolean? = true, aspectRatio: Boolean? = true, frameRate: Boolean? = true, facingMode: Boolean? = true, resizeMode: Boolean? = true, volume: Boolean? = true, sampleRate: Boolean? = true, sampleSize: Boolean? = true, echoCancellation: Boolean? = true, autoGainControl: Boolean? = true, noiseSuppression: Boolean? = true, latency: Boolean? = true, channelCount: Boolean? = true, deviceId: Boolean? = true, groupId: Boolean? = true): MediaTrackSupportedConstraints {
     val o = js("({})")
-
     o["width"] = width
     o["height"] = height
     o["aspectRatio"] = aspectRatio
@@ -142,7 +140,6 @@ public inline fun MediaTrackSupportedConstraints(width: Boolean? = true, height:
     o["channelCount"] = channelCount
     o["deviceId"] = deviceId
     o["groupId"] = groupId
-
     return o
 }
 
@@ -200,7 +197,6 @@ public external interface MediaTrackCapabilities {
 @kotlin.internal.InlineOnly
 public inline fun MediaTrackCapabilities(width: ULongRange? = undefined, height: ULongRange? = undefined, aspectRatio: DoubleRange? = undefined, frameRate: DoubleRange? = undefined, facingMode: Array<String>? = undefined, resizeMode: Array<String>? = undefined, volume: DoubleRange? = undefined, sampleRate: ULongRange? = undefined, sampleSize: ULongRange? = undefined, echoCancellation: Array<Boolean>? = undefined, autoGainControl: Array<Boolean>? = undefined, noiseSuppression: Array<Boolean>? = undefined, latency: DoubleRange? = undefined, channelCount: ULongRange? = undefined, deviceId: String? = undefined, groupId: String? = undefined): MediaTrackCapabilities {
     val o = js("({})")
-
     o["width"] = width
     o["height"] = height
     o["aspectRatio"] = aspectRatio
@@ -217,7 +213,6 @@ public inline fun MediaTrackCapabilities(width: ULongRange? = undefined, height:
     o["channelCount"] = channelCount
     o["deviceId"] = deviceId
     o["groupId"] = groupId
-
     return o
 }
 
@@ -233,7 +228,6 @@ public external interface MediaTrackConstraints : MediaTrackConstraintSet {
 @kotlin.internal.InlineOnly
 public inline fun MediaTrackConstraints(advanced: Array<MediaTrackConstraintSet>? = undefined, width: dynamic = undefined, height: dynamic = undefined, aspectRatio: dynamic = undefined, frameRate: dynamic = undefined, facingMode: dynamic = undefined, resizeMode: dynamic = undefined, volume: dynamic = undefined, sampleRate: dynamic = undefined, sampleSize: dynamic = undefined, echoCancellation: dynamic = undefined, autoGainControl: dynamic = undefined, noiseSuppression: dynamic = undefined, latency: dynamic = undefined, channelCount: dynamic = undefined, deviceId: dynamic = undefined, groupId: dynamic = undefined): MediaTrackConstraints {
     val o = js("({})")
-
     o["advanced"] = advanced
     o["width"] = width
     o["height"] = height
@@ -251,7 +245,6 @@ public inline fun MediaTrackConstraints(advanced: Array<MediaTrackConstraintSet>
     o["channelCount"] = channelCount
     o["deviceId"] = deviceId
     o["groupId"] = groupId
-
     return o
 }
 
@@ -309,7 +302,6 @@ public external interface MediaTrackConstraintSet {
 @kotlin.internal.InlineOnly
 public inline fun MediaTrackConstraintSet(width: dynamic = undefined, height: dynamic = undefined, aspectRatio: dynamic = undefined, frameRate: dynamic = undefined, facingMode: dynamic = undefined, resizeMode: dynamic = undefined, volume: dynamic = undefined, sampleRate: dynamic = undefined, sampleSize: dynamic = undefined, echoCancellation: dynamic = undefined, autoGainControl: dynamic = undefined, noiseSuppression: dynamic = undefined, latency: dynamic = undefined, channelCount: dynamic = undefined, deviceId: dynamic = undefined, groupId: dynamic = undefined): MediaTrackConstraintSet {
     val o = js("({})")
-
     o["width"] = width
     o["height"] = height
     o["aspectRatio"] = aspectRatio
@@ -326,7 +318,6 @@ public inline fun MediaTrackConstraintSet(width: dynamic = undefined, height: dy
     o["channelCount"] = channelCount
     o["deviceId"] = deviceId
     o["groupId"] = groupId
-
     return o
 }
 
@@ -387,7 +378,6 @@ public external interface MediaTrackSettings {
 @kotlin.internal.InlineOnly
 public inline fun MediaTrackSettings(width: Int? = undefined, height: Int? = undefined, aspectRatio: Double? = undefined, frameRate: Double? = undefined, facingMode: String? = undefined, resizeMode: String? = undefined, volume: Double? = undefined, sampleRate: Int? = undefined, sampleSize: Int? = undefined, echoCancellation: Boolean? = undefined, autoGainControl: Boolean? = undefined, noiseSuppression: Boolean? = undefined, latency: Double? = undefined, channelCount: Int? = undefined, deviceId: String? = undefined, groupId: String? = undefined): MediaTrackSettings {
     val o = js("({})")
-
     o["width"] = width
     o["height"] = height
     o["aspectRatio"] = aspectRatio
@@ -404,7 +394,6 @@ public inline fun MediaTrackSettings(width: Int? = undefined, height: Int? = und
     o["channelCount"] = channelCount
     o["deviceId"] = deviceId
     o["groupId"] = groupId
-
     return o
 }
 
@@ -413,6 +402,13 @@ public inline fun MediaTrackSettings(width: Int? = undefined, height: Int? = und
  */
 public external open class MediaStreamTrackEvent(type: String, eventInitDict: MediaStreamTrackEventInit) : Event {
     open val track: MediaStreamTrack
+
+    companion object {
+        val NONE: Short
+        val CAPTURING_PHASE: Short
+        val AT_TARGET: Short
+        val BUBBLING_PHASE: Short
+    }
 }
 
 public external interface MediaStreamTrackEventInit : EventInit {
@@ -424,17 +420,22 @@ public external interface MediaStreamTrackEventInit : EventInit {
 @kotlin.internal.InlineOnly
 public inline fun MediaStreamTrackEventInit(track: MediaStreamTrack?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaStreamTrackEventInit {
     val o = js("({})")
-
     o["track"] = track
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
-
     return o
 }
 
 public external open class OverconstrainedErrorEvent(type: String, eventInitDict: OverconstrainedErrorEventInit) : Event {
     open val error: dynamic
+
+    companion object {
+        val NONE: Short
+        val CAPTURING_PHASE: Short
+        val AT_TARGET: Short
+        val BUBBLING_PHASE: Short
+    }
 }
 
 public external interface OverconstrainedErrorEventInit : EventInit {
@@ -446,12 +447,10 @@ public external interface OverconstrainedErrorEventInit : EventInit {
 @kotlin.internal.InlineOnly
 public inline fun OverconstrainedErrorEventInit(error: dynamic = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): OverconstrainedErrorEventInit {
     val o = js("({})")
-
     o["error"] = error
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
-
     return o
 }
 
@@ -460,7 +459,7 @@ public inline fun OverconstrainedErrorEventInit(error: dynamic = null, bubbles: 
  */
 public external abstract class MediaDevices : EventTarget {
     open var ondevicechange: ((Event) -> dynamic)?
-    fun enumerateDevices(): Promise<dynamic>
+    fun enumerateDevices(): Promise<Array<MediaDeviceInfo>>
     fun getSupportedConstraints(): MediaTrackSupportedConstraints
     fun getUserMedia(constraints: MediaStreamConstraints = definedExternally): Promise<MediaStream>
 }
@@ -495,15 +494,15 @@ public external interface MediaStreamConstraints {
 @kotlin.internal.InlineOnly
 public inline fun MediaStreamConstraints(video: dynamic = false, audio: dynamic = false): MediaStreamConstraints {
     val o = js("({})")
-
     o["video"] = video
     o["audio"] = audio
-
     return o
 }
 
 public external interface ConstrainablePattern {
     var onoverconstrained: ((Event) -> dynamic)?
+        get() = definedExternally
+        set(value) = definedExternally
     fun getCapabilities(): Capabilities
     fun getConstraints(): Constraints
     fun getSettings(): Settings
@@ -525,10 +524,8 @@ public external interface DoubleRange {
 @kotlin.internal.InlineOnly
 public inline fun DoubleRange(max: Double? = undefined, min: Double? = undefined): DoubleRange {
     val o = js("({})")
-
     o["max"] = max
     o["min"] = min
-
     return o
 }
 
@@ -544,12 +541,10 @@ public external interface ConstrainDoubleRange : DoubleRange {
 @kotlin.internal.InlineOnly
 public inline fun ConstrainDoubleRange(exact: Double? = undefined, ideal: Double? = undefined, max: Double? = undefined, min: Double? = undefined): ConstrainDoubleRange {
     val o = js("({})")
-
     o["exact"] = exact
     o["ideal"] = ideal
     o["max"] = max
     o["min"] = min
-
     return o
 }
 
@@ -565,10 +560,8 @@ public external interface ULongRange {
 @kotlin.internal.InlineOnly
 public inline fun ULongRange(max: Int? = undefined, min: Int? = undefined): ULongRange {
     val o = js("({})")
-
     o["max"] = max
     o["min"] = min
-
     return o
 }
 
@@ -584,12 +577,10 @@ public external interface ConstrainULongRange : ULongRange {
 @kotlin.internal.InlineOnly
 public inline fun ConstrainULongRange(exact: Int? = undefined, ideal: Int? = undefined, max: Int? = undefined, min: Int? = undefined): ConstrainULongRange {
     val o = js("({})")
-
     o["exact"] = exact
     o["ideal"] = ideal
     o["max"] = max
     o["min"] = min
-
     return o
 }
 
@@ -608,10 +599,8 @@ public external interface ConstrainBooleanParameters {
 @kotlin.internal.InlineOnly
 public inline fun ConstrainBooleanParameters(exact: Boolean? = undefined, ideal: Boolean? = undefined): ConstrainBooleanParameters {
     val o = js("({})")
-
     o["exact"] = exact
     o["ideal"] = ideal
-
     return o
 }
 
@@ -630,43 +619,32 @@ public external interface ConstrainDOMStringParameters {
 @kotlin.internal.InlineOnly
 public inline fun ConstrainDOMStringParameters(exact: dynamic = undefined, ideal: dynamic = undefined): ConstrainDOMStringParameters {
     val o = js("({})")
-
     o["exact"] = exact
     o["ideal"] = ideal
-
     return o
 }
 
-public external interface Capabilities {
-}
+public external interface Capabilities
 
 @kotlin.internal.InlineOnly
 public inline fun Capabilities(): Capabilities {
     val o = js("({})")
-
-
     return o
 }
 
-public external interface Settings {
-}
+public external interface Settings
 
 @kotlin.internal.InlineOnly
 public inline fun Settings(): Settings {
     val o = js("({})")
-
-
     return o
 }
 
-public external interface ConstraintSet {
-}
+public external interface ConstraintSet
 
 @kotlin.internal.InlineOnly
 public inline fun ConstraintSet(): ConstraintSet {
     val o = js("({})")
-
-
     return o
 }
 
@@ -679,40 +657,52 @@ public external interface Constraints : ConstraintSet {
 @kotlin.internal.InlineOnly
 public inline fun Constraints(advanced: Array<ConstraintSet>? = undefined): Constraints {
     val o = js("({})")
-
     o["advanced"] = advanced
-
     return o
 }
 
 /* please, don't implement this interface! */
+@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface MediaStreamTrackState {
     companion object
 }
+
 public inline val MediaStreamTrackState.Companion.LIVE: MediaStreamTrackState get() = "live".asDynamic().unsafeCast<MediaStreamTrackState>()
+
 public inline val MediaStreamTrackState.Companion.ENDED: MediaStreamTrackState get() = "ended".asDynamic().unsafeCast<MediaStreamTrackState>()
 
 /* please, don't implement this interface! */
+@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface VideoFacingModeEnum {
     companion object
 }
+
 public inline val VideoFacingModeEnum.Companion.USER: VideoFacingModeEnum get() = "user".asDynamic().unsafeCast<VideoFacingModeEnum>()
+
 public inline val VideoFacingModeEnum.Companion.ENVIRONMENT: VideoFacingModeEnum get() = "environment".asDynamic().unsafeCast<VideoFacingModeEnum>()
+
 public inline val VideoFacingModeEnum.Companion.LEFT: VideoFacingModeEnum get() = "left".asDynamic().unsafeCast<VideoFacingModeEnum>()
+
 public inline val VideoFacingModeEnum.Companion.RIGHT: VideoFacingModeEnum get() = "right".asDynamic().unsafeCast<VideoFacingModeEnum>()
 
 /* please, don't implement this interface! */
+@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface VideoResizeModeEnum {
     companion object
 }
+
 public inline val VideoResizeModeEnum.Companion.NONE: VideoResizeModeEnum get() = "none".asDynamic().unsafeCast<VideoResizeModeEnum>()
+
 public inline val VideoResizeModeEnum.Companion.CROP_AND_SCALE: VideoResizeModeEnum get() = "crop-and-scale".asDynamic().unsafeCast<VideoResizeModeEnum>()
 
 /* please, don't implement this interface! */
+@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface MediaDeviceKind {
     companion object
 }
-public inline val MediaDeviceKind.Companion.AUDIOINPUT: MediaDeviceKind get() = "audioinput".asDynamic().unsafeCast<MediaDeviceKind>()
-public inline val MediaDeviceKind.Companion.AUDIOOUTPUT: MediaDeviceKind get() = "audiooutput".asDynamic().unsafeCast<MediaDeviceKind>()
-public inline val MediaDeviceKind.Companion.VIDEOINPUT: MediaDeviceKind get() = "videoinput".asDynamic().unsafeCast<MediaDeviceKind>()
 
+public inline val MediaDeviceKind.Companion.AUDIOINPUT: MediaDeviceKind get() = "audioinput".asDynamic().unsafeCast<MediaDeviceKind>()
+
+public inline val MediaDeviceKind.Companion.AUDIOOUTPUT: MediaDeviceKind get() = "audiooutput".asDynamic().unsafeCast<MediaDeviceKind>()
+
+public inline val MediaDeviceKind.Companion.VIDEOINPUT: MediaDeviceKind get() = "videoinput".asDynamic().unsafeCast<MediaDeviceKind>()

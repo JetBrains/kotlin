@@ -230,6 +230,11 @@ public class SequenceTest {
         seq.toList().let { expectedSingleChunk ->
             assertEquals(expectedSingleChunk, seq.chunked(size).single())
             assertEquals(expectedSingleChunk, seq.chunked(size + 3).single())
+            assertEquals(expectedSingleChunk, seq.chunked(Int.MAX_VALUE).single())
+        }
+
+        infiniteSeq.take(2).let { seq2 ->
+            assertEquals(seq2.toList(), seq2.chunked(Int.MAX_VALUE).single())
         }
 
         assertTrue(emptySequence<String>().chunked(3).none())
@@ -249,6 +254,16 @@ public class SequenceTest {
         result.take(10).forEachIndexed { windowIndex, window ->
             val startElement = windowIndex * 3
             assertEquals((startElement until startElement + 5).toList(), window)
+        }
+
+        infiniteSeq.take(3500).windowed(2000, 1000, partialWindows = true).forEachIndexed { windowIndex, window ->
+            val startElement = windowIndex * 1000
+            val elementCount = when (windowIndex) {
+                3 -> 500
+                2 -> 1500
+                else -> 2000
+            }
+            assertEquals((startElement until startElement + elementCount).toList(), window)
         }
 
         val size = 7
@@ -296,6 +311,24 @@ public class SequenceTest {
         }
 
         ensureIsIntermediate(source = sequenceOf(1, 2, 3)) { it.windowed(2, 1) }
+
+        // index overflow tests
+        for (partialWindows in listOf(true, false)) {
+
+            val windowed1 = seq.windowed(5, Int.MAX_VALUE, partialWindows)
+            assertEquals(seq.take(5).toList(), windowed1.single())
+            val windowed2 = seq.windowed(Int.MAX_VALUE, 5, partialWindows)
+            assertEquals(if (partialWindows) listOf(seq.toList(), listOf(5, 6)) else listOf(), windowed2.toList())
+            val windowed3 = seq.windowed(Int.MAX_VALUE, Int.MAX_VALUE, partialWindows)
+            assertEquals(if (partialWindows) listOf(seq.toList()) else listOf(), windowed3.toList())
+
+            val windowedTransform1 = seq.windowed(5, Int.MAX_VALUE, partialWindows) { it.joinToString("") }
+            assertEquals("01234", windowedTransform1.single())
+            val windowedTransform2 = seq.windowed(Int.MAX_VALUE, 5, partialWindows) { it.joinToString("") }
+            assertEquals(if (partialWindows) listOf("0123456", "56") else listOf(), windowedTransform2.toList())
+            val windowedTransform3 = seq.windowed(Int.MAX_VALUE, Int.MAX_VALUE, partialWindows) { it.joinToString("") }
+            assertEquals(if (partialWindows) listOf("0123456") else listOf(), windowedTransform3.toList())
+        }
     }
 
     @Test fun zip() {

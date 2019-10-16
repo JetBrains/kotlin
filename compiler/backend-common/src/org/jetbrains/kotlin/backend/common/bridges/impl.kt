@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
+import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 fun <Signature> generateBridgesForFunctionDescriptor(
     descriptor: FunctionDescriptor,
@@ -128,6 +130,6 @@ fun firstSuperMethodFromKotlin(
 ): CallableMemberDescriptor? {
     return descriptor.overriddenDescriptors.firstOrNull { overridden ->
         overridden.modality != Modality.ABSTRACT &&
-        (overridden == implementation || OverridingUtil.overrides(overridden, implementation))
+        (overridden == implementation || OverridingUtil.overrides(overridden, implementation, overridden.module.isTypeRefinementEnabled()))
     }
 }

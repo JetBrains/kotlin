@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.ir
 
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.cli.js.loadPluginsForTests
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.scripting.compiler.plugin.loadScriptConfiguration
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.rethrow
@@ -48,7 +51,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         val ignoreErrors = shouldIgnoreErrors(wholeFile)
         val irModule = generateIrModule(ignoreErrors)
 
-        val ktFiles = testFiles.filter { it.name.endsWith(".kt") }
+        val ktFiles = testFiles.filter { it.name.endsWith(".kt") || it.name.endsWith(".kts") }
         for ((testFile, irFile) in ktFiles.zip(irModule.files)) {
             doTestIrFileAgainstExpectations(dir, testFile, irFile)
         }
@@ -86,6 +89,13 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
                 ?: throw AssertionError("Can't find a class in external dependencies: $externalClassFqn")
 
         return generateMemberStub(classDescriptor) as IrClass
+    }
+
+    override fun configureTestSpecific(configuration: CompilerConfiguration, testFiles: List<TestFile>) {
+        if (testFiles.any { it.name.endsWith(".kts") }) {
+            loadScriptConfiguration(configuration)
+            loadPluginsForTests(configuration)
+        }
     }
 
     private fun doTestIrFileAgainstExpectations(dir: File, testFile: TestFile, irFile: IrFile) {
@@ -299,7 +309,9 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
     internal class IrTreeFileLabel(val expectedTextFile: File, val lineNumber: Int)
 
-    protected open fun getExpectedTextFileName(testFile: TestFile, name: String = testFile.name): String = name.replace(".kt", ".txt")
+    protected open fun getExpectedTextFileName(testFile: TestFile, name: String = testFile.name): String {
+        return name.replace(".kts", ".txt").replace(".kt", ".txt")
+    }
 
     private fun parseExpectations(dir: File, testFile: TestFile): Expectations {
         val regexps =

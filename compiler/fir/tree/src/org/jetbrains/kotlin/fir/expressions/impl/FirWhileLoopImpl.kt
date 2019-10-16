@@ -6,7 +6,54 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.visitors.*
 
-class FirWhileLoopImpl(psi: PsiElement?, condition: FirExpression) : FirAbstractLoop(psi, condition), FirWhileLoop
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+class FirWhileLoopImpl(
+    override val psi: PsiElement?,
+    override var condition: FirExpression
+) : FirWhileLoop, FirAbstractLoop, FirAbstractAnnotatedElement {
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override var label: FirLabel? = null
+    override lateinit var block: FirBlock
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        annotations.forEach { it.accept(visitor, data) }
+        label?.accept(visitor, data)
+        condition.accept(visitor, data)
+        block.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
+        transformCondition(transformer, data)
+        transformBlock(transformer, data)
+        transformOtherChildren(transformer, data)
+        return this
+    }
+
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
+        condition = condition.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
+        block = block.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhileLoopImpl {
+        annotations.transformInplace(transformer, data)
+        label = label?.transformSingle(transformer, data)
+        return this
+    }
+}

@@ -6,25 +6,40 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
-import org.jetbrains.kotlin.fir.transformSingle
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 class FirThrowExpressionImpl(
-    psi: PsiElement?,
+    override val psi: PsiElement?,
     override var exception: FirExpression
-) : FirThrowExpression(psi) {
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+) : FirThrowExpression, FirAbstractAnnotatedElement {
+    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(psi)
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        exception = exception.transformSingle(transformer, data)
-        typeRef = typeRef.transformSingle(transformer, data)
-        return super.transformChildren(transformer, data)
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        typeRef.accept(visitor, data)
+        annotations.forEach { it.accept(visitor, data) }
+        exception.accept(visitor, data)
     }
 
-    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(psi)
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirThrowExpressionImpl {
+        typeRef = typeRef.transformSingle(transformer, data)
+        annotations.transformInplace(transformer, data)
+        exception = exception.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
+    }
 }

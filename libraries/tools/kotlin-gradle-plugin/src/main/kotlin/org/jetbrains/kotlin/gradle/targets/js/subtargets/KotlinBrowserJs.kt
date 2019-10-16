@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
+import javax.inject.Inject
 
-class KotlinBrowserJs(target: KotlinJsTarget) :
+open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
@@ -42,7 +43,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
+        project.registerTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
             val compileKotlinTask = compilation.compileKotlinTask
             it.dependsOn(
                 nodeJs.npmInstallTask,
@@ -55,7 +56,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
         }
 
-        val run = project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("run")) {
+        val run = project.registerTask<KotlinWebpack>(disambiguateCamelCased("run")) {
             val compileKotlinTask = compilation.compileKotlinTask
             it.dependsOn(
                 nodeJs.npmInstallTask,
@@ -75,6 +76,6 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             it.outputs.upToDateWhen { false }
         }
 
-        target.runTask.dependsOn(run.getTaskOrProvider())
+        target.runTask.dependsOn(run)
     }
 }

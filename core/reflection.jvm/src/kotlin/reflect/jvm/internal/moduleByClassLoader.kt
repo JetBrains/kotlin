@@ -19,8 +19,8 @@ package kotlin.reflect.jvm.internal
 import java.lang.ref.WeakReference
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
-import kotlin.reflect.jvm.internal.components.RuntimeModuleData
-import kotlin.reflect.jvm.internal.structure.safeClassLoader
+import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
+import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 
 // TODO: collect nulls periodically
 private val moduleByClassLoader: ConcurrentMap<WeakClassLoaderBox, WeakReference<RuntimeModuleData>> = ConcurrentHashMap()

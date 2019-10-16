@@ -63,7 +63,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IdType modality:FINAL visibility:public superTypes:[<root>.CPointed]'
     PROPERTY name:value visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'value: kotlin.Int declared in <root>.IdType.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.IdType) returnType:kotlin.Int
@@ -71,7 +71,7 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.IdType
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.Int declared in <root>.IdType'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.IdType declared in <root>.IdType.<get-value>' type=<root>.IdType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

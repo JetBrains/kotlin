@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.psi.*
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
+import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -68,7 +69,7 @@ internal abstract class KtUltraLightParameter(
     name: String,
     override val kotlinOrigin: KtParameter?,
     protected val support: KtUltraLightSupport,
-    method: KtLightMethod
+    method: KtUltraLightMethod
 ) : org.jetbrains.kotlin.asJava.elements.LightParameter(
     name,
     PsiType.NULL,
@@ -91,7 +92,7 @@ internal abstract class KtUltraLightParameter(
     override fun isValid() = parent.isValid
 
     protected abstract val kotlinType: KotlinType?
-    protected abstract fun computeContainingDescriptor(): CallableDescriptor?
+    protected abstract val containingDescriptor: CallableDescriptor?
 
     override val kotlinTypeForNullabilityAnnotation: KotlinType?
         get() {
@@ -113,10 +114,14 @@ internal abstract class KtUltraLightParameter(
         if (kotlinType.isSuspendFunctionType) {
             kotlinType.asPsiType(support, TypeMappingMode.DEFAULT, this)
         } else {
-            val containingDescriptor = computeContainingDescriptor() ?: return@lazyPub PsiType.NULL
-            support.mapType(this) { typeMapper, sw ->
+            val containingDescriptor = containingDescriptor ?: return@lazyPub PsiType.NULL
+            val mappedType = support.mapType(this) { typeMapper, sw ->
                 typeMapper.writeParameterType(sw, kotlinType, containingDescriptor)
             }
+
+            if (method.checkNeedToErasureParametersTypes)
+                TypeConversionUtil.erasure(mappedType)
+            else mappedType
         }
     }
 
@@ -137,17 +142,17 @@ internal abstract class KtAbstractUltraLightParameterForDeclaration(
     name: String,
     kotlinOrigin: KtParameter?,
     support: KtUltraLightSupport,
-    method: KtLightMethod,
+    method: KtUltraLightMethod,
     protected val containingDeclaration: KtCallableDeclaration
 ) : KtUltraLightParameter(name, kotlinOrigin, support, method) {
-    override fun computeContainingDescriptor() = containingDeclaration.resolve() as? CallableMemberDescriptor
+    override val containingDescriptor: CallableDescriptor? = containingDeclaration.resolve() as? CallableMemberDescriptor
 }
 
 internal class KtUltraLightParameterForSource(
     name: String,
     override val kotlinOrigin: KtParameter,
     support: KtUltraLightSupport,
-    method: KtLightMethod,
+    method: KtUltraLightMethod,
     containingDeclaration: KtCallableDeclaration
 ) : KtAbstractUltraLightParameterForDeclaration(name, kotlinOrigin, support, method, containingDeclaration) {
 
@@ -168,7 +173,7 @@ internal class KtUltraLightParameterForSetterParameter(
     // KtProperty or KtParameter from primary constructor
     private val property: KtDeclaration,
     support: KtUltraLightSupport,
-    method: KtLightMethod,
+    method: KtUltraLightMethod,
     containingDeclaration: KtCallableDeclaration
 ) : KtAbstractUltraLightParameterForDeclaration(name, null, support, method, containingDeclaration) {
 
@@ -180,18 +185,18 @@ internal class KtUltraLightParameterForSetterParameter(
 internal class KtUltraLightReceiverParameter(
     containingDeclaration: KtCallableDeclaration,
     support: KtUltraLightSupport,
-    method: KtLightMethod
+    method: KtUltraLightMethod
 ) : KtAbstractUltraLightParameterForDeclaration("\$self", null, support, method, containingDeclaration) {
 
     override fun isVarArgs(): Boolean = false
 
-    override val kotlinType: KotlinType? by lazyPub { computeContainingDescriptor()?.extensionReceiverParameter?.type }
+    override val kotlinType: KotlinType? by lazyPub { containingDescriptor?.extensionReceiverParameter?.type }
 }
 
 internal class KtUltraLightParameterForDescriptor(
     private val descriptor: ParameterDescriptor,
     support: KtUltraLightSupport,
-    method: KtLightMethod
+    method: KtUltraLightMethod
 ) : KtUltraLightParameter(
     if (descriptor.name.isSpecial) "\$self" else descriptor.name.identifier,
     null, support, method
@@ -199,7 +204,7 @@ internal class KtUltraLightParameterForDescriptor(
     override val kotlinType: KotlinType?
         get() = descriptor.type
 
-    override fun computeContainingDescriptor() = descriptor.containingDeclaration as? CallableMemberDescriptor
+    override val containingDescriptor: CallableDescriptor? = descriptor.containingDeclaration as? CallableMemberDescriptor
 
     override fun isVarArgs() = (descriptor as? ValueParameterDescriptor)?.varargElementType != null
 

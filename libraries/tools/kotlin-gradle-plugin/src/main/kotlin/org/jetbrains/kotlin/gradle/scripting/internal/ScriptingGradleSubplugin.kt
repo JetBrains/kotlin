@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.useLazyTaskConfiguration
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
@@ -81,11 +80,8 @@ class ScriptingGradleSubplugin : Plugin<Project> {
                         }
                     }
                 }
-                if (useLazyTaskConfiguration) {
-                    project.tasks.withType(KotlinCompile::class.java).configureEach(configureAction)
-                } else {
-                    project.tasks.withType(KotlinCompile::class.java, configureAction)
-                }
+
+                project.tasks.withType(KotlinCompile::class.java).configureEach(configureAction)
             } else {
                 // TODO: implement support for discovery in MPP project: use KotlinSourceSet directly and do not rely on java convevtion sourcesets
                 if (project.multiplatformExtensionOrNull == null) {

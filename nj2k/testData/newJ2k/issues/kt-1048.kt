@@ -5,12 +5,12 @@ import java.util.HashMap
 
 internal class G<T : String?>(t: T)
 class Java {
-    internal fun test() {
+    fun test() {
         val m: HashMap<*, *> = HashMap<Any?, Any?>()
         m[1] = 1
     }
 
-    internal fun test2() {
+    fun test2() {
         val m: HashMap<*, *> = HashMap<Any?, Any?>()
         val g: G<*> = G<Any?>("")
         val g2 = G("")

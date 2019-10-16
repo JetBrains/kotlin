@@ -5,33 +5,35 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.expandedConeType
-import org.jetbrains.kotlin.fir.declarations.superConeTypes
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.calls.hasNullableSuperType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
-import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 
 class ErrorTypeConstructor(val reason: String) : TypeConstructorMarker
 
-interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext {
+interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext, TypeSystemCommonBackendContext {
     val session: FirSession
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean {
@@ -118,20 +120,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker {
         require(this is ConeKotlinType)
-        if (nullability.isNullable == nullable) return this
-        return when (this) {
-            is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, ConeNullability.create(nullable), constructor)
-            is ConeTypeParameterType -> ConeTypeParameterTypeImpl(lookupTag, nullable)
-            is ConeClassErrorType -> this
-            is ConeClassType -> ConeClassTypeImpl(lookupTag, typeArguments, nullable)
-            is ConeAbbreviatedType -> ConeAbbreviatedTypeImpl(
-                lookupTag,
-                typeArguments,
-                nullable
-            )
-            is ConeIntersectionType -> this.withNullability(ConeNullability.create(nullable))
-            else -> error("!")
-        }
+        return withNullability(ConeNullability.create(nullable))
     }
 
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker {
@@ -141,7 +130,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeAbbreviatedType -> this.directExpansionType(session)?.typeConstructor()
                 ?: ErrorTypeConstructor("Failed to expand alias: ${this}")
             is ConeLookupTagBasedType -> this.lookupTag.toSymbol(session) ?: ErrorTypeConstructor("Unresolved: ${this.lookupTag}")
-            is ConeIntersectionType -> constructor
+            is ConeIntersectionType -> this
             else -> error("?: ${this}")
         }
 
@@ -163,7 +152,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         require(this is ConeKotlinType)
 
         return this.typeArguments.getOrNull(index)
-            ?: StandardClassIds.Any(session.service()).constructType(emptyArray(), false) // TODO wtf
+            ?: StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), false) // TODO wtf
     }
 
     override fun KotlinTypeMarker.asTypeArgument(): TypeArgumentMarker {
@@ -202,11 +191,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.parametersCount(): Int {
         //require(this is ConeSymbol)
         return when (this) {
-            is ConeTypeParameterSymbol,
+            is FirTypeParameterSymbol,
             is ConeCapturedTypeConstructor,
             is ErrorTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionTypeConstructor -> 0
+            is ConeIntersectionType -> 0
             is FirClassSymbol -> fir.typeParameters.size
             is FirTypeAliasSymbol -> fir.typeParameters.size
             else -> error("?!:10")
@@ -216,7 +205,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.getParameter(index: Int): TypeParameterMarker {
         //require(this is ConeSymbol)
         return when (this) {
-            is ConeTypeParameterSymbol -> error("?!:11")
+            is FirTypeParameterSymbol -> error("?!:11")
             is FirClassSymbol -> fir.typeParameters[index].symbol
             is FirTypeAliasSymbol -> fir.typeParameters[index].symbol
             else -> error("?!:12")
@@ -232,13 +221,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is FirClassSymbol -> fir.superConeTypes
             is FirTypeAliasSymbol -> listOfNotNull(fir.expandedConeType)
             is ConeCapturedTypeConstructor -> supertypes!!
-            is ConeIntersectionTypeConstructor -> intersectedTypes
+            is ConeIntersectionType -> intersectedTypes
             else -> error("?!:13")
         }
     }
 
     override fun TypeConstructorMarker.isIntersection(): Boolean {
-        return this is ConeIntersectionTypeConstructor
+        return this is ConeIntersectionType
     }
 
     override fun TypeConstructorMarker.isClassTypeConstructor(): Boolean {
@@ -279,8 +268,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeCapturedTypeConstructor,
             is ConeTypeVariableTypeConstructor,
-            is ConeIntersectionTypeConstructor -> false
-            is ConeSymbol -> true
+            is ConeIntersectionType -> false
+            is AbstractFirBasedSymbol<*> -> true
             else -> true
         }
     }
@@ -349,11 +338,11 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean {
-        return this is ConeClassLikeSymbol && classId == StandardClassIds.Any
+        return this is FirClassLikeSymbol<*> && classId == StandardClassIds.Any
     }
 
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean {
-        return this is ConeClassLikeSymbol && classId == StandardClassIds.Nothing
+        return this is FirClassLikeSymbol<*> && classId == StandardClassIds.Nothing
     }
 
     override fun SimpleTypeMarker.isSingleClassifierType(): Boolean {
@@ -381,12 +370,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker {
         @Suppress("UNCHECKED_CAST")
-        return ConeTypeIntersector.intersectTypes(this, types as List<ConeKotlinType>) as SimpleTypeMarker
+        return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as List<ConeKotlinType>) as SimpleTypeMarker
     }
 
     override fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker {
         @Suppress("UNCHECKED_CAST")
-        return ConeTypeIntersector.intersectTypes(this, types as List<ConeKotlinType>)
+        return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as List<ConeKotlinType>)
     }
 
     private fun prepareClassLikeType(
@@ -430,6 +419,78 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return false
     }
 
+    private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {
+        if (this !is FirClassLikeSymbol<*>) return null
+        return fir as? FirRegularClass
+    }
+
+    override fun nullableAnyType(): SimpleTypeMarker = TODO("not implemented")
+
+    override fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker = TODO("not implemented")
+
+    override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean = TODO("not implemented")
+
+    override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
+        val firRegularClass = toFirRegularClass() ?: return false
+
+        return firRegularClass.modality == Modality.FINAL ||
+                firRegularClass.classKind == ClassKind.ENUM_ENTRY ||
+                firRegularClass.classKind == ClassKind.ANNOTATION_CLASS
+    }
+
+    override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
+        // TODO support annotations
+        return false
+    }
+
+    override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? {
+        // TODO support annotations
+        return null
+    }
+
+    override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? {
+        return this as? FirTypeParameterSymbol
+    }
+
+    override fun TypeConstructorMarker.isInlineClass(): Boolean {
+        return toFirRegularClass()?.isInline == true
+    }
+
+    override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
+        require(this is FirTypeParameterSymbol)
+        return this.fir.bounds.getOrNull(0)?.let { (it as? FirResolvedTypeRef)?.type }
+            ?: ConeClassTypeImpl(
+                ConeClassLikeLookupTagImpl(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.any.toSafe())), emptyArray(), true
+            )
+    }
+
+    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
+        // TODO: support inline classes
+        return null
+    }
+
+    override fun TypeConstructorMarker.getPrimitiveType() =
+        getClassFqNameUnsafe()?.let(KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiveType::get)
+
+    override fun TypeConstructorMarker.getPrimitiveArrayType() =
+        getClassFqNameUnsafe()?.let(KotlinBuiltIns.FQ_NAMES.arrayClassFqNameToPrimitiveType::get)
+
+    override fun TypeConstructorMarker.isUnderKotlinPackage() =
+        getClassFqNameUnsafe()?.startsWith(Name.identifier("kotlin")) == true
+
+    override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? {
+        return toFirRegularClass()?.symbol?.toLookupTag()?.classId?.asSingleFqName()?.toUnsafe()
+    }
+
+    override fun TypeParameterMarker.getName() = (this as FirTypeParameterSymbol).name
+
+    override fun TypeParameterMarker.isReified(): Boolean = TODO("not implemented")
+
+    override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {
+        val classKind = typeConstructor().toFirRegularClass()?.classKind ?: return false
+        return classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.INTERFACE
+    }
+
     override fun TypeConstructorMarker.isError(): Boolean {
         return this is ErrorTypeConstructor
     }
@@ -448,7 +509,7 @@ class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, 
         val substitutor = if (declaration != null) {
             val substitution =
                 declaration.typeParameters.zip(type.typeArguments).associate { (parameter, argument) ->
-                    parameter.symbol as ConeTypeParameterSymbol to ((argument as? ConeTypedProjection)?.type
+                    parameter.symbol to ((argument as? ConeTypedProjection)?.type
                         ?: StandardClassIds.Any(session.firSymbolProvider).constructType(emptyArray(), isNullable = true))
                 }
             substitutorByMap(substitution)

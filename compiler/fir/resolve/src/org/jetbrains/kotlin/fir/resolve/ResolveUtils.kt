@@ -12,17 +12,17 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.resultType
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -39,9 +39,11 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
 }
 
 val FirSession.firSymbolProvider: FirSymbolProvider by componentArrayAccessor()
+val FirSession.firProvider: FirProvider by componentArrayAccessor()
 val FirSession.correspondingSupertypesCache: FirCorrespondingSupertypesCache by componentArrayAccessor()
+val FirSession.declaredMemberScopeProvider: FirClassDeclaredMemberScopeProvider by componentArrayAccessor()
 
-fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? {
+fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
     val firSymbolProvider = useSiteSession.firSymbolProvider
     return firSymbolProvider.getSymbolByLookupTag(this)
 }
@@ -82,7 +84,7 @@ private fun mapTypeAliasArguments(typeAlias: FirTypeAlias, abbreviatedType: Cone
     return substitutor.substituteOrSelf(resultingType)
 }
 
-fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? =
+fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierSymbol<*>? =
     when (this) {
         is ConeClassLikeLookupTag -> toSymbol(useSiteSession)
         is ConeTypeParameterLookupTag -> this.symbol
@@ -103,12 +105,12 @@ fun ConeClassifierLookupTag.constructType(typeArguments: Array<ConeKotlinTypePro
     }
 }
 
-fun ConeClassifierSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
+fun FirClassifierSymbol<*>.constructType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return when (this) {
-        is ConeTypeParameterSymbol -> {
+        is FirTypeParameterSymbol -> {
             ConeTypeParameterTypeImpl(this.toLookupTag(), isNullable)
         }
-        is ConeClassSymbol -> {
+        is FirClassSymbol -> {
             ConeClassTypeImpl(this.toLookupTag(), typeArguments, isNullable)
         }
         is FirTypeAliasSymbol -> {
@@ -122,7 +124,7 @@ fun ConeClassifierSymbol.constructType(typeArguments: Array<ConeKotlinTypeProjec
     }
 }
 
-fun ConeClassifierSymbol.constructType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType =
+fun FirClassifierSymbol<*>.constructType(parts: List<FirQualifierPart>, isNullable: Boolean): ConeKotlinType =
     constructType(parts.toTypeProjections(), isNullable)
 
 fun ConeKotlinType.toTypeProjection(variance: Variance): ConeKotlinTypeProjection =
@@ -164,9 +166,9 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag) as T
         is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor) as T
         is ConeIntersectionType -> when (nullability) {
-            ConeNullability.NULLABLE -> ConeIntersectionType(constructor.mapTypes {
+            ConeNullability.NULLABLE -> this.mapTypes {
                 it.withNullability(nullability)
-            })
+            }
             ConeNullability.UNKNOWN -> this // TODO: is that correct?
             ConeNullability.NOT_NULL -> this
         } as T
@@ -194,7 +196,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeKotlinTypeProj
 
 fun FirFunction<*>.constructFunctionalTypeRef(session: FirSession): FirResolvedTypeRef {
     val receiverTypeRef = when (this) {
-        is FirNamedFunction -> receiverTypeRef
+        is FirSimpleFunction -> receiverTypeRef
         is FirAnonymousFunction -> receiverTypeRef
         else -> null
     }
@@ -217,7 +219,7 @@ fun createFunctionalType(
     val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
 
     val functionalTypeId = StandardClassIds.byName("Function${receiverAndParameterTypes.size - 1}")
-    val functionalType = functionalTypeId(session.service()).constructType(receiverAndParameterTypes.toTypedArray(), isNullable = false)
+    val functionalType = functionalTypeId(session.firSymbolProvider).constructType(receiverAndParameterTypes.toTypedArray(), isNullable = false)
     return functionalType
 }
 
@@ -225,7 +227,7 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
     val classId = resolvedQualifier.classId
     val resultType = resolvedQualifier.resultType
     if (classId != null) {
-        val classSymbol = symbolProvider.getClassLikeSymbolByFqName(classId)!!
+        val classSymbol: FirClassLikeSymbol<*> = symbolProvider.getClassLikeSymbolByFqName(classId)!!
         val declaration = classSymbol.phasedFir
         if (declaration is FirClass) {
             if (declaration.classKind == ClassKind.OBJECT) {
@@ -257,10 +259,17 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
 
 fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirResolvedTypeRef {
     val makeNullable: Boolean by lazy {
-        if (access is FirQualifiedAccess)
-            access.safe && access.explicitReceiver!!.resultType.coneTypeUnsafe<ConeKotlinType>().isNullable
-        else
+        if (access is FirQualifiedAccess && access.safe) {
+            val explicitReceiver = access.explicitReceiver!!
+            val receiverResultType = explicitReceiver.resultType
+            if (receiverResultType is FirResolvedTypeRef) {
+                receiverResultType.type.isNullable
+            } else {
+                throw AssertionError("Receiver ${explicitReceiver.render()} type is unresolved: ${receiverResultType.render()}")
+            }
+        } else {
             false
+        }
     }
 
     return when (val newCallee = access.calleeReference) {
@@ -270,19 +279,18 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             typeFromSymbol(newCallee.candidateSymbol, makeNullable)
         }
         is FirResolvedCallableReference -> {
-            typeFromSymbol(newCallee.coneSymbol, makeNullable)
+            typeFromSymbol(newCallee.resolvedSymbol, makeNullable)
         }
         is FirThisReference -> {
             val labelName = newCallee.labelName
-            val types = if (labelName == null) labels.values() else labels[Name.identifier(labelName)]
-            val type = types.lastOrNull() ?: ConeKotlinErrorType("Unresolved this@$labelName")
-            FirResolvedTypeRefImpl(null, type, emptyList())
+            val implicitReceiver = implicitReceiverStack[labelName]
+            FirResolvedTypeRefImpl(null, implicitReceiver?.type ?: ConeKotlinErrorType("Unresolved this@$labelName"))
         }
         else -> error("Failed to extract type from: $newCallee")
     }
 }
 
-private fun BodyResolveComponents.typeFromSymbol(symbol: ConeSymbol, makeNullable: Boolean): FirResolvedTypeRef {
+private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<*>, makeNullable: Boolean): FirResolvedTypeRef {
     return when (symbol) {
         is FirCallableSymbol<*> -> {
             val returnType = returnTypeCalculator.tryCalculateReturnType(symbol.phasedFir)
@@ -294,7 +302,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: ConeSymbol, makeNullabl
                 returnType
             }
         }
-        is ConeClassifierSymbol -> {
+        is FirClassifierSymbol<*> -> {
             val fir = (symbol as? AbstractFirBasedSymbol<*>)?.phasedFir
             // TODO: unhack
             if (fir is FirEnumEntry) {
@@ -303,10 +311,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: ConeSymbol, makeNullabl
                     "no enum item supertype"
                 )
             } else
-                FirResolvedTypeRefImpl(
-                    null, symbol.constructType(emptyArray(), isNullable = false),
-                    annotations = emptyList()
-                )
+                FirResolvedTypeRefImpl(null, symbol.constructType(emptyArray(), isNullable = false))
         }
         else -> error("WTF ! $symbol")
     }

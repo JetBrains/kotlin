@@ -12,9 +12,10 @@ dependencies {
 
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:cli"))
+    testCompile(project(":compiler:cli-js"))
     testCompile(project(":compiler:util"))
 
+    testRuntime(project(":kotlin-reflect"))
     testRuntime(intellijDep()) { includeJars("picocontainer", "trove4j", "guava", "jdom", rootProject = rootProject) }
 }
 
@@ -125,6 +126,9 @@ val reducedRuntimeSources by task<Sync> {
                 "libraries/stdlib/js/src/kotlin/regexp.kt",
                 "libraries/stdlib/js/src/kotlin/sequence.kt",
                 "libraries/stdlib/js/src/kotlin/text/**",
+                "libraries/stdlib/js/src/kotlin/reflect/KTypeHelpers.kt",
+                "libraries/stdlib/js/src/kotlin/reflect/KTypeParameterImpl.kt",
+                "libraries/stdlib/js/src/kotlin/reflect/KTypeImpl.kt",
                 "libraries/stdlib/src/kotlin/collections/**",
                 "libraries/stdlib/src/kotlin/experimental/bitwiseOperations.kt",
                 "libraries/stdlib/src/kotlin/properties/Delegates.kt",

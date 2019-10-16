@@ -76,6 +76,14 @@ class KotlinToResolvedCallTransformer(
     companion object {
         private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
             get() = false
+
+        fun keyForPartiallyResolvedCall(resolvedCallAtom: ResolvedCallAtom): Call {
+            val psiKotlinCall = resolvedCallAtom.atom.psiKotlinCall
+            return if (psiKotlinCall is PSIKotlinCallForInvoke)
+                psiKotlinCall.baseCall.psiCall
+            else
+                psiKotlinCall.psiCall
+        }
     }
 
     fun <D : CallableDescriptor> onlyTransform(
@@ -92,13 +100,9 @@ class KotlinToResolvedCallTransformer(
             is PartialCallResolutionResult -> {
                 val candidate = baseResolvedCall.resultCallAtom
 
-                val psiKotlinCall = candidate.atom.psiKotlinCall
-                val psiCall = if (psiKotlinCall is PSIKotlinCallForInvoke)
-                    psiKotlinCall.baseCall.psiCall
-                else
-                    psiKotlinCall.psiCall
+                val psiCall = keyForPartiallyResolvedCall(candidate)
 
-                context.trace.record(BindingContext.ONLY_RESOLVED_CALL, psiCall, baseResolvedCall)
+                context.trace.record(BindingContext.ONLY_RESOLVED_CALL, psiCall, PartialCallContainer(baseResolvedCall))
                 context.trace.record(BindingContext.PARTIAL_CALL_RESOLUTION_CONTEXT, psiCall, context)
 
                 context.inferenceSession.addPartialCallInfo(

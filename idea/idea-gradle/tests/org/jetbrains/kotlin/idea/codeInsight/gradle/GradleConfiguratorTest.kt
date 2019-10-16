@@ -569,6 +569,10 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
+    @TargetVersions("4.7+")
+    @Test
+    fun testChangeFeatureSupportWithXFlag() = testChangeFeatureSupport()
+
     @Test
     fun testDisableFeatureSupport() {
         val files = importProjectFromTestData()
@@ -583,6 +587,10 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
             checkFiles(files)
         }
     }
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testDisableFeatureSupportWithXFlag() = testDisableFeatureSupport()
 
     @Test
     fun testEnableFeatureSupport() {
@@ -599,6 +607,11 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
+    @TargetVersions("4.7+")
+    @Test
+    @JvmName("testEnableFeatureSupportWithXFlag")
+    fun testEnableFeatureSupportWithXFlag() = testEnableFeatureSupport()
+
     @Test
     fun testEnableFeatureSupportToExistentArguments() {
         val files = importProjectFromTestData()
@@ -613,6 +626,10 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
             checkFiles(files)
         }
     }
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testEnableFeatureSupportToExistentArgumentsWithXFlag() = testEnableFeatureSupportToExistentArguments()
 
     @Test
     fun testChangeFeatureSupportGSK() {
@@ -629,6 +646,10 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
+    @TargetVersions("4.7+")
+    @Test
+    fun testChangeFeatureSupportGSKWithXFlag() = testChangeFeatureSupportGSK()
+
     @Test
     fun testDisableFeatureSupportGSK() {
         val files = importProjectFromTestData()
@@ -644,6 +665,10 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
+    @TargetVersions("4.7+")
+    @Test
+    fun testDisableFeatureSupportGSKWithXFlag() = testDisableFeatureSupportGSK()
+
     @Test
     fun testEnableFeatureSupportGSK() {
         val files = importProjectFromTestData()
@@ -658,6 +683,18 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
             checkFiles(files)
         }
     }
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testEnableFeatureSupportGSKWithXFlag() = testEnableFeatureSupportGSK()
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testEnableFeatureSupportGSKWithNotInfixVersionCallAndXFlag() = testEnableFeatureSupportGSK()
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testEnableFeatureSupportGSKWithSpecifyingPluginThroughIdAndXFlag() = testEnableFeatureSupportGSK()
 
     override fun testDataDirName(): String {
         return "configurator"

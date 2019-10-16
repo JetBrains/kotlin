@@ -5,19 +5,17 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.withArguments
-import org.jetbrains.kotlin.fir.resolve.withNullability
-import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.model.*
@@ -26,7 +24,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
     ConeTypeContext {
 
-    val symbolProvider: FirSymbolProvider get() = session.service()
+    val symbolProvider: FirSymbolProvider get() = session.firSymbolProvider
 
     override val isErrorTypeAllowed: Boolean get() = false
 
@@ -58,11 +56,15 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean
     ): SimpleTypeMarker {
-        require(constructor is ConeClassifierSymbol)
-        when (constructor) {
-            is ConeClassLikeSymbol -> return ConeClassTypeImpl(
+        require(constructor is FirClassifierSymbol<*>)
+        return when (constructor) {
+            is FirClassLikeSymbol<*> -> ConeClassTypeImpl(
                 constructor.toLookupTag(),
                 (arguments as List<ConeKotlinTypeProjection>).toTypedArray(),
+                nullable
+            )
+            is FirTypeParameterSymbol -> ConeTypeParameterTypeImpl(
+                constructor.toLookupTag(),
                 nullable
             )
             else -> error("!")
@@ -159,7 +161,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
     }
 
     override fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
-        return this is ConeClassLikeSymbol && this.classId == StandardClassIds.Unit
+        return this is FirClassLikeSymbol<*> && this.classId == StandardClassIds.Unit
     }
 
     override fun Collection<KotlinTypeMarker>.singleBestRepresentative(): KotlinTypeMarker? {
@@ -250,7 +252,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
     }
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
-        if (map.isEmpty()) return ConeSubstitutor.Empty
+        if (map.isEmpty()) return createEmptySubstitutor()
         return object : AbstractConeSubstitutor(),
             TypeSubstitutorMarker {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
@@ -258,6 +260,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
                 return makeNullableIfNeed(type.isMarkedNullable, new as ConeKotlinType)
             }
         }
+    }
+
+    override fun createEmptySubstitutor(): TypeSubstitutorMarker {
+        return ConeSubstitutor.Empty
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {

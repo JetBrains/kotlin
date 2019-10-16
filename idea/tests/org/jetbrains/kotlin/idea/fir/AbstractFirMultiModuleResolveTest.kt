@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
@@ -23,15 +24,14 @@ import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
-import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
-import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
@@ -77,7 +77,8 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
     }
 
     private fun doFirResolveTest(dirPath: String) {
-        val firFiles = mutableListOf<FirFile>()
+        val firFilesPerSession = mutableMapOf<FirJavaModuleBasedSession, List<FirFile>>()
+        val totalTransformerPerSession = mutableMapOf<FirJavaModuleBasedSession, FirTotalResolveTransformer>()
         val sessions = mutableListOf<FirJavaModuleBasedSession>()
         val provider = FirProjectSessionProvider(project)
         for (module in project.allModules().drop(1)) {
@@ -100,14 +101,17 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
             val files = FileTypeIndex.getFiles(KotlinFileType.INSTANCE, contentScope)
 
             println("Got vfiles: ${files.size}")
+            val firFiles = mutableListOf<FirFile>()
             files.forEach {
                 val file = psiManager.findFile(it) as? KtFile ?: return@forEach
                 val firFile = builder.buildFirFile(file)
-                (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
+                (session.firProvider as FirProviderImpl).recordFile(firFile)
                 firFiles += firFile
             }
+            firFilesPerSession[session] = firFiles
+            totalTransformerPerSession[session] = FirTotalResolveTransformer()
         }
-        println("Raw fir up, files: ${firFiles.size}")
+        println("Raw fir up, files: ${firFilesPerSession.values.flatten().size}")
 
         fun expectedTxtPath(virtualFile: VirtualFile): String {
             val virtualPath = virtualFile.path
@@ -121,18 +125,28 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
             return result!!
         }
 
-        val transformer = FirTotalResolveTransformer()
-        transformer.processFiles(firFiles)
-        for (file in firFiles) {
+        // Start from 1 to miss raw FIR building
+        for (phaseIndex in 1 until FirResolvePhase.values().size) {
+            for (session in sessions) {
+                val firFiles = firFilesPerSession[session]!!
+                val transformer = totalTransformerPerSession[session]!!
+                for (file in firFiles) {
+                    transformer.transformers[phaseIndex - 1].visitFile(file, null)
+                }
+            }
+        }
+
+        for (file in firFilesPerSession.values.flatten()) {
             val firFileDump = StringBuilder().also { file.accept(FirRenderer(it), null) }.toString()
             val expectedPath = expectedTxtPath((file.psi as PsiFile).virtualFile)
             KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
         }
+
         val processedJavaClasses = mutableSetOf<FirJavaClass>()
         val javaFirDump = StringBuilder().also { builder ->
             val renderer = FirRenderer(builder)
             for (session in sessions) {
-                val symbolProvider = session.service<FirSymbolProvider>() as FirCompositeSymbolProvider
+                val symbolProvider = session.firSymbolProvider as FirCompositeSymbolProvider
                 val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
                 for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
                     if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
@@ -159,7 +173,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
                                 } else {
                                     enhancementScope.processFunctionsByName(declaration.name) { symbol ->
                                         val enhanced = symbol.fir
-                                        if (enhanced != null && enhanced !in renderedDeclarations) {
+                                        if (enhanced !in renderedDeclarations) {
                                             enhanced.accept(renderer, null)
                                             renderer.newLine()
                                             renderedDeclarations += enhanced

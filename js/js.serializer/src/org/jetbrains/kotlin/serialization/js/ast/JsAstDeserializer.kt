@@ -558,6 +558,7 @@ class JsAstDeserializer(program: JsProgram, private val sourceRoots: Iterable<Fi
         JsAstProtoBuf.SpecialFunction.COROUTINE_RECEIVER -> SpecialFunction.COROUTINE_RECEIVER
         JsAstProtoBuf.SpecialFunction.SET_COROUTINE_RESULT -> SpecialFunction.SET_COROUTINE_RESULT
         JsAstProtoBuf.SpecialFunction.GET_KCLASS -> SpecialFunction.GET_KCLASS
+        JsAstProtoBuf.SpecialFunction.GET_REIFIED_TYPE_PARAMETER_KTYPE -> SpecialFunction.GET_REIFIED_TYPE_PARAMETER_KTYPE
     }
 
     private fun <T : JsNode> withLocation(fileId: Int?, location: Location?, action: () -> T): T {

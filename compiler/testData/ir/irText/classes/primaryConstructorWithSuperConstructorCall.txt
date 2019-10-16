@@ -65,7 +65,7 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestWithDelegatingConstructor modality:FINAL visibility:public superTypes:[<root>.Base]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.TestWithDelegatingConstructor.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestWithDelegatingConstructor) returnType:kotlin.Int
@@ -73,10 +73,10 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestWithDelegatingConstructor
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestWithDelegatingConstructor'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestWithDelegatingConstructor declared in <root>.TestWithDelegatingConstructor.<get-x>' type=<root>.TestWithDelegatingConstructor origin=null
     PROPERTY name:y visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'y: kotlin.Int declared in <root>.TestWithDelegatingConstructor.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.TestWithDelegatingConstructor) returnType:kotlin.Int
@@ -84,7 +84,7 @@ FILE fqName:<root> fileName:/primaryConstructorWithSuperConstructorCall.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestWithDelegatingConstructor
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.TestWithDelegatingConstructor'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestWithDelegatingConstructor declared in <root>.TestWithDelegatingConstructor.<get-y>' type=<root>.TestWithDelegatingConstructor origin=null
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.TestWithDelegatingConstructor
       VALUE_PARAMETER name:x index:0 type:kotlin.Int

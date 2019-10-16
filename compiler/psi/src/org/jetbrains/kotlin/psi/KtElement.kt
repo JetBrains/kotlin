@@ -33,6 +33,7 @@ fun KtElement.getModificationStamp(): Long {
         is KtFile -> this.modificationStamp
         is KtDeclarationStub<*> -> this.modificationStamp
         is KtSuperTypeList -> this.modificationStamp
+        is KtScriptInitializer -> this.getModificationStamp()
         else -> (parent as KtElement).getModificationStamp()
     }
 }

@@ -6,6 +6,7 @@
 package kotlin.script.experimental.jvm.impl
 
 import java.io.*
+import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
@@ -141,23 +142,44 @@ fun getConfigurationWithClassloader(
 
 private fun CompiledScript<*>.makeClassLoaderFromDependencies(baseClassLoader: ClassLoader?): ClassLoader? {
     val processedScripts = mutableSetOf<CompiledScript<*>>()
-    fun seq(res: Sequence<CompiledScript<*>>, script: CompiledScript<*>): Sequence<CompiledScript<*>> {
-        if (processedScripts.contains(script)) return res
-        processedScripts.add(script)
-        return script.otherScripts.asSequence().fold(res + script, ::seq)
+    fun recursiveScriptsSeq(res: Sequence<CompiledScript<*>>, script: CompiledScript<*>): Sequence<CompiledScript<*>> =
+        if (processedScripts.add(script)) script.otherScripts.asSequence().fold(res + script, ::recursiveScriptsSeq)
+        else res
+
+    val dependenciesWithConfigurations = recursiveScriptsSeq(emptySequence(), this).flatMap { script ->
+        script.compilationConfiguration[ScriptCompilationConfiguration.dependencies]
+            ?.asSequence()?.map { script.compilationConfiguration to it } ?: emptySequence()
     }
 
-    val dependencies = seq(emptySequence(), this).flatMap { script ->
-        script.compilationConfiguration[ScriptCompilationConfiguration.dependencies]
-            ?.asSequence()
-            ?.flatMap { dep ->
-                (dep as? JvmDependency)?.classpath?.asSequence()?.map { it.toURI().toURL() } ?: emptySequence()
+    val processedClasspathElements = mutableSetOf<URL>()
+    fun recursiveClassPath(res: Sequence<URL>, classLoader: ClassLoader?): Sequence<URL> =
+        when (classLoader) {
+            null -> res
+            is DualClassLoader -> recursiveClassPath(res, classLoader.parent) +
+                    recursiveClassPath(emptySequence(), classLoader.fallbackClassLoader)
+            is URLClassLoader -> recursiveClassPath(res + classLoader.urLs, classLoader.parent)
+            else -> recursiveClassPath(res, classLoader.parent)
+        }
+    recursiveClassPath(emptySequence(), baseClassLoader).forEach { processedClasspathElements.add(it) }
+
+    val processedClassloaders = mutableSetOf<ClassLoader>()
+
+    return dependenciesWithConfigurations.fold(baseClassLoader) { parentClassLoader, (compilationConfiguration, scriptDependency) ->
+        when (scriptDependency) {
+            is JvmDependency -> {
+                scriptDependency.classpath.mapNotNull {
+                    val url = it.toURI().toURL()
+                    if (processedClasspathElements.add(url)) url else null
+                }.takeUnless { it.isEmpty() }?.let { URLClassLoader(it.toTypedArray(), parentClassLoader) }
             }
-            ?: emptySequence()
-    }.distinct()
-    // TODO: previous dependencies and classloaders should be taken into account here
-    return if (dependencies.none()) baseClassLoader
-    else URLClassLoader(dependencies.toList().toTypedArray(), baseClassLoader)
+            is JvmDependencyFromClassLoader -> {
+                val dependenciesClassLoader = scriptDependency.getClassLoader(compilationConfiguration)
+                if (processedClassloaders.add(dependenciesClassLoader)) DualClassLoader(dependenciesClassLoader, parentClassLoader)
+                else null
+            }
+            else -> null
+        } ?: parentClassLoader
+    }
 }
 
 const val KOTLIN_SCRIPT_METADATA_PATH = "META-INF/kotlin/script"

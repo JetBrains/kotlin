@@ -66,8 +66,8 @@ class IdeSamWithReceiverComponentContributor(val project: Project) : StorageComp
         val moduleInfo = moduleDescriptor.getCapability(ModuleInfo.Capability)
         val annotations =
             when (moduleInfo) {
-                is ScriptModuleInfo -> moduleInfo.scriptDefinition.legacyDefinition.annotationsForSamWithReceivers
-                is ScriptDependenciesInfo.ForFile -> moduleInfo.scriptDefinition.legacyDefinition.annotationsForSamWithReceivers
+                is ScriptModuleInfo -> moduleInfo.scriptDefinition.annotationsForSamWithReceivers
+                is ScriptDependenciesInfo.ForFile -> moduleInfo.scriptDefinition.annotationsForSamWithReceivers
                 is ModuleProductionSourceInfo -> getAnnotationsForModule(moduleInfo.module)
                 else -> null
             } ?: return

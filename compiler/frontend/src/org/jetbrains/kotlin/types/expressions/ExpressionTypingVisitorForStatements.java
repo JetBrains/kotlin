@@ -233,7 +233,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         TemporaryTraceAndCache temporaryForBinaryOperation = TemporaryTraceAndCache.create(
                 context, "trace to check binary operation like '+' for", expression);
         TemporaryBindingTrace ignoreReportsTrace = TemporaryBindingTrace.create(context.trace, "Trace for checking assignability");
-        boolean lhsAssignable = basic.checkLValue(ignoreReportsTrace, context, left, right, expression);
+        boolean lhsAssignable = basic.checkLValue(ignoreReportsTrace, context, left, right, expression, false);
         if (assignmentOperationType == null || lhsAssignable) {
             // Check for '+'
             Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
@@ -291,7 +291,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
             components.dataFlowAnalyzer.checkType(binaryOperationType, expression, context.replaceExpectedType(expectedType)
                     .replaceDataFlowInfo(rightInfo.getDataFlowInfo()).replaceCallPosition(new CallPosition.PropertyAssignment(left)));
-            basic.checkLValue(context.trace, context, leftOperand, right, expression);
+            basic.checkLValue(context.trace, context, leftOperand, right, expression, false);
         }
         temporary.commit();
         return rightInfo.replaceType(checkAssignmentType(type, expression, contextWithExpectedType));
@@ -337,7 +337,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             KtArrayAccessExpression arrayAccessExpression = (KtArrayAccessExpression) left;
             if (right == null) return TypeInfoFactoryKt.noTypeInfo(context);
             KotlinTypeInfo typeInfo = basic.resolveArrayAccessSetMethod(arrayAccessExpression, right, context, context.trace);
-            basic.checkLValue(context.trace, context, arrayAccessExpression, right, expression);
+            basic.checkLValue(context.trace, context, arrayAccessExpression, right, expression, true);
             return typeInfo.replaceType(checkAssignmentType(typeInfo.getType(), expression, contextWithExpectedType));
         }
         KotlinTypeInfo leftInfo = ExpressionTypingUtils.getTypeInfoOrNullType(left, context, facade);
@@ -362,7 +362,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             resultInfo = leftInfo;
         }
         if (expectedType != null && leftOperand != null) { //if expectedType == null, some other error has been generated
-            basic.checkLValue(context.trace, context, leftOperand, right, expression);
+            basic.checkLValue(context.trace, context, leftOperand, right, expression, false);
         }
         return resultInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(expression, contextWithExpectedType));
     }

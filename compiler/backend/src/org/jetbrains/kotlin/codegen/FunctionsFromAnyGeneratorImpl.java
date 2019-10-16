@@ -251,25 +251,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
                 return Unit.INSTANCE;
             });
 
-            if (asmType.getSort() == Type.FLOAT) {
-                thisPropertyValue.put(asmType, kotlinType, iv);
-                otherPropertyValue.put(asmType, kotlinType, iv);
-                iv.invokestatic("java/lang/Float", "compare", "(FF)I", false);
-                iv.ifne(ne);
-            }
-            else if (asmType.getSort() == Type.DOUBLE) {
-                thisPropertyValue.put(asmType, kotlinType, iv);
-                otherPropertyValue.put(asmType, kotlinType, iv);
-                iv.invokestatic("java/lang/Double", "compare", "(DD)I", false);
-                iv.ifne(ne);
-            }
-            else {
-                StackValue value = genEqualsForExpressionsOnStack(
-                        KtTokens.EQEQ, thisPropertyValue, otherPropertyValue
-                );
-                value.put(Type.BOOLEAN_TYPE, iv);
-                iv.ifeq(ne);
-            }
+            genTotalOrderEqualsForExpressionOnStack(thisPropertyValue, otherPropertyValue, asmType).condJump(ne, iv, true);
         }
 
         iv.mark(eq);

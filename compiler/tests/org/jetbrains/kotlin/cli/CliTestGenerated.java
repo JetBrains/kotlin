@@ -769,6 +769,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/libraryDirNotFound.args");
         }
 
+        @TestMetadata("moduleWithMetadataOnlyDependency.args")
+        public void testModuleWithMetadataOnlyDependency() throws Exception {
+            runTest("compiler/testData/cli/js/moduleWithMetadataOnlyDependency.args");
+        }
+
         @TestMetadata("modulesWithSameNames.args")
         public void testModulesWithSameNames() throws Exception {
             runTest("compiler/testData/cli/js/modulesWithSameNames.args");

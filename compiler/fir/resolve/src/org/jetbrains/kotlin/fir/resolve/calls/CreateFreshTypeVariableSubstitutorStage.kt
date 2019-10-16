@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val declaration = candidate.symbol.fir
-        if (declaration !is FirCallableMemberDeclaration<*> || declaration.typeParameters.isEmpty()) {
+        if (declaration !is FirTypeParametersOwner || declaration.typeParameters.isEmpty()) {
             candidate.substitutor = ConeSubstitutor.Empty
             return
         }
@@ -71,7 +71,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 is FirStarProjection -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     typeParameter.bounds.firstOrNull()?.coneTypeUnsafe()
-                        ?: StandardClassIds.Any(sink.components.session.service()).constructType(emptyArray(), true),
+                        ?: StandardClassIds.Any(sink.components.session.firSymbolProvider).constructType(emptyArray(), true),
                     SimpleConstraintSystemConstraintPosition
                 )
                 else -> assert(typeArgument == FirTypePlaceholderProjection) {
@@ -84,7 +84,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
 }
 
 fun createToFreshVariableSubstitutorAndAddInitialConstraints(
-    declaration: FirCallableMemberDeclaration<*>,
+    declaration: FirTypeParametersOwner,
     candidate: Candidate,
     csBuilder: ConstraintSystemOperation
 ): Pair<ConeSubstitutor, List<ConeTypeVariable>> {

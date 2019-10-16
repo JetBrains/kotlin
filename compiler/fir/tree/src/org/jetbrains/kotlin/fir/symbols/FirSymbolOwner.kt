@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
-import org.jetbrains.kotlin.fir.FirElement
-
-interface FirSymbolOwner<E> where E : FirElement, E : FirSymbolOwner<E> {
-    val symbol: FirBasedSymbol<E>
-}
+/*
+interface FirSymbolOwner<E> where E : FirSymbolOwner<E> {
+    val symbol: AbstractFirBasedSymbol<E>
+}*/

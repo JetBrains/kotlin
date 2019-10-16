@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -47,14 +44,16 @@ class JsIrBackendContext(
     val symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarations: Set<FqName>,
-    override val configuration: CompilerConfiguration
+    override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
+    override val scriptMode: Boolean = false
 ) : CommonBackendContext {
+    override val transformedFunction = mutableMapOf<IrFunctionSymbol, IrSimpleFunctionSymbol>()
 
     override val builtIns = module.builtIns
 
     override var inVerbosePhase: Boolean = false
 
-    var externalPackageFragment = mutableMapOf<FqName, IrPackageFragment>()
+    var externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
     lateinit var bodilessBuiltInsPackageFragment: IrPackageFragment
 
     val externalNestedClasses = mutableListOf<IrClass>()

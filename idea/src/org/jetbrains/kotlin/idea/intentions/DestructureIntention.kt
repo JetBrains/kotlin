@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -89,9 +90,12 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                     else {
                         name ?: KotlinNameSuggester.suggestNameByName(descriptor.name.asString(), validator)
                     }
-            variableToDrop?.delete()
-            usagesToReplace.forEach {
-                it.replace(factory.createExpression(suggestedName))
+
+            runWriteAction {
+                variableToDrop?.delete()
+                usagesToReplace.forEach {
+                    it.replace(factory.createExpression(suggestedName))
+                }
             }
             names.add(suggestedName)
         }
@@ -100,31 +104,42 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
         when (element) {
             is KtParameter -> {
                 val loopRange = (element.parent as? KtForExpression)?.loopRange
-                element.replace(factory.createDestructuringParameter("($joinedNames)"))
-                if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
-                    loopRange.replace(loopRange.receiverExpression)
+                runWriteAction {
+                    element.replace(factory.createDestructuringParameter("($joinedNames)"))
+                    if (removeSelectorInLoopRange && loopRange is KtDotQualifiedExpression) {
+                        loopRange.replace(loopRange.receiverExpression)
+                    }
                 }
             }
 
             is KtFunctionLiteral -> {
                 val lambda = element.parent as KtLambdaExpression
                 SpecifyExplicitLambdaSignatureIntention().applyTo(lambda, editor)
-                lambda.functionLiteral.valueParameters.singleOrNull()?.replace(
+                runWriteAction {
+                    lambda.functionLiteral.valueParameters.singleOrNull()?.replace(
                         factory.createDestructuringParameter("($joinedNames)")
-                )
+                    )
+                }
             }
 
             is KtVariableDeclaration -> {
                 val rangeAfterEq = PsiChildRange(element.initializer, element.lastChild)
                 val modifierList = element.modifierList
-                if (modifierList == null) {
-                    element.replace(factory.createDestructuringDeclarationByPattern(
-                            "val ($joinedNames) = $0", rangeAfterEq))
-                }
-                else {
-                    val rangeBeforeVal = PsiChildRange(element.firstChild, modifierList)
-                    element.replace(factory.createDestructuringDeclarationByPattern(
-                            "$0:'@xyz' val ($joinedNames) = $1", rangeBeforeVal, rangeAfterEq))
+                runWriteAction {
+                    if (modifierList == null) {
+                        element.replace(
+                            factory.createDestructuringDeclarationByPattern(
+                                "val ($joinedNames) = $0", rangeAfterEq
+                            )
+                        )
+                    } else {
+                        val rangeBeforeVal = PsiChildRange(element.firstChild, modifierList)
+                        element.replace(
+                            factory.createDestructuringDeclarationByPattern(
+                                "$0:'@xyz' val ($joinedNames) = $1", rangeBeforeVal, rangeAfterEq
+                            )
+                        )
+                    }
                 }
             }
         }

@@ -12,8 +12,13 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.KlibMetadataPackageFragment
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
 internal val DeclarationDescriptor.isExpectMember: Boolean
     get() = this is MemberDescriptor && this.isExpect
@@ -49,3 +54,23 @@ internal fun <T : CallableMemberDescriptor> T.resolveFakeOverrideMaybeAbstract()
 // This is Native specific. Try to eliminate.
 val ModuleDescriptor.isForwardDeclarationModule get() =
     name == Name.special("<forward declarations>")
+
+private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
+    val fragment = descriptor.findPackage() as KlibMetadataPackageFragment
+    return fragment.fileRegistry.sourceFile(index)
+}
+
+fun CallableMemberDescriptor.findSourceFile(): SourceFile {
+    val source = this.source.containingFile
+    if (source != SourceFile.NO_SOURCE_FILE)
+        return source
+    return when {
+        this is DeserializedSimpleFunctionDescriptor && proto.hasExtension(KlibMetadataProtoBuf.functionFile) ->
+            sourceByIndex(
+                this, proto.getExtension(KlibMetadataProtoBuf.functionFile))
+        this is DeserializedPropertyDescriptor && proto.hasExtension(KlibMetadataProtoBuf.propertyFile) ->
+            sourceByIndex(
+                this, proto.getExtension(KlibMetadataProtoBuf.propertyFile))
+        else -> TODO()
+    }
+}

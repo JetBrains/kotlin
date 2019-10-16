@@ -1,5 +1,4 @@
 internal class C() {
-
     constructor(p: Int) : this() {
         println(staticField1 + staticField2)
     }

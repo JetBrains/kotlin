@@ -3,6 +3,7 @@ package
 @kotlinx.serialization.Serializable public final data class WithTransients {
     public constructor WithTransients(/*0*/ missing: kotlin.Int)
     @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor WithTransients(/*0*/ seen1: kotlin.Int, /*1*/ serializationConstructorMarker: kotlinx.serialization.SerializationConstructorMarker?)
+    @kotlinx.serialization.Transient public final lateinit var allowTransientLateinitWithoutInitializer: kotlin.String
     @kotlinx.serialization.Transient public final val missing: kotlin.Int
     @kotlinx.serialization.Transient public final val redundant: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int

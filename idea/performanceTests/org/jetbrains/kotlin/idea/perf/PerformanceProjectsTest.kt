@@ -7,15 +7,19 @@ package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.propertyBased.MadTestingUtil
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater
+import org.jetbrains.kotlin.idea.perf.Stats.Companion.TEST_KEY
+import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
+import org.jetbrains.kotlin.idea.perf.Stats.Companion.tcSuite
 import org.jetbrains.kotlin.idea.testFramework.Fixture
+import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
+import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScriptFile
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.test.assertNotEquals
 
@@ -72,11 +76,43 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
             stats.use {
                 perfOpenKotlinProject(it)
 
-                perfHighlightFile("compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt", stats = it)
-
                 perfHighlightFile("idea/idea-analysis/src/org/jetbrains/kotlin/idea/util/PsiPrecedences.kt", stats = it)
 
                 perfHighlightFile("compiler/psi/src/org/jetbrains/kotlin/psi/KtElement.kt", stats = it)
+
+                perfHighlightFile("compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt", stats = it)
+
+                perfTypeAndHighlight(
+                    it,
+                    "compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt",
+                    "override fun getDeclarations(): List<KtDeclaration> {",
+                    "val q = import",
+                    note = "in-method getDeclarations-import"
+                )
+
+                perfTypeAndHighlight(
+                    it,
+                    "compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt",
+                    "override fun getDeclarations(): List<KtDeclaration> {",
+                    "val q = import",
+                    typeAfterMarker = false,
+                    note = "out-of-method import"
+                )
+            }
+        }
+    }
+
+    fun testKotlinProjectCopyAndPaste() {
+        tcSuite("Kotlin copy-and-paste") {
+            val stats = Stats("Kotlin copy-and-paste")
+            stats.use { stat ->
+                perfOpenKotlinProjectFast(stat)
+
+                perfCopyAndPaste(
+                    stat,
+                    sourceFileName = "compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt",
+                    targetFileName = "compiler/psi/src/org/jetbrains/kotlin/psi/KtImportInfo.kt"
+                )
             }
         }
     }
@@ -207,7 +243,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
             highlightFile {
                 val testName = "fileAnalysis ${notePrefix(note)}${simpleFilename(fileName)}"
                 val extraStats = Stats("${stats.name} $testName")
-                val extraTimingsNs = mutableListOf<Long>()
+                val extraTimingsNs = mutableListOf<Map<String, Any>?>()
 
                 val warmUpIterations = 3
                 val iterations = 10
@@ -218,19 +254,18 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     testName = testName,
                     setUp = perfKtsFileAnalysisSetUp(project, fileName),
                     test = perfKtsFileAnalysisTest(),
-                    tearDown = perfKtsFileAnalysisTearDown(extraTimingsNs, project)
+                    tearDown = perfKtsFileAnalysisTearDown(extraTimingsNs, project),
+                    profileEnabled = true
                 )
 
                 extraStats.printWarmUpTimings(
                     "annotator",
-                    Array(warmUpIterations, init = { null }),
-                    extraTimingsNs.take(warmUpIterations).toLongArray()
+                    extraTimingsNs.take(warmUpIterations).toTypedArray()
                 )
 
                 extraStats.appendTimings(
                     "annotator",
-                    Array(iterations, init = { null }),
-                    extraTimingsNs.drop(warmUpIterations).toLongArray()
+                    extraTimingsNs.drop(warmUpIterations).toTypedArray()
                 )
             }
         } finally {
@@ -251,16 +286,11 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         fileName: String
     ): (TestData<Fixture, Pair<Long, List<HighlightInfo>>>) -> Unit {
         return {
-            val fileInEditor = openFileInEditor(project, fileName)
-
-            val file = fileInEditor.psiFile
-            val virtualFile = file.virtualFile
-            val editor = EditorFactory.getInstance().getEditors(fileInEditor.document, project)[0]
-            val fixture = Fixture(project, editor, virtualFile)
+            val fixture = Fixture.openFixture(project, fileName)
 
             // Note: Kotlin scripts require dependencies to be loaded
             if (isAKotlinScriptFile(fileName)) {
-                ScriptDependenciesManager.updateScriptDependenciesSynchronously(fileInEditor.psiFile.virtualFile, project)
+                ScriptConfigurationManager.updateScriptDependenciesSynchronously(fixture.psiFile, project)
             }
 
             resetTimestamp()
@@ -277,7 +307,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     fun perfKtsFileAnalysisTearDown(
-        extraTimingsNs: MutableList<Long>,
+        extraTimingsNs: MutableList<Map<String, Any>?>,
         project: Project
     ): (TestData<Fixture, Pair<Long, List<HighlightInfo>>>) -> Unit {
         return {
@@ -286,7 +316,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     assertTrue(v.second.isNotEmpty())
                     assertNotEquals(0, timer.get())
 
-                    extraTimingsNs.add(timer.get() - v.first)
+                    extraTimingsNs.add(mapOf(TEST_KEY to (timer.get() - v.first)))
 
                 }
                 cleanupCaches(project, fixture.vFile)

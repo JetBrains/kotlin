@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -70,7 +71,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
             val pluginOptionsTask = compilerPluginOptionsTask.value ?: return null
             return when (pluginOptionsTask) {
                 is AbstractKotlinCompile<*> -> pluginOptionsTask.pluginOptions
-                is AbstractKotlinNativeCompile -> pluginOptionsTask.compilerPluginOptions
+                is AbstractKotlinNativeCompile<*> -> pluginOptionsTask.compilerPluginOptions
                 else -> error("Unexpected task: $pluginOptionsTask")
             }.arguments
         }
@@ -80,7 +81,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
             val pluginClasspathTask = compilerPluginOptionsTask.value ?: return null
             return when (pluginClasspathTask) {
                 is AbstractKotlinCompile<*> -> pluginClasspathTask.pluginClasspath
-                is AbstractKotlinNativeCompile -> pluginClasspathTask.compilerPluginClasspath ?: pluginClasspathTask.project.files()
+                is AbstractKotlinNativeCompile<*> -> pluginClasspathTask.compilerPluginClasspath ?: pluginClasspathTask.project.files()
                 else -> error("Unexpected task: $pluginClasspathTask")
             }
         }

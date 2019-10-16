@@ -10,22 +10,27 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
-import org.jetbrains.kotlin.nj2k.conversions.parentOfType
-import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.tree.JKDeclaration
 import org.jetbrains.kotlin.nj2k.tree.JKFile
+import org.jetbrains.kotlin.nj2k.tree.parentOfType
+import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 interface JKSymbol {
     val target: Any
     val declaredIn: JKSymbol?
     val fqName: String
     val name: String
+
+    val typeFactory: JKTypeFactory
+    val symbolProvider: JKSymbolProvider
+        get() = typeFactory.symbolProvider
 }
 
+
 interface JKUniverseSymbol<T : JKDeclaration> : JKSymbol {
-    val symbolProvider: JKSymbolProvider
     override var target: T
     override val fqName: String
         get() {
@@ -43,15 +48,16 @@ interface JKUniverseSymbol<T : JKDeclaration> : JKSymbol {
         get() = target.name.value
 
     override val declaredIn: JKSymbol?
-        get() = target.parentOfType<JKDeclaration>()?.let { symbolProvider.symbolsByJK[it] }
+        get() = target.parentOfType<JKDeclaration>()?.let { symbolProvider.provideUniverseSymbol(it) }
+            ?: target.parentOfType<JKFile>()?.packageDeclaration
+                ?.takeIf { it.name.value.isNotEmpty() }
+                ?.let { symbolProvider.provideUniverseSymbol(it) }
 }
 
 interface JKMultiverseSymbol<T> : JKSymbol where T : PsiNamedElement, T : PsiElement {
-    val symbolProvider: JKSymbolProvider
-
     override val target: T
     override val declaredIn: JKSymbol?
-        get() = target.parentOfType<PsiMember>()?.let { symbolProvider.provideDirectSymbol(it) }
+        get() = target.getStrictParentOfType<PsiMember>()?.let { symbolProvider.provideDirectSymbol(it) }
     override val fqName: String
         get() = target.getKotlinFqName()?.asString() ?: name
     override val name: String
@@ -59,13 +65,11 @@ interface JKMultiverseSymbol<T> : JKSymbol where T : PsiNamedElement, T : PsiEle
 }
 
 interface JKMultiverseKtSymbol<T : KtNamedDeclaration> : JKSymbol {
-    val symbolProvider: JKSymbolProvider
-
     override val target: T
     override val name: String
         get() = target.name!!
     override val declaredIn: JKSymbol?
-        get() = target.parentOfType<KtDeclaration>()?.let { symbolProvider.provideDirectSymbol(it) }
+        get() = target.getStrictParentOfType<KtDeclaration>()?.let { symbolProvider.provideDirectSymbol(it) }
     override val fqName: String
         get() = target.fqName?.asString() ?: name
 }

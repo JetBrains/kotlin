@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.cacheOnlyIfEnabledForKotlin
 import org.jetbrains.kotlin.gradle.tasks.clearLocalState
-import org.jetbrains.kotlin.gradle.tasks.isBuildCacheSupported
 import org.jetbrains.kotlin.gradle.utils.isJavaFile
 import java.io.File
 import java.util.jar.JarFile
@@ -24,10 +23,8 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     init {
         cacheOnlyIfEnabledForKotlin()
 
-        if (isBuildCacheSupported()) {
-            val reason = "Caching is disabled for kapt with 'kapt.useBuildCache'"
-            outputs.cacheIf(reason) { useBuildCache }
-        }
+        val reason = "Caching is disabled for kapt with 'kapt.useBuildCache'"
+        outputs.cacheIf(reason) { useBuildCache }
     }
 
     override fun localStateDirectories(): FileCollection = project.files()
@@ -196,7 +193,22 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
         val startTime = System.currentTimeMillis()
 
         val previousSnapshot = if (inputs.isIncremental) {
-            ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(incAptCacheDir)
+            val loadedPrevious = ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(incAptCacheDir)
+
+            val previousAndCurrentDataFiles = lazy { loadedPrevious.getAllDataFiles() + allDataFiles }
+            val allChangesRecognized = changedFiles.all {
+                val extension = it.extension
+                if (extension.isEmpty() || extension == "java" || extension == "jar" || extension == "class") {
+                    return@all true
+                }
+                // if not a directory, Java source file, jar, or class, it has to be a structure file, in order to understand changes
+                it in previousAndCurrentDataFiles.value
+            }
+            if (allChangesRecognized) {
+                loadedPrevious
+            } else {
+                ClasspathSnapshot.ClasspathSnapshotFactory.getEmptySnapshot()
+            }
         } else {
             ClasspathSnapshot.ClasspathSnapshotFactory.getEmptySnapshot()
         }

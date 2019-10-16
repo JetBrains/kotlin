@@ -11,12 +11,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analyzer.ModuleInfo;
 import org.jetbrains.kotlin.cfg.WhenMissingCase;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.rendering.DeclarationWithDiagnosticComponents;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -475,7 +475,7 @@ public interface Errors {
             DiagnosticFactory3.create(ERROR, VISIBILITY_MODIFIER);
     DiagnosticFactory3<KtModifierListOwner, Visibility, CallableMemberDescriptor, DeclarationDescriptor> CANNOT_CHANGE_ACCESS_PRIVILEGE =
             DiagnosticFactory3.create(ERROR, VISIBILITY_MODIFIER);
-    DiagnosticFactory2<KtNamedDeclaration, CallableMemberDescriptor, CallableMemberDescriptor> RETURN_TYPE_MISMATCH_ON_OVERRIDE =
+    DiagnosticFactory2<KtNamedDeclaration, CallableMemberDescriptor, DeclarationWithDiagnosticComponents> RETURN_TYPE_MISMATCH_ON_OVERRIDE =
             DiagnosticFactory2.create(ERROR, DECLARATION_RETURN_TYPE);
     DiagnosticFactory2<KtNamedDeclaration, CallableMemberDescriptor, CallableMemberDescriptor> PROPERTY_TYPE_MISMATCH_ON_OVERRIDE =
             DiagnosticFactory2.create(ERROR, DECLARATION_RETURN_TYPE);
@@ -585,6 +585,8 @@ public interface Errors {
     DiagnosticFactory0<KtParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtNamedFunction> NO_TAIL_CALLS_FOUND = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtNamedFunction> TAILREC_ON_VIRTUAL_MEMBER = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtNamedFunction> TAILREC_ON_VIRTUAL_MEMBER_ERROR = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<KtParameter>
             ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
@@ -648,9 +650,9 @@ public interface Errors {
     DiagnosticFactory2<KtNamedDeclaration, MemberDescriptor,
             Map<Incompatible, Collection<MemberDescriptor>>> ACTUAL_WITHOUT_EXPECT =
             DiagnosticFactory2.create(ERROR, INCOMPATIBLE_DECLARATION);
-    DiagnosticFactory2<KtNamedDeclaration, DeclarationDescriptor, Collection<String>> AMBIGUOUS_ACTUALS =
+    DiagnosticFactory2<KtNamedDeclaration, DeclarationDescriptor, Collection<ModuleDescriptor>> AMBIGUOUS_ACTUALS =
             DiagnosticFactory2.create(ERROR, INCOMPATIBLE_DECLARATION);
-    DiagnosticFactory2<KtNamedDeclaration, DeclarationDescriptor, Collection<String>> AMBIGUOUS_EXPECTS =
+    DiagnosticFactory2<KtNamedDeclaration, DeclarationDescriptor, Collection<ModuleDescriptor>> AMBIGUOUS_EXPECTS =
             DiagnosticFactory2.create(ERROR, INCOMPATIBLE_DECLARATION);
 
     DiagnosticFactory2<KtNamedDeclaration, ClassDescriptor,
@@ -695,6 +697,7 @@ public interface Errors {
     DiagnosticFactory0<LeafPsiElement> SPREAD_OF_LAMBDA_OR_CALLABLE_REFERENCE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtExpression> MANY_LAMBDA_EXPRESSION_ARGUMENTS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtLambdaExpression> UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, CallableDescriptor> TOO_MANY_ARGUMENTS = DiagnosticFactory1.create(ERROR);
 
@@ -829,7 +832,7 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> ITERATOR_ON_NULLABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> ITERATOR_AMBIGUITY = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory2<KtExpression, String, KotlinType> DELEGATE_SPECIAL_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory3<KtExpression, String, KotlinType, String> DELEGATE_SPECIAL_FUNCTION_MISSING = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory2<KtExpression, String, Collection<? extends ResolvedCall<?>>> DELEGATE_SPECIAL_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtExpression, String, Collection<? extends ResolvedCall<?>>> DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory3<KtExpression, String, KotlinType, KotlinType> DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR);
@@ -1060,7 +1063,7 @@ public interface Errors {
     DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> PRIVATE_CLASS_MEMBER_FROM_INLINE = DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory1<KtElement, KtElement> NON_LOCAL_RETURN_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory1<KtDeclaration, String> NOT_YET_SUPPORTED_IN_INLINE = DiagnosticFactory1.create(ERROR, NOT_SUPPORTED_IN_INLINE_MOST_RELEVANT);
-    DiagnosticFactory1<PsiElement, DeclarationDescriptor> NOTHING_TO_INLINE = DiagnosticFactory1.create(WARNING);
+    DiagnosticFactory0<PsiElement> NOTHING_TO_INLINE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory2<KtElement, KtExpression, DeclarationDescriptor> USAGE_IS_NOT_INLINABLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtElement, KtElement, DeclarationDescriptor> NULLABLE_INLINE_PARAMETER = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtElement, KtElement, DeclarationDescriptor> RECURSION_IN_INLINE = DiagnosticFactory2.create(ERROR);

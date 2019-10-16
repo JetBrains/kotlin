@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -44,6 +46,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
 class GenerationState private constructor(
@@ -192,7 +196,7 @@ class GenerationState private constructor(
     )
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val mainFunctionDetector = MainFunctionDetector(bindingContext, languageVersionSettings)
-    private val isIrBackend = configuration.get(JVMConfigurationKeys.IR) ?: false
+    val isIrBackend = configuration.get(JVMConfigurationKeys.IR) ?: false
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
         this.bindingContext,
         classBuilderMode,
@@ -258,6 +262,8 @@ class GenerationState private constructor(
     val metadataVersion = configuration.get(CommonConfigurationKeys.METADATA_VERSION) ?: JvmMetadataVersion.INSTANCE
 
     val globalSerializationBindings = JvmSerializationBindings()
+    lateinit var irBasedMapAsmMethod: (FunctionDescriptor) -> Method
+    var mapInlineClass: (ClassDescriptor) -> Type = { descriptor -> typeMapper.mapType(descriptor.defaultType) }
 
     init {
         this.interceptedBuilderFactory = builderFactory
@@ -272,7 +278,7 @@ class GenerationState private constructor(
                     BuilderFactoryForDuplicateSignatureDiagnostics(
                         it, this.bindingContext, diagnostics, this.moduleName, this.languageVersionSettings,
                         shouldGenerate = { !shouldOnlyCollectSignatures(it) },
-                        isIrBackend = isIrBackend
+                        mapAsmMethod = if (isIrBackend) { descriptor: FunctionDescriptor -> irBasedMapAsmMethod(descriptor) } else null
                     ).apply { duplicateSignatureFactory = this }
                 },
                 { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
@@ -291,7 +297,9 @@ class GenerationState private constructor(
     fun beforeCompile() {
         markUsed()
 
-        CodegenBinding.initTrace(this)
+        if (!isIrBackend || languageVersionSettings.getFlag(JvmAnalysisFlags.irCheckLocalNames)) {
+            CodegenBinding.initTrace(this)
+        }
     }
 
     fun afterIndependentPart() {

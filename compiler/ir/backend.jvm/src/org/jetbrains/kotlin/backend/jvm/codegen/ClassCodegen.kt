@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
+import org.jetbrains.kotlin.codegen.inline.NameGenerator
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -51,29 +54,42 @@ open class ClassCodegen protected constructor(
     val typeMapper = context.typeMapper
     val methodSignatureMapper = context.methodSignatureMapper
 
-    val descriptor = irClass.descriptor
-
     val type: Type = typeMapper.mapClass(irClass)
 
     val visitor: ClassBuilder = createClassBuilder()
 
     val reifiedTypeParametersUsages = ReifiedTypeParametersUsages()
 
-    open fun createClassBuilder() = state.factory.newVisitor(
-        OtherOrigin(descriptor.psiElement, descriptor),
-        type,
-        irClass.fileParent.loadSourceFilesInfo()
-    )
+    open fun createClassBuilder(): ClassBuilder {
+        // The descriptor associated with an IrClass is never modified in lowerings, so it
+        // doesn't reflect the state of the lowered class. To make the diagnostics work we
+        // pass in a wrapped descriptor instead.
+        // TODO: Migrate class builders away from descriptors
+        val descriptor = WrappedClassDescriptor()
+        descriptor.bind(irClass)
+        return state.factory.newVisitor(
+            OtherOrigin(descriptor.psiElement, descriptor),
+            type,
+            irClass.fileParent.loadSourceFilesInfo()
+        )
+    }
 
     private var sourceMapper: DefaultSourceMapper? = null
 
-    private val serializerExtension = JvmSerializerExtension(visitor.serializationBindings, state)
+    private val serializerExtension = JvmSerializerExtension(visitor.serializationBindings, state, typeMapper)
     private val serializer: DescriptorSerializer? =
         when (val metadata = irClass.metadata) {
             is MetadataSource.Class -> DescriptorSerializer.create(metadata.descriptor, serializerExtension, parentClassCodegen?.serializer)
             is MetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension)
             else -> null
         }
+
+    fun getRegeneratedObjectNameGenerator(function: IrFunction): NameGenerator {
+        val name = if (function.name.isSpecial) Name.identifier("special") else function.name
+        return context.regeneratedObjectNameGenerators.getOrPut(irClass to name) {
+            NameGenerator("${type.internalName}\$$name\$\$inlined")
+        }
+    }
 
     fun generate(): ReifiedTypeParametersUsages {
         if (withinInline) {
@@ -83,7 +99,7 @@ open class ClassCodegen protected constructor(
         val signature = getSignature(irClass, type, superClassInfo, typeMapper)
 
         visitor.defineClass(
-            descriptor.psiElement,
+            irClass.descriptor.psiElement,
             state.classFileVersion,
             irClass.flags,
             signature.name,
@@ -135,10 +151,7 @@ open class ClassCodegen protected constructor(
     private fun generateKotlinMetadataAnnotation() {
         val localDelegatedProperties = (irClass.attributeOwnerId as? IrClass)?.let(context.localDelegatedProperties::get)
         if (localDelegatedProperties != null && localDelegatedProperties.isNotEmpty()) {
-            // Remove this check once CodegenAnnotatingVisitor is no longer used in JVM IR
-            if (state.bindingContext.get(CodegenBinding.DELEGATED_PROPERTIES, type).isNullOrEmpty()) {
-                state.bindingTrace.record(CodegenBinding.DELEGATED_PROPERTIES, type, localDelegatedProperties.map { it.descriptor })
-            }
+            state.bindingTrace.record(CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA, type, localDelegatedProperties.map { it.descriptor })
         }
 
         when (val metadata = irClass.metadata) {
@@ -360,7 +373,7 @@ open class ClassCodegen protected constructor(
 }
 
 private val IrClass.flags: Int
-    get() = origin.flags or getVisibilityAccessFlagForClass() or when {
+    get() = origin.flags or getVisibilityAccessFlagForClass() or deprecationFlags or when {
         isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
         isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
         isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
@@ -368,7 +381,7 @@ private val IrClass.flags: Int
     }
 
 private val IrField.flags: Int
-    get() = origin.flags or visibility.flags or
+    get() = origin.flags or visibility.flags or (correspondingPropertySymbol?.owner?.deprecationFlags ?: 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or

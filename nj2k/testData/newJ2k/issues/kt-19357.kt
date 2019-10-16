@@ -1,13 +1,13 @@
 class TestPackagePrivateFieldInit {
-    internal var start: Any? = null
-    internal var end: Any? = null
-    internal var handler: Any? = null
-    internal var desc: String? = null
-    internal var type = 0
-    internal var next: TestPackagePrivateFieldInit? = null
+    var start: Any? = null
+    var end: Any? = null
+    var handler: Any? = null
+    var desc: String? = null
+    var type = 0
+    var next: TestPackagePrivateFieldInit? = null
 
     companion object {
-        internal fun doStuff(h: TestPackagePrivateFieldInit?, start: Any, end: Any?): TestPackagePrivateFieldInit? {
+        fun doStuff(h: TestPackagePrivateFieldInit?, start: Any, end: Any?): TestPackagePrivateFieldInit? {
             var h = h
             if (h == null) {
                 return null
@@ -17,7 +17,7 @@ class TestPackagePrivateFieldInit {
             val hstart = h.start.hashCode()
             val hend = h.end.hashCode()
             val s = start.hashCode()
-            val e = end?.hashCode() ?: Integer.MAX_VALUE
+            val e = end?.hashCode() ?: Int.MAX_VALUE
             if (s < hend && e > hstart) {
                 if (s <= hstart) {
                     if (e >= hend) {

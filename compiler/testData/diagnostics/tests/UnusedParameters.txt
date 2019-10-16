@@ -5,8 +5,11 @@ public fun foo(/*0*/ s: kotlin.String): kotlin.Unit
 public fun get(/*0*/ p: kotlin.Any): kotlin.Unit
 public fun set(/*0*/ p: kotlin.Any): kotlin.Unit
 public fun kotlin.Any.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>): kotlin.String
+public operator fun kotlin.Int.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>): kotlin.String
 public fun kotlin.Any.provideDelegate(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>): kotlin.Unit
+public operator fun kotlin.Int.provideDelegate(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>): kotlin.Unit
 public fun kotlin.Any.setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>, /*2*/ value: kotlin.String): kotlin.Unit
+public operator fun kotlin.Int.setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>, /*2*/ value: kotlin.String): kotlin.Unit
 
 public final class C {
     public constructor C(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int, /*2*/ c: kotlin.Int, /*3*/ d: kotlin.Int, /*4*/ e: kotlin.Int = ..., /*5*/ f: kotlin.String)

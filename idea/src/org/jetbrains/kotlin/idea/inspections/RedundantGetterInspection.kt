@@ -31,7 +31,7 @@ class RedundantGetterInspection : AbstractKotlinInspection(), CleanupLocalInspec
     }
 }
 
-private fun KtPropertyAccessor.isRedundantGetter(): Boolean {
+fun KtPropertyAccessor.isRedundantGetter(): Boolean {
     if (!isGetter) return false
     val expression = bodyExpression ?: return canBeCompletelyDeleted()
     if (expression.isBackingFieldReferenceTo(property)) return true
@@ -61,23 +61,28 @@ fun KtPropertyAccessor.deleteBody() {
     deleteChildRange(leftParenthesis, lastChild)
 }
 
-private class RemoveRedundantGetterFix : LocalQuickFix {
+class RemoveRedundantGetterFix : LocalQuickFix {
     override fun getName() = "Remove redundant getter"
 
     override fun getFamilyName() = name
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val accessor = descriptor.psiElement as? KtPropertyAccessor ?: return
-        val property = accessor.property
+        removeRedundantGetter(accessor)
+    }
 
-        val accessorTypeReference = accessor.returnTypeReference
-        if (accessorTypeReference != null && property.typeReference == null && property.initializer == null) {
-            property.typeReference = accessorTypeReference
-        }
-        if (accessor.canBeCompletelyDeleted()) {
-            accessor.delete()
-        } else {
-            accessor.deleteBody()
+    companion object {
+        fun removeRedundantGetter(getter: KtPropertyAccessor) {
+            val property = getter.property
+            val accessorTypeReference = getter.returnTypeReference
+            if (accessorTypeReference != null && property.typeReference == null && property.initializer == null) {
+                property.typeReference = accessorTypeReference
+            }
+            if (getter.canBeCompletelyDeleted()) {
+                getter.delete()
+            } else {
+                getter.deleteBody()
+            }
         }
     }
 }

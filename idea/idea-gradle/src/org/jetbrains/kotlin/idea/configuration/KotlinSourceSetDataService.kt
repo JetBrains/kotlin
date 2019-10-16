@@ -127,7 +127,8 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 platform,
                 modelsProvider,
                 mainModuleNode.isHmpp,
-                mainModuleNode.pureKotlinSourceFolders
+                mainModuleNode.pureKotlinSourceFolders,
+                kotlinSourceSet.dependsOn
             )
 
             val compilerArguments = kotlinSourceSet.compilerArguments
@@ -149,6 +150,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 kind = kotlinSourceSet.kotlinModule.kind
 
                 isTestModule = kotlinSourceSet.isTestModule
+                externalSystemTestTasks = ArrayList(kotlinSourceSet.externalSystemTestTasks)
 
                 externalProjectId = kotlinSourceSet.gradleModuleId
 

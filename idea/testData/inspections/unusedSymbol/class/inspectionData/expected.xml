@@ -87,20 +87,4 @@
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
     <description>Interface 'Interface' is never used</description>
   </problem>
-  <problem>
-    <file>enumEntries.kt</file>
-    <line>2</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/enumEntries.kt" />
-    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
-    <description>Class 'A' is never used</description>
-  </problem>
-  <problem>
-    <file>enumEntries.kt</file>
-    <line>2</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/enumEntries.kt" />
-    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused symbol</problem_class>
-    <description>Class 'B' is never used</description>
-  </problem>
 </problems>

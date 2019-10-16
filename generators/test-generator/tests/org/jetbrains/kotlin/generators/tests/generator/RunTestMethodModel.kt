@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.utils.Printer
 class RunTestMethodModel(
     private val targetBackend: TargetBackend,
     private val testMethodName: String,
-    private val testRunnerMethodName: String
+    private val testRunnerMethodName: String,
+    private val additionalRunnerArguments: List<String> = emptyList()
 ) : MethodModel {
     override val name = METHOD_NAME
     override val dataString: String? = null
@@ -22,7 +23,10 @@ class RunTestMethodModel(
 
     override fun generateBody(p: Printer) {
         val className = TargetBackend::class.java.simpleName
-        p.println("KotlinTestUtils.$testRunnerMethodName(this::$testMethodName, $className.$targetBackend, testDataFilePath);")
+        val additionalArguments = if (additionalRunnerArguments.isNotEmpty())
+            additionalRunnerArguments.joinToString(separator = ", ", prefix = ", ")
+        else ""
+        p.println("KotlinTestUtils.$testRunnerMethodName(this::$testMethodName, $className.$targetBackend, testDataFilePath$additionalArguments);")
     }
 
     companion object {

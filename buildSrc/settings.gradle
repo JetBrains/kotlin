@@ -59,7 +59,12 @@ class LocalBuildPropertiesProvider {
     }
     
     Boolean getBoolean(String name) {
-        return Boolean.parseBoolean(getString(name))
+        def property = getString(name)
+        if (property == null) {
+            return false
+        } else {
+            return Boolean.parseBoolean(property.trim())
+        }
     }
 }
 

@@ -197,7 +197,7 @@ class LoopExpressionGenerator(statementGenerator: StatementGenerator) : Statemen
                     irNextCall
                 )
             } else {
-                scope.createTemporaryVariable(irNextCall, "loop_parameter", origin = IrDeclarationOrigin.FOR_LOOP_IMPLICIT_VARIABLE)
+                scope.createTemporaryVariable(irNextCall, "loop_parameter")
             }
         irInnerBody.statements.add(irLoopParameter)
 

@@ -5,7 +5,6 @@ internal class A {
     }
 
     companion object {
-
         fun publicStatic() {
             privateStatic1()
         }

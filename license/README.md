@@ -181,6 +181,20 @@ any distributions of the tools or libraries:
       - License: Eclipse Public License v1.0 ([license/third_party/testdata/eclipse_license.txt][eclipse])
              and Eclipse Distribution License - v1.0 ([license/third_party/testdata/eclipse_distribution_license.txt][eclipse-distribution])
       - Origin: javax.persistence, Copyright (c) 2008, 2017 Sun Microsystems, Oracle Corporation.
+      
+ - Path: libraries/tools/kotlin-test-js-runner/karma-kotlin-reporter.js
+      - License: MIT ([license/third_party/karma_LICENSE.txt](third_party/karma_LICENSE.txt)
+             and [license/third_party/karma-teamcity-reporter_LICENSE.txt](third_party/karma-teamcity-reporter_LICENSE.txt))
+      - Origin: Copyright (C) 2011-2019 Google, Inc. and Copyright (C) 2011-2013 Vojta Jína and contributors.
+      
+ - Path: libraries/tools/kotlin-test-js-runner/src/utils.ts
+      - License: MIT ([license/third_party/teamcity-service-messages_LICENSE.txt](third_party/teamcity-service-messages_LICENSE.txt)
+             and [license/third_party/lodash_LICENSE.txt](third_party/lodash_LICENSE.txt))
+      - Origin: Copyright (c) 2013 Aaron Forsander and Copyright JS Foundation and other contributors <https://js.foundation/>
+      
+ - Path: libraries/tools/kotlin-source-map-loader/kotlin-source-map-loader.js
+      - License: MIT ([license/third_party/source-map-loader_LICENSE.txt](third_party/source-map-loader_LICENSE.txt))
+      - Origin: Copyright JS Foundation and other contributors
 
 ## Example Code
 

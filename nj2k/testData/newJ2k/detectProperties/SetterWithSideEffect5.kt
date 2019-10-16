@@ -4,4 +4,5 @@ class C {
             println("setter invoked")
             field = x
         }
+
 }

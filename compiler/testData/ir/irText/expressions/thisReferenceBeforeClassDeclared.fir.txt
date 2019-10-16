@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
             CONSTRUCTOR visibility:private <> () returnType:<root>.WithCompanion [primary]
               BLOCK_BODY
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (a: <root>.WithCompanion.Companion) [primary] declared in <root>.WithCompanion'
-                  a: ERROR_CALL 'Unresolved reference: this#' type=<root>.WithCompanion
+                  a: GET_VAR '<this>: <root>.WithCompanion declared in <root>.test' type=<root>.WithCompanion origin=null
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.WithCompanion]'
           CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.test.<no name provided>' type=<root>.test.<no name provided> origin=null
       VAR name:test2 type:<root>.WithCompanion [val]
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.WithCompanion.Companion
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun foo (): <root>.WithCompanion.Companion declared in <root>.WithCompanion.Companion'
-            ERROR_CALL 'Unresolved reference: this#' type=<root>.WithCompanion.Companion
+            GET_VAR '<this>: <root>.WithCompanion.Companion declared in <root>.WithCompanion.Companion' type=<root>.WithCompanion.Companion origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

@@ -640,6 +640,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             runTest("compiler/testData/codegen/boxInline/assert/jvmAssertInlineLambda.kt");
         }
 
+        @TestMetadata("jvmClassInitializer.kt")
+        public void testJvmClassInitializer() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/assert/jvmClassInitializer.kt");
+        }
+
         @TestMetadata("jvmCompanion.kt")
         public void testJvmCompanion() throws Exception {
             runTest("compiler/testData/codegen/boxInline/assert/jvmCompanion.kt");
@@ -1084,6 +1089,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             runTest("compiler/testData/codegen/boxInline/contracts/complexInitializerWithStackTransformation.kt");
         }
 
+        @TestMetadata("crossinlineCallableReference.kt")
+        public void testCrossinlineCallableReference() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/contracts/crossinlineCallableReference.kt");
+        }
+
         @TestMetadata("definiteLongValInitialization.kt")
         public void testDefiniteLongValInitialization() throws Exception {
             runTest("compiler/testData/codegen/boxInline/contracts/definiteLongValInitialization.kt");
@@ -1107,6 +1117,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         @TestMetadata("exactlyOnceCrossinline.kt")
         public void testExactlyOnceCrossinline() throws Exception {
             runTest("compiler/testData/codegen/boxInline/contracts/exactlyOnceCrossinline.kt");
+        }
+
+        @TestMetadata("exactlyOnceCrossinline2.kt")
+        public void testExactlyOnceCrossinline2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/contracts/exactlyOnceCrossinline2.kt");
         }
 
         @TestMetadata("exactlyOnceNoinline.kt")
@@ -1789,6 +1804,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/innerClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("captureThisAndOuter.kt")
+        public void testCaptureThisAndOuter() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/innerClasses/captureThisAndOuter.kt");
+        }
+
         @TestMetadata("innerLambda.kt")
         public void testInnerLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/innerClasses/innerLambda.kt");
@@ -1873,6 +1893,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
             runTest("compiler/testData/codegen/boxInline/lambdaTransformation/regeneratedLambdaName.kt");
         }
 
+        @TestMetadata("regeneratedLambdaName2.kt")
+        public void testRegeneratedLambdaName2() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/lambdaTransformation/regeneratedLambdaName2.kt");
+        }
+
         @TestMetadata("sameCaptured.kt")
         public void testSameCaptured() throws Exception {
             runTest("compiler/testData/codegen/boxInline/lambdaTransformation/sameCaptured.kt");
@@ -1922,6 +1947,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
 
         public void testAllFilesPresentInMultifileClasses() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("defaultArguments.kt")
+        public void testDefaultArguments() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/multifileClasses/defaultArguments.kt");
         }
 
         @TestMetadata("inlineFromOptimizedMultifileClass.kt")
@@ -3386,6 +3416,11 @@ public class IrBlackBoxInlineCodegenTestGenerated extends AbstractIrBlackBoxInli
         @TestMetadata("stackHeightBug.kt")
         public void testStackHeightBug() throws Exception {
             runTest("compiler/testData/codegen/boxInline/special/stackHeightBug.kt");
+        }
+
+        @TestMetadata("unusedInlineLambda.kt")
+        public void testUnusedInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/special/unusedInlineLambda.kt");
         }
     }
 

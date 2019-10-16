@@ -12,4 +12,5 @@ class Language(protected var code: String) : Serializable {
         var SWEDISH = Language("sv")
         private const val serialVersionUID = -2442762969929206780L
     }
+
 }

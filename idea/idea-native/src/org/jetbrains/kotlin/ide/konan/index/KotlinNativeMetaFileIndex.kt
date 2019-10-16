@@ -9,6 +9,7 @@ import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache
 import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileType
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinFileIndexBase
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.name.FqName
 
 object KotlinNativeMetaFileIndex : KotlinFileIndexBase<KotlinNativeMetaFileIndex>(KotlinNativeMetaFileIndex::class.java) {
@@ -27,6 +28,6 @@ object KotlinNativeMetaFileIndex : KotlinFileIndexBase<KotlinNativeMetaFileIndex
     /*todo: check version?!*/
     private val INDEXER = indexer { fileContent ->
         val fragment = KotlinNativeLoadingMetadataCache.getInstance().getCachedPackageFragment(fileContent.file)
-        FqName(fragment.fqName)
+        FqName(fragment.getExtension(KlibMetadataProtoBuf.fqName))
     }
 }

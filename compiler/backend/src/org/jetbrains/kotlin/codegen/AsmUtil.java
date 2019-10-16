@@ -862,6 +862,33 @@ public class AsmUtil {
     }
 
     @NotNull
+    public static BranchedValue genTotalOrderEqualsForExpressionOnStack(
+            @NotNull StackValue left,
+            @NotNull StackValue right,
+            @NotNull Type asmType
+    ) {
+        return new BranchedValue(left, right, asmType, Opcodes.IFEQ) {
+            @Override
+            public void condJump(@NotNull Label jumpLabel, @NotNull InstructionAdapter iv, boolean jumpIfFalse) {
+                if (asmType.getSort() == Type.FLOAT) {
+                    left.put(asmType, kotlinType, iv);
+                    right.put(asmType, kotlinType, iv);
+                    iv.invokestatic("java/lang/Float", "compare", "(FF)I", false);
+                    iv.visitJumpInsn(patchOpcode(jumpIfFalse ? Opcodes.IFNE : Opcodes.IFEQ, iv), jumpLabel);
+                } else if (asmType.getSort() == Type.DOUBLE) {
+                    left.put(asmType, kotlinType, iv);
+                    right.put(asmType, kotlinType, iv);
+                    iv.invokestatic("java/lang/Double", "compare", "(DD)I", false);
+                    iv.visitJumpInsn(patchOpcode(jumpIfFalse ? Opcodes.IFNE : Opcodes.IFEQ, iv), jumpLabel);
+                } else {
+                    StackValue value = genEqualsForExpressionsOnStack(KtTokens.EQEQ, left, right);
+                    BranchedValue.Companion.condJump(value, jumpLabel, jumpIfFalse, iv);
+                }
+            }
+        };
+    }
+
+    @NotNull
     public static StackValue genEqualsBoxedOnStack(@NotNull IElementType opToken) {
         return StackValue.operation(Type.BOOLEAN_TYPE, v -> genAreEqualCall(v, opToken));
     }
@@ -1137,6 +1164,15 @@ public class AsmUtil {
         }
     }
 
+    public static void pop2(@NotNull MethodVisitor v, @NotNull Type topOfStack, @NotNull Type afterTop) {
+        if (topOfStack.getSize() == 1 && afterTop.getSize() == 1) {
+            v.visitInsn(POP2);
+        } else {
+            pop(v, topOfStack);
+            pop(v, afterTop);
+        }
+    }
+
     public static void pop2(@NotNull MethodVisitor v, @NotNull Type type) {
         if (type.getSize() == 2) {
             v.visitInsn(Opcodes.POP2);
@@ -1176,6 +1212,29 @@ public class AsmUtil {
         }
         else {
             throw new UnsupportedOperationException();
+        }
+    }
+
+    // Duplicate the element afterTop and push it on the top of the stack.
+    public static void dupSecond(@NotNull InstructionAdapter v, @NotNull Type topOfStack, @NotNull Type afterTop) {
+        if (afterTop.getSize() == 0) {
+            return;
+        }
+
+        if (topOfStack.getSize() == 0) {
+            dup(v, afterTop);
+        } else if (topOfStack.getSize() == 1 && afterTop.getSize() == 1) {
+            v.dup2();
+            v.pop();
+        } else {
+            swap(v, topOfStack, afterTop);
+            if (topOfStack.getSize() == 1 && afterTop.getSize() == 2) {
+                v.dup2X1();
+            } else if (topOfStack.getSize() == 2 && afterTop.getSize() == 1) {
+                v.dupX2();
+            } else /* top = 2, after top = 2 */ {
+                v.dup2X2();
+            }
         }
     }
 

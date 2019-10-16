@@ -5,15 +5,15 @@ FILE: simple.kt
         }
 
         public open fun foo(): R|A| {
-            ^foo this#
+            ^foo this@R|/A|
         }
 
         public open fun bar(): R|A| {
-            ^bar this#
+            ^bar this@R|/A|
         }
 
         public open fun buz(p: R|A|): R|A| {
-            ^buz this#
+            ^buz this@R|/A|
         }
 
     }
@@ -23,20 +23,20 @@ FILE: simple.kt
         }
 
         public final override fun foo(): R|B| {
-            ^foo this#
+            ^foo this@R|/B|
         }
 
         public final fun bar(): R|B| {
-            ^bar this#
+            ^bar this@R|/B|
         }
 
         public final override fun buz(p: R|B|): R|B| {
-            ^buz this#
+            ^buz this@R|/B|
         }
 
         public final fun test(): R|kotlin/Unit| {
-            R|/B.foo|()
-            R|/B.bar|()
+            this@R|/B|.R|/B.foo|()
+            this@R|/B|.R|/B.bar|()
             <Inapplicable(PARAMETER_MAPPING_ERROR): [/B.buz, /A.buz]>#()
         }
 

@@ -35,30 +35,23 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
+import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.idea.util.liftToExpected
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import java.util.*
 
 abstract class CallableRefactoring<out T : CallableDescriptor>(
     val project: Project,
-    callableDescriptor: T,
+    val callableDescriptor: T,
     val commandName: String
 ) {
     private val LOG = Logger.getInstance(CallableRefactoring::class.java)
-
-    @Suppress("UNCHECKED_CAST")
-    val callableDescriptor = callableDescriptor.liftToExpected() as? T ?: callableDescriptor
 
     private val kind = (callableDescriptor as? CallableMemberDescriptor)?.kind ?: DECLARATION
 
@@ -184,15 +177,34 @@ abstract class CallableRefactoring<out T : CallableDescriptor>(
     }
 }
 
-fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): List<PsiElement> {
-    val baseCallables = descriptorsForChange.mapNotNull { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
-    return baseCallables + baseCallables.flatMapTo(HashSet<PsiElement>()) { callable ->
-        if (callable is KtDeclaration && callable.isExpectDeclaration()) {
-            callable.actualsForExpected()
-        } else {
-            callable.toLightMethods().flatMap { psiMethod ->
-                val overrides = OverridingMethodsSearch.search(psiMethod).findAll()
-                overrides.map { method -> method.namedUnwrappedElement ?: method }
+fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): Collection<PsiElement> {
+    val results = hashSetOf<PsiElement>()
+    for (descriptor in descriptorsForChange) {
+        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: continue
+        collectAffectedCallables(declaration, results)
+    }
+
+    return results
+}
+
+private fun collectAffectedCallables(declaration: PsiElement, results: MutableCollection<PsiElement>) {
+    if (!results.add(declaration)) return
+    if (declaration is KtDeclaration) {
+        for (it in declaration.actualsForExpected()) {
+            collectAffectedCallables(it, results)
+        }
+
+        declaration.liftToExpected()?.let { collectAffectedCallables(it, results) }
+
+        if (declaration !is KtCallableDeclaration) return
+        declaration.forEachOverridingElement { _, overridingElement ->
+            results += overridingElement.namedUnwrappedElement ?: overridingElement
+            true
+        }
+    } else {
+        for (psiMethod in declaration.toLightMethods()) {
+            OverridingMethodsSearch.search(psiMethod).forEach {
+                results += it.namedUnwrappedElement ?: it
             }
         }
     }

@@ -22,7 +22,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationUpdaterKt;
+import org.jetbrains.kotlin.idea.core.script.ScriptUtilsKt;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.plugins.groovy.GroovyFileType;
@@ -42,12 +42,12 @@ public abstract class AbstractConfigureProjectByChangingFileTest<C extends Kotli
         ApplicationManager.getApplication().runWriteAction(
                 () -> FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
         );
-        ScriptsCompilationConfigurationUpdaterKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), true);
+        ScriptUtilsKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), true);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        ScriptsCompilationConfigurationUpdaterKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), false);
+        ScriptUtilsKt.setScriptDependenciesUpdaterDisabled(ApplicationManager.getApplication(), false);
         moduleInfoFile = null;
         super.tearDown();
     }

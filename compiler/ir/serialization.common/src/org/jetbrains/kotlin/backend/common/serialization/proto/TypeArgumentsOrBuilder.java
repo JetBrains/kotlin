@@ -8,16 +8,15 @@ public interface TypeArgumentsOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+   * <code>repeated int32 type_argument = 1;</code>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex> 
-      getTypeArgumentList();
+  java.util.List<java.lang.Integer> getTypeArgumentList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex getTypeArgument(int index);
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+   * <code>repeated int32 type_argument = 1;</code>
    */
   int getTypeArgumentCount();
+  /**
+   * <code>repeated int32 type_argument = 1;</code>
+   */
+  int getTypeArgument(int index);
 }

@@ -75,6 +75,11 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         refinedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {
             args.addAll(it)
         }
+
+        importedScriptsEvalResults.forEach {
+            args.add(it.returnValue.scriptInstance)
+        }
+
         refinedEvalConfiguration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
             args.addAll(it)
         }
@@ -82,13 +87,15 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
             args.add(it.value)
         }
 
-        importedScriptsEvalResults.forEach {
-            args.add(it.returnValue.scriptInstance)
-        }
-
         val ctor = java.constructors.single()
 
-        return ctor.newInstance(*args.toArray())
+        val saveClassLoader = Thread.currentThread().contextClassLoader
+        Thread.currentThread().contextClassLoader = this.java.classLoader
+        return try {
+            ctor.newInstance(*args.toArray())
+        } finally {
+            Thread.currentThread().contextClassLoader = saveClassLoader
+        }
     }
 }
 

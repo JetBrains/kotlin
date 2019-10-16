@@ -31,7 +31,6 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
-import org.jetbrains.kotlin.idea.refactoring.move.invokeMoveFilesOrDirectoriesRefactoring
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinSelectNestedClassRefactoringDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinNestedClassesDialog
@@ -43,7 +42,60 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.isTopLevelInFileOrScript
 import java.util.*
 
-class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
+private val defaultHandlerActions = object : MoveKotlinDeclarationsHandlerActions {
+
+    override fun showErrorHint(project: Project, editor: Editor?, message: String, title: String, helpId: String?) {
+        CommonRefactoringUtil.showErrorHint(project, editor, message, title, helpId)
+    }
+
+    override fun invokeMoveKotlinNestedClassesRefactoring(
+        project: Project,
+        elementsToMove: List<KtClassOrObject>,
+        originalClass: KtClassOrObject,
+        targetClass: KtClassOrObject,
+        moveCallback: MoveCallback?
+    ) = MoveKotlinNestedClassesDialog(project, elementsToMove, originalClass, targetClass, moveCallback).show()
+
+    override fun invokeMoveKotlinTopLevelDeclarationsRefactoring(
+        project: Project,
+        elementsToMove: Set<KtNamedDeclaration>,
+        targetPackageName: String,
+        targetDirectory: PsiDirectory?,
+        targetFile: KtFile?,
+        moveToPackage: Boolean,
+        searchInComments: Boolean,
+        searchForTextOccurrences: Boolean,
+        deleteEmptySourceFiles: Boolean,
+        moveCallback: MoveCallback?
+    ) = MoveKotlinTopLevelDeclarationsDialog(
+        project,
+        elementsToMove,
+        targetPackageName,
+        targetDirectory,
+        targetFile,
+        moveToPackage,
+        searchInComments,
+        searchForTextOccurrences,
+        deleteEmptySourceFiles,
+        moveCallback
+    ).show()
+
+    override fun invokeKotlinSelectNestedClassChooser(nestedClass: KtClassOrObject, targetContainer: PsiElement?) =
+        KotlinSelectNestedClassRefactoringDialog.chooseNestedClassRefactoring(nestedClass, targetContainer)
+
+    override fun invokeKotlinAwareMoveFilesOrDirectoriesRefactoring(
+        project: Project,
+        initialDirectory: PsiDirectory?,
+        elements: Array<out PsiElement>,
+        moveCallback: MoveCallback?
+    ) = KotlinAwareMoveFilesOrDirectoriesDialog(project, initialDirectory, elements, moveCallback).show()
+}
+
+class MoveKotlinDeclarationsHandler internal constructor(private val handlerActions: MoveKotlinDeclarationsHandlerActions) :
+    MoveHandlerDelegate() {
+
+    constructor() : this(defaultHandlerActions)
+
     private fun getUniqueContainer(elements: Array<out PsiElement>): PsiElement? {
         val allTopLevel = elements.all { isTopLevelInFileOrScript(it) }
 
@@ -72,7 +124,7 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
 
         val container = getUniqueContainer(elements)
         if (container == null) {
-            CommonRefactoringUtil.showErrorHint(
+            handlerActions.showErrorHint(
                 project, editor, "All declarations must belong to the same directory or class", MOVE_DECLARATIONS, null
             )
             return false
@@ -89,20 +141,20 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
         // todo: allow moving companion object
         if (elementsToSearch.any { it is KtObjectDeclaration && it.isCompanion() }) {
             val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is not supported for companion objects")
-            CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
+            handlerActions.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
         }
 
         if (elementsToSearch.any { !it.canMove() }) {
             val message =
                 RefactoringBundle.getCannotRefactorMessage("Move declaration is only supported for top-level declarations and nested classes")
-            CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
+            handlerActions.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
         }
 
         if (elementsToSearch.any { it is KtEnumEntry }) {
             val message = RefactoringBundle.getCannotRefactorMessage("Move declaration is not supported for enum entries")
-            CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
+            handlerActions.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
             return true
         }
 
@@ -113,11 +165,10 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                 else -> null
             }
             val initialTargetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, initialTargetElement)
-            val dialog = KotlinAwareMoveFilesOrDirectoriesDialog(project, initialTargetDirectory) {
-                invokeMoveFilesOrDirectoriesRefactoring(it, project, elements, initialTargetDirectory, callback)
-            }
-            dialog.setData(elements, initialTargetDirectory, "refactoring.moveFile")
-            dialog.show()
+
+            handlerActions.invokeKotlinAwareMoveFilesOrDirectoriesRefactoring(
+                project, initialTargetDirectory, elements, callback
+            )
 
             return true
         }
@@ -128,12 +179,13 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                 val targetDirectory = if (targetContainer != null) {
                     MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
                 } else null
-                val searchInComments = KotlinRefactoringSettings.instance!!.MOVE_SEARCH_IN_COMMENTS
-                val searchInText = KotlinRefactoringSettings.instance!!.MOVE_SEARCH_FOR_TEXT
+                val searchInComments = KotlinRefactoringSettings.instance.MOVE_SEARCH_IN_COMMENTS
+                val searchInText = KotlinRefactoringSettings.instance.MOVE_SEARCH_FOR_TEXT
+                val deleteEmptySourceFiles = KotlinRefactoringSettings.instance.MOVE_DELETE_EMPTY_SOURCE_FILES
                 val targetFile = targetContainer as? KtFile
                 val moveToPackage = targetContainer !is KtFile
 
-                MoveKotlinTopLevelDeclarationsDialog(
+                handlerActions.invokeMoveKotlinTopLevelDeclarationsRefactoring(
                     project,
                     elementsToSearch,
                     targetPackageName,
@@ -142,8 +194,9 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                     moveToPackage,
                     searchInComments,
                     searchInText,
+                    deleteEmptySourceFiles,
                     callback
-                ).show()
+                )
             }
 
             is KtClassOrObject -> {
@@ -152,20 +205,20 @@ class MoveKotlinDeclarationsHandler : MoveHandlerDelegate() {
                     if (targetContainer !is KtClassOrObject) {
                         val message =
                             RefactoringBundle.getCannotRefactorMessage("Moving multiple nested classes to top-level is not supported")
-                        CommonRefactoringUtil.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
+                        handlerActions.showErrorHint(project, editor, message, MOVE_DECLARATIONS, null)
                         return true
                     }
                     @Suppress("UNCHECKED_CAST")
-                    MoveKotlinNestedClassesDialog(
+                    handlerActions.invokeMoveKotlinNestedClassesRefactoring(
                         project,
                         elementsToSearch.filterIsInstance<KtClassOrObject>(),
                         container,
                         targetContainer,
                         callback
-                    ).show()
+                    )
                     return true
                 }
-                KotlinSelectNestedClassRefactoringDialog.chooseNestedClassRefactoring(
+                handlerActions.invokeKotlinSelectNestedClassChooser(
                     elementsToSearch.first() as KtClassOrObject,
                     targetContainer
                 )

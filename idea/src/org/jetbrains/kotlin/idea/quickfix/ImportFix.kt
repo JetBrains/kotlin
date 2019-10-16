@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -50,15 +39,14 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.ReceiverType
-import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.idea.util.receiverTypesWithIndex
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiUtil.isSelectorInQualified
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -67,14 +55,13 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
 /**
@@ -261,6 +248,12 @@ internal abstract class OrdinaryImportFixBase<T : KtExpression>(expression: T, f
 
                 indicesHelper.getTopLevelCallablesByName(name).filterTo(result, filterByCallType)
             }
+            if (callTypeAndReceiver.callType == CallType.OPERATOR) {
+                val type = expression.getCallableDescriptor()?.returnType
+                if (type != null) {
+                    result.addAll(indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, listOf(type), { it == name }))
+                }
+            }
         }
 
         result.addAll(indicesHelper.getCallableTopLevelExtensions(callTypeAndReceiver, expression, bindingContext) { it == name })
@@ -295,7 +288,7 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
     ): List<DeclarationDescriptor> {
 
         val element = element ?: return emptyList()
-        if (element.isImportDirectiveExpression() || isSelectorInQualified(element)) return emptyList()
+        if (element.isImportDirectiveExpression()) return emptyList()
 
         val result = ArrayList<DeclarationDescriptor>()
 
@@ -303,17 +296,7 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
 
         indicesHelper.getKotlinEnumsByName(name).filterTo(result, filterByCallType)
 
-        val resolutionFacade = element.getResolutionFacade()
-        val actualReceiverTypes = callTypeAndReceiver
-            .receiverTypesWithIndex(
-                bindingContext, element,
-                resolutionFacade.moduleDescriptor, resolutionFacade,
-                stableSmartCastsOnly = false,
-                withImplicitReceiversWhenExplicitPresent = true
-            ).orEmpty()
-
-
-        val explicitReceiverTypes = actualReceiverTypes.filterNot { it.implicit }
+        val actualReceivers = getReceiversForExpression(element, callTypeAndReceiver, bindingContext)
 
         val checkDispatchReceiver = when (callTypeAndReceiver) {
             is CallTypeAndReceiver.OPERATOR, is CallTypeAndReceiver.INFIX -> true
@@ -321,10 +304,12 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
         }
 
         val processor = { descriptor: CallableDescriptor ->
-            if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)
-                && descriptor.isValidByReceiversFor(explicitReceiverTypes, actualReceiverTypes, checkDispatchReceiver)
-            ) {
-                result.add(descriptor)
+            if (descriptor.canBeReferencedViaImport() && filterByCallType(descriptor)) {
+                if (descriptor.extensionReceiverParameter != null) {
+                    result.addAll(descriptor.substituteExtensionIfCallable(actualReceivers.allReceivers, callTypeAndReceiver.callType))
+                } else if (descriptor.isValidByReceiversFor(actualReceivers, checkDispatchReceiver)) {
+                    result.add(descriptor)
+                }
             }
         }
 
@@ -344,19 +329,52 @@ internal class ImportFix(expression: KtSimpleNameExpression) : OrdinaryImportFix
         return result
     }
 
+    /**
+     * Currently at most one explicit receiver can be used in expression, but it can change in the future,
+     * so we use `Collection` to represent explicit receivers.
+     */
+    private class Receivers(val explicitReceivers: Collection<KotlinType>, val allReceivers: Collection<KotlinType>)
 
-    private fun CallableDescriptor.isValidByReceiversFor(
-        explicitReceiverTypes: Collection<ReceiverType>,
-        allReceiverTypes: Collection<ReceiverType>,
-        checkDispatchReceiver: Boolean
-    ): Boolean {
-        val bothReceivers = listOfNotNull(extensionReceiverParameter, dispatchReceiverParameter.takeIf { checkDispatchReceiver })
+    private fun getReceiversForExpression(
+        element: KtSimpleNameExpression,
+        callTypeAndReceiver: CallTypeAndReceiver<*, *>,
+        bindingContext: BindingContext
+    ): Receivers {
+        val resolutionFacade = element.getResolutionFacade()
+        val actualReceiverTypes = callTypeAndReceiver
+            .receiverTypesWithIndex(
+                bindingContext, element,
+                resolutionFacade.moduleDescriptor, resolutionFacade,
+                stableSmartCastsOnly = false,
+                withImplicitReceiversWhenExplicitPresent = true
+            ).orEmpty()
 
-        val receiverTypesPerReceiver = generateSequence(explicitReceiverTypes.ifEmpty { allReceiverTypes }) { allReceiverTypes }
+        val explicitReceiverType = actualReceiverTypes.filterNot { it.implicit }
 
-        return bothReceivers
-            .zip(receiverTypesPerReceiver.asIterable())
-            .all { (receiver, possibleTypes) -> possibleTypes.any { it.type.isSubtypeOf(receiver.type) } }
+        return Receivers(
+            explicitReceiverType.map { it.type },
+            actualReceiverTypes.map { it.type }
+        )
+    }
+
+    /**
+     * This methods accepts only callables with no extension receiver because it ignores generics
+     * and does not perform any substitution.
+     *
+     * @return true iff [this] descriptor can be called given [actualReceivers] present in scope AND
+     * passed [Receivers.explicitReceivers] are satisfied if present.
+     */
+    private fun CallableDescriptor.isValidByReceiversFor(actualReceivers: Receivers, checkDispatchReceiver: Boolean): Boolean {
+        require(extensionReceiverParameter == null) { "This method works only on non-extension callables, got $this" }
+
+        val dispatcherReceiver = dispatchReceiverParameter.takeIf { checkDispatchReceiver }
+
+        return if (dispatcherReceiver == null) {
+            actualReceivers.explicitReceivers.isEmpty()
+        } else {
+            val typesToCheck = with(actualReceivers) { explicitReceivers.ifEmpty { allReceivers } }
+            typesToCheck.any { it.isSubtypeOf(dispatcherReceiver.type) }
+        }
     }
 
     override fun fillCandidates(
@@ -483,7 +501,7 @@ internal class DelegateAccessorsImportFix(
                     OperatorNameConventions.GET_VALUE
                 else
                     OperatorNameConventions.SET_VALUE
-            }.distinct()
+            }.plus(OperatorNameConventions.PROVIDE_DELEGATE).distinct()
         }
 
         override fun createImportAction(diagnostic: Diagnostic) =

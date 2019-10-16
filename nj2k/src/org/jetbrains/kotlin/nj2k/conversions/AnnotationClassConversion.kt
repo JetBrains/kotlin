@@ -9,23 +9,27 @@ import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.toExpression
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
 
-class AnnotationClassConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
+import org.jetbrains.kotlin.nj2k.types.isArrayType
+import org.jetbrains.kotlin.nj2k.types.replaceJavaClassWithKotlinClassType
+import org.jetbrains.kotlin.nj2k.types.updateNullabilityRecursively
+
+class AnnotationClassConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKClass) return recurse(element)
         if (element.classKind != JKClass.ClassKind.ANNOTATION) return recurse(element)
         val javaAnnotationMethods =
             element.classBody.declarations
                 .filterIsInstance<JKJavaAnnotationMethod>()
-        val constructor = JKKtPrimaryConstructorImpl(
-            JKNameIdentifierImpl(""),
+        val constructor = JKKtPrimaryConstructor(
+            JKNameIdentifier(""),
             javaAnnotationMethods.map { it.asKotlinAnnotationParameter() },
-            JKStubExpressionImpl(),
-            JKAnnotationListImpl(),
+            JKStubExpression(),
+            JKAnnotationList(),
             emptyList(),
-            JKVisibilityModifierElementImpl(Visibility.PUBLIC),
-            JKModalityModifierElementImpl(Modality.FINAL)
+            JKVisibilityModifierElement(Visibility.PUBLIC),
+            JKModalityModifierElement(Modality.FINAL)
         )
         element.modality = Modality.FINAL
         element.classBody.declarations += constructor
@@ -33,31 +37,31 @@ class AnnotationClassConversion(private val context: NewJ2kConverterContext) : R
         return recurse(element)
     }
 
-    private fun JKJavaAnnotationMethod.asKotlinAnnotationParameter(): JKParameterImpl {
+    private fun JKJavaAnnotationMethod.asKotlinAnnotationParameter(): JKParameter {
         val type = returnType.type
             .updateNullabilityRecursively(Nullability.NotNull)
-            .replaceJavaClassWithKotlinClassType(context.symbolProvider)
-        val initializer = this::defaultValue.detached().toExpression(context.symbolProvider)
+            .replaceJavaClassWithKotlinClassType(symbolProvider)
+        val initializer = this::defaultValue.detached().toExpression(symbolProvider)
         val isVarArgs = type is JKJavaArrayType && name.value == "value"
-        return JKParameterImpl(
-            JKTypeElementImpl(
+        return JKParameter(
+            JKTypeElement(
                 if (!isVarArgs) type else (type as JKJavaArrayType).type
             ),
-            JKNameIdentifierImpl(name.value),
+            JKNameIdentifier(name.value),
             isVarArgs = isVarArgs,
             initializer =
             if (type.isArrayType()
                 && initializer !is JKKtAnnotationArrayInitializerExpression
                 && initializer !is JKStubExpression
             ) {
-                JKKtAnnotationArrayInitializerExpressionImpl(initializer)
+                JKKtAnnotationArrayInitializerExpression(initializer)
             } else initializer
         ).also { parameter ->
-            if (leftNonCodeElements.any { it is JKCommentElement }) {
-                parameter.leftNonCodeElements = leftNonCodeElements
+            if (trailingComments.any { it is JKComment }) {
+                parameter.trailingComments += trailingComments
             }
-            if (rightNonCodeElements.any { it is JKCommentElement }) {
-                parameter.rightNonCodeElements = rightNonCodeElements
+            if (leadingComments.any { it is JKComment }) {
+                parameter.leadingComments += leadingComments
             }
 
         }

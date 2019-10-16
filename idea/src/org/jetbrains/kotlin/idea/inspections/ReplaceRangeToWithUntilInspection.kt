@@ -27,8 +27,7 @@ import org.jetbrains.kotlin.psi.*
 
 class ReplaceRangeToWithUntilInspection : AbstractPrimitiveRangeToInspection() {
     override fun visitRangeToExpression(expression: KtExpression, holder: ProblemsHolder) {
-        if (expression.getArguments()?.second?.deparenthesize()?.isMinusOne() != true) return
-
+        if (!isApplicable(expression)) return
         holder.registerProblem(
             expression,
             "'rangeTo' or the '..' call should be replaced with 'until'",
@@ -44,6 +43,20 @@ class ReplaceRangeToWithUntilInspection : AbstractPrimitiveRangeToInspection() {
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val element = descriptor.psiElement as KtExpression
+            applyFix(element)
+        }
+    }
+
+    companion object {
+        fun applyFixIfApplicable(expression: KtExpression) {
+            if (isApplicable(expression)) applyFix(expression)
+        }
+
+        private fun isApplicable(expression: KtExpression): Boolean {
+            return expression.getArguments()?.second?.deparenthesize()?.isMinusOne() == true
+        }
+
+        private fun applyFix(element: KtExpression) {
             val args = element.getArguments() ?: return
             element.replace(
                 KtPsiFactory(element).createExpressionByPattern(
@@ -53,15 +66,15 @@ class ReplaceRangeToWithUntilInspection : AbstractPrimitiveRangeToInspection() {
                 )
             )
         }
-    }
 
-    private fun KtExpression.isMinusOne(): Boolean {
-        if (this !is KtBinaryExpression) return false
-        if (operationToken != KtTokens.MINUS) return false
+        private fun KtExpression.isMinusOne(): Boolean {
+            if (this !is KtBinaryExpression) return false
+            if (operationToken != KtTokens.MINUS) return false
 
-        val constantValue = right?.constantValueOrNull()
-        val rightValue = (constantValue?.value as? Number)?.toInt() ?: return false
-        return rightValue == 1
+            val constantValue = right?.constantValueOrNull()
+            val rightValue = (constantValue?.value as? Number)?.toInt() ?: return false
+            return rightValue == 1
+        }
     }
 }
 

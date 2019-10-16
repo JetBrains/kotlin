@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
 class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendContext) {
@@ -219,7 +220,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsArrayIteratorFunction = getInternalFunction("arrayIterator")
 
     val jsPrimitiveArrayIteratorFunctions =
-        PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCase()}ArrayIterator") }
+        PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator") }
 
     val arrayLiteral = unOp("arrayLiteral")
 
@@ -236,15 +237,15 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val primitiveToSizeConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCase()}Array")
-            } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}Array"))
+                unOp("${it.toLowerCaseAsciiOnly()}Array")
+            } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}Array"))
         }
 
     val primitiveToLiteralConstructor =
         PrimitiveType.values().associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
-                unOp("${it.toLowerCase()}ArrayOf")
-            } ?: getInternalFunction("${type.typeName.asString().toLowerCase()}ArrayOf"))
+                unOp("${it.toLowerCaseAsciiOnly()}ArrayOf")
+            } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}ArrayOf"))
         }
 
     val arrayConcat = getInternalWithoutPackage("arrayConcat")
@@ -261,12 +262,18 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     // TODO move CharSequence-related stiff to IntrinsifyCallsLowering
     val charSequenceClassSymbol = context.symbolTable.referenceClass(context.getClass(FqName("kotlin.CharSequence")))
-    val charSequenceLengthPropertyGetterSymbol =
-        charSequenceClassSymbol.owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "length" }.getter!!.symbol
-    val charSequenceGetFunctionSymbol =
+    val charSequenceLengthPropertyGetterSymbol by lazy {
+        with(charSequenceClassSymbol.owner.declarations) {
+            filterIsInstance<IrProperty>().firstOrNull { it.name.asString() == "length" }?.getter ?:
+            filterIsInstance<IrFunction>().first { it.name.asString() == "<get-length>" }
+        }.symbol
+    }
+    val charSequenceGetFunctionSymbol by lazy {
         charSequenceClassSymbol.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "get" }.symbol
-    val charSequenceSubSequenceFunctionSymbol =
+    }
+    val charSequenceSubSequenceFunctionSymbol by lazy {
         charSequenceClassSymbol.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "subSequence" }.symbol
+    }
 
 
     val jsCharSequenceGet = getInternalFunction("charSequenceGet")

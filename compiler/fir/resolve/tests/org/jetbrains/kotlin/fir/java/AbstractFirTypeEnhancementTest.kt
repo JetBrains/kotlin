@@ -28,15 +28,11 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
-import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -151,7 +147,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
         val javaFirDump = StringBuilder().also { builder ->
             val renderer = FirRenderer(builder)
-            val symbolProvider = session.service<FirSymbolProvider>() as FirCompositeSymbolProvider
+            val symbolProvider = session.firSymbolProvider as FirCompositeSymbolProvider
             val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
 
             fun processClassWithChildren(psiClass: PsiClass, parentFqName: FqName) {

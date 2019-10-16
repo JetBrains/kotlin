@@ -7,29 +7,29 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKArgumentListImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKKtCallExpressionImpl
+import org.jetbrains.kotlin.nj2k.types.primitiveTypes
 
-class BoxedTypeOperationsConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+
+class BoxedTypeOperationsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         return recurse(
             when (element) {
-                is JKMethodCallExpression ->
+                is JKCallExpression ->
                     convertBoxedTypeUnwrapping(element)
-                is JKJavaNewExpression -> convertCreationOfBoxedType(element)
+                is JKNewExpression -> convertCreationOfBoxedType(element)
                 else -> null
             } ?: element
         )
 
     }
 
-    private fun convertCreationOfBoxedType(newExpression: JKJavaNewExpression): JKExpression? {
+    private fun convertCreationOfBoxedType(newExpression: JKNewExpression): JKExpression? {
         if (newExpression.classSymbol.fqName !in boxedTypeFqNames) return null
         val singleArgument = newExpression.arguments.arguments.singleOrNull() ?: return null
         return singleArgument::value.detached()
     }
 
-    private fun convertBoxedTypeUnwrapping(methodCallExpression: JKMethodCallExpression): JKExpression? {
+    private fun convertBoxedTypeUnwrapping(methodCallExpression: JKCallExpression): JKExpression? {
         val (boxedJavaType, operationType) =
             primitiveTypeUnwrapRegexp.matchEntire(methodCallExpression.identifier.fqName)
                 ?.groupValues
@@ -38,12 +38,12 @@ class BoxedTypeOperationsConversion(private val context: NewJ2kConverterContext)
                 } ?: return null
         val primitiveTypeName = boxedTypeToPrimitiveType[boxedJavaType] ?: return null
         if (operationType !in primitiveTypeNames) return null
-        return JKKtCallExpressionImpl(
-            context.symbolProvider.provideMethodSymbol(
+        return JKCallExpressionImpl(
+            symbolProvider.provideMethodSymbol(
                 "kotlin.${primitiveTypeName.capitalize()}.to${operationType.capitalize()}"
             ),
-            JKArgumentListImpl()
-        ).withNonCodeElementsFrom(methodCallExpression)
+            JKArgumentList()
+        ).withFormattingFrom(methodCallExpression)
     }
 
     companion object {

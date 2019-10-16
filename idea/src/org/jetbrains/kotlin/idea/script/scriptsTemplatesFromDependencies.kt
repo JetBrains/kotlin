@@ -14,7 +14,10 @@ import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
-import org.jetbrains.kotlin.scripting.definitions.*
+import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT
+import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_PATH
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.getEnvironment
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
@@ -42,6 +45,8 @@ class ScriptTemplatesFromDependenciesProvider(project: Project) : AsyncScriptDef
     override val progressMessage = "Kotlin: scanning dependencies for script definitions..."
 
     override fun loadScriptDefinitions(previous: List<ScriptDefinition>?): List<ScriptDefinition> {
+        if (project.isDefault) return emptyList()
+
         val templatesCopy = templatesLock.write {
             val newTemplates = scriptDefinitionsFromDependencies(project)
             if (newTemplates != templates) {

@@ -1,4 +1,4 @@
 FILE: importFromObject.kt
     public final fun bar(): R|kotlin/Unit| {
-        R|a/A.foo|()
+        this@R|a/A|.R|a/A.foo|()
     }

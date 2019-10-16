@@ -20,12 +20,12 @@ import java.io.File
 abstract class AbstractConcatenatedStringGeneratorTest : KotlinLightCodeInsightFixtureTestCase() {
     @Throws(Exception::class)
     protected fun doTest(path: String) {
-        myFixture.configureByFile(path)
+        myFixture.configureByFile(fileName())
         val expression = myFixture.file.collectDescendantsOfType<KtBinaryExpression>().lastOrNull()
         TestCase.assertNotNull("No binary expression found: $path", expression)
 
         val generatedString = ConcatenatedStringGenerator().create(expression!!)
 
-        KotlinTestUtils.assertEqualsToFile(File("$path.result"), generatedString)
+        KotlinTestUtils.assertEqualsToFile(File("${testPath()}.result"), generatedString)
     }
 }

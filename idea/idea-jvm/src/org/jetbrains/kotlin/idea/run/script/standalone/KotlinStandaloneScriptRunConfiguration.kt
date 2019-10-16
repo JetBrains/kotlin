@@ -38,7 +38,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.listeners.RefactoringElementAdapter
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import org.jdom.Element
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.run.JavaRunConfigurationExtensionManagerUtil
 import org.jetbrains.kotlin.idea.run.KotlinRunConfiguration
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer.Companion.pathFromPsiElement
@@ -206,7 +206,7 @@ private class ScriptCommandLineState(
 
         params.classPath.add(PathUtil.kotlinPathsForIdeaPlugin.compilerPath)
 
-        val scriptClasspath = ScriptDependenciesManager.getInstance(environment.project).getScriptClasspath(scriptVFile)
+        val scriptClasspath = ScriptConfigurationManager.getInstance(environment.project).getScriptClasspath(scriptVFile)
         scriptClasspath.forEach {
             params.classPath.add(it.presentableUrl)
         }

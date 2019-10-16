@@ -39,19 +39,6 @@ class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
                 val ktFile = scratchFile.getPsiFile() as? KtFile ?: return
                 val file = ktFile.virtualFile ?: return
 
-                // BUNCH: 181 scratch files are created with .kt extension
-                if (file.extension == KotlinFileType.EXTENSION) {
-                    runWriteAction {
-                        var newName = file.nameWithoutExtension + STD_SCRIPT_EXT
-                        var i = 1
-                        while (file.parent.findChild(newName) != null) {
-                            newName = file.nameWithoutExtension + "_" + i + STD_SCRIPT_EXT
-                            i++
-                        }
-                        file.rename(this, newName)
-                    }
-                }
-
                 if (file.extension != STD_SCRIPT_SUFFIX) {
                     LOG.error("Kotlin Scratch file should have .kts extension. Cannot add scratch panel for ${file.path}")
                     return

@@ -36,9 +36,9 @@ import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
-import kotlin.reflect.jvm.internal.components.ReflectKotlinClass
-import kotlin.reflect.jvm.internal.structure.functionClassArity
-import kotlin.reflect.jvm.internal.structure.wrapperByPrimitive
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
+import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 
 internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainerImpl(), KClass<T>, KClassifierImpl {
     inner class Data : KDeclarationContainerImpl.Data() {

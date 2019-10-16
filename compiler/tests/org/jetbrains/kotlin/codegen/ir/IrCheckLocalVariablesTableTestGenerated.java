@@ -39,6 +39,11 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         runTest("compiler/testData/checkLocalVariablesTable/copyFunction.kt");
     }
 
+    @TestMetadata("destructuringInFor.kt")
+    public void testDestructuringInFor() throws Exception {
+        runTest("compiler/testData/checkLocalVariablesTable/destructuringInFor.kt");
+    }
+
     @TestMetadata("destructuringInLambdas.kt")
     public void testDestructuringInLambdas() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/destructuringInLambdas.kt");

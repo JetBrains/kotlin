@@ -28,88 +28,73 @@ import org.jetbrains.kotlin.types.model.CapturedTypeMarker
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.utils.DO_NOTHING_2
 
-// if input type is capturedType, then we approximate it to UpperBound
 // null means that type should be leaved as is
 fun prepareArgumentTypeRegardingCaptureTypes(argumentType: UnwrappedType): UnwrappedType? {
-    val simpleType = NewKotlinTypeChecker.Default.transformToNewType(argumentType.lowerIfFlexible())
-    if (simpleType.constructor is IntersectionTypeConstructor) {
-        var changed = false
-        val preparedSuperTypes = simpleType.constructor.supertypes.map {
-            prepareArgumentTypeRegardingCaptureTypes(it.unwrap())?.apply { changed = true } ?: it.unwrap()
-        }
-        if (!changed) return null
-        return intersectTypes(preparedSuperTypes).makeNullableAsSpecified(simpleType.isMarkedNullable)
-    }
-    if (simpleType is NewCapturedType) {
-        // todo may be we should respect flexible/definitelyNotNull captured types also...
-        return simpleType.constructor.supertypes.takeIf { it.isNotEmpty() }?.let {
-            intersectTypes(it).makeNullableAsSpecified(simpleType.isMarkedNullable)
-        } ?: argumentType.builtIns.nullableAnyType
-    }
-    return captureFromExpression(simpleType)
+    return if (argumentType is NewCapturedType) null else captureFromExpression(argumentType)
 }
 
-fun captureFromExpression(type: UnwrappedType): UnwrappedType? = when (type) {
-    is SimpleType -> captureFromExpression(type)
-    // i.e. if there is nothing to capture -- no changes, if there is something -- use lowerBound as base type
-    is FlexibleType -> captureFromExpression(type.lowerBound)
-}
+fun captureFromExpression(type: UnwrappedType): UnwrappedType? =
+    captureFromExpression(type.lowerIfFlexible())
 
-fun captureFromExpression(type: SimpleType): UnwrappedType? {
+private fun captureFromExpression(type: SimpleType): UnwrappedType? {
     val typeConstructor = type.constructor
     if (typeConstructor is IntersectionTypeConstructor) {
         var changed = false
-        val capturedSupertypes = typeConstructor.supertypes.map {
-            captureFromExpression(it.unwrap())?.apply { changed = true } ?: it.unwrap()
+        val capturedSupertypes = typeConstructor.supertypes.map { supertype ->
+            val unwrapped = supertype.unwrap()
+            captureFromExpression(unwrapped)?.apply { changed = true } ?: unwrapped
         }
+
         if (!changed) return null
+
         return intersectTypes(capturedSupertypes).makeNullableAsSpecified(type.isMarkedNullable)
     }
     return captureFromArguments(type, CaptureStatus.FROM_EXPRESSION)
 }
 
 // this function suppose that input type is simple classifier type
-fun captureFromArguments(
+internal fun captureFromArguments(
     type: SimpleType,
-    status: CaptureStatus,
-    acceptNewCapturedType: ((argumentIndex: Int, NewCapturedType) -> Unit) = DO_NOTHING_2
+    status: CaptureStatus
 ): SimpleType? {
     if (type.arguments.size != type.constructor.parameters.size) return null
 
     val arguments = type.arguments
     if (arguments.all { it.projectionKind == Variance.INVARIANT }) return null
 
-    val newArguments = arguments.map { projection ->
+    val capturedArguments = arguments.map { projection ->
         if (projection.projectionKind == Variance.INVARIANT) return@map projection
 
-        val lowerType = if (!projection.isStarProjection && projection.projectionKind == Variance.IN_VARIANCE) {
-            projection.type.unwrap()
-        } else null
+        val lowerType =
+            if (!projection.isStarProjection && projection.projectionKind == Variance.IN_VARIANCE) {
+                projection.type.unwrap()
+            } else {
+                null
+            }
 
         NewCapturedType(status, lowerType, projection).asTypeProjection() // todo optimization: do not create type projection
     }
 
-    val substitutor = TypeConstructorSubstitution.create(type.constructor, newArguments).buildSubstitutor()
+    val substitutor = TypeConstructorSubstitution.create(type.constructor, capturedArguments).buildSubstitutor()
     for (index in arguments.indices) {
         val oldProjection = arguments[index]
-        val newProjection = newArguments[index]
+        val newProjection = capturedArguments[index]
 
         if (oldProjection.projectionKind == Variance.INVARIANT) continue
-        var upperBounds = type.constructor.parameters[index].upperBounds.map {
+        val capturedTypeSupertypes = type.constructor.parameters[index].upperBounds.mapTo(mutableListOf()) {
             NewKotlinTypeChecker.Default.transformToNewType(substitutor.safeSubstitute(it, Variance.INVARIANT).unwrap())
         }
+
         if (!oldProjection.isStarProjection && oldProjection.projectionKind == Variance.OUT_VARIANCE) {
-            upperBounds += NewKotlinTypeChecker.Default.transformToNewType(oldProjection.type.unwrap())
+            capturedTypeSupertypes += NewKotlinTypeChecker.Default.transformToNewType(oldProjection.type.unwrap())
         }
 
         val capturedType = newProjection.type as NewCapturedType
-        capturedType.constructor.initializeSupertypes(upperBounds)
-        acceptNewCapturedType(index, capturedType)
+        capturedType.constructor.initializeSupertypes(capturedTypeSupertypes)
     }
 
-    return KotlinTypeFactory.simpleType(type.annotations, type.constructor, newArguments, type.isMarkedNullable)
+    return KotlinTypeFactory.simpleType(type.annotations, type.constructor, capturedArguments, type.isMarkedNullable)
 }
 
 /**

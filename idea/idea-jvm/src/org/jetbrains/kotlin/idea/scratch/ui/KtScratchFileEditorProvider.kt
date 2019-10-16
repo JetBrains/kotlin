@@ -9,11 +9,13 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.diff.tools.util.BaseSyncScrollable
 import com.intellij.diff.tools.util.SyncScrollSupport.TwosideSyncScrollSupport
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.actionSystem.ActionToolbar
+import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.EditorKind
 import com.intellij.openapi.editor.event.VisibleAreaListener
+import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorPolicy
 import com.intellij.openapi.fileEditor.FileEditorProvider
@@ -27,6 +29,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiManager
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.core.util.getLineNumber
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.*
 import org.jetbrains.kotlin.psi.UserDataProperty
@@ -54,18 +58,25 @@ class KtScratchFileEditorProvider : FileEditorProvider, DumbAware {
 
 class KtScratchFileEditorWithPreview private constructor(
     val scratchFile: ScratchFile,
-    private val sourceTextEditor: TextEditor,
+    sourceTextEditor: TextEditor,
     private val previewTextEditor: TextEditor
-) : TextEditorWithPreview(sourceTextEditor, previewTextEditor), TextEditor {
+) : TextEditorWithPreview(sourceTextEditor, previewTextEditor), TextEditor, ScratchEditorLinesTranslator {
 
+    private val sourceEditor = sourceTextEditor.editor as EditorEx
+    private val previewEditor = previewTextEditor.editor as EditorEx
+    private val previewOutputManager: PreviewOutputBlocksManager = PreviewOutputBlocksManager(previewEditor)
 
     private val toolWindowHandler: ScratchOutputHandler = requestToolWindowHandler()
     private val inlayScratchOutputHandler = InlayScratchOutputHandler(sourceTextEditor, toolWindowHandler)
-    private val previewEditorScratchOutputHandler = PreviewEditorScratchOutputHandler(previewTextEditor, toolWindowHandler)
+    private val previewEditorScratchOutputHandler = PreviewEditorScratchOutputHandler(
+        previewOutputManager,
+        toolWindowHandler,
+        previewTextEditor as Disposable
+    )
     private val commonPreviewOutputHandler = LayoutDependantOutputHandler(
-        inlayScratchOutputHandler,
-        previewEditorScratchOutputHandler,
-        ::getLayout
+        noPreviewOutputHandler = inlayScratchOutputHandler,
+        previewOutputHandler = previewEditorScratchOutputHandler,
+        layoutProvider = ::getLayout
     )
 
     private val scratchTopPanel = ScratchTopPanel(scratchFile)
@@ -77,19 +88,31 @@ class KtScratchFileEditorWithPreview private constructor(
         scratchFile.replScratchExecutor?.addOutputHandler(commonPreviewOutputHandler)
 
         configureSyncScrollForSourceAndPreview()
+        configureSyncHighlighting(sourceEditor, previewEditor, translator = this)
 
         ScratchFileAutoRunner.addListener(scratchFile.project, sourceTextEditor)
     }
 
-    private fun configureSyncScrollForSourceAndPreview() {
-        val sourceEditor = sourceTextEditor.editor
-        val previewEditor = previewTextEditor.editor
+    override fun previewLineToSourceLines(previewLine: Int): Pair<Int, Int>? {
+        val expressionUnderCaret = scratchFile.getExpressionAtLine(previewLine) ?: return null
+        val outputBlock = previewOutputManager.getBlock(expressionUnderCaret) ?: return null
 
+        return outputBlock.lineStart to outputBlock.lineEnd
+    }
+
+    override fun sourceLineToPreviewLines(sourceLine: Int): Pair<Int, Int>? {
+        val block = previewOutputManager.getBlockAtLine(sourceLine) ?: return null
+        if (!block.sourceExpression.linesInformationIsCorrect()) return null
+
+        return block.sourceExpression.lineStart to block.sourceExpression.lineEnd
+    }
+
+    private fun configureSyncScrollForSourceAndPreview() {
         val scrollable = object : BaseSyncScrollable() {
             override fun processHelper(helper: ScrollHelper) {
                 if (!helper.process(0, 0)) return
 
-                val alignments = previewEditorScratchOutputHandler.sourceToPreviewAlignments
+                val alignments = previewOutputManager.computeSourceToPreviewAlignments()
 
                 for ((fromSource, fromPreview) in alignments) {
                     if (!helper.process(fromSource, fromPreview)) return
@@ -136,6 +159,27 @@ class KtScratchFileEditorWithPreview private constructor(
         commonPreviewOutputHandler.clear(scratchFile)
     }
 
+    override fun createViewActionGroup(): ActionGroup {
+        return DefaultActionGroup(showEditorAction, showEditorAndPreviewAction)
+    }
+
+    /**
+     * For simple actions, [Presentation.getText] is shown in the tooltip in the [ActionToolbar], and [Presentation.getDescription] is shown
+     * in the bottom tool panel. But when action implements [com.intellij.openapi.actionSystem.ex.CustomComponentAction], its tooltip is
+     * controlled only by its [javax.swing.JComponent.setToolTipText] method.
+     *
+     * That's why we set long and descriptive [Presentation.getText], but short [Presentation.getDescription].
+     */
+    override fun getShowEditorAction(): ToggleAction = super.getShowEditorAction().apply {
+        templatePresentation.text = KotlinBundle.message("scratch.inlay.output.mode")
+        templatePresentation.description = KotlinBundle.message("scratch.inlay.output.mode.description")
+    }
+
+    override fun getShowEditorAndPreviewAction(): ToggleAction = super.getShowEditorAndPreviewAction().apply {
+        templatePresentation.text = KotlinBundle.message("scratch.side.panel.output.mode")
+        templatePresentation.description = KotlinBundle.message("scratch.side.panel.output.mode.description")
+    }
+
     override fun setLayout(newLayout: Layout) {
         val previous = layout
         super.setLayout(newLayout)
@@ -162,7 +206,7 @@ class KtScratchFileEditorWithPreview private constructor(
             val mainEditor = textEditorProvider.createEditor(scratchFile.project, scratchFile.file) as TextEditor
             val editorFactory = EditorFactory.getInstance()
 
-            val viewer = editorFactory.createViewer(editorFactory.createDocument(""))
+            val viewer = editorFactory.createViewer(editorFactory.createDocument(""), scratchFile.project, EditorKind.PREVIEW)
             Disposer.register(mainEditor, Disposable { editorFactory.releaseEditor(viewer) })
 
             val previewEditor = textEditorProvider.getTextEditor(viewer)
@@ -238,4 +282,13 @@ private class LayoutDependantOutputHandler(
             TextEditorWithPreview.Layout.SHOW_EDITOR -> noPreviewOutputHandler
             else -> previewOutputHandler
         }
+}
+
+/**
+ * Checks if [ScratchExpression.element] is actually starts at the [ScratchExpression.lineStart]
+ * and ends at the [ScratchExpression.lineEnd].
+ */
+private fun ScratchExpression.linesInformationIsCorrect(): Boolean {
+    if (!element.isValid) return false
+    return element.getLineNumber(start = true) == lineStart && element.getLineNumber(start = false) == lineEnd
 }

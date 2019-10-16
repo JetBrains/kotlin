@@ -6,20 +6,14 @@
 package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
-import org.jetbrains.kotlin.idea.AbstractCopyPasteTest
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopyPasteTest() {
-    protected open val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/plainTextConversion"
-
     private var oldEditorOptions: KotlinEditorOptions? = null
-
-    override fun getTestDataPath() = BASE_PATH
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
@@ -35,10 +29,9 @@ abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopy
         super.tearDown()
     }
 
-    fun doTest(path: String) {
-        myFixture.testDataPath = BASE_PATH
-        val testName = getTestName(false)
-        myFixture.configureByFiles(testName + ".txt")
+    fun doTest(unused: String) {
+        val fileName = fileName()
+        myFixture.configureByFile(fileName)
 
         val fileText = myFixture.editor.document.text
         val noConversionExpected = InTextDirectivesUtils.findListWithPrefixes(fileText, "// NO_CONVERSION_EXPECTED").isNotEmpty()
@@ -46,18 +39,21 @@ abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopy
         myFixture.editor.selectionModel.setSelection(0, fileText.length)
         myFixture.performEditorAction(IdeActions.ACTION_COPY)
 
-        configureByDependencyIfExists(testName + ".dependency.kt")
-        configureByDependencyIfExists(testName + ".dependency.java")
+        configureByDependencyIfExists(fileName.replace(".txt", ".dependency.kt"))
+        configureByDependencyIfExists(fileName.replace(".txt", ".dependency.java"))
 
-        configureTargetFile(testName + ".to.kt")
+        configureTargetFile(fileName.replace(".txt", ".to.kt"))
 
         ConvertTextJavaCopyPasteProcessor.conversionPerformed = false
 
         myFixture.performEditorAction(IdeActions.ACTION_PASTE)
 
-        kotlin.test.assertEquals(noConversionExpected, !ConvertTextJavaCopyPasteProcessor.conversionPerformed,
-                                 if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested")
+        kotlin.test.assertEquals(
+            noConversionExpected, !ConvertTextJavaCopyPasteProcessor.conversionPerformed,
+            if (noConversionExpected) "Conversion to Kotlin should not be suggested" else "No conversion to Kotlin suggested"
+        )
 
-        KotlinTestUtils.assertEqualsToFile(File(path.replace(".txt", ".expected.kt")), myFixture.file.text)
+        val expectedFile = File(testPath().replace(".txt", ".expected.kt"))
+        KotlinTestUtils.assertEqualsToFile(expectedFile, myFixture.file.text)
     }
 }

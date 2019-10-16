@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.idea.configuration.findApplicableConfigurator
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.facet.getCleanRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.roots.invalidateProjectRoots
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.KtFile
 
 sealed class ChangeGeneralLanguageFeatureSupportFix(
@@ -56,7 +58,13 @@ sealed class ChangeGeneralLanguageFeatureSupportFix(
                 if (!checkUpdateRuntime(project, feature.sinceApiVersion)) return
             }
             KotlinCompilerSettings.getInstance(project).update {
-                additionalArguments = additionalArguments.replaceLanguageFeature(feature, featureSupport, separator = " ", quoted = false)
+                additionalArguments = additionalArguments.replaceLanguageFeature(
+                    feature,
+                    featureSupport,
+                    file.module?.let { getCleanRuntimeLibraryVersion(it) },
+                    separator = " ",
+                    quoted = false
+                )
             }
             project.invalidateProjectRoots()
         }

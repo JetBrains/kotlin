@@ -1,4 +1,4 @@
-namespace org.w3c.notifications;
+package org.w3c.notifications;
 
 
 // Downloaded from https://raw.githubusercontent.com/whatwg/notifications/master/notifications.html

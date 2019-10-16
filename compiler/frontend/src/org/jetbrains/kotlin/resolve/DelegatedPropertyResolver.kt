@@ -195,24 +195,19 @@ class DelegatedPropertyResolver(
             isGet = isGet, isComplete = true
         )
 
-        reportAndRecordDelegateOperatorResults(functionResults, propertyDescriptor, accessor, delegateExpression, delegateType, trace)
+        if (functionResults.isSuccess) {
+            recordDelegateOperatorResults(functionResults, propertyDescriptor, accessor, trace)
+        } else {
+            reportGetSetValueResolutionError(functionResults, accessor, delegateExpression, delegateType, trace, isGet)
+        }
     }
 
-    private fun reportAndRecordDelegateOperatorResults(
+    private fun recordDelegateOperatorResults(
         result: OverloadResolutionResults<FunctionDescriptor>,
         propertyDescriptor: VariableDescriptorWithAccessors,
         accessor: VariableAccessorDescriptor,
-        delegateExpression: KtExpression,
-        delegateType: KotlinType,
         trace: BindingTrace
     ) {
-        if (!result.isSuccess) {
-            val call = trace.bindingContext.get(DELEGATED_PROPERTY_CALL, accessor)
-                    ?: throw AssertionError("'getDelegatedPropertyConventionMethod' didn't record a call")
-            reportDelegateOperatorResolutionError(trace, call, result, delegateExpression, delegateType)
-            return
-        }
-
         val resultingDescriptor = result.resultingDescriptor
         val resultingCall = result.resultingCall
 
@@ -230,16 +225,41 @@ class DelegatedPropertyResolver(
         trace.record(DELEGATED_PROPERTY_RESOLVED_CALL, accessor, resultingCall)
     }
 
-    private fun reportDelegateOperatorResolutionError(
+    private fun reportGetSetValueResolutionError(
+        result: OverloadResolutionResults<FunctionDescriptor>,
+        accessor: VariableAccessorDescriptor,
+        delegateExpression: KtExpression,
+        delegateType: KotlinType,
+        trace: BindingTrace,
+        isGet: Boolean
+    ) {
+        val call = trace.bindingContext.get(DELEGATED_PROPERTY_CALL, accessor)
+            ?: throw AssertionError("'getDelegatedPropertyConventionMethod' didn't record a call")
+
+        val errorReportedForCandidate = reportDelegateErrorIfCandidateExists(trace, call, result, delegateExpression)
+        if (!errorReportedForCandidate) {
+            reportDelegateFunctionMissing(call, delegateExpression, delegateType, trace, isGet)
+        }
+    }
+
+    private fun reportDelegateFunctionMissing(
+        delegateOperatorCall: Call,
+        delegateExpression: KtExpression,
+        delegateType: KotlinType,
+        trace: BindingTrace,
+        isGet: Boolean
+    ) {
+        val expectedFunction = renderCall(delegateOperatorCall, trace.bindingContext)
+        val delegateKind = if (isGet) "delegate" else "delegate for var (read-write property)"
+        trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType, delegateKind))
+    }
+
+    private fun reportDelegateErrorIfCandidateExists(
         trace: BindingTrace,
         delegateOperatorCall: Call,
         delegateOperatorResults: OverloadResolutionResults<FunctionDescriptor>,
-        delegateExpression: KtExpression,
-        delegateType: KotlinType,
-        operatorRequired: Boolean = true
+        delegateExpression: KtExpression
     ): Boolean {
-        val expectedFunction = renderCall(delegateOperatorCall, trace.bindingContext)
-
         val resolutionErrorFactory = when {
             delegateOperatorResults.isSingleResult ||
                     delegateOperatorResults.isIncomplete ||
@@ -250,17 +270,12 @@ class DelegatedPropertyResolver(
             else -> null
         }
 
-        if (resolutionErrorFactory != null) {
-            trace.report(resolutionErrorFactory.on(delegateExpression, expectedFunction, delegateOperatorResults.resultingCalls))
-            return true
+        resolutionErrorFactory?.let {
+            val expectedFunction = renderCall(delegateOperatorCall, trace.bindingContext)
+            trace.report(it.on(delegateExpression, expectedFunction, delegateOperatorResults.resultingCalls))
         }
 
-        if (operatorRequired) {
-            trace.report(DELEGATE_SPECIAL_FUNCTION_MISSING.on(delegateExpression, expectedFunction, delegateType))
-            return true
-        }
-
-        return false
+        return resolutionErrorFactory != null
     }
 
     private fun resolveProvideDelegateMethod(
@@ -283,8 +298,8 @@ class DelegatedPropertyResolver(
         if (!provideDelegateResults.isSuccess) {
             val call = traceForProvideDelegate.bindingContext.get(BindingContext.PROVIDE_DELEGATE_CALL, propertyDescriptor)
                     ?: throw AssertionError("'getDelegatedPropertyConventionMethod' didn't record a call")
-            val shouldCommitTrace = reportDelegateOperatorResolutionError(
-                traceForProvideDelegate, call, provideDelegateResults, byExpression, byExpressionType, operatorRequired = false
+            val shouldCommitTrace = reportDelegateErrorIfCandidateExists(
+                traceForProvideDelegate, call, provideDelegateResults, byExpression
             )
 
             if (shouldCommitTrace) {

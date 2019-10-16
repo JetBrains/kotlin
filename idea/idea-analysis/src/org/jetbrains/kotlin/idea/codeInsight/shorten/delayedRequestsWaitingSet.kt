@@ -16,19 +16,16 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.shorten
 
-import com.intellij.openapi.project.Project
-import com.intellij.psi.SmartPsiElementPointer
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.SmartPointerManager
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMember
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
+import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.ShortenReferences.Options
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -40,8 +37,8 @@ interface DelayedRefactoringRequest
 
 class ShorteningRequest(val pointer: SmartPsiElementPointer<KtElement>, val options: Options) : DelayedRefactoringRequest
 class ImportRequest(
-        val elementToImportPointer: SmartPsiElementPointer<PsiElement>,
-        val filePointer: SmartPsiElementPointer<KtFile>
+    val elementToImportPointer: SmartPsiElementPointer<PsiElement>,
+    val filePointer: SmartPsiElementPointer<KtFile>
 ) : DelayedRefactoringRequest
 
 private var Project.delayedRefactoringRequests: MutableSet<DelayedRefactoringRequest>?
@@ -90,6 +87,7 @@ fun addDelayedImportRequest(elementToImport: PsiElement, file: KtFile) {
 fun performDelayedRefactoringRequests(project: Project) {
     project.delayedRefactoringRequests?.let { requests ->
         project.delayedRefactoringRequests = null
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
 
         val shorteningRequests = ArrayList<ShorteningRequest>()
         val importRequests = ArrayList<ImportRequest>()
@@ -103,7 +101,7 @@ fun performDelayedRefactoringRequests(project: Project) {
         val elementToOptions = shorteningRequests.mapNotNull { req -> req.pointer.element?.let { it to req.options } }.toMap()
         val elements = elementToOptions.keys
         //TODO: this is not correct because it should not shorten deep into the elements!
-        ShortenReferences({ elementToOptions[it] ?: Options.DEFAULT }).process(elements)
+        ShortenReferences { elementToOptions[it] ?: Options.DEFAULT }.process(elements)
 
         val importInsertHelper = ImportInsertHelper.getInstance(project)
 
@@ -127,7 +125,7 @@ private val LOG = Logger.getInstance(Project::class.java.canonicalName)
 
 fun prepareDelayedRequests(project: Project) {
     val requests = project.delayedRefactoringRequests
-    if (project.ensureNoRefactoringRequestsBeforeRefactoring && requests != null && !requests.isEmpty()) {
+    if (project.ensureNoRefactoringRequestsBeforeRefactoring && requests != null && requests.isNotEmpty()) {
         LOG.warn("Waiting set for reference shortening is not empty")
         project.delayedRefactoringRequests = null
     }
@@ -137,7 +135,7 @@ var KtElement.isToBeShortened: Boolean? by CopyablePsiUserDataProperty(Key.creat
 
 fun KtElement.addToBeShortenedDescendantsToWaitingSet() {
     forEachDescendantOfType<KtElement> {
-        if (it.isToBeShortened ?: false) {
+        if (it.isToBeShortened == true) {
             it.isToBeShortened = null
             it.addToShorteningWaitSet()
         }

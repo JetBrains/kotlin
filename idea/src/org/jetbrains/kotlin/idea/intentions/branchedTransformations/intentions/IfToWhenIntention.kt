@@ -191,8 +191,8 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
         } as KtWhenExpression
 
 
-        if (whenExpression.getSubjectToIntroduce() != null) {
-            whenExpression = whenExpression.introduceSubject() ?: return
+        if (whenExpression.getSubjectToIntroduce(checkConstants = false) != null) {
+            whenExpression = whenExpression.introduceSubject(checkConstants = false) ?: return
         }
 
         val result = ifExpression.replaced(whenExpression)

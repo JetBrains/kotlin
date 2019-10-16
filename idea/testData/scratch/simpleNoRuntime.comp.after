@@ -1,4 +1,0 @@
-// REPL_MODE: false
-// NO_MODULE
-
-arrayListOf(1, 2).size    // RESULT: 2

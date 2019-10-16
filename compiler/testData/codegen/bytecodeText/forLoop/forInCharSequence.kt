@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun test() {
     var s = ""
     for (c in "testString") {

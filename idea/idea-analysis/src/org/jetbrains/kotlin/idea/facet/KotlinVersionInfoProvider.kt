@@ -92,7 +92,8 @@ private fun Iterable<String>.addReleaseVersionIfNecessary(shouldAdd: Boolean): I
     if (shouldAdd) this + VersionView.RELEASED_VERSION.versionString else this
 
 fun getRuntimeLibraryVersion(module: Module): String? {
-    val targetPlatform = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module).targetPlatform
+    val settingsProvider = KotlinFacetSettingsProvider.getInstance(module.project) ?: return null
+    val targetPlatform = settingsProvider.getInitializedSettings(module).targetPlatform
     val versions = getRuntimeLibraryVersions(module, null, targetPlatform.orDefault().idePlatformKind)
     return versions.toSet().singleOrNull()
 }

@@ -8,22 +8,22 @@ public interface FieldAccessCommonOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+   * <code>required int32 symbol = 1;</code>
    */
   boolean hasSymbol();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+   * <code>required int32 symbol = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSymbol();
+  int getSymbol();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super = 2;</code>
+   * <code>optional int32 super = 2;</code>
    */
   boolean hasSuper();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super = 2;</code>
+   * <code>optional int32 super = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSuper();
+  int getSuper();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression receiver = 3;</code>

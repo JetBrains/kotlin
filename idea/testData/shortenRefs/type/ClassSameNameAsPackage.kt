@@ -1,4 +1,3 @@
 
-// todo must be: s: same
-fun f(s: <selection>same.same</selection>) {
+fun f(s: <selection>_root_ide_package_.same.same</selection>) {
 }

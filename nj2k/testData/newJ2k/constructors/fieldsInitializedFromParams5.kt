@@ -1,8 +1,7 @@
 internal class C(p: Int) {
-    var p: Int
+    var p = 0
 
     init {
-        this.p = 0
         if (p > 0) {
             this.p = p
         }

@@ -7,4 +7,4 @@ fun test() {
 
 //T0 <: T1 due to 'INITIALIZER'
 //T2 <: T4 due to 'INITIALIZER'
-//T3 <: T1 due to 'ASSIGNMENT'
+//T1 <: T3 due to 'ASSIGNMENT'

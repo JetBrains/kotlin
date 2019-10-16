@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.intentions.loopToCallChain.countUsages
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -31,6 +32,9 @@ class MoveVariableDeclarationIntoWhenInspection : AbstractKotlinInspection(), Cl
             val subjectExpression = expression.subjectExpression ?: return
             val property = expression.findDeclarationNear() ?: return
             if (!property.isOneLiner()) return
+            if (property.initializer?.anyDescendantOfType<KtExpression> {
+                    it is KtThrowExpression || it is KtReturnExpression || it is KtBreakExpression || it is KtContinueExpression
+                } == true) return
 
             val action = property.action(expression)
             if (action == Action.NOTHING) return

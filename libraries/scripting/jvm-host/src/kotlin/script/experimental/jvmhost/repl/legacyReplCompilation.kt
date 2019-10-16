@@ -13,8 +13,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvmhost.impl.withDefaults
 
 /**
  * REPL Compilation wrapper for "legacy" REPL APIs defined in the org.jetbrains.kotlin.cli.common.repl package
@@ -23,7 +23,7 @@ class JvmReplCompiler(
     val scriptCompilationConfiguration: ScriptCompilationConfiguration,
     val hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
     val replCompilerProxy: KJvmReplCompilerProxy = KJvmReplCompilerImpl(
-        hostConfiguration.withDefaults()
+        hostConfiguration.withDefaultsFrom(defaultJvmScriptingHostConfiguration)
     )
 ) : ReplCompiler {
 
@@ -74,7 +74,10 @@ internal class SourceCodeFromReplCodeLine(
     compilationConfiguration: ScriptCompilationConfiguration
 ) : SourceCode {
     override val text: String get() = codeLine.code
-    override val name: String = "${makeScriptBaseName(codeLine)}.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}"
+    override val name: String =
+        "${compilationConfiguration[ScriptCompilationConfiguration.repl.makeSnippetIdentifier]!!(
+            compilationConfiguration, ReplSnippetIdImpl(codeLine.no, codeLine.generation, 0)
+        )}.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}"
     override val locationId: String? = null
 }
 

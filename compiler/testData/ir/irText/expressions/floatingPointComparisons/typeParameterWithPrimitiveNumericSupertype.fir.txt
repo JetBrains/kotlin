@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
               GET_VAR 'x: kotlin.Any declared in <root>.test0' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test0' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test0' type=kotlin.Int origin=null
               arg1: GET_VAR 'y: T of <root>.test0 declared in <root>.test0' type=T of <root>.test0 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
               GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Float origin=null
               arg1: GET_VAR 'y: T of <root>.test1 declared in <root>.test1' type=T of <root>.test1 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Float
               GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Float origin=null
               arg1: GET_VAR 'y: T of <root>.test2 declared in <root>.test2' type=T of <root>.test2 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
               GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Int origin=null
               arg1: GET_VAR 'y: T of <root>.test3 declared in <root>.test3' type=T of <root>.test3 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
               GET_VAR 'x: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test4' type=kotlin.Int origin=null
               arg1: GET_VAR 'y: T of <root>.test4 declared in <root>.test4' type=T of <root>.test4 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -91,7 +91,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
               GET_VAR 'x: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test5' type=kotlin.Int origin=null
               arg1: GET_VAR 'y: R of <root>.test5 declared in <root>.test5' type=R of <root>.test5 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Int
               GET_VAR 'x: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test6' type=kotlin.Any origin=null
+              arg0: GET_VAR 'x: kotlin.Any declared in <root>.test6' type=kotlin.Int origin=null
               arg1: GET_VAR 'y: T of <root>.test6 declared in <root>.test6' type=T of <root>.test6 origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/typeParameterWithPrimitiveNumericSupertype.kt
                 GET_VAR 'y: kotlin.Any declared in <root>.F.testCapturedType' type=kotlin.Any origin=null
               then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'x: T of <root>.F declared in <root>.F.testCapturedType' type=T of <root>.F origin=null
-                arg1: GET_VAR 'y: kotlin.Any declared in <root>.F.testCapturedType' type=kotlin.Any origin=null
+                arg1: GET_VAR 'y: kotlin.Any declared in <root>.F.testCapturedType' type=kotlin.Double origin=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Boolean type=kotlin.Boolean value=false

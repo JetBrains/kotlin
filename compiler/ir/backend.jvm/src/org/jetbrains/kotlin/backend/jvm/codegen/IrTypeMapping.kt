@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isLocalClass
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.org.objectweb.asm.Type
@@ -63,7 +60,7 @@ private fun IrSimpleType.buildPossiblyInnerType(classifier: IrClass?, index: Int
     val toIndex = classifier.typeParameters.size + index
     if (!classifier.isInner) {
         assert(toIndex == arguments.size || classifier.isLocalClass()) {
-            "${arguments.size - toIndex} trailing arguments were found in $this type"
+            "${arguments.size - toIndex} trailing arguments were found in this type: ${render()}"
         }
 
         return PossiblyInnerIrType(classifier, arguments.subList(index, arguments.size), null)
@@ -78,7 +75,7 @@ private fun IrSimpleType.buildPossiblyInnerType(classifier: IrClass?, index: Int
 
 internal val IrTypeParameter.representativeUpperBound: IrType
     get() {
-        assert(superTypes.isNotEmpty()) { "Upper bounds should not be empty: $this" }
+        assert(superTypes.isNotEmpty()) { "Upper bounds should not be empty: ${render()}" }
 
         return superTypes.firstOrNull {
             val irClass = it.classOrNull?.owner ?: return@firstOrNull false

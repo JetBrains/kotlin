@@ -18,55 +18,63 @@ import org.jetbrains.kotlin.types.AbbreviatedType
 class RedundantExplicitTypeInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) =
         propertyVisitor(fun(property) {
-            if (!property.isLocal) return
             val typeReference = property.typeReference ?: return
-            val initializer = property.initializer ?: return
+            if (hasRedundantType(property)) {
+                holder.registerProblem(
+                    typeReference,
+                    "Explicitly given type is redundant here",
+                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                    IntentionWrapper(RemoveExplicitTypeIntention(), property.containingKtFile)
+                )
+            }
+        })
 
-            val type = property.resolveToDescriptorIfAny()?.type ?: return
-            if (type is AbbreviatedType) return
+    companion object {
+        fun hasRedundantType(property: KtProperty): Boolean {
+            if (!property.isLocal) return false
+            val typeReference = property.typeReference ?: return false
+            val initializer = property.initializer ?: return false
+
+            val type = property.resolveToDescriptorIfAny()?.type ?: return false
+            if (type is AbbreviatedType) return false
             when (initializer) {
                 is KtConstantExpression -> {
                     when (initializer.node.elementType) {
                         KtNodeTypes.BOOLEAN_CONSTANT -> {
-                            if (!KotlinBuiltIns.isBoolean(type)) return
+                            if (!KotlinBuiltIns.isBoolean(type)) return false
                         }
                         KtNodeTypes.INTEGER_CONSTANT -> {
                             if (initializer.text.endsWith("L")) {
-                                if (!KotlinBuiltIns.isLong(type)) return
+                                if (!KotlinBuiltIns.isLong(type)) return false
                             } else {
-                                if (!KotlinBuiltIns.isInt(type)) return
+                                if (!KotlinBuiltIns.isInt(type)) return false
                             }
                         }
                         KtNodeTypes.FLOAT_CONSTANT -> {
                             if (initializer.text.endsWith("f") || initializer.text.endsWith("F")) {
-                                if (!KotlinBuiltIns.isFloat(type)) return
+                                if (!KotlinBuiltIns.isFloat(type)) return false
                             } else {
-                                if (!KotlinBuiltIns.isDouble(type)) return
+                                if (!KotlinBuiltIns.isDouble(type)) return false
                             }
                         }
                         KtNodeTypes.CHARACTER_CONSTANT -> {
-                            if (!KotlinBuiltIns.isChar(type)) return
+                            if (!KotlinBuiltIns.isChar(type)) return false
                         }
-                        else -> return
+                        else -> return false
                     }
                 }
                 is KtStringTemplateExpression -> {
-                    if (!KotlinBuiltIns.isString(type)) return
+                    if (!KotlinBuiltIns.isString(type)) return false
                 }
                 is KtNameReferenceExpression -> {
-                    if (typeReference.text != initializer.getReferencedName()) return
+                    if (typeReference.text != initializer.getReferencedName()) return false
                 }
                 is KtCallExpression -> {
-                    if (typeReference.text != initializer.calleeExpression?.text) return
+                    if (typeReference.text != initializer.calleeExpression?.text) return false
                 }
-                else -> return
+                else -> return false
             }
-
-            holder.registerProblem(
-                typeReference,
-                "Explicitly given type is redundant here",
-                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                IntentionWrapper(RemoveExplicitTypeIntention(), property.containingKtFile)
-            )
-        })
+            return true
+        }
+    }
 }

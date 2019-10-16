@@ -188,7 +188,7 @@ class ConvertFunctionToPropertyIntention :
             }
         }
 
-        private fun findMainElement(callables: List<PsiElement>): PsiElement? {
+        private fun findMainElement(callables: Collection<PsiElement>): PsiElement? {
             if (editor == null) return null
             val offset = editor.caretModel.offset
             return callables.find { file == it.containingFile && offset in it.textRange }

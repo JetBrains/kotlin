@@ -16,7 +16,7 @@ import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -117,15 +117,14 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             configDirectory = configDirectory,
             bundleAnalyzerReportDir = if (report) reportDir else null,
             devServer = devServer,
-            sourceMaps = sourceMaps,
-            sourceMapsRuntime = sourceMaps
+            sourceMaps = sourceMaps
         )
     )
 
     override val nodeModulesRequired: Boolean
         @Internal get() = true
 
-    override val requiredNpmDependencies: Collection<NpmPackageVersion>
+    override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         @Internal get() = createRunner().config.getRequiredDependencies(versions)
 
     @TaskAction

@@ -95,6 +95,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         return irCompiler;
     }
 
+    @Override
+    protected void addPlatformOptions(@NotNull List<String> $self, @NotNull K2JSCompilerArguments arguments) {}
+
     static {
         moduleKindMap.put(K2JsArgumentConstants.MODULE_PLAIN, ModuleKind.PLAIN);
         moduleKindMap.put(K2JsArgumentConstants.MODULE_COMMONJS, ModuleKind.COMMON_JS);
@@ -195,8 +198,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
-        ExitCode pluginLoadResult =
-                PluginCliParser.loadPluginsSafe(arguments.getPluginClasspaths(), arguments.getPluginOptions(), configuration);
+        ExitCode pluginLoadResult = loadPlugins(paths, arguments, configuration);
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult;
 
         configuration.put(JSConfigurationKeys.LIBRARIES, configureLibraries(arguments, paths, messageCollector));
@@ -318,9 +320,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         AnalyzerWithCompilerReport.Companion.reportDiagnostics(translationResult.getDiagnostics(), messageCollector);
 
-        if (!(translationResult instanceof TranslationResult.Success)) return ExitCode.COMPILATION_ERROR;
+        if (translationResult instanceof TranslationResult.Fail) return ExitCode.COMPILATION_ERROR;
 
-        TranslationResult.Success successResult = (TranslationResult.Success) translationResult;
+        TranslationResult.SuccessBase successResult = (TranslationResult.SuccessBase) translationResult;
         OutputFileCollection outputFiles = successResult.getOutputFiles(outputFile, outputPrefixFile, outputPostfixFile);
 
         if (outputFile.isDirectory()) {
@@ -434,6 +436,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             List<String> friendPaths = ArraysKt.filterNot(arguments.getFriendModules().split(File.pathSeparator), String::isEmpty);
             configuration.put(JSConfigurationKeys.FRIEND_PATHS, friendPaths);
         }
+
+        configuration.put(JSConfigurationKeys.METADATA_ONLY, arguments.getMetadataOnly());
 
         String moduleKindName = arguments.getModuleKind();
         ModuleKind moduleKind = moduleKindName != null ? moduleKindMap.get(moduleKindName) : ModuleKind.PLAIN;

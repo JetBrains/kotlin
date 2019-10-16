@@ -17,15 +17,13 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.expressions.impl.FirUncheckedNotNullCastImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.directExpansionType
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.withNullability
+import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -42,8 +40,8 @@ import java.io.Writer
 internal interface FirLinkResolver {
     fun nearPackage(fqName: FqName): String?
 
-    fun symbolSignature(symbol: ConeSymbol): String
-    fun nearSymbolLocation(symbol: ConeSymbol): String?
+    fun symbolSignature(symbol: FirBasedSymbol<*>): String
+    fun nearSymbolLocation(symbol: FirBasedSymbol<*>): String?
 
     fun classLocation(classId: ClassId): String?
 
@@ -270,7 +268,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
         require(inModule)
 
         val dumpOutput = index.files[file] ?: error("No location for ${file.name}")
-        val dumper = HtmlFirDump(LinkResolver(dumpOutput), file.fileSession)
+        val dumper = HtmlFirDump(LinkResolver(dumpOutput), file.session)
         val builder = StringBuilder()
         dumper.generate(file, builder)
 
@@ -284,7 +282,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
             supplementaryGenerator.supplementary(this, originDir)
         }
 
-        override fun symbolSignature(symbol: ConeSymbol): String {
+        override fun symbolSignature(symbol: FirBasedSymbol<*>): String {
             val id = index.symbolIds[symbol] ?: error("Not found $symbol")
             return "id$id"
         }
@@ -301,7 +299,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
             return location.relativeTo(originDir).path + "#$classId"
         }
 
-        override fun nearSymbolLocation(symbol: ConeSymbol): String? {
+        override fun nearSymbolLocation(symbol: FirBasedSymbol<*>): String? {
             val location = index.symbols[symbol] ?: return null
             return location.relativeTo(originDir).path + "#${symbolSignature(symbol)}"
         }
@@ -322,7 +320,7 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
 
                 override fun visitRegularClass(regularClass: FirRegularClass) {
                     classes[regularClass.classId] = location
-                    super.visitRegularClass(regularClass)
+                    visitElement(regularClass)
                 }
 
                 fun indexDeclaration(symbolOwner: FirSymbolOwner<*>) {
@@ -332,32 +330,32 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
 
                 override fun <F : FirVariable<F>> visitVariable(variable: FirVariable<F>) {
                     indexDeclaration(variable)
-                    super.visitVariable(variable)
+                    visitElement(variable)
                 }
 
                 override fun visitValueParameter(valueParameter: FirValueParameter) {
                     indexDeclaration(valueParameter)
-                    super.visitValueParameter(valueParameter)
+                    visitElement(valueParameter)
                 }
 
-                override fun visitNamedFunction(namedFunction: FirNamedFunction) {
-                    indexDeclaration(namedFunction)
-                    super.visitNamedFunction(namedFunction)
+                override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+                    indexDeclaration(simpleFunction)
+                    visitElement(simpleFunction)
                 }
 
                 override fun visitTypeParameter(typeParameter: FirTypeParameter) {
                     indexDeclaration(typeParameter)
-                    super.visitTypeParameter(typeParameter)
+                    visitElement(typeParameter)
                 }
 
                 override fun visitProperty(property: FirProperty) {
                     indexDeclaration(property)
-                    super.visitProperty(property)
+                    visitElement(property)
                 }
 
                 override fun visitConstructor(constructor: FirConstructor) {
                     indexDeclaration(constructor)
-                    super.visitConstructor(constructor)
+                    visitElement(constructor)
                 }
             }
         }
@@ -578,7 +576,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             }
         }
 
-        generateDeclarations(klass)
+        generateDeclarations(klass.declarations)
         br
 
     }
@@ -775,14 +773,14 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(memberDeclaration: FirMemberDeclaration) {
         when (memberDeclaration) {
             is FirRegularClass -> generate(memberDeclaration)
-            is FirNamedFunction -> generate(memberDeclaration)
-            is FirProperty -> generate(memberDeclaration)
+            is FirSimpleFunction -> generate(memberDeclaration)
+            is FirProperty -> if (memberDeclaration.isLocal) generate(memberDeclaration as FirVariable<*>) else generate(memberDeclaration)
             is FirConstructor -> generate(memberDeclaration)
             else -> unsupported(memberDeclaration)
         }
     }
 
-    private fun FlowContent.generateTypeParameters(typeParameterContainer: FirTypeParameterContainer) {
+    private fun FlowContent.generateTypeParameters(typeParameterContainer: FirTypeParametersOwner) {
         if (typeParameterContainer.typeParameters.isEmpty()) return
         +"<"
         generateList(typeParameterContainer.typeParameters) {
@@ -875,7 +873,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(statement: FirStatement) {
         when (statement) {
-            is FirNamedFunction -> generate(statement)
+            is FirSimpleFunction -> generate(statement)
             is FirAnonymousObject -> generate(statement, isStatement = true)
             is FirAnonymousFunction -> generate(statement, isStatement = true)
             is FirWhileLoop -> generate(statement)
@@ -919,18 +917,18 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun ConeSymbol.describe(): String {
+    private fun FirBasedSymbol<*>.describe(): String {
         return when (this) {
-            is ConeClassLikeSymbol -> classId.asString()
-            is ConeCallableSymbol -> callableId.toString()
+            is FirClassLikeSymbol<*> -> classId.asString()
+            is FirCallableSymbol<*> -> callableId.toString()
             else -> ""
         }
     }
 
-    private fun FlowContent.symbolRef(symbol: ConeSymbol?, body: FlowContent.() -> Unit) {
+    private fun FlowContent.symbolRef(symbol: FirBasedSymbol<*>?, body: FlowContent.() -> Unit) {
         val (link, classes) = when (symbol) {
             null -> null to setOf()
-            is ConeClassLikeSymbol -> linkResolver.classLocation(symbol.classId) to setOf("class-fqn")
+            is FirClassLikeSymbol<*> -> linkResolver.classLocation(symbol.classId) to setOf("class-fqn")
             else -> linkResolver.nearSymbolLocation(symbol) to setOf("symbol")
         }
         declarationRef(link, classes) {
@@ -965,7 +963,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             }
             is FirResolvedCallableReference -> {
                 resolved {
-                    symbolRef(reference.coneSymbol) {
+                    symbolRef(reference.resolvedSymbol) {
                         simpleName(reference.name)
                     }
                 }
@@ -1019,11 +1017,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             2 -> generateBinary(expression)
             else -> inlineUnsupported(expression)
         }
-    }
-
-    private fun FlowContent.generate(makeNotNullCall: FirUncheckedNotNullCastImpl) {
-        generate(makeNotNullCall.expression)
-        keyword("!")
     }
 
     private fun FlowContent.generate(typeOperatorCall: FirTypeOperatorCall) {
@@ -1081,7 +1074,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(whileLoop: FirWhileLoop) {
         iline {
-            generateLabel(whileLoop)
+            generateLabel(whileLoop.label)
             keyword("while ")
             +"("
             generate(whileLoop.condition)
@@ -1160,8 +1153,8 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generateLabel(labeledElement: FirLabeledElement) {
-        val label = labeledElement.label ?: return
+    private fun FlowContent.generateLabel(label: FirLabel?) {
+        if (label == null) return
         span("label") {
             +label.name
             +"@"
@@ -1176,7 +1169,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(resolvedQualifier: FirResolvedQualifier) {
         resolved {
-            val symbolProvider = session.service<FirSymbolProvider>()
+            val symbolProvider = session.firSymbolProvider
             val classId = resolvedQualifier.classId
             if (classId != null) {
                 symbolRef(symbolProvider.getClassLikeSymbolByFqName(classId)) {
@@ -1237,7 +1230,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     generate(expression.expression)
                 }
                 is FirTypeOperatorCall -> generate(expression)
-                is FirUncheckedNotNullCastImpl -> generate(expression)
                 is FirOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)
                 else -> inlineUnsupported(expression)
@@ -1262,7 +1254,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.symbolAnchor(symbol: ConeSymbol, body: FlowContent.() -> Unit) {
+    private fun FlowContent.symbolAnchor(symbol: AbstractFirBasedSymbol<*>, body: FlowContent.() -> Unit) {
         span(classes = "declaration") {
             id = linkResolver.symbolSignature(symbol)
             body()
@@ -1309,30 +1301,29 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                         generate(it)
                     }
                 }
-                generateDeclarations(anonymousObject)
+                generateDeclarations(anonymousObject.declarations)
             }
         }
     }
 
-    private fun FlowContent.generateDeclarations(declarationContainer: FirDeclarationContainer) {
-        if (declarationContainer.declarations.isNotEmpty()) {
+    private fun FlowContent.generateDeclarations(declarations: List<FirDeclaration>) {
+        if (declarations.isNotEmpty()) {
             +" {"
             br
 
             withIdentLevel {
-                for (declaration in declarationContainer.declarations) {
+                for (declaration in declarations) {
                     generate(declaration)
                     line {}
                 }
             }
-
 
             inl()
             +"}"
         }
     }
 
-    private fun FlowContent.generate(function: FirNamedFunction) {
+    private fun FlowContent.generate(function: FirSimpleFunction) {
         generateMultiLineExpression(isStatement = true) {
             iline {
                 declarationStatus(function.status)
@@ -1373,7 +1364,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(anonymousFunction: FirAnonymousFunction, isStatement: Boolean) {
         generateMultiLineExpression(isStatement) {
             iline {
-                generateLabel(anonymousFunction)
+                generateLabel(anonymousFunction.label)
                 keyword("fun ")
                 generateReceiver(anonymousFunction.receiverTypeRef)
 

@@ -5,29 +5,44 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
+import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
+import org.jetbrains.kotlin.gradle.testing.testTaskName
 
 open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
-    KotlinTargetConfigurator<KotlinJsCompilation>(true, true, kotlinPluginVersion) {
+    KotlinOnlyTargetConfigurator<KotlinJsCompilation, KotlinJsTarget>(true, true, kotlinPluginVersion),
+    KotlinTargetWithTestsConfigurator<KotlinJsReportAggregatingTestRun, KotlinJsTarget> {
 
-    override fun configureTarget(target: KotlinOnlyTarget<KotlinJsCompilation>) {
-        target as KotlinJsTarget
+    override val testRunClass: Class<KotlinJsReportAggregatingTestRun> get() = KotlinJsReportAggregatingTestRun::class.java
 
-        super.configureTarget(target)
-    }
+    override fun createTestRun(
+        name: String,
+        target: KotlinJsTarget
+    ): KotlinJsReportAggregatingTestRun {
+        val result = KotlinJsReportAggregatingTestRun(name, target)
 
-    override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {
-        target as KotlinJsTarget
+        val testTask = target.project.kotlinTestRegistry.getOrCreateAggregatedTestTask(
+            name = result.testTaskName,
+            description = "Run JS tests for all platforms"
+        )
 
-        // always create jsTest task for compatibility (KT-31527)
-        // actual tests tasks for browser and nodejs will be configured in KotlinJsSubTarget.configure
-        target.testTask
+        // workaround to avoid the infinite recursion in item factories of the target and the subtargets:
+        target.testRuns.matching { it.name == name }.whenObjectAdded {
+            it.configureAllExecutions {
+                // do not do anything with the aggregated test run, but ensure that they are created
+            }
+        }
+
+        result.executionTask = testTask
+
+        return result
     }
 
     override fun buildCompilationProcessor(compilation: KotlinJsCompilation): KotlinSourceSetProcessor<*> {
@@ -35,10 +50,10 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         return Kotlin2JsSourceSetProcessor(compilation.target.project, tasksProvider, compilation, kotlinPluginVersion)
     }
 
-    override fun configureCompilations(platformTarget: KotlinOnlyTarget<KotlinJsCompilation>) {
-        super.configureCompilations(platformTarget)
+    override fun configureCompilations(target: KotlinJsTarget) {
+        super.configureCompilations(target)
 
-        platformTarget.compilations.all {
+        target.compilations.all {
             it.compileKotlinTask.kotlinOptions {
                 moduleKind = "umd"
                 sourceMap = true

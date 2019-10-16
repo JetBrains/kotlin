@@ -5,75 +5,26 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.j2k.ast.Nullability
-import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.conversions.RecursiveApplicableConversionBase
-import org.jetbrains.kotlin.nj2k.symbols.*
+import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKUnresolvedMethod
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
-import org.jetbrains.kotlin.psi.KtNamedFunction
+
+
+import org.jetbrains.kotlin.nj2k.types.JKNoType
+import org.jetbrains.kotlin.nj2k.types.JKType
+import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
+import org.jetbrains.kotlin.nj2k.types.replaceJavaClassWithKotlinClassType
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun kotlinTypeByName(name: String, symbolProvider: JKSymbolProvider, nullability: Nullability = Nullability.Nullable): JKClassType =
-    JKClassTypeImpl(
-        symbolProvider.provideClassSymbol(name),
-        emptyList(),
-        nullability
-    )
-
-private fun JKType.classSymbol(symbolProvider: JKSymbolProvider) =
-    when (this) {
-        is JKClassType -> classReference
-        is JKJavaPrimitiveType ->
-            symbolProvider.provideClassSymbol(jvmPrimitiveType.primitiveType.typeFqName)
-
-        else -> null
-    }
-
-private fun JKKtOperatorToken.arithmeticMethodType(
-    leftType: JKType,
-    rightType: JKType,
-    symbolProvider: JKSymbolProvider
-): JKType? {
-    fun PsiClass.methodReturnType() =
-        allMethods
-            .filter { it.name == operatorName }
-            .firstOrNull {
-                it.parameterList.parameters.singleOrNull()?.takeIf { parameter ->
-                    val type = parameter.type.toJK(symbolProvider)
-                    if (type !is JKTypeParameterType) rightType.isSubtypeOf(type, symbolProvider)
-                    else true//TODO check for type bounds
-                } != null
-            }?.let { it.returnType?.toJK(symbolProvider) }
-
-
-    val classSymbol =
-        if (leftType.isStringType()) symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.string.toSafe())
-        else leftType.classSymbol(symbolProvider)
-
-    return when (classSymbol) {
-        is JKMultiverseKtClassSymbol ->
-            classSymbol.target.declarations
-                .asSequence()
-                .filterIsInstance<KtNamedFunction>()
-                .filter { it.name == operatorName }
-                .mapNotNull { symbolProvider.provideDirectSymbol(it) as? JKMethodSymbol }
-                .firstOrNull { it.parameterTypes?.singleOrNull()?.takeIf { rightType.isSubtypeOf(it, symbolProvider) } != null }
-                ?.returnType
-        is JKUniverseClassSymbol -> classSymbol.target.psi<PsiClass>()?.methodReturnType()
-        is JKMultiverseClassSymbol -> classSymbol.target.methodReturnType()
-        else -> null
-    }
-}
-
 fun JKOperator.isEquals() =
-    (token as? JKKtSingleValueOperatorToken)?.psiToken in equalsOperators
+    token.safeAs<JKKtSingleValueOperatorToken>()?.psiToken in equalsOperators
 
 private val equalsOperators =
     TokenSet.create(
@@ -82,97 +33,6 @@ private val equalsOperators =
         KtTokens.EQEQ,
         KtTokens.EXCLEQ
     )
-
-private val lessGreaterOperators =
-    TokenSet.create(
-        KtTokens.LT,
-        KtTokens.GT,
-        KtTokens.LTEQ,
-        KtTokens.GTEQ
-    )
-
-private val comparisonOperators =
-    TokenSet.orSet(
-        lessGreaterOperators,
-        equalsOperators
-    )
-
-private val booleanOperators =
-    TokenSet.orSet(
-        comparisonOperators,
-        TokenSet.create(
-            KtTokens.ANDAND,
-            KtTokens.OROR
-        )
-    )
-
-private val arithmeticOperators = TokenSet.create(
-    KtTokens.MUL,
-    KtTokens.PLUS,
-    KtTokens.MINUS,
-    KtTokens.DIV,
-    KtTokens.PERC
-)
-
-private fun JKKtOperatorToken.defaultReturnType(leftType: JKType?, rightType: JKType?, symbolProvider: JKSymbolProvider): JKType? {
-    if (this is JKKtSingleValueOperatorToken && psiToken in arithmeticOperators) return leftType
-    return null
-}
-
-fun kotlinBinaryExpression(
-    left: JKExpression,
-    right: JKExpression,
-    token: JKKtOperatorToken,
-    symbolProvider: JKSymbolProvider
-): JKBinaryExpression {
-    val returnType =
-        when {
-            token is JKKtSingleValueOperatorToken && token.psiToken in booleanOperators ->
-                JKClassTypeImpl(symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES._boolean.toSafe()))
-            else -> {
-                val leftType = left.type(symbolProvider)
-                val rightType = right.type(symbolProvider)
-                leftType?.let { l ->
-                    rightType?.let { r ->
-                        token.arithmeticMethodType(l, r, symbolProvider)
-                    }
-                } ?: token.defaultReturnType(leftType, rightType, symbolProvider)
-                ?: symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.nothing.toSafe()).asType()
-            }
-        }
-    return JKBinaryExpressionImpl(left, right, JKKtOperatorImpl(token, returnType))
-}
-
-fun kotlinBinaryExpression(
-    left: JKExpression,
-    right: JKExpression,
-    token: KtSingleValueToken,
-    symbolProvider: JKSymbolProvider
-): JKBinaryExpression =
-    kotlinBinaryExpression(
-        left,
-        right,
-        JKKtSingleValueOperatorToken(token),
-        symbolProvider
-    )
-
-fun kotlinPrefixExpression(
-    operand: JKExpression,
-    token: JKKtOperatorToken,
-    symbolProvider: JKSymbolProvider
-): JKPrefixExpression {
-    val operandType = operand.type(symbolProvider) ?: JKNoTypeImpl
-    return JKPrefixExpressionImpl(operand, JKKtOperatorImpl(token, operandType))
-}
-
-fun kotlinPostfixExpression(
-    operand: JKExpression,
-    token: JKKtOperatorToken,
-    symbolProvider: JKSymbolProvider
-): JKPostfixExpression {
-    val operandType = operand.type(symbolProvider) ?: JKNoTypeImpl
-    return JKPostfixExpressionImpl(operand, JKKtOperatorImpl(token, operandType))
-}
 
 fun untilToExpression(
     from: JKExpression,
@@ -198,11 +58,12 @@ fun downToExpression(
         conversionContext
     )
 
-fun JKExpression.parenthesizeIfBinaryExpression() =
-    when (this) {
-        is JKBinaryExpression -> JKParenthesizedExpressionImpl(this)
-        else -> this
-    }
+fun JKExpression.parenthesizeIfBinaryExpression() = when (this) {
+    is JKBinaryExpression -> JKParenthesizedExpression(this)
+    else -> this
+}
+
+fun JKExpression.parenthesize() = JKParenthesizedExpression(this)
 
 fun rangeExpression(
     from: JKExpression,
@@ -210,7 +71,7 @@ fun rangeExpression(
     operatorName: String,
     conversionContext: NewJ2kConverterContext
 ): JKExpression =
-    JKBinaryExpressionImpl(
+    JKBinaryExpression(
         from,
         to,
         JKKtOperatorImpl(
@@ -221,10 +82,10 @@ fun rangeExpression(
 
 
 fun blockStatement(vararg statements: JKStatement) =
-    JKBlockStatementImpl(JKBlockImpl(statements.toList()))
+    JKBlockStatement(JKBlockImpl(statements.toList()))
 
 fun blockStatement(statements: List<JKStatement>) =
-    JKBlockStatementImpl(JKBlockImpl(statements))
+    JKBlockStatement(JKBlockImpl(statements))
 
 fun useExpression(
     receiver: JKExpression,
@@ -234,40 +95,41 @@ fun useExpression(
 ): JKExpression {
     val useSymbol = symbolProvider.provideMethodSymbol("kotlin.io.use")
     val lambdaParameter =
-        JKParameterImpl(JKTypeElementImpl(JKNoTypeImpl), variableIdentifier)
+        JKParameter(JKTypeElement(JKNoType), variableIdentifier)
 
-    val lambda = JKLambdaExpressionImpl(
+    val lambda = JKLambdaExpression(
         body,
         listOf(lambdaParameter)
     )
     val methodCall =
-        JKJavaMethodCallExpressionImpl(
+        JKCallExpressionImpl(
             useSymbol,
             listOf(lambda).toArgumentList()
         )
-    return JKQualifiedExpressionImpl(receiver, JKKtQualifierImpl.DOT, methodCall)
+    return JKQualifiedExpression(receiver, methodCall)
 }
 
-fun kotlinAssert(assertion: JKExpression, message: JKExpression?, symbolProvider: JKSymbolProvider) =
-    JKKtCallExpressionImpl(
+fun kotlinAssert(assertion: JKExpression, message: JKExpression?, typeFactory: JKTypeFactory) =
+    JKCallExpressionImpl(
         JKUnresolvedMethod(//TODO resolve assert
             "assert",
-            kotlinTypeByName(KotlinBuiltIns.FQ_NAMES.unit.asString(), symbolProvider)
+            typeFactory,
+            typeFactory.types.unit
         ),
-        (listOfNotNull(assertion, message)).toArgumentList()
+        listOfNotNull(assertion, message).toArgumentList()
     )
 
 fun jvmAnnotation(name: String, symbolProvider: JKSymbolProvider) =
-    JKAnnotationImpl(
+    JKAnnotation(
         symbolProvider.provideClassSymbol("kotlin.jvm.$name")
     )
 
 fun throwAnnotation(throws: List<JKType>, symbolProvider: JKSymbolProvider) =
-    JKAnnotationImpl(
+    JKAnnotation(
         symbolProvider.provideClassSymbol("kotlin.jvm.Throws"),
         throws.map {
             JKAnnotationParameterImpl(
-                JKClassLiteralExpressionImpl(JKTypeElementImpl(it), JKClassLiteralExpression.LiteralType.KOTLIN_CLASS)
+                JKClassLiteralExpression(JKTypeElement(it), JKClassLiteralExpression.ClassLiteralType.KOTLIN_CLASS)
             )
         }
     )
@@ -275,20 +137,20 @@ fun throwAnnotation(throws: List<JKType>, symbolProvider: JKSymbolProvider) =
 fun JKAnnotationList.annotationByFqName(fqName: String): JKAnnotation? =
     annotations.firstOrNull { it.classSymbol.fqName == fqName }
 
-fun stringLiteral(content: String, symbolProvider: JKSymbolProvider): JKExpression {
+fun stringLiteral(content: String, typeFactory: JKTypeFactory): JKExpression {
     val lines = content.split('\n')
     return lines.mapIndexed { i, line ->
         val newlineSeparator = if (i == lines.size - 1) "" else "\\n"
-        JKKtLiteralExpressionImpl("\"$line$newlineSeparator\"", JKLiteralExpression.LiteralType.STRING)
-    }.reduce { acc: JKExpression, literalExpression: JKKtLiteralExpression ->
-        kotlinBinaryExpression(acc, literalExpression, JKKtSingleValueOperatorToken(KtTokens.PLUS), symbolProvider)
+        JKLiteralExpression("\"$line$newlineSeparator\"", JKLiteralExpression.LiteralType.STRING)
+    }.reduce { acc: JKExpression, literalExpression: JKLiteralExpression ->
+        JKBinaryExpression(acc, literalExpression, JKKtOperatorImpl(JKOperatorToken.PLUS, typeFactory.types.string))
     }
 }
 
 fun JKVariable.findUsages(scope: JKTreeElement, context: NewJ2kConverterContext): List<JKFieldAccessExpression> {
     val symbol = context.symbolProvider.provideUniverseSymbol(this)
     val usages = mutableListOf<JKFieldAccessExpression>()
-    val searcher = object : RecursiveApplicableConversionBase() {
+    val searcher = object : RecursiveApplicableConversionBase(context) {
         override fun applyToElement(element: JKTreeElement): JKTreeElement {
             if (element is JKExpression) {
                 element.unboxFieldReference()?.also {
@@ -311,11 +173,13 @@ fun JKExpression.unboxFieldReference(): JKFieldAccessExpression? = when {
 }
 
 fun JKFieldAccessExpression.asAssignmentFromTarget(): JKKtAssignmentStatement? =
-    (parent as? JKKtAssignmentStatement)
-        ?.takeIf { it.field == this }
+    parent.safeAs<JKKtAssignmentStatement>()?.takeIf { it.field == this }
 
 fun JKFieldAccessExpression.isInDecrementOrIncrement(): Boolean =
-    (parent as? JKUnaryExpression)?.operator?.token?.text in listOf("++", "--")
+    when (parent.safeAs<JKUnaryExpression>()?.operator?.token) {
+        JKOperatorToken.PLUSPLUS, JKOperatorToken.MINUSMINUS -> true
+        else -> false
+    }
 
 fun JKVariable.hasWritableUsages(scope: JKTreeElement, context: NewJ2kConverterContext): Boolean =
     findUsages(scope, context).any {
@@ -323,25 +187,27 @@ fun JKVariable.hasWritableUsages(scope: JKTreeElement, context: NewJ2kConverterC
                 || it.isInDecrementOrIncrement()
     }
 
-fun equalsExpression(left: JKExpression, right: JKExpression, symbolProvider: JKSymbolProvider) =
-    kotlinBinaryExpression(
+fun equalsExpression(left: JKExpression, right: JKExpression, typeFactory: JKTypeFactory) =
+    JKBinaryExpression(
         left,
         right,
-        KtTokens.EQEQ,
-        symbolProvider
+        JKKtOperatorImpl(
+            JKOperatorToken.EQEQ,
+            typeFactory.types.boolean
+        )
     )
 
 fun createCompanion(declarations: List<JKDeclaration>): JKClass =
-    JKClassImpl(
-        JKNameIdentifierImpl(""),
-        JKInheritanceInfoImpl(emptyList(), emptyList()),
+    JKClass(
+        JKNameIdentifier(""),
+        JKInheritanceInfo(emptyList(), emptyList()),
         JKClass.ClassKind.COMPANION,
-        JKTypeParameterListImpl(),
-        JKClassBodyImpl(declarations),
-        JKAnnotationListImpl(),
+        JKTypeParameterList(),
+        JKClassBody(declarations),
+        JKAnnotationList(),
         emptyList(),
-        JKVisibilityModifierElementImpl(Visibility.PUBLIC),
-        JKModalityModifierElementImpl(Modality.FINAL)
+        JKVisibilityModifierElement(Visibility.PUBLIC),
+        JKModalityModifierElement(Modality.FINAL)
     )
 
 fun JKClass.getCompanion(): JKClass? =
@@ -349,26 +215,17 @@ fun JKClass.getCompanion(): JKClass? =
 
 fun JKClass.getOrCreateCompanionObject(): JKClass =
     getCompanion()
-        ?: JKClassImpl(
-            JKNameIdentifierImpl(""),
-            JKInheritanceInfoImpl(emptyList(), emptyList()),
-            JKClass.ClassKind.COMPANION,
-            JKTypeParameterListImpl(),
-            JKClassBodyImpl(),
-            JKAnnotationListImpl(),
-            emptyList(),
-            JKVisibilityModifierElementImpl(Visibility.PUBLIC),
-            JKModalityModifierElementImpl(Modality.FINAL)
-        ).also { classBody.declarations += it }
+        ?: createCompanion(declarations = emptyList())
+            .also { classBody.declarations += it }
 
 fun runExpression(body: JKStatement, symbolProvider: JKSymbolProvider): JKExpression {
-    val lambda = JKLambdaExpressionImpl(
+    val lambda = JKLambdaExpression(
         body,
         emptyList()
     )
-    return JKKtCallExpressionImpl(
+    return JKCallExpressionImpl(
         symbolProvider.provideMethodSymbol("kotlin.run"),
-        (listOf(lambda)).toArgumentList()
+        listOf(lambda).toArgumentList()
     )
 }
 
@@ -381,59 +238,57 @@ fun JKAnnotationMemberValue.toExpression(symbolProvider: JKSymbolProvider): JKEx
         when (element) {
             is JKClassLiteralExpression ->
                 element.also {
-                    element.literalType = JKClassLiteralExpression.LiteralType.KOTLIN_CLASS
+                    element.literalType = JKClassLiteralExpression.ClassLiteralType.KOTLIN_CLASS
                 }
             is JKTypeElement ->
-                JKTypeElementImpl(element.type.replaceJavaClassWithKotlinClassType(symbolProvider))
+                JKTypeElement(element.type.replaceJavaClassWithKotlinClassType(symbolProvider))
             else -> applyRecursive(element, ::handleAnnotationParameter)
         }
 
     return handleAnnotationParameter(
-        when {
-            this is JKStubExpression -> this
-            this is JKAnnotation ->
-                JKJavaNewExpressionImpl(
-                    classSymbol,
-                    JKArgumentListImpl(
-                        arguments.map { argument ->
-                            val value = argument.value.copyTreeAndDetach().toExpression(symbolProvider)
-                            when (argument) {
-                                is JKAnnotationNameParameter ->
-                                    JKNamedArgumentImpl(value, JKNameIdentifierImpl(argument.name.value))
-                                else -> JKArgumentImpl(value)
-                            }
-
+        when (this) {
+            is JKStubExpression -> this
+            is JKAnnotation -> JKNewExpression(
+                classSymbol,
+                JKArgumentList(
+                    arguments.map { argument ->
+                        val value = argument.value.copyTreeAndDetach().toExpression(symbolProvider)
+                        when (argument) {
+                            is JKAnnotationNameParameter ->
+                                JKNamedArgument(value, JKNameIdentifier(argument.name.value))
+                            else -> JKArgumentImpl(value)
                         }
-                    ),
-                    JKTypeArgumentListImpl()
-                )
-            this is JKKtAnnotationArrayInitializerExpression ->
-                JKKtAnnotationArrayInitializerExpressionImpl(initializers.map { it.detached(this).toExpression(symbolProvider) })
-            this is JKExpression -> this
+
+                    }
+                ),
+                JKTypeArgumentList()
+            )
+            is JKKtAnnotationArrayInitializerExpression ->
+                JKKtAnnotationArrayInitializerExpression(initializers.map { it.detached(this).toExpression(symbolProvider) })
+            is JKExpression -> this
             else -> error("Bad initializer")
         }
     ) as JKExpression
 }
 
 
-fun JKExpression.asLiteralTextWithPrefix(): String? =
-    when {
-        this is JKPrefixExpression
-                && (operator.token.text == "+" || operator.token.text == "-")
-                && expression is JKLiteralExpression
-        -> operator.token.text + expression.cast<JKLiteralExpression>().literal
-        this is JKLiteralExpression -> literal
-        else -> null
-    }
+fun JKExpression.asLiteralTextWithPrefix(): String? = when {
+    this is JKPrefixExpression
+            && (operator.token == JKOperatorToken.MINUS || operator.token == JKOperatorToken.PLUS)
+            && expression is JKLiteralExpression
+    -> operator.token.text + expression.cast<JKLiteralExpression>().literal
+    this is JKLiteralExpression -> literal
+    else -> null
+}
 
 fun JKClass.primaryConstructor(): JKKtPrimaryConstructor? = classBody.declarations.firstIsInstanceOrNull()
 
 fun List<JKExpression>.toArgumentList(): JKArgumentList =
-    JKArgumentListImpl(map { JKArgumentImpl(it) })
+    JKArgumentList(map { JKArgumentImpl(it) })
 
 
 fun JKExpression.asStatement(): JKExpressionStatement =
-    JKExpressionStatementImpl(this)
+    JKExpressionStatement(this)
 
 fun <T : JKExpression> T.nullIfStubExpression(): T? =
     if (this is JKStubExpression) null
@@ -441,5 +296,60 @@ fun <T : JKExpression> T.nullIfStubExpression(): T? =
 
 fun JKExpression.qualified(qualifier: JKExpression?) =
     if (qualifier != null && qualifier !is JKStubExpression) {
-        JKQualifiedExpressionImpl(qualifier, JKJavaQualifierImpl.DOT, this)
+        JKQualifiedExpression(qualifier, this)
     } else this
+
+fun JKExpression.callOn(
+    symbol: JKMethodSymbol,
+    arguments: List<JKExpression> = emptyList(),
+    typeArguments: List<JKTypeElement> = emptyList()
+) = JKQualifiedExpression(
+    this,
+    JKCallExpressionImpl(
+        symbol,
+        JKArgumentList(arguments.map { JKArgumentImpl(it) }),
+        JKTypeArgumentList(typeArguments)
+    )
+)
+
+val JKStatement.statements: List<JKStatement>
+    get() = when (this) {
+        is JKBlockStatement -> block.statements
+        else -> listOf(this)
+    }
+
+val JKElement.psi: PsiElement?
+    get() = (this as? PsiOwner)?.psi
+
+inline fun <reified Elem : PsiElement> JKElement.psi(): Elem? = (this as? PsiOwner)?.psi as? Elem
+
+fun JKTypeElement.present(): Boolean = type != JKNoType
+
+fun JKStatement.isEmpty(): Boolean = when (this) {
+    is JKEmptyStatement -> true
+    is JKBlockStatement -> block is JKBodyStub
+    is JKExpressionStatement -> expression is JKStubExpression
+    else -> false
+}
+
+fun JKInheritanceInfo.present(): Boolean =
+    extends.isNotEmpty() || implements.isNotEmpty()
+
+fun JKClass.isLocalClass(): Boolean =
+    parent !is JKClassBody && parent !is JKFile
+
+val JKClass.declarationList: List<JKDeclaration>
+    get() = classBody.declarations
+
+val JKTreeElement.identifier: JKSymbol?
+    get() = when (this) {
+        is JKFieldAccessExpression -> identifier
+        is JKCallExpression -> identifier
+        is JKClassAccessExpression -> identifier
+        is JKPackageAccessExpression -> identifier
+        is JKNewExpression -> classSymbol
+        else -> null
+    }
+
+val JKClass.isObjectOrCompanionObject
+    get() = classKind == JKClass.ClassKind.OBJECT || classKind == JKClass.ClassKind.COMPANION

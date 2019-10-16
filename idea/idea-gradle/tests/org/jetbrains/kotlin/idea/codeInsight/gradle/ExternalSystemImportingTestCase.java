@@ -32,10 +32,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.roots.DependencyScope;
-import com.intellij.openapi.roots.ModuleOrderEntry;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
@@ -247,8 +244,12 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
                      expectedScopes, actualScopes);
     }
 
-    protected void assertNoDepForModule(String moduleName, String depName) {
+    protected void assertNoModuleDepForModule(String moduleName, String depName) {
         assertEmpty("No dependency '" + depName + "' was expected", collectModuleDeps(moduleName, depName, ModuleOrderEntry.class));
+    }
+
+    protected void assertNoLibraryDepForModule(String moduleName, String depName) {
+        assertEmpty("No dependency '" + depName + "' was expected", collectModuleDeps(moduleName, depName, LibraryOrderEntry.class));
     }
 
     @NotNull

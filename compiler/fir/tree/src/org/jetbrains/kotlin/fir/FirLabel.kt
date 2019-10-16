@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 interface FirLabel : FirElement {
+    override val psi: PsiElement?
     val name: String
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitLabel(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLabel(this, data)
 }

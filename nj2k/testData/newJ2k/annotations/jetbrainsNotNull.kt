@@ -3,10 +3,8 @@
 package test
 
 class Test(str: String) {
-    internal var myStr = "String2"
-    fun sout(str: String) {
-        // UNNECESSARY_NOT_NULL_ASSERTION heuristic does not work any more, instead we can skip generating !! altogether
-
+    var myStr = "String2"
+    fun sout(str: String) { // UNNECESSARY_NOT_NULL_ASSERTION heuristic does not work any more, instead we can skip generating !! altogether
         println(str)
     }
 
@@ -16,7 +14,7 @@ class Test(str: String) {
 
     fun test() {
         sout("String")
-        val test: String = "String2"
+        val test = "String2"
         sout(test)
         sout(dummy(test))
         Test(test)

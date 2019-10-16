@@ -15,7 +15,7 @@ class Test2 {
 }
 
 class Handler {
-    fun postDelayed(r: Runnable, time: Long) {}
+    fun postDelayed(r: Runnable?, time: Long) {}
 }
 
 class Test3 {

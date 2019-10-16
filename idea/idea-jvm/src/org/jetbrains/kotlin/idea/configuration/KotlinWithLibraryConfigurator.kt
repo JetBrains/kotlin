@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.facet.getCleanRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
@@ -340,11 +341,13 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
             return
         }
 
-        val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module)
-        ModuleRootModificationUtil.updateModel(module) {
-            facetSettings.coroutineSupport = state
-            facetSettings.apiLevel = LanguageVersion.KOTLIN_1_1
-            facetSettings.languageLevel = LanguageVersion.KOTLIN_1_1
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project)?.getInitializedSettings(module)
+        if (facetSettings != null) {
+            ModuleRootModificationUtil.updateModel(module) {
+                facetSettings.coroutineSupport = state
+                facetSettings.apiLevel = LanguageVersion.KOTLIN_1_1
+                facetSettings.languageLevel = LanguageVersion.KOTLIN_1_1
+            }
         }
     }
 
@@ -363,12 +366,20 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
             return
         }
 
-        val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module)
-        ModuleRootModificationUtil.updateModel(module) {
-            facetSettings.apiLevel = feature.sinceVersion
-            facetSettings.languageLevel = feature.sinceVersion
-            facetSettings.compilerSettings?.apply {
-                additionalArguments = additionalArguments.replaceLanguageFeature(feature, state, separator = " ", quoted = false)
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project)?.getInitializedSettings(module)
+        if (facetSettings != null) {
+            ModuleRootModificationUtil.updateModel(module) {
+                facetSettings.apiLevel = feature.sinceVersion
+                facetSettings.languageLevel = feature.sinceVersion
+                facetSettings.compilerSettings?.apply {
+                    additionalArguments = additionalArguments.replaceLanguageFeature(
+                    feature,
+                    state,
+                    getCleanRuntimeLibraryVersion(module),
+                    separator = " ",
+                    quoted = false
+                )
+                }
             }
         }
     }
@@ -382,14 +393,16 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
             return
         }
 
-        val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module)
-        ModuleRootModificationUtil.updateModel(module) {
-            with(facetSettings) {
-                if (languageVersion != null) {
-                    languageLevel = LanguageVersion.fromVersionString(languageVersion)
-                }
-                if (apiVersion != null) {
-                    apiLevel = LanguageVersion.fromVersionString(apiVersion)
+        val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project)?.getInitializedSettings(module)
+        if (facetSettings != null) {
+            ModuleRootModificationUtil.updateModel(module) {
+                with(facetSettings) {
+                    if (languageVersion != null) {
+                        languageLevel = LanguageVersion.fromVersionString(languageVersion)
+                    }
+                    if (apiVersion != null) {
+                        apiLevel = LanguageVersion.fromVersionString(apiVersion)
+                    }
                 }
             }
         }

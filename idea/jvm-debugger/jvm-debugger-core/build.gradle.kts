@@ -10,7 +10,7 @@ dependencies {
     compile(project(":idea:idea-core"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:jvm-debugger:jvm-debugger-util"))
-    compile(files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    compile(toolsJar())
 
     compileOnly(intellijDep())
     

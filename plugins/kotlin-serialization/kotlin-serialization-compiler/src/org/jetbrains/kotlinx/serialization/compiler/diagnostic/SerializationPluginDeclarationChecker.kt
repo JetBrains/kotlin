@@ -114,7 +114,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 filterUninitialized = false
             ) + declaration.primaryConstructorPropertiesDescriptorsMap(trace.bindingContext)
         propertiesMap.forEach { (descriptor, declaration) ->
-            val isInitialized = declarationHasInitializer(declaration)
+            val isInitialized = declarationHasInitializer(declaration) || descriptor.isLateInit
             val isMarkedTransient = descriptor.annotations.serialTransient
             val hasBackingField = descriptor.hasBackingField(trace.bindingContext)
             if (!hasBackingField && isMarkedTransient) {
@@ -164,7 +164,15 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         trace: BindingTrace,
         fallbackElement: PsiElement
     ) {
-        type.arguments.forEachIndexed { i, it -> checkType(module, it.type, element?.typeArgumentsAsTypes?.get(i), trace, fallbackElement) }
+        type.arguments.forEachIndexed { i, it ->
+            checkType(
+                module,
+                it.type,
+                element?.typeArgumentsAsTypes?.getOrNull(i),
+                trace,
+                fallbackElement
+            )
+        }
     }
 
     private fun AbstractSerialGenerator.checkType(
@@ -223,5 +231,4 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             )
         }
     }
-
 }

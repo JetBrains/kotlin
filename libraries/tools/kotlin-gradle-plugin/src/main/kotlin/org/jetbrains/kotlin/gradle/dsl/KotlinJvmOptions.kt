@@ -5,7 +5,7 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
 
     /**
-     * Include Kotlin runtime in to resulting .jar
+     * Include Kotlin runtime into the resulting .jar
      * Default value: false
      */
      var includeRuntime: kotlin.Boolean

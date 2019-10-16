@@ -3,7 +3,7 @@ interface Foo {
     val bar: Int
 }
 
-class A(override val bar: Int, overr<caret>): Foo
+class A(override val bar: Int, overrid<caret>): Foo
 
 // EXIST: { lookupString: "override", itemText: "override" }
 // EXIST: { itemText: "override val foo: Int", tailText: null, typeText: "Foo", attributes: "bold" }

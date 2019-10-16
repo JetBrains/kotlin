@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
     //base symbol as key
-    val overrides = mutableMapOf<ConeCallableSymbol, ConeCallableSymbol?>()
+    val overrides = mutableMapOf<FirCallableSymbol<*>, FirCallableSymbol<*>?>()
 
     val context: ConeTypeContext = session.typeContext
 
@@ -31,7 +31,7 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
     private fun isEqualTypes(a: FirTypeRef, b: FirTypeRef, substitution: ConeSubstitutor) =
         isEqualTypes(a.cast<FirResolvedTypeRef>().type, b.cast<FirResolvedTypeRef>().type, substitution)
 
-    private fun isOverriddenFunCheck(member: FirNamedFunction, self: FirNamedFunction): Boolean {
+    private fun isOverriddenFunCheck(member: FirSimpleFunction, self: FirSimpleFunction): Boolean {
         if (member.valueParameters.size != self.valueParameters.size) return false
         if (member.typeParameters.size != self.typeParameters.size) return false
 
@@ -58,12 +58,12 @@ abstract class AbstractFirOverrideScope(val session: FirSession) : FirScope() {
         }
     }
 
-    protected fun ConeCallableSymbol.isOverridden(seen: Set<ConeCallableSymbol>): ConeCallableSymbol? {
+    protected fun FirCallableSymbol<*>.isOverridden(seen: Set<FirCallableSymbol<*>>): FirCallableSymbol<*>? {
         if (overrides.containsKey(this)) return overrides[this]
 
         fun similarFunctionsOrBothProperties(declaration: FirCallableDeclaration<*>, self: FirCallableDeclaration<*>): Boolean {
             return when (declaration) {
-                is FirNamedFunction -> self is FirNamedFunction && isOverriddenFunCheck(declaration, self)
+                is FirSimpleFunction -> self is FirSimpleFunction && isOverriddenFunCheck(declaration, self)
                 is FirConstructor -> false
                 is FirProperty -> self is FirProperty && sameReceivers(
                     declaration.receiverTypeRef,

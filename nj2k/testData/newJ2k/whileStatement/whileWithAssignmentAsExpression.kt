@@ -1,7 +1,7 @@
 class SomeClass {
-    internal var a = 0
-    internal var b = 0
-    internal fun doSomeWhile(i: Int) {
+    var a = 0
+    var b = 0
+    fun doSomeWhile(i: Int) {
         while (i < 0) {
             b = i
             a = b

@@ -354,6 +354,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/reifiedIsCheckWithNullable.kt");
     }
 
+    @TestMetadata("reifiedSafeAsCheck.kt")
+    public void testReifiedSafeAsCheck() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/reifiedSafeAsCheck.kt");
+    }
+
     @TestMetadata("safeAsWithMutable.kt")
     public void testSafeAsWithMutable() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/safeAsWithMutable.kt");
@@ -1029,6 +1034,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/conditions/nonZeroCompareInWhile.kt");
         }
 
+        @TestMetadata("nullCompareConst.kt")
+        public void testNullCompareConst() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/conditions/nullCompareConst.kt");
+        }
+
         @TestMetadata("nullCompareInDoWhile.kt")
         public void testNullCompareInDoWhile() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/conditions/nullCompareInDoWhile.kt");
@@ -1627,6 +1637,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequence.kt");
         }
 
+        @TestMetadata("forInCharSequenceTypeParameter.kt")
+        public void testForInCharSequenceTypeParameter() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/forLoop/forInCharSequenceTypeParameter.kt");
+        }
+
         @TestMetadata("forInDownToCharMinValue.kt")
         public void testForInDownToCharMinValue() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/forLoop/forInDownToCharMinValue.kt");
@@ -1838,6 +1853,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             @TestMetadata("forInCharSequenceIndices.kt")
             public void testForInCharSequenceIndices() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/forInIndices/forInCharSequenceIndices.kt");
+            }
+
+            @TestMetadata("forInCharSequenceTypeParameterIndices.kt")
+            public void testForInCharSequenceTypeParameterIndices() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInIndices/forInCharSequenceTypeParameterIndices.kt");
             }
 
             @TestMetadata("forInCollectionImplicitReceiverIndices.kt")
@@ -2433,6 +2453,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/defaultParametersDontBox.kt");
         }
 
+        @TestMetadata("equalsDoesNotBox.kt")
+        public void testEqualsDoesNotBox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsDoesNotBox.kt");
+        }
+
         @TestMetadata("equalsIsCalledByInlineClass.kt")
         public void testEqualsIsCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsIsCalledByInlineClass.kt");
@@ -2548,9 +2573,29 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/propertySetterWithInlineClassTypeArgument.kt");
         }
 
+        @TestMetadata("resultApiDoesntCallSpecializedEquals.kt")
+        public void testResultApiDoesntCallSpecializedEquals() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiDoesntCallSpecializedEquals.kt");
+        }
+
         @TestMetadata("resultApiDoesntUseBox.kt")
         public void testResultApiDoesntUseBox() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiDoesntUseBox.kt");
+        }
+
+        @TestMetadata("resultApiEqualsDoesntBox.kt")
+        public void testResultApiEqualsDoesntBox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiEqualsDoesntBox.kt");
+        }
+
+        @TestMetadata("resultApiRunCatchingDoesntBox.kt")
+        public void testResultApiRunCatchingDoesntBox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiRunCatchingDoesntBox.kt");
+        }
+
+        @TestMetadata("resultApiStringInterpolationDoesntBox.kt")
+        public void testResultApiStringInterpolationDoesntBox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/resultApiStringInterpolationDoesntBox.kt");
         }
 
         @TestMetadata("resultMangling.kt")
@@ -3104,6 +3149,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testOptimizedMultifileClassFacadeMethods() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/multifileClasses/optimizedMultifileClassFacadeMethods.kt");
         }
+
+        @TestMetadata("privateFunctionName.kt")
+        public void testPrivateFunctionName() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/multifileClasses/privateFunctionName.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/notNullAssertions")
@@ -3320,6 +3370,39 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class OptimizedDelegatedProperties extends AbstractIrBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInOptimizedDelegatedProperties() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("definedInSources.kt")
+        public void testDefinedInSources() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties/definedInSources.kt");
+        }
+
+        @TestMetadata("inSeparateModule.kt")
+        public void testInSeparateModule() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties/inSeparateModule.kt");
+        }
+
+        @TestMetadata("lazy.kt")
+        public void testLazy() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties/lazy.kt");
+        }
+
+        @TestMetadata("withNonNullMetadataParameter.kt")
+        public void testWithNonNullMetadataParameter() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties/withNonNullMetadataParameter.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/properties")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -3391,6 +3474,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("inComparableRangeLiteral.kt")
         public void testInComparableRangeLiteral() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/ranges/inComparableRangeLiteral.kt");
+        }
+
+        @TestMetadata("inMixedUnsignedRange.kt")
+        public void testInMixedUnsignedRange() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/ranges/inMixedUnsignedRange.kt");
         }
 
         @TestMetadata("inNonMatchingRangeIntrinsified.kt")

@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:StringDelegate modality:FINAL visibility:public superTypes:[kotlin.Any]'
       PROPERTY name:s visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:public [final]
+        FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 's: kotlin.String declared in <root>.Host.StringDelegate.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:<root>.Host.StringDelegate) returnType:kotlin.String
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.Host.StringDelegate
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-s> (): kotlin.String declared in <root>.Host.StringDelegate'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                 receiver: GET_VAR '<this>: <root>.Host.StringDelegate declared in <root>.Host.StringDelegate.<get-s>' type=<root>.Host.StringDelegate origin=null
       FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Host.StringDelegate, receiver:kotlin.String, p:kotlin.Any) returnType:kotlin.String
         $this: VALUE_PARAMETER name:<this> type:<root>.Host.StringDelegate
@@ -75,7 +75,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
               receiver: GET_VAR '<this>: kotlin.String declared in <root>.Host.<get-plusK>' type=kotlin.String origin=null
               p: PROPERTY_REFERENCE 'public final plusK: kotlin.String [delegated,val]' field=null getter='public final fun <get-plusK> (): kotlin.String declared in <root>.Host' setter=null type=kotlin.reflect.KProperty2<kotlin.String, <root>.Host, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
     PROPERTY name:ok visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           CALL 'public final fun <get-plusK> (): kotlin.String declared in <root>.Host' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
@@ -85,7 +85,7 @@ FILE fqName:<root> fileName:/memberExtension.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Host
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-ok> (): kotlin.String declared in <root>.Host'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-ok>' type=<root>.Host origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

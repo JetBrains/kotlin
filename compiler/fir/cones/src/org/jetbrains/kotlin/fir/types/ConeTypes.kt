@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.*
 
@@ -86,9 +87,11 @@ val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullabil
 
 typealias ConeKotlinErrorType = ConeClassErrorType
 
+class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLikeLookupTag()
+
 class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     override val lookupTag: ConeClassLikeLookupTag
-        get() = ConeClassLikeLookupTagImpl(ClassId.fromString("<error>"))
+        get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = EMPTY_ARRAY
@@ -101,7 +104,7 @@ class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
     }
 }
 
-sealed class ConeLookupTagBasedType : ConeKotlinType(), SimpleTypeMarker {
+abstract class ConeLookupTagBasedType : ConeKotlinType(), SimpleTypeMarker {
     abstract val lookupTag: ConeClassifierLookupTag
 }
 
@@ -113,10 +116,6 @@ abstract class ConeClassType : ConeClassLikeType()
 
 abstract class ConeAbbreviatedType : ConeClassLikeType() {
     abstract val abbreviationLookupTag: ConeClassLikeLookupTag
-}
-
-abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
-    abstract override val lookupTag: ConeTypeParameterLookupTag
 }
 
 data class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),
@@ -182,44 +181,15 @@ class ConeDefinitelyNotNullType(val original: ConeKotlinType): ConeKotlinType(),
  *   only via ConeTypeIntersector
  */
 class ConeIntersectionType(
-    val constructor: ConeIntersectionTypeConstructor
-) : ConeKotlinType(), SimpleTypeMarker {
+    val intersectedTypes: Collection<ConeKotlinType>
+) : ConeKotlinType(), SimpleTypeMarker, TypeConstructorMarker {
     override val typeArguments: Array<out ConeKotlinTypeProjection>
         get() = emptyArray()
 
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
-
-    val intersectedTypes: Collection<ConeKotlinType> get() = constructor.intersectedTypes
-    val statusMap: Map<ConeKotlinType, ConeIntersectionTypeConstructor.IntersectionStatus> get() = constructor.statusMap
 }
 
-class ConeIntersectionTypeConstructor(
-    val intersectedTypes: Collection<ConeKotlinType>,
-    val statusMap: Map<ConeKotlinType, IntersectionStatus>
-) : TypeConstructorMarker {
-    val supertypes: Collection<ConeKotlinType> get() = intersectedTypes
-
-    /*
-     * IMPORTANT: use this method only for types from intersectedTypes
-     */
-    fun getStatus(type: ConeKotlinType): IntersectionStatus {
-        return statusMap[type] ?: error("")
-    }
-
-    enum class IntersectionStatus {
-        FROM_INFERENCE,
-        FROM_SMARTCAST
-    }
-}
-
-fun ConeIntersectionTypeConstructor.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionTypeConstructor {
-    val newStatusMap = mutableMapOf<ConeKotlinType, ConeIntersectionTypeConstructor.IntersectionStatus>()
-    val newTypes = intersectedTypes.map { type ->
-        val newType = func(type)
-        // TODO: what if some types squash? What status should we choose?
-        newStatusMap[newType] = getStatus(type)
-        newType
-    }
-    return ConeIntersectionTypeConstructor(newTypes, newStatusMap)
+fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes.map(func))
 }

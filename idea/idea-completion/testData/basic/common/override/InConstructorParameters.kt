@@ -12,7 +12,7 @@ class Base1 {
 open class Base2 : Base1() {
 }
 
-class A(overr<caret>) : Base2(), I
+class A(overrid<caret>) : Base2(), I
 
 // EXIST: { lookupString: "override", itemText: "override" }
 // EXIST: { itemText: "override val someVal: Int", tailText: null, typeText: "I", attributes: "bold" }

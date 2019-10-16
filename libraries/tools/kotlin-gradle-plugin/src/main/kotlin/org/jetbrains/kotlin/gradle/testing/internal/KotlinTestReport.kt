@@ -10,6 +10,7 @@ import org.gradle.api.execution.TaskExecutionGraph
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.*
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -46,7 +47,7 @@ open class KotlinTestReport : TestReport() {
     private var parent: KotlinTestReport? = null
 
     @Internal
-    val children = mutableListOf<KotlinTestReport>()
+    val children = mutableListOf<TaskProvider<KotlinTestReport>>()
 
     private val projectProperties = PropertiesProvider(project)
 
@@ -61,7 +62,7 @@ open class KotlinTestReport : TestReport() {
 
     private var hasOwnFailedTests = false
     private val hasFailedTests: Boolean
-        get() = hasOwnFailedTests || children.any { it.hasFailedTests }
+        get() = hasOwnFailedTests || children.any { it.get().hasFailedTests }
 
     private val ownSuppressedRunningFailures = mutableListOf<Pair<KotlinTest, Error>>()
 
@@ -82,15 +83,19 @@ open class KotlinTestReport : TestReport() {
         }
     }
 
-    fun addChild(child: KotlinTestReport) {
+    fun addChild(childProvider: TaskProvider<KotlinTestReport>) {
+        val child = childProvider.get()
+
         check(child.parent == null) { "$child already registers as child of ${child.parent}" }
         child.parent = this
 
-        children.add(child)
-        reportOnChildTasks(child)
+        children.add(childProvider)
+        reportOnChildTasks(childProvider)
     }
 
-    private fun reportOnChildTasks(child: KotlinTestReport) {
+    private fun reportOnChildTasks(childProvider: TaskProvider<KotlinTestReport>): Unit {
+        val child = childProvider.get()
+
         child.testTasks.forEach {
             reportOn(it)
         }
@@ -101,6 +106,7 @@ open class KotlinTestReport : TestReport() {
 
     fun registerTestTask(task: AbstractTestTask) {
         testTasks.add(task)
+
         task.addTestListener(failedTestsListener)
         if (task is KotlinTest) task.addRunListener(object : KotlinTestRunnerListener {
             override fun runningFailure(failure: Error) {
@@ -165,7 +171,7 @@ open class KotlinTestReport : TestReport() {
             }
 
             report.children.forEach {
-                visitSuppressedRunningFailures(it)
+                visitSuppressedRunningFailures(it.get())
             }
         }
 
@@ -227,9 +233,11 @@ open class KotlinTestReport : TestReport() {
             disableTestReporting(it)
         }
 
-        children.forEach {
-            it.checkFailedTests = false
-            it.disableIndividualTestTaskReportingAndFailing()
+        children.forEach { child ->
+            child.configure {
+                it.checkFailedTests = false
+                it.disableIndividualTestTaskReportingAndFailing()
+            }
         }
     }
 

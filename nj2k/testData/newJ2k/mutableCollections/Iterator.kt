@@ -8,7 +8,7 @@ internal class IteratorTest {
         mutableMap2.entries.iterator().remove()
     }
 
-    fun testFunctionParameters(immutableCollection: Collection<String>, mutableList: MutableList<Int>) {
+    fun testFunctionParameters(immutableCollection: Collection<String?>, mutableList: MutableList<Int?>) {
         val it = immutableCollection.iterator()
         while (it.hasNext()) {
             it.next()

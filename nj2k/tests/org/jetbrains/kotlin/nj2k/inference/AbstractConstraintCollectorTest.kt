@@ -30,6 +30,7 @@ abstract class AbstractConstraintCollectorTest : KotlinLightCodeInsightFixtureTe
         CommandProcessor.getInstance().runUndoTransparentAction {
             ktFile.prepareFile()
             createInferenceFacade(resolutionFacade).runOn(listOf(ktFile))
+            ktFile.afterInference()
         }
         KotlinTestUtils.assertEqualsToFile(file, ktFile.text)
     }
@@ -37,6 +38,8 @@ abstract class AbstractConstraintCollectorTest : KotlinLightCodeInsightFixtureTe
     open fun KtFile.prepareFile() = runWriteAction {
         deleteComments()
     }
+
+    open fun KtFile.afterInference() = Unit
 
     fun KtFile.deleteComments() {
         for (comment in collectDescendantsOfType<PsiComment>()) {

@@ -30,8 +30,7 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 class ScriptTemplatesFromCompilerSettingsProvider(
-    private val project: Project,
-    private val compilerSettings: KotlinCompilerSettings
+    private val project: Project
 ) : ScriptDefinitionSourceAsContributor {
 
     init {
@@ -46,7 +45,7 @@ class ScriptTemplatesFromCompilerSettingsProvider(
 
     override val definitions: Sequence<ScriptDefinition>
         get() {
-            val kotlinSettings = compilerSettings.settings
+            val kotlinSettings = KotlinCompilerSettings.getInstance(project).settings
             return if (kotlinSettings.scriptTemplates.isBlank()) emptySequence()
             else loadDefinitionsFromTemplates(
                 templateClassNames = kotlinSettings.scriptTemplates.split(',', ' '),

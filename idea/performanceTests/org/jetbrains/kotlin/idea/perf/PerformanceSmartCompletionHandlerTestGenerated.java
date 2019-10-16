@@ -129,6 +129,11 @@ public class PerformanceSmartCompletionHandlerTestGenerated extends AbstractPerf
         runTest("idea/idea-completion/testData/handlers/smart/ClassInObject.kt");
     }
 
+    @TestMetadata("ClassNameFromKotlinWithPackageConflict.kt")
+    public void testClassNameFromKotlinWithPackageConflict() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/smart/ClassNameFromKotlinWithPackageConflict.kt");
+    }
+
     @TestMetadata("ClassObjectFieldKeywordName.kt")
     public void testClassObjectFieldKeywordName() throws Exception {
         runTest("idea/idea-completion/testData/handlers/smart/ClassObjectFieldKeywordName.kt");

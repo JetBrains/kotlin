@@ -28,6 +28,10 @@ class KotlinMultiplatformRunLocationsProvider : MultipleRunLocationsProvider() {
 
     override fun getAlternativeLocations(originalLocation: Location<*>): List<Location<*>> {
         val originalModule = originalLocation.module ?: return emptyList()
+        if (originalModule.isNewMPPModule) {
+            return emptyList()
+        }
+
         val virtualFile = originalLocation.virtualFile ?: return emptyList()
         val sourceType = ModuleRootManager.getInstance(originalModule).fileIndex.getSourceType(virtualFile) ?: return emptyList()
         return modulesToRunFrom(originalModule, sourceType).map { PsiLocation(originalLocation.project, it, originalLocation.psiElement) }

@@ -101,7 +101,7 @@ sealed class KotlinType : Annotated, KotlinTypeMarker {
     final override fun hashCode(): Int {
         // NB: make one read to prevent race
         var currentHashCode = cachedHashCode
-        if (currentHashCode == 0) return currentHashCode
+        if (currentHashCode != 0) return currentHashCode
 
         currentHashCode = computeHashCode()
 

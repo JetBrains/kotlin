@@ -15,7 +15,7 @@ interface KotlinJSRunConfigurationData {
     val jsOutputFilePath: String
 }
 
-interface KotlinJSRunConfigurationDataProvider<out T : KotlinJSRunConfigurationData> {
+interface KotlinJSRunConfigurationDataProvider<out T : Any> {
     val isForTests: Boolean
     fun getConfigurationData(context: ConfigurationContext): T?
 }

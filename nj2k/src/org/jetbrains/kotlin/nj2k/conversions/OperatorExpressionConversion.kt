@@ -5,77 +5,27 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import com.intellij.psi.JavaTokenType
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.kotlinBinaryExpression
-import org.jetbrains.kotlin.nj2k.kotlinPostfixExpression
-import org.jetbrains.kotlin.nj2k.kotlinPrefixExpression
+import org.jetbrains.kotlin.nj2k.callOn
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.types.isStringType
 
 
-class OperatorExpressionConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+class AnyWithStringConcatenationConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKOperatorExpression) return recurse(element)
-        val operator = element.operator as? JKJavaOperatorImpl ?: return recurse(element)
-
-        return when (element) {
-            is JKBinaryExpression -> {
-                val operatorToken = operator.token.toKtToken()
-                val left = applyToElement(element::left.detached()) as JKExpression
-                val right = applyToElement(element::right.detached()) as JKExpression
-                recurse(convertBinaryExpression(left, right, operatorToken).withNonCodeElementsFrom(element))
-            }
-            is JKPrefixExpression -> {
-                val operand = applyToElement(element::expression.detached()) as JKExpression
-                recurse(convertPrefixExpression(operand, operator))
-            }
-            is JKPostfixExpression -> {
-                val operatorToken = operator.token.toKtToken()
-                val operand = applyToElement(element::expression.detached()) as JKExpression
-                recurse(kotlinPostfixExpression(operand, operatorToken, context.symbolProvider))
-            }
-            else -> TODO(element.javaClass.toString())
-        }.withNonCodeElementsFrom(element)
-    }
-
-
-    private fun convertPrefixExpression(operand: JKExpression, javaOperator: JKJavaOperatorImpl) =
-        convertTildeExpression(operand, javaOperator)
-            ?: kotlinPrefixExpression(operand, javaOperator.token.toKtToken(), context.symbolProvider)
-
-    private fun convertTildeExpression(operand: JKExpression, javaOperator: JKJavaOperatorImpl): JKExpression? =
-        if (javaOperator.token.psiToken == JavaTokenType.TILDE) {
-            val invCall =
-                JKKtCallExpressionImpl(
-                    context.symbolProvider.provideMethodSymbol("kotlin.Int.inv"),//TODO check if Long
-                    JKArgumentListImpl()
-                )
-            JKQualifiedExpressionImpl(
-                JKParenthesizedExpressionImpl(operand),
-                JKKtQualifierImpl.DOT,
-                invCall
-            )
-        } else null
-
-    private fun convertBinaryExpression(left: JKExpression, right: JKExpression, token: JKKtOperatorToken): JKBinaryExpression =
-        convertStringImplicitConcatenation(left, right, token)
-            ?: kotlinBinaryExpression(left, right, token, context.symbolProvider)
-
-
-    private fun convertStringImplicitConcatenation(left: JKExpression, right: JKExpression, token: JKKtOperatorToken): JKBinaryExpression? =
-        if (token is JKKtSingleValueOperatorToken
-            && token.psiToken == KtTokens.PLUS
-            && right.type(context.symbolProvider)?.isStringType() == true
-            && left.type(context.symbolProvider)?.isStringType() == false
+        if (element !is JKBinaryExpression) return recurse(element)
+        if (element.operator.token == JKOperatorToken.PLUS
+            && element.right.calculateType(typeFactory)?.isStringType() == true
+            && element.left.calculateType(typeFactory)?.isStringType() == false
         ) {
-            val toStringCall =
-                JKKtCallExpressionImpl(
-                    context.symbolProvider.provideMethodSymbol("kotlin.Any.toString"),
-                    JKArgumentListImpl()
+            return recurse(
+                JKBinaryExpression(
+                    element::left.detached().callOn(symbolProvider.provideMethodSymbol("kotlin.Any.toString")),
+                    element::right.detached(),
+                    element.operator
                 )
-            val qualifiedCall = JKQualifiedExpressionImpl(left, JKKtQualifierImpl.DOT, toStringCall)
-            kotlinBinaryExpression(qualifiedCall, right, KtTokens.PLUS, context.symbolProvider)
-        } else null
+            )
+        }
+        return recurse(element)
+    }
 }

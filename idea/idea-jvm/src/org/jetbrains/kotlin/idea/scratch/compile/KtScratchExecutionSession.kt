@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.scratch.compile
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.codegen.filterClassFiles
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.scratch.LOG
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
@@ -30,14 +31,13 @@ import org.jetbrains.kotlin.idea.util.JavaParametersBuilder
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import java.io.File
-import kotlin.script.experimental.api.valueOrNull
 
 class KtScratchExecutionSession(
     private val file: ScratchFile,
     private val executor: KtCompilingExecutor
 ) {
     companion object {
-        private val TIMEOUT_MS = 30000
+        private const val TIMEOUT_MS = 30000
     }
 
     private var backgroundProcessIndicator: ProgressIndicator? = null
@@ -48,8 +48,7 @@ class KtScratchExecutionSession(
         val expressions = file.getExpressions()
         if (!executor.checkForErrors(psiFile, expressions)) return
 
-        val result = runReadAction { KtScratchSourceFileProcessor().process(expressions) }
-        when (result) {
+        when (val result = runReadAction { KtScratchSourceFileProcessor().process(expressions) }) {
             is KtScratchSourceFileProcessor.Result.Error -> return executor.errorOccurs(result.message, isFatal = true)
             is KtScratchSourceFileProcessor.Result.OK -> {
                 LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
@@ -92,6 +91,8 @@ class KtScratchExecutionSession(
                                 callback()
                             }
                         } catch (e: Throwable) {
+                            if (e is ControlFlowException) throw e
+
                             LOG.printDebugMessage(result.code)
                             executor.errorOccurs(e.message ?: "Couldn't compile ${psiFile.name}", e, isFatal = true)
                         }
@@ -165,8 +166,8 @@ class KtScratchExecutionSession(
             javaParameters.classPath.addAll(JavaParametersBuilder.getModuleDependencies(module))
         }
 
-        ScriptDependenciesManager.getInstance(originalFile.project)
-            .getRefinedCompilationConfiguration(originalFile.virtualFile)?.valueOrNull()?.let {
+        ScriptConfigurationManager.getInstance(originalFile.project)
+            .getConfiguration(originalFile)?.let {
                 javaParameters.classPath.addAll(it.dependenciesClassPath.map { f -> f.absolutePath })
             }
 

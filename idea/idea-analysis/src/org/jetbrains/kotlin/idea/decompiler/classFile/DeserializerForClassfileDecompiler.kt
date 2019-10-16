@@ -43,8 +43,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import java.io.InputStream
 
 fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
-    val kotlinClassHeaderInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
-                                ?: error("Decompiled data factory shouldn't be called on an unsupported file: " + classFile)
+    val kotlinClassHeaderInfo =
+        IDEKotlinBinaryClassCache.getInstance().getKotlinBinaryClassHeaderData(classFile)
+            ?: error("Decompiled data factory shouldn't be called on an unsupported file: $classFile")
     val packageFqName = kotlinClassHeaderInfo.classId.packageFqName
     return DeserializerForClassfileDecompiler(classFile.parent!!, packageFqName)
 }
@@ -119,7 +120,7 @@ class DirectoryBasedClassFinder(
         val targetName = classId.relativeClassName.pathSegments().joinToString("$", postfix = ".class")
         val virtualFile = packageDirectory.findChild(targetName)
         if (virtualFile != null && isKotlinWithCompatibleAbiVersion(virtualFile)) {
-            return IDEKotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)?.let(::KotlinClass)
+            return IDEKotlinBinaryClassCache.getInstance().getKotlinBinaryClass(virtualFile)?.let(::KotlinClass)
         }
         return null
     }

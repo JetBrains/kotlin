@@ -124,6 +124,11 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         runTest("idea/testData/shortenRefs/PackagesToUseStarImports.kt");
     }
 
+    @TestMetadata("PropertyFunctionConflict.kt")
+    public void testPropertyFunctionConflict() throws Exception {
+        runTest("idea/testData/shortenRefs/PropertyFunctionConflict.kt");
+    }
+
     @TestMetadata("removeCompanionRefInCalleeExpression.kt")
     public void testRemoveCompanionRefInCalleeExpression() throws Exception {
         runTest("idea/testData/shortenRefs/removeCompanionRefInCalleeExpression.kt");
@@ -137,6 +142,11 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
     @TestMetadata("shortCompanionRefInsideShortenedCall.kt")
     public void testShortCompanionRefInsideShortenedCall() throws Exception {
         runTest("idea/testData/shortenRefs/shortCompanionRefInsideShortenedCall.kt");
+    }
+
+    @TestMetadata("TopLevelFunctionImportWithLotsOfFqName.kt")
+    public void testTopLevelFunctionImportWithLotsOfFqName() throws Exception {
+        runTest("idea/testData/shortenRefs/TopLevelFunctionImportWithLotsOfFqName.kt");
     }
 
     @TestMetadata("UnresolvedOverload.kt")

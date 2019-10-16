@@ -23,7 +23,7 @@ FILE: hashSet.kt
                 throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
             }
             else ->  {
-                R|<local>/<bangbang>|!
+                R|<local>/<bangbang>|
             }
         }
         .R|/d| = R|/produce|<R|T?|>()

@@ -849,6 +849,11 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/closureWthoutSpaces2.kt");
         }
 
+        @TestMetadata("comments.kt")
+        public void testComments() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/comments.kt");
+        }
+
         @TestMetadata("declaration1.kt")
         public void testDeclaration1() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/declaration1.kt");
@@ -857,6 +862,26 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         @TestMetadata("declaration2.kt")
         public void testDeclaration2() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/declaration2.kt");
+        }
+
+        @TestMetadata("hasComment1.kt")
+        public void testHasComment1() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/hasComment1.kt");
+        }
+
+        @TestMetadata("hasComment2.kt")
+        public void testHasComment2() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/hasComment2.kt");
+        }
+
+        @TestMetadata("hasComment3.kt")
+        public void testHasComment3() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/hasComment3.kt");
+        }
+
+        @TestMetadata("hasComment4.kt")
+        public void testHasComment4() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/hasComment4.kt");
         }
 
         @TestMetadata("If1.kt")
@@ -1109,6 +1134,16 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/qualifiedCall2.kt");
         }
 
+        @TestMetadata("semicolon1.kt")
+        public void testSemicolon1() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/semicolon1.kt");
+        }
+
+        @TestMetadata("semicolon2.kt")
+        public void testSemicolon2() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/semicolon2.kt");
+        }
+
         @TestMetadata("when1.kt")
         public void testWhen1() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/when1.kt");
@@ -1212,6 +1247,16 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs6.kt");
         }
 
+        @TestMetadata("callArgs7.kt")
+        public void testCallArgs7() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs7.kt");
+        }
+
+        @TestMetadata("callArgs8.kt")
+        public void testCallArgs8() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs8.kt");
+        }
+
         @TestMetadata("classParams1.kt")
         public void testClassParams1() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams1.kt");
@@ -1242,6 +1287,16 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams6.kt");
         }
 
+        @TestMetadata("classParams7.kt")
+        public void testClassParams7() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams7.kt");
+        }
+
+        @TestMetadata("classParams8.kt")
+        public void testClassParams8() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams8.kt");
+        }
+
         @TestMetadata("funParams1.kt")
         public void testFunParams1() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams1.kt");
@@ -1270,6 +1325,16 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         @TestMetadata("funParams6.kt")
         public void testFunParams6() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams6.kt");
+        }
+
+        @TestMetadata("funParams7.kt")
+        public void testFunParams7() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams7.kt");
+        }
+
+        @TestMetadata("funParams8.kt")
+        public void testFunParams8() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams8.kt");
         }
     }
 }

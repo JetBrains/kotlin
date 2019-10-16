@@ -5,15 +5,42 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
-import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
-import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
+import org.jetbrains.kotlin.backend.common.serialization.*
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.render
 
-class JsDeclarationTable(builtIns: IrBuiltIns, descriptorTable: DescriptorTable) : DeclarationTable(builtIns, descriptorTable, JsMangler) {
+class JsUniqIdClashTracker : UniqIdClashTracker {
+    private val committedUniqIds = mutableMapOf<UniqId, IrDeclaration>()
 
-    override var currentIndex = PUBLIC_LOCAL_UNIQ_ID_EDGE
+    override fun commit(declaration: IrDeclaration, uniqId: UniqId) {
+        if (uniqId.isLocal) return // don't track local ids
 
+        if (uniqId in committedUniqIds) {
+            val clashedDeclaration = committedUniqIds[uniqId]!!
+            if (declaration !is IrTypeParameter && declaration.descriptor.containingDeclaration !is PropertyDescriptor) {
+                // TODO: handle clashes properly
+                error("UniqId clash: $uniqId; Existed declaration ${clashedDeclaration.render()} clashed with new ${declaration.render()}")
+            } else {
+                // Check whether they are type parameters of the same extension property but different accessors
+                val parent = declaration.parent
+                val clashedParent = clashedDeclaration.parent
+                require(parent is IrSimpleFunction)
+                require(clashedParent is IrSimpleFunction)
+                require(clashedDeclaration !== parent)
+                require(clashedParent.correspondingPropertySymbol === parent.correspondingPropertySymbol)
+            }
+        }
+
+        committedUniqIds[uniqId] = declaration
+    }
+}
+
+class JsGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(JsMangler, JsUniqIdClashTracker()) {
     init {
-        loadKnownBuiltins()
+        loadKnownBuiltins(builtIns, PUBLIC_LOCAL_UNIQ_ID_EDGE)
     }
 }

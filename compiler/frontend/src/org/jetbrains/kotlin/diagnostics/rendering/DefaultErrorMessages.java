@@ -84,7 +84,8 @@ public class DefaultErrorMessages {
         MAP.put(EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE,
                 "Extension function is shadowed by a member property ''{0}'' with {1}", NAME, COMPACT_WITH_MODIFIERS);
 
-        MAP.put(INACCESSIBLE_TYPE, "Type {0} is inaccessible in this context due to: {1}", RENDER_TYPE, commaSeparated(FQ_NAMES_IN_TYPES));
+        MAP.put(INACCESSIBLE_TYPE, "Type {0} is inaccessible in this context due to: {1}", RENDER_TYPE, commaSeparated(
+                FQ_NAMES_IN_TYPES_WITH_ANNOTATIONS));
 
         MAP.put(REDECLARATION, "Conflicting declarations: {0}", commaSeparated(COMPACT_WITH_MODIFIERS));
         MAP.put(PACKAGE_OR_CLASSIFIER_REDECLARATION, "Redeclaration: {0}", STRING);
@@ -203,6 +204,7 @@ public class DefaultErrorMessages {
         MAP.put(SPREAD_OF_LAMBDA_OR_CALLABLE_REFERENCE, "The spread operator (*foo) cannot be applied to lambda argument or callable reference");
 
         MAP.put(MANY_LAMBDA_EXPRESSION_ARGUMENTS, "Only one lambda expression is allowed outside a parenthesized argument list");
+        MAP.put(UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE, "Expression is treated as a trailing lambda argument; consider separating it from call with semicolon");
         MAP.put(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER, "This property must either have a type annotation, be initialized or be delegated");
         MAP.put(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER, "This variable must either have a type annotation or be initialized");
 
@@ -287,9 +289,9 @@ public class DefaultErrorMessages {
         MAP.put(ACTUAL_WITHOUT_EXPECT, "{0} has no corresponding expected declaration{1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 PlatformIncompatibilityDiagnosticRenderer.TEXT);
         MAP.put(AMBIGUOUS_ACTUALS, "{0} has several compatible actual declarations in modules {1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM, commaSeparated(
-                STRING));
+                MODULE));
         MAP.put(AMBIGUOUS_EXPECTS, "{0} has several compatible expect declarations in modules {1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM, commaSeparated(
-                STRING));
+                MODULE));
 
         MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "Actual class ''{0}'' has no corresponding members for expected class members:{1}",
                 NAME, IncompatibleExpectedActualClassScopesRenderer.TEXT);
@@ -476,7 +478,7 @@ public class DefaultErrorMessages {
         MAP.put(ITERATOR_ON_NULLABLE, "Not nullable value required to call an 'iterator()' method on for-loop range");
         MAP.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
 
-        MAP.put(DELEGATE_SPECIAL_FUNCTION_MISSING, "Missing ''{0}'' method on delegate of type ''{1}''", STRING, RENDER_TYPE);
+        MAP.put(DELEGATE_SPECIAL_FUNCTION_MISSING, "Type ''{1}'' has no method ''{0}'' and thus it cannot serve as a {2}", STRING, RENDER_TYPE, STRING);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "Overload resolution ambiguity on method ''{0}'': {1}",  STRING, AMBIGUOUS_CALLS);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}",
                 STRING, AMBIGUOUS_CALLS);
@@ -618,6 +620,9 @@ public class DefaultErrorMessages {
         MAP.put(ILLEGAL_SELECTOR, "The expression cannot be a selector (occur after a dot)");
 
         MAP.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found");
+        MAP.put(TAILREC_ON_VIRTUAL_MEMBER, "Tailrec on open members is deprecated");
+        MAP.put(TAILREC_ON_VIRTUAL_MEMBER_ERROR, "Tailrec is not allowed on open members");
+
         MAP.put(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION, "A type annotation is required on a value parameter");
         MAP.put(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP, "'break' and 'continue' are only allowed inside a loop");
         MAP.put(BREAK_OR_CONTINUE_IN_WHEN, "'break' and 'continue' are not allowed in 'when' statements. Consider using labels to continue/break from the outer loop");
@@ -761,7 +766,7 @@ public class DefaultErrorMessages {
         MAP.put(CANNOT_CHANGE_ACCESS_PRIVILEGE, "Cannot change access privilege ''{0}'' for ''{1}'' in ''{2}''", VISIBILITY, NAME, NAME);
 
         MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, "Return type of ''{0}'' is not a subtype of the return type of the overridden member ''{1}''",
-                NAME, FQ_NAMES_IN_TYPES);
+                NAME, FQ_NAMES_IN_TYPES_ANNOTATIONS_WHITELIST);
         MAP.put(RETURN_TYPE_MISMATCH_ON_INHERITANCE, "''{0}'' clashes with ''{1}'': return types are incompatible",
                 SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
 
@@ -783,7 +788,8 @@ public class DefaultErrorMessages {
         MAP.put(PROPERTY_TYPE_MISMATCH_BY_DELEGATION, "Type of property ''{0}'' is not a subtype of overridden by delegation ''{1}''",
                 SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
 
-        MAP.put(VAR_OVERRIDDEN_BY_VAL, "Var-property {0} cannot be overridden by val-property {1}", FQ_NAMES_IN_TYPES, FQ_NAMES_IN_TYPES);
+        MAP.put(VAR_OVERRIDDEN_BY_VAL, "Var-property {0} cannot be overridden by val-property {1}", FQ_NAMES_IN_TYPES,
+                FQ_NAMES_IN_TYPES);
 
         MAP.put(CONFLICTING_INHERITED_MEMBERS, "{0} inherits conflicting members: {1}", NAME, commaSeparated(FQ_NAMES_IN_TYPES));
         MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "{0} is not abstract and does not implement abstract member {1}", RENDER_CLASS_OR_OBJECT,
@@ -920,7 +926,8 @@ public class DefaultErrorMessages {
 
         MAP.put(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES,
                     "Names of the parameter #{1} conflict in the following members of supertypes: ''{0}''. " +
-                    "This may cause problems when calling this function with named arguments.", commaSeparated(FQ_NAMES_IN_TYPES), TO_STRING);
+                    "This may cause problems when calling this function with named arguments.", commaSeparated(
+                        FQ_NAMES_IN_TYPES), TO_STRING);
 
         MAP.put(NAME_FOR_AMBIGUOUS_PARAMETER, "Named argument is not allowed for a parameter with an ambiguous name");
 
@@ -951,7 +958,7 @@ public class DefaultErrorMessages {
         MAP.put(DECLARATION_CANT_BE_INLINED, "'inline' modifier is not allowed on virtual members. Only private or final members can be inlined");
         MAP.put(OVERRIDE_BY_INLINE, "Override by an inline function");
         MAP.put(REIFIED_TYPE_PARAMETER_IN_OVERRIDE, "Override by a function with reified type parameter");
-        MAP.put(NOTHING_TO_INLINE, "Expected performance impact of inlining ''{0}'' is insignificant. Inlining works best for functions with parameters of functional types", SHORT_NAMES_IN_TYPES);
+        MAP.put(NOTHING_TO_INLINE, "Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of functional types");
         MAP.put(USAGE_IS_NOT_INLINABLE, "Illegal usage of inline-parameter ''{0}'' in ''{1}''. Add ''noinline'' modifier to the parameter declaration", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         MAP.put(NULLABLE_INLINE_PARAMETER, "Inline-parameter ''{0}'' of ''{1}'' must not be nullable. Add ''noinline'' modifier to the parameter declaration or make its type not nullable", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);
         MAP.put(RECURSION_IN_INLINE, "Inline function ''{1}'' cannot be recursive", ELEMENT_TEXT, SHORT_NAMES_IN_TYPES);

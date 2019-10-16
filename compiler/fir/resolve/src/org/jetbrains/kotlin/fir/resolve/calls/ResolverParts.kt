@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.visibility
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
+import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -60,8 +59,8 @@ internal sealed class CheckReceivers : ResolutionStage() {
             return this == DISPATCH_RECEIVER || this == BOTH_RECEIVERS
         }
 
-        override fun Candidate.getReceiverValue(): ReceiverValue? {
-            return dispatchReceiverValue
+        override fun Candidate.getReceiverType(): ConeKotlinType? {
+            return dispatchReceiverValue?.type
         }
     }
 
@@ -74,35 +73,30 @@ internal sealed class CheckReceivers : ResolutionStage() {
             return this == EXTENSION_RECEIVER || this == BOTH_RECEIVERS
         }
 
-        override fun Candidate.getReceiverValue(): ReceiverValue? {
+        override fun Candidate.getReceiverType(): ConeKotlinType? {
             val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
             val callable = callableSymbol.fir
-            val type = (callable.receiverTypeRef as FirResolvedTypeRef?)?.type ?: return null
-            return object : ReceiverValue {
-                override val type: ConeKotlinType
-                    get() = type
-
-            }
+            return (callable.receiverTypeRef as FirResolvedTypeRef?)?.type
         }
     }
 
-    abstract fun Candidate.getReceiverValue(): ReceiverValue?
+    abstract fun Candidate.getReceiverType(): ConeKotlinType?
 
     abstract fun ExplicitReceiverKind.shouldBeCheckedAgainstExplicit(): Boolean
 
     abstract fun ExplicitReceiverKind.shouldBeCheckedAgainstImplicit(): Boolean
 
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
-        val expectedReceiverParameterValue = candidate.getReceiverValue()
+        val expectedReceiverType = candidate.getReceiverType()
         val explicitReceiverExpression = callInfo.explicitReceiver
         val explicitReceiverKind = candidate.explicitReceiverKind
 
-        if (expectedReceiverParameterValue != null) {
+        if (expectedReceiverType != null) {
             if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeCheckedAgainstExplicit()) {
                 resolveArgumentExpression(
                     candidate.csBuilder,
                     argument = explicitReceiverExpression,
-                    expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverParameterValue.type),
+                    expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType),
                     expectedTypeRef = explicitReceiverExpression.typeRef,
                     sink = sink,
                     isReceiver = true,
@@ -117,7 +111,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     resolvePlainArgumentType(
                         candidate.csBuilder,
                         argumentType = argumentExtensionReceiverValue.type,
-                        expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverParameterValue.type),
+                        expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type),
                         sink = sink,
                         isReceiver = true,
                         isSafeCall = callInfo.isSafeCall
@@ -172,10 +166,10 @@ internal object DiscriminateSynthetics : CheckerStage() {
 }
 
 internal object CheckVisibility : CheckerStage() {
-    private fun ConeSymbol.packageFqName(): FqName {
+    private fun AbstractFirBasedSymbol<*>.packageFqName(): FqName {
         return when (this) {
-            is ConeClassLikeSymbol -> classId.packageFqName
-            is ConeCallableSymbol -> callableId.packageName
+            is FirClassLikeSymbol<*> -> classId.packageFqName
+            is FirCallableSymbol<*> -> callableId.packageName
             else -> error("No package fq name for ${this}")
         }
     }
@@ -189,10 +183,10 @@ internal object CheckVisibility : CheckerStage() {
                     symbol.packageFqName() == callInfo.containingFile.packageFqName
                 Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
                     if (declaration.session == callInfo.session) {
-                        val provider = callInfo.session.service<FirProvider>()
+                        val provider = callInfo.session.firProvider
                         val candidateFile = when (symbol) {
-                            is ConeCallableSymbol -> provider.getFirCallableContainerFile(symbol)
-                            is ConeClassLikeSymbol -> provider.getFirClassifierContainerFile(symbol.classId)
+                            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
+                            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFile(symbol.classId)
                             else -> null
                         }
                         candidateFile == callInfo.containingFile

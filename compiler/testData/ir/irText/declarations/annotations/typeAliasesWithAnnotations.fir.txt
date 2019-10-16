@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/typeAliasesWithAnnotations.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.TestAnn [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.String
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.String declared in <root>.TestAnn.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestAnn) returnType:kotlin.String
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/typeAliasesWithAnnotations.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestAnn
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.TestAnn'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.TestAnn declared in <root>.TestAnn.<get-x>' type=<root>.TestAnn origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

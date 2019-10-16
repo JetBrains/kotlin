@@ -5,8 +5,21 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.FirReference
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirResolvable : FirStatement {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+interface FirResolvable : FirElement {
+    override val psi: PsiElement?
     val calleeReference: FirReference
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvable(this, data)
+
+    fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirResolvable
 }

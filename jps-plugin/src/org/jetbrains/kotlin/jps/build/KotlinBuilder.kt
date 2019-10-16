@@ -261,6 +261,17 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         if (chunk.isDummy(context)) return
 
+        // Temporary workaround for KT-33808
+        val kotlinContext = ensureKotlinContextInitialized(context)
+        for (target in chunk.targets) {
+            if (kotlinContext.hasKotlinMarker[target] != true) continue
+
+            val outputRoots = target.getOutputRoots(context)
+            if (outputRoots.size > 1) {
+                outputRoots.forEach { it.mkdirs() }
+            }
+        }
+
         LOG.debug("------------------------------------------")
     }
 

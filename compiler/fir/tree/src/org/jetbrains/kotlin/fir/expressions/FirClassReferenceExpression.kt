@@ -6,13 +6,19 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirClassReferenceExpression(psi: PsiElement?) : FirUnknownTypeExpression(psi) {
-    abstract val classTypeRef: FirTypeRef
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitClassReferenceExpression(this, data)
+interface FirClassReferenceExpression : FirExpression {
+    override val psi: PsiElement?
+    override val typeRef: FirTypeRef
+    override val annotations: List<FirAnnotationCall>
+    val classTypeRef: FirTypeRef
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassReferenceExpression(this, data)
 }

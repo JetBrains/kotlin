@@ -36,13 +36,7 @@ open class KaptIncrementalIT : BaseGradleIT() {
             assertSuccessful()
             assertTasksExecuted(":kaptGenerateStubsKotlin", ":compileKotlin")
             assertTasksUpToDate(":kaptKotlin")
-
-            // compileJava is up-to-date with Gradle >= 4.3, executed otherwise
-            if (project.testGradleVersionAtLeast("4.3")) {
-                assertTasksUpToDate(":compileJava")
-            } else {
-                assertTasksExecuted(":compileJava")
-            }
+            assertTasksUpToDate(":compileJava")
         }
     }
 

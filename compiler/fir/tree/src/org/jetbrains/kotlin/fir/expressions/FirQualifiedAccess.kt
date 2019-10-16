@@ -5,24 +5,31 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirQualifiedAccess : FirResolvable {
-    val safe: Boolean get() = false
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    val explicitReceiver: FirExpression? get() = null
+interface FirQualifiedAccess : FirQualifiedAccessWithoutCallee, FirResolvable {
+    override val psi: PsiElement?
+    override val annotations: List<FirAnnotationCall>
+    override val safe: Boolean
+    override val explicitReceiver: FirExpression?
+    override val dispatchReceiver: FirExpression
+    override val extensionReceiver: FirExpression
+    override val calleeReference: FirReference
 
-    fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccess(this, data)
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitQualifiedAccess(this, data)
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        calleeReference.accept(visitor, data)
-        explicitReceiver?.accept(visitor, data)
-        super.acceptChildren(visitor, data)
-    }
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 
-    fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
+    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
+
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess
 }

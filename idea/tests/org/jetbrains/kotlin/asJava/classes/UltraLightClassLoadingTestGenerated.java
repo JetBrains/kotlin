@@ -64,6 +64,11 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
         runTest("compiler/testData/asJava/ultraLightClasses/delegatingToInterfaces.kt");
     }
 
+    @TestMetadata("dollarsInNameLocal.kt")
+    public void testDollarsInNameLocal() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/dollarsInNameLocal.kt");
+    }
+
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/enums.kt");
@@ -137,6 +142,11 @@ public class UltraLightClassLoadingTestGenerated extends AbstractUltraLightClass
     @TestMetadata("lateinitProperty.kt")
     public void testLateinitProperty() throws Exception {
         runTest("compiler/testData/asJava/ultraLightClasses/lateinitProperty.kt");
+    }
+
+    @TestMetadata("localClassDerived.kt")
+    public void testLocalClassDerived() throws Exception {
+        runTest("compiler/testData/asJava/ultraLightClasses/localClassDerived.kt");
     }
 
     @TestMetadata("objects.kt")

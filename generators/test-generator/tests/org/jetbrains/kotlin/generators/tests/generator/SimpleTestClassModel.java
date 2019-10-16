@@ -33,6 +33,7 @@ public class SimpleTestClassModel implements TestClassModel {
     private final String doTestMethodName;
     @NotNull
     private final String testClassName;
+    private final Integer deep;
     @NotNull
     private final TargetBackend targetBackend;
     @NotNull
@@ -44,6 +45,7 @@ public class SimpleTestClassModel implements TestClassModel {
 
     private final boolean skipIgnored;
     private final String testRunnerMethodName;
+    private final List<String> additionalRunnerArguments;
 
     public SimpleTestClassModel(
             @NotNull File rootFile,
@@ -56,7 +58,9 @@ public class SimpleTestClassModel implements TestClassModel {
             @NotNull TargetBackend targetBackend,
             @NotNull Collection<String> excludeDirs,
             boolean skipIgnored,
-            String testRunnerMethodName
+            String testRunnerMethodName,
+            List<String> additionalRunnerArguments,
+            Integer deep
     ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
@@ -69,12 +73,14 @@ public class SimpleTestClassModel implements TestClassModel {
         this.excludeDirs = excludeDirs.isEmpty() ? Collections.emptySet() : new LinkedHashSet<>(excludeDirs);
         this.skipIgnored = skipIgnored;
         this.testRunnerMethodName = testRunnerMethodName;
+        this.additionalRunnerArguments = additionalRunnerArguments;
+        this.deep = deep;
     }
 
     @NotNull
     @Override
     public Collection<TestClassModel> getInnerTestClasses() {
-        if (!rootFile.isDirectory() || !recursive) {
+        if (!rootFile.isDirectory() || !recursive || deep != null && deep < 1) {
             return Collections.emptyList();
         }
 
@@ -88,7 +94,7 @@ public class SimpleTestClassModel implements TestClassModel {
                         children.add(new SimpleTestClassModel(
                                 file, true, excludeParentDirs, filenamePattern, checkFilenameStartsLowerCase,
                                 doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()),
-                                skipIgnored, testRunnerMethodName)
+                                skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep != null ? deep - 1 : null)
                         );
                     }
                 }
@@ -150,7 +156,7 @@ public class SimpleTestClassModel implements TestClassModel {
             else {
                 List<MethodModel> result = new ArrayList<>();
 
-                result.add(new RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName));
+                result.add(new RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments));
 
                 result.add(new TestAllFilesPresentMethodModel());
 
@@ -158,7 +164,7 @@ public class SimpleTestClassModel implements TestClassModel {
 
                 boolean hasCoroutines = false;
 
-                if (listFiles != null) {
+                if (listFiles != null && (deep == null || deep == 0)) {
                     for (File file : listFiles) {
                         if (filenamePattern.matcher(file.getName()).matches()) {
 
@@ -183,7 +189,7 @@ public class SimpleTestClassModel implements TestClassModel {
 
                 if (hasCoroutines) {
                     String methodName = doTestMethodName + "WithCoroutinesPackageReplacement";
-                    result.add(new RunTestMethodWithPackageReplacementModel(targetBackend, methodName, testRunnerMethodName));
+                    result.add(new RunTestMethodWithPackageReplacementModel(targetBackend, methodName, testRunnerMethodName, additionalRunnerArguments));
                 }
 
                 result.sort(BY_NAME);
@@ -234,7 +240,8 @@ public class SimpleTestClassModel implements TestClassModel {
             }
             String assertTestsPresentStr = String.format(
                     "KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s.%s, %s%s);",
-                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), TargetBackend.class.getSimpleName(), targetBackend.toString(), recursive, exclude
+                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
+                    TargetBackend.class.getSimpleName(), targetBackend.toString(), recursive, exclude
             );
             p.println(assertTestsPresentStr);
         }

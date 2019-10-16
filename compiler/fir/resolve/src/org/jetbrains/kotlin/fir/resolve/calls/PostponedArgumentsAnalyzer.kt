@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds.Unit
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -69,7 +68,7 @@ class PostponedArgumentsAnalyzer(
         lambda: ResolvedLambdaAtom//,
         //diagnosticHolder: KotlinDiagnosticsHolder
     ) {
-        val unitType = Unit(components.session.service()).constructType(emptyArray(), false)
+        val unitType = Unit(components.session.firSymbolProvider).constructType(emptyArray(), false)
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
 

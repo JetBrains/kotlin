@@ -8,36 +8,86 @@ package org.jetbrains.kotlin.fir.java.declarations
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractCallableMember
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class FirJavaField(
-    session: FirSession,
-    psi: PsiElement?,
+    override val psi: PsiElement?,
+    override val session: FirSession,
     override val symbol: FirFieldSymbol,
-    name: Name,
+    override val name: Name,
     visibility: Visibility,
     modality: Modality?,
-    returnTypeRef: FirTypeRef,
+    override var returnTypeRef: FirTypeRef,
     override val isVar: Boolean,
     isStatic: Boolean
-) : FirAbstractCallableMember<FirField>(
-    session, psi, name,
-    visibility, modality,
-    isExpect = false, isActual = false, isOverride = false,
-    receiverTypeRef = null, returnTypeRef = returnTypeRef
-), FirField {
+) : FirAbstractAnnotatedElement, FirField {
     init {
         symbol.bind(this)
-        resolvePhase = FirResolvePhase.DECLARATIONS
+    }
+
+    override var status: FirDeclarationStatus = FirDeclarationStatusImpl(visibility, modality).apply {
+        this.isStatic = isStatic
+        isExpect = false
+        isActual = false
+        isOverride = false
+    }
+    override val receiverTypeRef: FirTypeRef? get() = null
+    override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    override val isVal: Boolean = true
+    override val getter: FirPropertyAccessor? get() = null
+    override val setter: FirPropertyAccessor? get() = null
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField {
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirField {
+        return this
+    }
+
+    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirField {
+        return this
+    }
+
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField {
+        annotations.transformInplace(transformer, data)
+        typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
+        resolvePhase = newResolvePhase
+    }
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        returnTypeRef.accept(visitor, data)
+        annotations.forEach { it.accept(visitor, data) }
+        typeParameters.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaField {
+        transformReturnTypeRef(transformer, data)
+        transformOtherChildren(transformer, data)
+        return this
     }
 
     override val delegate: FirExpression?
@@ -49,11 +99,5 @@ class FirJavaField(
     override val delegateFieldSymbol: FirDelegateFieldSymbol<FirField>?
         get() = null
 
-    init {
-        status.isStatic = isStatic
-    }
-
-    override fun <D> transformChildrenWithoutAccessors(transformer: FirTransformer<D>, data: D) {
-        transformChildren(transformer, data)
-    }
+    override var containerSource: DeserializedContainerSource? = null
 }

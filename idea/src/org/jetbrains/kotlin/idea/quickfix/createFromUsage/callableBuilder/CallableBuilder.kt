@@ -79,6 +79,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 import kotlin.math.max
 
@@ -444,6 +445,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     if (containingElement is KtBlockExpression && (callableInfo as? PropertyInfo)?.writable == true) {
                         originalElement as KtBinaryExpression
                     } else null
+                val pointerOfAssignmentToReplace = assignmentToReplace?.createSmartPointer()
 
                 val ownerTypeString = if (isExtension) {
                     val renderedType = receiverTypeCandidate!!.renderedTypes.first()
@@ -574,9 +576,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     }
                 }
 
-                if (assignmentToReplace != null) {
-                    (declaration as KtProperty).initializer = assignmentToReplace.right
-                    return assignmentToReplace.replace(declaration) as KtCallableDeclaration
+                val newInitializer = pointerOfAssignmentToReplace?.element
+                if (newInitializer != null) {
+                    (declaration as KtProperty).initializer = newInitializer.right
+                    return newInitializer.replace(declaration) as KtCallableDeclaration
                 }
 
                 val container = if (containingElement is KtClass && callableInfo.isForCompanion) {
@@ -1145,13 +1148,22 @@ internal fun <D : KtNamedDeclaration> placeDeclarationInContainer(
         else -> throw AssertionError("Invalid containing element: ${container.text}")
     }
 
-    if (declaration !is KtPrimaryConstructor) {
-        val parent = declarationInPlace.parent
-        calcNecessaryEmptyLines(declarationInPlace, false).let {
-            if (it > 0) parent.addBefore(psiFactory.createNewLine(it), declarationInPlace)
+    when (declaration) {
+        is KtEnumEntry -> {
+            val prevEnumEntry = declarationInPlace.siblings(forward = false, withItself = false).firstIsInstanceOrNull<KtEnumEntry>()
+            if ((prevEnumEntry?.prevSibling as? PsiWhiteSpace)?.text?.contains('\n') == true) {
+                val parent = declarationInPlace.parent
+                parent.addBefore(psiFactory.createNewLine(), declarationInPlace)
+            }
         }
-        calcNecessaryEmptyLines(declarationInPlace, true).let {
-            if (it > 0) parent.addAfter(psiFactory.createNewLine(it), declarationInPlace)
+        !is KtPrimaryConstructor -> {
+            val parent = declarationInPlace.parent
+            calcNecessaryEmptyLines(declarationInPlace, false).let {
+                if (it > 0) parent.addBefore(psiFactory.createNewLine(it), declarationInPlace)
+            }
+            calcNecessaryEmptyLines(declarationInPlace, true).let {
+                if (it > 0) parent.addAfter(psiFactory.createNewLine(it), declarationInPlace)
+            }
         }
     }
     return declarationInPlace

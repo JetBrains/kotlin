@@ -9,7 +9,6 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirErrorDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -80,7 +79,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         } else {
                             normalReferences++
                         }
-                        super.visitQualifiedAccess(qualifiedAccess)
+                        visitStatement(qualifiedAccess)
                     }
 
                     override fun visitExpression(expression: FirExpression) {
@@ -101,11 +100,11 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         statement.acceptChildren(this)
                     }
 
-                    override fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration) {
-                        errorDeclarations++
-                        println(errorDeclaration.render())
-                        errorDeclaration.psi?.let { println(it) }
-                    }
+//                    override fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration) {
+//                        errorDeclarations++
+//                        println(errorDeclaration.render())
+//                        errorDeclaration.psi?.let { println(it) }
+//                    }
 
                     override fun visitDeclaration(declaration: FirDeclaration) {
                         normalDeclarations++

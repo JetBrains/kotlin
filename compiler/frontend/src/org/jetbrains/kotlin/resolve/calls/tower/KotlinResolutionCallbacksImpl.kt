@@ -226,21 +226,6 @@ class KotlinResolutionCallbacksImpl(
         )
     }
 
-    override fun createReceiverWithSmartCastInfo(resolvedAtom: ResolvedCallAtom): ReceiverValueWithSmartCastInfo? {
-        val returnType = resolvedAtom.candidateDescriptor.returnType ?: return null
-        val psiKotlinCall = resolvedAtom.atom.psiKotlinCall
-        val callElement = psiKotlinCall.psiCall.callElement.safeAs<KtExpression>() ?: return null
-        val expression = findCommonParent(callElement, resolvedAtom.atom.psiKotlinCall.explicitReceiver)
-
-        return transformToReceiverWithSmartCastInfo(
-            resolvedAtom.candidateDescriptor,
-            trace.bindingContext,
-            psiKotlinCall.resultDataFlowInfo,
-            ExpressionReceiver.create(expression, returnType, trace.bindingContext),
-            languageVersionSettings, dataFlowValueFactory
-        )
-    }
-
     override fun isCompileTimeConstant(resolvedAtom: ResolvedCallAtom, expectedType: UnwrappedType): Boolean {
         val descriptor = resolvedAtom.candidateDescriptor
 

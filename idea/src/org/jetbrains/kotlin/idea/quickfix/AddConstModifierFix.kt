@@ -32,19 +32,24 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.findAnnotation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.checkers.ConstModifierChecker
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
-class AddConstModifierFix(val property: KtProperty) : AddModifierFix(property, KtTokens.CONST_KEYWORD), CleanupFix {
+class AddConstModifierFix(property: KtProperty) : AddModifierFix(property, KtTokens.CONST_KEYWORD), CleanupFix {
+    private val pointer = property.createSmartPointer()
+
     override fun invokeImpl(project: Project, editor: Editor?, file: PsiFile) {
+        val property = pointer.element ?: return
         addConstModifier(property)
     }
 
@@ -52,9 +57,12 @@ class AddConstModifierFix(val property: KtProperty) : AddModifierFix(property, K
         private val removeAnnotations = listOf(FqName("kotlin.jvm.JvmStatic"), FqName("kotlin.jvm.JvmField"))
 
         fun addConstModifier(property: KtProperty) {
+            val annotationsToRemove = removeAnnotations.mapNotNull { property.findAnnotation(it) }
             replaceReferencesToGetterByReferenceToField(property)
-            property.addModifier(KtTokens.CONST_KEYWORD)
-            removeAnnotations.mapNotNull { property.findAnnotation(it) }.forEach(KtAnnotationEntry::delete)
+            runWriteAction {
+                property.addModifier(KtTokens.CONST_KEYWORD)
+                annotationsToRemove.forEach(KtAnnotationEntry::delete)
+            }
         }
     }
 }
@@ -100,24 +108,23 @@ object ConstFixFactory : KotlinSingleIntentionActionFactory() {
 
 fun replaceReferencesToGetterByReferenceToField(property: KtProperty) {
     val project = property.project
-    val getter = LightClassUtil.getLightClassPropertyMethods(property).getter
+    val getter = LightClassUtil.getLightClassPropertyMethods(property).getter ?: return
 
     val javaScope = GlobalSearchScope.getScopeRestrictedByFileTypes(project.allScope(), JavaFileType.INSTANCE)
-    val getterUsages = if (getter != null)
-        ReferencesSearch.search(getter, javaScope).findAll()
-    else
-        emptyList()
 
     val backingField = LightClassUtil.getLightClassPropertyMethods(property).backingField
     if (backingField != null) {
+        val getterUsages = ReferencesSearch.search(getter, javaScope).findAll()
         val factory = PsiElementFactory.SERVICE.getInstance(project)
         val fieldFQName = backingField.containingClass!!.qualifiedName + "." + backingField.name
 
-        getterUsages.forEach {
-            val call = it.element.getNonStrictParentOfType<PsiMethodCallExpression>()
-            if (call != null && it.element == call.methodExpression) {
-                val fieldRef = factory.createExpressionFromText(fieldFQName, it.element)
-                call.replace(fieldRef)
+        runWriteAction {
+            getterUsages.forEach {
+                val call = it.element.getNonStrictParentOfType<PsiMethodCallExpression>()
+                if (call != null && it.element == call.methodExpression) {
+                    val fieldRef = factory.createExpressionFromText(fieldFQName, it.element)
+                    call.replace(fieldRef)
+                }
             }
         }
     }

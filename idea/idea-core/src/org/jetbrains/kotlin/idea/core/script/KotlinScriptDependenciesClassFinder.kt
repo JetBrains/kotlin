@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 class KotlinScriptDependenciesClassFinder(
     private val project: Project
 ) : NonClasspathClassFinder(project), KotlinSafeClassFinder {
-    override fun calcClassRoots(): List<VirtualFile> = ScriptDependenciesManager.getInstance(project)
+    override fun calcClassRoots(): List<VirtualFile> = ScriptConfigurationManager.getInstance(project)
         .getAllScriptsDependenciesClassFiles().toList()
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {

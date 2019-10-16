@@ -1,6 +1,6 @@
-fun notNullParameters(f: /*T3@*/Function2</*T0@*/Int, /*T1@*/Int, /*T2@*/String>) {}
-fun nullableParameter(f: /*T7@*/Function2</*T4@*/Int?, /*T5@*/Int, /*T6@*/String>) {}
-fun nullableReturnType(f: /*T11@*/Function2</*T8@*/Int, /*T9@*/Int, /*T10@*/String?>) {}
+fun notNullParameters(f: /*T3@*/Function2</*T0@*/Int, /*T1@*/Int, /*T2@*/String?>?) {}
+fun nullableParameter(f: /*T7@*/Function2</*T4@*/Int?, /*T5@*/Int?, /*T6@*/String?>?) {}
+fun nullableReturnType(f: /*T11@*/Function2</*T8@*/Int, /*T9@*/Int?, /*T10@*/String?>?) {}
 
 
 fun test() {
@@ -8,11 +8,11 @@ fun test() {
                           if (i/*T12@Int*/ < 10/*LIT*//*LIT*/ && j/*T13@Int*/ > 0/*LIT*//*LIT*//*LIT*/) ""/*LIT*/ else ""/*LIT*/
                       }/*Function2<T12@Int, T13@Int, T18@String>!!L*/)
 
-    nullableParameter({ i: /*T14@*/Int?, j: /*T15@*/Int ->
+    nullableParameter({ i: /*T14@*/Int?, j: /*T15@*/Int? ->
                           if (i/*T14@Int*/ == null/*LIT*/) ""/*LIT*/ else ""/*LIT*/
                       }/*Function2<T14@Int, T15@Int, T19@String>!!L*/)
 
-    nullableReturnType({ i: /*T16@*/Int, j: /*T17@*/Int ->
+    nullableReturnType({ i: /*T16@*/Int, j: /*T17@*/Int? ->
                            if (i/*T16@Int*/ < 10/*LIT*//*LIT*/) return@nullableReturnType null/*NULL!!U*/
                            return@nullableReturnType "nya"/*LIT*/
                        }/*Function2<T16@Int, T17@Int, T20@String>!!L*/)

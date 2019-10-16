@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.Type
 
 object IrCheckNotNull : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
@@ -23,10 +23,14 @@ object IrCheckNotNull : IntrinsicMethod() {
             override fun materialize() {
                 arg0.materialize()
                 mv.dup()
-                val ifNonNullLabel = Label()
-                mv.ifnonnull(ifNonNullLabel)
-                mv.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "throwNpe", Type.getMethodDescriptor(Type.VOID_TYPE), false)
-                mv.mark(ifNonNullLabel)
+                if (codegen.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) {
+                    mv.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;)V", false)
+                } else {
+                    val ifNonNullLabel = Label()
+                    mv.ifnonnull(ifNonNullLabel)
+                    mv.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "throwNpe", "()V", false)
+                    mv.mark(ifNonNullLabel)
+                }
             }
         }
     }

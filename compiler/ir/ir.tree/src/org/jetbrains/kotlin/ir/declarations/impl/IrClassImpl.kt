@@ -37,7 +37,7 @@ class IrClassImpl(
     override val symbol: IrClassSymbol,
     override val name: Name,
     override val kind: ClassKind,
-    override val visibility: Visibility,
+    override var visibility: Visibility,
     override val modality: Modality,
     override val isCompanion: Boolean,
     override val isInner: Boolean,

@@ -71,7 +71,7 @@ class IncrementalKaptTest {
 
             incrementalCache = incrementalCacheDir
             compiledSources.add(classesOutput)
-            changedFiles.add(sourcesDir.resolve("User.java"))
+            changedFiles.add(sourcesDir.resolve("User.java").canonicalFile)
             flags.add(KaptFlag.INCREMENTAL_APT)
         }.build()
 
@@ -145,7 +145,7 @@ class IncrementalKaptTest {
 
             incrementalCache = incrementalCacheDir
             compiledSources.add(classesOutput)
-            changedFiles.add(sourcesDir.resolve("User.java"))
+            changedFiles.add(sourcesDir.resolve("User.java").canonicalFile)
             flags.add(KaptFlag.INCREMENTAL_APT)
         }.build()
 

@@ -8,7 +8,7 @@ FILE: main.kt
             public get(): R|kotlin/Int|
 
         init {
-            R|/Foo.x| = Int(42)
+            this@R|/Foo|.R|/Foo.x| = Int(42)
         }
 
     }

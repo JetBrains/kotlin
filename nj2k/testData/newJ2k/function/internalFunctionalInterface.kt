@@ -14,6 +14,6 @@ internal class Test {
     }
 
     fun nya(): Double {
-        return foo(1, FunctionalI<Int?, Double?> { x: A -> this.toDouble(x) })
+        return foo(1, FunctionalI<Int, Double> { x: A -> this.toDouble(x) })
     }
 }

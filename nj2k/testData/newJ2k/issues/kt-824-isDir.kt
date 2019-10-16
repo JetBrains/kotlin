@@ -13,7 +13,6 @@ object Test {
         val result = true
         return if (parent.isDirectory) {
             true
-        } else
-            false
+        } else false
     }
 }

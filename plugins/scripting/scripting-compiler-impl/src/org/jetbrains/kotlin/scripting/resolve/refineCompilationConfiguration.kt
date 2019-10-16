@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.withCorrectExtension
 import java.io.File
 import java.net.URL
 import kotlin.reflect.KClass
@@ -30,7 +31,6 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.compat.mapToDiagnostics
-import kotlin.script.experimental.jvm.impl.refineWith
 import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 import kotlin.script.experimental.jvm.impl.toDependencies
 
@@ -97,7 +97,8 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
         charset = CharsetToolkit.UTF8_CHARSET
     }
 
-    override fun getPath(): String = _path ?: super.getPath()
+    override fun getPath(): String = _path ?: if (parent != null) parent.path + "/" + name else name
+
     override fun getCanonicalPath(): String? = path
 }
 
@@ -290,7 +291,7 @@ fun SourceCode.getVirtualFile(definition: ScriptDefinition): VirtualFile {
         val vFile = LocalFileSystem.getInstance().findFileByIoFile(file)
         if (vFile != null) return vFile
     }
-    val scriptName = name ?: "script.${definition.fileExtension}"
+    val scriptName = withCorrectExtension(name ?: definition.defaultClassName, definition.fileExtension)
     val scriptPath = when (this) {
         is FileScriptSource -> file.path
         is ExternalSourceCode -> externalLocation.toString()

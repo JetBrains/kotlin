@@ -9,7 +9,7 @@ internal class X {
 }
 
 internal class C {
-    fun foo(map: HashMap<String, String>): String? {
+    fun foo(map: HashMap<String?, String?>): String? {
         return map["a"]
     }
 
@@ -22,6 +22,6 @@ internal class C {
     }
 
     fun foo(javaClass: JavaClass): Int {
-        return javaClass.get(0)
+        return javaClass[0]
     }
 }

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.test.engines.SpiderMonkeyEngine
+import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverResultImpl
+import org.jetbrains.kotlin.library.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import java.io.Closeable
 import java.io.File
+import java.lang.Boolean.getBoolean
 
 private val wasmRuntimeKlib =
     loadKlib("compiler/ir/serialization.js/build/wasmRuntime/klib")
@@ -88,7 +91,7 @@ abstract class BasicWasmBoxTest(
         testFunction: String
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
-        val debugMode = false
+        val debugMode = getBoolean("kotlin.js.debugMode")
 
         val phaseConfig = if (debugMode) {
             val allPhasesSet = wasmPhases.toPhaseMap().values.toSet()
@@ -110,7 +113,8 @@ abstract class BasicWasmBoxTest(
             files = filesToCompile,
             configuration = config.configuration,
             phaseConfig = phaseConfig,
-            allDependencies = listOf(wasmRuntimeKlib),
+            // TODO: Bypass the resolver fow wasm.
+            allDependencies = KotlinLibraryResolverResultImpl(listOf(KotlinResolvedLibraryImpl(wasmRuntimeKlib))),
             friendDependencies = emptyList(),
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
         )

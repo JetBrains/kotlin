@@ -23,4 +23,7 @@ object JvmAnalysisFlags {
 
     @JvmStatic
     val suppressMissingBuiltinsError by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val irCheckLocalNames by AnalysisFlag.Delegates.Boolean
 }

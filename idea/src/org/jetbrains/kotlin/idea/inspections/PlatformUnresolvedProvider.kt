@@ -49,7 +49,7 @@ object PlatformUnresolvedProvider : KotlinIntentionActionFactoryWithDelegate<KtN
                     register(action)
                 }
 
-                override fun unregister(condition: Condition<IntentionAction>) {
+                override fun unregister(condition: Condition<in IntentionAction>) {
                 }
             })
         }

@@ -534,9 +534,16 @@ public class KtPsiUtil {
                 return ((KtBinaryExpression) parentElement).getRight() == currentInner;
             }
 
-            //'-(-x)' case
             if (parentElement instanceof KtPrefixExpression && innerExpression instanceof KtPrefixExpression) {
-                return innerOperation == parentOperation && (innerOperation == KtTokens.PLUS || innerOperation == KtTokens.MINUS);
+                // +(++x) or +(+x) case
+                if (parentOperation == KtTokens.PLUS) {
+                    return innerOperation == KtTokens.PLUS || innerOperation == KtTokens.PLUSPLUS;
+                }
+
+                // -(--x) or -(-x) case
+                if (parentOperation == KtTokens.MINUS) {
+                    return innerOperation == KtTokens.MINUS || innerOperation == KtTokens.MINUSMINUS;
+                }
             }
             return false;
         }

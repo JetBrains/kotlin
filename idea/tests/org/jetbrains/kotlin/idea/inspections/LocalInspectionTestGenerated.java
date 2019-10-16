@@ -824,6 +824,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/lineBreaksAndComments.kt");
             }
 
+            @TestMetadata("qualified.kt")
+            public void testQualified() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/qualified.kt");
+            }
+
+            @TestMetadata("qualified2.kt")
+            public void testQualified2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/qualified2.kt");
+            }
+
+            @TestMetadata("qualified3.kt")
+            public void testQualified3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/qualified3.kt");
+            }
+
+            @TestMetadata("qualified4.kt")
+            public void testQualified4() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/qualified4.kt");
+            }
+
             @TestMetadata("this.kt")
             public void testThis() throws Exception {
                 runTest("idea/testData/inspectionsLocal/branched/introduceWhenSubject/this.kt");
@@ -4196,6 +4216,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/explicitThis/functionReference.kt");
         }
 
+        @TestMetadata("functionWithSameNameInvocableVariable.kt")
+        public void testFunctionWithSameNameInvocableVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/explicitThis/functionWithSameNameInvocableVariable.kt");
+        }
+
+        @TestMetadata("functionWithSameNameVariable.kt")
+        public void testFunctionWithSameNameVariable() throws Exception {
+            runTest("idea/testData/inspectionsLocal/explicitThis/functionWithSameNameVariable.kt");
+        }
+
         @TestMetadata("multipleReceivers.kt")
         public void testMultipleReceivers() throws Exception {
             runTest("idea/testData/inspectionsLocal/explicitThis/multipleReceivers.kt");
@@ -4264,6 +4294,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("variableWithSameName.kt")
         public void testVariableWithSameName() throws Exception {
             runTest("idea/testData/inspectionsLocal/explicitThis/variableWithSameName.kt");
+        }
+
+        @TestMetadata("variableWithSameNameFunction.kt")
+        public void testVariableWithSameNameFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/explicitThis/variableWithSameNameFunction.kt");
         }
     }
 
@@ -5141,11 +5176,6 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("typeMismatch2.kt")
             public void testTypeMismatch2() throws Exception {
                 runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch2.kt");
-            }
-
-            @TestMetadata("typeMismatch2_ni.kt")
-            public void testTypeMismatch2_ni() throws Exception {
-                runTest("idea/testData/inspectionsLocal/liftOut/ifToAssignment/typeMismatch2_ni.kt");
             }
 
             @TestMetadata("typeMismatch3.kt")
@@ -6076,6 +6106,36 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
         public void testAllFilesPresentInMoveVariableDeclarationIntoWhen() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("hasBreak.kt")
+        public void testHasBreak() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasBreak.kt");
+        }
+
+        @TestMetadata("hasContinue.kt")
+        public void testHasContinue() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasContinue.kt");
+        }
+
+        @TestMetadata("hasReturn.kt")
+        public void testHasReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasReturn.kt");
+        }
+
+        @TestMetadata("hasReturn2.kt")
+        public void testHasReturn2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasReturn2.kt");
+        }
+
+        @TestMetadata("hasThrow.kt")
+        public void testHasThrow() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasThrow.kt");
+        }
+
+        @TestMetadata("hasThrow2.kt")
+        public void testHasThrow2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/moveVariableDeclarationIntoWhen/hasThrow2.kt");
         }
 
         @TestMetadata("inBinaryExpression.kt")
@@ -7238,6 +7298,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("getterWithDerivedProperty4.kt")
         public void testGetterWithDerivedProperty4() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantOverride/getterWithDerivedProperty4.kt");
+        }
+
+        @TestMetadata("javaPackagePrivate.kt")
+        public void testJavaPackagePrivate() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/javaPackagePrivate.kt");
         }
 
         @TestMetadata("notCallSuper.kt")

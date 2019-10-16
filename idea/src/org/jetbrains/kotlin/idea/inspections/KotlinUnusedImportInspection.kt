@@ -22,7 +22,6 @@ import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerEx
 import com.intellij.codeInsight.daemon.impl.DaemonListeners
 import com.intellij.codeInsight.daemon.impl.DaemonProgressIndicator
-import com.intellij.codeInsight.daemon.impl.HighlightingSessionImpl
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInspection.*
 import com.intellij.lang.annotation.HighlightSeverity
@@ -147,9 +146,8 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
         val progress = generateSequence(ProgressManager.getInstance().progressIndicator) {
             (it as? ProgressWrapper)?.originalProgressIndicator
         }.last() as DaemonProgressIndicator
-        val highlightingSession = HighlightingSessionImpl.getHighlightingSession(file, progress)
 
-        val project = highlightingSession.project
+        val project = file.project
 
         val modificationCount = PsiModificationTracker.SERVICE.getInstance(project).modificationCount
         val invokeFixLater = Disposable {

@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
+import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
-abstract class AbstractFirBasedSymbol<E> : FirBasedSymbol<E> where E : FirDeclaration, E : FirSymbolOwner<E> {
+abstract class AbstractFirBasedSymbol<E> : FirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
 
     override lateinit var fir: E
 

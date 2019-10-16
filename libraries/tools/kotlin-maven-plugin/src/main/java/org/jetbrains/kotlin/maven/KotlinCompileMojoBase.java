@@ -231,7 +231,8 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     private boolean hasKotlinFilesInSources() throws MojoExecutionException {
         for (File root : getSourceDirs()) {
             if (root.exists()) {
-                boolean sourcesExists = !FileUtil.processFilesRecursively(root, file -> !file.getName().endsWith(".kt"));
+                boolean sourcesExists =
+                        !FileUtil.processFilesRecursively(root, file -> !file.getName().endsWith(".kt") && !file.getName().endsWith(".kts"));
                 if (sourcesExists) return true;
             }
         }

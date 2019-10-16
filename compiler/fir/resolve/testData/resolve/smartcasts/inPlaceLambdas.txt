@@ -1,0 +1,47 @@
+FILE: inPlaceLambdas.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public final fun run(block: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun test_1(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|A|) ->  {
+                R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+                    R|<local>/x|.R|/A.foo|()
+                }
+                )
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_2(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            (R|<local>/x| as R|B|)
+        }
+        )
+        R|<local>/x|.R|/B.bar|()
+    }
+    public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|A|) ->  {
+                R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+                    R|<local>/x|.R|/A.foo|()
+                    (R|<local>/x| as R|B|)
+                }
+                )
+                R|<local>/x|.R|/B.bar|()
+            }
+            else ->  {
+            }
+        }
+
+    }

@@ -36,10 +36,10 @@ import javax.lang.model.type.TypeMirror
 import javax.tools.JavaFileObject
 
 class SymbolBasedClass(
-        element: TypeElement,
-        javac: JavacWrapper,
-        override val classId: ClassId?,
-        val file: JavaFileObject?
+    element: TypeElement,
+    javac: JavacWrapper,
+    override val classId: ClassId?,
+    val file: JavaFileObject?
 ) : SymbolBasedClassifier<TypeElement>(element, javac), JavaClassWithClassId {
 
     override val name: Name
@@ -58,7 +58,7 @@ class SymbolBasedClass(
         get() = element.getVisibility()
 
     override val typeParameters: List<JavaTypeParameter>
-        by lazy { element.typeParameters.map { SymbolBasedTypeParameter(it, javac) } }
+            by lazy { element.typeParameters.map { SymbolBasedTypeParameter(it, javac) } }
 
     override val fqName: FqName
         get() = FqName(element.qualifiedName.toString())
@@ -66,30 +66,35 @@ class SymbolBasedClass(
     override val supertypes: Collection<JavaClassifierType>
             by lazy {
                 arrayListOf<TypeMirror>()
-                        .apply {
-                            element.superclass.takeIf { it !is NoType }?.let(this::add)
-                            addAll(element.interfaces)
+                    .apply {
+                        element.superclass.takeIf { it !is NoType }?.let(this::add)
+                        addAll(element.interfaces)
+                    }
+                    .mapTo(arrayListOf()) { SymbolBasedClassifierType(it, javac) }
+                    .apply {
+                        if (isEmpty() && element.qualifiedName.toString() != CommonClassNames.JAVA_LANG_OBJECT) {
+                            javac.JAVA_LANG_OBJECT?.let { add(it) }
                         }
-                        .mapTo(arrayListOf()) { SymbolBasedClassifierType(it, javac) }
-                        .apply {
-                            if (isEmpty() && element.qualifiedName.toString() != CommonClassNames.JAVA_LANG_OBJECT) {
-                                javac.JAVA_LANG_OBJECT?.let { add(it) }
-                            }
-                        }
+                    }
             }
 
     val innerClasses: Map<Name, JavaClass>
             by lazy {
                 enclosedElements
-                        .filterIsInstance(TypeElement::class.java)
-                        .map { SymbolBasedClass(it, javac, classId?.createNestedClassId(Name.identifier(it.simpleName.toString())), file) }
-                        .associateBy(JavaClass::name)
+                    .filterIsInstance(TypeElement::class.java)
+                    .map { SymbolBasedClass(it, javac, classId?.createNestedClassId(Name.identifier(it.simpleName.toString())), file) }
+                    .associateBy(JavaClass::name)
             }
 
     override val outerClass: JavaClass?
             by lazy {
                 element.enclosingElement?.let {
-                    if (it.asType().kind != TypeKind.DECLARED) null else SymbolBasedClass(it as TypeElement, javac, classId?.outerClassId, file)
+                    if (it.asType().kind != TypeKind.DECLARED) null else SymbolBasedClass(
+                        it as TypeElement,
+                        javac,
+                        classId?.outerClassId,
+                        file
+                    )
                 }
             }
 
@@ -107,8 +112,8 @@ class SymbolBasedClass(
 
     override val methods: Collection<JavaMethod>
         get() = enclosedElements
-                .filter { it.kind == ElementKind.METHOD && !isEnumValuesOrValueOf(it as ExecutableElement) }
-                .map { SymbolBasedMethod(it as ExecutableElement, this, javac) }
+            .filter { it.kind == ElementKind.METHOD && !isEnumValuesOrValueOf(it as ExecutableElement) }
+            .map { SymbolBasedMethod(it as ExecutableElement, this, javac) }
 
     private fun isEnumValuesOrValueOf(method: ExecutableElement): Boolean {
         return isEnum && when (method.simpleName.toString()) {
@@ -120,13 +125,13 @@ class SymbolBasedClass(
 
     override val fields: Collection<JavaField>
         get() = enclosedElements
-                .filter { it.kind.isField && Name.isValidIdentifier(it.simpleName.toString()) }
-                .map { SymbolBasedField(it as VariableElement, this, javac) }
+            .filter { it.kind.isField && Name.isValidIdentifier(it.simpleName.toString()) }
+            .map { SymbolBasedField(it as VariableElement, this, javac) }
 
     override val constructors: Collection<JavaConstructor>
         get() = enclosedElements
-                .filter { it.kind == ElementKind.CONSTRUCTOR }
-                .map { SymbolBasedConstructor(it as ExecutableElement, this, javac) }
+            .filter { it.kind == ElementKind.CONSTRUCTOR }
+            .map { SymbolBasedConstructor(it as ExecutableElement, this, javac) }
 
     override val innerClassNames: Collection<Name>
         get() = innerClasses.keys

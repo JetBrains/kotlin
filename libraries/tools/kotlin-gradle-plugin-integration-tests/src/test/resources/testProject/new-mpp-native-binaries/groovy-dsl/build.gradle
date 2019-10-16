@@ -37,6 +37,8 @@ kotlin {
         mingwX64("mingw64")
 
         configure([macos64, linux64, mingw64]) {
+            compilations.all { kotlinOptions.verbose = true }
+            compilations.test.kotlinOptions.freeCompilerArgs += "-nowarn"
             binaries {
 
                 executable()                  // Executable with default name.
@@ -53,7 +55,10 @@ kotlin {
 
                 executable("test2", [RELEASE]) {
                     compilation = compilations["test"]
-                    freeCompilerArgs.add("-tr")
+                    freeCompilerArgs += "-tr"
+                    linkTask.kotlinOptions {
+                        freeCompilerArgs += "-Xtime"
+                    }
                 }
 
                 sharedLib([RELEASE])

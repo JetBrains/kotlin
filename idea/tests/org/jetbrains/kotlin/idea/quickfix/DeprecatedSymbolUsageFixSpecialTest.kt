@@ -14,19 +14,15 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.junit.runner.RunWith
 
-@TestMetadata("idea/testData/quickfix.special")
+@TestMetadata("idea/testData/quickfix.special/deprecatedSymbolUsage")
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
 class DeprecatedSymbolUsageFixSpecialTest : KotlinLightCodeInsightFixtureTestCase() {
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
-
-    private val TEST_DATA_DIR = "idea/testData/quickfix.special/deprecatedSymbolUsage"
 
     fun testMemberInCompiledClass() {
         doTest("matches(input)")
@@ -37,7 +33,7 @@ class DeprecatedSymbolUsageFixSpecialTest : KotlinLightCodeInsightFixtureTestCas
     }
 
     private fun doTest(pattern: String) {
-        val testPath = KotlinTestUtils.navigationMetadata(TEST_DATA_DIR + "/" + getTestName(true) + ".kt")
+        val testPath = getTestName(true) + ".kt"
         myFixture.configureByFile(testPath)
 
         val offset = editor.caretModel.offset

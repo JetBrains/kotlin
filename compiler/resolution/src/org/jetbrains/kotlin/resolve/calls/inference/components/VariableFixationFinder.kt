@@ -77,6 +77,8 @@ class VariableFixationFinder(
         completionMode: ConstraintSystemCompletionMode,
         topLevelType: KotlinTypeMarker
     ): VariableForFixation? {
+        if (allTypeVariables.isEmpty()) return null
+
         val dependencyProvider = TypeVariableDependencyInformationProvider(
             notFixedTypeVariables, postponedArguments, topLevelType.takeIf { completionMode == PARTIAL }, this
         )

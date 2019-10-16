@@ -7,7 +7,7 @@ plugins {
 }
 
 val versions by configurations.creating
-val versionFilePath = "$rootDir/dependencies/dependencies.properties"
+val versionFilePath = "${rootProject.buildDir}/dependencies.properties"
 val ideaVersion = findProperty("versions.intellijSdk").toString()
 val markdownVersion = findProperty("versions.markdown").toString()
 

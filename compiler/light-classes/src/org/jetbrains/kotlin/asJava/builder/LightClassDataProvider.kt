@@ -56,13 +56,10 @@ class LightClassDataProviderForClassOrObject(
     }
 
     override fun compute(): CachedValueProvider.Result<LightClassDataHolder.ForClass>? {
+        val trackerService = KotlinModificationTrackerService.getInstance(classOrObject.project)
         return CachedValueProvider.Result.create(
-                computeLightClassData(),
-                if (classOrObject.isLocal()) {
-                    KotlinModificationTrackerService.getInstance(classOrObject.project).modificationTracker
-                } else {
-                    KotlinModificationTrackerService.getInstance(classOrObject.project).outOfBlockModificationTracker
-                }
+            computeLightClassData(),
+            if (classOrObject.isLocal) trackerService.modificationTracker else trackerService.outOfBlockModificationTracker
         )
     }
 

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeUniqueAsSequenc
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.org.objectweb.asm.commons.Method
 import java.util.*
 
 private val EXTERNAL_SOURCES_KINDS = arrayOf(
@@ -50,14 +51,15 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     moduleName: String,
     languageVersionSettings: LanguageVersionSettings,
     shouldGenerate: (JvmDeclarationOrigin) -> Boolean,
-    isIrBackend: Boolean
+    mapAsmMethod: ((FunctionDescriptor) -> Method)?
 ) : SignatureCollectingClassBuilderFactory(builderFactory, shouldGenerate) {
 
-    // Avoid errors when some classes are not loaded for some reason
-    private val typeMapper = KotlinTypeMapper(
-        bindingContext, ClassBuilderMode.LIGHT_CLASSES, moduleName, languageVersionSettings,
-        isIrBackend = isIrBackend
-    )
+    private val mapAsmMethod = mapAsmMethod
+        ?: KotlinTypeMapper(
+            // Avoid errors when some classes are not loaded for some reason
+            bindingContext, ClassBuilderMode.LIGHT_CLASSES, moduleName, languageVersionSettings, isIrBackend = false
+        )::mapAsmMethod
+
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
 
     fun reportDiagnostics() {
@@ -240,7 +242,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     }
 
     private fun FunctionDescriptor.asRawSignature() =
-        with(typeMapper.mapAsmMethod(this)) {
+        with(mapAsmMethod(this)) {
             RawSignature(name, descriptor, MemberKind.METHOD)
         }
 

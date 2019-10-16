@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -39,10 +40,13 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-class JvmSerializerExtension(private val bindings: JvmSerializationBindings, state: GenerationState) : SerializerExtension() {
+class JvmSerializerExtension @JvmOverloads constructor(
+    private val bindings: JvmSerializationBindings,
+    state: GenerationState,
+    private val typeMapper: KotlinTypeMapperBase = state.typeMapper
+) : SerializerExtension() {
     private val globalBindings = state.globalSerializationBindings
     private val codegenBinding = state.bindingContext
-    private val typeMapper = state.typeMapper
     override val stringTable = JvmCodegenStringTable(typeMapper)
     private val useTypeTable = state.useTypeTableInSerializer
     private val moduleName = state.moduleName

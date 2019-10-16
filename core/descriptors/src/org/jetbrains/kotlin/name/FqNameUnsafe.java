@@ -159,8 +159,11 @@ public final class FqNameUnsafe {
     }
 
     public boolean startsWith(@NotNull Name segment) {
+        if (isRoot())
+            return false;
+
         int firstDot = fqName.indexOf('.');
-        return !isRoot() && fqName.regionMatches(0, segment.asString(), 0, firstDot == -1 ? fqName.length() : firstDot);
+        return fqName.regionMatches(0, segment.asString(), 0, firstDot == -1 ? fqName.length() : firstDot);
     }
 
     @NotNull

@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.nameIdentifierTextRangeInThis
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -28,8 +29,11 @@ class AddOperatorModifierInspection : AbstractApplicabilityBasedInspection<KtNam
     }
 
     override fun applyTo(element: KtNamedFunction, project: Project, editor: Editor?) {
-        for (declaration in element.withExpectedActuals()) {
-            declaration.addModifier(KtTokens.OPERATOR_KEYWORD)
+        val declarations = element.withExpectedActuals()
+        runWriteAction {
+            for (declaration in declarations) {
+                declaration.addModifier(KtTokens.OPERATOR_KEYWORD)
+            }
         }
     }
 }

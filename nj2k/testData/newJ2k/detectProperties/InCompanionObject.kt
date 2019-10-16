@@ -4,7 +4,7 @@ class AAA {
     }
 
     companion object {
-
         var x = 42
+
     }
 }

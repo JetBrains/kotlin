@@ -8,40 +8,40 @@ public interface IrLocalDelegatedPropertyReferenceOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol delegate = 1;</code>
+   * <code>required int32 delegate = 1;</code>
    */
   boolean hasDelegate();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol delegate = 1;</code>
+   * <code>required int32 delegate = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getDelegate();
+  int getDelegate();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getter = 2;</code>
+   * <code>optional int32 getter = 2;</code>
    */
   boolean hasGetter();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getter = 2;</code>
+   * <code>optional int32 getter = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getGetter();
+  int getGetter();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol setter = 3;</code>
+   * <code>optional int32 setter = 3;</code>
    */
   boolean hasSetter();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol setter = 3;</code>
+   * <code>optional int32 setter = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSetter();
+  int getSetter();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 4;</code>
+   * <code>required int32 symbol = 4;</code>
    */
   boolean hasSymbol();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 4;</code>
+   * <code>required int32 symbol = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSymbol();
+  int getSymbol();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin origin = 5;</code>

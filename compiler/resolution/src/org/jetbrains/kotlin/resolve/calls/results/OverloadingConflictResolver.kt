@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -43,6 +44,8 @@ open class OverloadingConflictResolver<C : Any>(
     private val isFromSources: (CallableDescriptor) -> Boolean,
     private val hasSAMConversion: ((C) -> Boolean)?
 ) {
+
+    private val isTypeRefinementEnabled by lazy { module.isTypeRefinementEnabled() }
 
     private val resolvedCallHashingStrategy = object : TObjectHashingStrategy<C> {
         override fun equals(call1: C?, call2: C?): Boolean =
@@ -72,7 +75,10 @@ open class OverloadingConflictResolver<C : Any>(
         }
 
         val noEquivalentCalls = filterOutEquivalentCalls(fixedCandidates)
-        val noOverrides = OverridingUtil.filterOverrides(noEquivalentCalls) { a, b ->
+        val noOverrides = OverridingUtil.filterOverrides(
+            noEquivalentCalls,
+            isTypeRefinementEnabled
+        ) { a, b ->
             val aDescriptor = a.resultingDescriptor
             val bDescriptor = b.resultingDescriptor
             // Here we'd like to handle situation when we have two synthetic descriptors as in syntheticSAMExtensions.kt
@@ -118,10 +124,16 @@ open class OverloadingConflictResolver<C : Any>(
         val result = LinkedHashSet<C>()
         outerLoop@ for (meD in fromSourcesGoesFirst) {
             for (otherD in result) {
-                val me = meD.resultingDescriptor
-                val other = otherD.resultingDescriptor
+                val me = meD.resultingDescriptor.originalIfTypeRefinementEnabled
+                val other = otherD.resultingDescriptor.originalIfTypeRefinementEnabled
                 val ignoreReturnType = isFromSources(me) != isFromSources(other)
-                if (DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(me, other, ignoreReturnType)) {
+                if (DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(
+                        me,
+                        other,
+                        isTypeRefinementEnabled,
+                        ignoreReturnType
+                    )
+                ) {
                     continue@outerLoop
                 }
             }
@@ -130,6 +142,8 @@ open class OverloadingConflictResolver<C : Any>(
 
         return result
     }
+
+    private val CallableDescriptor.originalIfTypeRefinementEnabled get() = if (isTypeRefinementEnabled) original else this
 
     private fun Collection<C>.setIfOneOrEmpty() = when (size) {
         0 -> emptySet()

@@ -61,7 +61,7 @@ class SamWrapperTransformer(transformationInfo: SamWrapperTransformationInfo, pr
 
         classReader.accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
-                classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
+                classBuilder.defineClass(null, maxOf(version, state.classFileVersion), access, name, signature, superName, interfaces)
             }
 
         }, ClassReader.SKIP_FRAMES)

@@ -9,11 +9,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
+import org.jetbrains.kotlin.fir.declarations.visibility
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
@@ -68,40 +72,46 @@ class JavaSymbolProvider(
         scopeSession: ScopeSession
     ): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
-        return buildJavaEnhancementScope(useSiteSession, symbol, scopeSession)
+        return buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, mutableSetOf())
     }
 
     private fun buildJavaEnhancementScope(
         useSiteSession: FirSession,
         symbol: FirClassSymbol,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
+        visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
     ): JavaClassEnhancementScope {
         return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
-            JavaClassEnhancementScope(useSiteSession, buildJavaUseSiteScope(symbol.fir, useSiteSession, scopeSession))
+            JavaClassEnhancementScope(useSiteSession, buildJavaUseSiteScope(symbol.fir, useSiteSession, scopeSession, visitedSymbols))
         }
     }
 
     private fun buildJavaUseSiteScope(
         regularClass: FirRegularClass,
         useSiteSession: FirSession,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
+        visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
     ): JavaClassUseSiteScope {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
-            val declaredScope = scopeSession.getOrBuild(regularClass.symbol, DECLARED) { declaredMemberScope(regularClass) }
+            val declaredScope = declaredMemberScope(regularClass)
             val superTypeEnhancementScopes =
                 lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
                     .mapNotNull { useSiteSuperType ->
                         if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
                         val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                        if (symbol is FirClassSymbol) {
+                        if (symbol is FirClassSymbol && visitedSymbols.add(symbol)) {
                             // We need JavaClassEnhancementScope here to have already enhanced signatures from supertypes
-                            val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession)
-                            useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, scope, scopeSession)
+                            val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, visitedSymbols)
+                            visitedSymbols.remove(symbol)
+                            useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, scope, symbol.fir, scopeSession)
                         } else {
                             null
                         }
                     }
-            JavaClassUseSiteScope(regularClass, useSiteSession, FirSuperTypeScope(session, superTypeEnhancementScopes), declaredScope)
+            JavaClassUseSiteScope(
+                regularClass, useSiteSession,
+                FirSuperTypeScope(useSiteSession, superTypeEnhancementScopes), declaredScope
+            )
         }
     }
 
@@ -109,7 +119,14 @@ class JavaSymbolProvider(
         val stored = javaTypeParameterStack.safeGet(this)
         if (stored != null) return stored.fir
         val firSymbol = FirTypeParameterSymbol()
-        val result = FirTypeParameterImpl(session, null, firSymbol, name, variance = INVARIANT, isReified = false)
+        val result = FirTypeParameterImpl(
+            null,
+            session,
+            name,
+            firSymbol,
+            variance = INVARIANT,
+            isReified = false
+        )
         javaTypeParameterStack.add(this, result)
         return result
     }
@@ -122,6 +139,7 @@ class JavaSymbolProvider(
         for (upperBound in javaTypeParameter.upperBounds) {
             bounds += upperBound.toFirResolvedTypeRef(this@JavaSymbolProvider.session, stack)
         }
+        addDefaultBoundIfNecessary()
     }
 
     private fun List<JavaTypeParameter>.convertTypeParameters(stack: JavaTypeParameterStack): List<FirTypeParameter> {
@@ -159,7 +177,7 @@ class JavaSymbolProvider(
                     }
                 }
                 FirJavaClass(
-                    session, (javaClass as? JavaElementImpl<*>)?.psi,
+                    (javaClass as? JavaElementImpl<*>)?.psi, session,
                     firSymbol as FirClassSymbol, javaClass.name,
                     javaClass.visibility, javaClass.modality,
                     javaClass.classKind, isTopLevel = isTopLevel,
@@ -179,7 +197,7 @@ class JavaSymbolProvider(
                         val fieldSymbol = FirFieldSymbol(fieldId)
                         val returnType = javaField.type
                         val firJavaField = FirJavaField(
-                            this@JavaSymbolProvider.session, (javaField as? JavaElementImpl<*>)?.psi,
+                            (javaField as? JavaElementImpl<*>)?.psi, this@JavaSymbolProvider.session,
                             fieldSymbol, fieldName,
                             javaField.visibility, javaField.modality,
                             returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack),
@@ -223,9 +241,13 @@ class JavaSymbolProvider(
                         val constructorSymbol = FirConstructorSymbol(constructorId)
                         val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                         val firJavaConstructor = FirJavaConstructor(
-                            this@JavaSymbolProvider.session, psi,
-                            constructorSymbol, visibility, isPrimary,
-                            FirResolvedTypeRefImpl(
+                            psi,
+                            this@JavaSymbolProvider.session,
+                            constructorSymbol,
+                            visibility,
+                            isPrimary,
+                            isInner = !javaClass.isStatic,
+                            returnTypeRef = FirResolvedTypeRefImpl(
                                 null,
                                 firSymbol.constructType(
                                     classTypeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),

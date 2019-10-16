@@ -51,6 +51,7 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
                                                                 )
             )
             ScriptEvaluationExtension.registerExtensionIfRequired(project, JvmCliScriptEvaluationExtension())
+            ScriptEvaluationExtension.registerExtensionIfRequired(project, JsScriptEvaluationExtension())
             ShellExtension.registerExtensionIfRequired(project, JvmCliReplShellExtension())
             ReplFactoryExtension.registerExtensionIfRequired(project,
                                                              JvmStandardReplFactoryExtension()

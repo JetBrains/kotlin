@@ -101,6 +101,16 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             runTest("idea/idea-completion/testData/basic/common/DataClassMembers2.kt");
         }
 
+        @TestMetadata("EnumItemsThroughChainedTypeAlias.kt")
+        public void testEnumItemsThroughChainedTypeAlias() throws Exception {
+            runTest("idea/idea-completion/testData/basic/common/EnumItemsThroughChainedTypeAlias.kt");
+        }
+
+        @TestMetadata("EnumItemsThroughSingleTypeAlias.kt")
+        public void testEnumItemsThroughSingleTypeAlias() throws Exception {
+            runTest("idea/idea-completion/testData/basic/common/EnumItemsThroughSingleTypeAlias.kt");
+        }
+
         @TestMetadata("ExtendClassName.kt")
         public void testExtendClassName() throws Exception {
             runTest("idea/idea-completion/testData/basic/common/ExtendClassName.kt");
@@ -429,6 +439,16 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         @TestMetadata("KT13780_1.kt")
         public void testKT13780_1() throws Exception {
             runTest("idea/idea-completion/testData/basic/common/KT13780_1.kt");
+        }
+
+        @TestMetadata("KT33903_1.kt")
+        public void testKT33903_1() throws Exception {
+            runTest("idea/idea-completion/testData/basic/common/KT33903_1.kt");
+        }
+
+        @TestMetadata("KT33903_2.kt")
+        public void testKT33903_2() throws Exception {
+            runTest("idea/idea-completion/testData/basic/common/KT33903_2.kt");
         }
 
         @TestMetadata("LocalMultideclarationValues.kt")
@@ -1163,6 +1183,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("container.kt")
             public void testContainer() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/dslMarker/container.kt");
+            }
+
+            @TestMetadata("noDslCompletionForNonDslReciever.kt")
+            public void testNoDslCompletionForNonDslReciever() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/dslMarker/noDslCompletionForNonDslReciever.kt");
             }
 
             @TestMetadata("root.kt")

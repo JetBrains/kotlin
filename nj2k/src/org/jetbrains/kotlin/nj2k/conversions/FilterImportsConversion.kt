@@ -5,19 +5,15 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.ImportStorage
+import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.tree.JKImportList
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 
-
-class FilterImportsConversion : RecursiveApplicableConversionBase() {
+class FilterImportsConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element is JKImportList) {
-            for (import in element.imports) {
-                if (!ImportStorage.isImportNeeded(import.name.value)) {
-                    element.imports -= import
-                }
-            }
+        if (element !is JKImportList) return recurse(element)
+        element.imports = element.imports.filter { import ->
+            context.importStorage.isImportNeeded(import.name.value, allowSingleIdentifierImport = true)
         }
         return recurse(element)
     }

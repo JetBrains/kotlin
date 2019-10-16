@@ -88,8 +88,13 @@ fun PromisedValue.coerce(target: Type, irTarget: IrType): PromisedValue {
     val isFromTypeInlineClass = erasedSourceType.classOrNull!!.owner.isInline
     val isToTypeInlineClass = erasedTargetType.classOrNull!!.owner.isInline
 
+    // Boxing and unboxing kotlin.Result leads to CCE in generated code
+    val doNotCoerceKotlinResultInContinuation =
+        (codegen.irFunction.isInvokeSuspendOfContinuation(codegen.context) || codegen.irFunction.isInvokeOfSuspendLambda(codegen.context))
+                && (irType.isKotlinResult() || irTarget.isKotlinResult())
+
     // Coerce inline classes
-    if (isFromTypeInlineClass || isToTypeInlineClass) {
+    if ((isFromTypeInlineClass || isToTypeInlineClass) && !doNotCoerceKotlinResultInContinuation) {
         val isFromTypeUnboxed = isFromTypeInlineClass && typeMapper.mapType(erasedSourceType.unboxed) == type
         val isToTypeUnboxed = isToTypeInlineClass && typeMapper.mapType(erasedTargetType.unboxed) == target
 

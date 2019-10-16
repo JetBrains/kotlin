@@ -50,6 +50,7 @@ public class SingleClassTestModel implements TestClassModel {
 
     private final boolean skipIgnored;
     private final String testRunnerMethodName;
+    private final List<String> additionalRunnerArguments;
 
     public SingleClassTestModel(
             @NotNull File rootFile,
@@ -59,7 +60,8 @@ public class SingleClassTestModel implements TestClassModel {
             @NotNull String testClassName,
             @NotNull TargetBackend targetBackend,
             boolean skipIgnored,
-            String testRunnerMethodName
+            String testRunnerMethodName,
+            List<String> additionalRunnerArguments
     ) {
         this.rootFile = rootFile;
         this.filenamePattern = filenamePattern;
@@ -69,6 +71,7 @@ public class SingleClassTestModel implements TestClassModel {
         this.targetBackend = targetBackend;
         this.skipIgnored = skipIgnored;
         this.testRunnerMethodName = testRunnerMethodName;
+        this.additionalRunnerArguments = additionalRunnerArguments;
     }
 
     @NotNull
@@ -83,7 +86,7 @@ public class SingleClassTestModel implements TestClassModel {
         if (methods == null) {
             List<MethodModel> result = new ArrayList<>();
 
-            result.add(new RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName));
+            result.add(new RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments));
 
             result.add(new TestAllFilesPresentMethodModel());
 

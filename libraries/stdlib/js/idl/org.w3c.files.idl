@@ -1,4 +1,4 @@
-namespace org.w3c.files;
+package org.w3c.files;
 
 
 // Downloaded from https://raw.githubusercontent.com/w3c/FileAPI/gh-pages/index.html

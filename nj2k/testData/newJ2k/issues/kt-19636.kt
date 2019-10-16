@@ -1,5 +1,5 @@
 class TestInitializeInTry {
-    internal var x: Any? = null
+    var x: Any? = null
     private var y: Any? = null
 
     init {

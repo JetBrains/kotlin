@@ -136,14 +136,12 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
         element.getAttributeValue("useProjectSettings")?.let { useProjectSettings = it.toBoolean() }
         val targetPlatform = element.getFacetPlatformByConfigurationElement()
         this.targetPlatform = targetPlatform
-        element.getChild("implements")?.let {
-            val items = it.getChildren("implement")
-            implementedModuleNames = if (items.isNotEmpty()) {
-                items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
-            } else {
-                listOfNotNull((it.content.firstOrNull() as? Text)?.textTrim)
-            }
+        readElementsList(element, "implements", "implement")?.let { implementedModuleNames = it }
+        readElementsList(element, "dependsOnModuleNames", "dependsOn")?.let { dependsOnModuleNames = it }
+        readElementsList(element, "externalSystemTestTasks", "externalSystemTestTask")?.let {
+            externalSystemTestTasks = it.mapNotNull { ExternalSystemTestTask.fromStringRepresentation(it) }
         }
+
         element.getChild("sourceSets")?.let {
             val items = it.getChildren("sourceSet")
             sourceSetNames = items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
@@ -181,6 +179,18 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
             PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
         } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
     }
+}
+
+private fun readElementsList(element: Element, rootElementName: String, elementName: String): List<String>? {
+    element.getChild(rootElementName)?.let {
+        val items = it.getChildren(elementName)
+        return if (items.isNotEmpty()) {
+            items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
+        } else {
+            listOfNotNull((it.content.firstOrNull() as? Text)?.textTrim)
+        }
+    }
+    return null
 }
 
 private fun readV2Config(element: Element): KotlinFacetSettings {
@@ -298,23 +308,14 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
 
     targetPlatform?.let {
         element.setAttribute("platform", it.oldFashionedDescription)
-        element.setAttribute("allPlatforms", it.componentPlatforms.map { it.serializeToString() }.joinToString(separator = "/"))
+        element.setAttribute("allPlatforms", it.componentPlatforms.map { it.serializeToString() }.sorted().joinToString(separator = "/"))
     }
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())
     }
-    if (implementedModuleNames.isNotEmpty()) {
-        element.addContent(
-                Element("implements").apply {
-                    val singleModule = implementedModuleNames.singleOrNull()
-                    if (singleModule != null) {
-                        addContent(singleModule)
-                    } else {
-                        implementedModuleNames.map { addContent(Element("implement").apply { addContent(it) }) }
-                    }
-                }
-        )
-    }
+    saveElementsList(element, implementedModuleNames, "implements", "implement")
+    saveElementsList(element, dependsOnModuleNames, "dependsOnModuleNames", "dependsOn")
+
     if (sourceSetNames.isNotEmpty()) {
         element.addContent(
             Element("sourceSets").apply {
@@ -330,7 +331,15 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
         element.setAttribute("externalProjectId", externalProjectId)
     }
     if (isHmppEnabled) {
-        element.setAttribute("isHmppProject", isHmppEnabled.toString())
+        element.setAttribute("isHmppProject", mppVersion.isHmpp.toString())
+    }
+    if (externalSystemTestTasks.isNotEmpty()) {
+        saveElementsList(
+            element,
+            externalSystemTestTasks.map { it.toStringRepresentation() },
+            "externalSystemTestTasks",
+            "externalSystemTestTask"
+        )
     }
     if (pureKotlinSourceFolders.isNotEmpty()) {
         element.setAttribute("pureKotlinSourceFolders", pureKotlinSourceFolders.joinToString(";"))
@@ -353,6 +362,21 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
         it.convertPathsToSystemIndependent()
         val compilerArgumentsXml = buildChildElement(element, "compilerArguments", it, filter)
         compilerArgumentsXml.dropVersionsIfNecessary(it)
+    }
+}
+
+private fun saveElementsList(element: Element, elementsList: List<String>, rootElementName: String, elementName: String) {
+    if (elementsList.isNotEmpty()) {
+        element.addContent(
+            Element(rootElementName).apply {
+                val singleModule = elementsList.singleOrNull()
+                if (singleModule != null) {
+                    addContent(singleModule)
+                } else {
+                    elementsList.map { addContent(Element(elementName).apply { addContent(it) }) }
+                }
+            }
+        )
     }
 }
 

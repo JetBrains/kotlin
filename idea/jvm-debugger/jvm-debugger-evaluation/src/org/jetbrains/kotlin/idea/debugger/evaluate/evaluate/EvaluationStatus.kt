@@ -37,8 +37,8 @@ class EvaluationStatus {
             return
         }
 
-        val statusName = error?.name ?: "Success"
-        KotlinFUSLogger.log(FUSEventGroups.DebugEval, statusName, values)
+        values["status"] = error?.name ?: "Success"
+        KotlinFUSLogger.log(FUSEventGroups.Debug, "Evaluation", values)
     }
 
     enum class EvaluatorType {

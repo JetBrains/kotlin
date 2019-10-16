@@ -50,7 +50,8 @@ class KotlinMPPGradleTestTasksProvider : GradleTestTasksProvider {
     }
 
     private fun isMultiplatformTestModule(module: Module): Boolean {
-        val settings = KotlinFacetSettingsProvider.getInstance(module.project).getInitializedSettings(module)
+        val settingsProvider = KotlinFacetSettingsProvider.getInstance(module.project) ?: return false
+        val settings = settingsProvider.getInitializedSettings(module)
         return settings.isMPPModule && settings.isTestModule
     }
 

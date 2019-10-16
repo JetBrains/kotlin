@@ -55,10 +55,9 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
-import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
@@ -210,27 +209,27 @@ object KotlinToJVMBytecodeCompiler {
                 val mainClassProvider = if (outputs.size == 1) MainClassProvider(state, environment) else null
                 writeOutput(state.configuration, state.factory, mainClassProvider)
             }
-
-            if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
-                val singleModule = chunk.singleOrNull()
-                if (singleModule != null) {
-                    return JavacWrapper.getInstance(environment.project).use {
-                        it.compile(File(singleModule.getOutputDirectory()))
-                    }
-                } else {
-                    projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
-                        WARNING,
-                        "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). " +
-                                "-Xuse-javac option couldn't be used to compile java files"
-                    )
-                    JavacWrapper.getInstance(environment.project).close()
-                }
-            }
-
-            return true
         } finally {
             outputs.values.forEach(GenerationState::destroy)
         }
+
+        if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
+            val singleModule = chunk.singleOrNull()
+            if (singleModule != null) {
+                return JavacWrapper.getInstance(environment.project).use {
+                    it.compile(File(singleModule.getOutputDirectory()))
+                }
+            } else {
+                projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                    WARNING,
+                    "A chunk contains multiple modules (${chunk.joinToString { it.getModuleName() }}). " +
+                            "-Xuse-javac option couldn't be used to compile java files"
+                )
+                JavacWrapper.getInstance(environment.project).close()
+            }
+        }
+
+        return true
     }
 
     internal fun configureSourceRoots(configuration: CompilerConfiguration, chunk: List<Module>, buildFile: File? = null) {
@@ -330,7 +329,7 @@ object KotlinToJVMBytecodeCompiler {
             val resolveTransformer = FirTotalResolveTransformer()
             val firFiles = ktFiles.map {
                 val firFile = builder.buildFirFile(it)
-                (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
+                (session.firProvider as FirProviderImpl).recordFile(firFile)
                 firFile
             }.also {
                 try {
@@ -398,7 +397,7 @@ object KotlinToJVMBytecodeCompiler {
             (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
         }
 
-    private class MainClassProvider(generationState: GenerationState, environment: KotlinCoreEnvironment) {
+    class MainClassProvider(generationState: GenerationState, environment: KotlinCoreEnvironment) {
         val mainClassFqName: FqName? by lazy { findMainClass(generationState, environment.getSourceFiles()) }
 
         private fun findMainClass(generationState: GenerationState, files: List<KtFile>): FqName? {

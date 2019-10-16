@@ -39,8 +39,10 @@ import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.kotlin.idea.maven.PomFile
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.idea.platform.tooling
-import org.jetbrains.kotlin.idea.versions.*
+import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
+import org.jetbrains.kotlin.idea.versions.MAVEN_STDLIB_ID
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import java.util.*
 
 class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectModel>(MavenDomProjectModel::class.java) {
@@ -107,7 +109,8 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
                                 || pom.isExecutionEnabled(javacPlugin, "default-compile")
                                 || pom.isExecutionEnabled(javacPlugin, "default-testCompile")
                                 || pom.isPluginExecutionMissing(javacPlugin, "default-compile", "compile")
-                                || pom.isPluginExecutionMissing(javacPlugin, "default-testCompile", "testCompile")) {
+                                || pom.isPluginExecutionMissing(javacPlugin, "default-testCompile", "testCompile")
+                            ) {
 
                                 holder.createProblem(
                                     badExecution.phase.createStableCopy(),
@@ -179,24 +182,31 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
         }
 
         pom.findKotlinExecutions().filter {
-            it.goals.goals.any { it.rawText == PomFile.KotlinGoals.Compile || it.rawText == PomFile.KotlinGoals.Js }
-                    && it.goals.goals.any { it.rawText == PomFile.KotlinGoals.TestCompile || it.rawText == PomFile.KotlinGoals.TestJs }
+            it.goals.goals.any { goal -> goal.rawText == PomFile.KotlinGoals.Compile || goal.rawText == PomFile.KotlinGoals.Js }
+                    && it.goals.goals.any { goal -> goal.rawText == PomFile.KotlinGoals.TestCompile || goal.rawText == PomFile.KotlinGoals.TestJs }
         }.forEach { badExecution ->
-                holder.createProblem(
-                    badExecution.goals.createStableCopy(),
-                    HighlightSeverity.WEAK_WARNING,
-                    "It is not recommended to have both test and compile goals in the same execution"
-                )
-            }
+            holder.createProblem(
+                badExecution.goals.createStableCopy(),
+                HighlightSeverity.WEAK_WARNING,
+                "It is not recommended to have both test and compile goals in the same execution"
+            )
+        }
     }
 
-    private class AddExecutionLocalFix(val file: XmlFile, val module: Module, val kotlinPlugin: MavenDomPlugin, val goal: String) :
-        LocalQuickFix {
+    private class AddExecutionLocalFix(
+        file: XmlFile,
+        val module: Module,
+        val kotlinPlugin: MavenDomPlugin,
+        val goal: String
+    ) : LocalQuickFix {
+        private val pointer = file.createSmartPointer()
+
         override fun getName() = "Create $goal execution"
 
         override fun getFamilyName() = "Create kotlin execution"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val file = pointer.element ?: return
             PomFile.forFileOrNull(file)
                 ?.addKotlinExecution(module, kotlinPlugin, goal, PomFile.getPhase(module.hasJavaFiles(), false), false, listOf(goal))
         }
@@ -212,32 +222,44 @@ class KotlinMavenPluginPhaseInspection : DomElementsInspection<MavenDomProjectMo
         }
     }
 
-    private class AddJavaExecutionsLocalFix(val module: Module, val file: XmlFile, val kotlinPlugin: MavenDomPlugin) : LocalQuickFix {
+    private class AddJavaExecutionsLocalFix(val module: Module, file: XmlFile, val kotlinPlugin: MavenDomPlugin) : LocalQuickFix {
+        private val pointer = file.createSmartPointer()
+
         override fun getName() = "Configure maven-compiler-plugin executions in the right order"
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val file = pointer.element ?: return
             PomFile.forFileOrNull(file)?.addJavacExecutions(module, kotlinPlugin)
         }
     }
 
-    private class FixAddStdlibLocalFix(val pomFile: XmlFile, val id: String, val version: String?) : LocalQuickFix {
+    private class FixAddStdlibLocalFix(pomFile: XmlFile, val id: String, val version: String?) : LocalQuickFix {
+        private val pointer = pomFile.createSmartPointer()
+
         override fun getName() = "Add $id dependency"
         override fun getFamilyName() = "Add dependency"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            PomFile.forFileOrNull(pomFile)
-                ?.addDependency(MavenId(KotlinMavenConfigurator.GROUP_ID, id, version), MavenArtifactScope.COMPILE)
+            val file = pointer.element ?: return
+            PomFile.forFileOrNull(file)?.addDependency(MavenId(KotlinMavenConfigurator.GROUP_ID, id, version), MavenArtifactScope.COMPILE)
         }
     }
 
-    private class ConfigurePluginExecutionLocalFix(val module: Module, val xmlFile: XmlFile, val goal: String, val version: String?) :
-        LocalQuickFix {
+    private class ConfigurePluginExecutionLocalFix(
+        val module: Module,
+        xmlFile: XmlFile,
+        val goal: String,
+        val version: String?
+    ) : LocalQuickFix {
+        private val pointer = xmlFile.createSmartPointer()
+
         override fun getName() = "Create $goal execution of kotlin-maven-compiler"
         override fun getFamilyName() = "Create kotlin execution"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            PomFile.forFileOrNull(xmlFile)?.let { pom ->
+            val file = pointer.element ?: return
+            PomFile.forFileOrNull(file)?.let { pom ->
                 val plugin = pom.addKotlinPlugin(version)
                 pom.addKotlinExecution(module, plugin, "compile", PomFile.getPhase(module.hasJavaFiles(), false), false, listOf(goal))
             }

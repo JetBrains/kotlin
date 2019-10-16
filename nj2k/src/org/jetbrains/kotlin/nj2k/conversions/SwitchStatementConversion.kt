@@ -11,15 +11,14 @@ import com.intellij.psi.controlFlow.ControlFlowUtil
 import com.intellij.psi.controlFlow.LocalsOrMyInstanceFieldsControlFlowPolicy
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.blockStatement
-import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.runExpression
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
 
 
-class SwitchStatementConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
+
+class SwitchStatementConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element !is JKJavaSwitchStatementImpl) return recurse(element)
+        if (element !is JKJavaSwitchStatement) return recurse(element)
         element.invalidate()
         element.cases.forEach { case ->
             case.statements.forEach { it.detach(case) }
@@ -28,7 +27,7 @@ class SwitchStatementConversion(private val context: NewJ2kConverterContext) : R
             }
         }
         val cases = switchCasesToWhenCases(element.cases).moveElseCaseToTheEnd()
-        val whenStatement = JKKtWhenStatementImpl(element.expression, cases)
+        val whenStatement = JKKtWhenStatement(element.expression, cases)
         return recurse(whenStatement)
     }
 
@@ -49,7 +48,7 @@ class SwitchStatementConversion(private val context: NewJ2kConverterContext) : R
                                 statement.block.statements
                                     .takeWhile { !isSwitchBreak(it) }
                                     .map { it.copyTreeAndDetach() }
-                            ).withNonCodeElementsFrom(statement)
+                            ).withFormattingFrom(statement)
                         isSwitchBreak(statement) -> null
                         else -> statement.copyTreeAndDetach()
                     }
@@ -60,16 +59,16 @@ class SwitchStatementConversion(private val context: NewJ2kConverterContext) : R
 
             val statementLabels = javaLabels
                 .filterIsInstance<JKJavaLabelSwitchCase>()
-                .map { JKKtValueWhenLabelImpl(it.label) }
+                .map { JKKtValueWhenLabel(it.label) }
             val elseLabel = javaLabels
-                .find { it is JKJavaDefaultSwitchCaseImpl }
-                ?.let { JKKtElseWhenLabelImpl() }
+                .find { it is JKJavaDefaultSwitchCase }
+                ?.let { JKKtElseWhenLabel() }
             val elseWhenCase = elseLabel?.let { label ->
-                JKKtWhenCaseImpl(listOf(label), statements.map { it.copyTreeAndDetach() }.singleBlockOrWrapToRun())
+                JKKtWhenCase(listOf(label), statements.map { it.copyTreeAndDetach() }.singleBlockOrWrapToRun())
             }
             val mainWhenCase =
                 if (statementLabels.isNotEmpty()) {
-                    JKKtWhenCaseImpl(statementLabels, statements.singleBlockOrWrapToRun())
+                    JKKtWhenCase(statementLabels, statements.singleBlockOrWrapToRun())
                 } else null
             listOfNotNull(mainWhenCase) +
                     listOfNotNull(elseWhenCase) +
@@ -81,12 +80,12 @@ class SwitchStatementConversion(private val context: NewJ2kConverterContext) : R
 
     private fun List<JKStatement>.singleBlockOrWrapToRun(): JKStatement =
         singleOrNull()
-            ?: JKBlockStatementImpl(
+            ?: JKBlockStatement(
                 JKBlockImpl(map { statement ->
                     when (statement) {
                         is JKBlockStatement ->
-                            JKExpressionStatementImpl(
-                                runExpression(statement, context.symbolProvider)
+                            JKExpressionStatement(
+                                runExpression(statement, symbolProvider)
                             )
                         else -> statement
                     }
@@ -101,7 +100,7 @@ class SwitchStatementConversion(private val context: NewJ2kConverterContext) : R
         }
 
     private fun isSwitchBreak(statement: JKStatement) =
-        statement is JKBreakStatement && statement !is JKBreakWithLabelStatement
+        statement is JKBreakStatement && statement.label is JKLabelEmpty
 
     private fun List<JKStatement>.fallsThrough(): Boolean =
         all { it.fallsThrough() }
@@ -113,10 +112,10 @@ class SwitchStatementConversion(private val context: NewJ2kConverterContext) : R
                     this is JKReturnStatement ||
                     this is JKContinueStatement -> false
             this is JKBlockStatement -> block.statements.fallsThrough()
-            this is JKIfStatement ||
+            this is JKIfElseStatement ||
                     this is JKJavaSwitchStatement ||
                     this is JKKtWhenStatement ->
-                this.psi!!.canCompleteNormally()
+                psi?.canCompleteNormally() == true
             else -> true
         }
 

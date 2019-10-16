@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.nj2k
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-
+import org.jetbrains.kotlin.utils.SmartList
+import kotlin.random.Random
 
 interface JKElementInfo
 
@@ -14,9 +15,25 @@ sealed class SuperFunctionInfo
 data class ExternalSuperFunctionInfo(val descriptor: FunctionDescriptor) : SuperFunctionInfo()
 data class InternalSuperFunctionInfo(val label: JKElementInfoLabel) : SuperFunctionInfo()
 
-data class FunctionInfo(val originalDescriptor: FunctionDescriptor, val superFunctions: List<SuperFunctionInfo>) : JKElementInfo
+data class FunctionInfo(val superFunctions: List<SuperFunctionInfo>) : JKElementInfo
 
-object UnknownNullability : JKElementInfo
+enum class JKTypeInfo(val unknownNullability: Boolean, val unknownMutability: Boolean) : JKElementInfo {
+    KNOWN_NULLABILITY_KNOWN_MUTABILITY(false, false),
+    UNKNOWN_NULLABILITY_KNOWN_MUTABILITY(true, false),
+    KNOWN_NULLABILITY_UNKNOWN_MUTABILITY(false, true),
+    UNKNOWN_NULLABILITY_UNKNOWN_MUTABILITY(true, true)
+    ;
+
+    companion object {
+        operator fun invoke(unknownNullability: Boolean, unknownMutability: Boolean) = when {
+            !unknownNullability && !unknownMutability -> KNOWN_NULLABILITY_KNOWN_MUTABILITY
+            unknownNullability && !unknownMutability -> UNKNOWN_NULLABILITY_KNOWN_MUTABILITY
+            !unknownNullability && unknownMutability -> KNOWN_NULLABILITY_UNKNOWN_MUTABILITY
+            else -> UNKNOWN_NULLABILITY_UNKNOWN_MUTABILITY
+        }
+    }
+}
+
 
 inline class JKElementInfoLabel(val label: String) {
     fun render(): String = "/*@@$label@@*/"
@@ -30,22 +47,18 @@ fun String.asLabel(): JKElementInfoLabel? =
     JKElementInfoLabel.LABEL_REGEX.matchEntire(this)?.groupValues?.getOrNull(1)?.let { JKElementInfoLabel(it) }
 
 class JKElementInfoStorage {
-    private val labelToInfo = mutableMapOf<JKElementInfoLabel, List<JKElementInfo>>()
+    private val labelToInfo = mutableMapOf<JKElementInfoLabel, MutableList<JKElementInfo>>()
     private val elementToLabel = mutableMapOf<Any, JKElementInfoLabel>()
 
     fun getOrCreateInfoForElement(element: Any): JKElementInfoLabel =
         elementToLabel.getOrPut(element) { JKElementInfoLabel(createRandomString()) }
 
-    fun getOrCreateInfoForLabel(label: JKElementInfoLabel): List<JKElementInfo> =
-        labelToInfo.getOrPut(label) { emptyList() }
-
     fun getInfoForLabel(label: JKElementInfoLabel): List<JKElementInfo>? =
         labelToInfo[label]
 
-
     fun addEntry(element: Any, info: JKElementInfo) {
         val label = elementToLabel.getOrPut(element) { JKElementInfoLabel(createRandomString()) }
-        labelToInfo[label] = labelToInfo[label].orEmpty() + info
+        labelToInfo.getOrPut(label) { SmartList() } += info
         elementToLabel[element] = label
     }
 
@@ -53,11 +66,8 @@ class JKElementInfoStorage {
         private val charPool = ('a'..'z').toList()
         private const val generatedStringLength = 6
 
-        private fun createRandomString(): String {
-            return (1..generatedStringLength)
-                .map { kotlin.random.Random.nextInt(0, charPool.size) }
-                .map(charPool::get)
-                .joinToString("")
+        private fun createRandomString() = (1..generatedStringLength).joinToString("") {
+            charPool[Random.nextInt(0, charPool.size)].toString()
         }
     }
 }

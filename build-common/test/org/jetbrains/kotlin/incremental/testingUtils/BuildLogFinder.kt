@@ -22,7 +22,7 @@ data class BuildLogFinder(
     private val isDataContainerBuildLogEnabled: Boolean = false,
     private val isGradleEnabled: Boolean = false,
     private val isJsEnabled: Boolean = false,
-    private val isJsIrEnabled: Boolean = false
+    private val isJsIrEnabled: Boolean = false // TODO rename as it is used for metadata-only test
 ) {
     companion object {
         private const val JS_LOG = "js-build.log"

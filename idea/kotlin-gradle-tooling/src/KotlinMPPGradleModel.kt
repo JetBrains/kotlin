@@ -91,6 +91,10 @@ interface KotlinCompilationArguments : Serializable {
     val currentArguments: Array<String>
 }
 
+interface KotlinNativeCompilationExtensions : Serializable {
+    val konanTarget: String?
+}
+
 interface KotlinCompilation : KotlinModule {
     val sourceSets: Collection<KotlinSourceSet>
     val output: KotlinCompilationOutput
@@ -99,7 +103,7 @@ interface KotlinCompilation : KotlinModule {
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
     val kotlinTaskProperties: KotlinTaskProperties
-
+    val nativeExtensions: KotlinNativeCompilationExtensions
 
     companion object {
         const val MAIN_COMPILATION_NAME = "main"
@@ -151,11 +155,13 @@ interface KotlinTarget : Serializable {
 
 interface KotlinTestTask : Serializable {
     val taskName: String
+    val compilationName: String
 }
 
 interface ExtraFeatures : Serializable {
     val coroutinesState: String?
     val isHMPPEnabled: Boolean
+    val isNativeDependencyPropagationEnabled: Boolean
 }
 
 interface KotlinMPPGradleModel : Serializable {

@@ -9,16 +9,23 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 
-class FirDefaultSimpleImportingScope(session: FirSession) : FirAbstractSimpleImportingScope(session) {
+class FirDefaultSimpleImportingScope(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    priority: DefaultImportPriority
+) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
     private fun FirImportImpl.resolve(importResolveTransformer: FirImportResolveTransformer) =
         importResolveTransformer.transformImport(this, null).single as FirResolvedImportImpl
 
     override val simpleImports = run {
         val importResolveTransformer = FirImportResolveTransformer(session)
-        session.moduleInfo?.analyzerServices?.getDefaultImports(LanguageVersionSettingsImpl.DEFAULT, true)
+        val analyzerServices = session.moduleInfo?.analyzerServices
+        val allDefaultImports = priority.getAllDefaultImports(analyzerServices, LanguageVersionSettingsImpl.DEFAULT)
+        allDefaultImports
             ?.filter { !it.isAllUnder }
             ?.map {
                 FirImportImpl(null, it.fqName, isAllUnder = false, aliasName = null)

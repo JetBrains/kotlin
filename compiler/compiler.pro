@@ -15,9 +15,6 @@ messages/**)
 -outjars '<kotlin-compiler-jar>'
 
 -dontnote **
--dontwarn com.intellij.util.ui.IsRetina*
--dontwarn com.intellij.util.ui.UIUtilities
--dontwarn com.intellij.util.RetinaImage*
 -dontwarn apple.awt.*
 -dontwarn dk.brics.automaton.*
 -dontwarn org.fusesource.**
@@ -27,6 +24,12 @@ messages/**)
 -dontwarn com.intellij.util.SnappyInitializer
 -dontwarn com.intellij.util.SVGLoader
 -dontwarn com.intellij.util.SVGLoader$MyTranscoder
+-dontwarn com.intellij.util.ImageLoader$ImageDesc
+-dontwarn com.intellij.util.ui.**
+-dontwarn com.intellij.ui.**
+-dontwarn com.intellij.util.IconUtil
+-dontwarn com.intellij.util.ImageLoader
+-dontwarn kotlinx.coroutines.flow.FlowKt__MergeKt
 -dontwarn net.sf.cglib.**
 -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 -dontwarn com.sun.jna.NativeString
@@ -62,6 +65,7 @@ messages/**)
 -dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
 -dontwarn org.checkerframework.checker.nullness.qual.Nullable
 -dontwarn org.checkerframework.checker.nullness.qual.MonotonicNonNull
+-dontwarn org.checkerframework.checker.nullness.qual.NonNull
 
 # Depends on apache batick which has lots of dependencies
 -dontwarn com.intellij.util.SVGLoader*
@@ -265,6 +269,8 @@ messages/**)
 -keep class org.jline.reader.History { *; }
 -keep class org.jline.reader.EndOfFileException { *; }
 -keep class org.jline.reader.UserInterruptException { *; }
+-keep class org.jline.terminal.impl.jna.JnaSupportImpl  { *; }
+-keep class org.jline.terminal.impl.jansi.JansiSupportImpl  { *; }
 
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;

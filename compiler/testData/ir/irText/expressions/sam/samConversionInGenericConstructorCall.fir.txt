@@ -11,4 +11,4 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
       TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
         GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/C.C]>#' type=IrErrorType
-        GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+        GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null

@@ -134,4 +134,10 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             description = "Paths to friend modules"
     )
     var friendModules: String? by NullableStringFreezableVar(null)
+
+    @Argument(value = "-Xmetadata-only", description = "Generate *.meta.js and *.kjsm files only")
+    var metadataOnly: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xenable-js-scripting", description = "Enable experimental support of .kts files using K/JS (with -Xir only)")
+    var enableJsScripting: Boolean by FreezableVar(false)
 }

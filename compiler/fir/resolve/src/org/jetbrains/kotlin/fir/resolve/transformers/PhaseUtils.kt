@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 fun <D> AbstractFirBasedSymbol<D>.phasedFir(
     session: FirSession,
@@ -25,11 +24,11 @@ fun <D> AbstractFirBasedSymbol<D>.phasedFir(
     if (availablePhase < requiredPhase) {
         val provider = FirProvider.getInstance(session)
         val containingFile = when (this) {
-            is FirSyntheticFunctionSymbol -> file
-            is ConeCallableSymbol -> provider.getFirCallableContainerFile(this)
-            is ConeClassLikeSymbol -> provider.getFirClassifierContainerFile(this)
+            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(this)
+            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFile(this)
             else -> null
-        } ?: throw AssertionError("Cannot get container file by symbol: $this (${result.render()})")
+        }
+            ?: throw AssertionError("Cannot get container file by symbol: $this (${result.render()})")
         containingFile.runResolve(toPhase = requiredPhase, fromPhase = availablePhase)
     }
     return result

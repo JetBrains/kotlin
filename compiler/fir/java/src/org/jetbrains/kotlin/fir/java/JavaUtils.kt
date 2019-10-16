@@ -15,17 +15,18 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.constructClassType
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
-import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -92,9 +93,10 @@ internal fun JavaClassifierType.toFirResolvedTypeRef(
 ): FirResolvedTypeRef {
     val coneType = this.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false)
     return FirResolvedTypeRefImpl(
-        psi = null, type = coneType,
-        annotations = annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }
-    )
+        psi = null, type = coneType
+    ).apply {
+        annotations += this@toFirResolvedTypeRef.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }
+    }
 }
 
 internal fun JavaType?.toConeKotlinTypeWithNullability(
@@ -174,8 +176,7 @@ internal fun JavaAnnotation.toFirAnnotationCall(
         psi = null, useSiteTarget = null,
         annotationTypeRef = FirResolvedTypeRefImpl(
             psi = null,
-            type = ConeClassTypeImpl(FirClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false),
-            annotations = emptyList()
+            type = ConeClassTypeImpl(FirClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false)
         )
     ).apply {
         for (argument in this@toFirAnnotationCall.arguments) {
@@ -247,7 +248,7 @@ private fun JavaAnnotationArgument.toFirExpression(
                 val classId = this@toFirExpression.enumClassId
                 val entryName = this@toFirExpression.entryName
                 val calleeReference = if (classId != null && entryName != null) {
-                    val callableSymbol = session.service<FirSymbolProvider>().getClassDeclaredCallableSymbols(
+                    val callableSymbol = session.firSymbolProvider.getClassDeclaredCallableSymbols(
                         classId, entryName
                     ).firstOrNull()
                     callableSymbol?.let {
@@ -257,7 +258,7 @@ private fun JavaAnnotationArgument.toFirExpression(
                     null
                 }
                 this.calleeReference = calleeReference
-                    ?: FirErrorNamedReference(null, "Strange Java enum value: $classId.$entryName")
+                    ?: FirErrorNamedReferenceImpl(null, "Strange Java enum value: $classId.$entryName")
             }
         }
         is JavaClassObjectAnnotationArgument -> FirGetClassCallImpl(null).apply {
@@ -310,8 +311,7 @@ private fun JavaType.toFirResolvedTypeRef(
 ): FirResolvedTypeRef {
     if (this is JavaClassifierType) return toFirResolvedTypeRef(session, javaTypeParameterStack)
     return FirResolvedTypeRefImpl(
-        psi = null, type = ConeClassErrorType("Unexpected JavaType: $this"),
-        annotations = emptyList()
+        psi = null, type = ConeClassErrorType("Unexpected JavaType: $this")
     )
 }
 

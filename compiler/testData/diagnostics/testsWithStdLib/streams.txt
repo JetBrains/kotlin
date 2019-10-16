@@ -1,0 +1,3 @@
+package
+
+public fun testStreams(/*0*/ list: java.util.ArrayList<kotlin.String>): kotlin.Unit

@@ -533,6 +533,40 @@ class C(param1: String = "", param2: Int = 0) {
         assert(!parameterDescriptor.type.containsError())
     }
 
+    fun testTypingInScriptInitializer() {
+        val file = myFixture.configureByText(
+            "Test.kts", """
+            run { 1 +<caret> 1 }
+            run { 2 + 2 }
+            """
+        ) as KtFile
+
+        val script = file.script ?: error("File should be a script")
+
+        val statement1 = (script.blockExpression.statements.first() as? KtScriptInitializer)?.body
+            ?: error("Cannot find first expression in script")
+        val statement2 = (script.blockExpression.statements.last() as? KtScriptInitializer)?.body
+            ?: error("Cannot find last expression in script")
+        val bindingContext1Before = statement1.analyze()
+        val bindingContext2Before = statement2.analyze()
+
+        val caret = myFixture.elementByOffset.getParentOfType<KtExpression>(true) ?: error("Cannot find element at caret")
+
+        myFixture.project.executeWriteCommand("") {
+            caret.parent.addAfter(KtPsiFactory(project).createWhiteSpace(), caret)
+        }
+
+        val bindingContext1After = statement1.analyze()
+        val bindingContext2After = statement2.analyze()
+
+        assert(bindingContext1Before !== bindingContext1After) {
+            "Analysis for first statement must change because statement was changed"
+        }
+        assert(bindingContext2Before === bindingContext2After) {
+            "Analysis for second statement must not change, only first statement was changed"
+        }
+    }
+
     private fun checkResolveMultiple(mode: BodyResolveMode, vararg expressions: KtExpression): BindingContext {
         val resolutionFacade = expressions.first().getResolutionFacade()
         val bindingContext = resolutionFacade.analyze(expressions.asList(), mode)

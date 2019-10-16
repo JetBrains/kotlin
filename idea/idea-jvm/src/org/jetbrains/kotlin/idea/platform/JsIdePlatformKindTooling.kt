@@ -11,28 +11,21 @@ import com.intellij.execution.actions.RunConfigurationProducer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.idea.compiler.configuration.Kotlin2JsCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
 import org.jetbrains.kotlin.idea.framework.JsLibraryStdDetectionUtil
-import org.jetbrains.kotlin.idea.highlighter.KotlinTestRunLineMarkerContributor.Companion.getTestStateIcon
+import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationData
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
+import org.jetbrains.kotlin.idea.platform.getGenericTestIcon
 import org.jetbrains.kotlin.idea.run.multiplatform.KotlinMultiplatformRunLocationsProvider
-import org.jetbrains.kotlin.idea.util.string.joinWithEscape
-import org.jetbrains.kotlin.js.resolve.JsResolverForModuleFactory
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.ifEmpty
 import javax.swing.Icon
@@ -40,9 +33,6 @@ import javax.swing.Icon
 class JsIdePlatformKindTooling : IdePlatformKindTooling() {
     companion object {
         private const val MAVEN_OLD_JS_STDLIB_ID = "kotlin-js-library"
-
-        private val TEST_FQ_NAME = FqName("kotlin.test.Test")
-        private val IGNORE_FQ_NAME = FqName("kotlin.test.Ignore")
     }
 
     override val kind = JsIdePlatformKind
@@ -61,39 +51,26 @@ class JsIdePlatformKindTooling : IdePlatformKindTooling() {
     }
 
     override fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? {
-        if (!descriptor.isTest()) return null
+        return getGenericTestIcon(declaration, descriptor) {
+            val contexts by lazy { computeConfigurationContexts(declaration) }
 
-        val contexts by lazy { computeConfigurationContexts(declaration) }
+            val runConfigData = RunConfigurationProducer
+                .getProducers(declaration.project)
+                .asSequence()
+                .filterIsInstance<KotlinJSRunConfigurationDataProvider<*>>()
+                .filter { it.isForTests }
+                .flatMap { provider -> contexts.map { context -> provider.getConfigurationData(context) } }
+                .firstOrNull { it != null }
+                ?: return@getGenericTestIcon null
 
-        val runConfigData = RunConfigurationProducer
-            .getProducers(declaration.project)
-            .asSequence()
-            .filterIsInstance<KotlinJSRunConfigurationDataProvider<*>>()
-            .filter { it.isForTests }
-            .flatMap { provider -> contexts.map { context -> provider.getConfigurationData(context) } }
-            .firstOrNull { it != null } ?: return null
+            val location = if (runConfigData is KotlinJSRunConfigurationData) {
+                FileUtil.toSystemDependentName(runConfigData.jsOutputFilePath)
+            } else {
+                declaration.containingKtFile.packageFqName.asString()
+            }
 
-        val locations = ArrayList<String>()
-
-        locations += FileUtil.toSystemDependentName(runConfigData.jsOutputFilePath)
-
-        val klass = when (declaration) {
-            is KtClassOrObject -> declaration
-            is KtNamedFunction -> declaration.containingClassOrObject ?: return null
-            else -> return null
+            return@getGenericTestIcon SmartList(location)
         }
-        locations += klass.parentsWithSelf.filterIsInstance<KtNamedDeclaration>().mapNotNull { it.name }.toList().asReversed()
-
-        val testName = (declaration as? KtNamedFunction)?.name
-        if (testName != null) {
-            locations += "$testName"
-        }
-
-        val prefix = if (testName != null) "test://" else "suite://"
-
-        val url = prefix + locations.joinWithEscape('.')
-
-        return getTestStateIcon(url, declaration.project)
     }
 
     override fun acceptsAsEntryPoint(function: KtFunction): Boolean {
@@ -113,18 +90,5 @@ class JsIdePlatformKindTooling : IdePlatformKindTooling() {
         return KotlinMultiplatformRunLocationsProvider().getAlternativeLocations(location).map {
             ConfigurationContext.createEmptyContextForLocation(it)
         }.ifEmpty { listOf(ConfigurationContext.createEmptyContextForLocation(location)) }.asSequence()
-    }
-
-    private fun DeclarationDescriptor.isIgnored(): Boolean =
-        annotations.any { it.fqName == IGNORE_FQ_NAME } || ((containingDeclaration as? ClassDescriptor)?.isIgnored() ?: false)
-
-    private fun DeclarationDescriptor.isTest(): Boolean {
-        if (isIgnored()) return false
-
-        if (annotations.any { it.fqName == TEST_FQ_NAME }) return true
-        if (this is ClassDescriptorWithResolutionScopes) {
-            return declaredCallableMembers.any { it.isTest() }
-        }
-        return false
     }
 }

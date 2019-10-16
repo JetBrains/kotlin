@@ -56,6 +56,8 @@ open class ClasspathSnapshot protected constructor(
         fun getEmptySnapshot() = UnknownSnapshot
     }
 
+    fun getAllDataFiles() = dataForFiles.keys
+
     private fun isCompatible(snapshot: ClasspathSnapshot) =
         this != UnknownSnapshot
                 && snapshot != UnknownSnapshot

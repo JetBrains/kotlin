@@ -4,11 +4,11 @@ FILE fqName:<root> fileName:/fileWithAnnotations.kt
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
   PROPERTY name:bar visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null

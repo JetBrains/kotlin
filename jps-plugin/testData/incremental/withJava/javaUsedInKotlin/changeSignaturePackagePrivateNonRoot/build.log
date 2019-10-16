@@ -18,4 +18,4 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Cannot access 'foo': it is public/*package*/ in 'JavaClass'
+Cannot access 'foo': it is package-private in 'JavaClass'

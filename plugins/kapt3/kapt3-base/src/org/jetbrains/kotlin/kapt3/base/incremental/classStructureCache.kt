@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.kapt3.base.incremental
 
-import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
+import java.lang.IllegalArgumentException
 import java.net.URI
+import java.util.regex.Pattern
 
 class JavaClassCache() : Serializable {
     private var sourceCache = mutableMapOf<URI, SourceFileStructure>()
@@ -73,7 +74,23 @@ class JavaClassCache() : Serializable {
         output.writeObject(generatedTypes)
     }
 
-    fun isAlreadyProcessed(sourceFile: URI) = sourceCache.containsKey(sourceFile) || generatedTypes.containsKey(File(sourceFile))
+    fun isAlreadyProcessed(sourceFile: URI): Boolean {
+        if (!sourceFile.isAbsolute) {
+            // we never want to process non-absolute URIs, see https://youtrack.jetbrains.com/issue/KT-33617
+            return true
+        }
+        if (sourceFile.isOpaque) {
+            // we never want to process non-hierarchical URIs, https://youtrack.jetbrains.com/issue/KT-33617
+            return true
+        }
+        return try {
+            val fileFromUri = File(sourceFile)
+            sourceCache.containsKey(sourceFile) || generatedTypes.containsKey(fileFromUri)
+        } catch (e: IllegalArgumentException) {
+            // unable to create File instance, avoid processing these files
+            true
+        }
+    }
 
     /** Used for testing only. */
     internal fun getStructure(sourceFile: File) = sourceCache[sourceFile.toURI()]
@@ -130,7 +147,18 @@ class JavaClassCache() : Serializable {
      * annotation processor. This search is not transitive.
      */
     fun invalidateEntriesAnnotatedWith(annotations: Set<String>): Set<File> {
-        val patterns = annotations.map { JavacProcessingEnvironment.validImportStringToPattern(it) }
+        val patterns: List<Pattern> = if ("*" in annotations) {
+            // optimize this case - create only one pattern
+            listOf(Pattern.compile(".*"))
+        } else {
+            annotations.map {
+                Pattern.compile(
+                    // These are already valid import statements, otherwise run fails when loading the annotation processor.
+                    // Handles structure; TypeName [.*] e.g. org.jetbrains.annotations.NotNull and org.jetbrains.annotations.*
+                    it.replace(".", "\\.").replace("*", ".+")
+                )
+            }
+        }
         val matchesAnyPattern = { name: String -> patterns.any { it.matcher(name).matches() } }
 
         val toReprocess = mutableSetOf<URI>()

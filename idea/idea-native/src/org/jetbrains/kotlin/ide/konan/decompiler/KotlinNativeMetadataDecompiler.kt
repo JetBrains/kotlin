@@ -9,13 +9,13 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypeConsumer
 import com.intellij.openapi.fileTypes.FileTypeFactory
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.serialization.konan.KonanSerializerProtocol
 import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 
 class KotlinNativeMetadataDecompiler : KotlinNativeMetadataDecompilerBase<KotlinNativeMetadataVersion>(
-    KotlinNativeMetaFileType, { KonanSerializerProtocol }, NullFlexibleTypeDeserializer,
+    KotlinNativeMetaFileType, { KlibMetadataSerializerProtocol }, NullFlexibleTypeDeserializer,
     { KotlinNativeMetadataVersion.DEFAULT_INSTANCE },
     { KotlinNativeMetadataVersion.INVALID_VERSION },
     KotlinNativeMetaFileType.STUB_VERSION
@@ -23,7 +23,7 @@ class KotlinNativeMetadataDecompiler : KotlinNativeMetadataDecompilerBase<Kotlin
 
     override fun doReadFile(file: VirtualFile): FileWithMetadata? {
         val proto = KotlinNativeLoadingMetadataCache.getInstance().getCachedPackageFragment(file)
-        return FileWithMetadata.Compatible(proto, KonanSerializerProtocol) //todo: check version compatibility
+        return FileWithMetadata.Compatible(proto, KlibMetadataSerializerProtocol) //todo: check version compatibility
     }
 }
 
@@ -43,10 +43,10 @@ object KotlinNativeMetaFileType : FileType {
     override fun getName() = "KNM"
     override fun getDescription() = "Kotlin/Native Metadata"
     override fun getDefaultExtension() = KLIB_METADATA_FILE_EXTENSION
-    override fun getIcon() = null
+    override fun getIcon(): Nothing? = null
     override fun isBinary() = true
     override fun isReadOnly() = true
-    override fun getCharset(file: VirtualFile, content: ByteArray) = null
+    override fun getCharset(file: VirtualFile, content: ByteArray): Nothing? = null
 
     const val STUB_VERSION = 2
 }

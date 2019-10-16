@@ -27,7 +27,8 @@ class PackagePrefixImportingTest : MultiplePluginVersionGradleImportingTestCase(
             projectPath,
             exhaustiveModuleList = true,
             exhaustiveSourceSourceRootList = true,
-            exhaustiveDependencyList = false
+            exhaustiveDependencyList = false,
+            exhaustiveTestsList = false
         ) {
             module("project") {
             }

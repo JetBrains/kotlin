@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
-// See libraries/tools/idl2k for details
+// See github.com/kotlin/dukat for details
 
-@file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.w3c.dom.pointerevents
 
 import kotlin.js.*
@@ -61,9 +60,8 @@ public external interface PointerEventInit : MouseEventInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun PointerEventInit(pointerId: Int? = 0, width: Double? = 1.0, height: Double? = 1.0, pressure: Float? = 0f, tangentialPressure: Float? = 0f, tiltX: Int? = 0, tiltY: Int? = 0, twist: Int? = 0, pointerType: String? = "", isPrimary: Boolean? = false, screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PointerEventInit {
+public inline fun PointerEventInit(pointerId: Int? = 0, width: Double? = 1.0, height: Double? = 1.0, pressure: Float? = 0f, tangentialPressure: Float? = 0f, tiltX: Int? = 0, tiltY: Int? = 0, twist: Int? = 0, pointerType: String? = "", isPrimary: Boolean? = false, screenX: Int? = 0, screenY: Int? = 0, clientX: Int? = 0, clientY: Int? = 0, button: Short? = 0, buttons: Short? = 0, relatedTarget: EventTarget? = null, region: String? = null, ctrlKey: Boolean? = false, shiftKey: Boolean? = false, altKey: Boolean? = false, metaKey: Boolean? = false, modifierAltGraph: Boolean? = false, modifierCapsLock: Boolean? = false, modifierFn: Boolean? = false, modifierFnLock: Boolean? = false, modifierHyper: Boolean? = false, modifierNumLock: Boolean? = false, modifierScrollLock: Boolean? = false, modifierSuper: Boolean? = false, modifierSymbol: Boolean? = false, modifierSymbolLock: Boolean? = false, view: Window? = null, detail: Int? = 0, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): PointerEventInit {
     val o = js("({})")
-
     o["pointerId"] = pointerId
     o["width"] = width
     o["height"] = height
@@ -81,6 +79,7 @@ public inline fun PointerEventInit(pointerId: Int? = 0, width: Double? = 1.0, he
     o["button"] = button
     o["buttons"] = buttons
     o["relatedTarget"] = relatedTarget
+    o["region"] = region
     o["ctrlKey"] = ctrlKey
     o["shiftKey"] = shiftKey
     o["altKey"] = altKey
@@ -100,7 +99,6 @@ public inline fun PointerEventInit(pointerId: Int? = 0, width: Double? = 1.0, he
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
-
     return o
 }
 
@@ -118,5 +116,11 @@ public external open class PointerEvent(type: String, eventInitDict: PointerEven
     open val twist: Int
     open val pointerType: String
     open val isPrimary: Boolean
-}
 
+    companion object {
+        val NONE: Short
+        val CAPTURING_PHASE: Short
+        val AT_TARGET: Short
+        val BUBBLING_PHASE: Short
+    }
+}

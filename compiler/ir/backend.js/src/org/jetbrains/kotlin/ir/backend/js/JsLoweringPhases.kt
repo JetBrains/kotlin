@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineFunctionsWithReifiedTypeParametersLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.inline.ReturnableBlockLowering
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -21,19 +20,6 @@ import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 private fun DeclarationContainerLoweringPass.runOnFilesPostfix(files: Iterable<IrFile>) = files.forEach { runOnFilePostfix(it) }
 
 private fun ClassLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { runOnFilePostfix(it) }
-
-private fun validationCallback(context: JsIrBackendContext, module: IrModuleFragment) {
-    val validatorConfig = IrValidatorConfig(
-        abortOnError = true,
-        ensureAllNodesAreDifferent = true,
-        checkTypes = false,
-        checkDescriptors = false
-    )
-    module.accept(IrValidator(context, validatorConfig), null)
-    module.accept(CheckDeclarationParentsVisitor, null)
-}
-
-val validationAction = makeVerifyAction(::validationCallback)
 
 private fun makeJsModulePhase(
     lowering: (JsIrBackendContext) -> FileLoweringPass,
@@ -76,14 +62,6 @@ private val validateIrAfterLowering = makeCustomJsModulePhase(
     { context, module -> validationCallback(context, module) },
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
-)
-
-private val moveBodilessDeclarationsToSeparatePlacePhase = makeCustomJsModulePhase(
-    { context, module ->
-        moveBodilessDeclarationsToSeparatePlace(context, module)
-    },
-    name = "MoveBodilessDeclarationsToSeparatePlace",
-    description = "Move `external` and `built-in` declarations into separate place to make the following lowerings do not care about them"
 )
 
 private val expectDeclarationsRemovingPhase = makeJsModulePhase(
@@ -399,12 +377,14 @@ private val objectUsageLoweringPhase = makeCustomJsModulePhase(
 val jsPhases = namedIrModulePhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = validateIrBeforeLowering then
+    lower = scriptRemoveReceiverLowering then
+            validateIrBeforeLowering then
             testGenerationPhase then
             expectDeclarationsRemovingPhase then
             stripTypeAliasDeclarationsPhase then
             arrayConstructorPhase then
             functionInliningPhase then
+            createScriptFunctionsPhase then
             provisionalFunctionExpressionPhase then
             lateinitLoweringPhase then
             tailrecLoweringPhase then
@@ -419,7 +399,6 @@ val jsPhases = namedIrModulePhase(
             primaryConstructorLoweringPhase then
             initializersLoweringPhase then
             // Common prefix ends
-            moveBodilessDeclarationsToSeparatePlacePhase then
             enumClassLoweringPhase then
             enumUsageLoweringPhase then
             suspendFunctionsLoweringPhase then
@@ -447,6 +426,5 @@ val jsPhases = namedIrModulePhase(
             objectDeclarationLoweringPhase then
             objectUsageLoweringPhase then
             callsLoweringPhase then
-            staticMembersLoweringPhase then
             validateIrAfterLowering
 )

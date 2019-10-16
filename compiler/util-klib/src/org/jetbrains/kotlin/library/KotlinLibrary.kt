@@ -11,6 +11,9 @@ const val KLIB_PROPERTY_LIBRARY_VERSION = "library_version"
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
+const val KLIB_PROPERTY_INTEROP = "interop"
+const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations"
+
 /**
  * Abstractions for getting access to the information stored inside of Kotlin/Native library.
  */
@@ -32,11 +35,13 @@ interface MetadataLibrary {
 
 interface IrLibrary {
     val dataFlowGraph: ByteArray?
-    val irHeader: ByteArray?
-    fun irDeclaration(index: Long, isLocal: Boolean): ByteArray
-    fun symbol(index: Int): ByteArray
-    fun type(index: Int): ByteArray
-    fun string(index: Int): ByteArray
+    fun irDeclaration(index: Long, fileIndex: Int): ByteArray
+    fun symbol(index: Int, fileIndex: Int): ByteArray
+    fun type(index: Int, fileIndex: Int): ByteArray
+    fun string(index: Int, fileIndex: Int): ByteArray
+    fun body(index: Int, fileIndex: Int): ByteArray
+    fun file(index: Int): ByteArray
+    fun fileCount(): Int
 }
 
 val BaseKotlinLibrary.uniqueName: String
@@ -44,8 +49,20 @@ val BaseKotlinLibrary.uniqueName: String
 
 val BaseKotlinLibrary.unresolvedDependencies: List<UnresolvedLibrary>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
-            .map {
-                UnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it"))
-            }
+        .map { UnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it")) }
 
 interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
+
+// TODO: should we move the below ones to Native?
+val KotlinLibrary.isInterop
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP) == "true"
+
+val KotlinLibrary.packageFqName: String?
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_PACKAGE)
+
+val KotlinLibrary.exportForwardDeclarations
+    get() = manifestProperties.propertyList(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, escapeInQuotes = true)
+        .asSequence()
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+        .toList()

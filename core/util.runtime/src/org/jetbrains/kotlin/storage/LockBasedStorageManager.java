@@ -135,6 +135,21 @@ public class LockBasedStorageManager implements StorageManager {
 
     @NotNull
     @Override
+    public <T> NotNullLazyValue<T> createLazyValue(
+            @NotNull Function0<? extends T> computable,
+            @NotNull final Function1<? super Boolean, ? extends T> onRecursiveCall
+    ) {
+        return new LockBasedNotNullLazyValue<T>(this, computable) {
+            @NotNull
+            @Override
+            protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
+                return RecursionDetectedResult.value(onRecursiveCall.invoke(firstTime));
+            }
+        };
+    }
+
+    @NotNull
+    @Override
     public <T> NotNullLazyValue<T> createRecursionTolerantLazyValue(
             @NotNull Function0<? extends T> computable, @NotNull final T onRecursiveCall
     ) {
@@ -159,7 +174,7 @@ public class LockBasedStorageManager implements StorageManager {
             final Function1<? super Boolean, ? extends T> onRecursiveCall,
             @NotNull final Function1<? super T, Unit> postCompute
     ) {
-        return new LockBasedNotNullLazyValue<T>(this, computable) {
+        return new LockBasedNotNullLazyValueWithPostCompute<T>(this, computable) {
             @NotNull
             @Override
             protected RecursionDetectedResult<T> recursionDetected(boolean firstTime) {
@@ -170,13 +185,13 @@ public class LockBasedStorageManager implements StorageManager {
             }
 
             @Override
-            protected void postCompute(@NotNull T value) {
+            protected void doPostCompute(@NotNull T value) {
                 postCompute.invoke(value);
             }
 
             @Override
             protected String presentableName() {
-                return "LazyValueWithPostCompute";
+                return "LockBasedNotNullLazyValueWithPostCompute";
             }
         };
     }
@@ -209,9 +224,9 @@ public class LockBasedStorageManager implements StorageManager {
     public <T> NullableLazyValue<T> createNullableLazyValueWithPostCompute(
             @NotNull Function0<? extends T> computable, @NotNull final Function1<? super T, Unit> postCompute
     ) {
-        return new LockBasedLazyValue<T>(this, computable) {
+        return new LockBasedLazyValueWithPostCompute<T>(this, computable) {
             @Override
-            protected void postCompute(@Nullable T value) {
+            protected void doPostCompute(T value) {
                 postCompute.invoke(value);
             }
 
@@ -288,18 +303,6 @@ public class LockBasedStorageManager implements StorageManager {
         RECURSION_WAS_DETECTED
     }
 
-    /**
-     * Important thread-safety note!
-     *
-     * This implementation publishes value **BEFORE** calling postCompute on it.
-     *
-     * It means that thread-safety of actions in postCompute() and recursion prevention
-     * rely *solely* on the `storageManager.lock()`.
-     *
-     * And yes, there are a LockBasedStorageManager.NO_LOCKS, which doesn't have lock at all,
-     * so if you have some `StorageManager` (or even if it is an instanceof `LockBasedStorageManager`),
-     * thread-safety of produced lazy values still not guaranteed.
-     */
     private static class LockBasedLazyValue<T> implements NullableLazyValue<T> {
         private final LockBasedStorageManager storageManager;
         private final Function0<? extends T> computable;
@@ -350,8 +353,12 @@ public class LockBasedStorageManager implements StorageManager {
                 value = NotValue.COMPUTING;
                 try {
                     T typedValue = computable.invoke();
-                    value = typedValue;
+
+                    // Don't publish computed value till post compute is finished as it may cause a race condition
+                    // if post compute modifies value internals.
                     postCompute(typedValue);
+
+                    value = typedValue;
                     return typedValue;
                 }
                 catch (Throwable throwable) {
@@ -383,7 +390,7 @@ public class LockBasedStorageManager implements StorageManager {
         }
 
         protected void postCompute(T value) {
-            // Doing something in post-compute helps prevent infinite recursion
+            // Default post compute implementation doesn't publish the value till it is finished
         }
 
         @NotNull
@@ -396,8 +403,67 @@ public class LockBasedStorageManager implements StorageManager {
         }
     }
 
-    private static class LockBasedNotNullLazyValue<T> extends LockBasedLazyValue<T> implements NotNullLazyValue<T> {
+    private static abstract class LockBasedLazyValueWithPostCompute<T> extends LockBasedLazyValue<T> {
+        @NotNull
+        private final ThreadLocal<Object> valuePostCompute = new ThreadLocal<Object>() {
+            @Override
+            protected Object initialValue() {
+                return NotValue.NOT_COMPUTED;
+            }
+        };
 
+        public LockBasedLazyValueWithPostCompute(
+                @NotNull LockBasedStorageManager storageManager,
+                @NotNull Function0<? extends T> computable
+        ) {
+            super(storageManager, computable);
+        }
+
+        @Override
+        public T invoke() {
+            Object _value = valuePostCompute.get();
+            if (!(_value instanceof NotValue)) {
+                // This thread is counting the value so allow an early publication
+                return WrappedValues.unescapeThrowable(_value);
+            }
+
+            return super.invoke();
+        }
+
+        // Doing something in post-compute helps prevent infinite recursion
+        @Override
+        protected final void postCompute(T value) {
+            valuePostCompute.set(value);
+            try {
+                doPostCompute(value);
+            } finally {
+                valuePostCompute.remove();
+            }
+        }
+
+        protected abstract void doPostCompute(T value);
+    }
+
+    private static abstract class LockBasedNotNullLazyValueWithPostCompute<T> extends LockBasedLazyValueWithPostCompute<T>
+            implements NotNullLazyValue<T> {
+        public LockBasedNotNullLazyValueWithPostCompute(
+                @NotNull LockBasedStorageManager storageManager,
+                @NotNull Function0<? extends T> computable
+        ) {
+            super(storageManager, computable);
+        }
+
+        @Override
+        @NotNull
+        public T invoke() {
+            T result = super.invoke();
+            assert result != null : "compute() returned null";
+            return result;
+        }
+    }
+
+
+    private static class LockBasedNotNullLazyValue<T> extends LockBasedLazyValue<T> implements NotNullLazyValue<T> {
         public LockBasedNotNullLazyValue(@NotNull LockBasedStorageManager storageManager, @NotNull Function0<? extends T> computable) {
             super(storageManager, computable);
         }

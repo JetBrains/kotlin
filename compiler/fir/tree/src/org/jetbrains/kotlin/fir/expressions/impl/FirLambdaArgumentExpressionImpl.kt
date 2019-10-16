@@ -6,18 +6,36 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
-import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
+
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
 class FirLambdaArgumentExpressionImpl(
-    psi: PsiElement?,
+    override val psi: PsiElement?,
     override var expression: FirExpression
-) : FirLambdaArgumentExpression(psi) {
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        expression = expression.transformSingle(transformer, data)
-        return super.transformChildren(transformer, data)
+) : FirLambdaArgumentExpression, FirAbstractAnnotatedElement {
+    override val typeRef: FirTypeRef get() = expression.typeRef
+    override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val isSpread: Boolean get() = false
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        annotations.forEach { it.accept(visitor, data) }
+        expression.accept(visitor, data)
     }
+
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirLambdaArgumentExpressionImpl {
+        annotations.transformInplace(transformer, data)
+        expression = expression.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

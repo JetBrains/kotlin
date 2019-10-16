@@ -157,7 +157,6 @@ dependencies {
     testCompile(intellijPluginDep("copyright"))
     testCompile(intellijPluginDep("properties"))
     testCompile(intellijPluginDep("java-i18n"))
-    testCompile(intellijPluginDep("stream-debugger"))
     testCompileOnly(intellijDep())
     testCompileOnly(commonDep("com.google.code.findbugs", "jsr305"))
     testCompileOnly(intellijPluginDep("gradle"))
@@ -181,6 +180,7 @@ dependencies {
         testRuntime(intellijPluginDep("git4idea"))
         testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
         testRuntime(intellijPluginDep("google-login-as"))
+        testRuntime(intellijPluginDep("android-wizardTemplate-plugin"))
     }
 
     performanceTestCompile(sourceSets["test"].output)
@@ -200,7 +200,7 @@ projectTest(taskName = "performanceTest") {
     dependsOn(performanceTestRuntime)
 
     testClassesDirs = sourceSets["performanceTest"].output.classesDirs
-    classpath = performanceTestRuntime
+    classpath = performanceTestRuntime + files("${System.getenv("ASYNC_PROFILER_HOME")}/build/async-profiler.jar")
     workingDir = rootDir
 
     jvmArgs?.removeAll { it.startsWith("-Xmx") }
@@ -215,6 +215,9 @@ projectTest(taskName = "performanceTest") {
 
     doFirst {
         systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+        project.findProperty("cacheRedirectorEnabled")?.let {
+            systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
+        }
     }
 }
 

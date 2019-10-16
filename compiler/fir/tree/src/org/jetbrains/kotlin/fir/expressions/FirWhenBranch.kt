@@ -5,30 +5,25 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.BaseTransformedType
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.*
 
-@BaseTransformedType
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
 interface FirWhenBranch : FirElement {
-    // NB: we can represent subject, if it's inside, as a special kind of expression
-    // when (mySubject) {
-    //     $subj == 42$ -> doSmth()
-    // }
+    override val psi: PsiElement?
     val condition: FirExpression
-
     val result: FirBlock
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitWhenBranch(this, data)
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        condition.accept(visitor, data)
-        result.accept(visitor, data)
-    }
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenBranch(this, data)
 
     fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch
 
     fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranch
+
+    fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenBranch
 }

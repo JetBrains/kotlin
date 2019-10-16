@@ -373,9 +373,8 @@ internal object EagerResolveOfCallableReferences : ResolutionPart() {
 internal object CheckInfixResolutionPart : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val candidateDescriptor = resolvedCall.candidateDescriptor
-        if (callComponents.statelessCallbacks.isInfixCall(kotlinCall) &&
-            (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isInfix)
-        ) {
+        if (candidateDescriptor !is FunctionDescriptor) return
+        if (!candidateDescriptor.isInfix && callComponents.statelessCallbacks.isInfixCall(kotlinCall)) {
             addDiagnostic(InfixCallNoInfixModifier)
         }
     }
@@ -384,9 +383,8 @@ internal object CheckInfixResolutionPart : ResolutionPart() {
 internal object CheckOperatorResolutionPart : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val candidateDescriptor = resolvedCall.candidateDescriptor
-        if (callComponents.statelessCallbacks.isOperatorCall(kotlinCall) &&
-            (candidateDescriptor !is FunctionDescriptor || !candidateDescriptor.isOperator)
-        ) {
+        if (candidateDescriptor !is FunctionDescriptor) return
+        if (!candidateDescriptor.isOperator && callComponents.statelessCallbacks.isOperatorCall(kotlinCall)) {
             addDiagnostic(InvokeConventionCallNoOperatorModifier)
         }
     }

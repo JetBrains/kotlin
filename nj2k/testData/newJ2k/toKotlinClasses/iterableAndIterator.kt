@@ -1,9 +1,9 @@
-// ERROR: Null can not be a value of a non-null type Iterator<String?>
-// ERROR: Null can not be a value of a non-null type Iterator<String?>
+// ERROR: Null can not be a value of a non-null type Iterator<String>
+// ERROR: Null can not be a value of a non-null type Iterator<String>
 package demo
 
 internal class Test : Iterable<String?> {
-    override fun iterator(): Iterator<String?> {
+    override fun iterator(): Iterator<String> {
         return null
     }
 
@@ -13,7 +13,7 @@ internal class Test : Iterable<String?> {
 }
 
 internal class FullTest : Iterable<String?> {
-    override fun iterator(): Iterator<String?> {
+    override fun iterator(): Iterator<String> {
         return null
     }
 

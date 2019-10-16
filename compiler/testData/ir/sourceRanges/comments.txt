@@ -25,7 +25,7 @@
       @18:27..33 VALUE_PARAMETER name:y index:0 type:kotlin.Int
       @18:35..20:39 BLOCK_BODY
     @25:4..27:25 PROPERTY name:x visibility:public modality:FINAL [val]
-      @25:4..27:25 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      @25:4..27:25 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         @25:17..19 EXPRESSION_BODY
           @25:17..19 CONST Int type=kotlin.Int value=42
       @27:8..25 FUN name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Foo) returnType:kotlin.Int
@@ -33,7 +33,7 @@
         @27:16..25 BLOCK_BODY
           @27:16..25 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Foo'
             @27:16..25 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-              @27:16..21 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+              @27:16..21 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 @27:16..21 GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<get-x>' type=<root>.Foo origin=null
               @27:24..25 CONST Int type=kotlin.Int value=1
     @30:4..32:5 FUN name:test visibility:public modality:FINAL <> ($this:<root>.Foo) returnType:kotlin.Unit

@@ -114,7 +114,7 @@ compileKotlin2Js {
             "-Xuse-experimental=kotlin.Experimental",
             "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
             "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-            "-XXLanguage:+InlineClasses",
+            "-Xinline-classes",
         ]
     }
 }
@@ -193,9 +193,7 @@ task runMocha(type: NodeTask) {
     args += [testOutputFile, kotlinTestTestOutputFile]
 
     execOverrides {
-        // Tests are currently failing. Ignore the exit value for now
-        // TODO: replace with rootProject.ignoreTestFailures when tests are fixed
-        it.ignoreExitValue = true
+        it.ignoreExitValue = rootProject.ignoreTestFailures
         it.workingDir = buildDir
     }
 }

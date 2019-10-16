@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseExperimental(ExperimentalUnsignedTypes::class)
+
 package org.jetbrains.kotlin.backend.common.serialization
 
 private val k0 = 0xc3a5c85c97cb3127U

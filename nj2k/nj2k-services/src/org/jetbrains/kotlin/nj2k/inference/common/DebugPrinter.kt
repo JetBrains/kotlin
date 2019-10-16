@@ -35,6 +35,7 @@ class DebugPrinter(private val inferenceContext: InferenceContext) {
         State.LOWER -> "L"
         State.UPPER -> "U"
         State.UNKNOWN -> "?"
+        State.UNUSED -> "$"
     }
 
     fun BoundType.asString(): String = buildString {
@@ -71,10 +72,9 @@ class DebugPrinter(private val inferenceContext: InferenceContext) {
 
 
 private class Namer(inferenceContext: InferenceContext) {
-    val names = inferenceContext.typeVariables.mapIndexed { index, typeVariable ->
+    private val names = inferenceContext.typeVariables.mapIndexed { index, typeVariable ->
         typeVariable to "T$index"
     }.toMap()
-
 
     fun name(typeVariable: TypeVariable): String =
         names.getValue(typeVariable)

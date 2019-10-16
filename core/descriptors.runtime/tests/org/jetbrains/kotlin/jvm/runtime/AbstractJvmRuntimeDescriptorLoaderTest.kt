@@ -38,9 +38,9 @@ import java.io.File
 import java.net.URLClassLoader
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.reflect.jvm.internal.components.ReflectKotlinClass
-import kotlin.reflect.jvm.internal.components.RuntimeModuleData
-import kotlin.reflect.jvm.internal.structure.classId
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
+import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 
 abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
     companion object {

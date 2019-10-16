@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtSuperTypeList
-import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
@@ -48,5 +47,15 @@ fun PsiReferenceList.addSuperTypeEntry(
     } else {
         // Preserve original entry order
         entry.replace(entryToAdd)
+    }
+}
+
+internal fun KtClassOrObject.getExternalDependencies(): List<ModificationTracker> {
+    return with(KotlinModificationTrackerService.getInstance(project)) {
+        if (!isLocal) return listOf(outOfBlockModificationTracker)
+        else when (val file = containingFile) {
+            is KtFile -> listOf(outOfBlockModificationTracker, fileModificationTracker(file))
+            else -> listOf(outOfBlockModificationTracker)
+        }
     }
 }

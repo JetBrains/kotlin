@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 fun provideLambdaReturnValueHints(expression: KtExpression): List<InlayInfo> {
     if (expression is KtWhenExpression || expression is KtBlockExpression) {
@@ -42,7 +43,7 @@ fun provideLambdaReturnValueHints(expression: KtExpression): List<InlayInfo> {
         return emptyList()
     }
 
-    val bindingContext = expression.analyze()
+    val bindingContext = expression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
     if (expression.isUsedAsResultOfLambda(bindingContext)) {
         val lambdaName = getNameOfFunctionThatTakesLambda(expression) ?: "lambda"
         return listOf(InlayInfo("$TYPE_INFO_PREFIX^$lambdaName", expression.startOffset))

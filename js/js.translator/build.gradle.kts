@@ -28,6 +28,6 @@ sourceSets {
 
 configure<IdeaModel> {
     module {
-        excludeDirs = excludeDirs + files("testData/out-min")
+        excludeDirs = excludeDirs + files("testData/out", "testData/out-min")
     }
 }

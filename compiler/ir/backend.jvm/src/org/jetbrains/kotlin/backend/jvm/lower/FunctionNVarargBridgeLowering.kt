@@ -56,7 +56,7 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             at(expression)
             irCall(functionNInvokeFun).apply {
                 dispatchReceiver = expression.dispatchReceiver
-                putValueArgument(0, irArray(backendContext.ir.symbols.array.typeWith(context.irBuiltIns.anyNType)) {
+                putValueArgument(0, irArray(irSymbols.array.typeWith(context.irBuiltIns.anyNType)) {
                     (0 until expression.valueArgumentsCount).forEach { +expression.getValueArgument(it)!! }
                 })
             }

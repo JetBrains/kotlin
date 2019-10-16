@@ -10,7 +10,7 @@ import java.lang.reflect.Type
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
-import kotlin.reflect.jvm.internal.structure.wrapperByPrimitive
+import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import java.lang.reflect.Method as ReflectMethod
 
 internal class AnnotationConstructorCaller(

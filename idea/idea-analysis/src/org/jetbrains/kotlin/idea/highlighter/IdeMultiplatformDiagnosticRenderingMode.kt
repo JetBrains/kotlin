@@ -36,6 +36,6 @@ object IdeMultiplatformDiagnosticRenderingMode : MultiplatformDiagnosticRenderin
     }
 
     override fun renderDescriptor(sb: StringBuilder, descriptor: DeclarationDescriptor, context: RenderingContext, indent: String) {
-        sb.append(IdeRenderers.HTML.render(descriptor, context))
+        sb.append(IdeRenderers.HTML_WITH_ANNOTATIONS.render(descriptor, context))
     }
 }

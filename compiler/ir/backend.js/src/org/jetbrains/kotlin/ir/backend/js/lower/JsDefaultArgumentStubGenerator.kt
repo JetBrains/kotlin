@@ -14,17 +14,13 @@ import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irImplicitCast
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, true) {
@@ -35,7 +31,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
         handlerDeclaration: IrValueParameter,
         oldIrFunction: IrFunction,
         newIrFunction: IrFunction,
-        params: MutableList<IrVariable>
+        params: MutableList<IrValueDeclaration>
     ): IrExpression {
         val paramCount = oldIrFunction.valueParameters.size
         val invokeFunctionN = resolveInvoke(paramCount)

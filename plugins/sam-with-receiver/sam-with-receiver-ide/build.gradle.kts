@@ -14,7 +14,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":idea:idea-core"))
 
-    Ide.AS33.orHigher.not {
+    Ide.IJ183 {
         compile(project(":idea:idea-android"))
     }
 
@@ -22,9 +22,7 @@ dependencies {
     compile(project(":idea:idea-jvm"))
 
     compileOnly(intellijDep()) { includeJars("openapi", "extensions", "util") }
-    Platform[181].orHigher {
-        compileOnly(intellijDep()) { includeJars("platform-api") }
-    }
+    compileOnly(intellijDep()) { includeJars("platform-api") }
 }
 
 sourceSets {

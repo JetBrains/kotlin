@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.descriptors.Modality
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.function.UnaryOperator
 
 internal val interfaceDelegationPhase = makeIrFilePhase(
     ::InterfaceDelegationLowering,
@@ -68,93 +66,80 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
     }
 
     private fun generateInterfaceMethods(irClass: IrClass) {
-        val (actualClass, isDefaultImplsGeneration) = if (irClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
-            Pair(irClass.parent as IrClass, true)
-        } else {
-            Pair(irClass, false)
-        }
-
         val toRemove = mutableListOf<IrSimpleFunction>()
-        for (function in actualClass.functions.toList()) { // Copy the list, because we are adding new declarations from the loop
+        for (function in irClass.functions.toList()) { // Copy the list, because we are adding new declarations from the loop
             if (function.origin !== IrDeclarationOrigin.FAKE_OVERRIDE) continue
 
-            // In classes, only generate interface delegation for functions immediately inherited from am interface.
+            // Only generate interface delegation for functions immediately inherited from an interface.
             // (Otherwise, delegation will be present in the parent class)
-            if (!isDefaultImplsGeneration &&
-                function.overriddenSymbols.any {
-                    (!it.owner.parentAsClass.isInterface || it.owner.hasJvmDefault()) &&
-                            it.owner.modality != Modality.ABSTRACT
-                }
-            ) {
+            if (function.overriddenSymbols.any { !it.owner.parentAsClass.isInterface && it.owner.modality != Modality.ABSTRACT }) {
                 continue
             }
 
             val implementation = function.resolveFakeOverride() ?: continue
-            if (!implementation.hasInterfaceParent() ||
-                Visibilities.isPrivate(implementation.visibility) ||
-                implementation.isDefinitelyNotDefaultImplsMethod() || implementation.isMethodOfAny()
+
+            if (!implementation.hasInterfaceParent()
+                || Visibilities.isPrivate(implementation.visibility)
+                || implementation.isDefinitelyNotDefaultImplsMethod()
+                || implementation.isMethodOfAny()
+                || (!context.state.jvmDefaultMode.isCompatibility && implementation.hasJvmDefault())
             ) {
                 continue
             }
 
-            val delegation = generateDelegationToDefaultImpl(irClass, implementation, function, isDefaultImplsGeneration)
-            if (!isDefaultImplsGeneration) {
-                toRemove.add(function)
-                replacementMap[function.symbol] = delegation.symbol
-            }
+            toRemove.add(function)
+
+            val delegation = generateDelegationToDefaultImpl(irClass, implementation, function)
+            irClass.declarations.add(delegation)
+            replacementMap[function.symbol] = delegation.symbol
         }
         irClass.declarations.removeAll(toRemove)
     }
 
     private fun generateDelegationToDefaultImpl(
         irClass: IrClass,
-        interfaceFun: IrSimpleFunction,
-        inheritedFun: IrSimpleFunction,
-        isDefaultImplsGeneration: Boolean
+        interfaceImplementation: IrSimpleFunction,
+        classOverride: IrSimpleFunction
     ): IrSimpleFunction {
-        val defaultImplFun = context.declarationFactory.getDefaultImplsFunction(interfaceFun)
+        val inheritedProperty = classOverride.correspondingPropertySymbol?.owner
+        val descriptor = DescriptorsToIrRemapper.remapDeclaredSimpleFunction(classOverride.descriptor)
 
         val irFunction =
-            if (!isDefaultImplsGeneration) {
-                val inheritedProperty = inheritedFun.correspondingPropertySymbol?.owner
-                val descriptor = DescriptorsToIrRemapper.remapDeclaredSimpleFunction(inheritedFun.descriptor)
-                IrFunctionImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    IrDeclarationOrigin.DEFINED,
-                    IrSimpleFunctionSymbolImpl(descriptor),
-                    inheritedFun.name,
-                    Visibilities.PUBLIC,
-                    inheritedFun.modality,
-                    inheritedFun.returnType,
-                    isInline = inheritedFun.isInline,
-                    isExternal = false,
-                    isTailrec = false,
-                    isSuspend = inheritedFun.isSuspend
-                ).apply {
-                    descriptor.bind(this)
-                    parent = irClass
-                    overriddenSymbols.addAll(inheritedFun.overriddenSymbols)
-                    copyParameterDeclarationsFrom(inheritedFun)
-                    annotations.addAll(inheritedFun.annotations)
+            IrFunctionImpl(
+                UNDEFINED_OFFSET,
+                UNDEFINED_OFFSET,
+                IrDeclarationOrigin.DEFINED,
+                IrSimpleFunctionSymbolImpl(descriptor),
+                classOverride.name,
+                Visibilities.PUBLIC,
+                classOverride.modality,
+                classOverride.returnType,
+                isInline = classOverride.isInline,
+                isExternal = false,
+                isTailrec = false,
+                isSuspend = classOverride.isSuspend
+            ).apply {
+                descriptor.bind(this)
+                parent = irClass
+                overriddenSymbols.addAll(classOverride.overriddenSymbols)
+                copyParameterDeclarationsFrom(classOverride)
+                annotations.addAll(classOverride.annotations)
 
-                    if (inheritedProperty != null) {
-                        val propertyDescriptor = DescriptorsToIrRemapper.remapDeclaredProperty(inheritedProperty.descriptor)
-                        IrPropertyImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, IrPropertySymbolImpl(propertyDescriptor),
-                            inheritedProperty.name, Visibilities.PUBLIC, inheritedProperty.modality, inheritedProperty.isVar,
-                            inheritedProperty.isConst, inheritedProperty.isLateinit, inheritedProperty.isDelegated, isExternal = false
-                        ).apply {
-                            propertyDescriptor.bind(this)
-                            parent = irClass
-                            correspondingPropertySymbol = symbol
-                        }
+                if (inheritedProperty != null) {
+                    val propertyDescriptor = DescriptorsToIrRemapper.remapDeclaredProperty(inheritedProperty.descriptor)
+                    IrPropertyImpl(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, IrPropertySymbolImpl(propertyDescriptor),
+                        inheritedProperty.name, Visibilities.PUBLIC, inheritedProperty.modality, inheritedProperty.isVar,
+                        inheritedProperty.isConst, inheritedProperty.isLateinit, inheritedProperty.isDelegated, isExternal = false
+                    ).apply {
+                        propertyDescriptor.bind(this)
+                        parent = irClass
+                        correspondingPropertySymbol = symbol
                     }
                 }
-            } else context.declarationFactory.getDefaultImplsFunction(inheritedFun)
+            }
 
-        irClass.declarations.add(irFunction)
-
+        val defaultImplFun = context.declarationFactory.getDefaultImplsFunction(interfaceImplementation)
         context.createIrBuilder(irFunction.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
             irFunction.body = irBlockBody {
                 +irReturn(
@@ -180,7 +165,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
         }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-            declaration.overriddenSymbols.replaceAll(UnaryOperator { symbol -> replacementMap[symbol] ?: symbol })
+            declaration.overriddenSymbols.replaceAll { symbol -> replacementMap[symbol] ?: symbol }
             super.visitSimpleFunction(declaration)
         }
     }
@@ -205,8 +190,9 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
         if (expression.superQualifierSymbol?.owner?.isInterface != true) {
             return super.visitCall(expression)
         }
+
         val superCallee = (expression.symbol.owner as IrSimpleFunction).resolveFakeOverride()!!
-        if (superCallee.isDefinitelyNotDefaultImplsMethod()) return super.visitCall(expression)
+        if (superCallee.isDefinitelyNotDefaultImplsMethod() || superCallee.hasJvmDefault()) return super.visitCall(expression)
 
         val redirectTarget = context.declarationFactory.getDefaultImplsFunction(superCallee)
         val newCall = irCall(expression, redirectTarget, receiversAsArguments = true)
@@ -222,7 +208,7 @@ internal val interfaceDefaultCallsPhase = makeIrFilePhase(
 )
 
 private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
-
+    // TODO If there are no default _implementations_ we can avoid generating defaultImpls class entirely by moving default arg dispatchers to the interface class
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
     }
@@ -231,7 +217,8 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
         val callee = expression.symbol.owner
 
         if (callee.parent.safeAs<IrClass>()?.isInterface != true ||
-            callee.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+            callee.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+            (callee.hasJvmDefault() && !context.state.jvmDefaultMode.isCompatibility)
         ) {
             return super.visitCall(expression)
         }

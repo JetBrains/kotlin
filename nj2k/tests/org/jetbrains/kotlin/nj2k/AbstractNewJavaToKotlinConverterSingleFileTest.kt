@@ -28,10 +28,7 @@ abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKo
     }
 
     override fun compareResults(expectedFile: File, actual: String) {
-        KotlinTestUtils.assertEqualsToFile(expectedFile, actual) {
-            val file = createKotlinFile(it)
-            file.dumpStructureText()
-        }
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
     }
 
     override fun setUp() {

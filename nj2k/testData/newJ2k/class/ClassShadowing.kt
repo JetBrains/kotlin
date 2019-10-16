@@ -1,8 +1,8 @@
 package test
 
-class Integer(s: String) {
+class Integer(s: String?) {
     companion object {
-        fun valueOf(value: String): Integer {
+        fun valueOf(value: String?): Integer {
             return Integer(value)
         }
     }

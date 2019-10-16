@@ -1,4 +1,3 @@
-// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 // PROBLEM: none
 // ERROR: Type mismatch: inferred type is Long? but Long was expected
 fun test(b: Boolean, x: Long, y: Long?) {

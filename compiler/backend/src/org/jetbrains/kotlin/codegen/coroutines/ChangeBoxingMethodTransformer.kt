@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import java.util.*
 
 private val BOXING_CLASS_INTERNAL_NAME =
     RELEASE_COROUTINES_VERSION_SETTINGS.coroutinesJvmInternalPackageFqName().child(Name.identifier("Boxing")).topLevelClassInternalName()
 
+@UseExperimental(ExperimentalStdlibApi::class)
 object ChangeBoxingMethodTransformer : MethodTransformer() {
     private val wrapperToInternalBoxing: Map<String, String>
 
@@ -26,7 +28,7 @@ object ChangeBoxingMethodTransformer : MethodTransformer() {
         val map = hashMapOf<String, String>()
         for (primitiveType in JvmPrimitiveType.values()) {
             val name = primitiveType.wrapperFqName.topLevelClassInternalName()
-            map[name] = "box${primitiveType.javaKeywordName.capitalize()}"
+            map[name] = "box${primitiveType.javaKeywordName.capitalize(Locale.US)}"
         }
         wrapperToInternalBoxing = map
     }

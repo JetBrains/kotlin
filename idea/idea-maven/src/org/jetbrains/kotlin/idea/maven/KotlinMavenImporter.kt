@@ -121,7 +121,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             }
         }
 
-        configureFacet(mavenProject, modifiableModelsProvider, module, false) //HMPP is not supported currently for maven
+        configureFacet(mavenProject, modifiableModelsProvider, module)
     }
 
     private fun scheduleDownloadStdlibSources(mavenProject: MavenProject, module: Module) {
@@ -243,7 +243,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         PomFile.KotlinGoals.MetaData
     )
 
-    private fun configureFacet(mavenProject: MavenProject, modifiableModelsProvider: IdeModifiableModelsProvider, module: Module, isHmppModule: Boolean) {
+    private fun configureFacet(mavenProject: MavenProject, modifiableModelsProvider: IdeModifiableModelsProvider, module: Module) {
         val mavenPlugin = mavenProject.findPlugin(KotlinMavenConfigurator.GROUP_ID, KotlinMavenConfigurator.MAVEN_PLUGIN_ID) ?: return
         val compilerVersion = mavenPlugin.version ?: LanguageVersion.LATEST_STABLE.versionString
         val kotlinFacet = module.getOrCreateFacet(
@@ -259,9 +259,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
             compilerVersion,
             LanguageFeature.Coroutines.defaultState,
             platform,
-            modifiableModelsProvider,
-            hmppEnabled = isHmppModule,
-            pureKotlinSourceFolders = emptyList()
+            modifiableModelsProvider
         )
         val facetSettings = kotlinFacet.configuration.settings
         val configuredPlatform = kotlinFacet.configuration.settings.targetPlatform!!

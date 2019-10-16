@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/superCalls.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Base
       BLOCK_BODY
     PROPERTY name:bar visibility:public modality:OPEN [val]
-      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           CONST String type=kotlin.String value=""
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:OPEN <> ($this:<root>.Base) returnType:kotlin.String
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/superCalls.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-bar> (): kotlin.String declared in <root>.Base'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-bar>' type=<root>.Base origin=null
     FUN name:hashCode visibility:public modality:OPEN <> ($this:<root>.Base) returnType:kotlin.Int
       overridden:

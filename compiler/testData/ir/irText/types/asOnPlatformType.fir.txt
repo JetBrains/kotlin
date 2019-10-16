@@ -19,11 +19,11 @@ FILE fqName:<root> fileName:/asOnPlatformType.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <T> (): T of <root>.foo [inline] declared in <root>'
         TYPE_OP type=T of <root>.foo origin=CAST typeOperand=T of <root>.foo
-          ERROR_CALL 'Unresolved reference: this#' type=T of <root>.foo
+          GET_VAR '<this>: T of <root>.foo declared in <root>.foo' type=T of <root>.foo origin=null
   FUN name:fooN visibility:public modality:FINAL <T> ($receiver:T of <root>.fooN) returnType:T of <root>.fooN? [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     $receiver: VALUE_PARAMETER name:<this> type:T of <root>.fooN
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun fooN <T> (): T of <root>.fooN? [inline] declared in <root>'
         TYPE_OP type=T of <root>.fooN? origin=CAST typeOperand=T of <root>.fooN?
-          ERROR_CALL 'Unresolved reference: this#' type=T of <root>.fooN
+          GET_VAR '<this>: T of <root>.fooN declared in <root>.fooN' type=T of <root>.fooN origin=null

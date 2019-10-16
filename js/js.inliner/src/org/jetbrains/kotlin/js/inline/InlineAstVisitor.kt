@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.inlineStrategy
 import org.jetbrains.kotlin.js.backend.ast.metadata.psiElement
 import org.jetbrains.kotlin.js.inline.clean.FunctionPostProcessor
 import org.jetbrains.kotlin.js.inline.clean.removeUnusedLocalFunctionDeclarations
+import org.jetbrains.kotlin.js.inline.clean.substituteKTypes
 import org.jetbrains.kotlin.js.inline.util.extractFunction
 import org.jetbrains.kotlin.js.inline.util.refreshLabelNames
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
@@ -47,11 +48,11 @@ class InlineAstVisitor(
     }
 
     override fun endVisit(function: JsFunction, ctx: JsContext<*>) {
-        // Cleanup
         patchReturnsFromSecondaryConstructor(function)
         refreshLabelNames(function.body, function.scope)
         removeUnusedLocalFunctionDeclarations(function)
         FunctionPostProcessor(function).apply()
+        substituteKTypes(function)
     }
 
 

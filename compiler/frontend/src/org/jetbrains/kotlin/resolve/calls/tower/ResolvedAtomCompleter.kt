@@ -78,6 +78,8 @@ class ResolvedAtomCompleter(
     }
 
     fun completeResolvedCall(resolvedCallAtom: ResolvedCallAtom, diagnostics: Collection<KotlinCallDiagnostic>): ResolvedCall<*>? {
+        clearPartiallyResolvedCall(resolvedCallAtom)
+
         if (resolvedCallAtom.atom.psiKotlinCall is PSIKotlinCallForVariable) return null
 
         val resolvedCall = kotlinToResolvedCallTransformer.transformToResolvedCall<CallableDescriptor>(
@@ -114,6 +116,15 @@ class ResolvedAtomCompleter(
         kotlinToResolvedCallTransformer.reportDiagnostics(topLevelCallContext, topLevelTrace, resolvedCall, diagnostics)
 
         return resolvedCall
+    }
+
+    private fun clearPartiallyResolvedCall(resolvedCallAtom: ResolvedCallAtom) {
+        val psiCall = KotlinToResolvedCallTransformer.keyForPartiallyResolvedCall(resolvedCallAtom)
+
+        val partialCallContainer = topLevelTrace[BindingContext.ONLY_RESOLVED_CALL, psiCall]
+        if (partialCallContainer != null) {
+            topLevelTrace.record(BindingContext.ONLY_RESOLVED_CALL, psiCall, PartialCallContainer.empty)
+        }
     }
 
     private val ResolvedLambdaAtom.isCoercedToUnit: Boolean

@@ -1,9 +1,0 @@
-LineBreakpoint created at inlineFunInLibrary.kt:4
-LineBreakpoint created at inlineFunInLibrary.kt:12
-Run Java
-Connected to the target VM
-inlineFunInLibrary.kt:4
-inlineFunInLibrary.kt:12
-Disconnected from the target VM
-
-Process finished with exit code 0

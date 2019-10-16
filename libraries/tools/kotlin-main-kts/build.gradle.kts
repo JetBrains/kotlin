@@ -27,12 +27,11 @@ dependencies {
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm-host")) { isTransitive = false }
     embedded(project(":kotlin-script-util")) { isTransitive = false }
-    embedded(project(":kotlin-script-runtime")) { isTransitive = false }
     embedded("org.apache.ivy:ivy:2.4.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     proguardLibraryJars(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
                               firstFromJavaHomeThatExists("jre/lib/jsse.jar", "../Classes/jsse.jar"),
-                              toolsJar()))
+                              toolsJarFile()))
     proguardLibraryJars(kotlinStdlib())
     proguardLibraryJars(project(":kotlin-reflect"))
     proguardLibraryJars(project(":kotlin-compiler"))

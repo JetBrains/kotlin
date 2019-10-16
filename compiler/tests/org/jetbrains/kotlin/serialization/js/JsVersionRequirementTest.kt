@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationResult
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.serialization.AbstractVersionRequirementTest
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -78,7 +79,7 @@ class JsVersionRequirementTest : AbstractVersionRequirementTest() {
         val config = JsConfig(environment.project, environment.configuration)
         return ContextForNewModule(
             ProjectContext(environment.project, "ProjectContext"),
-            Name.special("<test>"), JsPlatformAnalyzerServices.builtIns, null
+            Name.special("<test>"), JsPlatformAnalyzerServices.builtIns, JsPlatforms.defaultJsPlatform
         ).apply {
             setDependencies(listOf(module) + config.moduleDescriptors + module.builtIns.builtInsModule)
         }
