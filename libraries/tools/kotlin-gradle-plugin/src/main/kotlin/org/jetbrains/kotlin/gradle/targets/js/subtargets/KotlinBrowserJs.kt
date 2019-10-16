@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -66,6 +67,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 target.project.tasks.getByName(compilation.processResourcesTaskName)
             )
 
+            it.mode = Mode.DEVELOPMENT
             it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
             it.compilation = compilation
             it.description = "start webpack dev server"
@@ -99,6 +101,11 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     nodeJs.npmInstallTask,
                     compileKotlinTask
                 )
+
+                it.mode = when (buildVariant.kind) {
+                    BuildVariantKind.RELEASE -> Mode.PRODUCTION
+                    BuildVariantKind.DEBUG -> Mode.DEVELOPMENT
+                }
 
                 it.compilation = compilation
                 it.description = "build webpack bundle"

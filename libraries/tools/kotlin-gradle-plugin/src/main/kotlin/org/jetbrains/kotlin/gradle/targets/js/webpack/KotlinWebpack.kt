@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.injected
 import java.io.File
@@ -46,6 +47,9 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             val target = it.target
             target.project.path + "@" + target.name + ":" + it.compilationName
         }
+
+    @Input
+    var mode: Mode = Mode.PRODUCTION
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
@@ -110,6 +114,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         execHandleFactory,
         bin,
         KotlinWebpackConfig(
+            mode = mode,
             entry = entry,
             reportEvaluatedConfigFile = if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
             outputPath = destinationDirectory,
