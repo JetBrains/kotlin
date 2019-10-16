@@ -370,6 +370,11 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
       protected DataContext getDataContext() {
         return DataManager.getInstance().getDataContext(this);
       }
+§
+      @Override
+      protected String getShortcutText() {
+        return KeymapUtil.getKeystrokeText(NEW_LINE_KEYSTROKE);
+      }
     };
     button.setLook(ActionButtonLook.INPLACE_LOOK);
     button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -392,8 +397,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
 
   private class NewLineAction extends DumbAwareAction {
     NewLineAction() {
-      super(null, "New line (" + KeymapUtil.getKeystrokeText(NEW_LINE_KEYSTROKE) + ")",
-            AllIcons.Actions.SearchNewLine);
+      super("New Line", null, AllIcons.Actions.SearchNewLine);
       getTemplatePresentation().setHoveredIcon(AllIcons.Actions.SearchNewLineHover);
     }
 

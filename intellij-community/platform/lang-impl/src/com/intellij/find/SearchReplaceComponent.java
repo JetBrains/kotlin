@@ -549,13 +549,13 @@ public class SearchReplaceComponent extends EditorHeaderComponent implements Dat
     toolbar.setForceMinimumSize(true);
     toolbar.setReservePlaceAutoPopupIcon(false);
     toolbar.setSecondaryButtonPopupStateModifier(mySearchToolbar1PopupStateModifier);
+    toolbar.setSecondaryActionsTooltip(FindBundle.message("find.popup.show.filter.popup"));
+    toolbar.setSecondaryActionsIcon(AllIcons.General.Filter);
+
     KeyboardShortcut keyboardShortcut = ActionManager.getInstance().getKeyboardShortcut("ShowFilterPopup");
     if (keyboardShortcut != null) {
-      toolbar.setSecondaryActionsTooltip(FindBundle.message("find.popup.show.filter.popup") + " (" + KeymapUtil.getShortcutText(keyboardShortcut) + ")");
-    } else {
-      toolbar.setSecondaryActionsTooltip(FindBundle.message("find.popup.show.filter.popup"));
+      toolbar.setSecondaryActionsShortcut(KeymapUtil.getShortcutText(keyboardShortcut));
     }
-    toolbar.setSecondaryActionsIcon(AllIcons.General.Filter);
 
     new ShowMoreOptions(toolbar, mySearchFieldWrapper);
     return toolbar;
