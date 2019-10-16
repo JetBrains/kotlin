@@ -271,7 +271,7 @@ public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
       settings.linkProject(gradleProjectSettings);
 
       ExternalSystemUtil.refreshProject(gradleProjectSettings.getExternalProjectPath(),
-                                        new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).build());
+                                        new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID));
     };
     ExternalProjectsManagerImpl.getInstance(project)
       .runWhenInitialized(
@@ -300,7 +300,10 @@ public class GradleProjectOpenProcessor extends ProjectOpenProcessor {
   }
 
   private static void createProjectPreview(@NotNull Project project, @NotNull String rootProjectPath, @Nullable VirtualFile virtualFile) {
-    ExternalSystemUtil.refreshProject(project, GradleConstants.SYSTEM_ID, rootProjectPath, true, ProgressExecutionMode.MODAL_SYNC);
+    ExternalSystemUtil.refreshProject(rootProjectPath,
+                                      new ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
+                                        .usePreviewMode()
+                                        .use(ProgressExecutionMode.MODAL_SYNC));
     ExternalProjectsManagerImpl.getInstance(project).runWhenInitialized(() -> DumbService.getInstance(project).runWhenSmart(() -> {
       ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID);
       if (virtualFile == null) return;

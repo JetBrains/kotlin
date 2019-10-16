@@ -3,8 +3,8 @@ package org.jetbrains.plugins.gradle.service.project.open
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.externalSystem.importing.AbstractOpenProjectProvider
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.IN_BACKGROUND_ASYNC
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.MODAL_SYNC
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
@@ -55,8 +55,11 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
     }
     ExternalProjectsManagerImpl.disableProjectWatcherAutoUpdate(project)
     ExternalSystemApiUtil.getSettings(project, SYSTEM_ID).linkProject(settings)
-    ExternalSystemUtil.refreshProject(project, SYSTEM_ID, externalProjectPath, true, MODAL_SYNC)
-    ExternalSystemUtil.refreshProject(project, SYSTEM_ID, externalProjectPath, false, IN_BACKGROUND_ASYNC)
+    ExternalSystemUtil.refreshProject(externalProjectPath,
+                                      ImportSpecBuilder(project, SYSTEM_ID)
+                                        .usePreviewMode()
+                                        .use(MODAL_SYNC))
+    ExternalSystemUtil.refreshProject(externalProjectPath, ImportSpecBuilder(project, SYSTEM_ID))
   }
 
   fun setupGradleSettings(settings: GradleProjectSettings, projectDirectory: String, project: Project, projectSdk: Sdk? = null) {

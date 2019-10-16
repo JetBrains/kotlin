@@ -16,7 +16,6 @@
 package org.jetbrains.plugins.gradle.execution.filters;
 
 import com.intellij.execution.filters.HyperlinkInfo;
-import com.intellij.openapi.externalSystem.importing.ImportSpec;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.service.internal.ExternalSystemResolveProjectTask;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
@@ -43,10 +42,9 @@ public class ReRunSyncFilter extends GradleReRunBuildFilter {
   @Override
   protected HyperlinkInfo getHyperLinkInfo(List<String> options) {
     return (project) -> {
-      ImportSpec importSpec = new ImportSpecBuilder(myProject, myTask.getExternalSystemId())
-        .withArguments(StringUtil.join(options, " "))
-        .build();
-      ExternalSystemUtil.refreshProject(myTask.getExternalProjectPath(), importSpec);
+      ExternalSystemUtil.refreshProject(myTask.getExternalProjectPath(),
+                                        new ImportSpecBuilder(myProject, myTask.getExternalSystemId())
+                                          .withArguments(StringUtil.join(options, " ")));
     };
   }
 }

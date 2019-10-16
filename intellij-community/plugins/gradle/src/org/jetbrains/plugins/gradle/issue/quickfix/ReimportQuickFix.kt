@@ -34,7 +34,6 @@ class ReimportQuickFix(private val myProjectPath: String) : BuildIssueQuickFix {
             future.completeExceptionally(RuntimeException(errorMessage))
           }
         })
-        .build()
       )
       return future
     }

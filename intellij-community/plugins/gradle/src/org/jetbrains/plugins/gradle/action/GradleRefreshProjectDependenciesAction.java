@@ -68,7 +68,6 @@ public class GradleRefreshProjectDependenciesAction extends RefreshExternalProje
 
     ExternalSystemUtil.refreshProject(externalProjectPath,
                                       new ImportSpecBuilder(project, projectSystemId)
-                                        .withArguments("--refresh-dependencies")
-                                        .build());
+                                        .withArguments("--refresh-dependencies"));
   }
 }

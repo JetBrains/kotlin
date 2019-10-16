@@ -4,6 +4,7 @@ package org.jetbrains.plugins.gradle
 import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.CommandLineInspectionProgressReporter
 import com.intellij.codeInspection.CommandLineInspectionProjectConfigurator
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
@@ -28,7 +29,8 @@ class GradleCommandLineProjectConfigurator : CommandLineInspectionProjectConfigu
   override fun configureProject(project: Project, scope: AnalysisScope, logger: CommandLineInspectionProgressReporter) {
     val basePath = project.basePath
     if (!initialImport && basePath != null) {
-      ExternalSystemUtil.refreshProject(project, GradleConstants.SYSTEM_ID, basePath, false, ProgressExecutionMode.MODAL_SYNC)
+      ExternalSystemUtil.refreshProject(basePath,
+                                        ImportSpecBuilder(project, GradleConstants.SYSTEM_ID).use(ProgressExecutionMode.MODAL_SYNC))
     }
   }
 }
