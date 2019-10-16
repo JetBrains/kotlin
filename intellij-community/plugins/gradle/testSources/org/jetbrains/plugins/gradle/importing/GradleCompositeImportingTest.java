@@ -549,4 +549,53 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
 
     assertModuleModuleDeps("root-project.sub-project.main", "myId.main");
   }
+
+  @Test
+  @TargetVersions("3.1+")
+  public void testScopeUpdateForSubstituteDependency() throws Exception {
+    createSettingsFile("rootProject.name = 'pA'\n" +
+                       "include 'pA-1', 'pA-2'\n" +
+                       "includeBuild('pB')\n" +
+                       "includeBuild('pC')");
+
+    createProjectSubFile("pB/settings.gradle");
+    createProjectSubFile("pC/settings.gradle");
+
+    createProjectSubFile("pA-1/build.gradle",
+                         new GradleBuildScriptBuilderEx()
+                           .applyPlugin("'java-library'")
+                           .addDependency("implementation 'group:pC'")
+                           .generate());
+
+    createProjectSubFile("pA-2/build.gradle",
+                         new GradleBuildScriptBuilderEx()
+                           .applyPlugin("'java-library'")
+                           .addDependency("implementation project(':pA-1')")
+                           .addDependency("implementation 'group:pB'")
+                           .generate());
+
+    createProjectSubFile("pB/build.gradle",
+                         new GradleBuildScriptBuilderEx()
+                           .addPostfix("group = 'group'")
+                           .applyPlugin("'java-library'")
+                           .addDependency("api 'group:pC'")
+                           .generate());
+
+    createProjectSubFile("pC/build.gradle",
+                         new GradleBuildScriptBuilderEx()
+                           .addPostfix("group = 'group'")
+                           .applyPlugin("'java-library'")
+                           .generate());
+
+    //enableGradleDebugWithSuspend();
+    importProject("");
+
+    assertModules("pA",
+                  "pA.pA-1", "pA.pA-1.main", "pA.pA-1.test",
+                  "pA.pA-2", "pA.pA-2.main", "pA.pA-2.test",
+                  "pB", "pB.main", "pB.test",
+                  "pC", "pC.main", "pC.test");
+
+    assertModuleModuleDepScope("pA.pA-2.main", "pC.main", COMPILE);
+  }
 }

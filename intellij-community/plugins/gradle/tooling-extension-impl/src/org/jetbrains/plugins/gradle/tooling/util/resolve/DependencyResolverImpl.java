@@ -527,9 +527,24 @@ public class DependencyResolverImpl implements DependencyResolver {
                                       @NotNull ExternalDependency nextDependency) {
     Collection<File> seenFiles = getFiles(seenDependency);
     Collection<File> nextFiles = getFiles(nextDependency);
-    return seenFiles.containsAll(nextFiles);
+    boolean filesSeen = seenFiles.containsAll(nextFiles);
+    boolean projectDependencySeen = compareAsProjectDependencies(seenDependency, nextDependency);
+
+    return filesSeen || projectDependencySeen;
   }
 
+  private static boolean compareAsProjectDependencies(@NotNull ExternalDependency seenDependency,
+                                               @NotNull ExternalDependency newDependency) {
+    if (seenDependency instanceof ExternalProjectDependency
+    && newDependency instanceof ExternalProjectDependency) {
+      String seenConfiguration = ((ExternalProjectDependency)seenDependency).getConfigurationName();
+      String newConfiguration = ((ExternalProjectDependency)newDependency).getConfigurationName();
+      return
+        seenDependency.getId().equals(newDependency.getId())
+      && ((seenConfiguration == newConfiguration) || (seenConfiguration != null && seenConfiguration.equals(newConfiguration)));
+    }
+    return false;
+  }
 
   private static void upgradeScopeIfNeeded(@NotNull ExternalDependency targetDependency, @NotNull String newScope) {
     if (targetDependency.getScope().equals(COMPILE_SCOPE) || !(targetDependency instanceof AbstractExternalDependency)) {
