@@ -18,12 +18,11 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun preprocessLambdaArgument(
+fun Candidate.preprocessLambdaArgument(
     csBuilder: ConstraintSystemBuilder,
     argument: FirAnonymousFunction,
     expectedType: ConeKotlinType?,
     expectedTypeRef: FirTypeRef,
-    acceptLambdaAtoms: (PostponedResolvedAtomMarker) -> Unit,
     forceResolution: Boolean = false
 ) {
     if (expectedType != null && !forceResolution && csBuilder.isTypeVariable(expectedType)) {
@@ -42,7 +41,7 @@ fun preprocessLambdaArgument(
 //        csBuilder.addSubtypeConstraint(lambdaType, expectedType, ArgumentConstraintPosition(argument))
     }
 
-    acceptLambdaAtoms(resolvedArgument)
+    postponedAtoms += resolvedArgument
 }
 
 fun preprocessCallableReference(

@@ -33,9 +33,10 @@ interface LambdaAnalyzer {
 
 
 class PostponedArgumentsAnalyzer(
-    val lambdaAnalyzer: LambdaAnalyzer,
-    val typeProvider: (FirExpression) -> FirTypeRef?,
-    val components: InferenceComponents
+    private val lambdaAnalyzer: LambdaAnalyzer,
+    private val typeProvider: (FirExpression) -> FirTypeRef?,
+    private val components: InferenceComponents,
+    private val candidate: Candidate
 ) {
 
     fun analyze(
@@ -103,7 +104,7 @@ class PostponedArgumentsAnalyzer(
 
         val subResolvedKtPrimitives = returnArguments.map {
             var atom: PostponedResolvedAtomMarker? = null
-            resolveArgumentExpression(
+            candidate.resolveArgumentExpression(
                 c.getBuilder(),
                 it,
                 lambda.returnType.let(::substitute),
@@ -111,7 +112,6 @@ class PostponedArgumentsAnalyzer(
                 checkerSink,
                 false,
                 false,
-                { atom = it },
                 typeProvider
             )
 //            resolveKtPrimitive(

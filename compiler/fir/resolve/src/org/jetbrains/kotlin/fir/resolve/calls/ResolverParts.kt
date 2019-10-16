@@ -93,7 +93,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
 
         if (expectedReceiverType != null) {
             if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeCheckedAgainstExplicit()) {
-                resolveArgumentExpression(
+                candidate.resolveArgumentExpression(
                     candidate.csBuilder,
                     argument = explicitReceiverExpression,
                     expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType),
@@ -101,8 +101,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     sink = sink,
                     isReceiver = true,
                     isSafeCall = callInfo.isSafeCall,
-                    typeProvider = callInfo.typeProvider,
-                    acceptLambdaAtoms = { candidate.postponedAtoms += it }
+                    typeProvider = callInfo.typeProvider
                 )
                 sink.yield()
             } else {
