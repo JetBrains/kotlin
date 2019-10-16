@@ -255,13 +255,14 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
         sameNameElements.clear();
         for (final Object element : elements) {
           indicator.checkCanceled();
-          if (matchQualifiedName(model, fullMatcher, element) != null) {
-            sameNameElements.add(Pair.create(element, result));
+          MatchResult qualifiedResult = matchQualifiedName(model, fullMatcher, element);
+          if (qualifiedResult != null) {
+            sameNameElements.add(Pair.create(element, qualifiedResult));
           }
         }
         Collections.sort(sameNameElements, weightComparator);
         List<FoundItemDescriptor<?>> processedItems =
-          ContainerUtil.map(sameNameElements, p -> new FoundItemDescriptor<>(p.first, p.second.matchingDegree));
+          ContainerUtil.map(sameNameElements, p -> new FoundItemDescriptor<>(p.first, result.matchingDegree));
         if (!ContainerUtil.process(processedItems, consumer)) return false;
       }
       else if (elements.length == 1) {
