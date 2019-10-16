@@ -370,7 +370,7 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
       protected DataContext getDataContext() {
         return DataManager.getInstance().getDataContext(this);
       }
-§
+
       @Override
       protected String getShortcutText() {
         return KeymapUtil.getKeystrokeText(NEW_LINE_KEYSTROKE);
