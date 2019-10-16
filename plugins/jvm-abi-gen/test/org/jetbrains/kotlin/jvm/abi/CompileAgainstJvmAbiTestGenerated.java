@@ -48,6 +48,11 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
         runTest("plugins/jvm-abi-gen/testData/compile/inlineAnonymousObject/");
     }
 
+    @TestMetadata("inlineCapture")
+    public void testInlineCapture() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineCapture/");
+    }
+
     @TestMetadata("inlineReifiedFunction")
     public void testInlineReifiedFunction() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/inlineReifiedFunction/");
