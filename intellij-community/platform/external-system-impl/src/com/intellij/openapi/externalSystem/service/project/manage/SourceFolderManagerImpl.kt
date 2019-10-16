@@ -33,7 +33,7 @@ import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 
-@State(name = "sourceFolderManager",  storages = [Storage(StoragePathMacros.WORKSPACE_FILE)])
+@State(name = "sourceFolderManager",  storages = [Storage(StoragePathMacros.CACHE_FILE)])
 class SourceFolderManagerImpl(private val project: Project) : SourceFolderManager, Disposable, PersistentStateComponent<SourceFolderManagerState> {
 
   private val moduleNamesToSourceFolderState: MultiMap<String, SourceFolderModelState> = MultiMap.create()
