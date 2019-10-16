@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
@@ -150,6 +151,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     }
 
     override fun setUpProject() {
+        LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(appDataPath))
         super.setUpProject()
         File(appOutputPath).mkdirs()
     }
