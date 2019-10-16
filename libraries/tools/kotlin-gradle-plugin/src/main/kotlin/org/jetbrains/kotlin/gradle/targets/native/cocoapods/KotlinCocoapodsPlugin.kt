@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -88,7 +87,10 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
     ) {
         val fatTargets = requestedPlatforms.associate { it to kotlinExtension.targetsForPlatform(it) }
 
-        check(fatTargets.values.any { it.isNotEmpty() }) { "The project doesn't contain a target for iOS device" }
+        check(fatTargets.values.any { it.isNotEmpty() }) {
+            "The project must have a target for at least one of the following platforms: " +
+                    "${requestedPlatforms.joinToString { it.visibleName }}."
+        }
         fatTargets.forEach { platform, targets ->
             check(targets.size <= 1) {
                 "The project has more than one target for the requested platform: `${platform.visibleName}`"
@@ -132,27 +134,21 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
         val requestedTargetName = project.findProperty(TARGET_PROPERTY)?.toString() ?: return@whenEvaluated
         val requestedBuildType = project.findProperty(CONFIGURATION_PROPERTY)?.toString()?.toUpperCase() ?: return@whenEvaluated
 
-        if (requestedTargetName == KOTLIN_TARGET_FOR_DEVICE) {
-            // We create a fat framework only for device platforms: iosArm64, iosArm32, watchosArm32, watchosArm64 and tvosArm64.
-            val devicePlatforms = listOf(
-                KonanTarget.IOS_ARM64,
-                KonanTarget.IOS_ARM32,
-                KonanTarget.WATCHOS_ARM32,
-                KonanTarget.WATCHOS_ARM64,
-                KonanTarget.TVOS_ARM64
-            )
-            val deviceTargets = devicePlatforms.flatMap { kotlinExtension.targetsForPlatform(it) }
+        // We create a fat framework only for device platforms which have several
+        // device architectures: iosArm64, iosArm32, watchosArm32 and watchosArm64.
+        val frameworkPlatforms: List<KonanTarget> = when (requestedTargetName) {
+            KOTLIN_TARGET_FOR_IOS_DEVICE -> listOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM32)
+            KOTLIN_TARGET_FOR_WATCHOS_DEVICE -> listOf(KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64)
+            else -> listOf(HostManager().targetByName(requestedTargetName)) // A requested target doesn't require building a fat framework.
+        }
 
-            if (deviceTargets.size == 1) {
-                // Fast path: there is only one device target. There is no need to build a fat framework.
-                createSyncForRegularFramework(project, kotlinExtension, requestedBuildType, deviceTargets.single().konanTarget)
-            } else {
-                // There are several device targets so we need to build a fat framework.
-                createSyncForFatFramework(project, kotlinExtension, requestedBuildType, devicePlatforms)
-            }
+        val frameworkTargets = frameworkPlatforms.flatMap { kotlinExtension.targetsForPlatform(it) }
+        if (frameworkTargets.size == 1) {
+            // Fast path: there is only one device target. There is no need to build a fat framework.
+            createSyncForRegularFramework(project, kotlinExtension, requestedBuildType, frameworkTargets.single().konanTarget)
         } else {
-            // A requested target doesn't require building a fat framework.
-            createSyncForRegularFramework(project, kotlinExtension, requestedBuildType, HostManager().targetByName(requestedTargetName))
+            // There are several device targets so we need to build a fat framework.
+            createSyncForFatFramework(project, kotlinExtension, requestedBuildType, frameworkPlatforms)
         }
     }
 
@@ -266,7 +262,7 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
 
         // Used in Xcode script phase to indicate that the framework is being built for a device
         // so we should generate a fat framework with arm32 and arm64 binaries.
-        const val KOTLIN_TARGET_FOR_DEVICE = "ios_arm"
-
+        const val KOTLIN_TARGET_FOR_IOS_DEVICE = "ios_arm"
+        const val KOTLIN_TARGET_FOR_WATCHOS_DEVICE = "watchos_arm"
     }
 }

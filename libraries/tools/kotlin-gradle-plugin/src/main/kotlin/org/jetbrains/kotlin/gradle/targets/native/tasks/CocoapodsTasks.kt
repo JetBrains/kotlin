@@ -12,7 +12,8 @@ import org.gradle.api.tasks.wrapper.Wrapper
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_DEVICE
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_IOS_DEVICE
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_WATCHOS_DEVICE
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
@@ -75,7 +76,11 @@ open class PodspecTask : DefaultTask() {
             |
             |    spec.pod_target_xcconfig = {
             |        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
-            |        'KOTLIN_TARGET[sdk=iphoneos*]' => '$KOTLIN_TARGET_FOR_DEVICE',
+            |        'KOTLIN_TARGET[sdk=iphoneos*]' => '$KOTLIN_TARGET_FOR_IOS_DEVICE',
+            |        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
+            |        'KOTLIN_TARGET[sdk=watchos*]' => '$KOTLIN_TARGET_FOR_WATCHOS_DEVICE',
+            |        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
+            |        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
             |        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
             |    }
             |
