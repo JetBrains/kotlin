@@ -45,14 +45,7 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
   override fun addSourceFolder(module: Module, url: String, type: JpsModuleSourceRootType<*>) {
     synchronized(mutex) {
       sourceFolders[url] = SourceFolderModel(module, url, type)
-      val moduleModel = sourceFoldersByModule.getOrPut(module.name) {
-        ModuleModel(module).also {
-          Disposer.register(module, Disposable {
-            removeSourceFolders(module)
-          })
-        }
-      }
-      moduleModel.sourceFolders.add(url)
+      addUrlToModuleModel(module, url)
     }
     TransactionGuard.getInstance().submitTransactionLater(this, Runnable {
       val virtualFileManager = VirtualFileManager.getInstance()
@@ -237,6 +230,10 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
     val rootType: JpsModuleSourceRootType<*> = dictionary[model.type] ?: return
     val url = model.url
     sourceFolders[url] = SourceFolderModel(module, url, rootType, model.packagePrefix, model.generated)
+    addUrlToModuleModel(module, url)
+  }
+
+  private fun addUrlToModuleModel(module: Module, url: String) {
     val moduleModel = sourceFoldersByModule.getOrPut(module.name) {
       ModuleModel(module).also {
         Disposer.register(module, Disposable {
