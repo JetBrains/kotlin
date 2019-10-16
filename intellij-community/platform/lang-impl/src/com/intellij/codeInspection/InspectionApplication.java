@@ -212,7 +212,8 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
           reportMessage(0, "modified file" + file.getPath());
         }
         try {
-          runAnalysisOnScope(parentDisposable, project, myInspectionProfile,
+          runAnalysisOnScope(projectPath, 
+                             parentDisposable, project, myInspectionProfile,
                              new AnalysisScope(project, files));
         }
         catch (IOException e) {
@@ -240,7 +241,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
         scope = new AnalysisScope(Objects.requireNonNull(psiDirectory));
 
       }
-      runAnalysisOnScope(parentDisposable, project, myInspectionProfile, scope);
+      runAnalysisOnScope(projectPath, parentDisposable, project, myInspectionProfile, scope);
     }
   }
 
@@ -253,7 +254,8 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     return context;
   }
 
-  private void runAnalysisOnScope(@NotNull Disposable parentDisposable,
+  private void runAnalysisOnScope(Path projectPath, 
+                                  @NotNull Disposable parentDisposable,
                                   Project project,
                                   InspectionProfileImpl inspectionProfile, AnalysisScope scope)
     throws IOException {
@@ -291,24 +293,31 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       }
     }
 
-    for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getIterable()) {
-      configurator.configureProject(project, scope, this);
-    }
+    runAnalysis(project, projectPath, inspectionProfile, scope, reportConverter, resultsDataPath);
+  }
 
-    runAnalysis(project, inspectionProfile, scope, reportConverter, resultsDataPath);
+  private void configureProject(Path projectPath, Project project, AnalysisScope scope) {
+    for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getIterable()) {
+      if (configurator.isApplicable(projectPath, this)) {
+        configurator.configureProject(project, scope, this);
+      }
+    }
   }
 
   private void runAnalysis(Project project,
+                           Path projectPath, 
                            InspectionProfileImpl inspectionProfile,
-                           AnalysisScope scope, InspectionsReportConverter reportConverter, Path resultsDataPath) throws IOException {
+                           AnalysisScope scope, 
+                           InspectionsReportConverter reportConverter, 
+                           Path resultsDataPath) throws IOException {
     GlobalInspectionContextImpl context = createGlobalInspectionContext(project);
     if (myAnalyzeChanges) {
-      scope = runFirstStage(project, createGlobalInspectionContext(project), scope, resultsDataPath);
+      scope = runAnalysisOnCodeWithoutChanges(project, projectPath, createGlobalInspectionContext(project), scope, resultsDataPath);
       setupSecondAnalysisHandler(project, context);
     }
 
     final List<Path> inspectionsResults = new ArrayList<>();
-    runUnderProgress(project, context, scope, resultsDataPath, inspectionsResults);
+    runUnderProgress(project, projectPath, context, scope, resultsDataPath, inspectionsResults);
     final Path descriptionsFile = resultsDataPath.resolve(DESCRIPTIONS + XML_EXTENSION);
     describeInspections(descriptionsFile,
                         myRunWithEditorSettings ? null : inspectionProfile.getName(),
@@ -327,7 +336,11 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   }
 
   @NotNull
-  private AnalysisScope runFirstStage(Project project, GlobalInspectionContextImpl context, AnalysisScope scope, Path resultsDataPath) {
+  private AnalysisScope runAnalysisOnCodeWithoutChanges(Project project,
+                                                        Path projectPath,
+                                                        GlobalInspectionContextImpl context,
+                                                        AnalysisScope scope,
+                                                        Path resultsDataPath) {
     VirtualFile[] changes = ChangesUtil.getFilesFromChanges(ChangeListManager.getInstance(project).getAllChanges());
     setupFirstAnalysisHandler(context);
     final List<Path> inspectionsResults = new ArrayList<>();
@@ -350,7 +363,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
       createProcessIndicator(),
       () -> {
         syncProject(project, changes);
-        runUnderProgress(project, context, scope, resultsDataPath, inspectionsResults);
+        runUnderProgress(project, projectPath, context, scope, resultsDataPath, inspectionsResults);
       }
     );
     syncProject(project, changes);
@@ -485,14 +498,12 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   }
 
   private void runUnderProgress(@NotNull Project project,
-                                @NotNull GlobalInspectionContextImpl context,
+                                Path projectPath, @NotNull GlobalInspectionContextImpl context,
                                 @NotNull AnalysisScope scope,
                                 @NotNull Path resultsDataPath,
                                 @NotNull List<? super Path> inspectionsResults) {
     ProgressManager.getInstance().runProcess(() -> {
-      for (CommandLineInspectionProjectConfigurator configurator : CommandLineInspectionProjectConfigurator.EP_NAME.getIterable()) {
-        configurator.configureProject(project, scope, this);
-      }
+      configureProject(projectPath, project, scope);
 
       if (!GlobalInspectionContextUtil.canRunInspections(project, false)) {
         gracefulExit();
