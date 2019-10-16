@@ -59,11 +59,6 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
             ConfigureUtil.configure(fn, this)
         }
     }
-
-    val buildVariants: NamedDomainObjectContainer<BuildVariant>
-
-    fun NamedDomainObjectContainer<BuildVariant>.release(body: BuildVariant.() -> Unit)
-    fun NamedDomainObjectContainer<BuildVariant>.debug(body: BuildVariant.() -> Unit)
 }
 
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {

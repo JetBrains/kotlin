@@ -26,7 +26,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
-    override lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
+    lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -47,40 +47,46 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         (project.tasks.getByName(webpackTaskName) as KotlinWebpack).body()
     }
 
-    override fun NamedDomainObjectContainer<BuildVariant>.release(body: BuildVariant.() -> Unit) {
-        buildVariants.getByName(RELEASE).body()
-    }
-
-    override fun NamedDomainObjectContainer<BuildVariant>.debug(body: BuildVariant.() -> Unit) {
-        buildVariants.getByName(DEBUG).body()
-    }
-
     override fun configureRun(compilation: KotlinJsCompilation) {
 
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        val run = project.registerTask<KotlinWebpack>(runTaskName) {
-            val compileKotlinTask = compilation.compileKotlinTask
-            it.dependsOn(
-                nodeJs.npmInstallTask,
-                compileKotlinTask,
-                target.project.tasks.getByName(compilation.processResourcesTaskName)
-            )
+        buildVariants.all { buildVariant ->
+            val kind = buildVariant.kind
+            val run = project.registerTask<KotlinWebpack>(
+                disambiguateCamelCased(
+                    lowerCamelCaseName(
+                        buildVariant.name,
+                        "run"
+                    )
+                )
+            ) {
+                val compileKotlinTask = compilation.compileKotlinTask
+                it.dependsOn(
+                    nodeJs.npmInstallTask,
+                    compileKotlinTask,
+                    target.project.tasks.getByName(compilation.processResourcesTaskName)
+                )
 
-            it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
-            it.compilation = compilation
-            it.description = "start webpack dev server"
+                it.configureOptimization(kind)
 
-            it.devServer = KotlinWebpackConfig.DevServer(
-                open = true,
-                contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
-            )
+                it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
+                it.compilation = compilation
+                it.description = "start ${kind.name.toLowerCase()} webpack dev server"
 
-            it.outputs.upToDateWhen { false }
+                it.devServer = KotlinWebpackConfig.DevServer(
+                    open = true,
+                    contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
+                )
+
+                it.outputs.upToDateWhen { false }
+            }
+
+            if (kind == BuildVariantKind.DEBUG) {
+                target.runTask.dependsOn(run)
+            }
         }
-
-        target.runTask.dependsOn(run)
     }
 
     override fun configureBuild(compilation: KotlinJsCompilation) {
@@ -88,7 +94,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
         buildVariants.all { buildVariant ->
-            project.registerTask<KotlinWebpack>(
+            val kind = buildVariant.kind
+            val build = project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
                     lowerCamelCaseName(
                         buildVariant.name,
@@ -102,26 +109,32 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     compileKotlinTask
                 )
 
-                val kind = buildVariant.kind
-
-                it.mode = getByKind(
-                    kind = kind,
-                    releaseValue = Mode.PRODUCTION,
-                    debugValue = Mode.DEVELOPMENT
-                )
-
-                it.devtool = getByKind(
-                    kind = kind,
-                    releaseValue = Devtool.SOURCE_MAP,
-                    debugValue = Devtool.EVAL_SOURCE_MAP
-                )
+                it.configureOptimization(kind)
 
                 it.compilation = compilation
-                it.description = "build webpack bundle"
+                it.description = "build webpack ${kind.name.toLowerCase()} bundle"
 
-                project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
+
+            }
+
+            if (kind == BuildVariantKind.RELEASE) {
+                project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(build)
             }
         }
+    }
+
+    private fun KotlinWebpack.configureOptimization(kind: BuildVariantKind) {
+        mode = getByKind(
+            kind = kind,
+            releaseValue = Mode.PRODUCTION,
+            debugValue = Mode.DEVELOPMENT
+        )
+
+        devtool = getByKind(
+            kind = kind,
+            releaseValue = Devtool.SOURCE_MAP,
+            debugValue = Devtool.EVAL_SOURCE_MAP
+        )
     }
 
     private fun <T> getByKind(
