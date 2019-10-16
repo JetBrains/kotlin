@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
+import org.jetbrains.kotlin.resolve.calls.model.LHSResult
+import org.jetbrains.kotlin.resolve.calls.model.SubKotlinCallArgument
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -40,6 +43,8 @@ interface ConstraintSystemOperation {
     fun isPostponedTypeVariable(typeVariable: TypeVariableMarker): Boolean
 
     fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker>
+
+    fun addOtherSystem(otherSystem: ConstraintStorage)
 }
 
 interface ConstraintSystemBuilder : ConstraintSystemOperation {

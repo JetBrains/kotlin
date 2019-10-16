@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -32,6 +33,8 @@ interface BodyResolveComponents : SessionHolder {
     val resolutionStageRunner: ResolutionStageRunner
     val scopeSession: ScopeSession
     val samResolver: FirSamResolver
+    val callResolver: FirCallResolver
+    val doubleColonExpressionResolver: FirDoubleColonExpressionResolver
 
     val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() = phasedFir(session, FirResolvePhase.DECLARATIONS)

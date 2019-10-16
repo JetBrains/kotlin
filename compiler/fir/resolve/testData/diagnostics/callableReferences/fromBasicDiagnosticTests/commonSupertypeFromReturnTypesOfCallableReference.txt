@@ -1,0 +1,19 @@
+FILE: commonSupertypeFromReturnTypesOfCallableReference.kt
+    public abstract interface Parent : R|kotlin/Any| {
+    }
+    public abstract interface Child1 : R|Parent| {
+    }
+    public abstract interface Child2 : R|Parent| {
+    }
+    public final fun foo(): R|Child1| {
+        ^foo R|kotlin/TODO|()
+    }
+    public final fun bar(): R|Child2| {
+        ^bar R|kotlin/TODO|()
+    }
+    public final fun <K> select(x: R|K|, y: R|K|): R|K| {
+        ^select R|kotlin/TODO|()
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval a: R|kotlin/reflect/KFunction0<Parent>| = R|/select|<R|kotlin/reflect/KFunction0<Parent>|>(::R|/foo|, ::R|/bar|)
+    }

@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
@@ -35,9 +33,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class FirCallResolver(
@@ -221,65 +220,77 @@ class FirCallResolver(
         return resultExpression
     }
 
-    fun resolveCallableReference(callableReferenceAccess: FirCallableReferenceAccess, lhs: DoubleColonLHS?): FirCallableReferenceAccess {
-        val resultCollector = ReferencesCandidateCollector(this, resolutionStageRunner)
+    fun resolveCallableReference(
+        constraintSystemBuilder: ConstraintSystemBuilder,
+        resolvedCallableReferenceAtom: ResolvedCallableReferenceAtom
+    ): Boolean {
+        val callableReferenceAccess = resolvedCallableReferenceAtom.atom
+        val lhs = resolvedCallableReferenceAtom.lhs
+        val expectedType = resolvedCallableReferenceAtom.expectedType ?: return false
 
+        val result = CandidateCollector(this, resolutionStageRunner)
         val consumer =
             createCallableReferencesConsumerForLHS(
-                callableReferenceAccess, lhs, resultCollector
+                callableReferenceAccess, lhs,
+                result, expectedType,
+                constraintSystemBuilder
             )
 
         towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
-
-        val result = resultCollector.results.firstOrNull() ?: return callableReferenceAccess
-
-        val resultingType: ConeKotlinType = when (val fir = result.symbol.fir) {
-            is FirSimpleFunction -> createKFunctionType(fir, lhs)
-            is FirProperty -> createKPropertyType(fir)
-            else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
+        val bestCandidates = result.bestCandidates()
+        val noSuccessfulCandidates = result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED
+        val reducedCandidates = if (noSuccessfulCandidates) {
+            bestCandidates.toSet()
+        } else {
+            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
         }
 
-        callableReferenceAccess.replaceTypeRef(FirResolvedTypeRefImpl(null, resultingType))
-
-        return callableReferenceAccess.transformCalleeReference(
-            StoreNameReference,
-            FirNamedReferenceWithCandidate(callableReferenceAccess.psi, callableReferenceAccess.calleeReference.name, result)
-        )
-    }
-
-    private fun createKPropertyType(fir: FirProperty): ConeKotlinType {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    private fun createKFunctionType(
-        function: FirSimpleFunction,
-        lhs: DoubleColonLHS?
-    ): ConeKotlinType {
-        val receiverType = (lhs as? DoubleColonLHS.Type)?.type
-        val parameterTypes = function.valueParameters.map {
-            it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter $it")
+        when {
+            noSuccessfulCandidates -> {
+                return false
+            }
+            reducedCandidates.size > 1 -> {
+                // TODO: add postponed atom
+                return true
+            }
         }
 
-        return createFunctionalType(
-            parameterTypes, receiverType = receiverType,
-            rawReturnType = function.returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $this")
-        )
+        val chosenCandidate = reducedCandidates.single()
+        constraintSystemBuilder.runTransaction {
+            addOtherSystem(chosenCandidate.system.asReadOnlyStorage())
+
+            val position = SimpleConstraintSystemConstraintPosition //TODO
+            addSubtypeConstraint(chosenCandidate.resultingTypeForCallableReference!!, expectedType, position)
+
+            true
+        }
+
+        resolvedCallableReferenceAtom.resultingCandidate = Pair(chosenCandidate, result.currentApplicability)
+
+        return true
     }
 
     private fun createCallableReferencesConsumerForLHS(
         callableReferenceAccess: FirCallableReferenceAccess,
         lhs: DoubleColonLHS?,
-        resultCollector: CandidateCollector
+        resultCollector: CandidateCollector,
+        expectedType: ConeKotlinType?,
+        outerConstraintSystemBuilder: ConstraintSystemBuilder?
     ): TowerDataConsumer {
         val name = callableReferenceAccess.calleeReference.name
 
         return when (lhs) {
             is DoubleColonLHS.Expression, null -> createCallableReferencesConsumerForReceiver(
-                name, resultCollector, callableReferenceAccess.explicitReceiver
+                name, resultCollector, callableReferenceAccess.explicitReceiver, expectedType, outerConstraintSystemBuilder,
+                lhs
             )
             is DoubleColonLHS.Type -> createCallableReferencesConsumerForReceiver(
-                name, resultCollector,
-                FirExpressionStub(callableReferenceAccess.psi).apply { replaceTypeRef(FirResolvedTypeRefImpl(null, lhs.type)) }
+                name,
+                resultCollector,
+                FirExpressionStub(callableReferenceAccess.psi).apply { replaceTypeRef(FirResolvedTypeRefImpl(null, lhs.type)) },
+                expectedType,
+                outerConstraintSystemBuilder,
+                lhs
             )
         }
     }
@@ -287,7 +298,10 @@ class FirCallResolver(
     private fun createCallableReferencesConsumerForReceiver(
         name: Name,
         resultCollector: CandidateCollector,
-        receiver: FirExpression?
+        receiver: FirExpression?,
+        expectedType: ConeKotlinType?,
+        outerConstraintSystemBuilder: ConstraintSystemBuilder?,
+        lhs: DoubleColonLHS?
     ): TowerDataConsumer {
         val info = CallInfo(
             CallKind.CallableReference,
@@ -297,7 +311,10 @@ class FirCallResolver(
             emptyList(),
             session,
             file,
-            transformer.components.container
+            transformer.components.container,
+            expectedType,
+            outerConstraintSystemBuilder,
+            lhs
         ) { it.resultType }
 
         return createCallableReferencesConsumer(session, name, info, this, resultCollector)

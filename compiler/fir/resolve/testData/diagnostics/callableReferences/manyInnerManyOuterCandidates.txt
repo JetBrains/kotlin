@@ -1,0 +1,14 @@
+FILE: manyInnerManyOuterCandidates.kt
+    public final fun foo(x: R|kotlin/Function1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun foo(x: R|kotlin/Function0<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun bar(): R|kotlin/Int| {
+        ^bar Int(1)
+    }
+    public final fun bar(x: R|kotlin/Double|): R|kotlin/Int| {
+        ^bar Int(1)
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/foo|(::R|/bar|)
+    }

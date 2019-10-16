@@ -78,11 +78,15 @@ class ConeOverloadConflictResolver(
     }
 
     private fun createFlatSignature(call: Candidate, function: FirSimpleFunction): FlatSignature<Candidate> {
+        val valueParametersTypes =
+            call.resultingTypeForCallableReference?.typeArguments?.map { it as ConeKotlinType }
+                ?: (listOfNotNull<ConeKotlinType>(function.receiverTypeRef?.coneTypeUnsafe()) +
+                        call.argumentMapping?.map { it.value.argumentType() }.orEmpty())
+
         return FlatSignature(
             call,
             function.typeParameters.map { it.symbol },
-            listOfNotNull<ConeKotlinType>(function.receiverTypeRef?.coneTypeUnsafe()) +
-                    call.argumentMapping?.map { it.value.argumentType() }.orEmpty(),
+            valueParametersTypes,
             function.receiverTypeRef != null,
             function.valueParameters.any { it.isVararg },
             function.valueParameters.count { it.defaultValue != null },

@@ -72,6 +72,9 @@ fun createFunctionConsumer(
         bodyResolveComponents.session,
         callInfo.containingFile,
         callInfo.container,
+        callInfo.expectedType,
+        callInfo.outerCSBuilder,
+        callInfo.lhs,
         callInfo.typeProvider
     )
     return PrioritizedTowerDataConsumer(

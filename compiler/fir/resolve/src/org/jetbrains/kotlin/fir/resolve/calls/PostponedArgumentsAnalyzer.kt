@@ -7,17 +7,23 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds.Unit
+import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
-import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.fir.symbols.invoke
+import org.jetbrains.kotlin.types.model.StubTypeMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.freshTypeConstructor
+import org.jetbrains.kotlin.types.model.safeSubstitute
 
 interface LambdaAnalyzer {
     fun analyzeAndGetLambdaReturnArguments(
@@ -36,7 +42,8 @@ class PostponedArgumentsAnalyzer(
     private val lambdaAnalyzer: LambdaAnalyzer,
     private val typeProvider: (FirExpression) -> FirTypeRef?,
     private val components: InferenceComponents,
-    private val candidate: Candidate
+    private val candidate: Candidate,
+    private val replacements: MutableMap<FirExpression, FirExpression>
 ) {
 
     fun analyze(
@@ -54,8 +61,7 @@ class PostponedArgumentsAnalyzer(
 //                    c, resolutionCallbacks, argument.transformToResolvedLambda(c.getBuilder()), diagnosticsHolder
 //                )
 
-//            is ResolvedCallableReferenceAtom ->
-//                callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument, diagnosticsHolder)
+            is ResolvedCallableReferenceAtom -> processCallableReference(argument)
 //
 //            is ResolvedCollectionLiteralAtom -> TODO("Not supported")
 
@@ -63,6 +69,31 @@ class PostponedArgumentsAnalyzer(
         }
     }
 
+    private fun processCallableReference(atom: ResolvedCallableReferenceAtom) {
+        val callableReferenceAccess = atom.atom
+        atom.analyzed = true
+        val (candidate, applicability) = atom.resultingCandidate ?: Pair(null, CandidateApplicability.INAPPLICABLE)
+
+        val namedReference = when {
+            candidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
+                FirErrorNamedReferenceImpl(
+                    callableReferenceAccess.psi,
+                    "Unresolved reference: ${callableReferenceAccess.calleeReference.name}"
+                )
+            else -> FirNamedReferenceWithCandidate(callableReferenceAccess.psi, callableReferenceAccess.calleeReference.name, candidate)
+        }
+
+        val transformedCalleeReference = callableReferenceAccess.transformCalleeReference(
+            StoreNameReference,
+            namedReference
+        ).apply {
+            if (candidate != null) {
+                replaceTypeRef(FirResolvedTypeRefImpl(null, candidate.resultingTypeForCallableReference!!))
+            }
+        }
+
+        replacements[callableReferenceAccess] = transformedCalleeReference
+    }
 
     private fun analyzeLambda(
         c: PostponedArgumentsAnalyzer.Context,

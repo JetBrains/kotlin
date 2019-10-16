@@ -66,20 +66,6 @@ open class CandidateCollector(
     }
 }
 
-class ReferencesCandidateCollector(components: BodyResolveComponents, resolutionStageRunner: ResolutionStageRunner) :
-    CandidateCollector(components, resolutionStageRunner) {
-
-    val results = mutableListOf<Candidate>()
-
-    override fun consumeCandidate(group: Int, candidate: Candidate): CandidateApplicability {
-        val applicability = resolutionStageRunner.processCandidate(candidate)
-        if (applicability >= CandidateApplicability.SYNTHETIC_RESOLVED) {
-            results.add(candidate)
-        }
-        return CandidateApplicability.SYNTHETIC_RESOLVED
-    }
-}
-
 // Collects properties that potentially could be invoke receivers, like 'propertyName()',
 // and initiates further invoke resolution by adding property-bound invoke consumers
 class InvokeReceiverCandidateCollector(
@@ -113,6 +99,9 @@ class InvokeReceiverCandidateCollector(
                 session,
                 invokeCallInfo.containingFile,
                 invokeCallInfo.container,
+                invokeCallInfo.expectedType,
+                invokeCallInfo.outerCSBuilder,
+                invokeCallInfo.lhs,
                 invokeCallInfo.typeProvider
             )
 

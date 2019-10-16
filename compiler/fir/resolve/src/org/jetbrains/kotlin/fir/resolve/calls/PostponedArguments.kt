@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -44,18 +43,12 @@ fun Candidate.preprocessLambdaArgument(
     postponedAtoms += resolvedArgument
 }
 
-fun preprocessCallableReference(
-    csBuilder: ConstraintSystemBuilder,
+fun Candidate.preprocessCallableReference(
     argument: FirCallableReferenceAccess,
-    expectedType: ConeKotlinType,
-    sink: CheckerSink
+    expectedType: ConeKotlinType
 ) {
-    val type = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
-    val candidate = argument.candidate() ?: return resolvePlainArgumentType(
-        csBuilder, type, expectedType, sink, isReceiver = false, isSafeCall = false
-    )
-    val argumentType = candidate.substitutor.substituteOrSelf(type)
-    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver = false, isSafeCall = false)
+    val lhs = bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(argument)
+    postponedAtoms += EagerCallableReferenceAtom(argument, expectedType, lhs)
 }
 
 val ConeKotlinType.isBuiltinFunctionalType: Boolean
@@ -210,4 +203,24 @@ class ResolvedLambdaAtom(
 
     override val inputTypes: Collection<ConeKotlinType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: ConeKotlinType get() = returnType
+}
+
+abstract class ResolvedCallableReferenceAtom(
+    val atom: FirCallableReferenceAccess,
+    val expectedType: ConeKotlinType?,
+    val lhs: DoubleColonLHS?
+) : PostponedResolvedAtomMarker {
+    override var analyzed: Boolean = false
+
+    var resultingCandidate: Pair<Candidate, CandidateApplicability>? = null
+}
+
+class EagerCallableReferenceAtom(
+    atom: FirCallableReferenceAccess,
+    expectedType: ConeKotlinType?,
+    lhs: DoubleColonLHS?
+) : ResolvedCallableReferenceAtom(atom, expectedType, lhs) {
+
+    override val inputTypes: Collection<ConeKotlinType> get() = emptyList()
+    override val outputType: ConeKotlinType? get() = null
 }

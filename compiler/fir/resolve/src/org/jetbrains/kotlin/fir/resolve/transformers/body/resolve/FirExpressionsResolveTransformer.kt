@@ -266,9 +266,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             else
                 callableReferenceAccess
 
-        val lhsResult = doubleColonExpressionResolver.resolveDoubleColonLHS(callableReferenceAccessWithTransformedLHS)
-
-        return callResolver.resolveCallableReference(callableReferenceAccessWithTransformedLHS, lhsResult).compose()
+        return callableReferenceAccessWithTransformedLHS.compose()
     }
 
     override fun transformGetClassCall(getClassCall: FirGetClassCall, data: Any?): CompositeTransformResult<FirStatement> {

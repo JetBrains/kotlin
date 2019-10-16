@@ -40,6 +40,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/callableReferences"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("differentLevels.kt")
+        public void testDifferentLevels() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/differentLevels.kt");
+        }
+
         @TestMetadata("inferenceFromCallableReferenceType.kt")
         public void testInferenceFromCallableReferenceType() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/inferenceFromCallableReferenceType.kt");
@@ -48,6 +53,31 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("inferenceFromExpectedType.kt")
         public void testInferenceFromExpectedType() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/inferenceFromExpectedType.kt");
+        }
+
+        @TestMetadata("manyCandidatesInference.kt")
+        public void testManyCandidatesInference() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/manyCandidatesInference.kt");
+        }
+
+        @TestMetadata("manyInnerCandidates.kt")
+        public void testManyInnerCandidates() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/manyInnerCandidates.kt");
+        }
+
+        @TestMetadata("manyInnerManyOuterCandidates.kt")
+        public void testManyInnerManyOuterCandidates() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/manyInnerManyOuterCandidates.kt");
+        }
+
+        @TestMetadata("manyInnermanyOuterCandidatesAmbiguity.kt")
+        public void testManyInnermanyOuterCandidatesAmbiguity() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/manyInnermanyOuterCandidatesAmbiguity.kt");
+        }
+
+        @TestMetadata("manyOuterCandidates.kt")
+        public void testManyOuterCandidates() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/manyOuterCandidates.kt");
         }
 
         @TestMetadata("simpleClassReceiver.kt")
@@ -63,6 +93,84 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("simpleNoReceiver.kt")
         public void testSimpleNoReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/simpleNoReceiver.kt");
+        }
+
+        @TestMetadata("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FromBasicDiagnosticTests extends AbstractFirDiagnosticsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInFromBasicDiagnosticTests() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ambiguityWhenNoApplicableCallableReferenceCandidate.kt")
+            public void testAmbiguityWhenNoApplicableCallableReferenceCandidate() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/ambiguityWhenNoApplicableCallableReferenceCandidate.kt");
+            }
+
+            @TestMetadata("applicableCallableReferenceFromDistantScope.kt")
+            public void testApplicableCallableReferenceFromDistantScope() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/applicableCallableReferenceFromDistantScope.kt");
+            }
+
+            @TestMetadata("chooseCallableReferenceDependingOnInferredReceiver.kt")
+            public void testChooseCallableReferenceDependingOnInferredReceiver() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/chooseCallableReferenceDependingOnInferredReceiver.kt");
+            }
+
+            @TestMetadata("commonSupertypeFromReturnTypesOfCallableReference.kt")
+            public void testCommonSupertypeFromReturnTypesOfCallableReference() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/commonSupertypeFromReturnTypesOfCallableReference.kt");
+            }
+
+            @TestMetadata("eagerAndPostponedCallableReferences.kt")
+            public void testEagerAndPostponedCallableReferences() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/eagerAndPostponedCallableReferences.kt");
+            }
+
+            @TestMetadata("eagerResolveOfSingleCallableReference.kt")
+            public void testEagerResolveOfSingleCallableReference() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/eagerResolveOfSingleCallableReference.kt");
+            }
+
+            @TestMetadata("moreSpecificAmbiguousExtensions.kt")
+            public void testMoreSpecificAmbiguousExtensions() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/moreSpecificAmbiguousExtensions.kt");
+            }
+
+            @TestMetadata("multipleOutersAndMultipleCallableReferences.kt")
+            public void testMultipleOutersAndMultipleCallableReferences() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/multipleOutersAndMultipleCallableReferences.kt");
+            }
+
+            @TestMetadata("noAmbiguityBetweenTopLevelAndMemberProperty.kt")
+            public void testNoAmbiguityBetweenTopLevelAndMemberProperty() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/noAmbiguityBetweenTopLevelAndMemberProperty.kt");
+            }
+
+            @TestMetadata("overloadsBound.kt")
+            public void testOverloadsBound() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/overloadsBound.kt");
+            }
+
+            @TestMetadata("postponedResolveOfManyCallableReference.kt")
+            public void testPostponedResolveOfManyCallableReference() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/postponedResolveOfManyCallableReference.kt");
+            }
+
+            @TestMetadata("resolveCallableReferencesAfterAllSimpleArguments.kt")
+            public void testResolveCallableReferencesAfterAllSimpleArguments() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/resolveCallableReferencesAfterAllSimpleArguments.kt");
+            }
+
+            @TestMetadata("withGenericFun.kt")
+            public void testWithGenericFun() throws Exception {
+                runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests/withGenericFun.kt");
+            }
         }
     }
 

@@ -29,7 +29,8 @@ sealed class CallKind {
             CreateFreshTypeVariableSubstitutorStage,
             CheckReceivers.Dispatch,
             CheckReceivers.Extension,
-            CheckArguments
+            CheckArguments,
+            EagerResolveOfCallableReferences
         )
     }
 
@@ -48,7 +49,8 @@ sealed class CallKind {
         override val resolutionSequence: List<ResolutionStage> = listOf(
             CheckVisibility,
             DiscriminateSynthetics,
-            CreateFreshTypeVariableSubstitutorStage
+            CreateFreshTypeVariableSubstitutorStage,
+            CheckCallableReferenceExpectedType
         )
     }
 }

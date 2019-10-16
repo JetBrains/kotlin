@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 
 
 fun Candidate.resolveArgumentExpression(
@@ -48,7 +47,7 @@ fun Candidate.resolveArgumentExpression(
             typeProvider
         )
         // TODO:!
-        is FirCallableReferenceAccess -> preprocessCallableReference(csBuilder, argument, expectedType, sink)
+        is FirCallableReferenceAccess -> preprocessCallableReference(argument, expectedType)
         // NB: FirCallableReferenceAccess should be checked earlier
         is FirQualifiedAccessExpression -> resolvePlainExpressionArgument(
             csBuilder,

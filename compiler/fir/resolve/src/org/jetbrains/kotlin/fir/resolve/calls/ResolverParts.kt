@@ -7,17 +7,24 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.visibility
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
+import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 
@@ -154,6 +161,69 @@ internal object CheckArguments : CheckerStage() {
             sink.yield()
         }
     }
+}
+
+internal object EagerResolveOfCallableReferences : CheckerStage() {
+    override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        for (atom in candidate.postponedAtoms.filterIsInstance<EagerCallableReferenceAtom>()) {
+            if (!candidate.bodyResolveComponents.callResolver.resolveCallableReference(candidate.csBuilder, atom)) {
+                sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
+            }
+        }
+    }
+}
+
+internal object CheckCallableReferenceExpectedType : CheckerStage() {
+    override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
+        val outerCsBuilder = callInfo.outerCSBuilder ?: return
+        val expectedType = callInfo.expectedType ?: return
+        val lhs = callInfo.lhs
+
+        val resultingType: ConeKotlinType = when (val fir = candidate.symbol.fir) {
+            is FirSimpleFunction -> createKFunctionType(fir, lhs)
+            is FirProperty -> createKPropertyType(fir)
+            else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
+        }.let(candidate.substitutor::substituteOrSelf)
+
+        candidate.resultingTypeForCallableReference = resultingType
+
+        var isApplicable = true
+
+        outerCsBuilder.runTransaction {
+            addOtherSystem(candidate.system.asReadOnlyStorage())
+
+            val position = SimpleConstraintSystemConstraintPosition //TODO
+
+            addSubtypeConstraint(resultingType, expectedType, position)
+            isApplicable = !hasContradiction
+
+            false
+        }
+
+        if (!isApplicable) {
+            sink.yieldApplicability(CandidateApplicability.INAPPLICABLE)
+        }
+    }
+}
+
+private fun createKPropertyType(fir: FirProperty): ConeKotlinType {
+    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+}
+
+private fun createKFunctionType(
+    function: FirSimpleFunction,
+    lhs: DoubleColonLHS?
+): ConeKotlinType {
+    val receiverType = (lhs as? DoubleColonLHS.Type)?.type
+    val parameterTypes = function.valueParameters.map {
+        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter $it")
+    }
+
+    return createFunctionalType(
+        parameterTypes, receiverType = receiverType,
+        rawReturnType = function.returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $function"),
+        isKFunctionType = true
+    )
 }
 
 internal object DiscriminateSynthetics : CheckerStage() {
