@@ -178,7 +178,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement(),
             context.expectedType.isSuspendFunctionType()
         ).let {
-            TypeResolutionInterceptor(expression.project).interceptFunctionLiteralDescriptor(expression, context, it)
+            facade.components.typeResolutionInterceptor.interceptFunctionLiteralDescriptor(expression, context, it)
         }
         components.functionDescriptorResolver.initializeFunctionDescriptorAndExplicitReturnType(
             context.scope.ownerDescriptor, context.scope, functionLiteral,

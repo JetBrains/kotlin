@@ -380,7 +380,7 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(
     result.addAll(scopeTower.syntheticScopes.collectSyntheticStaticFunctions(this, name, location))
     result.addAll(scopeTower.syntheticScopes.collectSyntheticConstructors(this, name, location))
 
-    return scopeTower.interceptCandidates(this, name, result, location).toList()
+    return scopeTower.interceptCandidates(this, name, result, location)
 }
 
 private fun getConstructorsOfClassifier(classifier: ClassifierDescriptor?): List<ConstructorDescriptor> {

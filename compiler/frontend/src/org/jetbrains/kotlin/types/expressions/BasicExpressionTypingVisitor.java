@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.extensions.TypeResolutionInterceptorExtension;
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -1636,10 +1635,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (baseExpression == null) {
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
+        if (components.typeResolutionInterceptor.isEmpty()) return facade.getTypeInfo(baseExpression, context, isStatement);
+
         KotlinType newExpectedType = components.typeResolutionInterceptor.interceptType(baseExpression, context, context.expectedType);
         KotlinTypeInfo resultTypeInfo = facade.getTypeInfo(baseExpression, newExpectedType == context.expectedType ? context : context.replaceExpectedType(newExpectedType), isStatement);
         KotlinType newResultType = components.typeResolutionInterceptor.interceptType(baseExpression, context, resultTypeInfo.getType());
-        if(!components.typeResolutionInterceptor.isEmpty()) components.dataFlowAnalyzer.checkType(newResultType, expression, context);
+        components.dataFlowAnalyzer.checkType(newResultType, expression, context);
         return resultTypeInfo.getType() == newResultType ? resultTypeInfo : resultTypeInfo.replaceType(newResultType);
     }
 
