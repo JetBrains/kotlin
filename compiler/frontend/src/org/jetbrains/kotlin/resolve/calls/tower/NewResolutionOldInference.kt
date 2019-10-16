@@ -382,7 +382,8 @@ class NewResolutionOldInference(
         override fun interceptCandidates(
             resolutionScope: ResolutionScope,
             name: Name,
-            candidates: Collection<FunctionDescriptor>
+            candidates: Collection<FunctionDescriptor>,
+            location: LookupLocation
         ): Collection<FunctionDescriptor> {
             val project = resolutionContext.call.callElement.project
             return candidateInterceptor.interceptCandidates(candidates, this, resolutionContext, resolutionScope, callResolver, name, location)

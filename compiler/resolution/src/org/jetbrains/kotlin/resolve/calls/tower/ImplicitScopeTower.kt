@@ -47,7 +47,8 @@ interface ImplicitScopeTower {
     fun interceptCandidates(
         resolutionScope: ResolutionScope,
         name: Name,
-        initialResults: Collection<FunctionDescriptor>
+        initialResults: Collection<FunctionDescriptor>,
+        location: LookupLocation
     ): Collection<FunctionDescriptor>
 }
 

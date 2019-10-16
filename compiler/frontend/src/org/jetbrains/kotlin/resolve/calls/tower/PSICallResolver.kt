@@ -404,7 +404,8 @@ class PSICallResolver(
         override fun interceptCandidates(
             resolutionScope: ResolutionScope,
             name: Name,
-            candidates: Collection<FunctionDescriptor>
+            candidates: Collection<FunctionDescriptor>,
+            location: LookupLocation
         ): Collection<FunctionDescriptor> {
             val project = context.call.callElement.project
             return candidateInterceptor.interceptCandidates(candidates, this, context, resolutionScope, null, name, location)
