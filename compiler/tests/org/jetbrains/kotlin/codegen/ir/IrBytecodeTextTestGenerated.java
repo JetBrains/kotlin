@@ -1545,6 +1545,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/maskAndArgumentElimination.kt");
         }
 
+        @TestMetadata("maskCheckSequence.kt")
+        public void testMaskCheckSequence() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/defaultArguments/maskCheckSequence.kt");
+        }
+
         @TestMetadata("methodHandlerElimination.kt")
         public void testMethodHandlerElimination() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/methodHandlerElimination.kt");

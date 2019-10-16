@@ -31,6 +31,7 @@ class RedundantGotoMethodTransformer : MethodTransformer() {
      *  (1) subsequent labels
      *      ...
      *      goto Label (can be removed)
+     *      nop        (any number of them, or maybe none; will be removed by RedundantNopsCleanupMethodTransformer)
      *      Label:
      *      ...
      *  (2) indirect goto
@@ -49,6 +50,10 @@ class RedundantGotoMethodTransformer : MethodTransformer() {
         var pendingGoto: JumpInsnNode? = null
 
         for (insn in insns) {
+            // We can remove jumps over labels, NOPs, GOTOs with the same target, and fake
+            // instructions used to describe the current frame state. We have to keep jumps
+            // over line numbers, though, as otherwise something like an `if` with an empty
+            // `else` will trigger a breakpoint inside the `else` even when the condition is true.
             when {
                 insn is LabelNode -> {
                     currentLabels.add(insn)
@@ -62,8 +67,7 @@ class RedundantGotoMethodTransformer : MethodTransformer() {
                         currentLabels.clear()
                     }
                 }
-                insn is LineNumberNode -> pendingGoto = null
-                insn.isMeaningful -> {
+                insn is LineNumberNode || (insn.isMeaningful && insn.opcode != Opcodes.NOP) -> {
                     currentLabels.clear()
                     pendingGoto = null
                 }

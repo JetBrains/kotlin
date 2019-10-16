@@ -130,8 +130,8 @@ internal val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
     prerequisite = setOf(callableReferencePhase, sharedVariablesPhase)
 )
 
-private val defaultArgumentStubPhase = makeIrFilePhase<CommonBackendContext>(
-    { context -> DefaultArgumentStubGenerator(context, false) },
+private val defaultArgumentStubPhase = makeIrFilePhase(
+    ::JvmDefaultArgumentStubGenerator,
     name = "DefaultArgumentsStubGenerator",
     description = "Generate synthetic stubs for functions with default parameter values",
     prerequisite = setOf(localDeclarationsPhase)
