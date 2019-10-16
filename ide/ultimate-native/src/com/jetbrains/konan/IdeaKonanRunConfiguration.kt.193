@@ -87,7 +87,7 @@ open class IdeaKonanRunConfiguration(
         }
 
         val execFile = selectedTarget?.productFile ?: return null
-        return KonanCommandLineState(env, IdeaKonanLauncher(this, execFile))
+        return KonanCommandLineState(env, this, execFile)
     }
 
     override fun canRunOn(target: ExecutionTarget): Boolean {
