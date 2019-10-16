@@ -13,7 +13,11 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
 
     constructor(message: String) : super(message)
 
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
+    constructor(message: String?, cause: Throwable?) : super(message, cause) {
+        if (cause is KotlinExceptionWithAttachments) {
+            attachments.addAll(cause.attachments)
+        }
+    }
 
     override fun getAttachments(): Array<Attachment> = attachments.toTypedArray()
 
