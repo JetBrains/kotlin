@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.engine.JavaDebuggerEvaluator
 import com.intellij.debugger.engine.evaluation.CodeFragmentFactory
 import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.debugger.engine.events.DebuggerCommandImpl
@@ -146,10 +147,16 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
 
         DebugLabelPropertyDescriptorProvider(codeFragment, debugProcess).supplyDebugLabels()
 
+        @Suppress("MoveVariableDeclarationIntoWhen")
         val evaluator = debugProcess.session.xDebugSession?.currentStackFrame?.evaluator
-        if (evaluator is KotlinDebuggerEvaluator) {
-            codeFragment.putUserData(EVALUATION_TYPE, evaluator.getType(item))
+
+        val evaluationType = when (evaluator) {
+            is KotlinDebuggerEvaluator -> evaluator.getType(item)
+            is JavaDebuggerEvaluator -> KotlinDebuggerEvaluator.EvaluationType.FROM_JAVA
+            else -> KotlinDebuggerEvaluator.EvaluationType.UNKNOWN
         }
+
+        codeFragment.putUserData(EVALUATION_TYPE, evaluationType)
     }
 
     private fun getDebugProcess(project: Project, context: PsiElement?): DebugProcessImpl? {
