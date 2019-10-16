@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
@@ -66,10 +68,20 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
                 is PropertyDescriptor -> {
                     val name = selectorDescriptor.name
                     if (containingClassDescriptor.findMemberVariable(name) != null) return false
-                    val nameAsString = name.asString()
-                    if (listOf(JvmAbi.getterName(nameAsString), JvmAbi.setterName(nameAsString)).any {
-                            containingClassDescriptor.findMemberFunction(Name.identifier(it)) is JavaMethodDescriptor
-                        }) return false
+
+                    val type = selectorDescriptor.type
+                    val javaGetter = containingClassDescriptor.findMemberFunction(
+                        Name.identifier(JvmAbi.getterName(name.asString()))
+                    ) as? JavaMethodDescriptor
+                    if (javaGetter?.valueParameters?.isEmpty() == true && javaGetter.returnType?.makeNotNullable() == type) return false
+
+                    val javaSetter = containingClassDescriptor.findMemberFunction(
+                        Name.identifier(JvmAbi.setterName(name.asString()))
+                    ) as? JavaMethodDescriptor
+                    if (javaSetter?.valueParameters?.singleOrNull()?.type?.makeNotNullable() == type
+                        && javaSetter.returnType?.makeNotNullable()?.isUnit() == true
+                    ) return false
+
                     val variable = reference.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
                     if (variable != null && variable.isLocalOrExtension(containingClassDescriptor)) return false
                 }
