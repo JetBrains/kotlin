@@ -26,3 +26,11 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
         return this
     }
 }
+
+inline fun checkWithAttachment(value: Boolean, lazyMessage: () -> String, attachments: (KotlinExceptionWithAttachments) -> Unit = {}) {
+    if (!value) {
+        val e = KotlinExceptionWithAttachments(lazyMessage())
+        attachments(e)
+        throw e
+    }
+}

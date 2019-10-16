@@ -127,4 +127,6 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var presentableUnresolvedTypes: Boolean by property(false)
 
     override var boldOnlyForNamesInHtml: Boolean by property(false)
+
+    override var informativeErrorType: Boolean by property(true)
 }

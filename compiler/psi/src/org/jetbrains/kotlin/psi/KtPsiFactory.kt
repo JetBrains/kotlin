@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
+import org.jetbrains.kotlin.utils.checkWithAttachment
 
 @JvmOverloads
 fun KtPsiFactory(project: Project?, markGenerated: Boolean = true): KtPsiFactory = KtPsiFactory(project!!, markGenerated)
@@ -299,7 +301,12 @@ class KtPsiFactory @JvmOverloads constructor(private val project: Project, val m
     fun <TDeclaration : KtDeclaration> createDeclaration(text: String): TDeclaration {
         val file = createFile(text)
         val declarations = file.declarations
-        assert(declarations.size == 1) { "${declarations.size} declarations in $text" }
+        checkWithAttachment(declarations.size == 1, { "unexpected ${declarations.size} declarations" }) {
+            it.withAttachment("text.kt", text)
+            for (d in declarations.withIndex()) {
+                it.withAttachment("declaration${d.index}.kt", d.value.text)
+            }
+        }
         @Suppress("UNCHECKED_CAST")
         return declarations.first() as TDeclaration
     }

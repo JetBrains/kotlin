@@ -223,7 +223,9 @@ private val OVERRIDE_RENDERER = withOptions {
         it.type.constructor.declarationDescriptor?.annotations?.hasAnnotation(ExperimentalUsageChecker.EXPERIMENTAL_FQ_NAME) ?: false
     }
     presentableUnresolvedTypes = true
+    informativeErrorType = false
 }
+
 
 private val EXPECT_RENDERER = OVERRIDE_RENDERER.withOptions {
     modifiers = setOf(VISIBILITY, MODALITY, OVERRIDE, INNER, MEMBER_KIND)

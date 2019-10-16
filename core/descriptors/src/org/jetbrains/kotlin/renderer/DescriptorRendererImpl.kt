@@ -244,7 +244,11 @@ internal class DescriptorRendererImpl(
             if (type is UnresolvedType && presentableUnresolvedTypes) {
                 append(type.presentableName)
             } else {
-                append(type.constructor.toString()) // Debug name of an error type is more informative
+                if (type is ErrorType && !informativeErrorType) {
+                    append(type.presentableName)
+                } else {
+                    append(type.constructor.toString()) // Debug name of an error type is more informative
+                }
             }
             append(renderTypeArguments(type.arguments))
         } else {
