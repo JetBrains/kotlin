@@ -118,6 +118,9 @@ private class KotlinIdeaResolutionException(
             appendln("---------------------------------------------")
             append(creationPlace.description())
         })
+        for (element in resolvingWhat.elements.withIndex()) {
+            withAttachment("element${element.index}.kt", element.value.text)
+        }
     }
 }
 
@@ -142,7 +145,7 @@ private class CreationPlace(
 }
 
 private class ResolvingWhat(
-    private val elements: Collection<PsiElement> = emptyList(),
+    val elements: Collection<PsiElement> = emptyList(),
     private val bodyResolveMode: BodyResolveMode? = null,
     private val serviceClass: Class<*>? = null,
     private val moduleDescriptor: ModuleDescriptor? = null
