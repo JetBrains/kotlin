@@ -228,14 +228,14 @@ public class ExternalSystemNotificationManager implements Disposable {
   }
 
   @Deprecated
-  @ApiStatus.ScheduledForRemoval
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   public void clearNotifications(@NotNull final NotificationSource notificationSource,
                                  @NotNull final ProjectSystemId externalSystemId) {
     clearNotifications(null, notificationSource, externalSystemId);
   }
 
   @Deprecated
-  @ApiStatus.ScheduledForRemoval
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   public void clearNotifications(@Nullable final String groupName,
                                  @NotNull final NotificationSource notificationSource,
                                  @NotNull final ProjectSystemId externalSystemId) {
@@ -366,7 +366,7 @@ public class ExternalSystemNotificationManager implements Disposable {
   }
 
   @Deprecated
-  @ApiStatus.ScheduledForRemoval
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @NotNull
   public NewErrorTreeViewPanel prepareMessagesView(@NotNull final ProjectSystemId externalSystemId,
                                                    @NotNull final NotificationSource notificationSource,
@@ -416,7 +416,7 @@ public class ExternalSystemNotificationManager implements Disposable {
   }
 
   @Deprecated
-  @ApiStatus.ScheduledForRemoval
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   @NotNull
   public static String getContentDisplayName(@NotNull final NotificationSource notificationSource,
                                              @NotNull final ProjectSystemId externalSystemId) {
