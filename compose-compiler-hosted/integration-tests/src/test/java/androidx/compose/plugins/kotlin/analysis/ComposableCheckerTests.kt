@@ -684,4 +684,85 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             }
         """)
     }
+
+    fun testComposableReporting048() {
+        // Type inference for non-null @Composable lambdas
+        checkFail("""
+            import androidx.compose.*
+
+            val lambda: @Composable() (() -> Unit)? = null
+
+            @Composable
+            fun Foo() {
+	        // Should fail as null cannot be coerced to non-null
+                Bar(lambda)
+                Bar(null)
+                Bar {}
+            }
+
+            @Composable
+            fun Bar(child: @Composable() () -> Unit) {
+                child()
+            }
+        """)
+
+        // Type inference for nullable @Composable lambdas, with no default value
+        check("""
+            import androidx.compose.*
+
+            val lambda: @Composable() (() -> Unit)? = null
+
+            @Composable
+            fun Foo() {
+                Bar(lambda)
+                Bar(null)
+                Bar {}
+            }
+
+            @Composable
+            fun Bar(child: @Composable() (() -> Unit)?) {
+                child?.invoke()
+            }
+        """)
+
+        // Type inference for nullable @Composable lambdas, with a nullable default value
+        check("""
+            import androidx.compose.*
+
+            val lambda: @Composable() (() -> Unit)? = null
+
+            @Composable
+            fun Foo() {
+                Bar()
+                Bar(lambda)
+                Bar(null)
+                Bar {}
+            }
+
+            @Composable
+            fun Bar(child: @Composable() (() -> Unit)? = null) {
+                child?.invoke()
+            }
+        """)
+
+        // Type inference for nullable @Composable lambdas, with a non-null default value
+        check("""
+            import androidx.compose.*
+
+            val lambda: @Composable() (() -> Unit)? = null
+
+            @Composable
+            fun Foo() {
+                Bar()
+                Bar(lambda)
+                Bar(null)
+                Bar {}
+            }
+
+            @Composable
+            fun Bar(child: @Composable() (() -> Unit)? = {}) {
+                child?.invoke()
+            }
+        """)
+    }
 }
