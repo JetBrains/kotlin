@@ -209,8 +209,7 @@ data class KotlinWebpackConfig(
         appendln(
             """
                 // entry
-                if (!config.entry) config.entry = [];
-                config.entry.push(${entry.canonicalPath.jsQuoted()});
+                config.entry = ${entry.canonicalPath.jsQuoted()};
                 config.output = {
                     path: ${outputPath.canonicalPath.jsQuoted()},
                     filename: ${outputFileName!!.jsQuoted()}
