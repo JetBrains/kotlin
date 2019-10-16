@@ -335,8 +335,5 @@ fun DeclarationDescriptor.fuzzyTypesForSmartCompletion(
     }
 }
 
-fun Collection<ExpectedInfo>.filterFunctionExpected()
-        = filter { it.fuzzyType != null && it.fuzzyType!!.type.isFunctionType }
-
 fun Collection<ExpectedInfo>.filterCallableExpected()
         = filter { it.fuzzyType != null && ReflectionTypes.isCallableType(it.fuzzyType!!.type) }

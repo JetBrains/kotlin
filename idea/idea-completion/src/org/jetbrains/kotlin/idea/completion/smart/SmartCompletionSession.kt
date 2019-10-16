@@ -21,12 +21,14 @@ import com.intellij.codeInsight.completion.CompletionResultSet
 import com.intellij.codeInsight.completion.CompletionSorter
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.LambdaArgument
@@ -45,14 +47,17 @@ class SmartCompletionSession(
 
     override val descriptorKindFilter: DescriptorKindFilter by lazy {
         // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
-        var filter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
+        val filter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
 
-        if (smartCompletion?.expectedInfos?.filterFunctionExpected()?.isNotEmpty() ?: false) {
-            // if function type is expected we need classes to obtain their constructors
-            filter = filter.withKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)
+        val referenceToConstructorIsApplicable = smartCompletion?.expectedInfos.orEmpty().any {
+            it.fuzzyType?.type?.isFunctionType == true
         }
 
-        filter
+        if (referenceToConstructorIsApplicable) {
+            filter.withKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)
+        } else {
+            filter
+        }
     }
 
     private val smartCompletion by lazy(LazyThreadSafetyMode.NONE) {
