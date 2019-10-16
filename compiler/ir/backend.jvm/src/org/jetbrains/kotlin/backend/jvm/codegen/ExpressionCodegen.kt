@@ -585,6 +585,10 @@ class ExpressionCodegen(
         SwitchGenerator(expression, data, this).generate()?.let { return it }
 
         val endLabel = Label()
+        val exhaustive = expression.branches.any { it.condition.isTrueConst() }
+        assert(exhaustive || expression.type.isUnit() || expression.type.isNothing()) {
+            "non-exhaustive conditional should return Unit: ${expression.dump()}"
+        }
         for (branch in expression.branches) {
             val elseLabel = Label()
             if (branch.condition.isFalseConst() || branch.condition.isTrueConst()) {
@@ -600,7 +604,9 @@ class ExpressionCodegen(
                 branch.condition.accept(this, data).coerceToBoolean().jumpIfFalse(elseLabel)
             }
             val result = branch.result.accept(this, data).coerce(expression.type).materialized
-            if (branch.condition.isTrueConst()) {
+            if (!exhaustive) {
+                result.discard()
+            } else if (branch.condition.isTrueConst()) {
                 // The rest of the expression is dead code.
                 mv.mark(endLabel)
                 return result
@@ -608,11 +614,8 @@ class ExpressionCodegen(
             mv.goTo(endLabel)
             mv.mark(elseLabel)
         }
-        // Produce the default value for the type. Doesn't really matter right now, as non-exhaustive
-        // conditionals cannot be used as expressions.
-        val result = defaultValue(expression.type).materialized
         mv.mark(endLabel)
-        return result
+        return immaterialUnitValue
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): PromisedValue {
