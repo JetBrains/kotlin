@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -131,7 +132,7 @@ class ExpressionCodegen(
     val IrExpression.asmType: Type
         get() = type.asmType
 
-    val IrVariable.asmType: Type
+    val IrValueDeclaration.asmType: Type
         get() = type.asmType
 
     // Assume this expression's result has already been materialized on the stack
@@ -512,10 +513,14 @@ class ExpressionCodegen(
 
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
-        expression.value.markLineNumber(startOffset = true)
-        expression.value.accept(this, data).coerce(expression.symbol.owner.type).materialize()
-        mv.store(findLocalIndex(expression.symbol), expression.symbol.owner.asmType)
+        setVariable(expression.symbol, expression.value, data)
         return defaultValue(expression.type)
+    }
+
+    fun setVariable(symbol: IrValueSymbol, value: IrExpression, data: BlockInfo) {
+        value.markLineNumber(startOffset = true)
+        value.accept(this, data).coerce(symbol.owner.type).materialize()
+        mv.store(findLocalIndex(symbol), symbol.owner.asmType)
     }
 
     override fun <T> visitConst(expression: IrConst<T>, data: BlockInfo): PromisedValue {

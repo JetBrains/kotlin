@@ -108,7 +108,6 @@ open class DefaultArgumentStubGenerator(
 
                     val expressionBody = valueParameter.defaultValue!!
                     expressionBody.patchDeclarationParents(newIrFunction)
-
                     expressionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
                         override fun visitGetValue(expression: IrGetValue): IrExpression {
                             log { "GetValue: ${expression.symbol.owner}" }
@@ -117,13 +116,7 @@ open class DefaultArgumentStubGenerator(
                         }
                     })
 
-                    val argument = irIfThenElse(
-                        type = parameter.type,
-                        condition = condition,
-                        thenPart = expressionBody.expression,
-                        elsePart = irGet(parameter)
-                    )
-                    createTmpVariable(argument, nameHint = parameter.name.asString())
+                    selectArgumentOrDefault(condition, parameter, expressionBody.expression)
                 } else {
                     parameter
                 }
@@ -155,6 +148,15 @@ open class DefaultArgumentStubGenerator(
             }
         }
         return listOf(irFunction, newIrFunction)
+    }
+
+    protected open fun IrBlockBodyBuilder.selectArgumentOrDefault(
+        shouldUseDefault: IrExpression,
+        parameter: IrValueParameter,
+        default: IrExpression
+    ): IrValueDeclaration {
+        val value = irIfThenElse(parameter.type, shouldUseDefault, default, irGet(parameter))
+        return createTmpVariable(value, nameHint = parameter.name.asString())
     }
 
     private fun IrBlockBodyBuilder.dispatchToImplementation(
