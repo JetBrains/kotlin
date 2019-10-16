@@ -25,6 +25,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import androidx.compose.FrameManager
+import org.junit.Ignore
 
 @RunWith(ComposeRobolectricTestRunner::class)
 @Config(
@@ -32,6 +33,7 @@ import androidx.compose.FrameManager
     minSdk = 23,
     maxSdk = 23
 )
+@Ignore("b/142799174 - Flaky tests")
 class FcsModelCodeGenTests : AbstractCodegenTest() {
 
     @Before
