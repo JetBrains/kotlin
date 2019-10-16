@@ -1,25 +1,25 @@
 interface MyInterface {
-    abstract  fun blaBlaBla(bla: Int): String
+    abstract  fun blaBlaBla(bla: Int) : String
 }
 interface AnotherInterface {
-    abstract  fun blaBla(bla: Int): String
+    abstract  fun blaBla(bla: Int) : String
 }
 class Implemented(): MyInterface, AnotherInterface {
-    override fun blaBlaBla(bla: Int): String  {
+    override fun blaBlaBla(bla: Int) : String  {
         return bla.toString()
     }
 
-    override fun blaBla(bla: Int): String  {
+    override fun blaBla(bla: Int) : String  {
         return bla.unaryMinus().toString()
     }
 
 }
-fun box(): String  {
-    val implemented: Implemented = Implemented()
-    val res: String = implemented.blaBla(4) + implemented.blaBlaBla(2)
-    val tmp0_subject: String = res
+fun box() : String  {
+    val implemented : Implemented = Implemented()
+    val res : String = implemented.blaBla(4) + implemented.blaBlaBla(2)
+    val tmp0_subject : String = res
     when {
-        tmp0_subject == "-42" -> {
+         (tmp0_subject == "-42") -> {
             return "OK"
         }
         else -> {

@@ -28,6 +28,7 @@ val OPERATOR_TOKENS = mutableMapOf<IrStatementOrigin, String>().apply {
     set(MINUS, "-")
     set(UPLUS, "+")
     set(UMINUS, "-")
+    set(EXCL, "!")
     set(MUL, "*")
     set(DIV, "/")
     set(PERC, "%")
@@ -103,18 +104,20 @@ internal inline fun DecompileIrTreeVisitor.indented(body: () -> Unit) {
     printer.popIndent()
 }
 
-internal fun obtainFlagsList(vararg flags: String?) =
-    flags.filterNotNull().run {
-        if (isNotEmpty())
-            joinToString(separator = " ")
-        else
-            EMPTY_TOKEN
-    }
+internal fun concatenateNonEmptyWithSpace(vararg flags: String?) =
+    flags.filterNotNull()
+        .filterNot { it.isEmpty() }
+        .run {
+            if (isNotEmpty())
+                joinToString(separator = " ")
+            else
+                EMPTY_TOKEN
+        }
 
 internal inline fun IrDeclaration.name(): String = descriptor.name.asString()
 
 internal fun IrTypeAlias.obtainTypeAliasFlags(): String =
-    obtainFlagsList(
+    concatenateNonEmptyWithSpace(
         "actual".takeIf { isActual }
     )
 
@@ -137,38 +140,52 @@ internal fun IrSimpleFunction.obtainModality(): String? =
     }
 
 
-internal fun IrCall.obtainUnaryOperatorCall(): String = "${OPERATOR_TOKENS[origin]}${dispatchReceiver?.decompile() ?: EMPTY_TOKEN}"
+internal fun IrCall.obtainUnaryOperatorCall(): String = "${OPERATOR_TOKENS[origin]}(${dispatchReceiver?.decompile().orEmpty()})"
 
 
 internal fun IrCall.obtainBinaryOperatorCall(): String =
-    "${dispatchReceiver?.decompile() ?: EMPTY_TOKEN} ${OPERATOR_TOKENS[origin]} ${getValueArgument(0)?.decompile()}"
+    concatenateNonEmptyWithSpace(dispatchReceiver?.decompile(), OPERATOR_TOKENS[origin], getValueArgument(0)?.decompile())
 
 
 //TODO разобраться когда тут вызов compareTo, а когда реальное сравнение
 internal fun IrCall.obtainComparisonOperatorCall(): String {
     val leftOperand = if (dispatchReceiver != null) dispatchReceiver else getValueArgument(0)
     val rightOperand = if (dispatchReceiver != null) getValueArgument(0) else getValueArgument(1)
-    if (symbol.owner.name() in OPERATOR_NAMES) {
-        val sign = OPERATOR_TOKENS[origin]
-        return "${leftOperand?.decompile()} $sign ${rightOperand?.decompile()}"
+    return if (symbol.owner.name() in OPERATOR_NAMES) {
+        concatenateNonEmptyWithSpace(leftOperand?.decompile(), OPERATOR_TOKENS[origin], rightOperand?.decompile())
     } else {
-        return "${leftOperand?.decompile()}.${symbol.owner.name()}(${rightOperand?.decompile()})"
+        "${leftOperand?.decompile()}.${symbol.owner.name()}(${rightOperand?.decompile()})"
     }
 }
 
 internal fun IrCall.obtainNotEqCall(): String =
-    if (symbol.owner.name().toLowerCase() != "not") {
-        "${getValueArgument(0)?.decompile()} ${OPERATOR_TOKENS[origin]} ${getValueArgument(1)?.decompile()}"
-    } else {
-        dispatchReceiver?.decompile() ?: EMPTY_TOKEN
-    }
+    if (symbol.owner.name().toLowerCase() != "not")
+        concatenateNonEmptyWithSpace(getValueArgument(0)?.decompile(), OPERATOR_TOKENS[origin], getValueArgument(1)?.decompile())
+    else
+        dispatchReceiver?.decompile().orEmpty()
 
 internal fun IrCall.obtainNameWithArgs(): String {
-    var result = symbol.owner.name()
-    result += (0 until valueArgumentsCount).mapNotNull {
-        getValueArgument(it)?.decompile()
-    }.joinToString(separator = ", ", prefix = "(", postfix = ")")
-    return result
+    val result = symbol.owner.name()
+    val args: String
+    val callArgumentsWithNulls = (0 until valueArgumentsCount).map {
+        getValueArgument(it)
+    }
+    // Проверяем, что все аргументы из декларации явно определены. 
+    // Если это не так, значит есть значение по-умолчанию (null в argumentsByIndex). 
+    // Будем брать по индексу it из декларации имена, конкатенируя в корректный именованный аргумент 
+    return result + if (valueArgumentsCount != callArgumentsWithNulls.filterNotNull().size) {
+        ArrayList<String>().apply {
+            for (i in callArgumentsWithNulls.indices) {
+                if (callArgumentsWithNulls[i] != null) {
+                    add("${symbol.owner.valueParameters[i].name()} = ${callArgumentsWithNulls[i]?.decompile()}")
+                }
+            }
+        }.joinToString(separator = ", ", prefix = "(", postfix = ")")
+    } else {
+        (0 until valueArgumentsCount).mapNotNull {
+            getValueArgument(it)?.decompile()
+        }.joinToString(separator = ", ", prefix = "(", postfix = ")")
+    }
 }
 
 
@@ -184,19 +201,20 @@ internal fun IrCall.obtainCall(): String {
         PLUSEQ, MINUSEQ, MULTEQ, DIVEQ -> getValueArgument(0)?.decompile() ?: EMPTY_TOKEN
         // Для присваивания свойстам в конструкторах
         EQ -> obtainEqCall()
+        EXCL -> "!${dispatchReceiver?.decompile()}"
         else -> {
-            var result = EMPTY_TOKEN
+            var result: String? = null
             if (dispatchReceiver != null) {
-                result += if (superQualifierSymbol != null) {
+                result = if (superQualifierSymbol != null) {
                     "$SUPER_TOKEN."
                 } else {
                     "${dispatchReceiver!!.decompile()}."
                 }
             } else if (extensionReceiver != null) {
-                result += "${extensionReceiver!!.decompile()}."
+                result = "${extensionReceiver!!.decompile()}."
             }
 
-            result + obtainNameWithArgs()
+            "${result.orEmpty()}${obtainNameWithArgs()}"
         }
     }
 }
@@ -211,29 +229,19 @@ internal fun IrCall.obtainGetPropertyCall(): String {
     val matchResult = regex.find(fullName)
     val propName = matchResult?.groups?.get(1)?.value
 
-    return "${dispatchReceiver?.decompile()}.$propName" //if (!propName.isNullOrEmpty()) { && primaryCtor.isPrimaryCtorArg(propName)) {
-//        propName
-//    } else {
-//        "${dispatchReceiver?.decompile()}.$propName"
-//    }
+    return "${dispatchReceiver?.decompile()}.$propName"
 }
 
 internal fun IrConstructor.obtainValueParameterTypes(): String =
     ArrayList<String>().apply {
         valueParameters.mapTo(this) {
-            var argDefinition =
-                listOf(
-                    it.obtainValueParameterFlags(),
-                    "val".takeIf { isPrimary }.orEmpty(),
-                    it.name(),
-                    ": ",
-                    (it.varargElementType?.toKotlinType() ?: it.type.toKotlinType()).toString()
-                )
-                    .filterNot { it.isEmpty() }.joinToString(" ")
-            if (it.hasDefaultValue()) {
-                argDefinition += " = ${it.defaultValue!!.decompile()}"
-            }
-            argDefinition
+            concatenateNonEmptyWithSpace(
+                it.obtainValueParameterFlags(),
+                "val".takeIf { isPrimary },
+                "${it.name()}:",
+                (it.varargElementType?.toKotlinType() ?: it.type.toKotlinType()).toString(),
+                if (it.hasDefaultValue()) " = ${it.defaultValue!!.decompile()}" else EMPTY_TOKEN
+            )
         }
     }.joinToString(separator = ", ", prefix = "(", postfix = ")")
 
@@ -241,23 +249,19 @@ internal fun IrConstructor.obtainValueParameterTypes(): String =
 internal fun IrFunction.obtainValueParameterTypes(): String =
     ArrayList<String>().apply {
         valueParameters.mapTo(this) {
-            var argDefinition = listOf(
+            concatenateNonEmptyWithSpace(
                 it.obtainValueParameterFlags(),
                 "${it.name()}:",
-                (it.varargElementType?.toKotlinType() ?: it.type.toKotlinType()).toString()
+                (it.varargElementType?.toKotlinType() ?: it.type.toKotlinType()).toString(),
+                if (it.hasDefaultValue()) " = ${it.defaultValue!!.decompile()}" else EMPTY_TOKEN
             )
-                .filter { it.isNotEmpty() }.joinToString(" ")
-            if (it.defaultValue != null) {
-                argDefinition += " = ${it.defaultValue!!.decompile()}"
-            }
-            argDefinition
         }
     }.joinToString(separator = ", ", prefix = "(", postfix = ")")
 
 internal inline fun IrDeclarationWithVisibility.obtainVisibility(): String =
     when (visibility) {
         Visibilities.PUBLIC -> EMPTY_TOKEN
-        else -> "${visibility.name.toLowerCase()} "
+        else -> visibility.name.toLowerCase()
     }
 
 
@@ -276,19 +280,22 @@ internal fun concatenateConditions(branch: IrBranch): String {
             val irIfThenElseImplBranch = branch.condition as IrIfThenElseImpl
             val firstBranch = irIfThenElseImplBranch.branches[0]
             val secondBranch = irIfThenElseImplBranch.branches[1]
-            when (irIfThenElseImplBranch.origin) {
-                OROR -> return listOf(
-                    "(${secondBranch.result.decompile()})",
+            return when (irIfThenElseImplBranch.origin) {
+                OROR -> return "(" + concatenateNonEmptyWithSpace(
+                    secondBranch.result.decompile(),
                     OPERATOR_TOKENS[irIfThenElseImplBranch.origin],
-                    "(${concatenateConditions(firstBranch)})"
-                ).joinToString(" ")
+                    concatenateConditions(firstBranch)
+                ) + ")"
                 ANDAND -> {
-                    var result = "(${concatenateConditions(firstBranch)})"
+                    var result = concatenateConditions(firstBranch)
                     if (firstBranch.result !is IrConst<*>) {
-                        result += " ${OPERATOR_TOKENS[irIfThenElseImplBranch.origin]} "
-                        result += "(${firstBranch.result.decompile()})"
+                        result = concatenateNonEmptyWithSpace(
+                            result,
+                            OPERATOR_TOKENS[irIfThenElseImplBranch.origin],
+                            firstBranch.result.decompile()
+                        )
                     }
-                    return result
+                    "($result)"
                 }
                 else -> TODO()
             }
@@ -300,16 +307,10 @@ internal fun concatenateConditions(branch: IrBranch): String {
 }
 
 internal fun IrClass.obtainDeclarationStr(): String =
-    ArrayList<String?>().apply {
-        add(obtainVisibility())
-        add(obtainModality())
-        add(obtainClassFlags())
-        add("${name()}${obtainTypeParameters()}")
-    }.filterNot { it.isNullOrEmpty() }.joinToString(" ")
+    concatenateNonEmptyWithSpace(obtainVisibility(), obtainModality(), obtainClassFlags(), "${name()}${obtainTypeParameters()}")
 
 internal fun IrClass.obtainClassFlags() =
-    obtainFlagsList(
-        CLASS_TOKEN.takeIf { isClass },
+    concatenateNonEmptyWithSpace(
         INTERFACE_TOKEN.takeIf { isInterface },
         COMPANION_TOKEN.takeIf { isCompanion },
         OBJECT_TOKEN.takeIf { isObject },
@@ -318,7 +319,8 @@ internal fun IrClass.obtainClassFlags() =
         DATA_TOKEN.takeIf { isData },
         EXTERNAL_TOKEN.takeIf { isExternal },
         ANNOTATION_TOKEN.takeIf { isAnnotationClass },
-        ENUM_TOKEN.takeIf { isEnumClass }
+        ENUM_TOKEN.takeIf { isEnumClass },
+        CLASS_TOKEN.takeIf { isClass }
     )
 
 internal fun IrClass.isPrimaryCtorArg(argName: String): Boolean {
@@ -328,14 +330,14 @@ internal fun IrClass.isPrimaryCtorArg(argName: String): Boolean {
 }
 
 internal fun IrVariable.obtainVariableFlags(): String =
-    obtainFlagsList(
+    concatenateNonEmptyWithSpace(
         "const".takeIf { isConst },
         "lateinit".takeIf { isLateinit },
         if (isVar) "var" else "val"
     )
 
 internal fun IrProperty.obtainPropertyFlags() =
-    obtainFlagsList(
+    concatenateNonEmptyWithSpace(
         "external".takeIf { isExternal },
         "const".takeIf { isConst },
         "lateinit".takeIf { isLateinit },
@@ -344,7 +346,7 @@ internal fun IrProperty.obtainPropertyFlags() =
     )
 
 internal fun IrValueParameter.obtainValueParameterFlags(): String =
-    obtainFlagsList(
+    concatenateNonEmptyWithSpace(
         "vararg".takeIf { varargElementType != null },
         "crossinline".takeIf { isCrossinline },
         "noinline".takeIf { isNoinline }
@@ -366,9 +368,7 @@ private fun IrTypeParameter.bound() =
         .ifNotEmpty { joinToString(", ", prefix = " : ") } ?: EMPTY_TOKEN
 
 internal fun IrTypeParameter.obtain() =
-    listOf(variance(), name(), bound())
-        .filter { it.isNotEmpty() }
-        .joinToString(" ")
+    concatenateNonEmptyWithSpace(variance(), name(), bound())
 
 //TODO посмотреть где это используется (особенно с IrTypeAbbreviation)
 internal fun IrTypeArgument.obtain() =
@@ -382,7 +382,7 @@ internal fun IrSimpleFunction.isOverriden() =
     overriddenSymbols.isNotEmpty() && overriddenSymbols.map { it.owner.name() }.contains(name())
 
 internal fun IrSimpleFunction.obtainSimpleFunctionFlags(): String =
-    obtainFlagsList(
+    concatenateNonEmptyWithSpace(
         "tailrec".takeIf { isTailrec },
         "inline".takeIf { isInline },
         "external".takeIf { isExternal },
@@ -413,8 +413,7 @@ internal fun decompileAnnotations(element: IrAnnotationContainer) {
 internal fun IrFunction.obtainFunctionName(): String {
     var result = EMPTY_TOKEN
     if (extensionReceiverParameter != null) {
-        result += extensionReceiverParameter?.type?.toKotlinType().toString()
-        result += "."
+        result = "${extensionReceiverParameter?.type?.toKotlinType().toString()}."
     }
-    return result + name()
+    return "$result${name()}"
 }

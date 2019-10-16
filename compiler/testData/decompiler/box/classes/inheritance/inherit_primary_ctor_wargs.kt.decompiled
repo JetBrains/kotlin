@@ -1,11 +1,11 @@
-open  class ParentClass(val x :  Int) {
-    val anotherX: Int = this.x
+open  class ParentClass(val x: Int) {
+    val anotherX : Int = this.x
 }
-class ChildClass() : ParentClass(9) {
+class ChildClass(): ParentClass (9) {
 }
-fun box(): String  {
-    val parentClass: ParentClass = ParentClass(9)
-    val childClass: ChildClass = ChildClass()
+fun box() : String  {
+    val parentClass : ParentClass = ParentClass(9)
+    val childClass : ChildClass = ChildClass()
     if (parentClass.anotherX == childClass.anotherX) {
         return "OK"
     }

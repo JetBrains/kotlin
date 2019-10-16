@@ -1,15 +1,15 @@
-fun bar(): Int  {
+fun bar() : Int  {
     return 666
 }
 
-fun box(): String  {
-    val f: Int = bar()
-    val tmp0_subject: Int = f
+fun box() : String  {
+    val f : Int = bar()
+    val tmp0_subject : Int = f
     when {
-        (tmp0_subject is Int).not() -> {
+         (!(tmp0_subject is Int)) -> {
             return "FAIL"
         }
-        (tmp0_subject is Int) -> {
+         ((tmp0_subject is Int)) -> {
             return "OK"
         }
         else -> {

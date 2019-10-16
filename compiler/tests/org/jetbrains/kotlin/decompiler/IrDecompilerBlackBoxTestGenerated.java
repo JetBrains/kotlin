@@ -84,6 +84,24 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             }
         }
 
+        @TestMetadata("compiler/testData/decompiler/box/classes/data_class")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Data_class extends AbstractIrDecompilerBlackBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInData_class() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/classes/data_class"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("data_class.kt")
+            public void testData_class() throws Exception {
+                runTest("compiler/testData/decompiler/box/classes/data_class/data_class.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/decompiler/box/classes/delegating_calls")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -348,6 +366,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
 
         public void testAllFilesPresentInFunctions() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/functions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("default_named_args.kt")
+        public void testDefault_named_args() throws Exception {
+            runTest("compiler/testData/decompiler/box/functions/default_named_args.kt");
         }
 
         @TestMetadata("compiler/testData/decompiler/box/functions/simple")

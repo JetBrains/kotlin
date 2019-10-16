@@ -1,9 +1,9 @@
 class MyClass() {
 }
-fun MyClass.printOk(): String  {
+fun MyClass.printOk() : String  {
     return "OK"
 }
 
-fun box(): String  {
+fun box() : String  {
     return MyClass().printOk()
 }

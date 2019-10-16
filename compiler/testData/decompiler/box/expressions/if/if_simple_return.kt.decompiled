@@ -1,9 +1,9 @@
-fun foo(): Int  {
+fun foo() : Int  {
     return 42
 }
 
-fun box(): String  {
-    val f: Int = foo()
+fun box() : String  {
+    val f : Int = foo()
     return if (f == 40) {
         "FAIL"
     }

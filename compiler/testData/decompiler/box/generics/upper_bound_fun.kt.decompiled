@@ -1,17 +1,17 @@
-fun <T  : Comparable<T>> max(list: List<T>): T  {
-    var max: T = list.get(0)
-    val tmp0_iterator: Iterator<T> = list.iterator()
+fun <T  : Comparable<T>> max(list: List<T>) : T  {
+    var max : T = list.get(0)
+    val tmp0_iterator : Iterator<T> = list.iterator()
     while (tmp0_iterator.hasNext()) {
-        val i: T = tmp0_iterator.next()
+        val i : T = tmp0_iterator.next()
         if (i.compareTo(max) > 0) {
-            max = i
+            max  =  i
         }
     }
     return max
 }
 
-fun box(): String  {
-    val mx: Int = max(listOf(1, 2, 3, 4))
+fun box() : String  {
+    val mx : Int = max(listOf(1, 2, 3, 4))
     if (mx == 4) {
         return "OK"
     }

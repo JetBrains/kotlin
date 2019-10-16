@@ -1,4 +1,4 @@
-fun Int.box(other: Int): String  {
+fun Int.box(other: Int) : String  {
     if (this > other) {
         return "OK"
     }
@@ -7,6 +7,6 @@ fun Int.box(other: Int): String  {
     }
 }
 
-fun box(): String  {
+fun box() : String  {
     return 99.box(9)
 }

@@ -1,10 +1,10 @@
-class TestClass(val namedString :  String, val namedInt :  Int) {
+class TestClass(val namedString: String, val namedInt: Int) {
 }
-fun box(): String  {
-    val testClassOrderedWoutNames: TestClass = TestClass("String", 4)
-    val tmp0_namedInt: Int = 4
-    val tmp1_namedString: String = "String"
-    val testClassReorderedWNames: TestClass = TestClass(tmp1_namedString, tmp0_namedInt)
+fun box() : String  {
+    val testClassOrderedWoutNames : TestClass = TestClass("String", 4)
+    val tmp0_namedInt : Int = 4
+    val tmp1_namedString : String = "String"
+    val testClassReorderedWNames : TestClass = TestClass(tmp1_namedString, tmp0_namedInt)
     if (testClassReorderedWNames.namedInt == testClassOrderedWoutNames.namedInt) {
         return "OK"
     }

@@ -1,10 +1,10 @@
 interface Source<out T> {
-    abstract  fun nextT(): T
+    abstract  fun nextT() : T
 }
-fun demo(strs: Source<String>): Unit  {
-    val objects: Source<Any> = strs
+fun demo(strs: Source<String>) : Unit  {
+    val objects : Source<Any> = strs
 }
 
-fun box(): String  {
+fun box() : String  {
     return "OK"
 }

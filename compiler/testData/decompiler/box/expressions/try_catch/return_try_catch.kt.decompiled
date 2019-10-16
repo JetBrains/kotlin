@@ -1,13 +1,13 @@
-fun fail(message: String): Nothing  {
+fun fail(message: String) : Nothing  {
     throw IllegalArgumentException(message)
 }
 
-fun box(): String  {
+fun box() : String  {
     return try {
-        val x: Nothing = fail("Testing fail")
+        val x : Nothing = fail("Testing fail")
         "FAIL"
     }
-    catch (e: IllegalArgumentException)  {
+    catch (e : IllegalArgumentException)  {
         "OK"
     }
     finally  {

@@ -1,18 +1,18 @@
 class TestClass() {
-    fun foo(): Unit  {
+    fun foo() : Unit  {
     }
 
-    fun bar(): Unit  {
+    fun bar() : Unit  {
     }
 
 }
 interface TestInterface {
-    abstract  fun foo(): Unit
+    abstract  fun foo() : Unit
 }
 object TestObject {
 }
 annotation class TestAnnotationClass {
 }
-fun box(): String  {
+fun box() : String  {
     return "OK"
 }

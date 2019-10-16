@@ -6,24 +6,38 @@
 
 ## TODO-лист
 
-- кастомные геттер и сеттер
-- varargs
-- аргументы по-умолчанию в методах, именованые вызовы с перестановкой аргументов
-- продолжить дженерики (https://kotlinlang.org/docs/reference/generics.html)
-- inner, nested классы
-- companion object, именованный object, top-level object
+Четверг 17.10:
 
-- функции высших порядков
-- typealias со стрелкой (для функций высших порядков)
-- делегирование (https://kotlinlang.org/docs/reference/delegation.html, https://kotlinlang.org/docs/reference/delegated-properties.html)
-- cast операторы
+- break, continue
+- nullable типы
 - enum
+- кастомные геттер и сеттер
+
+Пятница 18.10:
+
+- cast операторы as, as?
+- делегирование (https://kotlinlang.org/docs/reference/delegation.html, https://kotlinlang.org/docs/reference/delegated-properties.html)
+
+Суббота 19.10:
+
+- функции высших порядков и лямбды (https://kotlinlang.org/docs/reference/lambdas.html)
+- typealias со стрелкой (для функций высших порядков)
 - Работа со scope functions - https://kotlinlang.org/docs/reference/scope-functions.html
+
+Воскресенье:
+
+- продолжить дженерики (https://kotlinlang.org/docs/reference/generics.html)
+- обход дерева и сбор импортов через full qualified names
 
 ## LATER
 
+1 очередь:
+- companion object, именованный object, top-level object
+- inner, nested классы.
 - when с множественным условием через запятую
 - return when (varName) - block с WHEN в origin
+
+- расстановка скобок для логических операторов !, &&, ||
 - использовать abbrevation при выводе типа для typealias
 - override fun - проверять overridenSymbols (если visibility и modality не отличаются от родительских, то не пишем их)
 - когда у проперти нет BackingField
@@ -32,6 +46,10 @@
 
 ## DONE
 
+- package
+- аргументы по-умолчанию в методах, именованые вызовы с перестановкой аргументов
+- data class + destructing declarations
+- varargs
 - аргументы по-умолчанию в конструкторах, именованые вызовы с перестановкой аргументов
 - рефакторинг
 - секции инициализации

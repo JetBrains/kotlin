@@ -1,11 +1,11 @@
 class TestClass() {
-    fun fn_true(): Boolean  {
+    fun fn_true() : Boolean  {
         return true
     }
 
 }
-fun box(): String  {
-    val testClass: TestClass = TestClass()
+fun box() : String  {
+    val testClass : TestClass = TestClass()
     if (testClass.fn_true()) {
         return "OK"
     }

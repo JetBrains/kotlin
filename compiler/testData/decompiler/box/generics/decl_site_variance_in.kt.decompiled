@@ -1,11 +1,11 @@
 interface Comparable<in T> {
-    abstract  fun compareTo(other: T): Int
+    abstract  fun compareTo(other: T) : Int
 }
-fun demo(x: Comparable<Number>): Unit  {
+fun demo(x: Comparable<Number>) : Unit  {
     x.compareTo(1.0)
-    val y: Comparable<Double> = x
+    val y : Comparable<Double> = x
 }
 
-fun box(): String  {
+fun box() : String  {
     return "OK"
 }

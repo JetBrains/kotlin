@@ -63,7 +63,12 @@ class DecompileIrTreeVisitor(
                 withBracesLn {
                     declaration.declarations
                         .filterIsInstance<IrProperty>()
-                        .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+                        .filterNot {
+                            it.origin in setOf(
+                                IrDeclarationOrigin.FAKE_OVERRIDE,
+                                IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER
+                            )
+                        }
                         .decompileElements()
 
                     val secondaryCtors = declaration.constructors.filterNot { it.isPrimary }
@@ -72,7 +77,12 @@ class DecompileIrTreeVisitor(
                     }
                     declaration.declarations
                         .filterNot { it is IrConstructor || it is IrProperty }
-                        .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+                        .filterNot {
+                            it.origin in setOf(
+                                IrDeclarationOrigin.FAKE_OVERRIDE,
+                                IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER
+                            )
+                        }
                         .decompileElements()
                 }
             }
@@ -80,7 +90,9 @@ class DecompileIrTreeVisitor(
                 withBracesLn {
                     declaration.declarations
                         .filterNot { it is IrConstructor }
-                        .filterNot { it.origin == IrDeclarationOrigin.FAKE_OVERRIDE }
+                        .filterNot {
+                            it.origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                        }
                         .decompileElements()
                 }
             }
@@ -129,18 +141,18 @@ class DecompileIrTreeVisitor(
     }
 
 
-    // TODO TypeParameters (дженерики)
+    //TODO TypeParameters (дженерики)
     override fun visitTypeAlias(declaration: IrTypeAlias, data: String) {
         with(declaration) {
             printer.println(
-                ArrayList<String?>().apply {
-                    add(obtainTypeAliasFlags())
-                    add(obtainVisibility())
-                    add(TYPEALIAS_TOKEN)
-                    add(name())
-                    add("=")
-                    add(expandedType.toKotlinType().toString())
-                }.filterNot { it.isNullOrEmpty() }.joinToString(" ")
+                concatenateNonEmptyWithSpace(
+                    obtainTypeAliasFlags(),
+                    obtainVisibility(),
+                    TYPEALIAS_TOKEN,
+                    name(),
+                    OPERATOR_TOKENS[EQ],
+                    expandedType.toKotlinType().toString()
+                )
             )
         }
     }
@@ -155,19 +167,16 @@ class DecompileIrTreeVisitor(
         with(declaration) {
             if (origin != DEFAULT_PROPERTY_ACCESSOR) {
                 printer.print(
-                    ArrayList<String?>().apply {
-                        add(obtainSimpleFunctionFlags())
-                        add(OVERRIDE_TOKEN.takeIf { isOverriden() })
-                        add(obtainModality().takeIf { !isOverriden() })
-                        add(obtainVisibility())
-                        add(FUN_TOKEN)
-                        add(obtainTypeParameters())
-                        add(obtainFunctionName()
-                                    + obtainValueParameterTypes()
-                                    + returnType.toKotlinType().takeIf { !it.isUnit() }.let { ": ${returnType.toKotlinType()} " })
-                    }.filterNot { it.isNullOrEmpty() }
-                        .joinToString(separator = " ")
-                )
+                    concatenateNonEmptyWithSpace(
+                        obtainSimpleFunctionFlags(),
+                        OVERRIDE_TOKEN.takeIf { isOverriden() },
+                        obtainModality().takeIf { !isOverriden() },
+                        obtainVisibility(),
+                        FUN_TOKEN,
+                        obtainTypeParameters(),
+                        "${obtainFunctionName()}${obtainValueParameterTypes()}",
+                        returnType.toKotlinType().takeIf { !it.isUnit() }.let { ": ${returnType.toKotlinType()} " }
+                    ))
                 declaration.body?.accept(this@DecompileIrTreeVisitor, "")
                 printer.printlnWithNoIndent()
             } else {
@@ -178,42 +187,52 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitVariable(declaration: IrVariable, data: String) {
-        var result = run {
+        printer.println(
             with(declaration) {
                 when {
-                    origin == IrDeclarationOrigin.CATCH_PARAMETER -> "${name()}: ${type.toKotlinType()}"
+                    origin == IrDeclarationOrigin.CATCH_PARAMETER -> concatenateNonEmptyWithSpace(
+                        name(),
+                        ":",
+                        type.toKotlinType().toString()
+                    )
                     initializer is IrBlock -> {
                         val variableDeclarations = (initializer as IrBlock).statements.filterIsInstance<IrVariable>()
                         variableDeclarations.forEach { it.accept(this@DecompileIrTreeVisitor, "") }
                         val lastStatement = (initializer as IrBlock).statements.last()
-                        "${obtainVariableFlags()} ${name()}: ${type.toKotlinType()} = ${lastStatement.decompile()}"
+                        concatenateNonEmptyWithSpace(
+                            obtainVariableFlags(),
+                            name(),
+                            ":",
+                            type.toKotlinType().toString(),
+                            "=",
+                            lastStatement.decompile()
+                        )
                     }
-                    else -> "${obtainVariableFlags()} ${name()}: ${type.toKotlinType()} = ${initializer?.decompile()}"
+                    else -> concatenateNonEmptyWithSpace(
+                        obtainVariableFlags(),
+                        name(),
+                        ":",
+                        type.toKotlinType().toString(),
+                        "=",
+                        initializer?.decompile()
+                    )
                 }
             }
-        }
-        printer.println(result)
+        )
     }
 
     override fun visitProperty(declaration: IrProperty, data: String) {
         with(declaration) {
             if (!parentAsClass.isPrimaryCtorArg(name())) {
-                var result = ""
-                result += ArrayList<String?>().apply {
-                    add(obtainVisibility())
-                    add(obtainModality())
-                    add(obtainPropertyFlags())
-                    if (backingField != null) {
-                        add("${backingField!!.name()}: ${backingField!!.type.toKotlinType()}")
-                        if (backingField!!.initializer != null) {
-                            add("=")
-                            add(backingField!!.initializer!!.decompile())
-                        }
-                    } else {
-                        add("${name()}: ${getter?.returnType?.toKotlinType()}")
+                var result = concatenateNonEmptyWithSpace(obtainVisibility(), obtainModality(), obtainPropertyFlags())
+                if (backingField != null) {
+                    result = concatenateNonEmptyWithSpace(result, backingField!!.name(), ":", backingField!!.type.toKotlinType().toString())
+                    if (backingField!!.initializer != null) {
+                        result = concatenateNonEmptyWithSpace(result, "=", backingField!!.initializer!!.decompile())
                     }
-                }.filterNot { it.isNullOrEmpty() }
-                    .joinToString(separator = " ")
+                } else {
+                    result = concatenateNonEmptyWithSpace(result, name(), ":", getter?.returnType?.toKotlinType().toString())
+                }
                 printer.println(result)
                 getter?.obtainCustomGetter()
                 setter?.obtainCustomSetter()
@@ -222,9 +241,9 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitField(declaration: IrField, data: String) {
-        var result = "${declaration.name()}: ${declaration.type.toKotlinType()} "
+        var result = concatenateNonEmptyWithSpace(declaration.name(), ":", declaration.type.toKotlinType().toString())
         if (declaration.initializer != null) {
-            result += "= ${declaration.initializer!!.decompile()}"
+            result = concatenateNonEmptyWithSpace(result, "=", declaration.initializer!!.decompile())
         }
         printer.println(result)
     }
@@ -236,10 +255,10 @@ class DecompileIrTreeVisitor(
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: String) {
         var result = ""
         if (!expression.symbol.owner.returnType.isAny()) {
-            result += " : ${expression.symbol.owner.returnType.toKotlinType()}"
-            result += ((0 until expression.valueArgumentsCount)
-                .map { expression.getValueArgument(it)?.decompile() }
-                .joinToString(", ", "(", ")"))
+            result = concatenateNonEmptyWithSpace(":", expression.symbol.owner.returnType.toKotlinType().toString(),
+                                                  ((0 until expression.valueArgumentsCount)
+                                                      .map { expression.getValueArgument(it)?.decompile() }
+                                                      .joinToString(", ", "(", ")")))
         }
         printer.println(result)
     }
@@ -262,7 +281,7 @@ class DecompileIrTreeVisitor(
                     } else {
                         printer.print(IF_TOKEN)
                     }
-                    printer.printWithNoIndent(" (${concatenateConditions(expression.branches[0])})")
+                    printer.printWithNoIndent(" (${expression.branches[0].decompile()})")
                     withBracesLn {
                         expression.branches[0].result.accept(this, "")
                     }
@@ -273,6 +292,21 @@ class DecompileIrTreeVisitor(
                         }
                     }
                 }
+                OROR -> printer.printWithNoIndent(
+                    concatenateNonEmptyWithSpace(
+                        "${expression.branches[0].condition.decompile()}",
+                        OPERATOR_TOKENS[expression.origin],
+                        "${expression.branches[1].result.decompile()}"
+                    )
+                )
+
+                ANDAND -> printer.printWithNoIndent(
+                    "(" + concatenateNonEmptyWithSpace(
+                        expression.branches[0].condition.decompile(),
+                        OPERATOR_TOKENS[expression.origin],
+                        expression.branches[0].result.decompile()
+                    ) + ")"
+                )
                 else -> TODO()
             }
         } else {
@@ -282,21 +316,22 @@ class DecompileIrTreeVisitor(
                 printer.print(WHEN_TOKEN)
             }
             withBracesLn {
-                expression.branches.decompileElements()
+                expression.branches.forEach {
+                    if (it is IrElseBranch) {
+                        printer.print("else ->")
+                    } else {
+                        printer.print(" (${it.condition.decompile()}) ->")
+                    }
+                    withBracesLn {
+                        it.result.accept(this, "")
+                    }
+                }
             }
         }
     }
 
     override fun visitBranch(branch: IrBranch, data: String) {
-        if (branch.condition is IrIfThenElseImpl) {
-            printer.print(collectCommaArguments(branch.condition))
-        } else {
-            printer.print(branch.condition.decompile())
-        }
-        printer.printWithNoIndent(" ->")
-        withBracesLn {
-            branch.result.accept(this@DecompileIrTreeVisitor, "")
-        }
+        printer.print(branch.condition.decompile())
     }
 
     private fun collectCommaArguments(condition: IrExpression): String = TODO()
@@ -310,16 +345,19 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitSetVariable(expression: IrSetVariable, data: String) {
-        var result = expression.symbol.owner.name()
-        result += when (expression.origin) {
-            PLUSEQ -> " += "
-            MINUSEQ -> " -= "
-            MULTEQ -> " *= "
-            DIVEQ -> " /= "
-            else -> " = "
-        }
-        result += expression.value.decompile()
-        printer.println(result)
+        printer.println(
+            concatenateNonEmptyWithSpace(
+                expression.symbol.owner.name(),
+                when (expression.origin) {
+                    PLUSEQ -> " += "
+                    MINUSEQ -> " -= "
+                    MULTEQ -> " *= "
+                    DIVEQ -> " /= "
+                    else -> " = "
+                },
+                expression.value.decompile()
+            )
+        )
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: String) {
@@ -362,7 +400,7 @@ class DecompileIrTreeVisitor(
         if (data == "return") {
             printer.printlnWithNoIndent(expression.obtainGetValue())
         } else {
-            printer.printWithNoIndent(expression.obtainGetValue())
+            printer.println(expression.obtainGetValue())
         }
     }
 
@@ -454,7 +492,7 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitVararg(expression: IrVararg, data: String) {
-        printer.print(expression.elements.map { it.decompile() }.joinToString(", "))
+        printer.print(expression.elements.joinToString(", ") { it.decompile() })
     }
 
     override fun visitBody(body: IrBody, data: String) {

@@ -1,0 +1,24 @@
+data class MyUser(val name: String, val age: Int) {
+}
+data class MyUserDefaultName(val name: String  = "John", val age: Int  = 42) {
+}
+fun box() : String  {
+    val myUser : MyUser = MyUser("John", 42)
+    val tmp0_container : MyUser = MyUser("John", 42)
+    val name : String = tmp0_container.component1()
+    val age : Int = tmp0_container.component2()
+    if (name != myUser.name || age != myUser.age) {
+        return "FAIL"
+    }
+    val tmp1_container : MyUser = myUser
+    val name1 : String = tmp1_container.component1()
+    val age1 : Int = tmp1_container.component2()
+    if (name != name1 || age != age1) {
+        return "FAIL"
+    }
+    val myUserDefaultName : MyUserDefaultName = MyUserDefaultName()
+    if (myUserDefaultName.name != myUser.name || myUserDefaultName.age != myUser.age) {
+        return "FAIL"
+    }
+    return "OK"
+}
