@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.config.ExplicitApiMode
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.implicitVisibility
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
@@ -25,16 +27,18 @@ import org.jetbrains.kotlin.psi.declarationVisitor
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 
 class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return declarationVisitor(fun(declaration: KtDeclaration) {
             val isInApiMode = declaration.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode) != ExplicitApiMode.DISABLED
-            if (isInApiMode) return@declarationVisitor
 
             if (declaration is KtPropertyAccessor && declaration.isGetter) return // There is a quick fix for REDUNDANT_MODIFIER_IN_GETTER
             val visibilityModifier = declaration.visibilityModifier() ?: return
             val implicitVisibility = declaration.implicitVisibility()
+            if (isInApiMode && (declaration.resolveToDescriptorIfAny() as? DeclarationDescriptorWithVisibility)?.isEffectivelyPublicApi == true) return@declarationVisitor
+
             val redundantVisibility = when {
                 visibilityModifier.node.elementType == implicitVisibility ->
                     implicitVisibility

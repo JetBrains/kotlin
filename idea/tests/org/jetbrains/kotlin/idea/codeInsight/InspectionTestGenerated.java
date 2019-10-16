@@ -313,6 +313,11 @@ public class InspectionTestGenerated extends AbstractInspectionTest {
             runTest("idea/testData/inspections/redundantVisibilityModifier/inspectionData/inspections.test");
         }
 
+        @TestMetadata("redundantVisibilityModifierWithExplicitApi/inspectionData/inspections.test")
+        public void testRedundantVisibilityModifierWithExplicitApi_inspectionData_Inspections_test() throws Exception {
+            runTest("idea/testData/inspections/redundantVisibilityModifierWithExplicitApi/inspectionData/inspections.test");
+        }
+
         @TestMetadata("redundantWith/inspectionData/inspections.test")
         public void testRedundantWith_inspectionData_Inspections_test() throws Exception {
             runTest("idea/testData/inspections/redundantWith/inspectionData/inspections.test");
