@@ -59,10 +59,10 @@ private fun Char.escape(): String = (if (this == '\\' || patternCharsToEscape.co
 
 internal val pathSeparatorChars = "/".let { if (File.separatorChar == '/') it else it + File.separator }.toCharArray()
 internal val pathElementPattern = if (File.separatorChar == '/') "[^/]*" else "[^/${File.separatorChar.escape()}]*"
-internal val pathSeparatorPattern = if (File.separatorChar == '/') "/" else "[/${File.separatorChar.escape()}]."
+internal val pathSeparatorPattern = if (File.separatorChar == '/') "/" else "[/${File.separatorChar.escape()}]"
 internal val specialPatternChars = patternCharsToEscape + pathSeparatorChars
 
-private fun String.toUniversalSeparator(): String = if (File.separatorChar == '/') this else replace(File.separatorChar, '/')
+internal fun String.toUniversalSeparator(): String = if (File.separatorChar == '/') this else replace(File.separatorChar, '/')
 
 internal fun forAllMatchingFilesInDirectory(baseDir: File, namePattern: String, body: (String, InputStream) -> Unit) {
     val patternStart = namePattern.indexOfAny(wildcardChars)

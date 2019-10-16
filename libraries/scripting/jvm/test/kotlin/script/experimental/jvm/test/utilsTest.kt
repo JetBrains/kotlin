@@ -20,7 +20,7 @@ class UtilsTest : TestCase() {
         assertPattern("a$pathSeparatorPattern$pathElementPattern\\.txt", "a/*.txt")
         assertPattern("a$pathSeparatorPattern.*${pathSeparatorPattern}b", "a/**/b")
         assertPattern("a${pathSeparatorPattern}b.\\.txt", "a/b?.txt")
-        assertPattern("$pathElementPattern/b\\.txt", "*/b.txt")
+        assertPattern("$pathElementPattern${pathSeparatorPattern}b\\.txt", "*/b.txt")
         assertPattern(".*${pathSeparatorPattern}b\\.txt", "**/b.txt")
     }
 
@@ -35,13 +35,21 @@ class UtilsTest : TestCase() {
 
         val rootDir = File(".")
 
-        fun assertProjectFilesBy(pattern: String, vararg paths: String) {
+        fun assertProjectFilesBy(pattern: String, vararg paths: String, trace: Boolean = false) {
             val res = ArrayList<Pair<String, String>>()
 
             forAllMatchingFilesInDirectory(rootDir, pattern) { path, stream ->
                 res.add(path to stream.reader().readText())
             }
-            assertEquals(paths.toSet(), res.mapTo(HashSet()) { it.first })
+            if (trace && paths.toSet() != res.mapTo(HashSet()) { it.first }) {
+                val re = namePatternToRegex(pattern)
+                val files = rootDir.walkTopDown().map {
+                    it.relativeToOrSelf(rootDir).path
+                }
+                fail("Unable to match '${re.pattern}' with files:\n  ${files.joinToString("\n  ")}")
+            } else {
+                assertEquals(paths.toSet(), res.mapTo(HashSet()) { it.first })
+            }
 
             res.forEach { (path, bytes) ->
                 val data = File(path).readText()
@@ -63,7 +71,7 @@ class UtilsTest : TestCase() {
             "src/kotlin/script/experimental/jvm/util/jvm*LoaderUtil.kt",
             "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt"
         )
-        assertProjectFilesBy("**/jvmClassLoaderUtil.kt", "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt")
+        assertProjectFilesBy("**/jvmClassLoaderUtil.kt", "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt", trace = true)
         assertProjectFilesBy("**/script/**/jvmClassLoaderUtil.kt", "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt")
         assertProjectFilesBy("src/**/jvmClassLoaderUtil.kt", "src/kotlin/script/experimental/jvm/util/jvmClassLoaderUtil.kt")
         assertProjectFilesBy("test/**/?????Test.*", "test/kotlin/script/experimental/jvm/test/utilsTest.kt")
@@ -76,7 +84,7 @@ class UtilsTest : TestCase() {
             rootDir.walkTopDown().filter {
                 it.relativeToOrSelf(rootDir).path.startsWith("src") && it.extension == "kt"
             }.mapTo(HashSet()) {
-                it.relativeToOrSelf(rootDir).path
+                it.relativeToOrSelf(rootDir).path.toUniversalSeparator()
             }
         assertEquals(allExpectedSrcKtFiles, allSrcKtFiles)
     }
