@@ -55,6 +55,7 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         candidates: Collection<NewResolutionOldInference.MyCandidate>,
         context: BasicCallResolutionContext,
         candidateResolver: CandidateResolver,
+        callResolver: CallResolver?,
         name: Name,
         kind: NewResolutionOldInference.ResolutionKind,
         tracing: TracingStrategy
@@ -67,13 +68,13 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         scopeTower: ImplicitScopeTower,
         resolutionContext: BasicCallResolutionContext,
         resolutionScope: ResolutionScope,
+        callResolver: CallResolver?,
         name: Name,
         location: LookupLocation
     ): Collection<FunctionDescriptor> {
-        val callResolver =
-            (scopeTower as NewResolutionOldInference.ImplicitScopeTowerImpl).callResolver
         val element = resolutionContext.call.callElement as KtExpression
         val project = element.project
+        if (callResolver == null) throw IllegalArgumentException("Call resolver must be non-null")
 
         if (candidates.isEmpty()) return candidates
         val bindingContext = resolutionContext.trace.bindingContext
