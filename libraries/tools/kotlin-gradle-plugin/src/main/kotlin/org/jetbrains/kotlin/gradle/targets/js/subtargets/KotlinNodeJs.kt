@@ -33,4 +33,7 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
 
     override fun configureBuild(compilation: KotlinJsCompilation) {
     }
+
+    override fun configureBuildVariants() {
+    }
 }

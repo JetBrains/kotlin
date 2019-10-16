@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -59,6 +59,11 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
             ConfigureUtil.configure(fn, this)
         }
     }
+
+    val buildVariants: NamedDomainObjectContainer<BuildVariant>
+
+    fun NamedDomainObjectContainer<BuildVariant>.release(body: BuildVariant.() -> Unit)
+    fun NamedDomainObjectContainer<BuildVariant>.debug(body: BuildVariant.() -> Unit)
 }
 
 interface KotlinJsNodeDsl : KotlinJsSubTargetDsl {

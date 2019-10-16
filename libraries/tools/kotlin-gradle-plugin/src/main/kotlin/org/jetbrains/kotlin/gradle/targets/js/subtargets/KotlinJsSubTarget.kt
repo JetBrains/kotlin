@@ -43,6 +43,7 @@ abstract class KotlinJsSubTarget(
     fun configure() {
         NpmResolverPlugin.apply(project)
 
+        configureBuildVariants()
         configureTests()
         configure { configureRun(it) }
         configure { configureBuild(it) }
@@ -59,6 +60,8 @@ abstract class KotlinJsSubTarget(
 
     protected fun disambiguateCamelCased(name: String): String =
         lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, name)
+
+    abstract fun configureBuildVariants()
 
     private fun configureTests() {
         testRuns = project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, this) }.also {

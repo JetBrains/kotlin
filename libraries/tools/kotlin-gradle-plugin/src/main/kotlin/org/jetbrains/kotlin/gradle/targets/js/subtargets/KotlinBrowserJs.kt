@@ -5,20 +5,26 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariant
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
 open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
+
+    override lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -39,7 +45,16 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         (project.tasks.getByName(webpackTaskName) as KotlinWebpack).body()
     }
 
+    override fun NamedDomainObjectContainer<BuildVariant>.release(body: BuildVariant.() -> Unit) {
+        buildVariants.getByName(RELEASE).body()
+    }
+
+    override fun NamedDomainObjectContainer<BuildVariant>.debug(body: BuildVariant.() -> Unit) {
+        buildVariants.getByName(DEBUG).body()
+    }
+
     override fun configureRun(compilation: KotlinJsCompilation) {
+
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
@@ -70,18 +85,41 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        project.registerTask<KotlinWebpack>(webpackTaskName) {
-            val compileKotlinTask = compilation.compileKotlinTask
-            it.dependsOn(
-                nodeJs.npmInstallTask,
-                compileKotlinTask
-            )
+        buildVariants.all { buildVariant ->
+            project.registerTask<KotlinWebpack>(
+                disambiguateCamelCased(
+                    lowerCamelCaseName(
+                        buildVariant.name,
+                        "webpack"
+                    )
+                )
+            ) {
+                val compileKotlinTask = compilation.compileKotlinTask
+                it.dependsOn(
+                    nodeJs.npmInstallTask,
+                    compileKotlinTask
+                )
 
-            it.compilation = compilation
-            it.description = "build webpack bundle"
+                it.compilation = compilation
+                it.description = "build webpack bundle"
 
-            project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
+                project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
+            }
         }
     }
 
+    override fun configureBuildVariants() {
+        buildVariants = project.container(BuildVariant::class.java)
+        buildVariants.create(RELEASE) {
+            it.kind = BuildVariantKind.RELEASE
+        }
+        buildVariants.create(DEBUG) {
+            it.kind = BuildVariantKind.DEBUG
+        }
+    }
+
+    companion object {
+        const val RELEASE = "release"
+        const val DEBUG = "debug"
+    }
 }
