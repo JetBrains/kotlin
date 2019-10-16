@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.CandidateInterceptor
+import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
@@ -74,6 +74,7 @@ class NewResolutionOldInference(
     private val coroutineInferenceSupport: CoroutineInferenceSupport,
     private val deprecationResolver: DeprecationResolver,
     private val typeApproximator: TypeApproximator,
+    private val callResolver: CallResolver,
     private val candidateInterceptor: CandidateInterceptor
 ) {
     sealed class ResolutionKind {
@@ -162,8 +163,7 @@ class NewResolutionOldInference(
         context: BasicCallResolutionContext,
         name: Name,
         kind: ResolutionKind,
-        tracing: TracingStrategy,
-        callResolver: CallResolver
+        tracing: TracingStrategy
     ): OverloadResolutionResultsImpl<D> {
         val explicitReceiver = context.call.explicitReceiver
         val detailedReceiver = if (explicitReceiver is QualifierReceiver?) {
@@ -208,7 +208,7 @@ class NewResolutionOldInference(
             )
         }
 
-        candidates = candidateInterceptor.interceptCandidates(candidates, context, candidateResolver, callResolver, name, kind, tracing)
+        candidates = candidateInterceptor.interceptResolvedCandidates(candidates, context, candidateResolver, callResolver, name, kind, tracing)
 
         if (candidates.isEmpty()) {
             if (reportAdditionalDiagnosticIfNoCandidates(context, nameToResolve, kind, scopeTower, detailedReceiver)) {
@@ -382,11 +382,10 @@ class NewResolutionOldInference(
         override fun interceptCandidates(
             resolutionScope: ResolutionScope,
             name: Name,
-            candidates: Collection<FunctionDescriptor>,
+            initialResults: Collection<FunctionDescriptor>,
             location: LookupLocation
         ): Collection<FunctionDescriptor> {
-            val project = resolutionContext.call.callElement.project
-            return candidateInterceptor.interceptCandidates(candidates, this, resolutionContext, resolutionScope, callResolver, name, location)
+            return candidateInterceptor.interceptCandidates(initialResults, this, resolutionContext, resolutionScope, callResolver, name, location)
         }
     }
 

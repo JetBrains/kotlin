@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension
+import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
@@ -404,11 +403,10 @@ class PSICallResolver(
         override fun interceptCandidates(
             resolutionScope: ResolutionScope,
             name: Name,
-            candidates: Collection<FunctionDescriptor>,
+            initialResults: Collection<FunctionDescriptor>,
             location: LookupLocation
         ): Collection<FunctionDescriptor> {
-            val project = context.call.callElement.project
-            return candidateInterceptor.interceptCandidates(candidates, this, context, resolutionScope, null, name, location)
+            return candidateInterceptor.interceptCandidates(initialResults, this, context, resolutionScope, null, name, location)
         }
     }
 

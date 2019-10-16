@@ -3,12 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.resolve
+package org.jetbrains.kotlin.extensions.internal
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.CandidateResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -16,8 +18,36 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolutionOldInference
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
-class CandidateInterceptor(private val extensions: Collection<CallResolutionInterceptorExtension>) {
+
+/**
+ * This is marker for non-stable experimental extension points.
+ * Extension points marked with this meta-annotation will be broken in the future version.
+ * Please do not use them in general code.
+ */
+@Experimental(level = Experimental.Level.ERROR)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class InternalNonStableExtensionPoints
+
+@InternalNonStableExtensionPoints
+interface TypeResolutionInterceptorExtension {
+    fun interceptFunctionLiteralDescriptor(
+        expression: KtLambdaExpression,
+        context: ExpressionTypingContext,
+        descriptor: AnonymousFunctionDescriptor
+    ): AnonymousFunctionDescriptor = descriptor
+
+    fun interceptType(
+        element: KtElement,
+        context: ExpressionTypingContext,
+        resultType: KotlinType
+    ): KotlinType = resultType
+}
+
+@InternalNonStableExtensionPoints
+interface CallResolutionInterceptorExtension {
     fun interceptCandidates(
         candidates: Collection<NewResolutionOldInference.MyCandidate>,
         context: BasicCallResolutionContext,
@@ -26,11 +56,7 @@ class CandidateInterceptor(private val extensions: Collection<CallResolutionInte
         name: Name,
         kind: NewResolutionOldInference.ResolutionKind,
         tracing: TracingStrategy
-    ): Collection<NewResolutionOldInference.MyCandidate> {
-        return extensions.fold(candidates) { candidates, extension ->
-            extension.interceptCandidates(candidates, context, candidateResolver, callResolver, name, kind, tracing)
-        }
-    }
+    ): Collection<NewResolutionOldInference.MyCandidate> = candidates
 
     fun interceptCandidates(
         candidates: Collection<FunctionDescriptor>,
@@ -40,10 +66,5 @@ class CandidateInterceptor(private val extensions: Collection<CallResolutionInte
         callResolver: CallResolver?,
         name: Name,
         location: LookupLocation
-    ): Collection<FunctionDescriptor> {
-        return extensions.fold(candidates) { candidates, extension ->
-            extension.interceptCandidates(candidates, scopeTower, resolutionContext, resolutionScope, callResolver, name, location)
-        }
-
-    }
+    ): Collection<FunctionDescriptor> = candidates
 }
