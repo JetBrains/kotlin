@@ -19052,6 +19052,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/syntheticAccessors/inline.kt");
         }
 
+        @TestMetadata("inlineInOtherClass.kt")
+        public void testInlineInOtherClass() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/inlineInOtherClass.kt");
+        }
+
         @TestMetadata("kt10047.kt")
         public void testKt10047() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/kt10047.kt");

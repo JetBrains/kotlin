@@ -24922,6 +24922,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/syntheticAccessors/inline.kt");
         }
 
+        @TestMetadata("inlineInOtherClass.kt")
+        public void testInlineInOtherClass() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticAccessors/inlineInOtherClass.kt");
+        }
+
         @TestMetadata("jvmField.kt")
         public void testJvmField() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticAccessors/jvmField.kt");

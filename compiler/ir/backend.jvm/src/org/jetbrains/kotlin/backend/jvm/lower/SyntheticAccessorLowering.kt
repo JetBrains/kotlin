@@ -435,11 +435,13 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     private fun IrDeclaration.getAccessContext(withSuper: Boolean): IrDeclarationContainer? = when {
         this is IrDeclarationContainer -> this
-        // Accesses from public inline functions can actually be anywhere. For protected inline functions
-        // calling methods on `super` we need an accessor to satisfy INVOKESPECIAL constraints.
-        this is IrFunction && isInline && !visibility.isPrivate && (withSuper || !visibility.isProtected) -> null
         // For inline lambdas, we can navigate to the only call site directly.
         this in inlineLambdaToCallSite -> inlineLambdaToCallSite[this]?.getAccessContext(withSuper)
+        // Accesses from inline functions can actually be anywhere; even private inline functions can be
+        // inlined into a different class, e.g. a callable reference. For protected inline functions
+        // calling methods on `super` we also need an accessor to satisfy INVOKESPECIAL constraints.
+        // TODO scan nested classes for calls to private inline functions?
+        this is IrFunction && isInline -> null
         else -> (parent as? IrDeclaration)?.getAccessContext(withSuper)
     }
 
