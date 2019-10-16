@@ -31,7 +31,7 @@ class FirSuperTypeScope(
         for (scope in scopes) {
             if (scope.processFunctionsByName(name) { functionSymbol ->
                     empty = false
-                    if (functionSymbol !in accepted && functionSymbol.isOverridden(accepted) == null) {
+                    if (functionSymbol !in accepted && functionSymbol.getOverridden(accepted) == null) {
                         pending += functionSymbol
                         processor(functionSymbol)
                     } else {
@@ -60,7 +60,7 @@ class FirSuperTypeScope(
         for (scope in scopes) {
             if (scope.processPropertiesByName(name) {
                     empty = false
-                    if (it !in accepted && it.isOverridden(accepted) == null) {
+                    if (it !in accepted && it.getOverridden(accepted) == null) {
                         pending += it
                         processor(it)
                     } else {
