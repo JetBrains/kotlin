@@ -15,7 +15,6 @@ import javax.inject.Inject
 open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "node"),
     KotlinJsNodeDsl {
-
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
 
@@ -30,5 +29,8 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     override fun configureRun(compilation: KotlinJsCompilation) {
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased("run"))
         target.runTask.dependsOn(runTaskHolder)
+    }
+
+    override fun configureBuild(compilation: KotlinJsCompilation) {
     }
 }

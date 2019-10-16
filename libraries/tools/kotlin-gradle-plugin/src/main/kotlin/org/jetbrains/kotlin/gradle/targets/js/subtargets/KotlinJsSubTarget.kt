@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
@@ -33,6 +35,8 @@ abstract class KotlinJsSubTarget(
     val runTaskName = disambiguateCamelCased("run")
     val testTaskName = disambiguateCamelCased("test")
 
+    abstract val testTaskDescription: String
+
     final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
         private set
 
@@ -40,12 +44,17 @@ abstract class KotlinJsSubTarget(
         NpmResolverPlugin.apply(project)
 
         configureTests()
-        configureRun()
+        configure { configureRun(it) }
+        configure { configureBuild(it) }
 
         target.compilations.all {
             val npmProject = it.npmProject
             it.compileKotlinTask.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
         }
+    }
+
+    override fun testTask(body: KotlinJsTest.() -> Unit) {
+        testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }
 
     protected fun disambiguateCamelCased(name: String): String =
@@ -65,8 +74,6 @@ abstract class KotlinJsSubTarget(
             configureTestsRun(testRun, compilation)
         }
     }
-
-    abstract val testTaskDescription: String
 
     private fun configureTestsRun(testRun: KotlinJsPlatformTestRun, compilation: KotlinJsCompilation) {
         fun KotlinJsPlatformTestRun.subtargetTestTaskName(): String = disambiguateCamelCased(
@@ -116,17 +123,15 @@ abstract class KotlinJsSubTarget(
 
     protected abstract fun configureDefaultTestFramework(it: KotlinJsTest)
 
-    fun configureRun() {
+    fun configure(configurator: (KotlinJsCompilation) -> Unit) {
         target.compilations.all { compilation ->
             if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
-                configureRun(compilation)
+                configurator(compilation)
             }
         }
     }
 
     protected abstract fun configureRun(compilation: KotlinJsCompilation)
 
-    override fun testTask(body: KotlinJsTest.() -> Unit) {
-        testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
-    }
+    protected abstract fun configureBuild(compilation: KotlinJsCompilation)
 }

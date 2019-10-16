@@ -43,20 +43,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        project.registerTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
-            val compileKotlinTask = compilation.compileKotlinTask
-            it.dependsOn(
-                nodeJs.npmInstallTask,
-                compileKotlinTask
-            )
-
-            it.compilation = compilation
-            it.description = "build webpack bundle"
-
-            project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
-        }
-
-        val run = project.registerTask<KotlinWebpack>(disambiguateCamelCased("run")) {
+        val run = project.registerTask<KotlinWebpack>(runTaskName) {
             val compileKotlinTask = compilation.compileKotlinTask
             it.dependsOn(
                 nodeJs.npmInstallTask,
@@ -78,4 +65,23 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         target.runTask.dependsOn(run)
     }
+
+    override fun configureBuild(compilation: KotlinJsCompilation) {
+        val project = compilation.target.project
+        val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+
+        project.registerTask<KotlinWebpack>(webpackTaskName) {
+            val compileKotlinTask = compilation.compileKotlinTask
+            it.dependsOn(
+                nodeJs.npmInstallTask,
+                compileKotlinTask
+            )
+
+            it.compilation = compilation
+            it.description = "build webpack bundle"
+
+            project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
+        }
+    }
+
 }
