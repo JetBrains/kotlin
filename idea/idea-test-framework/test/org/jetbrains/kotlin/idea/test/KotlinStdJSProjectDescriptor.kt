@@ -17,8 +17,6 @@
 package org.jetbrains.kotlin.idea.test
 
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleType
-import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdDescription
 
 object KotlinStdJSProjectDescriptor : KotlinLightProjectDescriptor() {
-    override fun getModuleType(): ModuleType<*> = StdModuleTypes.JAVA
     override fun getSdk(): Sdk? = null
 
     override fun configureModule(module: Module, model: ModifiableRootModel) {
