@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -36,7 +37,7 @@ open class FirSimpleFunctionImpl(
     override val name: Name,
     override var status: FirDeclarationStatus,
     override val symbol: FirFunctionSymbol<FirSimpleFunction>
-) : FirSimpleFunction, FirModifiableFunction<FirSimpleFunction>, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
+) : FirPureAbstractElement(), FirSimpleFunction, FirModifiableFunction<FirSimpleFunction>, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()

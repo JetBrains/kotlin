@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -36,7 +37,7 @@ class FirJavaField(
     override var returnTypeRef: FirTypeRef,
     override val isVar: Boolean,
     isStatic: Boolean
-) : FirAbstractAnnotatedElement, FirField {
+) : FirPureAbstractElement(), FirAbstractAnnotatedElement, FirField {
     init {
         symbol.bind(this)
     }

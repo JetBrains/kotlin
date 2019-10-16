@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.references.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.name.Name
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirErrorNamedReferenceImpl(
     override val psi: PsiElement?,
     override val errorReason: String
-) : FirErrorNamedReference {
+) : FirPureAbstractElement(), FirErrorNamedReference {
     override val name: Name = Name.special("<$errorReason>")
     override val candidateSymbol: AbstractFirBasedSymbol<*>? get() = null
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
@@ -25,7 +26,7 @@ class FirResolvedFunctionTypeRefImpl(
     override val isMarkedNullable: Boolean,
     override var receiverTypeRef: FirTypeRef?,
     override var returnTypeRef: FirTypeRef
-) : FirResolvedFunctionTypeRef, FirAbstractAnnotatedElement {
+) : FirPureAbstractElement(), FirResolvedFunctionTypeRef, FirAbstractAnnotatedElement {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
 

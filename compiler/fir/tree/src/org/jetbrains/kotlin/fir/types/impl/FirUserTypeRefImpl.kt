@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.transformInplace
 open class FirUserTypeRefImpl(
     override val psi: PsiElement?,
     override val isMarkedNullable: Boolean
-) : FirUserTypeRef, FirAbstractAnnotatedElement {
+) : FirPureAbstractElement(), FirUserTypeRef, FirAbstractAnnotatedElement {
     override val qualifier: MutableList<FirQualifierPart> = mutableListOf()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 

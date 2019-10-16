@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -29,7 +30,7 @@ class FirDefaultSetterValueParameter(
     override val session: FirSession,
     override var returnTypeRef: FirTypeRef,
     override val symbol: FirVariableSymbol<FirValueParameter>
-) : FirValueParameter, FirAbstractAnnotatedElement {
+) : FirPureAbstractElement(), FirValueParameter, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override var receiverTypeRef: FirTypeRef? = null
     override val name: Name = Name.identifier("value")

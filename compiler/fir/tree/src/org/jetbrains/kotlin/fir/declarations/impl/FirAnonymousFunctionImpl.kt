@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -34,7 +35,7 @@ class FirAnonymousFunctionImpl(
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
     override val symbol: FirAnonymousFunctionSymbol
-) : FirAnonymousFunction, FirModifiableFunction<FirAnonymousFunction>, FirAbstractAnnotatedElement {
+) : FirPureAbstractElement(), FirAnonymousFunction, FirModifiableFunction<FirAnonymousFunction>, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()

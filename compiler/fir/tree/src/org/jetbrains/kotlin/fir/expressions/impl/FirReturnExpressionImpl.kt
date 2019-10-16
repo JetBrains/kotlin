@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirReturnExpressionImpl(
     override val psi: PsiElement?,
     override var result: FirExpression
-) : FirReturnExpression, FirAbstractAnnotatedElement {
+) : FirPureAbstractElement(), FirReturnExpression, FirAbstractAnnotatedElement {
     override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(psi)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var target: FirTarget<FirFunction<*>>

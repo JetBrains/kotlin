@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -25,7 +26,7 @@ class FirDelegatedConstructorCallImpl(
     override val psi: PsiElement?,
     override var constructedTypeRef: FirTypeRef,
     override val isThis: Boolean
-) : FirDelegatedConstructorCall, FirCallWithArgumentList, FirAbstractAnnotatedElement {
+) : FirPureAbstractElement(), FirDelegatedConstructorCall, FirCallWithArgumentList, FirAbstractAnnotatedElement {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val arguments: MutableList<FirExpression> = mutableListOf()
     override val isSuper: Boolean get() = !isThis

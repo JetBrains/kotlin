@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -22,7 +23,7 @@ sealed class FirImplicitBuiltinTypeRef(
     val id: ClassId,
     typeArguments: Array<out ConeKotlinTypeProjection> = emptyArray(),
     isNullable: Boolean = false
-) : FirResolvedTypeRef {
+) : FirPureAbstractElement(), FirResolvedTypeRef {
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
 

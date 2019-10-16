@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.references.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.name.Name
@@ -20,7 +21,7 @@ class FirResolvedCallableReferenceImpl(
     override val psi: PsiElement?,
     override val name: Name,
     override val resolvedSymbol: AbstractFirBasedSymbol<*>
-) : FirResolvedCallableReference {
+) : FirPureAbstractElement(), FirResolvedCallableReference {
     override val candidateSymbol: AbstractFirBasedSymbol<*>? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.CONSTRUCTOR_NAME
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -36,7 +37,7 @@ class FirJavaConstructor(
     override val isPrimary: Boolean,
     isInner: Boolean,
     override var returnTypeRef : FirTypeRef
-) : FirAbstractAnnotatedElement, FirConstructor {
+) : FirPureAbstractElement(), FirAbstractAnnotatedElement, FirConstructor {
     override val receiverTypeRef: FirTypeRef? get() = null
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override val name: Name get() = CONSTRUCTOR_NAME

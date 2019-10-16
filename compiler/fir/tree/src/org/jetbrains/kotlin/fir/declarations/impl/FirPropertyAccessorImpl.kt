@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -34,7 +35,7 @@ open class FirPropertyAccessorImpl(
     override val symbol: FirPropertyAccessorSymbol,
     override val isGetter: Boolean,
     override var status: FirDeclarationStatus
-) : FirPropertyAccessor, FirModifiableFunction<FirPropertyAccessor>, FirAbstractAnnotatedElement {
+) : FirPureAbstractElement(), FirPropertyAccessor, FirModifiableFunction<FirPropertyAccessor>, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override var receiverTypeRef: FirTypeRef? = null
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()

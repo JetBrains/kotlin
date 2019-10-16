@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.references.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirExplicitSuperReference(
     override val psi: PsiElement?,
     override var superTypeRef: FirTypeRef
-) : FirSuperReference {
+) : FirPureAbstractElement(), FirSuperReference {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         superTypeRef.accept(visitor, data)
     }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 open class FirDeclarationStatusImpl(
     override val visibility: Visibility,
     override val modality: Modality?
-) : FirDeclarationStatus {
+) : FirPureAbstractElement(), FirDeclarationStatus {
     override val psi: PsiElement? get() = null
     protected var flags: Int = 0
 

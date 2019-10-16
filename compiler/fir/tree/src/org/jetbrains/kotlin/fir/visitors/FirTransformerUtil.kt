@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 
 fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
-    return transform<T, D>(transformer, data).single
+    return (this as FirPureAbstractElement).transform<T, D>(transformer, data).single
 }
 
 fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
     val iterator = this.listIterator()
     while (iterator.hasNext()) {
-        val next = iterator.next()
+        val next = iterator.next() as FirPureAbstractElement
         val result = next.transform<T, D>(transformer, data)
         if (result.isSingle) {
             iterator.set(result.single)

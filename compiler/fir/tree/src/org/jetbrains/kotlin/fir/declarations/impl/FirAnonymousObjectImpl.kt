@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirAnonymousObjectImpl(
     override val psi: PsiElement?,
     override val session: FirSession
-) : FirAnonymousObject, FirModifiableClass, FirAbstractAnnotatedElement {
+) : FirPureAbstractElement(), FirAnonymousObject, FirModifiableClass, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val classKind: ClassKind get() = ClassKind.OBJECT
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -25,7 +26,7 @@ class FirBinaryLogicExpressionImpl(
     override var leftOperand: FirExpression,
     override var rightOperand: FirExpression,
     override val kind: LogicOperationKind
-) : FirBinaryLogicExpression, FirAbstractAnnotatedElement {
+) : FirPureAbstractElement(), FirBinaryLogicExpression, FirAbstractAnnotatedElement {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 

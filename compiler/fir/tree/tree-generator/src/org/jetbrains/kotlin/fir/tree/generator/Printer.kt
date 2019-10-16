@@ -169,7 +169,8 @@ fun Implementation.generateCode(generationPath: String) {
 
 fun Implementation.collectImports(): List<String> {
     return element.collectImportsInternal(
-        listOf(element.fullQualifiedName) + usedTypes.mapNotNull { it.fullQualifiedName } + parents.mapNotNull { it.fullQualifiedName },
+        listOf(element.fullQualifiedName) + usedTypes.mapNotNull { it.fullQualifiedName } + parents.mapNotNull { it.fullQualifiedName }
+                + listOfNotNull(pureAbstractElementType.fullQualifiedName?.takeIf { kind != Implementation.Kind.Interface }),
         isImpl = true
     )
 }
@@ -272,7 +273,11 @@ fun PrintWriter.printImplementation(implementation: Implementation) {
             print(")")
         }
 
-        print(" : ${element.typeWithArguments}")
+        print(" : ")
+        if (!isInterface) {
+            print("${pureAbstractElementType.type}(), ")
+        }
+        print(element.typeWithArguments)
         parents.forEach {
             print(", ${it.typeWithArguments}")
         }

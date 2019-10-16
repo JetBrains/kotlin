@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCatch
@@ -20,7 +21,7 @@ class FirCatchImpl(
     override val psi: PsiElement?,
     override var parameter: FirValueParameter,
     override var block: FirBlock
-) : FirCatch {
+) : FirPureAbstractElement(), FirCatch {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         parameter.accept(visitor, data)
         block.accept(visitor, data)

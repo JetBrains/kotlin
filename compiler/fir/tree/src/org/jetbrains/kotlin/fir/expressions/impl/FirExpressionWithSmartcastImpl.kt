@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -20,7 +21,7 @@ class FirExpressionWithSmartcastImpl(
     override var originalExpression: FirQualifiedAccessExpression,
     override val typeRef: FirTypeRef,
     override val typesFromSmartcast: Collection<ConeKotlinType>
-) : FirExpressionWithSmartcast {
+) : FirPureAbstractElement(), FirExpressionWithSmartcast {
     init {
         assert(originalExpression.typeRef is FirResolvedTypeRef)
     }
