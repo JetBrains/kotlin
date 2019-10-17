@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.functionSignature
@@ -126,11 +125,12 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
             function.parent,
             bridge.visibility,
             bridge.modality, // TODO: should copy modality?
-            bridge.isInline,
-            bridge.isExternal,
-            bridge.isTailrec,
-            bridge.isSuspend,
-            origin
+            isInline = bridge.isInline,
+            isExternal = bridge.isExternal,
+            isTailrec = bridge.isTailrec,
+            isSuspend = bridge.isSuspend,
+            isExpect = bridge.isExpect,
+            origin = origin
         ).apply {
             copyTypeParametersFrom(bridge)
             // TODO: should dispatch receiver be copied?

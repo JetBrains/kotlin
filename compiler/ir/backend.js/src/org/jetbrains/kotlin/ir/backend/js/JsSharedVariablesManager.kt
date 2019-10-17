@@ -48,9 +48,11 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
 
         val constructorSymbol = closureBoxConstructorDeclaration.symbol
 
-        val irCall = IrConstructorCallImpl.fromSymbolDescriptor(initializer.startOffset, initializer.endOffset, closureBoxType, constructorSymbol).apply {
-            putValueArgument(0, initializer)
-        }
+        val irCall =
+            IrConstructorCallImpl.fromSymbolDescriptor(initializer.startOffset, initializer.endOffset, closureBoxType, constructorSymbol)
+                .apply {
+                    putValueArgument(0, initializer)
+                }
 
         val descriptor = WrappedVariableDescriptor()
         return IrVariableImpl(
@@ -127,7 +129,8 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
         val descriptor = WrappedClassDescriptor()
         val declaration = IrClassImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS_DECLARATION, IrClassSymbolImpl(descriptor),
-            Name.identifier(boxTypeName), ClassKind.CLASS, Visibilities.PUBLIC, Modality.FINAL, false, false, false, false, false
+            Name.identifier(boxTypeName), ClassKind.CLASS, Visibilities.PUBLIC, Modality.FINAL,
+            isCompanion = false, isInner = false, isData = false, isExternal = false, isInline = false, isExpect = false
         )
 
         descriptor.bind(declaration)
@@ -135,9 +138,9 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
         // TODO: substitute
         closureBoxType = IrSimpleTypeImpl(declaration.symbol, false, emptyList(), emptyList())
         declaration.thisReceiver =
-                JsIrBuilder.buildValueParameter(Name.special("<this>"), -1, closureBoxType, IrDeclarationOrigin.INSTANCE_RECEIVER).apply {
-                    parent = declaration
-                }
+            JsIrBuilder.buildValueParameter(Name.special("<this>"), -1, closureBoxType, IrDeclarationOrigin.INSTANCE_RECEIVER).apply {
+                parent = declaration
+            }
         implicitDeclarationsFile.declarations += declaration
 
         return declaration
@@ -171,7 +174,8 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
 
         val declaration = IrConstructorImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS_DECLARATION, symbol,
-            Name.special("<init>"), Visibilities.PUBLIC, closureBoxClassDeclaration.defaultType, false, false, true
+            Name.special("<init>"), Visibilities.PUBLIC, closureBoxClassDeclaration.defaultType,
+            isInline = false, isExternal = false, isPrimary = true, isExpect = false
         )
 
         descriptor.bind(declaration)

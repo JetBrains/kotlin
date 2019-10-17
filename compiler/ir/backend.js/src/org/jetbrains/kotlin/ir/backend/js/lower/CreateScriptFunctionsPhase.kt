@@ -104,7 +104,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
             IrSimpleFunctionSymbolImpl(descriptor),
             Name.identifier(name),
             Visibilities.PRIVATE, Modality.FINAL, returnType,
-            isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+            isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false
         ).also {
             descriptor.bind(it)
             it.parent = irScript

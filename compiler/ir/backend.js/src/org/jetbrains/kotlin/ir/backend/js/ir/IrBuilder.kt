@@ -93,6 +93,7 @@ object JsIrBuilder {
         isExternal: Boolean = false,
         isTailrec: Boolean = false,
         isSuspend: Boolean = false,
+        isExpect: Boolean = false,
         origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
     ) = buildFunction(
         Name.identifier(name),
@@ -100,11 +101,12 @@ object JsIrBuilder {
         parent,
         visibility,
         modality,
-        isInline,
-        isExternal,
-        isTailrec,
-        isSuspend,
-        origin
+        isInline = isInline,
+        isExternal = isExternal,
+        isTailrec = isTailrec,
+        isSuspend = isSuspend,
+        isExpect = isExpect,
+        origin = origin
     )
 
     fun buildFunction(
@@ -117,6 +119,7 @@ object JsIrBuilder {
         isExternal: Boolean = false,
         isTailrec: Boolean = false,
         isSuspend: Boolean = false,
+        isExpect: Boolean = false,
         origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
     ): IrSimpleFunction {
         val descriptor = WrappedSimpleFunctionDescriptor()
@@ -129,10 +132,11 @@ object JsIrBuilder {
             visibility,
             modality,
             returnType,
-            isInline,
-            isExternal,
-            isTailrec,
-            isSuspend
+            isInline = isInline,
+            isExternal = isExternal,
+            isTailrec = isTailrec,
+            isSuspend = isSuspend,
+            isExpect = isExpect
         ).also {
             descriptor.bind(it)
             it.parent = parent
