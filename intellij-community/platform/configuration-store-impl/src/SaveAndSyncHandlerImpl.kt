@@ -56,9 +56,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
   private val saveAlarm = pooledThreadSingleAlarm(delay = 300, parentDisposable = this) {
     val app = ApplicationManager.getApplication()
     if (app != null && !app.isDisposedOrDisposeInProgress && blockSaveOnFrameDeactivationCount.get() == 0) {
-      runBlocking {
-        processTasks()
-      }
+      processTasks()
     }
   }
 
@@ -67,7 +65,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
     EdtScheduledExecutorService.getInstance().schedule({ addListeners() }, LISTEN_DELAY.toLong(), TimeUnit.SECONDS)
   }
 
-  private suspend fun processTasks() {
+  private fun processTasks() {
     while (true) {
       val task = synchronized(saveQueue) {
         saveQueue.pollFirst() ?: return
@@ -78,16 +76,18 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
       }
 
       LOG.runAndLogException {
-        coroutineScope {
-          if (task.saveDocuments) {
-            launch(storeEdtCoroutineDispatcher) {
-              // forceSavingAllSettings is set to true currently only if save triggered explicitly (or on close app/project), so, pass equal isDocumentsSavingExplicit
-              // in any case flag isDocumentsSavingExplicit is not really important
-              (FileDocumentManagerImpl.getInstance() as FileDocumentManagerImpl).saveAllDocuments(task.forceSavingAllSettings)
+        runBlocking {
+          coroutineScope {
+            if (task.saveDocuments) {
+              launch(storeEdtCoroutineDispatcher) {
+                // forceSavingAllSettings is set to true currently only if save triggered explicitly (or on close app/project), so, pass equal isDocumentsSavingExplicit
+                // in any case flag isDocumentsSavingExplicit is not really important
+                (FileDocumentManagerImpl.getInstance() as FileDocumentManagerImpl).saveAllDocuments(task.forceSavingAllSettings)
+              }
             }
-          }
-          launch {
-            saveProjectsAndApp(forceSavingAllSettings = task.forceSavingAllSettings, onlyProject = task.onlyProject)
+            launch {
+              saveProjectsAndApp(forceSavingAllSettings = task.forceSavingAllSettings, onlyProject = task.onlyProject)
+            }
           }
         }
       }
@@ -289,7 +289,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
       FileEditorManager.getInstance(project).selectedFiles.filterTo(files) { it is NewVirtualFile }
     }
 
-    if (!files.isEmpty()) {
+    if (files.isNotEmpty()) {
       // refresh open files synchronously so it doesn't wait for potentially longish refresh request in the queue to finish
       RefreshQueue.getInstance().refresh(false, false, null, files)
     }
