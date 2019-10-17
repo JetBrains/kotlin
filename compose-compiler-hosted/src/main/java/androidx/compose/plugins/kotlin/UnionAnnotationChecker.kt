@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-class UnionAnnotationCheckerProvider() : StorageComponentContainerContributor {
+open class UnionAnnotationCheckerProvider() : StorageComponentContainerContributor {
     override fun registerModuleComponents(
         container: StorageComponentContainer,
         platform: TargetPlatform,
@@ -47,7 +47,7 @@ class UnionAnnotationCheckerProvider() : StorageComponentContainerContributor {
     }
 }
 
-class UnionAnnotationChecker(val moduleDescriptor: ModuleDescriptor) : AdditionalTypeChecker {
+open class UnionAnnotationChecker(val moduleDescriptor: ModuleDescriptor) : AdditionalTypeChecker {
     companion object {
         val UNIONTYPE_ANNOTATION_NAME =
             ComposeUtils.composeFqName("UnionType")
