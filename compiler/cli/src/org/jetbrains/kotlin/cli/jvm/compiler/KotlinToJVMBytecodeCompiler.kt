@@ -353,6 +353,8 @@ object KotlinToJVMBytecodeCompiler {
                 module
             ).onIndependentPartCompilationEnd(
                 createOutputFilesFlushingCallbackIfPossible(moduleConfiguration)
+            ).isIrBackend(
+                true
             ).build()
 
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -623,6 +625,7 @@ object KotlinToJVMBytecodeCompiler {
             )
             .withModule(module)
             .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
+            .isIrBackend(isIR)
             .build()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
