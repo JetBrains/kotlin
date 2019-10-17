@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.config.ExternalSystemTestTask
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING
+import org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver.Companion.fullName
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -868,7 +869,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 info.gradleModuleId = getModuleId(resolverCtx, gradleModule)
                 info.actualPlatforms.addSimplePlatforms(sourceSet.actualPlatforms.platforms)
                 info.isTestModule = sourceSet.isTestModule
-                info.dependsOn = sourceSet.dependsOnSourceSets.toList().map { gradleModule.name + "_" + it }
+                info.dependsOn = sourceSet.dependsOnSourceSets.toList().map {
+                    getModuleId(resolverCtx, gradleModule) + ":" + it
+                }
                 //TODO(auskov): target flours are lost here
                 info.compilerArguments = createCompilerArguments(emptyList(), sourceSet.actualPlatforms.getSinglePlatform()).also {
                     it.multiPlatform = true

@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.idea.caches.project
 
 import com.intellij.facet.FacetManager
 import com.intellij.facet.FacetTypeRegistry
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
@@ -58,7 +61,11 @@ val Module.implementingModules: List<Module>
         when (facetSettings?.mppVersion) {
             null -> emptyList()
 
-            KotlinMultiplatformVersion.M3 -> moduleManager.modules.filter { it.facetSettings?.dependsOnModuleNames?.contains(name) == true }
+            KotlinMultiplatformVersion.M3 -> {
+                val thisModuleStableName = stableModuleName
+
+                moduleManager.modules.filter { it.facetSettings?.dependsOnModuleNames?.contains(thisModuleStableName) == true }
+            }
 
             KotlinMultiplatformVersion.M2 -> moduleManager.getModuleDependentModules(this).filter {
                 it.isNewMPPModule && it.externalProjectId == externalProjectId
@@ -68,6 +75,19 @@ val Module.implementingModules: List<Module>
         }
     }
 
+private val Module.stableModuleName: String
+    get() = ExternalSystemModulePropertyManager.getInstance(this).getLinkedProjectId()
+        ?: name.also {
+            if (!ApplicationManager.getApplication().isUnitTestMode) LOG.error("Don't have a LinkedProjectId for module $this for HMPP!")
+        }
+
+private val Project.modulesByLinkedKey: Map<String, Module>
+    get() = cacheInvalidatingOnRootModifications {
+        val moduleManager = ModuleManager.getInstance(this)
+
+        moduleManager.modules.associateBy { it.stableModuleName }
+    }
+
 val Module.implementedModules: List<Module>
     get() = cacheInvalidatingOnRootModifications {
         val facetSettings = facetSettings
@@ -75,8 +95,9 @@ val Module.implementedModules: List<Module>
             null -> emptyList()
 
             KotlinMultiplatformVersion.M3 -> {
-                val modelsProvider = IdeModelsProviderImpl(project)
-                facetSettings.dependsOnModuleNames.mapNotNull { modelsProvider.findIdeModule(it) }
+                facetSettings.dependsOnModuleNames.mapNotNull {
+                    project.modulesByLinkedKey[it]
+                }
             }
 
             KotlinMultiplatformVersion.M2 -> {
