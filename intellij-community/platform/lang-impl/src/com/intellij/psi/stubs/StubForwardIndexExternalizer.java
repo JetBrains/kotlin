@@ -109,11 +109,12 @@ public abstract class StubForwardIndexExternalizer<StubKeySerializationState> im
     public static final FileLocalStubForwardIndexExternalizer INSTANCE = new FileLocalStubForwardIndexExternalizer();
 
     @Override
-    protected FileLocalStringEnumerator createStubIndexKeySerializationState(@NotNull DataOutput out, @NotNull Set<StubIndexKey> set) {
+    protected FileLocalStringEnumerator createStubIndexKeySerializationState(@NotNull DataOutput out, @NotNull Set<StubIndexKey> set) throws IOException {
       FileLocalStringEnumerator enumerator = new FileLocalStringEnumerator(true);
       for (StubIndexKey<?, ?> key : set) {
         enumerator.enumerate(key.getName());
       }
+      enumerator.write(out);
       return enumerator;
     }
 
