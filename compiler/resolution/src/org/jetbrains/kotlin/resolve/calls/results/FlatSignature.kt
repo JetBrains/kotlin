@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.results
 
+import org.jetbrains.kotlin.builtins.getAllParameterProjectionsFromCallableReflectionType
 import org.jetbrains.kotlin.container.DefaultImplementation
-import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
 import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
@@ -62,7 +62,7 @@ class FlatSignature<out T> constructor(
             return FlatSignature(
                 origin,
                 descriptor.typeParameters,
-                reflectionType.arguments.map { it.type }, // should we drop return type?
+                reflectionType.getAllParameterProjectionsFromCallableReflectionType().map { it.type },
                 hasExtensionReceiver = false,
                 hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                 numDefaults = numDefaults,

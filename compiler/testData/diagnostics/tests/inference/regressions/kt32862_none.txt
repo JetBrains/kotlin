@@ -1,0 +1,6 @@
+package
+
+public fun bar(/*0*/ f: (kotlin.Boolean) -> kotlin.Unit): kotlin.Unit
+public fun foo(/*0*/ i: kotlin.Long): kotlin.Unit
+public fun foo(/*0*/ s: kotlin.String): kotlin.Unit
+public fun test(): kotlin.Unit

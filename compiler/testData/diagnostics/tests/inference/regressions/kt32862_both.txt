@@ -1,0 +1,29 @@
+package
+
+public fun forReference(/*0*/ ref: kotlin.Any?): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun </*0*/ V, /*1*/ T : V?> G<T>.foo(/*0*/ vararg values: V1<V> /*kotlin.Array<out V1<V>>*/): G<T>
+public fun </*0*/ V, /*1*/ T : V?> G<T>.foo(/*0*/ vararg values: V2<V?> /*kotlin.Array<out V2<V?>>*/): G<T>
+
+public interface G</*0*/ T> {
+    public abstract fun build(): G<T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class V1</*0*/ V> {
+    public constructor V1</*0*/ V>(/*0*/ value: V)
+    public final val value: V
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class V2</*0*/ V> {
+    public constructor V2</*0*/ V>(/*0*/ value: V)
+    public final val value: V
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
