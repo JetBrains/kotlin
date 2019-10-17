@@ -46,6 +46,11 @@ public class FirCfgBuildingTestGenerated extends AbstractFirCfgBuildingTest {
             runTest("compiler/fir/resolve/testData/resolve/cfg/complex.kt");
         }
 
+        @TestMetadata("emptyWhen.kt")
+        public void testEmptyWhen() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/emptyWhen.kt");
+        }
+
         @TestMetadata("initBlock.kt")
         public void testInitBlock() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/initBlock.kt");

@@ -353,15 +353,20 @@ class FirDataFlowAnalyzer(transformer: FirBodyResolveTransformer) : BodyResolveC
     fun exitWhenExpression(whenExpression: FirWhenExpression) {
         val (whenExitNode, syntheticElseNode) = graphBuilder.exitWhenExpression(whenExpression)
         if (syntheticElseNode != null) {
-            val previousConditionExitNode = syntheticElseNode.previousNodes.single() as WhenBranchConditionExitNode
             syntheticElseNode.mergeIncomingFlow()
-            syntheticElseNode.flow = logicSystem.approveFactsInsideFlow(
-                variablesForWhenConditions.remove(previousConditionExitNode)!!,
-                EqFalse,
-                syntheticElseNode.flow,
-                shouldForkFlow = true,
-                shouldRemoveSynthetics = true
-            )
+            val previousConditionExitNode = syntheticElseNode.previousNodes.single() as? WhenBranchConditionExitNode
+            // previous node for syntheticElseNode can be not WhenBranchConditionExitNode in case of `when` without any branches
+            // in that case there will be when enter or subject access node
+            if (previousConditionExitNode != null) {
+                syntheticElseNode.flow = logicSystem.approveFactsInsideFlow(
+                    variablesForWhenConditions.remove(previousConditionExitNode)!!,
+                    EqFalse,
+                    syntheticElseNode.flow,
+                    shouldForkFlow = true,
+                    shouldRemoveSynthetics = true
+                )
+            }
+
         }
         val previousFlows = whenExitNode.alivePreviousNodes.map { it.flow }
         val flow = logicSystem.joinFlow(previousFlows)

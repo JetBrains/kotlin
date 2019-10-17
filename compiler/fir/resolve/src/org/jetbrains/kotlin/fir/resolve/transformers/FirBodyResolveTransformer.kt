@@ -532,20 +532,25 @@ open class FirBodyResolveTransformer(
             }
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(this, noExpectedType)
-            if (whenExpression.isOneBranch()) {
-                whenExpression = whenExpression.transformBranches(this, noExpectedType)
-                whenExpression.resultType = whenExpression.branches.first().result.resultType
-            } else {
-                whenExpression = whenExpression.transformBranches(this, null)
 
-                whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression) ?: run {
-                    dataFlowAnalyzer.exitWhenExpression(whenExpression)
-                    whenExpression.resultType = FirErrorTypeRefImpl(null, "")
-                    return@with whenExpression.compose()
+            when {
+                whenExpression.branches.isEmpty() -> {}
+                whenExpression.isOneBranch() -> {
+                    whenExpression = whenExpression.transformBranches(this, noExpectedType)
+                    whenExpression.resultType = whenExpression.branches.first().result.resultType
                 }
+                else -> {
+                    whenExpression = whenExpression.transformBranches(this, null)
 
-                val expectedTypeRef = data as FirTypeRef?
-                whenExpression = callCompleter.completeCall(whenExpression, expectedTypeRef)
+                    whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression) ?: run {
+                        dataFlowAnalyzer.exitWhenExpression(whenExpression)
+                        whenExpression.resultType = FirErrorTypeRefImpl(null, "")
+                        return@with whenExpression.compose()
+                    }
+
+                    val expectedTypeRef = data as FirTypeRef?
+                    whenExpression = callCompleter.completeCall(whenExpression, expectedTypeRef)
+                }
             }
             whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
             dataFlowAnalyzer.exitWhenExpression(whenExpression)

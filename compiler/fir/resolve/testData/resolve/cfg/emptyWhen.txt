@@ -1,0 +1,16 @@
+FILE: emptyWhen.kt
+    public final fun test_1(): R|kotlin/Unit| {
+        when () {
+        }
+
+    }
+    public final fun test_2(x: R|kotlin/Int|): R|kotlin/Unit| {
+        when (R|<local>/x|) {
+        }
+
+    }
+    public final fun test_3(x: R|kotlin/Int|): R|kotlin/Unit| {
+        when (lval y: R|kotlin/Int| = R|<local>/x|) {
+        }
+
+    }
