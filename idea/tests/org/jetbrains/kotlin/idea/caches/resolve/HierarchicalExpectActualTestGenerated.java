@@ -97,4 +97,9 @@ public class HierarchicalExpectActualTestGenerated extends AbstractHierarchicalE
     public void testIncompleteActualization() throws Exception {
         runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/incompleteActualization/");
     }
+
+    @TestMetadata("weaklyIncompatibleActualInIntermediateModule")
+    public void testWeaklyIncompatibleActualInIntermediateModule() throws Exception {
+        runTest("idea/testData/multiModuleHighlighting/hierarchicalExpectActualMatching/weaklyIncompatibleActualInIntermediateModule/");
+    }
 }
