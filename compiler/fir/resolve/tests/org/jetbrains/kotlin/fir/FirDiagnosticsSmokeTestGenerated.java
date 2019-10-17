@@ -10760,6 +10760,16 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
                 runTest("compiler/testData/diagnostics/tests/inference/regressions/kt3174.kt");
             }
 
+            @TestMetadata("kt32862_both.kt")
+            public void testKt32862_both() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/regressions/kt32862_both.kt");
+            }
+
+            @TestMetadata("kt32862_none.kt")
+            public void testKt32862_none() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/regressions/kt32862_none.kt");
+            }
+
             @TestMetadata("kt3301.kt")
             public void testKt3301() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/regressions/kt3301.kt");

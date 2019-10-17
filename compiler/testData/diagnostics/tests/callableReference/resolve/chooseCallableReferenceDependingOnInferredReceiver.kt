@@ -31,7 +31,7 @@ fun test() {
             val t3 = bar(::baz)
             <!DEBUG_INFO_EXPRESSION_TYPE("B")!>t3<!>
 
-            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(::<!DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)
+            <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, DEBUG_INFO_MISSING_UNRESOLVED!>foo<!>)
         }
     }
 }

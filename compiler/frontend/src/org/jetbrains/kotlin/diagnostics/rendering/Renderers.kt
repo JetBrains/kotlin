@@ -190,10 +190,21 @@ object Renderers {
     @JvmField
     val AMBIGUOUS_CALLS = Renderer { calls: Collection<ResolvedCall<*>> ->
         val descriptors = calls.map { it.resultingDescriptor }
+        renderAmbiguousDescriptors(descriptors)
+    }
+
+    @JvmField
+    val AMBIGUOUS_CALLABLE_REFERENCES = Renderer { references: Collection<CallableDescriptor> ->
+        renderAmbiguousDescriptors(references)
+    }
+
+    private fun renderAmbiguousDescriptors(descriptors: Collection<CallableDescriptor>): String {
         val context = RenderingContext.Impl(descriptors)
-        descriptors
+        return descriptors
             .sortedWith(MemberComparator.INSTANCE)
-            .joinToString(separator = "\n", prefix = "\n") { FQ_NAMES_IN_TYPES.render(it, context) }
+            .joinToString(separator = "\n", prefix = "\n") {
+                FQ_NAMES_IN_TYPES.render(it, context)
+            }
     }
 
     @JvmStatic
