@@ -27,12 +27,15 @@ import org.jetbrains.kotlin.idea.core.canBeInternal
 import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.canBeProtected
 import org.jetbrains.kotlin.idea.core.setVisibility
+import org.jetbrains.kotlin.idea.inspections.RemoveRedundantSetterFix
+import org.jetbrains.kotlin.idea.inspections.isRedundantSetter
 import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.ExposedVisibilityChecker
 
 open class ChangeVisibilityFix(
@@ -51,6 +54,11 @@ open class ChangeVisibilityFix(
         }
 
         element?.setVisibility(visibilityModifier)
+
+        val propertyAccessor = element as? KtPropertyAccessor
+        if (propertyAccessor?.isRedundantSetter() == true) {
+            RemoveRedundantSetterFix.removeRedundantSetter(propertyAccessor)
+        }
     }
 
     protected class ChangeToPublicFix(element: KtModifierListOwner, elementName: String) :

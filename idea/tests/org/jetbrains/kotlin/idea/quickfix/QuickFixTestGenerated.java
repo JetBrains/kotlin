@@ -7790,6 +7790,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/increaseVisibility/privateSealedClassInheritance.kt");
         }
 
+        @TestMetadata("privateSetterToInternal.kt")
+        public void testPrivateSetterToInternal() throws Exception {
+            runTest("idea/testData/quickfix/increaseVisibility/privateSetterToInternal.kt");
+        }
+
+        @TestMetadata("privateSetterToPublic.kt")
+        public void testPrivateSetterToPublic() throws Exception {
+            runTest("idea/testData/quickfix/increaseVisibility/privateSetterToPublic.kt");
+        }
+
         @TestMetadata("protectedMemberToPublicSingleFile.kt")
         public void testProtectedMemberToPublicSingleFile() throws Exception {
             runTest("idea/testData/quickfix/increaseVisibility/protectedMemberToPublicSingleFile.kt");
