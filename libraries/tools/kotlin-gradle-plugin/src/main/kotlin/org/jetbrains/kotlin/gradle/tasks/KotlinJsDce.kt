@@ -67,7 +67,9 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
     @TaskAction
     fun performDce() {
-        val inputFiles = (listOf(source) + classpath.map { project.fileTree(it) })
+        val inputFiles = (listOf(source) + classpath
+            .filter { isDceCandidate(it) }
+            .map { project.fileTree(it) })
             .reduce(FileTree::plus)
             .files.map { it.path }
 
@@ -82,5 +84,17 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
             log
         )
         throwGradleExceptionIfError(exitCode)
+    }
+
+    private fun isDceCandidate(file: File): Boolean {
+        if (file.extension == "jar") {
+            return true
+        }
+
+        if (file.extension != "js" || file.name.endsWith(".meta.js")) {
+            return false
+        }
+
+        return File("${file.nameWithoutExtension}.meta.js").exists()
     }
 }
