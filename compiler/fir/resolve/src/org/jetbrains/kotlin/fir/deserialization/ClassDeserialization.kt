@@ -51,7 +51,8 @@ fun deserializeClassToSymbol(
         isData = Flags.IS_DATA.get(classProto.flags)
         isInline = Flags.IS_INLINE_CLASS.get(classProto.flags)
     }
-    val firClass = if (modality == Modality.SEALED) {
+    val isSealed = modality == Modality.SEALED
+    val firClass = if (isSealed) {
         FirSealedClassImpl(
             null,
             session,
@@ -131,6 +132,11 @@ fun deserializeClassToSymbol(
                 symbol.fir
             }
         )
+
+        if (isSealed) {
+            classProto.sealedSubclassFqNameList.mapTo((firClass as FirSealedClassImpl).inheritors) {
+                ClassId.fromString(nameResolver.getQualifiedClassName(it))
+            }
+        }
     }
 }
-
