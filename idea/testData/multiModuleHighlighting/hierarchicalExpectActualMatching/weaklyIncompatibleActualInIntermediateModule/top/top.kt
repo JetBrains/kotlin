@@ -1,5 +1,5 @@
 package sample
 
-expect class <!AMBIGUOUS_ACTUALS("Class 'A'", "middle, middle")!>A<!> {
+expect class A {
     fun f()
 }
