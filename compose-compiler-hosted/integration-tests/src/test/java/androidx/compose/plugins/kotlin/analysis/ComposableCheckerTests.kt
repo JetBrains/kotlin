@@ -282,7 +282,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import android.widget.TextView;
 
             fun foo() {
-                val myVariable: ()->Unit = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>@Composable {
+                val myVariable: ()->Unit = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE!>@Composable {
                  TextView(text="Hello World!") }<!>
                 System.out.println(myVariable)
             }
@@ -403,7 +403,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import android.widget.TextView;
 
             fun foo(v: @Composable() ()->Unit) {
-                val myVariable: ()->Unit = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>v<!>
+                val myVariable: ()->Unit = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE!>v<!>
                 myVariable()
             }
         """)
@@ -485,7 +485,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             fun test(f: @Composable() ()->Unit) {
-                val f2: @Composable() ()->Unit = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>identity(<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>f<!>)<!>;
+                val f2: @Composable() ()->Unit = <!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE!>identity (<!TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE!>f<!>)<!>;
                 f2()
             }
         """)

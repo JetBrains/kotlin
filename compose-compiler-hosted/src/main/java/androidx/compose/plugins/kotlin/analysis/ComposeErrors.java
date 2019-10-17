@@ -20,17 +20,12 @@ import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 import com.intellij.psi.PsiElement;
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory3;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtReferenceExpression;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
@@ -62,6 +57,8 @@ public interface ComposeErrors {
             CHILDREN_MUST_BE_LAST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement>
             ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory2<KtElement, KotlinType, KotlinType>
+            TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE = DiagnosticFactory2.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object INITIALIZER = new Object() {

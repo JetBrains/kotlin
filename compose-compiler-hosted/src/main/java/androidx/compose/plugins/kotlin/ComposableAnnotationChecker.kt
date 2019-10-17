@@ -68,10 +68,8 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
-import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
@@ -459,12 +457,13 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
                     if (expression.parent is KtAnnotatedExpression)
                         expression.parent as KtExpression
                     else expression
-                c.trace.report(
-                    Errors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(
+                c.trace.reportFromPlugin(
+                    ComposeErrors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE.on(
                         reportOn,
                         expectedType,
                         expressionTypeWithSmartCast
-                    )
+                    ),
+                    ComposeDefaultErrorMessages
                 )
             }
             return
@@ -488,12 +487,13 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
                     if (expression.parent is KtAnnotatedExpression)
                         expression.parent as KtExpression
                     else expression
-                c.trace.report(
-                    Errors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH.on(
+                c.trace.reportFromPlugin(
+                    ComposeErrors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE.on(
                         reportOn,
                         expectedType,
                         expressionTypeWithSmartCast
-                    )
+                    ),
+                    ComposeDefaultErrorMessages
                 )
             }
             return
