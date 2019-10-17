@@ -98,7 +98,10 @@ class MultipleRootsInjectedFileViewProvider extends MultiplePsiFilesPerDocumentF
   @NotNull
   @Override
   protected MultiplePsiFilesPerDocumentFileViewProvider cloneInner(@NotNull VirtualFile fileCopy) {
-    return (MultiplePsiFilesPerDocumentFileViewProvider)getManager().getFileManager().createFileViewProvider(fileCopy, false);
+    FileViewProvider originalProvider = getManager().getFileManager().createFileViewProvider(fileCopy, false);
+    assert originalProvider instanceof MultiplePsiFilesPerDocumentFileViewProvider :
+      "Original provider " + originalProvider + " is not multi-root for " + fileCopy + ", cached provider: " + myOriginalProvider;
+    return (MultiplePsiFilesPerDocumentFileViewProvider)originalProvider;
   }
 
   @Override
