@@ -31,7 +31,9 @@ import junit.framework.TestCase;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.collections.SetsKt;
+import kotlin.io.FilesKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.text.Charsets;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -110,6 +112,7 @@ public class KotlinTestUtils {
 
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
+    private static final String AUTOMATICALLY_MUTE_FAILED_TESTS_WITH_CONTENT = null;
 
     private static final List<File> filesToDelete = new ArrayList<>();
 
@@ -1077,7 +1080,9 @@ public class KotlinTestUtils {
     private static void testWithMuteInFile(DoTest test, String testDataFilePath) throws Exception {
         File testDataFile = new File(testDataFilePath);
 
-        if (isMutedWithFile(testDataFile)) {
+        boolean isMutedWithFile = isMutedWithFile(testDataFile);
+        if (isMutedWithFile && !RUN_IGNORED_TESTS_AS_REGULAR) {
+            System.err.println("IGNORED TEST: " + testDataFilePath);
             return;
         }
 
@@ -1085,8 +1090,16 @@ public class KotlinTestUtils {
             test.invoke(testDataFilePath);
         }
         catch (Throwable e) {
-            if (checkFailFile(e, testDataFile)) {
-                return;
+            boolean hasFailFile = hasFailFile(testDataFile);
+            if (hasFailFile) {
+                if (checkFailFile(e, testDataFile)) {
+                    return;
+                }
+            }
+
+            //noinspection ConstantConditions
+            if (!isMutedWithFile && !hasFailFile && AUTOMATICALLY_MUTE_FAILED_TESTS_WITH_CONTENT != null) {
+                createMuteFile(testDataFile, AUTOMATICALLY_MUTE_FAILED_TESTS_WITH_CONTENT);
             }
 
             throw e;
@@ -1179,6 +1192,13 @@ public class KotlinTestUtils {
         return muteFile.exists() && muteFile.isFile();
     }
 
+    private static void createMuteFile(@NotNull File testDataFile, @NotNull String text) throws IOException {
+        if (text.isEmpty()) {
+            throw new IllegalArgumentException("Mute text must not be empty");
+        }
+
+        FilesKt.writeText(new File(testDataFile.getPath() + ".mute"), text, Charsets.UTF_8);
+    }
 
     @Nullable
     private static File failFile(@NotNull File testDataFile) {
@@ -1192,6 +1212,10 @@ public class KotlinTestUtils {
         }
 
         return failFile;
+    }
+
+    private static boolean hasFailFile(@NotNull File testDataFile) {
+        return failFile(testDataFile) != null;
     }
 
     private static boolean checkFailFile(@NotNull Throwable failure, @NotNull File testDataFile) {
