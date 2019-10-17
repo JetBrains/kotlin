@@ -105,8 +105,9 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         arguments.setMetaInfo(metaInfo);
         arguments.setModuleKind(moduleKind);
         arguments.setMain(main);
-        arguments.setIrBackend(useIrBackend);
-        arguments.setIrLegacyGradlePluginCompatibility(true);
+        arguments.setIrOnly(useIrBackend);
+        arguments.setIrProduceJs(useIrBackend);
+        arguments.setIrProduceKlibDir(useIrBackend);
 
         List<String> libraries;
         try {
