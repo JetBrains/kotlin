@@ -110,4 +110,13 @@ public interface IrFunctionBaseOrBuilder extends
    * <code>required int32 return_type = 11;</code>
    */
   int getReturnType();
+
+  /**
+   * <code>required bool is_expect = 12;</code>
+   */
+  boolean hasIsExpect();
+  /**
+   * <code>required bool is_expect = 12;</code>
+   */
+  boolean getIsExpect();
 }

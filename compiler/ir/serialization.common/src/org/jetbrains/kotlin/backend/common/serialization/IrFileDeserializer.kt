@@ -985,7 +985,7 @@ abstract class IrFileDeserializer(
                     isData = proto.isData,
                     isExternal = proto.isExternal,
                     isInline = proto.isInline,
-                    isExpect = false // TODO isExpect
+                    isExpect = proto.isExpect
                 )
             }.usingParent {
                 proto.declarationContainer.declarationList.mapTo(declarations) { deserializeDeclaration(it) }
@@ -1057,7 +1057,7 @@ abstract class IrFileDeserializer(
                     isExternal = proto.base.isExternal,
                     isTailrec = proto.isTailrec,
                     isSuspend = proto.isSuspend,
-                    isExpect = false // TODO isExpect
+                    isExpect = proto.base.isExpect
                 )
             }.apply {
                 proto.overriddenList.mapTo(overriddenSymbols) { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
@@ -1141,7 +1141,7 @@ abstract class IrFileDeserializer(
                     isInline = proto.base.isInline,
                     isExternal = proto.base.isExternal,
                     isPrimary = proto.isPrimary,
-                    isExpect = false // TODO isExpect
+                    isExpect = proto.base.isExpect
                 )
             }.apply {
                 (descriptor as? WrappedClassConstructorDescriptor)?.bind(this)
@@ -1212,11 +1212,12 @@ abstract class IrFileDeserializer(
                     deserializeName(proto.name),
                     deserializeVisibility(proto.visibility),
                     deserializeModality(proto.modality),
-                    proto.isVar,
-                    proto.isConst,
-                    proto.isLateinit,
-                    proto.isDelegated,
-                    proto.isExternal
+                    isVar = proto.isVar,
+                    isConst = proto.isConst,
+                    isLateinit = proto.isLateinit,
+                    isDelegated = proto.isDelegated,
+                    isExpect = proto.isExpect,
+                    isExternal = proto.isExternal
                 )
             }.apply {
                 if (proto.hasGetter()) {

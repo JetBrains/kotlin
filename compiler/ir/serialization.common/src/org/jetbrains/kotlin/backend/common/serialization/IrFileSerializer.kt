@@ -1033,6 +1033,7 @@ open class IrFileSerializer(
             .setVisibility(serializeVisibility(function.visibility))
             .setIsInline(function.isInline)
             .setIsExternal(function.isExternal)
+            .setIsExpect(function.isExpect)
             .setReturnType(serializeIrType(function.returnType))
             .setTypeParameters(serializeIrTypeParameterContainer(function.typeParameters))
 
@@ -1108,6 +1109,7 @@ open class IrFileSerializer(
             .setIsLateinit(property.isLateinit)
             .setIsDelegated(property.isDelegated)
             .setIsExternal(property.isExternal)
+            .setIsExpect(property.isExpect)
 
         val backingField = property.backingField
         val getter = property.getter
@@ -1180,6 +1182,7 @@ open class IrFileSerializer(
             .setIsData(clazz.isData)
             .setIsExternal(clazz.isExternal)
             .setIsInline(clazz.isInline)
+            .setIsExpect(clazz.isExpect)
             .setTypeParameters(serializeIrTypeParameterContainer(clazz.typeParameters))
             .setDeclarationContainer(serializeIrDeclarationContainer(clazz.declarations))
         clazz.superTypes.forEach {

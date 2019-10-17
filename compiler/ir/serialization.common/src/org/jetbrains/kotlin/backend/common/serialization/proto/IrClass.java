@@ -193,6 +193,11 @@ public final class IrClass extends
             input.popLimit(limit);
             break;
           }
+          case 120: {
+            bitField0_ |= 0x00002000;
+            isExpect_ = input.readBool();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -455,6 +460,21 @@ public final class IrClass extends
     return superType_.get(index);
   }
 
+  public static final int IS_EXPECT_FIELD_NUMBER = 15;
+  private boolean isExpect_;
+  /**
+   * <code>required bool is_expect = 15;</code>
+   */
+  public boolean hasIsExpect() {
+    return ((bitField0_ & 0x00002000) == 0x00002000);
+  }
+  /**
+   * <code>required bool is_expect = 15;</code>
+   */
+  public boolean getIsExpect() {
+    return isExpect_;
+  }
+
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     name_ = 0;
@@ -470,6 +490,7 @@ public final class IrClass extends
     typeParameters_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterContainer.getDefaultInstance();
     declarationContainer_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationContainer.getDefaultInstance();
     superType_ = java.util.Collections.emptyList();
+    isExpect_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -522,6 +543,10 @@ public final class IrClass extends
       return false;
     }
     if (!hasDeclarationContainer()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasIsExpect()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -596,6 +621,9 @@ public final class IrClass extends
     for (int i = 0; i < superType_.size(); i++) {
       output.writeInt32(14, superType_.get(i));
     }
+    if (((bitField0_ & 0x00002000) == 0x00002000)) {
+      output.writeBool(15, isExpect_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -665,6 +693,10 @@ public final class IrClass extends
       }
       size += dataSize;
       size += 1 * getSuperTypeList().size();
+    }
+    if (((bitField0_ & 0x00002000) == 0x00002000)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeBoolSize(15, isExpect_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -788,6 +820,8 @@ public final class IrClass extends
       bitField0_ = (bitField0_ & ~0x00001000);
       superType_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00002000);
+      isExpect_ = false;
+      bitField0_ = (bitField0_ & ~0x00004000);
       return this;
     }
 
@@ -868,6 +902,10 @@ public final class IrClass extends
         bitField0_ = (bitField0_ & ~0x00002000);
       }
       result.superType_ = superType_;
+      if (((from_bitField0_ & 0x00004000) == 0x00004000)) {
+        to_bitField0_ |= 0x00002000;
+      }
+      result.isExpect_ = isExpect_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -923,6 +961,9 @@ public final class IrClass extends
         }
         
       }
+      if (other.hasIsExpect()) {
+        setIsExpect(other.getIsExpect());
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -974,6 +1015,10 @@ public final class IrClass extends
         return false;
       }
       if (!hasDeclarationContainer()) {
+        
+        return false;
+      }
+      if (!hasIsExpect()) {
         
         return false;
       }
@@ -1661,6 +1706,38 @@ public final class IrClass extends
     public Builder clearSuperType() {
       superType_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00002000);
+      
+      return this;
+    }
+
+    private boolean isExpect_ ;
+    /**
+     * <code>required bool is_expect = 15;</code>
+     */
+    public boolean hasIsExpect() {
+      return ((bitField0_ & 0x00004000) == 0x00004000);
+    }
+    /**
+     * <code>required bool is_expect = 15;</code>
+     */
+    public boolean getIsExpect() {
+      return isExpect_;
+    }
+    /**
+     * <code>required bool is_expect = 15;</code>
+     */
+    public Builder setIsExpect(boolean value) {
+      bitField0_ |= 0x00004000;
+      isExpect_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>required bool is_expect = 15;</code>
+     */
+    public Builder clearIsExpect() {
+      bitField0_ = (bitField0_ & ~0x00004000);
+      isExpect_ = false;
       
       return this;
     }

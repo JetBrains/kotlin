@@ -144,4 +144,13 @@ public interface IrClassOrBuilder extends
    * <code>repeated int32 super_type = 14;</code>
    */
   int getSuperType(int index);
+
+  /**
+   * <code>required bool is_expect = 15;</code>
+   */
+  boolean hasIsExpect();
+  /**
+   * <code>required bool is_expect = 15;</code>
+   */
+  boolean getIsExpect();
 }

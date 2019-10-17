@@ -114,4 +114,13 @@ public interface IrPropertyOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getSetter();
+
+  /**
+   * <code>required bool is_expect = 13;</code>
+   */
+  boolean hasIsExpect();
+  /**
+   * <code>required bool is_expect = 13;</code>
+   */
+  boolean getIsExpect();
 }

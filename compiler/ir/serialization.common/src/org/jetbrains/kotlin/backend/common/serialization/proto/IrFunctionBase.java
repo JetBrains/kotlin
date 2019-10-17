@@ -151,6 +151,11 @@ public final class IrFunctionBase extends
             returnType_ = input.readInt32();
             break;
           }
+          case 96: {
+            bitField0_ |= 0x00000400;
+            isExpect_ = input.readBool();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -373,6 +378,21 @@ public final class IrFunctionBase extends
     return returnType_;
   }
 
+  public static final int IS_EXPECT_FIELD_NUMBER = 12;
+  private boolean isExpect_;
+  /**
+   * <code>required bool is_expect = 12;</code>
+   */
+  public boolean hasIsExpect() {
+    return ((bitField0_ & 0x00000400) == 0x00000400);
+  }
+  /**
+   * <code>required bool is_expect = 12;</code>
+   */
+  public boolean getIsExpect() {
+    return isExpect_;
+  }
+
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     name_ = 0;
@@ -385,6 +405,7 @@ public final class IrFunctionBase extends
     valueParameter_ = java.util.Collections.emptyList();
     body_ = 0;
     returnType_ = 0;
+    isExpect_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -417,6 +438,10 @@ public final class IrFunctionBase extends
       return false;
     }
     if (!hasReturnType()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasIsExpect()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -490,6 +515,9 @@ public final class IrFunctionBase extends
     if (((bitField0_ & 0x00000200) == 0x00000200)) {
       output.writeInt32(11, returnType_);
     }
+    if (((bitField0_ & 0x00000400) == 0x00000400)) {
+      output.writeBool(12, isExpect_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -542,6 +570,10 @@ public final class IrFunctionBase extends
     if (((bitField0_ & 0x00000200) == 0x00000200)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(11, returnType_);
+    }
+    if (((bitField0_ & 0x00000400) == 0x00000400)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeBoolSize(12, isExpect_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -659,6 +691,8 @@ public final class IrFunctionBase extends
       bitField0_ = (bitField0_ & ~0x00000200);
       returnType_ = 0;
       bitField0_ = (bitField0_ & ~0x00000400);
+      isExpect_ = false;
+      bitField0_ = (bitField0_ & ~0x00000800);
       return this;
     }
 
@@ -727,6 +761,10 @@ public final class IrFunctionBase extends
         to_bitField0_ |= 0x00000200;
       }
       result.returnType_ = returnType_;
+      if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+        to_bitField0_ |= 0x00000400;
+      }
+      result.isExpect_ = isExpect_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -773,6 +811,9 @@ public final class IrFunctionBase extends
       if (other.hasReturnType()) {
         setReturnType(other.getReturnType());
       }
+      if (other.hasIsExpect()) {
+        setIsExpect(other.getIsExpect());
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -804,6 +845,10 @@ public final class IrFunctionBase extends
         return false;
       }
       if (!hasReturnType()) {
+        
+        return false;
+      }
+      if (!hasIsExpect()) {
         
         return false;
       }
@@ -1440,6 +1485,38 @@ public final class IrFunctionBase extends
     public Builder clearReturnType() {
       bitField0_ = (bitField0_ & ~0x00000400);
       returnType_ = 0;
+      
+      return this;
+    }
+
+    private boolean isExpect_ ;
+    /**
+     * <code>required bool is_expect = 12;</code>
+     */
+    public boolean hasIsExpect() {
+      return ((bitField0_ & 0x00000800) == 0x00000800);
+    }
+    /**
+     * <code>required bool is_expect = 12;</code>
+     */
+    public boolean getIsExpect() {
+      return isExpect_;
+    }
+    /**
+     * <code>required bool is_expect = 12;</code>
+     */
+    public Builder setIsExpect(boolean value) {
+      bitField0_ |= 0x00000800;
+      isExpect_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>required bool is_expect = 12;</code>
+     */
+    public Builder clearIsExpect() {
+      bitField0_ = (bitField0_ & ~0x00000800);
+      isExpect_ = false;
       
       return this;
     }
