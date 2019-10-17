@@ -45,10 +45,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Supplier;
 
 class FileEncodingConfigurable extends PerFileConfigurableBase<Charset> {
@@ -263,7 +261,7 @@ class FileEncodingConfigurable extends PerFileConfigurableBase<Charset> {
       @NotNull
       @Override
       public Map<VirtualFile, Charset> getMappings() {
-        return prjManager.getAllMappings();
+        return new HashMap<>(prjManager.getAllMappings());
       }
 
       @Override
