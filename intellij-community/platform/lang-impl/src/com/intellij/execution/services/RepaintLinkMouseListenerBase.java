@@ -24,6 +24,8 @@ public abstract class RepaintLinkMouseListenerBase<T> extends LinkMouseListenerB
 
   @Override
   public void mouseMoved(MouseEvent e) {
+    if (!isEnabled()) return;
+
     JComponent component = (JComponent)e.getSource();
     Object tag = getTagAt(e);
     UIUtil.setCursor(component, tag != null ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : Cursor.getDefaultCursor());
@@ -54,4 +56,12 @@ public abstract class RepaintLinkMouseListenerBase<T> extends LinkMouseListenerB
   }
 
   protected abstract void repaintComponent(MouseEvent e);
+
+  /**
+   * Override this method if link listener should be temporary disabled for a component.
+   * For example, if tree is empty and empty text link listener should manage the cursor.
+   */
+  protected boolean isEnabled() {
+    return true;
+  }
 }

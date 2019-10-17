@@ -49,4 +49,9 @@ public class ServiceViewTreeLinkMouseListener extends RepaintLinkMouseListenerBa
     Component component = myTree.getCellRenderer().getTreeCellRendererComponent(myTree, treeNode, true, false, isLeaf, row, true);
     return component instanceof ColoredTreeCellRenderer ? ((ColoredTreeCellRenderer)component).getFragmentTagAt(dx) : null;
   }
+
+  @Override
+  protected boolean isEnabled() {
+    return myTree.getRowCount() > 0;
+  }
 }

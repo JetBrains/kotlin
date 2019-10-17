@@ -2,20 +2,29 @@
 package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
+import com.intellij.ide.DataManager;
 import com.intellij.ide.dnd.DnDManager;
 import com.intellij.ide.navigationToolbar.NavBarModel;
 import com.intellij.ide.navigationToolbar.NavBarPanel;
 import com.intellij.ide.util.treeView.TreeState;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.AutoScrollToSourceHandler;
+import com.intellij.ui.SimpleTextAttributes;
+import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.tree.RestoreSelectionListener;
 import com.intellij.ui.tree.TreeVisitor;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.StatusText;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.AsyncPromise;
@@ -25,6 +34,8 @@ import org.jetbrains.concurrency.Promises;
 import javax.swing.*;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
@@ -32,6 +43,8 @@ import java.util.concurrent.CancellationException;
 import java.util.function.Consumer;
 
 class ServiceTreeView extends ServiceView {
+  private static final String ADD_SERVICE_ACTION_ID = "ServiceView.AddService";
+
   private final ServiceViewTree myTree;
   private final ServiceViewTreeModel myTreeModel;
   private final ServiceViewModel.ServiceViewModelListener myListener;
@@ -76,6 +89,10 @@ class ServiceTreeView extends ServiceView {
     myNavBarPanel = new ServiceViewNavBarPanel(getProject(), true, getModel(), selector);
     myNavBarPanel.getModel().updateModel(null);
     myUi.setNavBar(myNavBarPanel);
+
+    if (model instanceof ServiceViewModel.AllServicesModel) {
+      setEmptyText(myTree, myTree.getEmptyText());
+    }
 
     state.treeState.applyTo(myTree, myTreeModel.getRoot());
   }
@@ -276,6 +293,33 @@ class ServiceTreeView extends ServiceView {
     Promise<?> selectPromise = myUpdateSelectionPromise;
     if (selectPromise instanceof AsyncPromise) {
       ((AsyncPromise<?>)selectPromise).cancel();
+    }
+  }
+
+  private static void setEmptyText(JComponent component, StatusText emptyText) {
+    emptyText.setText("No services configured.");
+    emptyText.appendSecondaryText("Add Service",
+                                  new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, JBUI.CurrentTheme.Link.linkColor()),
+                                  new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                      ActionGroup addActionGroup = ObjectUtils.tryCast(
+                                        ActionManager.getInstance().getAction(ADD_SERVICE_ACTION_ID), ActionGroup.class);
+                                      if (addActionGroup == null) return;
+
+                                      DataContext dataContext = DataManager.getInstance().getDataContext(component);
+                                      JBPopupFactory.getInstance().createActionGroupPopup(
+                                        addActionGroup.getTemplatePresentation().getText(), addActionGroup, dataContext,
+                                        JBPopupFactory.ActionSelectionAid.SPEEDSEARCH,
+                                        false, null, -1, null, ActionPlaces.getActionGroupPopupPlace(ADD_SERVICE_ACTION_ID))
+                                        .show(new RelativePoint(component, component.getMousePosition()));
+                                    }
+                                  });
+    AnAction addAction = ActionManager.getInstance().getAction(ADD_SERVICE_ACTION_ID);
+    ShortcutSet shortcutSet = addAction == null ? null : addAction.getShortcutSet();
+    Shortcut shortcut = shortcutSet == null ? null : ArrayUtil.getFirstElement(shortcutSet.getShortcuts());
+    if (shortcut != null) {
+      emptyText.appendSecondaryText(" (" + KeymapUtil.getShortcutText(shortcut) + ")", StatusText.DEFAULT_ATTRIBUTES, null);
     }
   }
 

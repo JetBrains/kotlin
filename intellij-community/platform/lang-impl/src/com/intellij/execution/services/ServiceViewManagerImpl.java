@@ -31,6 +31,7 @@ import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
+import com.intellij.openapi.wm.ex.ToolWindowManagerEx;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.content.*;
@@ -82,9 +83,9 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       }, myProject.getDisposed());
     }));
     myModel.initRoots().onSuccess(o -> {
-      for (ServiceViewItem root : myModel.getRoots()) {
-        activateToolWindow(root.getRootContributor().getClass(),
-                           !(root.getViewDescriptor() instanceof ServiceViewNonActivatingDescriptor), true);
+      for (ServiceViewContributor<?> contributor : ServiceModel.getContributors()) {
+        activateToolWindow(contributor.getClass(),
+                           !(contributor.getViewDescriptor(myProject) instanceof ServiceViewNonActivatingDescriptor), true);
       }
     });
   }
@@ -129,14 +130,25 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         return;
       }
 
-      if (toolWindow.getContentManager().getContentCount() > 0) {
-        doShow = show && !toolWindow.isAvailable() && doShow;
+      ContentManager contentManager = toolWindow.getContentManager();
+      if (contentManager.getContentCount() > 0) {
+        doShow = show && (!toolWindow.isAvailable() || !toolWindow.isShowStripeButton()) && doShow;
         toolWindow.setAvailable(true, null);
+        Content content = getMainContent(contentManager);
+        ServiceView mainView = content == null ? null : getServiceView(content);
+        if (mainView != null && mainView.getModel().getRoots().isEmpty() && contentManager.getContentCount() == 1) {
+          hideToolWindow(toolWindowId, toolWindow);
+        }
         if (doShow) {
           toolWindow.show(null);
         }
       }
     });
+  }
+
+  private void hideToolWindow(String toolWindowId, ToolWindow toolWindow) {
+    ToolWindowManagerEx.getInstanceEx(myProject).hideToolWindow(toolWindowId, true);
+    toolWindow.setShowStripeButton(false);
   }
 
   @NotNull
@@ -152,20 +164,10 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     Collection<ServiceViewContributor<?>> contributors = myGroups.get(toolWindowId);
     if (contributors == null) return;
 
-    ContentManager contentManager = toolWindow.getContentManager();
-    ToolWindowEx toolWindowEx = (ToolWindowEx)toolWindow;
-    contentManager.addContentManagerListener(new ContentManagerAdapter() {
-      @Override
-      public void contentRemoved(@NotNull ContentManagerEvent event) {
-        if (contentManager.getContentCount() == 0) {
-          toolWindow.setAvailable(false, null);
-        }
-      }
-    });
-
     if (myAutoScrollToSourceHandler == null) {
       myAutoScrollToSourceHandler = ServiceViewSourceScrollHelper.createAutoScrollToSourceHandler(myProject);
     }
+    ToolWindowEx toolWindowEx = (ToolWindowEx)toolWindow;
     ServiceViewSourceScrollHelper.installAutoScrollSupport(myProject, toolWindowEx, myAutoScrollToSourceHandler);
 
     Pair<ServiceViewState, List<ServiceViewState>> states = getServiceViewStates(toolWindowId);
@@ -173,16 +175,17 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     ServiceView mainView = ServiceView.createView(myProject, mainModel, prepareViewState(states.first));
     mainView.setAutoScrollToSourceHandler(myAutoScrollToSourceHandler);
 
+    ContentManager contentManager = toolWindow.getContentManager();
     ServiceViewContentHolder holder = new ServiceViewContentHolder(mainView, contentManager, contributors, toolWindowId);
     myContentHolders.add(holder);
     contentManager.addContentManagerListener(new ServiceViewContentMangerListener(myModelFilter, myAutoScrollToSourceHandler, holder));
 
-    addMainContent(contentManager, mainView);
+    addMainContent(toolWindowId, toolWindow, mainView);
     loadViews(contentManager, mainView, contributors, states.second);
     ServiceViewDragHelper.installDnDSupport(myProject, toolWindowEx.getDecorator(), contentManager);
   }
 
-  private void addMainContent(ContentManager contentManager, ServiceView mainView) {
+  private void addMainContent(String toolWindowId, ToolWindow toolWindow, ServiceView mainView) {
     Content mainContent = ContentFactory.SERVICE.getInstance().createContent(mainView, null, false);
     mainContent.putUserData(ToolWindow.SHOW_CONTENT_ICON, Boolean.TRUE);
     mainContent.setHelpId(getToolWindowContextHelpId());
@@ -191,13 +194,25 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     Disposer.register(mainContent, mainView);
     Disposer.register(mainContent, mainView.getModel());
 
+    ContentManager contentManager = toolWindow.getContentManager();
     contentManager.addContent(mainContent);
     mainView.getModel().addModelListener(() -> {
       boolean isEmpty = mainView.getModel().getRoots().isEmpty();
       AppUIUtil.invokeOnEdt(() -> {
         if (isEmpty) {
-          if (contentManager.getIndexOfContent(mainContent) >= 0) {
-            contentManager.removeContent(mainContent, false);
+          if (contentManager.getIndexOfContent(mainContent) < 0) {
+            if (contentManager.getContentCount() == 0) {
+              contentManager.addContent(mainContent, 0);
+              hideToolWindow(toolWindowId, toolWindow);
+            }
+          }
+          else {
+            if (contentManager.getContentCount() > 1) {
+              contentManager.removeContent(mainContent, false);
+            }
+            else {
+              hideToolWindow(toolWindowId, toolWindow);
+            }
           }
         }
         else {
@@ -805,24 +820,6 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       templatePresentation.setText(ServiceViewDragHelper.getDisplayName(contributorPresentation) + " (Services)");
       templatePresentation.setIcon(contributorPresentation.getIcon(false));
       templatePresentation.setDescription("Activate " + getToolWindowId() + " window");
-    }
-
-    @Override
-    public void update(@NotNull AnActionEvent e) {
-      Project project = e.getProject();
-      if (project == null) {
-        e.getPresentation().setEnabledAndVisible(false);
-        return;
-      }
-
-      ServiceViewManagerImpl manager = (ServiceViewManagerImpl)ServiceViewManager.getInstance(project);
-      for (ServiceViewItem root : manager.myModel.getRoots()) {
-        if (myContributor.equals(root.getContributor())) {
-          e.getPresentation().setEnabledAndVisible(true);
-          return;
-        }
-      }
-      e.getPresentation().setEnabledAndVisible(false);
     }
 
     @Override
