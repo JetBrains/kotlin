@@ -47,6 +47,7 @@ import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.GetScriptingClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
@@ -174,29 +175,40 @@ class LazyScriptDescriptor(
 
     override fun computeSupertypes() = listOf(baseClassDescriptor()?.defaultType ?: builtIns.anyType)
 
-    // TODO: consider passing ScriptSource to avoid psi file fsearching
     private inner class ImportedScriptDescriptorsFinder {
 
-        val fileManager = VirtualFileManager.getInstance()
-        val localFS = fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-        val psiManager = PsiManager.getInstance(scriptInfo.script.project)
+        val localFS by lazy {
+            val fileManager = VirtualFileManager.getInstance()
+            fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL) 
+        }
+        val psiManager by lazy { PsiManager.getInstance(scriptInfo.script.project) }
 
-        operator fun invoke(importedScriptFile: File): ScriptDescriptor? {
+        operator fun invoke(importedScript: SourceCode): ScriptDescriptor? {
+            // Note: is not an error now - if import references other valid source file, it is simply compiled along with script
+            // TODO: check if this is the behavior we want to have - see #KT-28916
+            val ktScript = getKtFile(importedScript)?.declarations?.firstIsInstanceOrNull<KtScript>()
+                ?: return null
+            return resolveSession.getScriptDescriptor(ktScript) as ScriptDescriptor
+        }
 
-            fun errorDescriptor(errorDiagnostic: DiagnosticFactory1<PsiElement, String>?): ScriptDescriptor? {
-                reportErrorString1(errorDiagnostic, importedScriptFile.path)
+        private fun getKtFile(script: SourceCode): KtFile? {
+            if (script is KtFileScriptSource) return script.ktFile
+
+            // TODO: support any kind of ScriptSource.
+            if (script !is FileBasedScriptSource) return null
+
+            fun errorKtFile(errorDiagnostic: DiagnosticFactory1<PsiElement, String>?): KtFile? {
+                reportErrorString1(errorDiagnostic, script.file.path)
                 return null
             }
 
-            val vfile = localFS.findFileByPath(importedScriptFile.absolutePath)
-                ?: return errorDescriptor(MISSING_IMPORTED_SCRIPT_FILE)
-            val psiFile = psiManager.findFile(vfile)
-                ?: return errorDescriptor(MISSING_IMPORTED_SCRIPT_PSI)
-            // Note: is not an error now - if import references other valid source file, it is simply compiled along with script
-            // TODO: check if this is the behavior we want to have - see #KT-28916
-            val ktScript = (psiFile as? KtFile)?.declarations?.firstIsInstanceOrNull<KtScript>()
-                ?: return null
-            return resolveSession.getScriptDescriptor(ktScript) as ScriptDescriptor
+            val virtualFile = when (script) {
+                is VirtualFileScriptSource -> script.virtualFile
+                else -> localFS.findFileByPath(script.file.absolutePath) ?: return errorKtFile(MISSING_IMPORTED_SCRIPT_FILE)
+            }
+
+            val psiFile = psiManager.findFile(virtualFile) ?: return errorKtFile(MISSING_IMPORTED_SCRIPT_PSI)
+            return psiFile as? KtFile
         }
     }
 

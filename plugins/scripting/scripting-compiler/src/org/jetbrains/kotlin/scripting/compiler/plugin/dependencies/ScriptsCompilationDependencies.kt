@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import java.io.File
+import kotlin.script.experimental.host.FileBasedScriptSource
 
 data class ScriptsCompilationDependencies(
     val classpath: List<File>,
@@ -45,8 +46,10 @@ fun collectScriptsCompilationDependencies(
                 if (refinedConfiguration != null) {
                     collectedClassPath.addAll(refinedConfiguration.dependenciesClassPath)
 
-                    val sourceDependenciesRoots = refinedConfiguration.importedScripts.map {
-                        KotlinSourceRoot(it.absolutePath, false)
+                    val sourceDependenciesRoots = refinedConfiguration.importedScripts.mapNotNull {
+                        // TODO: support any kind of ScriptSource.
+                        val path = (it as? FileBasedScriptSource)?.file?.path ?: return@mapNotNull null
+                        KotlinSourceRoot(path, false)
                     }
                     val sourceDependencies =
                         createSourceFilesFromSourceRoots(
