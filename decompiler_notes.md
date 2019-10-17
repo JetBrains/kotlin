@@ -6,13 +6,6 @@
 
 ## TODO-лист
 
-Четверг 17.10:
-
-- break, continue
-- nullable типы
-- enum
-- кастомные геттер и сеттер
-
 Пятница 18.10:
 
 - cast операторы as, as?
@@ -28,6 +21,7 @@
 
 - продолжить дженерики (https://kotlinlang.org/docs/reference/generics.html)
 - обход дерева и сбор импортов через full qualified names
+- кастомные геттер и сеттер
 
 ## LATER
 
@@ -46,6 +40,9 @@
 
 ## DONE
 
+- nullable типы
+- enum
+- break, continue
 - package
 - аргументы по-умолчанию в методах, именованые вызовы с перестановкой аргументов
 - data class + destructing declarations

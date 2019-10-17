@@ -1,0 +1,18 @@
+class MyClass() {
+    val prop : Int? = 42
+}
+typealias MyClassNullable = MyClass?
+typealias MyIntNullable = Int?
+fun box() : String  {
+    val myClass : MyClass = MyClass()
+    val tmp : Int? = 42
+    val tmp0_subject : Int? = myClass.prop
+    when {
+         (tmp0_subject == tmp) -> {
+            return "OK"
+        }
+        else -> {
+            return "FAIL"
+        }
+    }
+}

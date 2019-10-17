@@ -47,6 +47,7 @@ val OPERATOR_TOKENS = mutableMapOf<IrStatementOrigin, String>().apply {
     set(GTEQ, ">=")
     set(LTEQ, "<=")
     set(ELVIS, "?:")
+    set(EXCLEXCL, "!!")
     set(RANGE, "..")
     set(PREFIX_INCR, "++")
     set(PREFIX_DECR, "--")
@@ -75,7 +76,7 @@ const val INLINE_TOKEN = "inline"
 const val DATA_TOKEN = "data"
 const val EXTERNAL_TOKEN = "external"
 const val ANNOTATION_TOKEN = "annotation class"
-const val ENUM_TOKEN = "enum"
+const val ENUM_TOKEN = "enum class"
 const val IF_TOKEN = "if"
 const val WHEN_TOKEN = "when"
 const val ELSE_TOKEN = "else"
@@ -201,6 +202,7 @@ internal fun IrCall.obtainCall(): String {
         PLUSEQ, MINUSEQ, MULTEQ, DIVEQ -> getValueArgument(0)?.decompile() ?: EMPTY_TOKEN
         // Для присваивания свойстам в конструкторах
         EQ -> obtainEqCall()
+        EXCLEXCL -> "${getValueArgument(0)!!.decompile()}!!"
         EXCL -> "!${dispatchReceiver?.decompile()}"
         else -> {
             var result: String? = null

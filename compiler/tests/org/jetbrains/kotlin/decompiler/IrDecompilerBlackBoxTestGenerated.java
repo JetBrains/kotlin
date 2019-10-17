@@ -51,6 +51,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/classes/classes_simple.kt");
         }
 
+        @TestMetadata("enum_test.kt")
+        public void testEnum_test() throws Exception {
+            runTest("compiler/testData/decompiler/box/classes/enum_test.kt");
+        }
+
         @TestMetadata("compiler/testData/decompiler/box/classes/ctor")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -289,6 +294,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             public void testLoops() throws Exception {
                 runTest("compiler/testData/decompiler/box/expressions/loop/loops.kt");
             }
+
+            @TestMetadata("loops_break_continue.kt")
+            public void testLoops_break_continue() throws Exception {
+                runTest("compiler/testData/decompiler/box/expressions/loop/loops_break_continue.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/decompiler/box/expressions/other")
@@ -311,6 +321,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             @TestMetadata("typealias.kt")
             public void testTypealias() throws Exception {
                 runTest("compiler/testData/decompiler/box/expressions/other/typealias.kt");
+            }
+
+            @TestMetadata("typealias_nullability.kt")
+            public void testTypealias_nullability() throws Exception {
+                runTest("compiler/testData/decompiler/box/expressions/other/typealias_nullability.kt");
             }
         }
 

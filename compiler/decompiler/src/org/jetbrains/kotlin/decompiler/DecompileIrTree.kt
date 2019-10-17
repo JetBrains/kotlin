@@ -76,7 +76,7 @@ class DecompileIrTreeVisitor(
                         it.obtainSecondaryCtor()
                     }
                     declaration.declarations
-                        .filterNot { it is IrConstructor || it is IrProperty }
+                        .filterNot { it is IrConstructor || it is IrProperty || it is IrEnumEntry }
                         .filterNot {
                             it.origin in setOf(
                                 IrDeclarationOrigin.FAKE_OVERRIDE,
@@ -94,6 +94,15 @@ class DecompileIrTreeVisitor(
                             it.origin == IrDeclarationOrigin.FAKE_OVERRIDE
                         }
                         .decompileElements()
+                }
+            }
+            ClassKind.ENUM_CLASS -> {
+                declaration.primaryConstructor?.obtainPrimaryCtor()
+                withBracesLn {
+                    printer.println(declaration.declarations
+                                        .filterIsInstance<IrEnumEntry>()
+                                        .joinToString(", ", postfix = ";") { it.decompile() }
+                    )
                 }
             }
             else -> {
@@ -223,7 +232,7 @@ class DecompileIrTreeVisitor(
 
     override fun visitProperty(declaration: IrProperty, data: String) {
         with(declaration) {
-            if (!parentAsClass.isPrimaryCtorArg(name())) {
+            if (!parentAsClass.isPrimaryCtorArg(name()) && origin != IrDeclarationOrigin.FAKE_OVERRIDE) {
                 var result = concatenateNonEmptyWithSpace(obtainVisibility(), obtainModality(), obtainPropertyFlags())
                 if (backingField != null) {
                     result = concatenateNonEmptyWithSpace(result, backingField!!.name(), ":", backingField!!.type.toKotlinType().toString())
@@ -419,7 +428,7 @@ class DecompileIrTreeVisitor(
         result += ((0 until expression.valueArgumentsCount).map { expression.getValueArgument(it)?.decompile() }
             .filterNotNull()
             .joinToString(", ", "(", ")"))
-        printer.printWithNoIndent(result)
+        printer.println(result)
     }
 
     override fun visitGetField(expression: IrGetField, data: String) {
@@ -491,6 +500,16 @@ class DecompileIrTreeVisitor(
         }
     }
 
+    override fun visitBreak(jump: IrBreak, data: String) {
+        //TODO отрисовать label break@loop если label не пуст
+        printer.println("break")
+    }
+
+    override fun visitContinue(jump: IrContinue, data: String) {
+        //TODO отрисовать label continue@loop если label не пуст
+        printer.println("continue")
+    }
+
     override fun visitVararg(expression: IrVararg, data: String) {
         printer.print(expression.elements.joinToString(", ") { it.decompile() })
     }
@@ -522,11 +541,26 @@ class DecompileIrTreeVisitor(
         printer.print("*${spread.expression.decompile()}")
     }
 
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: String) {
+        printer.println(
+            (0 until expression.valueArgumentsCount)
+                .map { expression.getValueArgument(it)?.decompile() }
+                .joinToString(",", "(", ")")
+                .takeIf { expression.valueArgumentsCount > 0 } ?: EMPTY_TOKEN
+        )
+    }
+
+    override fun visitGetEnumValue(expression: IrGetEnumValue, data: String) {
+        printer.printWithNoIndent("${expression.type.toKotlinType()}.${expression.symbol.owner.name()}")
+    }
+
+    override fun visitEnumEntry(declaration: IrEnumEntry, data: String) {
+        printer.print("${declaration.name()}${declaration.initializerExpression?.decompile()}")
+    }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: String) = TODO()
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: String) = TODO()
-    override fun visitEnumEntry(declaration: IrEnumEntry, data: String) = TODO()
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: String) = TODO()
 
