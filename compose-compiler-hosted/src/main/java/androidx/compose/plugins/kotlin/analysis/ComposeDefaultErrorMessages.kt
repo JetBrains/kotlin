@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_COLLECTION_OF_TYPES
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE_WITH_ANNOTATIONS
 
 object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
     private val MAP = DiagnosticFactoryToRendererMap("Compose")
@@ -65,6 +66,13 @@ object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
         MAP.put(
             ComposeErrors.ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE,
             "Try catch is not supported around composable function invocations."
+        )
+        MAP.put(
+            ComposeErrors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE,
+            "Type inference failed. Expected type mismatch: inferred type is {1} but {0}" +
+                    " was expected",
+            RENDER_TYPE_WITH_ANNOTATIONS,
+            RENDER_TYPE_WITH_ANNOTATIONS
         )
     }
 }
