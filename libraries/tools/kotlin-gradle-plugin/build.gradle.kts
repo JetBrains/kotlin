@@ -210,4 +210,9 @@ pluginBundle {
         id = "org.jetbrains.kotlin.native.cocoapods",
         display = "Kotlin Native plugin for CocoaPods integration"
     )
+    create(
+        name = "kotlinNativePerformancePlugin",
+        id = "org.jetbrains.kotlin.native.performance",
+        display = "Kotlin Native plugin for tracking performance of building binaries"
+    )
 }
