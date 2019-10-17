@@ -803,4 +803,27 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
             runTest("idea/idea-completion/testData/handlers/smart/lambdaSignature/Simple.kt");
         }
     }
+
+    @TestMetadata("idea/idea-completion/testData/handlers/smart/suspendLambdaSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SuspendLambdaSignature extends AbstractSmartCompletionHandlerTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSuspendLambdaSignature() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/suspendLambdaSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("NoAdditionalSpace.kt")
+        public void testNoAdditionalSpace() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/smart/suspendLambdaSignature/NoAdditionalSpace.kt");
+        }
+
+        @TestMetadata("Simple.kt")
+        public void testSimple() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/smart/suspendLambdaSignature/Simple.kt");
+        }
+    }
 }

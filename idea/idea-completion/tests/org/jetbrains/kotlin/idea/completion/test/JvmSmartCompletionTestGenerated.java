@@ -1330,6 +1330,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         public void testSingleParameter() throws Exception {
             runTest("idea/idea-completion/testData/smart/lambdaSignature/SingleParameter.kt");
         }
+
+        @TestMetadata("SuspendExplicitParameterTypesRequired.kt")
+        public void testSuspendExplicitParameterTypesRequired() throws Exception {
+            runTest("idea/idea-completion/testData/smart/lambdaSignature/SuspendExplicitParameterTypesRequired.kt");
+        }
     }
 
     @TestMetadata("idea/idea-completion/testData/smart/multipleArgsItem")
