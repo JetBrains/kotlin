@@ -288,7 +288,7 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
    */
   @NotNull
   @Deprecated
-  @ApiStatus.ScheduledForRemoval
+  @ApiStatus.ScheduledForRemoval(inVersion = "2022.2")
   protected ToggleAction createFlattenModulesAction(@NotNull BooleanSupplier isApplicable) {
     return new FlattenModulesToggleAction(myProject, () -> isApplicable.getAsBoolean() && ProjectView.getInstance(myProject).isShowModules(getId()),
                                           () -> ProjectView.getInstance(myProject).isFlattenModules(getId()),

@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  * @deprecated added in {@link ProjectViewImpl} automatically
  */
 @Deprecated
-@ApiStatus.ScheduledForRemoval
+@ApiStatus.ScheduledForRemoval(inVersion = "2022.2")
 public final class ShowModulesAction extends ToggleAction implements DumbAware {
   private final Project myProject;
   private final String myId;

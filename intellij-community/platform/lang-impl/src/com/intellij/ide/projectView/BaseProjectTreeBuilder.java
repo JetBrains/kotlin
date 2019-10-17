@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * @deprecated use {@link com.intellij.ui.tree.AsyncTreeModel} and {@link com.intellij.ui.tree.StructureTreeModel} instead.
  */
-@ApiStatus.ScheduledForRemoval
+@ApiStatus.ScheduledForRemoval(inVersion = "2022.2")
 @Deprecated
 public abstract class BaseProjectTreeBuilder extends AbstractTreeBuilder {
   protected final Project myProject;
