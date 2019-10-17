@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.template.impl;
 
 import com.intellij.AbstractBundle;
@@ -22,6 +22,7 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.xmlb.Converter;
@@ -42,7 +43,7 @@ import java.util.*;
   storages = @Storage("templates.xml"),
   additionalExportFile = TemplateSettings.TEMPLATES_DIR_PATH
 )
-public class TemplateSettings implements PersistentStateComponent<TemplateSettings.State> {
+public final class TemplateSettings implements PersistentStateComponent<TemplateSettings.State> {
   private static final Logger LOG = Logger.getInstance(TemplateSettings.class);
 
   @NonNls public static final String USER_GROUP_NAME = "user";
@@ -185,7 +186,8 @@ public class TemplateSettings implements PersistentStateComponent<TemplateSettin
     this(SchemeManagerFactory.getInstance());
   }
 
-  public TemplateSettings(SchemeManagerFactory factory) {
+  @NonInjectable
+  public TemplateSettings(@NotNull SchemeManagerFactory factory) {
     mySchemeManager = factory.create(TEMPLATES_DIR_PATH, new BaseSchemeProcessor<TemplateGroup, TemplateGroup>() {
       @Nullable
       @Override
