@@ -16,10 +16,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -553,9 +550,30 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
             return friendPaths.filter { filter(File(it)) }
         }
 
+    private fun isHybridKotlinJsLibrary(file: File): Boolean =
+        LibraryUtils.isKotlinJavascriptLibrary(file) && LibraryUtils.isKotlinJavascriptIrLibrary(file)
+
+    private fun KotlinJsOptions.isPreIrBackendDisabled(): Boolean =
+        listOf(
+            "-Xir-only",
+            "-Xir-produce-js",
+            "-Xir-produce-klib-file"
+        ).any(freeCompilerArgs::contains)
+
+    private fun KotlinJsOptions.isIrBackendEnabled(): Boolean =
+        listOf(
+            "-Xir-produce-klib-dir",
+            "-Xir-produce-js",
+            "-Xir-produce-klib-file"
+        ).any(freeCompilerArgs::contains)
+
     private val libraryFilter: (File) -> Boolean
-        get() = if ("-Xir" in kotlinOptions.freeCompilerArgs) {
-            LibraryUtils::isKotlinJavascriptIrLibrary
+        get() = if (kotlinOptions.isIrBackendEnabled()) {
+            if (kotlinOptions.isPreIrBackendDisabled()) {
+                LibraryUtils::isKotlinJavascriptIrLibrary
+            } else {
+                ::isHybridKotlinJsLibrary
+            }
         } else {
             LibraryUtils::isKotlinJavascriptLibrary
         }
@@ -566,10 +584,9 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
 
-        if ("-Xir" in args.freeArgs) {
+        if (args.isIrBackendEnabled()) {
             logger.kotlinDebug("Using JS IR backend")
             incremental = false
-            args.freeArgs += "-Xir-legacy-gradle-plugin-compatibility"
         }
 
         val dependencies = compileClasspath

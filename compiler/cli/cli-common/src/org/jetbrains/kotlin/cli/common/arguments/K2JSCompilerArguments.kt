@@ -106,22 +106,24 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
-
-    @Argument(value = "-Xir", description = "Use IR backend")
-    var irBackend: Boolean by FreezableVar(false)
+    @Argument(
+        value = "-Xir-produce-klib-dir",
+        description = "Generate unpacked KLIB into parent directory of output JS file.\n" +
+                "In combination with -meta-info generates both IR and pre-IR versions of library."
+    )
+    var irProduceKlibDir: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xir-produce-only",
-        valueDescription = "{ klib, js }",
-        description = "Type of output to produce. Overrides -meta-info argument."
+        value = "-Xir-produce-klib-file",
+        description = "Generate packed klib into file specified by -output. Disables pre-IR backend"
     )
-    var irProduceOnly: String? by NullableStringFreezableVar(null)
+    var irProduceKlibFile: Boolean by FreezableVar(false)
 
-    @Argument(
-        value = "-Xir-legacy-gradle-plugin-compatibility",
-        description = "Make KLIB generation compatible with legacy gradle plugin"
-    )
-    var irLegacyGradlePluginCompatibility: Boolean by FreezableVar(false)
+    @Argument(value = "-Xir-produce-js", description = "Generates JS file using IR backend. Also disables pre-IR backend")
+    var irProduceJs: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xir-only", description = "Disables pre-IR backend")
+    var irOnly: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays to JS typed arrays")
@@ -144,3 +146,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xenable-js-scripting", description = "Enable experimental support of .kts files using K/JS (with -Xir only)")
     var enableJsScripting: Boolean by FreezableVar(false)
 }
+
+fun K2JSCompilerArguments.isPreIrBackendDisabled(): Boolean =
+    irOnly || irProduceJs || irProduceKlibFile
+
+fun K2JSCompilerArguments.isIrBackendEnabled(): Boolean =
+    irProduceKlibDir || irProduceJs || irProduceKlibFile
