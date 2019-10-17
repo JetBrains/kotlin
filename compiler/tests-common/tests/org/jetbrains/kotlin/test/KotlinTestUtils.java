@@ -1055,7 +1055,7 @@ public class KotlinTestUtils {
     }
 
     public static void runTestWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile, String ignoreDirective) throws Exception {
-        runTest0WithCustomIgnoreDirective(test, targetBackend, testDataFile, ignoreDirective);
+        runTest(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), testDataFile);
     }
 
     // In this test runner version, NONE of the parameters are annotated by `TestDataFile`.
@@ -1067,23 +1067,18 @@ public class KotlinTestUtils {
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
     public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
-        runTest0WithCustomIgnoreDirective(test, targetBackend, testDataFilePath, IGNORE_BACKEND_DIRECTIVE_PREFIX);
+        runTest(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), testDataFilePath);
     }
 
-    private static void runTest0WithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String testDataFilePath, String ignoreDirective) throws Exception {
+    private static void runTest(DoTest test, String testDataFilePath) throws Exception {
+        testWithMuteInFile(test, testDataFilePath);
+    }
+
+    private static void testWithMuteInFile(DoTest test, String testDataFilePath) throws Exception {
         File testDataFile = new File(testDataFilePath);
 
         if (isMutedWithFile(testDataFile)) {
             return;
-        }
-
-        boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile, ignoreDirective);
-
-        if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
-            // Only ignore if it is ignored for both backends
-            // Motivation: this backend works => all good, even if compatible backend fails
-            // This backend fails, compatible works => need to know
-            isIgnored &= isIgnoredTarget(targetBackend.getCompatibleWith(), testDataFile);
         }
 
         try {
@@ -1094,59 +1089,85 @@ public class KotlinTestUtils {
                 return;
             }
 
-            if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
-                String text = doLoadFile(testDataFile);
-                String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name() + "\n";
-
-                String newText;
-                if (text.startsWith("// !")) {
-                    StringBuilder prefixBuilder = new StringBuilder();
-                    int l = 0;
-                    while (text.startsWith("// !", l)) {
-                        int r = text.indexOf("\n", l) + 1;
-                        if (r <= 0) r = text.length();
-                        prefixBuilder.append(text.substring(l, r));
-                        l = r;
-                    }
-                    prefixBuilder.append(directive);
-                    prefixBuilder.append(text.substring(l));
-
-                    newText = prefixBuilder.toString();
-                } else {
-                    newText = directive + text;
-                }
-
-                if (!newText.equals(text)) {
-                    System.err.println("\"" + directive + "\" was added to \"" + testDataFile + "\"");
-                    FileUtil.writeToFile(testDataFile, newText);
-                }
-            }
-
-            if (RUN_IGNORED_TESTS_AS_REGULAR || !isIgnored) {
-                throw e;
-            }
-
-            if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
-                e.printStackTrace();
-            }
-            return;
+            throw e;
         }
 
         Assert.assertNull("Test is good but there is a fail file", failFile(testDataFile));
+    }
 
-        if (isIgnored) {
-            if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
-                String text = doLoadFile(testDataFile);
-                String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name();
-                String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
-                if (!newText.equals(text)) {
-                    System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
-                    FileUtil.writeToFile(testDataFile, newText);
-                }
+    private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {
+        if (targetBackend == TargetBackend.ANY && !AUTOMATICALLY_MUTE_FAILED_TESTS) {
+            return test;
+        }
+
+        return filePath -> {
+            File testDataFile = new File(filePath);
+
+            boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile, ignoreDirective);
+
+            if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
+                // Only ignore if it is ignored for both backends
+                // Motivation: this backend works => all good, even if compatible backend fails
+                // This backend fails, compatible works => need to know
+                isIgnored &= isIgnoredTarget(targetBackend.getCompatibleWith(), testDataFile);
             }
 
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive.");
-        }
+            try {
+                test.invoke(filePath);
+            }
+            catch (Throwable e) {
+                if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
+                    String text = doLoadFile(testDataFile);
+                    String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name() + "\n";
+
+                    String newText;
+                    if (text.startsWith("// !")) {
+                        StringBuilder prefixBuilder = new StringBuilder();
+                        int l = 0;
+                        while (text.startsWith("// !", l)) {
+                            int r = text.indexOf("\n", l) + 1;
+                            if (r <= 0) r = text.length();
+                            prefixBuilder.append(text.substring(l, r));
+                            l = r;
+                        }
+                        prefixBuilder.append(directive);
+                        prefixBuilder.append(text.substring(l));
+
+                        newText = prefixBuilder.toString();
+                    } else {
+                        newText = directive + text;
+                    }
+
+                    if (!newText.equals(text)) {
+                        System.err.println("\"" + directive + "\" was added to \"" + testDataFile + "\"");
+                        FileUtil.writeToFile(testDataFile, newText);
+                    }
+                }
+
+                if (RUN_IGNORED_TESTS_AS_REGULAR || !isIgnored) {
+                    throw e;
+                }
+
+                if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+
+            if (isIgnored) {
+                if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
+                    String text = doLoadFile(testDataFile);
+                    String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name();
+                    String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
+                    if (!newText.equals(text)) {
+                        System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
+                        FileUtil.writeToFile(testDataFile, newText);
+                    }
+                }
+
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive.");
+            }
+        };
     }
 
     private static boolean isMutedWithFile(@NotNull File testDataFile) {
