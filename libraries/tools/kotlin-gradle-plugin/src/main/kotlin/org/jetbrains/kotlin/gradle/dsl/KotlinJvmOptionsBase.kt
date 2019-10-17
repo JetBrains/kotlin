@@ -88,6 +88,13 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             noStdlibField = value
         }
 
+    private var useIRField: kotlin.Boolean? = null
+    override var useIR: kotlin.Boolean
+        get() = useIRField ?: false
+        set(value) {
+            useIRField = value
+        }
+
     internal open fun updateArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments) {
         allWarningsAsErrorsField?.let { args.allWarningsAsErrors = it }
         suppressWarningsField?.let { args.suppressWarnings = it }
@@ -101,6 +108,7 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         noJdkField?.let { args.noJdk = it }
         noReflectField?.let { args.noReflect = it }
         noStdlibField?.let { args.noStdlib = it }
+        useIRField?.let { args.useIR = it }
     }
 }
 
@@ -117,4 +125,5 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     noJdk = false
     noReflect = true
     noStdlib = true
+    useIR = false
 }
