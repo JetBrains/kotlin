@@ -56,6 +56,9 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     val entry: File
         get() = compilation.compileKotlinTask.outputFile
 
+    @Input
+    var resolveFromModulesFirst: Boolean = false
+
     @Suppress("unused")
     val runtimeClasspath: FileCollection
         @InputFiles get() = compilation.compileDependencyFiles
@@ -126,7 +129,8 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             bundleAnalyzerReportDir = if (report) reportDir else null,
             devServer = devServer,
             devtool = devtool,
-            sourceMaps = sourceMaps
+            sourceMaps = sourceMaps,
+            resolveFromModulesFirst = resolveFromModulesFirst
         )
     )
 

@@ -96,6 +96,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 when (kind) {
                     BuildVariantKind.RELEASE -> {
+                        it.resolveFromModulesFirst = true
                         it.dependsOn(dceTask)
                     }
                     BuildVariantKind.DEBUG -> {
@@ -139,6 +140,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 when (kind) {
                     BuildVariantKind.RELEASE -> {
+                        it.resolveFromModulesFirst = true
                         it.dependsOn(dceTask)
                         project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
                     }
