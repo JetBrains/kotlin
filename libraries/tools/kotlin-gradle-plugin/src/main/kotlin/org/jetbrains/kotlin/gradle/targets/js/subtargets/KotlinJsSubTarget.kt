@@ -45,8 +45,10 @@ abstract class KotlinJsSubTarget(
 
         configureBuildVariants()
         configureTests()
-        configure { configureRun(it) }
-        configure { configureBuild(it) }
+        configure {
+            configureRun(it)
+            configureBuild(it)
+        }
 
         target.compilations.all {
             val npmProject = it.npmProject

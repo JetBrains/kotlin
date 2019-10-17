@@ -6,25 +6,32 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariant
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Devtool
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
+import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.io.File
 import javax.inject.Inject
 
 open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
+
+    lateinit var dceTask: TaskProvider<KotlinJsDce>
 
     lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
@@ -52,9 +59,15 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
+        val dceTask = if (::dceTask.isInitialized) {
+            this.dceTask
+        } else {
+            configureDce(compilation)
+        }
+
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
-            val run = project.registerTask<KotlinWebpack>(
+            project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
                     lowerCamelCaseName(
                         buildVariant.name,
@@ -65,7 +78,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 val compileKotlinTask = compilation.compileKotlinTask
                 it.dependsOn(
                     nodeJs.npmInstallTask,
-                    compileKotlinTask,
                     target.project.tasks.getByName(compilation.processResourcesTaskName)
                 )
 
@@ -81,10 +93,16 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 )
 
                 it.outputs.upToDateWhen { false }
-            }
 
-            if (kind == BuildVariantKind.DEBUG) {
-                target.runTask.dependsOn(run)
+                when (kind) {
+                    BuildVariantKind.RELEASE -> {
+                        it.dependsOn(dceTask)
+                    }
+                    BuildVariantKind.DEBUG -> {
+                        it.dependsOn(compileKotlinTask)
+                        target.runTask.dependsOn(it)
+                    }
+                }
             }
         }
     }
@@ -93,9 +111,15 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
+        val dceTask = if (::dceTask.isInitialized) {
+            this.dceTask
+        } else {
+            configureDce(compilation)
+        }
+
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
-            val build = project.registerTask<KotlinWebpack>(
+            project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
                     lowerCamelCaseName(
                         buildVariant.name,
@@ -105,8 +129,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             ) {
                 val compileKotlinTask = compilation.compileKotlinTask
                 it.dependsOn(
-                    nodeJs.npmInstallTask,
-                    compileKotlinTask
+                    nodeJs.npmInstallTask
                 )
 
                 it.configureOptimization(kind)
@@ -114,12 +137,40 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 it.compilation = compilation
                 it.description = "build webpack ${kind.name.toLowerCase()} bundle"
 
-
+                when (kind) {
+                    BuildVariantKind.RELEASE -> {
+                        it.dependsOn(dceTask)
+                        project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
+                    }
+                    BuildVariantKind.DEBUG -> {
+                        it.dependsOn(compileKotlinTask)
+                    }
+                }
             }
+        }
+    }
 
-            if (kind == BuildVariantKind.RELEASE) {
-                project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(build)
-            }
+    private fun configureDce(compilation: KotlinJsCompilation): TaskProvider<KotlinJsDce> {
+        val project = compilation.target.project
+
+        val dceTaskName = lowerCamelCaseName(
+            DCE_TASK_PREFIX,
+            compilation.target.disambiguationClassifier,
+            compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            DCE_TASK_SUFFIX
+        )
+
+        val kotlinTask = compilation.compileKotlinTask
+
+        return project.registerTask<KotlinJsDce>(dceTaskName) {
+            it.dependsOn(kotlinTask)
+
+            it.classpath = project.configurations.getByName(compilation.compileDependencyConfigurationName)
+            it.destinationDir = it.dceOptions.outputDirectory?.let { File(it) }
+                ?: compilation.npmProject.dir.resolve(DCE_DIR)
+            it.source(kotlinTask.outputFile)
+        }.also {
+            dceTask = it
         }
     }
 
@@ -157,6 +208,11 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     }
 
     companion object {
+        const val DCE_TASK_PREFIX = "processDce"
+        const val DCE_TASK_SUFFIX = "kotlinJs"
+
+        const val DCE_DIR = "kotlin-dce"
+
         const val RELEASE = "release"
         const val DEBUG = "debug"
     }
