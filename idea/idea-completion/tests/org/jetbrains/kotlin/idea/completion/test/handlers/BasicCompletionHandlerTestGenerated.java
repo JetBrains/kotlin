@@ -462,6 +462,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/HigherOrderFunctionWithArgs3.kt");
         }
 
+        @TestMetadata("HigherOrderSuspendFunctionWithArgs.kt")
+        public void testHigherOrderSuspendFunctionWithArgs() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/HigherOrderSuspendFunctionWithArgs.kt");
+        }
+
         @TestMetadata("InsertFunctionWithSingleParameterWithBrace.kt")
         public void testInsertFunctionWithSingleParameterWithBrace() throws Exception {
             runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/InsertFunctionWithSingleParameterWithBrace.kt");

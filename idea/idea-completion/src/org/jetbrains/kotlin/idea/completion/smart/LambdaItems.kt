@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.completion.smart
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.idea.completion.LambdaSignatureTemplates
 import org.jetbrains.kotlin.idea.completion.suppressAutoInsertion
 import org.jetbrains.kotlin.idea.core.ExpectedInfo
@@ -36,7 +36,7 @@ object LambdaItems {
     }
 
     fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
-        val functionExpectedInfos = expectedInfos.filter { it.fuzzyType?.type?.isFunctionType == true }
+        val functionExpectedInfos = expectedInfos.filter { it.fuzzyType?.type?.isFunctionOrSuspendFunctionType == true }
         if (functionExpectedInfos.isEmpty()) return
 
         val functionTypes = functionExpectedInfos
