@@ -13,8 +13,8 @@ FILE: postponedResolveOfManyCallableReference.kt
     public final fun <T> bar2(f: R|kotlin/Function1<T, kotlin/Unit>|, e: R|T|): R|kotlin/Unit| {
     }
     public final fun test(a: R|A|, b: R|B|): R|kotlin/Unit| {
-        lval expectedType1: R|A| = R|/bar1|<R|A|>(::<Unresolved reference: foo>#)
-        lval expectedType2: R|B| = R|/bar1|<R|B|>(::<Unresolved reference: foo>#)
+        lval expectedType1: R|A| = R|/bar1|<R|A|>(::R|/foo|)
+        lval expectedType2: R|B| = R|/bar1|<R|B|>(::R|/foo|)
         R|/bar2|<R|A|>(::R|/foo|, R|<local>/a|)
         R|/bar2|<R|B|>(::R|/foo|, R|<local>/b|)
     }

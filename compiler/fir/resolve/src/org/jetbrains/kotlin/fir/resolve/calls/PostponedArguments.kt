@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -211,6 +213,7 @@ abstract class ResolvedCallableReferenceAtom(
     val lhs: DoubleColonLHS?
 ) : PostponedResolvedAtomMarker {
     override var analyzed: Boolean = false
+    var postponed: Boolean = false
 
     var resultingCandidate: Pair<Candidate, CandidateApplicability>? = null
 }
@@ -221,6 +224,63 @@ class EagerCallableReferenceAtom(
     lhs: DoubleColonLHS?
 ) : ResolvedCallableReferenceAtom(atom, expectedType, lhs) {
 
-    override val inputTypes: Collection<ConeKotlinType> get() = emptyList()
-    override val outputType: ConeKotlinType? get() = null
+    override val inputTypes: Collection<ConeKotlinType>
+        get() {
+            if (!postponed) return emptyList()
+            return extractInputOutputTypesFromCallableReferenceExpectedType(expectedType)?.inputTypes ?: listOfNotNull(expectedType)
+        }
+    override val outputType: ConeKotlinType?
+        get() {
+            if (!postponed) return null
+            return extractInputOutputTypesFromCallableReferenceExpectedType(expectedType)?.outputType
+        }
+}
+
+private data class InputOutputTypes(val inputTypes: List<ConeKotlinType>, val outputType: ConeKotlinType)
+
+private fun extractInputOutputTypesFromCallableReferenceExpectedType(expectedType: ConeKotlinType?): InputOutputTypes? {
+    if (expectedType == null) return null
+
+    return when {
+        expectedType.isBuiltinFunctionalType || expectedType.isSuspendFunctionType ->
+            extractInputOutputTypesFromFunctionType(expectedType)
+
+//        ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType) ->
+//            InputOutputTypes(emptyList(), expectedType.arguments.single().type.unwrap())
+//
+//        ReflectionTypes.isNumberedKFunction(expectedType) -> {
+//            val functionFromSupertype = expectedType.immediateSupertypes().first { it.isFunctionType }.unwrap()
+//            extractInputOutputTypesFromFunctionType(functionFromSupertype)
+//        }
+//
+//        ReflectionTypes.isNumberedKSuspendFunction(expectedType) -> {
+//            val kSuspendFunctionType = expectedType.immediateSupertypes().first { it.isSuspendFunctionType }.unwrap()
+//            extractInputOutputTypesFromFunctionType(kSuspendFunctionType)
+//        }
+//
+//        ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(expectedType) -> {
+//            val functionFromSupertype = expectedType.supertypes().first { it.isFunctionType }.unwrap()
+//            extractInputOutputTypesFromFunctionType(functionFromSupertype)
+//        }
+
+        else -> null
+    }
+}
+
+private fun extractInputOutputTypesFromFunctionType(functionType: ConeKotlinType): InputOutputTypes {
+    val receiver = null// TODO: functionType.receiverType()
+    val parameters = functionType.valueParameterTypes.map {
+        it ?: ConeClassTypeImpl(
+            ConeClassLikeLookupTagImpl(StandardClassIds.Nothing), emptyArray(),
+            isNullable = false
+        )
+    }
+
+    val inputTypes = /*listOfNotNull(receiver) +*/ parameters
+    val outputType = functionType.returnType ?: ConeClassTypeImpl(
+        ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(),
+        isNullable = true
+    )
+
+    return InputOutputTypes(inputTypes, outputType)
 }

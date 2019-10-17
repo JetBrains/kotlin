@@ -17,7 +17,7 @@ FILE: applicableCallableReferenceFromDistantScope.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            lval s: R|kotlin/String| = this@R|/Scope|.R|/Scope.bar|<R|kotlin/String|>(::<Unresolved reference: foo>#)
+            lval s: R|kotlin/String| = this@R|/Scope|.R|/Scope.bar|<R|kotlin/String|>(::R|/foo|)
         }
 
     }

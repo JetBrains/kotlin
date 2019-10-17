@@ -15,10 +15,10 @@ FILE: eagerAndPostponedCallableReferences.kt
         ^foo R|kotlin/TODO|()
     }
     public final fun test(): R|kotlin/Unit| {
-        lval a1: R|A| = R|/foo|<R|A|>(::R|/singleA|, ::<Unresolved reference: multiple>#)
-        lval a2: R|B| = R|/foo|<R|B|>(::R|/singleB|, ::<Unresolved reference: multiple>#)
-        lval a3: R|A| = R|/foo|<R|A|>(::<Unresolved reference: multiple>#, ::R|/singleA|)
-        lval a4: R|B| = R|/foo|<R|B|>(::<Unresolved reference: multiple>#, ::R|/singleB|)
+        lval a1: R|A| = R|/foo|<R|A|>(::R|/singleA|, ::R|/multiple|)
+        lval a2: R|B| = R|/foo|<R|B|>(::R|/singleB|, ::R|/multiple|)
+        lval a3: R|A| = R|/foo|<R|A|>(::R|/multiple|, ::R|/singleA|)
+        lval a4: R|B| = R|/foo|<R|B|>(::R|/multiple|, ::R|/singleB|)
         lval a5: R|A| = R|/foo|<R|A|>(::R|/singleA|, ::R|/singleA|)
         lval a6: R|it(A & B)| = R|/foo|<R|it(A & B)|>(::R|/singleA|, ::R|/singleB|)
         R|/foo|<R|kotlin/Unit|>(::<Unresolved reference: multiple>#, ::<Unresolved reference: multiple>#)

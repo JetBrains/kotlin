@@ -18,14 +18,12 @@ import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
-import org.jetbrains.kotlin.fir.resolve.typeForQualifier
-import org.jetbrains.kotlin.fir.resolve.typeFromCallee
-import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -226,7 +224,8 @@ class FirCallResolver(
     ): Boolean {
         val callableReferenceAccess = resolvedCallableReferenceAtom.atom
         val lhs = resolvedCallableReferenceAtom.lhs
-        val expectedType = resolvedCallableReferenceAtom.expectedType ?: return false
+        val coneSubstitutor = constraintSystemBuilder.buildCurrentSubstitutor() as ConeSubstitutor
+        val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf) ?: return false
 
         val result = CandidateCollector(this, resolutionStageRunner)
         val consumer =
@@ -250,7 +249,8 @@ class FirCallResolver(
                 return false
             }
             reducedCandidates.size > 1 -> {
-                // TODO: add postponed atom
+                if (resolvedCallableReferenceAtom.postponed) return false
+                resolvedCallableReferenceAtom.postponed = true
                 return true
             }
         }

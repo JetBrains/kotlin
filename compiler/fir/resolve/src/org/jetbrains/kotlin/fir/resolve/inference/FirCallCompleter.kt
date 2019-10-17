@@ -71,7 +71,9 @@ class FirCallCompleter(
         val replacements = mutableMapOf<FirExpression, FirExpression>()
 
         val analyzer =
-            PostponedArgumentsAnalyzer(LambdaAnalyzerImpl(replacements), { it.resultType }, inferenceComponents, candidate, replacements)
+            PostponedArgumentsAnalyzer(
+                LambdaAnalyzerImpl(replacements), { it.resultType }, inferenceComponents, candidate, replacements, transformer.callResolver
+            )
 
         completer.complete(candidate.system.asConstraintSystemCompleterContext(), completionMode, listOf(call), initialType) {
             analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it)

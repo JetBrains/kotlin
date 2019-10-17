@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
@@ -43,7 +44,8 @@ class PostponedArgumentsAnalyzer(
     private val typeProvider: (FirExpression) -> FirTypeRef?,
     private val components: InferenceComponents,
     private val candidate: Candidate,
-    private val replacements: MutableMap<FirExpression, FirExpression>
+    private val replacements: MutableMap<FirExpression, FirExpression>,
+    private val callResolver: FirCallResolver
 ) {
 
     fun analyze(
@@ -70,6 +72,10 @@ class PostponedArgumentsAnalyzer(
     }
 
     private fun processCallableReference(atom: ResolvedCallableReferenceAtom) {
+        if (atom.postponed) {
+            callResolver.resolveCallableReference(candidate.csBuilder, atom)
+        }
+
         val callableReferenceAccess = atom.atom
         atom.analyzed = true
         val (candidate, applicability) = atom.resultingCandidate ?: Pair(null, CandidateApplicability.INAPPLICABLE)
