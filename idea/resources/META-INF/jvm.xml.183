@@ -198,6 +198,7 @@
         <storageComponentContainerContributor implementation="org.jetbrains.kotlin.samWithReceiver.ide.IdeSamWithReceiverComponentContributor"/>
 
         <declarationAttributeAltererExtension implementation="org.jetbrains.kotlin.allopen.ide.IdeAllOpenDeclarationAttributeAltererExtension"/>
+        <ultraLightClassModifierExtension implementation="org.jetbrains.kotlin.allopen.ide.AllOpenUltraLightClassModifierExtension"/>
 
         <storageComponentContainerContributor implementation="org.jetbrains.kotlin.noarg.ide.IdeNoArgComponentContainerContributor"/>
         <expressionCodegenExtension implementation="org.jetbrains.kotlin.noarg.ide.IdeNoArgExpressionCodegenExtension"/>

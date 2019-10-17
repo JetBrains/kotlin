@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.google.common.collect.Lists
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
 import com.intellij.psi.impl.cache.TypeInfo
@@ -16,6 +17,7 @@ import com.intellij.psi.impl.light.*
 import com.intellij.util.BitUtil.isSet
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
+import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -388,6 +390,10 @@ fun KotlinType.tryResolveMarkerInterfaceFQName(): String? {
     }
 
     return null
+}
+
+internal inline fun Project.applyCompilerPlugins(body: (UltraLightClassModifierExtension) -> Unit) {
+    UltraLightClassModifierExtension.getInstances(this).forEach { body(it) }
 }
 
 internal fun <L : Any> L.invalidAccess(): Nothing =

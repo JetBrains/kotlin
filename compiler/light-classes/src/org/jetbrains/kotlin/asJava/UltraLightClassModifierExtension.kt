@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.asJava
 
+import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -32,4 +33,10 @@ interface UltraLightClassModifierExtension {
         containingDeclaration: KtUltraLightClass,
         fieldsList: MutableList<KtLightField>
     ) = Unit
+
+    fun interceptModalityBuilding(
+        declaration: KtDeclaration,
+        descriptor: Lazy<DeclarationDescriptor?>,
+        modifier: String
+    ) = modifier
 }

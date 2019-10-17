@@ -42,10 +42,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightModifierList
 import org.jetbrains.kotlin.asJava.elements.KtLightPsiReferenceList
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -230,10 +227,12 @@ abstract class KtLightClassForSourceDeclaration(
         if (isAbstract() || isSealed()) {
             psiModifiers.add(PsiModifier.ABSTRACT)
         } else if (!(classOrObject.hasModifier(OPEN_KEYWORD) || (classOrObject is KtClass && classOrObject.isEnum()))) {
-            // AllOpen can affect on modality of the member. We ought to check if the extension could override the modality
-            // Resolver will produce correct descriptor corresponding to modality from AllOpen.
-            // The easiest way to get new modality is to resolve the descriptor
-            if (!kotlinOrigin.isOrdinaryClass || getDescriptor()?.modality != Modality.OPEN) {
+            val descriptor = lazy { getDescriptor() }
+            var modifier = PsiModifier.FINAL
+            project.applyCompilerPlugins {
+                modifier = it.interceptModalityBuilding(kotlinOrigin, descriptor, modifier)
+            }
+            if (modifier == PsiModifier.FINAL) {
                 psiModifiers.add(PsiModifier.FINAL)
             }
         }

@@ -246,14 +246,15 @@ internal class UltraLightMembersCreator(
 
         override fun hasModifierProperty(name: String): Boolean {
 
-            val modifierResult = hasModifier(name)
+            if (name != PsiModifier.FINAL || !outerDeclaration.isOrdinaryClass) return hasModifier(name)
 
             //AllOpen can affect on modality of the member. We ought to check if the extension could override the modality
-            if (name != PsiModifier.FINAL) return modifierResult
-            if (!outerDeclaration.isOrdinaryClass) return modifierResult
-            // Resolver will produce correct descriptor corresponding to modality from AllOpen.
-            // The easiest way to get new modality is to resolve the descriptor
-            return (declaration.resolve() as? CallableMemberDescriptor)?.modality == Modality.FINAL
+            val descriptor = lazy { declaration.resolve() }
+            var modifier = PsiModifier.FINAL
+            project.applyCompilerPlugins {
+                modifier = it.interceptModalityBuilding(declaration, descriptor, modifier)
+            }
+            return modifier == PsiModifier.FINAL
         }
 
         private fun hasModifier(name: String): Boolean {

@@ -197,7 +197,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         fun ArrayList<KtLightField>.updateWithCompilerPlugins() = also {
             val lazyDescriptor = lazy { getDescriptor() }
-            applyCompilerPlugins {
+            project.applyCompilerPlugins {
                 it.interceptFieldsBuilding(
                     declaration = kotlinOrigin,
                     descriptor = lazyDescriptor,
@@ -309,7 +309,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         addDelegatesToInterfaceMethods(result)
 
         val lazyDescriptor = lazy { getDescriptor() }
-        applyCompilerPlugins {
+        project.applyCompilerPlugins {
             it.interceptMethodsBuilding(
                 declaration = kotlinOrigin,
                 descriptor = lazyDescriptor,
@@ -319,10 +319,6 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         }
 
         return result
-    }
-
-    private inline fun applyCompilerPlugins(body: (UltraLightClassModifierExtension) -> Unit) {
-        UltraLightClassModifierExtension.getInstances(project).forEach { body(it) }
     }
 
     private val _ownMethods: CachedValue<List<KtLightMethod>> = CachedValuesManager.getManager(project).createCachedValue(
