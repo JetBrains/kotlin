@@ -980,11 +980,12 @@ abstract class IrFileDeserializer(
                     deserializeClassKind(proto.kind),
                     deserializeVisibility(proto.visibility),
                     modality,
-                    proto.isCompanion,
-                    proto.isInner,
-                    proto.isData,
-                    proto.isExternal,
-                    proto.isInline
+                    isCompanion = proto.isCompanion,
+                    isInner = proto.isInner,
+                    isData = proto.isData,
+                    isExternal = proto.isExternal,
+                    isInline = proto.isInline,
+                    isExpect = false // TODO isExpect
                 )
             }.usingParent {
                 proto.declarationContainer.declarationList.mapTo(declarations) { deserializeDeclaration(it) }
@@ -1052,10 +1053,11 @@ abstract class IrFileDeserializer(
                     deserializeVisibility(proto.base.visibility),
                     deserializeModality(proto.modality),
                     deserializeIrType(proto.base.returnType),
-                    proto.base.isInline,
-                    proto.base.isExternal,
-                    proto.isTailrec,
-                    proto.isSuspend
+                    isInline = proto.base.isInline,
+                    isExternal = proto.base.isExternal,
+                    isTailrec = proto.isTailrec,
+                    isSuspend = proto.isSuspend,
+                    isExpect = false // TODO isExpect
                 )
             }.apply {
                 proto.overriddenList.mapTo(overriddenSymbols) { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
@@ -1136,9 +1138,10 @@ abstract class IrFileDeserializer(
                     deserializeName(proto.base.name),
                     deserializeVisibility(proto.base.visibility),
                     deserializeIrType(proto.base.returnType),
-                    proto.base.isInline,
-                    proto.base.isExternal,
-                    proto.isPrimary
+                    isInline = proto.base.isInline,
+                    isExternal = proto.base.isExternal,
+                    isPrimary = proto.isPrimary,
+                    isExpect = false // TODO isExpect
                 )
             }.apply {
                 (descriptor as? WrappedClassConstructorDescriptor)?.bind(this)
