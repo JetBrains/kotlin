@@ -10,7 +10,7 @@ val appcodeVersion: String by rootProject.extra
 val appcodeUnscrambledJarDir: File by rootProject.extra
 
 dependencies {
-    compile(project(":kotlin-ultimate:ide:cidr-native"))
+    compile(project(":kotlin-ultimate:ide:common-cidr-native"))
     compileOnly(fileTree(appcodeUnscrambledJarDir) { include("**/*.jar") })
 }
 

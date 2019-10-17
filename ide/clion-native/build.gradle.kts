@@ -17,7 +17,7 @@ if (!isStandaloneBuild) {
 }
 
 dependencies {
-    compile(project(":kotlin-ultimate:ide:cidr-native"))
+    compile(project(":kotlin-ultimate:ide:common-cidr-native"))
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
 
     if (!isStandaloneBuild) {
