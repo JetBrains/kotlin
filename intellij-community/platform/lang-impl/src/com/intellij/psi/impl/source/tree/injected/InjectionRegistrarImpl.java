@@ -673,6 +673,10 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     InjectedFileViewProvider viewProvider = InjectedFileViewProvider.create(PsiManagerEx.getInstanceEx(project), virtualFile, documentWindow, finalLanguage);
     Set<Language> languages = viewProvider.getLanguages();
     ASTNode[] parsedNodes = new ASTNode[languages.size()];
+
+    virtualFile.setContent(null, decodedChars, false);
+    virtualFile.setWritable(virtualFile.getDelegate().isWritable());
+
     int i = 0;
     for (Language lang : languages) {
       ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(lang);
@@ -699,9 +703,6 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
         throw new RuntimeException(exceptionContext(e.getMessage()+"'\n---chars:\n'" + decodedChars + "'", finalLanguage, hostPsiFile, hostVirtualFile, hostDocument, placeInfos,
                                                     documentManager));
       }
-
-      virtualFile.setContent(null, decodedChars, false);
-      virtualFile.setWritable(virtualFile.getDelegate().isWritable());
 
       try {
         List<InjectedLanguageUtil.TokenInfo> tokens = obtainHighlightTokensFromLexer(language, decodedChars, virtualFile, project, placeInfos);
