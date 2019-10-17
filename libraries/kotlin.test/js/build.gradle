@@ -16,7 +16,11 @@ dependencies {
 }
 
 compileKotlin2Js {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xuse-experimental=kotlin.contracts.ExperimentalContracts"]
+    kotlinOptions.freeCompilerArgs = [
+            "-Xallow-kotlin-package",
+            "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
+            "-Xir-produce-klib-dir"
+    ]
     kotlinOptions {
         moduleKind = "umd"
         outputFile = "${buildDir}/classes/main/kotlin-test.js"

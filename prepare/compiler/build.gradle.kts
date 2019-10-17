@@ -91,7 +91,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-stdlib-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-source-sections-compiler-plugin",
     ":kotlin-test:kotlin-test-js",
-    ":kotlin-test:kotlin-test-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-jvm",
@@ -114,7 +113,6 @@ val distSourcesProjects = listOfNotNull(
     ":kotlin-script-runtime",
     ":kotlin-stdlib-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-test:kotlin-test-js",
-    ":kotlin-test:kotlin-test-js-ir".takeIf { kotlinBuildProperties.jsIrDist },
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-jvm",
@@ -149,7 +147,7 @@ dependencies {
     libraries(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
     libraries(commonDep("io.ktor", "ktor-network"))
     libraries(kotlinStdlib("jdk8"))
-    libraries(kotlinStdlib("js"))
+    libraries(kotlinStdlib("js", "distLibrary"))
 
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
