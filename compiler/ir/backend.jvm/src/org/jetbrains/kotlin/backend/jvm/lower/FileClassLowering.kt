@@ -86,7 +86,8 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             isInner = false,
             isData = false,
             isExternal = false,
-            isInline = false
+            isInline = false,
+            isExpect = false
         ).apply {
             descriptor.bind(this)
             superTypes.add(context.irBuiltIns.anyType)

@@ -117,7 +117,8 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
                 isInline = classOverride.isInline,
                 isExternal = false,
                 isTailrec = false,
-                isSuspend = classOverride.isSuspend
+                isSuspend = classOverride.isSuspend,
+                isExpect = false
             ).apply {
                 descriptor.bind(this)
                 parent = irClass
@@ -130,7 +131,11 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
                     IrPropertyImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, IrPropertySymbolImpl(propertyDescriptor),
                         inheritedProperty.name, Visibilities.PUBLIC, inheritedProperty.modality, inheritedProperty.isVar,
-                        inheritedProperty.isConst, inheritedProperty.isLateinit, inheritedProperty.isDelegated, isExternal = false
+                        isConst = inheritedProperty.isConst,
+                        isLateinit = inheritedProperty.isLateinit,
+                        isDelegated = inheritedProperty.isDelegated,
+                        isExpect = inheritedProperty.isExpect,
+                        isExternal = false
                     ).apply {
                         propertyDescriptor.bind(this)
                         parent = irClass

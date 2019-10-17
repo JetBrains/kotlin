@@ -81,10 +81,17 @@ class JvmDeclarationFactory(
     private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor {
         val newDescriptor = WrappedClassConstructorDescriptor(oldConstructor.descriptor.annotations)
         return IrConstructorImpl(
-            oldConstructor.startOffset, oldConstructor.endOffset, oldConstructor.origin,
+            oldConstructor.startOffset,
+            oldConstructor.endOffset,
+            oldConstructor.origin,
             IrConstructorSymbolImpl(newDescriptor),
-            oldConstructor.name, oldConstructor.visibility, oldConstructor.returnType,
-            oldConstructor.isInline, oldConstructor.isExternal, oldConstructor.isPrimary
+            oldConstructor.name,
+            oldConstructor.visibility,
+            oldConstructor.returnType,
+            isInline = oldConstructor.isInline,
+            isExternal = oldConstructor.isExternal,
+            isPrimary = oldConstructor.isPrimary,
+            isExpect = oldConstructor.isExpect
         ).apply {
             newDescriptor.bind(this)
             annotations.addAll(oldConstructor.annotations.map { it.deepCopyWithSymbols(this) })
@@ -172,7 +179,8 @@ class JvmDeclarationFactory(
                 isInner = false,
                 isData = false,
                 isExternal = false,
-                isInline = false
+                isInline = false,
+                isExpect = false
             ).apply {
                 descriptor.bind(this)
                 parent = interfaceClass

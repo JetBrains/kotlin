@@ -129,7 +129,8 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                     returnType = oldFunction.returnType,
                     isInline = oldFunction.isInline,
                     isExternal = false,
-                    isPrimary = false
+                    isPrimary = false,
+                    isExpect = false
                 ).apply {
                     descriptor.bind(this)
                 }
@@ -147,7 +148,8 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                     isInline = oldFunction.isInline,
                     isExternal = false,
                     isTailrec = false,
-                    isSuspend = oldFunction.isSuspend
+                    isSuspend = oldFunction.isSuspend,
+                    isExpect = false
                 ).apply {
                     descriptor.bind(this)
                 }
