@@ -55,7 +55,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
 
   private val saveAlarm = pooledThreadSingleAlarm(delay = 300, parentDisposable = this) {
     val app = ApplicationManager.getApplication()
-    if (app != null && !app.isDisposed && !app.isDisposeInProgress && blockSaveOnFrameDeactivationCount.get() == 0) {
+    if (app != null && !app.isDisposedOrDisposeInProgress && blockSaveOnFrameDeactivationCount.get() == 0) {
       runBlocking {
         processTasks()
       }
