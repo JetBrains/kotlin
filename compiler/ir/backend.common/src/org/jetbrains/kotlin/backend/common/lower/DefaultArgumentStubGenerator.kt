@@ -493,9 +493,10 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
                 irFunction.name,
                 irFunction.visibility,
                 irFunction.returnType,
-                irFunction.isInline,
-                false,
-                false
+                isInline = irFunction.isInline,
+                isExternal = false,
+                isPrimary = false,
+                isExpect = false
             ).also {
                 descriptor.bind(it)
                 it.parent = irFunction.parent
@@ -516,10 +517,11 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
                 irFunction.visibility,
                 Modality.FINAL,
                 irFunction.returnType,
-                irFunction.isInline,
-                false,
-                false,
-                irFunction.isSuspend
+                isInline = irFunction.isInline,
+                isExternal = false,
+                isTailrec = false,
+                isSuspend = irFunction.isSuspend,
+                isExpect = irFunction.isExpect
             ).also {
                 descriptor.bind(it)
                 it.parent = irFunction.parent
@@ -551,8 +553,8 @@ private fun IrFunction.valueParameter(index: Int, name: Name, type: IrType): IrV
         index,
         type,
         null,
-        false,
-        false
+        isCrossinline = false,
+        isNoinline = false
     ).also {
         parameterDescriptor.bind(it)
         it.parent = this

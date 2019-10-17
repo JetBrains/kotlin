@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -87,7 +85,7 @@ class PropertiesLowering(
         return IrFunctionImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, Name.identifier(name),
             declaration.visibility, Modality.OPEN, context.irBuiltIns.unitType,
-            isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+            isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false
         ).apply {
             descriptor.bind(this)
 

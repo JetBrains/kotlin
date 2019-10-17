@@ -137,7 +137,8 @@ class InitializersLowering(
         // TODO: mark as synthesized
         val staticInitializerDescriptor = WrappedSimpleFunctionDescriptor()
         val staticInitializer = IrFunctionImpl(
-            irClass.startOffset, irClass.endOffset,
+            irClass.startOffset,
+            irClass.endOffset,
             declarationOrigin,
             IrSimpleFunctionSymbolImpl(staticInitializerDescriptor),
             clinitName,
@@ -147,7 +148,8 @@ class InitializersLowering(
             isInline = false,
             isExternal = false,
             isTailrec = false,
-            isSuspend = false
+            isSuspend = false,
+            isExpect = false
         ).apply {
             staticInitializerDescriptor.bind(this)
             body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,

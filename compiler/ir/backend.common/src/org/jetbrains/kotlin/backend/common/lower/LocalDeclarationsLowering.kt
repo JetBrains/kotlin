@@ -518,10 +518,11 @@ class LocalDeclarationsLowering(
                 Visibilities.PRIVATE,
                 Modality.FINAL,
                 oldDeclaration.returnType,
-                oldDeclaration.isInline,
-                oldDeclaration.isExternal,
-                oldDeclaration.isTailrec,
-                oldDeclaration.isSuspend
+                isInline = oldDeclaration.isInline,
+                isExternal = oldDeclaration.isExternal,
+                isTailrec = oldDeclaration.isTailrec,
+                isSuspend = oldDeclaration.isSuspend,
+                isExpect = oldDeclaration.isExpect
             )
             newDescriptor.bind(newDeclaration)
 
@@ -611,8 +612,11 @@ class LocalDeclarationsLowering(
 
             val newDeclaration = IrConstructorImpl(
                 oldDeclaration.startOffset, oldDeclaration.endOffset, oldDeclaration.origin,
-                newSymbol, oldDeclaration.name, loweredConstructorVisibility, oldDeclaration.returnType, oldDeclaration.isInline,
-                oldDeclaration.isExternal, oldDeclaration.isPrimary
+                newSymbol, oldDeclaration.name, loweredConstructorVisibility, oldDeclaration.returnType,
+                isInline = oldDeclaration.isInline,
+                isExternal = oldDeclaration.isExternal,
+                isPrimary = oldDeclaration.isPrimary,
+                isExpect = oldDeclaration.isExpect
             )
 
             newDescriptor.bind(newDeclaration)

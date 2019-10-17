@@ -26,7 +26,8 @@ fun IrClassBuilder.buildClass(): IrClass {
     return IrClassImpl(
         startOffset, endOffset, origin,
         IrClassSymbolImpl(wrappedDescriptor),
-        name, kind, visibility, modality, isCompanion, isInner, isData, isExternal, isInline
+        name, kind, visibility, modality,
+        isCompanion = isCompanion, isInner = isInner, isData = isData, isExternal = isExternal, isInline = isInline, isExpect = isExpect
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -74,7 +75,8 @@ fun IrPropertyBuilder.buildProperty(): IrProperty {
     return IrPropertyImpl(
         startOffset, endOffset, origin,
         IrPropertySymbolImpl(wrappedDescriptor),
-        name, visibility, modality, isVar, isConst, isLateinit, isDelegated, isExternal
+        name, visibility, modality,
+        isVar = isVar, isConst = isConst, isLateinit = isLateinit, isDelegated = isDelegated, isExpect = isExpect, isExternal = isExternal
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -121,7 +123,7 @@ fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): 
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),
         name, visibility, modality, returnType,
-        isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend
+        isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect
     ).also {
         wrappedDescriptor.bind(it)
     }
@@ -134,7 +136,7 @@ fun IrFunctionBuilder.buildConstructor(): IrConstructorImpl {
         IrConstructorSymbolImpl(wrappedDescriptor),
         Name.special("<init>"),
         visibility, returnType,
-        isInline = isInline, isExternal = isExternal, isPrimary = isPrimary
+        isInline = isInline, isExternal = isExternal, isPrimary = isPrimary, isExpect = isExpect
     ).also {
         wrappedDescriptor.bind(it)
     }

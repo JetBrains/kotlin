@@ -290,7 +290,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 isInner = false,
                 isData = false,
                 isExternal = false,
-                isInline = false
+                isInline = false,
+                isExpect = false
             ).apply {
                 d.bind(this)
                 parent = irFunction.parent
@@ -392,7 +393,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.defaultType,
                 isInline = false,
                 isExternal = false,
-                isPrimary = true
+                isPrimary = true,
+                isExpect = false
             ).apply {
                 d.bind(this)
                 parent = coroutineClass
@@ -437,7 +439,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.defaultType,
                 isInline = false,
                 isExternal = false,
-                isPrimary = false
+                isPrimary = false,
+                isExpect = false
             ).apply {
                 d.bind(this)
                 parent = coroutineClass
@@ -484,7 +487,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 isInline = false,
                 isExternal = false,
                 isTailrec = false,
-                isSuspend = false
+                isSuspend = false,
+                isExpect = false
             ).apply {
                 d.bind(this)
                 parent = coroutineClass
@@ -549,7 +553,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 isInline = false,
                 isExternal = false,
                 isTailrec = false,
-                isSuspend = true
+                isSuspend = true,
+                isExpect = false
             ).apply {
                 d.bind(this)
                 parent = coroutineClass
@@ -603,10 +608,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     stateMachineFunction.visibility,
                     Modality.FINAL,
                     context.irBuiltIns.anyNType,
-                    stateMachineFunction.isInline,
-                    stateMachineFunction.isExternal,
-                    stateMachineFunction.isTailrec,
-                    stateMachineFunction.isSuspend
+                    isInline = stateMachineFunction.isInline,
+                    isExternal = stateMachineFunction.isExternal,
+                    isTailrec = stateMachineFunction.isTailrec,
+                    isSuspend = stateMachineFunction.isSuspend,
+                    isExpect = stateMachineFunction.isExpect
                 ).apply {
                     d.bind(this)
                     parent = coroutineClass

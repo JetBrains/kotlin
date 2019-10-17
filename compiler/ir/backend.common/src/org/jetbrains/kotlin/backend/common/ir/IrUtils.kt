@@ -67,9 +67,10 @@ fun IrClass.addSimpleDelegatingConstructor(
         superConstructor.name,
         superConstructor.visibility,
         defaultType,
-        false,
-        false,
-        isPrimary
+        isInline = false,
+        isExternal = false,
+        isPrimary = isPrimary,
+        isExpect = false
     ).also { constructor ->
         descriptor.bind(constructor)
         constructor.parent = this
@@ -481,10 +482,11 @@ fun IrClass.addFakeOverrides() {
                 Visibilities.INHERITED,
                 irFunction.modality,
                 irFunction.returnType,
-                irFunction.isInline,
-                irFunction.isExternal,
-                irFunction.isTailrec,
-                irFunction.isSuspend
+                isInline = irFunction.isInline,
+                isExternal = irFunction.isExternal,
+                isTailrec = irFunction.isTailrec,
+                isSuspend = irFunction.isSuspend,
+                isExpect = irFunction.isExpect
             ).apply {
                 descriptor.bind(this)
                 parent = this@addFakeOverrides
@@ -521,7 +523,10 @@ fun createStaticFunctionWithReceivers(
         modality,
         oldFunction.returnType,
         isInline = oldFunction.isInline,
-        isExternal = false, isTailrec = false, isSuspend = oldFunction.isSuspend
+        isExternal = false,
+        isTailrec = false,
+        isSuspend = oldFunction.isSuspend,
+        isExpect = oldFunction.isExpect
     ).apply {
         descriptor.bind(this)
         parent = irParent
