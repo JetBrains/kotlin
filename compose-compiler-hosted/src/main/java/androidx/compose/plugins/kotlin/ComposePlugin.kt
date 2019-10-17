@@ -25,16 +25,12 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.backend.jvm.extensions.IrLoweringExtension
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension
-import org.jetbrains.kotlin.extensions.KtxControlFlowExtension
-import org.jetbrains.kotlin.extensions.KtxTypeResolutionExtension
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.extensions.TypeResolutionInterceptorExtension
-import org.jetbrains.kotlin.parsing.KtxParsingExtension
 import org.jetbrains.kotlin.psi2ir.extensions.SyntheticIrExtension
 import androidx.compose.plugins.kotlin.frames.analysis.FrameModelChecker
 import androidx.compose.plugins.kotlin.frames.analysis.FramePackageAnalysisHandlerExtension
+import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
+import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 
 class ComposeCommandLineProcessor : CommandLineProcessor {
@@ -96,7 +92,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 project,
                 ComposeDiagnosticSuppressor()
             )
-            TypeResolutionInterceptorExtension.registerExtension(
+            TypeResolutionInterceptor.registerExtension(
                 project,
                 ComposeTypeResolutionInterceptorExtension()
             )
@@ -106,7 +102,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             IrLoweringExtension.registerExtension(project,
                 ComposeIrLoweringExtension()
             )
-            CallResolutionInterceptorExtension.registerExtension(
+            CandidateInterceptor.registerExtension(
                 project,
                 ComposeCallResolutionInterceptorExtension()
             )
