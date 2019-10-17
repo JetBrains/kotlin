@@ -343,11 +343,6 @@ abstract class ComponentStoreImpl : IComponentStore {
   private fun doAddComponent(name: String, component: Any, stateSpec: State?, serviceDescriptor: ServiceDescriptor?): ComponentInfo {
     val newInfo = createComponentInfo(component, stateSpec, serviceDescriptor)
     val existing = components.put(name, newInfo)
-
-    if (name == "GradleSettings") {
-      LOG.info("hi")
-    }
-
     if (existing != null && existing.component !== component) {
       components.put(name, existing)
       LOG.error("Conflicting component name '$name': ${existing.component.javaClass} and ${component.javaClass} (componentManager=${storageManager.componentManager})")
