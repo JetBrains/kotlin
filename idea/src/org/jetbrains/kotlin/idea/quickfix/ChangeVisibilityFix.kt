@@ -27,12 +27,16 @@ import org.jetbrains.kotlin.idea.core.canBeInternal
 import org.jetbrains.kotlin.idea.core.canBePrivate
 import org.jetbrains.kotlin.idea.core.canBeProtected
 import org.jetbrains.kotlin.idea.core.setVisibility
+import org.jetbrains.kotlin.idea.inspections.RemoveRedundantSetterFix
+import org.jetbrains.kotlin.idea.inspections.isRedundantSetter
 import org.jetbrains.kotlin.idea.util.runOnExpectAndAllActuals
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.ExposedVisibilityChecker
 
 open class ChangeVisibilityFix(
@@ -45,12 +49,18 @@ open class ChangeVisibilityFix(
     override fun getFamilyName() = "Make $visibilityModifier"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val originalElement = element
+        val pointer = element?.createSmartPointer()
+        val originalElement = pointer?.element
         if (originalElement is KtDeclaration) {
             originalElement.runOnExpectAndAllActuals { it.setVisibility(visibilityModifier) }
         }
 
-        element?.setVisibility(visibilityModifier)
+        pointer?.element?.setVisibility(visibilityModifier)
+
+        val propertyAccessor = pointer?.element as? KtPropertyAccessor
+        if (propertyAccessor?.isRedundantSetter() == true) {
+            RemoveRedundantSetterFix.removeRedundantSetter(propertyAccessor)
+        }
     }
 
     protected class ChangeToPublicFix(element: KtModifierListOwner, elementName: String) :
