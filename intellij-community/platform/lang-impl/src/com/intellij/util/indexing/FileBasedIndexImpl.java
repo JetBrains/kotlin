@@ -681,6 +681,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   @NotNull
   @Override
   public <K, V> Map<K, V> getFileData(@NotNull ID<K, V> id, @NotNull VirtualFile virtualFile, @NotNull Project project) {
+    if (!(virtualFile instanceof VirtualFileWithId)) return Collections.emptyMap();
     int fileId = getFileId(virtualFile);
     Map<K, V> map = processExceptions(id, virtualFile, GlobalSearchScope.fileScope(project, virtualFile), index -> index.getIndexedFileData(fileId));
     return ContainerUtil.notNullize(map);
