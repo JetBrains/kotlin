@@ -46,4 +46,10 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      * Default value: true
      */
      var noStdlib: kotlin.Boolean
+
+    /**
+     * Use the IR backend
+     * Default value: false
+     */
+     var useIR: kotlin.Boolean
 }
