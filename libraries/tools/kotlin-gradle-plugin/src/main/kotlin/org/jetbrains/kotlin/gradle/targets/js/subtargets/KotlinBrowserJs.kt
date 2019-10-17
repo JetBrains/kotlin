@@ -31,6 +31,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
+    private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
     private val dceWebpackEntryAppliers: MutableList<KotlinJsDce.(File) -> Unit> = mutableListOf()
     private lateinit var dceTaskProvider: TaskProvider<KotlinJsDce>
 
@@ -53,6 +54,10 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
     override fun webpackTask(body: KotlinWebpack.() -> Unit) {
         (project.tasks.getByName(webpackTaskName) as KotlinWebpack).body()
+    }
+
+    override fun dceTask(body: KotlinJsDce.() -> Unit) {
+        dceConfigurations.add(body)
     }
 
     override fun configureRun(compilation: KotlinJsCompilation) {
@@ -172,6 +177,10 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val kotlinTask = compilation.compileKotlinTask
 
         return project.registerTask<KotlinJsDce>(dceTaskName) {
+            dceConfigurations.forEach { configuration ->
+                it.configuration()
+            }
+
             it.dependsOn(kotlinTask)
 
             it.classpath = project.configurations.getByName(compilation.compileDependencyConfigurationName)

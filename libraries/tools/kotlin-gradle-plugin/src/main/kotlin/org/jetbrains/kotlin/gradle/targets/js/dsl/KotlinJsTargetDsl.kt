@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
 
 interface KotlinJsTargetDsl {
     fun browser() = browser { }
@@ -56,6 +57,13 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     fun webpackTask(body: KotlinWebpack.() -> Unit)
     fun webpackTask(fn: Closure<*>) {
         webpackTask {
+            ConfigureUtil.configure(fn, this)
+        }
+    }
+
+    fun dceTask(body: KotlinJsDce.() -> Unit)
+    fun dceTask(fn: Closure<*>) {
+        dceTask {
             ConfigureUtil.configure(fn, this)
         }
     }
