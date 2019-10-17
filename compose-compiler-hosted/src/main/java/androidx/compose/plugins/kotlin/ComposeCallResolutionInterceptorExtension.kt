@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.PackageQualifier
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
-class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExtension {
+open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExtension {
     override fun interceptCandidates(
         candidates: Collection<NewResolutionOldInference.MyCandidate>,
         context: BasicCallResolutionContext,

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 /**
  * If a lambda is marked as `@Composable`, then the inferred type should become `@Composable`
  */
-class ComposeTypeResolutionInterceptorExtension : TypeResolutionInterceptorExtension {
+open class ComposeTypeResolutionInterceptorExtension : TypeResolutionInterceptorExtension {
 
     override fun interceptFunctionLiteralDescriptor(
         expression: KtLambdaExpression,
