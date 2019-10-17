@@ -5,6 +5,7 @@ plugins {
 
 repositories {
     maven("https://jetbrains.bintray.com/markdown")
+    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
 }
 
 sourceSets {
@@ -101,6 +102,10 @@ dependencies {
         compileOnly(intellijPluginDep("java"))
         testCompileOnly(intellijPluginDep("java"))
         testRuntime(intellijPluginDep("java"))
+    }
+
+    Platform[193].orHigher {
+        implementation(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
     }
 
     compileOnly(commonDep("org.jetbrains", "markdown"))
