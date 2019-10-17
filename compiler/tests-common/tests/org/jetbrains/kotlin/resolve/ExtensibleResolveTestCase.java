@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
+import org.jetbrains.kotlin.test.TestFiles;
 
 import java.io.File;
 import java.util.List;
@@ -42,7 +43,7 @@ public abstract class ExtensibleResolveTestCase extends KotlinTestWithEnvironmen
     protected void doTest(@NonNls String filePath) throws Exception {
         File file = new File(filePath);
         String text = KotlinTestUtils.doLoadFile(file);
-        List<KtFile> files = KotlinTestUtils.createTestFiles("file.kt", text, new KotlinTestUtils.TestFileFactoryNoModules<KtFile>() {
+        List<KtFile> files = TestFiles.createTestFiles("file.kt", text, new TestFiles.TestFileFactoryNoModules<KtFile>() {
             @NotNull
             @Override
             public KtFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {

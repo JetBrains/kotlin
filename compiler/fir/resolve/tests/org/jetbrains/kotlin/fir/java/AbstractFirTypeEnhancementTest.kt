@@ -10,7 +10,10 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElementFinder
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiPackageStatement
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
@@ -98,9 +101,9 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val content = javaLines.joinToString(separator = "\n")
         if (InTextDirectivesUtils.isDirectiveDefined(content, "SKIP_IN_FIR_TEST")) return
 
-        val srcFiles = KotlinTestUtils.createTestFiles<Void, File>(
+        val srcFiles = TestFiles.createTestFiles<Void, File>(
             javaFile.name, FileUtil.loadFile(javaFile, true),
-            object : KotlinTestUtils.TestFileFactoryNoModules<File>() {
+            object : TestFiles.TestFileFactoryNoModules<File>() {
                 override fun create(fileName: String, text: String, directives: Map<String, String>): File {
                     var currentDir = javaFilesDir
                     if ("/" !in fileName) {

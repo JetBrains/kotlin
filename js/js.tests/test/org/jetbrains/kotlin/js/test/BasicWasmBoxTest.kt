@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.TestFiles
 import java.io.Closeable
 import java.io.File
 import java.lang.Boolean.getBoolean
@@ -51,7 +52,7 @@ abstract class BasicWasmBoxTest(
         val fileContent = KotlinTestUtils.doLoadFile(file)
 
         TestFileFactoryImpl().use { testFactory ->
-            val inputFiles: MutableList<TestFile> = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true, "")
+            val inputFiles: MutableList<TestFile> = TestFiles.createTestFiles(file.name, fileContent, testFactory, true, "")
             val testPackage = testFactory.testPackage
             val outputFileBase = outputDir.absolutePath + "/" + getTestName(true)
             val outputWatFile = outputFileBase + ".wat"
@@ -154,7 +155,7 @@ abstract class BasicWasmBoxTest(
         return JsConfig(project, configuration, null, null)
     }
 
-    private inner class TestFileFactoryImpl : KotlinTestUtils.TestFileFactoryNoModules<TestFile>(), Closeable {
+    private inner class TestFileFactoryImpl : TestFiles.TestFileFactoryNoModules<TestFile>(), Closeable {
         override fun create(fileName: String, text: String, directives: MutableMap<String, String>): TestFile {
             val ktFile = KtPsiFactory(project).createFile(text)
             val boxFunction = ktFile.declarations.find { it is KtNamedFunction && it.name == TEST_FUNCTION }

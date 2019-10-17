@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactory
+import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.DFS
@@ -120,7 +120,13 @@ abstract class BasicBoxTest(
         val inferMainModule = INFER_MAIN_MODULE.matcher(fileContent).find()
 
         TestFileFactoryImpl(coroutinesPackage).use { testFactory ->
-            val inputFiles = KotlinTestUtils.createTestFiles(file.name, fileContent, testFactory, true, coroutinesPackage)
+            val inputFiles = TestFiles.createTestFiles(
+                file.name,
+                fileContent,
+                testFactory,
+                true,
+                coroutinesPackage
+            )
             val modules = inputFiles
                     .map { it.module }.distinct()
                     .map { it.name to it }.toMap()
@@ -714,7 +720,7 @@ abstract class BasicBoxTest(
         TestCase.assertEquals(expectedResult, result)
     }
 
-    private inner class TestFileFactoryImpl(val coroutinesPackage: String) : TestFileFactory<TestModule, TestFile>, Closeable {
+    private inner class TestFileFactoryImpl(val coroutinesPackage: String) : TestFiles.TestFileFactory<TestModule, TestFile>, Closeable {
         var testPackage: String? = null
         val tmpDir = KotlinTestUtils.tmpDir("js-tests")
         val defaultModule = TestModule(TEST_MODULE, emptyList(), emptyList())

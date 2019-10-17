@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.KotlinTestUtils.TestFileFactoryNoModules
+import org.jetbrains.kotlin.test.TestFiles.TestFileFactoryNoModules
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
@@ -113,13 +113,18 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
         val fileName = file.name
         when {
             fileName.endsWith(".java") -> {
-                val sources = KotlinTestUtils.createTestFiles(fileName, text, object : TestFileFactoryNoModules<File>() {
-                    override fun create(fileName: String, text: String, directives: Map<String, String>): File {
-                        val targetFile = File(tmpdir, fileName)
-                        targetFile.writeText(adaptJavaSource(text))
-                        return targetFile
-                    }
-                }, "")
+                val sources = TestFiles.createTestFiles(
+                    fileName,
+                    text,
+                    object : TestFileFactoryNoModules<File>() {
+                        override fun create(fileName: String, text: String, directives: Map<String, String>): File {
+                            val targetFile = File(tmpdir, fileName)
+                            targetFile.writeText(adaptJavaSource(text))
+                            return targetFile
+                        }
+                    },
+                    ""
+                )
                 LoadDescriptorUtil.compileJavaWithAnnotationsJar(sources, tmpdir)
             }
             fileName.endsWith(".kt") -> {

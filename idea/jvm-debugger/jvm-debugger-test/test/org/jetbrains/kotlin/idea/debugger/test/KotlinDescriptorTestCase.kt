@@ -124,10 +124,10 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     }
 
     private fun createTestFiles(wholeFile: File, wholeFileContents: String): TestFiles {
-        val testFiles = KotlinTestUtils.createTestFiles<Void, TestFile>(
+        val testFiles = org.jetbrains.kotlin.test.TestFiles.createTestFiles<Void, TestFile>(
             wholeFile.name,
             wholeFileContents,
-            object : KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
+            object : org.jetbrains.kotlin.test.TestFiles.TestFileFactoryNoModules<TestFile>() {
                 override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
                     return TestFile(fileName, text)
                 }

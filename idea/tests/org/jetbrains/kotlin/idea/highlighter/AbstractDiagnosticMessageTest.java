@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
+import org.jetbrains.kotlin.test.*;
 
 import java.io.File;
 import java.lang.reflect.Field;

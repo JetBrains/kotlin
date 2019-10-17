@@ -13,7 +13,6 @@ import com.intellij.testFramework.TestDataFile;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
-import kotlin.script.experimental.api.ErrorHandlingKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +67,6 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings;
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
-import static org.jetbrains.kotlin.cli.js.K2JsIrCompilerKt.loadPluginsForTests;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
@@ -794,7 +792,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     @NotNull
     private static List<TestFile> createTestFiles(File file, String expectedText, String coroutinesPackage) {
-        return KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
+        return TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
             @NotNull
             @Override
             public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
