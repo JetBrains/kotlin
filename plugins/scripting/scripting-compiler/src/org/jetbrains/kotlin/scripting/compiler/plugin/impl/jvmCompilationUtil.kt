@@ -119,7 +119,7 @@ internal fun makeCompiledScript(
 
         val containingKtFile = script.containingKtFile
         val otherScripts: List<KJvmCompiledScript<*>> =
-            sourceDependencies.find { it.scriptFile == containingKtFile }?.sourceDependencies?.mapNotNull { sourceFile ->
+            sourceDependencies.find { it.scriptFile == containingKtFile }?.sourceDependencies?.valueOrThrow()?.mapNotNull { sourceFile ->
                 sourceFile.declarations.firstIsInstanceOrNull<KtScript>()?.let {
                     KJvmCompiledScript<Any>(
                         containingKtFile.virtualFile?.path,
