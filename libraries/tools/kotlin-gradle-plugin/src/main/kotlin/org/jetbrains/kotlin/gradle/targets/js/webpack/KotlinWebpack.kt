@@ -53,8 +53,8 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFile
-    val entry: File
-        get() = compilation.compileKotlinTask.outputFile
+    var entry: File? = null
+        get() = field ?: compilation.compileKotlinTask.outputFile
 
     @Input
     var resolveFromModulesFirst: Boolean = false
@@ -96,7 +96,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     var report: Boolean = false
 
     open val reportDir: File
-        @OutputDirectory get() = project.reportsDir.resolve("webpack").resolve(entry.nameWithoutExtension)
+        @OutputDirectory get() = project.reportsDir.resolve("webpack").resolve(entry!!.nameWithoutExtension)
 
     open val evaluatedConfigFile: File
         @OutputFile get() = reportDir.resolve("webpack.config.evaluated.js")

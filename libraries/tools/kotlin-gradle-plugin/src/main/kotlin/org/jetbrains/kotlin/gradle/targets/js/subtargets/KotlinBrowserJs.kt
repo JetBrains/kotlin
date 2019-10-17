@@ -31,7 +31,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
-    lateinit var dceTask: TaskProvider<KotlinJsDce>
+    private val dceWebpackEntryAppliers: MutableList<KotlinJsDce.(File) -> Unit> = mutableListOf()
+    private lateinit var dceTaskProvider: TaskProvider<KotlinJsDce>
 
     lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
@@ -59,8 +60,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        val dceTask = if (::dceTask.isInitialized) {
-            this.dceTask
+        val dceTaskProvider = if (::dceTaskProvider.isInitialized) {
+            this.dceTaskProvider
         } else {
             configureDce(compilation)
         }
@@ -96,8 +97,11 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 when (kind) {
                     BuildVariantKind.RELEASE -> {
+                        dceWebpackEntryAppliers.add { file ->
+                            it.entry = file
+                        }
                         it.resolveFromModulesFirst = true
-                        it.dependsOn(dceTask)
+                        it.dependsOn(dceTaskProvider)
                     }
                     BuildVariantKind.DEBUG -> {
                         it.dependsOn(compileKotlinTask)
@@ -112,8 +116,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        val dceTask = if (::dceTask.isInitialized) {
-            this.dceTask
+        val dceTaskProvider = if (::dceTaskProvider.isInitialized) {
+            this.dceTaskProvider
         } else {
             configureDce(compilation)
         }
@@ -140,8 +144,11 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 when (kind) {
                     BuildVariantKind.RELEASE -> {
+                        dceWebpackEntryAppliers.add { file ->
+                            it.entry = file
+                        }
                         it.resolveFromModulesFirst = true
-                        it.dependsOn(dceTask)
+                        it.dependsOn(dceTaskProvider)
                         project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
                     }
                     BuildVariantKind.DEBUG -> {
@@ -170,9 +177,14 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             it.classpath = project.configurations.getByName(compilation.compileDependencyConfigurationName)
             it.destinationDir = it.dceOptions.outputDirectory?.let { File(it) }
                 ?: compilation.npmProject.dir.resolve(DCE_DIR)
+
+            dceWebpackEntryAppliers.forEach { entryApplier ->
+                it.entryApplier(it.destinationDir.resolve(kotlinTask.outputFile.name))
+            }
+
             it.source(kotlinTask.outputFile)
         }.also {
-            dceTask = it
+            dceTaskProvider = it
         }
     }
 
