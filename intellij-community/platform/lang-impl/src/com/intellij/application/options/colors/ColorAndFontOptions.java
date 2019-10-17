@@ -25,6 +25,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.FileStatusFactory;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.packageDependencies.DependencyValidationManager;
@@ -297,6 +298,7 @@ public class ColorAndFontOptions extends SearchableConfigurable.Parent.Abstract
     try {
       EditorColorsManager myColorsManager = EditorColorsManager.getInstance();
       SchemeManager<EditorColorsScheme> schemeManager = ((EditorColorsManagerImpl)myColorsManager).getSchemeManager();
+      String oldScheme = myColorsManager.getGlobalScheme().getName();
 
       List<EditorColorsScheme> result = new ArrayList<>(mySchemes.values().size());
       boolean activeSchemeModified = false;
@@ -316,7 +318,9 @@ public class ColorAndFontOptions extends SearchableConfigurable.Parent.Abstract
         ((EditorColorsManagerImpl)EditorColorsManager.getInstance()).schemeChangedOrSwitched(null);
       }
 
-      changeLafIfNecessary(activeOriginalScheme);
+      if (!StringUtil.equals(oldScheme, myColorsManager.getGlobalScheme().getName())) {
+        changeLafIfNecessary(activeOriginalScheme);
+      }
 
       reset();
     }
