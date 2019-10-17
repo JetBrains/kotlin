@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.DummyTraces;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
@@ -143,7 +144,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             KtNamedFunction function = (KtNamedFunction) declarations.get(0);
             SimpleFunctionDescriptor functionDescriptor =
                     functionDescriptorResolver.resolveFunctionDescriptor(classDescriptor, scope, function,
-                                                                         KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
+                                                                         DummyTraces.DUMMY_TRACE, DataFlowInfoFactory.EMPTY);
 
             assertEquals(expectedFunctionModality, functionDescriptor.getModality());
         }
@@ -156,7 +157,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
                     classDescriptor, scope, scope, property,
-                    KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY,
+                    DummyTraces.DUMMY_TRACE, DataFlowInfoFactory.EMPTY,
                     InferenceSession.Companion.getDefault()
             );
 
@@ -172,7 +173,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
             KtProperty property = (KtProperty) declarations.get(0);
             PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePropertyDescriptor(
                     classDescriptor, scope, scope, property,
-                    KotlinTestUtils.DUMMY_TRACE, DataFlowInfoFactory.EMPTY,
+                    DummyTraces.DUMMY_TRACE, DataFlowInfoFactory.EMPTY,
                     InferenceSession.Companion.getDefault()
             );
             PropertyAccessorDescriptor propertyAccessor = isGetter

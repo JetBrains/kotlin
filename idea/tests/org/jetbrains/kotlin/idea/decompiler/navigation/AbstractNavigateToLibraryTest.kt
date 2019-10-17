@@ -21,7 +21,7 @@ abstract class AbstractNavigateToLibraryTest : KotlinLightCodeInsightFixtureTest
     abstract val expectedFileExt: String
 
     protected fun doTest(path: String) {
-        myFixture.configureByFile(path)
+        myFixture.configureByFile(fileName())
         NavigationChecker.checkAnnotatedCode(file, File(path.replace(".kt", expectedFileExt)))
     }
 
@@ -29,9 +29,6 @@ abstract class AbstractNavigateToLibraryTest : KotlinLightCodeInsightFixtureTest
         SourceNavigationHelper.setForceResolve(false)
         super.tearDown()
     }
-
-    override fun getTestDataPath(): String =
-        KotlinTestUtils.getHomeDirectory() + File.separator
 }
 
 abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibraryTest() {

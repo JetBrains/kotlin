@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.DummyTraces;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
@@ -534,7 +535,7 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
         KotlinType type = expressionTypingServices.getType(
                 scopeWithImports, ktExpression, TypeUtils.NO_EXPECTED_TYPE,
                 DataFlowInfoFactory.EMPTY, InferenceSession.Companion.getDefault(),
-                KotlinTestUtils.DUMMY_TRACE
+                DummyTraces.DUMMY_TRACE
         );
         assertNotNull(type);
         assertEquals(type + " != " + expectedType, expectedType, type);
@@ -583,6 +584,6 @@ public class KotlinTypeCheckerTest extends KotlinTestWithEnvironment {
     }
 
     private KotlinType makeType(LexicalScope scope, String typeStr) {
-        return typeResolver.resolveType(scope, KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr), KotlinTestUtils.DUMMY_TRACE, true);
+        return typeResolver.resolveType(scope, KtPsiFactoryKt.KtPsiFactory(getProject()).createType(typeStr), DummyTraces.DUMMY_TRACE, true);
     }
 }

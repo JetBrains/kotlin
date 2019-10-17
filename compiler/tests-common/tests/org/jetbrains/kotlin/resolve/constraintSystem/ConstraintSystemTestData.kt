@@ -27,11 +27,10 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.DummyTraces
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import java.util.regex.Pattern
@@ -76,8 +75,8 @@ class ConstraintSystemTestData(
             )
         }
         return typeResolver.resolveType(
-                scopeToResolveTypeParameters, KtPsiFactory(project).createType(name),
-                KotlinTestUtils.DUMMY_TRACE, true)
+            scopeToResolveTypeParameters, KtPsiFactory(project).createType(name),
+            DummyTraces.DUMMY_TRACE, true)
     }
 }
 
