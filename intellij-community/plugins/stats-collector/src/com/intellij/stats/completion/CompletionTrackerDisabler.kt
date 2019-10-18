@@ -5,7 +5,7 @@ import com.intellij.openapi.extensions.ExtensionPointName
 
 interface CompletionTrackerDisabler {
     companion object {
-        private val EpName = ExtensionPointName<CompletionTrackerDisabler>("com.intellij.stats.completion.tracker.disabler")
+        val EpName = ExtensionPointName<CompletionTrackerDisabler>("com.intellij.stats.completion.tracker.disabler")
 
         fun isDisabled(): Boolean = EpName.extensionList.any { it.isDisabled() }
     }

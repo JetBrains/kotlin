@@ -16,8 +16,7 @@ class CompletionLoggerInitializer(private val actionListener: LookupActionsListe
   companion object {
     fun shouldInitialize(): Boolean = isUnitTestMode()
                                       || (ApplicationManager.getApplication().isEAP
-                                          && StatisticsUploadAssistant.isSendAllowed()
-                                          && !CompletionTrackerDisabler.isDisabled())
+                                          && StatisticsUploadAssistant.isSendAllowed())
 
     private val LOGGED_SESSIONS_RATIO: Map<String, Double> = mapOf(
       "python" to 0.5,
@@ -58,6 +57,7 @@ class CompletionLoggerInitializer(private val actionListener: LookupActionsListe
   }
 
   private fun sessionShouldBeLogged(experimentHelper: WebServiceStatus, language: Language): Boolean {
+    if (CompletionTrackerDisabler.isDisabled()) return false
     val application = ApplicationManager.getApplication()
     if (application.isUnitTestMode || experimentHelper.isExperimentOnCurrentIDE()) return true
 
