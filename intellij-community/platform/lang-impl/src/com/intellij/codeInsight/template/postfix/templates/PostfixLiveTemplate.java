@@ -293,18 +293,14 @@ public class PostfixLiveTemplate extends CustomLiveTemplateBase {
 
     // The copy document doesn't contain live template key.
     // Register offset translator to make getOriginalElement() work in the copy.
-    Document originalDocument = editor.getDocument();
-    if (originalDocument.getTextLength() < currentOffset) {
-      String content = "Original document length: " + originalDocument.getTextLength() + "\n\n" +
-                       "Current offset: " + currentOffset + "\n\n" +
-                       "Content: \n\n" + originalDocument.getText();
-      Attachment attachment = new Attachment(file.getName(), content);
-      attachment.setIncluded(true);
-      LOG.error("Original document length is less than offset", attachment);
-    } else {
-      OffsetTranslator translator = new OffsetTranslator(originalDocument, file, copyDocument, newOffset, currentOffset, "");
-      Disposer.register(parentDisposable, translator);
+    Document fileDocument = file.getViewProvider().getDocument();
+    if (fileDocument != null && fileDocument.getTextLength() < currentOffset) {
+      LOG.error("File document length (" + fileDocument.getTextLength() + ") is less than offset (" + currentOffset + ")",
+                AttachmentFactory.createAttachment(fileDocument));
     }
+    Document originalDocument = editor.getDocument();
+    OffsetTranslator translator = new OffsetTranslator(originalDocument, file, copyDocument, newOffset, currentOffset, "");
+    Disposer.register(parentDisposable, translator);
 
     final PsiElement context = CustomTemplateCallback.getContext(copyFile, positiveOffset(newOffset));
     final Document finalCopyDocument = copyDocument;
