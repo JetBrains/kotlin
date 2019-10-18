@@ -223,7 +223,6 @@ include ":kotlin-build-common",
         ":pill:generate-all-tests",
         ":libraries:kotlin-prepush-hook",
         ":libraries:tools:mutability-annotations-compat",
-        ":include:kotlin-compiler",
         ":plugins:jvm-abi-gen",
         ":plugins:jvm-abi-gen-embeddable",
 

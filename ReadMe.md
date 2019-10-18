@@ -130,7 +130,7 @@ To include kotlin compiler into [composite build](https://docs.gradle.org/curren
 ```
 includeBuild('/path/to/kotlin') {
     dependencySubstitution {
-        substitute module('org.jetbrains.kotlin:kotlin-compiler') with project(':include:kotlin-compiler')
+        substitute module('org.jetbrains.kotlin:kotlin-compiler') with project(':kotlin-compiler')
     }
 }
 ```
