@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -21,11 +22,11 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Devtool
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
-import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import javax.inject.Inject
+import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce as KotlinJsDceTask
 
 open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
@@ -33,7 +34,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
     private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
     private val dceWebpackEntryAppliers: MutableList<KotlinJsDce.(File) -> Unit> = mutableListOf()
-    private lateinit var dceTaskProvider: TaskProvider<KotlinJsDce>
+    private lateinit var dceTaskProvider: TaskProvider<KotlinJsDceTask>
 
     lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
@@ -170,7 +171,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
     }
 
-    private fun configureDce(compilation: KotlinJsCompilation): TaskProvider<KotlinJsDce> {
+    private fun configureDce(compilation: KotlinJsCompilation): TaskProvider<KotlinJsDceTask> {
         val project = compilation.target.project
 
         val dceTaskName = lowerCamelCaseName(
@@ -182,7 +183,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val kotlinTask = compilation.compileKotlinTask
 
-        return project.registerTask<KotlinJsDce>(dceTaskName) {
+        return project.registerTask<KotlinJsDceTask>(dceTaskName) {
             dceConfigurations.forEach { configuration ->
                 it.configuration()
             }
