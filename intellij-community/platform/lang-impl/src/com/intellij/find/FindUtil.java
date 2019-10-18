@@ -90,7 +90,7 @@ public class FindUtil {
     String stringToFind = firstSearch || model.getStringToFind().contains("\n") ? "" : model.getStringToFind();
     boolean isSelectionUsed = false;
     if (!StringUtil.isEmpty(selectedText)) {
-      if (!multiline) {
+      if (!multiline || !replace) {
         stringToFind = selectedText;
         isSelectionUsed = true;
       } else {
@@ -98,7 +98,7 @@ public class FindUtil {
       }
     }
     model.setReplaceState(replace);
-    boolean isGlobal = !multiline;
+    boolean isGlobal = !multiline || !replace;
     model.setStringToFind(isSelectionUsed
                           && model.isRegularExpressions()
                           && Registry.is("ide.find.escape.selected.text.for.regex")

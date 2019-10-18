@@ -48,8 +48,9 @@ public class SwitchToFind extends AnAction implements DumbAware {
     }
 
     final FindModel findModel = search.getFindModel();
-    if (!findModel.isReplaceState()) return;
-    findModel.setReplaceState(false);
+    if (findModel.isReplaceState()) {
+      findModel.setReplaceState(false);
+    }
     search.getComponent().getSearchTextComponent().selectAll();
   }
 }

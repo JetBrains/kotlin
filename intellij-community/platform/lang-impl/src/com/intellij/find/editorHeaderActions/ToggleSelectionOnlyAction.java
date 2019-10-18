@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ToggleSelectionOnlyAction extends ToggleAction implements ContextAwareShortcutProvider, DumbAware {
   public ToggleSelectionOnlyAction() {
-    super("In Selection", "Search in selection only", AllIcons.Actions.InSelection);
+    super("Search in Selection Only", null, AllIcons.Actions.InSelection);
   }
 
   @Override
@@ -35,7 +35,7 @@ public class ToggleSelectionOnlyAction extends ToggleAction implements ContextAw
     if (search != null) {
       boolean replaceState = search.getFindModel().isReplaceState();
       AnAction action = ActionManager.getInstance().getAction(
-        replaceState ? IdeActions.ACTION_REPLACE : IdeActions.ACTION_FIND);
+        replaceState ? IdeActions.ACTION_REPLACE : IdeActions.ACTION_TOGGLE_FIND_IN_SELECTION_ONLY);
       return action != null ? action.getShortcutSet() : null;
     }
     return null;

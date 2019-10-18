@@ -399,7 +399,7 @@ public class EditorSearchSession implements SearchSession,
     if (text != null && text.contains("\n")) {
       boolean replaceState = myFindModel.isReplaceState();
       AnAction action = ActionManager.getInstance().getAction(
-        replaceState ? IdeActions.ACTION_REPLACE : IdeActions.ACTION_FIND);
+        replaceState ? IdeActions.ACTION_REPLACE : IdeActions.ACTION_TOGGLE_FIND_IN_SELECTION_ONLY);
       Shortcut shortcut = ArrayUtil.getFirstElement(action.getShortcutSet().getShortcuts());
       if (shortcut != null) {
         return ApplicationBundle.message("editorsearch.in.selection.with.hint", KeymapUtil.getShortcutText(shortcut));

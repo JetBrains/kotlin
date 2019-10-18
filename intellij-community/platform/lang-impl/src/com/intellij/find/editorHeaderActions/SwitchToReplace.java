@@ -31,8 +31,9 @@ public class SwitchToReplace extends AnAction {
   public void actionPerformed(@NotNull AnActionEvent e) {
     EditorSearchSession search = e.getRequiredData(EditorSearchSession.SESSION_KEY);
     FindModel findModel = search.getFindModel();
-    if (findModel.isReplaceState()) return;
-    findModel.setReplaceState(true);
+    if (!findModel.isReplaceState()) {
+      findModel.setReplaceState(true);
+    }
     search.getComponent().getSearchTextComponent().selectAll();
   }
 }
