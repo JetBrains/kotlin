@@ -4,11 +4,12 @@ package com.intellij.execution.services;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.execution.services.ServiceViewActionProvider.getSelectedView;
 
-public class AddServiceActionGroup extends DefaultActionGroup {
+public class AddServiceActionGroup extends DefaultActionGroup implements DumbAware {
   @Override
   public void update(@NotNull AnActionEvent e) {
     ServiceView selectedView = getSelectedView(e);
