@@ -690,6 +690,11 @@ public class LoadJavaClsStubTestGenerated extends AbstractLoadJavaClsStubTest {
             runTest("compiler/testData/loadJava/compiledKotlin/class/RecursiveGeneric.kt");
         }
 
+        @TestMetadata("SealedClass.kt")
+        public void testSealedClass() throws Exception {
+            runTest("compiler/testData/loadJava/compiledKotlin/class/SealedClass.kt");
+        }
+
         @TestMetadata("SingleAbstractMethod.kt")
         public void testSingleAbstractMethod() throws Exception {
             runTest("compiler/testData/loadJava/compiledKotlin/class/SingleAbstractMethod.kt");
