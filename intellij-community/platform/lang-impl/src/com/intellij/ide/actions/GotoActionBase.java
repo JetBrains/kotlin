@@ -56,7 +56,7 @@ public abstract class GotoActionBase extends AnAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    LOG.assertTrue(!getClass().equals(myInAction));
+    LOG.assertTrue(!getClass().equals(myInAction), "Action should be disabled if it's already in progress: " + getClass());
     try {
       myInAction = getClass();
       List<String> strings = ourHistory.get(myInAction);
