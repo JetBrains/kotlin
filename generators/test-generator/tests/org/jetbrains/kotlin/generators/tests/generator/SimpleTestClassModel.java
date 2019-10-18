@@ -238,11 +238,23 @@ public class SimpleTestClassModel implements TestClassModel {
                 exclude.append(StringUtil.escapeStringCharacters(dir));
                 exclude.append("\"");
             }
-            String assertTestsPresentStr = String.format(
-                    "KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s.%s, %s%s);",
-                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
-                    TargetBackend.class.getSimpleName(), targetBackend.toString(), recursive, exclude
-            );
+
+            String assertTestsPresentStr;
+
+            if (targetBackend == TargetBackend.ANY) {
+                assertTestsPresentStr = String.format(
+                        "KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s%s);",
+                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
+                        recursive, exclude
+                );
+            } else {
+                assertTestsPresentStr = String.format(
+                        "KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s.%s, %s%s);",
+                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
+                        TargetBackend.class.getSimpleName(), targetBackend.toString(), recursive, exclude
+                );
+            }
+
             p.println(assertTestsPresentStr);
         }
 

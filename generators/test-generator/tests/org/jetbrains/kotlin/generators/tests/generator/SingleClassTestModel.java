@@ -143,11 +143,20 @@ public class SingleClassTestModel implements TestClassModel {
 
         @Override
         public void generateBody(@NotNull Printer p) {
-            String assertTestsPresentStr = String.format(
-                    "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s.%s);",
-                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
-                    TargetBackend.class.getSimpleName(), targetBackend.toString()
-            );
+            String assertTestsPresentStr;
+
+            if (targetBackend != TargetBackend.ANY) {
+                assertTestsPresentStr = String.format(
+                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s.%s);",
+                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
+                        TargetBackend.class.getSimpleName(), targetBackend.toString()
+                );
+            } else {
+                assertTestsPresentStr = String.format(
+                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"));",
+                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern())
+                );
+            }
             p.println(assertTestsPresentStr);
         }
 

@@ -707,6 +707,11 @@ public class KotlinTestUtils {
         void invoke(@NotNull String filePath) throws Exception;
     }
 
+    @SuppressWarnings("unused")
+    public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) throws Exception {
+        runTest(test, TargetBackend.ANY, testDataFile);
+    }
+
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
     // So only file paths passed to this parameter will be used in navigation actions, like "Navigate to testdata" and "Related Symbol..."
     public static void runTest(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile) throws Exception {
@@ -832,6 +837,23 @@ public class KotlinTestUtils {
             @NotNull Class<?> testCaseClass,
             @NotNull File testDataDir,
             @NotNull Pattern filenamePattern,
+            boolean recursive,
+            @NotNull String... excludeDirs
+    ) {
+        assertAllTestsPresentByMetadata(
+                testCaseClass,
+                testDataDir,
+                filenamePattern,
+                TargetBackend.ANY,
+                recursive,
+                excludeDirs
+        );
+    }
+
+    public static void assertAllTestsPresentByMetadata(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
             @NotNull TargetBackend targetBackend,
             boolean recursive,
             @NotNull String... excludeDirs
@@ -854,6 +876,14 @@ public class KotlinTestUtils {
                 }
             }
         }
+    }
+
+    public static void assertAllTestsPresentInSingleGeneratedClass(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern
+    ) {
+        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, TargetBackend.ANY);
     }
 
     public static void assertAllTestsPresentInSingleGeneratedClass(
