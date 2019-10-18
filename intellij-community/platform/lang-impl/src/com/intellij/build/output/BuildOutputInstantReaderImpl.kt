@@ -29,10 +29,15 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
   private val channel = LinkedBlockingQueue<String>(channelBufferCapacity)
   private val readLinesBuffer = LinkedList<String>()
   private var readLinesBufferPosition = -1
-  private val state = AtomicReference<State>(State.NotStarted)
-  private val readFinishedFuture = CompletableFuture<Unit>()
-  @Suppress("LeakingThis")
-  private val readerRunnable = underThreadNameRunnable("Reader thread for BuildOutputInstantReaderImpl@${System.identityHashCode(this)}") {
+  private val state = AtomicReference(State.Idle)
+  @Volatile
+  private var useActiveReading = true
+  private var readFinishedFuture = CompletableFuture<Unit>()
+
+  private val readerRunnable = underThreadNameRunnable(
+    "Reader thread for BuildOutputInstantReaderImpl@${System.identityHashCode(parentEventId)}") {
+    require(!readFinishedFuture.isDone) { "Can't read from closed stream" }
+
     var lastMessage: BuildEvent? = null
     val messageConsumer = { event: BuildEvent ->
       //do not add duplicates, e.g. sometimes same messages can be added both to stdout and stderr
@@ -44,7 +49,7 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
 
     try {
       while (true) {
-        val line = readLine() ?: break
+        val line = doReadLine(useActiveReading) ?: break
         if (line.isBlank()) continue
         for (parser in parsers) {
           val readerWrapper = BuildOutputInstantReaderWrapper(this)
@@ -60,21 +65,28 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
           readerWrapper.pushBackReadLines()
         }
       }
-      readFinishedFuture.complete(Unit)
     }
     catch (ex: Throwable) {
-      readFinishedFuture.completeExceptionally(ex)
+      when {
+        LOG.isDebugEnabled -> LOG.warn("Build output reading error", ex)
+        else -> LOG.warn("Build output reading error: ${ex.message}")
+      }
+    }
+    finally {
+      if (!state.compareAndSet(State.Running, State.Idle)) {
+        readFinishedFuture.complete(Unit)
+      }
     }
   }
 
   private val appendedLineProcessor = object : LineProcessor() {
     override fun process(line: String) {
       require(state.get() != State.Closed) { "Can't append to closed stream" }
-      if (state.compareAndSet(State.NotStarted, State.Running)) {
-        ProcessIOExecutorService.INSTANCE.submit(readerRunnable)
-      }
       try {
         while (state.get() != State.Closed) {
+          if (state.compareAndSet(State.Idle, State.Running)) {
+            ProcessIOExecutorService.INSTANCE.submit(readerRunnable)
+          }
           if (channel.offer(line, 100, TimeUnit.MILLISECONDS)) {
             break
           }
@@ -109,7 +121,7 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
 
   open fun closeAndGetFuture(): CompletableFuture<Unit> {
     if (state.get() == State.Closed) return readFinishedFuture
-    if (state.compareAndSet(State.NotStarted, State.Closed)) {
+    if (state.compareAndSet(State.Idle, State.Closed)) {
       readFinishedFuture.complete(Unit)
     }
     else {
@@ -118,7 +130,9 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
     return readFinishedFuture
   }
 
-  override fun readLine(): String? {
+  override fun readLine(): String? = doReadLine()
+
+  private fun doReadLine(waitIfNotClosed: Boolean = true): String? {
     if (readLinesBufferPosition >= 0) {
       return readLinesBuffer[readLinesBufferPosition].also { readLinesBufferPosition-- }
     }
@@ -126,8 +140,9 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
     while (true) {
       line = channel.poll(100, TimeUnit.MILLISECONDS)
       if (line != null || state.get() == State.Closed) break
+      if (!waitIfNotClosed) return null
     }
-    if (line == null) return line;
+    if (line == null) return line
     readLinesBuffer.addFirst(line)
     if (readLinesBuffer.size > pushBackBufferSize) {
       readLinesBuffer.removeLast()
@@ -139,6 +154,11 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
 
   override fun pushBack(numberOfLines: Int) {
     readLinesBufferPosition += numberOfLines
+  }
+
+  @ApiStatus.Experimental
+  fun disableActiveReading() {
+    useActiveReading = false
   }
 
   private class BuildOutputInstantReaderWrapper(private val reader: BuildOutputInstantReader) : BuildOutputInstantReader {
@@ -170,7 +190,7 @@ open class BuildOutputInstantReaderImpl @JvmOverloads constructor(
 
   companion object {
     private val LOG = logger<BuildOutputInstantReader>()
-    private enum class State { NotStarted, Running, Closed }
+    private enum class State { Idle, Running, Closed }
   }
 }
 

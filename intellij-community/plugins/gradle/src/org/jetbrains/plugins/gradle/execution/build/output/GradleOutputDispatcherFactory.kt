@@ -4,6 +4,7 @@ package org.jetbrains.plugins.gradle.execution.build.output
 import com.intellij.build.BuildProgressListener
 import com.intellij.build.events.BuildEvent
 import com.intellij.build.events.DuplicateMessageAware
+import com.intellij.build.events.FinishEvent
 import com.intellij.build.events.StartEvent
 import com.intellij.build.events.impl.OutputBuildEventImpl
 import com.intellij.build.output.BuildOutputInstantReaderImpl
@@ -97,12 +98,18 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
 
     override fun onEvent(buildId: Any, event: BuildEvent) {
       super.onEvent(buildId, event)
-      if (event is StartEvent && event.parentId == buildId) {
+      if (event.parentId != buildId) return
+      if (event is StartEvent) {
         tasksOutputReaders[event.message]?.close() // multiple invocations of the same task during the build session
 
         val parentEventId = event.id
         tasksOutputReaders[event.message] = BuildOutputInstantReaderImpl(buildId, parentEventId, myBuildProgressListener, parsers)
         tasksEventIds[event.message] = parentEventId
+      }
+      else if (event is FinishEvent) {
+        // unreceived output is still possible after finish task event but w/o long pauses between chunks
+        // also no output expected for up-to-date tasks
+        tasksOutputReaders[event.message]?.disableActiveReading()
       }
     }
 
