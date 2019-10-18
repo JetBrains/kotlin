@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
-import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.isAbiCompatible
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.safeAbiVersion
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.isCompatible
 import org.jetbrains.kotlin.ide.konan.analyzer.NativeResolverForModuleFactory
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.lazyClosure
@@ -47,7 +48,6 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.IOException
-import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 fun KotlinLibrary.createPackageFragmentProvider(
     storageManager: StorageManager,
@@ -55,7 +55,7 @@ fun KotlinLibrary.createPackageFragmentProvider(
     moduleDescriptor: ModuleDescriptor
 ): PackageFragmentProvider? {
 
-    if (!isAbiCompatible) return null
+    if (!safeAbiVersion.isCompatible) return null
 
     val libraryProto = CachingIdeKonanLibraryMetadataLoader.loadModuleHeader(this)
 
@@ -78,7 +78,7 @@ class NativePlatformKindResolution : IdePlatformKindResolution {
         return library.getFiles(OrderRootType.CLASSES).mapNotNull { file ->
             if (!isLibraryFileForPlatform(file)) return@createLibraryInfo emptyList()
             val path = PathUtil.getLocalPath(file) ?: return@createLibraryInfo emptyList()
-            NativeLibraryInfo(project, library, File(path))
+            NativeLibraryInfo(project, library, path)
         }
     }
 
@@ -185,19 +185,16 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
 private fun ModuleInfo.findNativeStdlib(): NativeLibraryInfo? =
     dependencies().lazyClosure { it.dependencies() }
         .filterIsInstance<NativeLibraryInfo>()
-        .firstOrNull { it.isStdlib && it.isAbiCompatible }
+        .firstOrNull { it.isStdlib && it.safeAbiVersion.isCompatible }
 
-class NativeLibraryInfo(project: Project, library: Library, root: File) : LibraryInfo(project, library) {
+class NativeLibraryInfo(project: Project, library: Library, val libraryRoot: String) : LibraryInfo(project, library) {
 
-    private val nativeLibrary = createKotlinLibrary(root)
+    private val nativeLibrary = createKotlinLibrary(File(libraryRoot))
 
-    private val roots = listOf(root.absolutePath)
+    val isStdlib get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
+    val safeAbiVersion get() = nativeLibrary.safeAbiVersion
 
-    val isStdlib by lazy(PUBLICATION) { roots.first().endsWith(KONAN_STDLIB_NAME) }
-
-    val isAbiCompatible get() = nativeLibrary.isAbiCompatible
-
-    override fun getLibraryRoots() = roots
+    override fun getLibraryRoots() = listOf(libraryRoot)
 
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() {
@@ -216,7 +213,8 @@ class NativeLibraryInfo(project: Project, library: Library, root: File) : Librar
     companion object {
         val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("KotlinNativeLibrary")
 
-        val KotlinLibrary.isAbiCompatible get() = this.readSafe(null) { versions.abiVersion } == KotlinAbiVersion.CURRENT
+        internal val KotlinLibrary.safeAbiVersion get() = this.readSafe(null) { versions.abiVersion }
+        internal val KotlinAbiVersion?.isCompatible get() = this == KotlinAbiVersion.CURRENT
 
         private fun <T> KotlinLibrary.readSafe(defaultValue: T, action: KotlinLibrary.() -> T) = try {
             action()
