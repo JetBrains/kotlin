@@ -73,7 +73,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
-            project.registerTask<KotlinWebpack>(
+            val runTask = project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
                     lowerCamelCaseName(
                         buildVariant.name,
@@ -110,9 +110,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     }
                     BuildVariantKind.DEBUG -> {
                         it.dependsOn(compileKotlinTask)
-                        target.runTask.dependsOn(it)
                     }
                 }
+            }
+
+            if (kind == BuildVariantKind.DEBUG) {
+                target.runTask.dependsOn(runTask)
             }
         }
     }
@@ -129,7 +132,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
-            project.registerTask<KotlinWebpack>(
+            val webpackTask = project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
                     lowerCamelCaseName(
                         buildVariant.name,
@@ -154,12 +157,15 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         }
                         it.resolveFromModulesFirst = true
                         it.dependsOn(dceTaskProvider)
-                        project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(it)
                     }
                     BuildVariantKind.DEBUG -> {
                         it.dependsOn(compileKotlinTask)
                     }
                 }
+            }
+
+            if (kind == BuildVariantKind.RELEASE) {
+                project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(webpackTask)
             }
         }
     }
