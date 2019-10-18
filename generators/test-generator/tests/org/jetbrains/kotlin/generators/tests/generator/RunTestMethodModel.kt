@@ -22,7 +22,7 @@ class RunTestMethodModel(
     }
 
     override fun generateBody(p: Printer) {
-        if (targetBackend == TargetBackend.ANY && additionalRunnerArguments.isEmpty() && testRunnerMethodName == METHOD_NAME) {
+        if (!isWithTargetBackend()) {
             p.println("KotlinTestUtils.$testRunnerMethodName(this::$testMethodName, this, testDataFilePath);")
         } else {
             val className = TargetBackend::class.java.simpleName
@@ -31,6 +31,14 @@ class RunTestMethodModel(
             else ""
             p.println("KotlinTestUtils.$testRunnerMethodName(this::$testMethodName, $className.$targetBackend, testDataFilePath$additionalArguments);")
         }
+    }
+
+    override fun imports(): Collection<Class<*>> {
+        return super.imports() + if (isWithTargetBackend()) setOf(TargetBackend::class.java) else emptySet()
+    }
+
+    private fun isWithTargetBackend(): Boolean {
+        return !(targetBackend == TargetBackend.ANY && additionalRunnerArguments.isEmpty() && testRunnerMethodName == METHOD_NAME)
     }
 
     companion object {

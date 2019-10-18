@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class DelegatingTestClassModel implements TestClassModel {
+public class DelegatingTestClassModel extends TestClassModel {
     private final TestClassModel delegate;
 
     public DelegatingTestClassModel(TestClassModel delegate) {
@@ -70,7 +70,7 @@ public class DelegatingTestClassModel implements TestClassModel {
 
     @NotNull
     @Override
-    public Collection<Class<?>> getImports() {
-        return delegate.getImports();
+    public Collection<Class<?>> getOwnImports() {
+        return delegate.getOwnImports();
     }
 }

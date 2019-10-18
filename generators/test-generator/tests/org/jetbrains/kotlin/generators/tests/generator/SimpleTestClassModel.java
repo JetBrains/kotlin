@@ -19,7 +19,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class SimpleTestClassModel implements TestClassModel {
+public class SimpleTestClassModel extends TestClassModel {
     private static final Comparator<TestEntityModel> BY_NAME = Comparator.comparing(TestEntityModel::getName);
 
     @NotNull
@@ -238,11 +238,11 @@ public class SimpleTestClassModel implements TestClassModel {
 
     @NotNull
     @Override
-    public Collection<Class<?>> getImports() {
+    public Collection<Class<?>> getOwnImports() {
         return annotations.stream().map(AnnotationModel::getAnnotation).collect(Collectors.toSet());
     }
 
-    private class TestAllFilesPresentMethodModel implements TestMethodModel {
+    private class TestAllFilesPresentMethodModel extends TestMethodModel {
         @NotNull
         @Override
         public String getName() {
@@ -280,11 +280,6 @@ public class SimpleTestClassModel implements TestClassModel {
         @Override
         public String getDataString() {
             return null;
-        }
-
-        @Override
-        public void generateSignature(@NotNull Printer p) {
-            TestMethodModel.DefaultImpls.generateSignature(this, p);
         }
 
         @Override

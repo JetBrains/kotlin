@@ -68,13 +68,13 @@ class TestGenerator(
             p.println("import ", RUNNER.canonicalName, ";")
         }
         p.println("import " + KotlinTestUtils::class.java.canonicalName + ";")
-        p.println("import " + TargetBackend::class.java.canonicalName + ";")
-        if (suiteClassPackage != baseTestClassPackage) {
-            p.println("import $baseTestClassPackage.$baseTestClassName;")
+
+        for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
+            p.println("import ${clazz.name};")
         }
 
-        for (clazz in testClassModels.flatMap { classModel -> classModel.imports }.toSet()) {
-            p.println("import ${clazz.name};")
+        if (suiteClassPackage != baseTestClassPackage) {
+            p.println("import $baseTestClassPackage.$baseTestClassName;")
         }
 
         p.println("import " + TestMetadata::class.java.canonicalName + ";")
@@ -98,7 +98,7 @@ class TestGenerator(
                     get() = suiteClassName
             }
         } else {
-            model = object : TestClassModel {
+            model = object : TestClassModel() {
                 override val innerTestClasses: Collection<TestClassModel>
                     get() = testClassModels
 
@@ -120,8 +120,11 @@ class TestGenerator(
                 override val annotations: Collection<AnnotationModel>
                     get() = emptyList()
 
-                override val imports: Collection<Class<*>>
+                override val ownImports: Collection<Class<*>>
                     get() = emptyList()
+
+                override val imports: Collection<Class<*>>
+                    get() = super.imports
             }
         }
 

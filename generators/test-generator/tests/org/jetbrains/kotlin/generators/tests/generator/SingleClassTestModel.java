@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class SingleClassTestModel implements TestClassModel {
+public class SingleClassTestModel extends TestClassModel {
     @NotNull
     private final File rootFile;
     @NotNull
@@ -148,11 +148,11 @@ public class SingleClassTestModel implements TestClassModel {
 
     @NotNull
     @Override
-    public Collection<Class<?>> getImports() {
+    public Collection<Class<?>> getOwnImports() {
         return annotations.stream().map(AnnotationModel::getAnnotation).collect(Collectors.toSet());
     }
 
-    private class TestAllFilesPresentMethodModel implements TestMethodModel {
+    private class TestAllFilesPresentMethodModel extends TestMethodModel {
         @NotNull
         @Override
         public String getName() {
@@ -181,11 +181,6 @@ public class SingleClassTestModel implements TestClassModel {
         @Override
         public String getDataString() {
             return null;
-        }
-
-        @Override
-        public void generateSignature(@NotNull Printer p) {
-            TestMethodModel.DefaultImpls.generateSignature(this, p);
         }
 
         @Override
