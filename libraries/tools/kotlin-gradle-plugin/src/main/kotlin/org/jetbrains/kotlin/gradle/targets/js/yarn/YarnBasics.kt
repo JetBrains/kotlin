@@ -55,6 +55,11 @@ abstract class YarnBasics : NpmApi {
 
                 val key = YarnLock.key(src.key, src.version)
                 val deps = byKey[key]
+                    ?: if (src.version == "*") byKey.entries
+                        .firstOrNull { it.key.startsWith(YarnLock.key(src.key, "")) }
+                        ?.value
+                    else null
+
                 if (deps != null) {
                     src.resolvedVersion = deps.version
                     src.integrity = deps.integrity
