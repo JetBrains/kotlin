@@ -3963,6 +3963,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/controlStructures/ifConst2.kt");
         }
 
+        @TestMetadata("ifIncompatibleBranches.kt")
+        public void testIfIncompatibleBranches() throws Exception {
+            runTest("compiler/testData/codegen/box/controlStructures/ifIncompatibleBranches.kt");
+        }
+
         @TestMetadata("inRangeConditionsInWhen.kt")
         public void testInRangeConditionsInWhen() throws Exception {
             runTest("compiler/testData/codegen/box/controlStructures/inRangeConditionsInWhen.kt");

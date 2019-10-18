@@ -586,9 +586,6 @@ class ExpressionCodegen(
 
         val endLabel = Label()
         val exhaustive = expression.branches.any { it.condition.isTrueConst() }
-        assert(exhaustive || expression.type.isUnit() || expression.type.isNothing()) {
-            "non-exhaustive conditional should return Unit: ${expression.dump()}"
-        }
         for (branch in expression.branches) {
             val elseLabel = Label()
             if (branch.condition.isFalseConst() || branch.condition.isTrueConst()) {
@@ -615,6 +612,14 @@ class ExpressionCodegen(
             mv.mark(elseLabel)
         }
         mv.mark(endLabel)
+        // NOTE: using a non-exhaustive if/when as an expression is invalid, so it should theoretically
+        //       always return Unit. However, with the current frontend this is not always the case.
+        //       Most notably, 1. when all branches return/break/continue, the type is Nothing;
+        //       2. the frontend may sometimes infer Any instead of Unit, probably due to a bug
+        //       (see compiler/testData/codegen/box/controlStructures/ifIncompatibleBranches.kt).
+        //       It should still be safe to produce a soon-to-be-discarded Unit. (What is not ok is
+        //       inserting *any* code here, though, as its line number will be that of the last line
+        //       of the last branch.)
         return immaterialUnitValue
     }
 
