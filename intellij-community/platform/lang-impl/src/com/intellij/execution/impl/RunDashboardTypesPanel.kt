@@ -5,26 +5,26 @@ import com.intellij.execution.ExecutionBundle
 import com.intellij.execution.configurations.ConfigurationType
 import com.intellij.execution.dashboard.RunDashboardManager
 import com.intellij.ide.util.PropertiesComponent
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.DefaultActionGroup
-import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.popup.JBPopup
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.*
 import com.intellij.ui.components.JBList
 import com.intellij.ui.speedSearch.SpeedSearchUtil
+import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.NonNls
 import java.awt.BorderLayout
+import java.util.function.Consumer
 import javax.swing.JList
 import javax.swing.JPanel
+import javax.swing.ListSelectionModel
 import javax.swing.event.ListDataEvent
 import javax.swing.event.ListDataListener
 
-@NonNls private val EXPAND_PROPERTY_KEY = "ExpandRunDashboardTypesPanel"
+@NonNls
+private val EXPAND_PROPERTY_KEY = "ExpandRunDashboardTypesPanel"
 
 private val IGNORE_CASE_DISPLAY_NAME_COMPARATOR = Comparator<ConfigurationType> { t1, t2 ->
   t1.displayName.compareTo(t2.displayName, ignoreCase = true)
@@ -61,7 +61,20 @@ internal class RunDashboardTypesPanel(private val myProject: Project) : JPanel(B
     if (!SystemInfo.isMac) {
       toolbarDecorator.setAsUsualTopToolbar()
     }
-    toolbarDecorator.setAddAction { showAddPopup(it, true) }
+    toolbarDecorator.setAddAction { button ->
+      showAddPopup(myProject, listModel.items.map(ConfigurationType::getId).toSet(),
+                   Consumer { newTypes ->
+                     newTypes.forEach { listModel.add(it) }
+                     listModel.sort(IGNORE_CASE_DISPLAY_NAME_COMPARATOR)
+                     list.selectedIndices = newTypes.map { listModel.getElementIndex(it) }.filter { it != -1 }.toIntArray()
+                     val selectedIndex = list.selectedIndex
+                     val cellBounds = list.getCellBounds(selectedIndex, selectedIndex)
+                     if (cellBounds != null) {
+                       list.scrollRectToVisible(cellBounds)
+                     }
+                   },
+                   Consumer { it.show(button.preferredPopupPoint!!) })
+    }
     toolbarDecorator.setRemoveAction { list.selectedValuesList.forEach { listModel.remove(it) } }
     toolbarDecorator.setMoveUpAction(null)
     toolbarDecorator.setMoveDownAction(null)
@@ -89,53 +102,6 @@ internal class RunDashboardTypesPanel(private val myProject: Project) : JPanel(B
     }
     hideableDecorator.setOn(PropertiesComponent.getInstance().getBoolean(EXPAND_PROPERTY_KEY, false))
     hideableDecorator.setContentComponent(listPanel)
-  }
-
-  private fun showAddPopup(button: AnActionButton, showApplicableTypesOnly: Boolean) {
-    val allTypes = ConfigurationType.CONFIGURATION_TYPE_EP.extensionList.filter { !listModel.contains(it) }
-    val configurationTypes = getTypesToShow(showApplicableTypesOnly, allTypes).toMutableList()
-    configurationTypes.sortWith(IGNORE_CASE_DISPLAY_NAME_COMPARATOR)
-    val hiddenCount = allTypes.size - configurationTypes.size
-
-    val actionGroup = DefaultActionGroup(null, false)
-    configurationTypes.forEach {
-      actionGroup.add(object : AnAction(it.displayName, null, it.icon) {
-        override fun actionPerformed(e: AnActionEvent) {
-          listModel.add(it)
-          listModel.sort(IGNORE_CASE_DISPLAY_NAME_COMPARATOR)
-          list.selectedIndex = listModel.getElementIndex(it)
-        }
-      })
-    }
-    if (hiddenCount > 0) {
-      actionGroup.add(object : AnAction(ExecutionBundle.message("show.irrelevant.configurations.action.name", hiddenCount)) {
-        override fun actionPerformed(e: AnActionEvent) {
-          showAddPopup(button, false)
-        }
-      })
-    }
-
-    val popup = JBPopupFactory.getInstance().createActionGroupPopup(
-      ExecutionBundle.message("run.dashboard.configurable.add.configuration.type"),
-      actionGroup,
-      SimpleDataContext.getProjectContext(myProject),
-      false,
-      false,
-      false,
-      null,
-      -1,
-      Conditions.alwaysTrue<AnAction>())
-    popup.show(button.preferredPopupPoint!!)
-  }
-
-  private fun getTypesToShow(showApplicableTypesOnly: Boolean, allTypes: List<ConfigurationType>): List<ConfigurationType> {
-    if (showApplicableTypesOnly) {
-      val applicableTypes = allTypes.filter { type -> type.configurationFactories.any { it.isApplicable(myProject) } }
-      if (applicableTypes.size < (allTypes.size - 3)) {
-        return applicableTypes
-      }
-    }
-    return allTypes
   }
 
   fun addChangeListener(onChange: () -> Unit) {
@@ -168,6 +134,60 @@ internal class RunDashboardTypesPanel(private val myProject: Project) : JPanel(B
     val types = listModel.items.mapTo(THashSet()) { it.id }
     if (types != dashboardManager.types) {
       dashboardManager.types = types
+    }
+  }
+
+  companion object {
+    @JvmStatic
+    fun showAddPopup(project: Project, addedTypes: Set<String>,
+                     onAddCallback: Consumer<List<ConfigurationType>>, popupOpener: Consumer<JBPopup>) {
+      showAddPopup(project, addedTypes, onAddCallback, popupOpener, true)
+    }
+
+    private fun showAddPopup(project: Project, addedTypes: Set<String>,
+                             onAddCallback: Consumer<List<ConfigurationType>>, popupOpener: Consumer<JBPopup>,
+                             showApplicableTypesOnly: Boolean) {
+      val allTypes = ConfigurationType.CONFIGURATION_TYPE_EP.extensionList.filter { !addedTypes.contains(it.id) }
+      val configurationTypes = RunConfigurable.getTypesToShow(project, showApplicableTypesOnly, allTypes).toMutableList()
+      configurationTypes.sortWith(IGNORE_CASE_DISPLAY_NAME_COMPARATOR)
+      val hiddenCount = allTypes.size - configurationTypes.size
+      val popupList = ArrayList<Any>(configurationTypes)
+      if (hiddenCount > 0) {
+        popupList.add(ExecutionBundle.message("show.irrelevant.configurations.action.name", hiddenCount))
+      }
+
+      val builder = JBPopupFactory.getInstance().createPopupChooserBuilder(popupList)
+        .setTitle(ExecutionBundle.message("run.dashboard.configurable.add.configuration.type"))
+        .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION)
+        .setRenderer(object : ColoredListCellRenderer<Any>() {
+          override fun customizeCellRenderer(list: JList<*>,
+                                             value: Any,
+                                             index: Int,
+                                             selected: Boolean,
+                                             hasFocus: Boolean) {
+            if (value is ConfigurationType) {
+              icon = value.icon
+              append(value.displayName)
+            }
+            else {
+              append(value.toString())
+            }
+          }
+        })
+        .setMovable(true)
+        .setResizable(true)
+        .setNamerForFiltering { if (it is ConfigurationType) it.displayName else null }
+        .setAdText("Select one or more types")
+        .setItemsChosenCallback { selectedValues ->
+          val value = ContainerUtil.getOnlyItem(selectedValues)
+          if (value is String) {
+            showAddPopup(project, addedTypes, onAddCallback, popupOpener, false)
+            return@setItemsChosenCallback
+          }
+
+          onAddCallback.accept(selectedValues.filterIsInstance<ConfigurationType>())
+        }
+      popupOpener.accept(builder.createPopup())
     }
   }
 }
