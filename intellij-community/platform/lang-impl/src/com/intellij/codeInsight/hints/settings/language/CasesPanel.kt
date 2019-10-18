@@ -17,10 +17,11 @@ internal class CasesPanel(
   mainCheckBoxName: String,
   private val loadMainCheckBoxValue: () -> Boolean,
   private val onUserChangedMainCheckBox: (Boolean) -> Unit,
-  listener: ChangeListener
+  listener: ChangeListener,
+  private val disabledExternally: () -> Boolean
 ) : JPanel() {
   private val caseListPanel = CaseListPanel(cases, listener)
-  private val mainCheckBox = JCheckBox(mainCheckBoxName, loadMainCheckBoxValue())
+  private val mainCheckBox = JCheckBox(mainCheckBoxName)
 
   init {
     layout = BoxLayout(this, BoxLayout.Y_AXIS)
@@ -33,14 +34,16 @@ internal class CasesPanel(
       caseListPanel.setEnabledCheckboxes(selected)
       onUserChangedMainCheckBox(selected)
     }
-    caseListPanel.setEnabledCheckboxes(loadMainCheckBoxValue())
+    updateFromSettings()
     revalidate()
   }
 
   fun updateFromSettings() {
     val mainCheckBoxSelected = loadMainCheckBoxValue()
+    val disabledExternally = disabledExternally()
+    mainCheckBox.isEnabled = !disabledExternally
     mainCheckBox.isSelected = mainCheckBoxSelected
-    caseListPanel.setEnabledCheckboxes(mainCheckBoxSelected)
+    caseListPanel.setEnabledCheckboxes(mainCheckBoxSelected && !disabledExternally)
     caseListPanel.updateCheckBoxes()
   }
 }

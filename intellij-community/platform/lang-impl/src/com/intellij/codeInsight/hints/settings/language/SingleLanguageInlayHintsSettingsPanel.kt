@@ -5,8 +5,10 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.hint.EditorFragmentComponent
 import com.intellij.codeInsight.hints.ChangeListener
 import com.intellij.codeInsight.hints.InlayHintsSettings
+import com.intellij.codeInsight.hints.settings.InlayHintsConfigurable
 import com.intellij.codeInsight.hints.settings.InlayProviderSettingsModel
 import com.intellij.ide.CopyProvider
+import com.intellij.ide.DataManager
 import com.intellij.lang.Language
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
@@ -17,7 +19,9 @@ import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.panel.ComponentPanelBuilder
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.EditorTextField
@@ -25,9 +29,10 @@ import com.intellij.ui.JBColor
 import com.intellij.ui.JBSplitter
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.labels.LinkLabel
+import com.intellij.ui.layout.*
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
-import java.awt.Dimension
 import java.awt.GridLayout
 import java.awt.datatransfer.StringSelection
 import javax.swing.*
@@ -50,10 +55,14 @@ class SingleLanguageInlayHintsSettingsPanel(
   private val myCurrentProviderCasesPane = JBScrollPane().also {
     it.border = null
     it.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
+    it.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
   }
   private val myBottomPanel = createBottomPanel()
   private var myCasesPanel: CasesPanel? = null
   private val myRightPanel: JPanel = JPanel()
+  private val myWarningContainer = JPanel().also {
+    it.layout = BoxLayout(it, BoxLayout.Y_AXIS)
+  }
 
 
   init {
@@ -122,11 +131,17 @@ class SingleLanguageInlayHintsSettingsPanel(
   private fun createLeftPanel() = JBScrollPane(myProviderList)
 
   private fun fillRightPanel(): JPanel {
-    myRightPanel.layout = BoxLayout(myRightPanel, BoxLayout.Y_AXIS)
-    myRightPanel.add(myCurrentProviderCasesPane)
-    myRightPanel.add(Box.createRigidArea(Dimension(0, 5)))
-    myRightPanel.add(withInset(myCurrentProviderCustomSettingsPane))
-    return withInset(myRightPanel)
+    return withInset(panel {
+      row {
+        withInset(myCurrentProviderCasesPane)()
+      }
+      row {
+        withInset(myCurrentProviderCustomSettingsPane)()
+      }
+      row {
+        myWarningContainer(growY)
+      }
+    })
   }
 
   private fun createBottomPanel(): JPanel {
@@ -183,7 +198,7 @@ class SingleLanguageInlayHintsSettingsPanel(
   }
 
   private fun withInset(component: JComponent): JPanel {
-    val panel = JPanel(BorderLayout())
+    val panel = JPanel(GridLayout())
     panel.add(component)
     panel.border = JBUI.Borders.empty(2)
     return panel
@@ -196,9 +211,10 @@ class SingleLanguageInlayHintsSettingsPanel(
   }
 
   private fun updateWithNewProvider() {
-    myCurrentProviderCasesPane.setViewportView(createMainCheckBoxPanel())
+    myCurrentProviderCasesPane.setViewportView(createCasesPanel())
     myCurrentProviderCustomSettingsPane.setViewportView(myCurrentProvider.component)
     myRightPanel.validate()
+    updateWarningPanel()
     val previewText = myCurrentProvider.previewText
     if (previewText == null) {
       myBottomPanel.isVisible = false
@@ -210,14 +226,34 @@ class SingleLanguageInlayHintsSettingsPanel(
     }
   }
 
-  private fun createMainCheckBoxPanel(): JPanel {
+  private fun updateWarningPanel() {
+    myWarningContainer.removeAll()
+    if (!config.hintsEnabled(myLanguage)) {
+      val comment = ComponentPanelBuilder.createCommentComponent("Inlay hints for ${myLanguage.displayName} are disabled.", true)
+      myWarningContainer.add(comment)
+      myWarningContainer.add(LinkLabel.create("Configure settings.") {
+        val settings = Settings.KEY.getData(DataManager.getInstance().getDataContext(this))
+        if (settings != null) {
+          val mainConfigurable = settings.find(InlayHintsConfigurable::class.java)
+          if (mainConfigurable != null) {
+            settings.select(mainConfigurable)
+          }
+        }
+      })
+    }
+    myWarningContainer.revalidate()
+    myWarningContainer.repaint()
+  }
+
+  private fun createCasesPanel(): JPanel {
     val model = myCurrentProvider
     val casesPanel = CasesPanel(
-      model.cases,
-      model.mainCheckBoxLabel,
-      { model.isEnabled },
-      { model.isEnabled = it },
-      model.onChangeListener!! // must be installed at this point
+      cases = model.cases,
+      mainCheckBoxName = model.mainCheckBoxLabel,
+      loadMainCheckBoxValue = { model.isEnabled },
+      onUserChangedMainCheckBox = { model.isEnabled = it },
+      listener = model.onChangeListener!!, // must be installed at this point
+      disabledExternally = { !config.hintsEnabled(myLanguage) }
     )
     myCasesPanel = casesPanel
     return casesPanel
@@ -252,6 +288,7 @@ class SingleLanguageInlayHintsSettingsPanel(
       model.reset()
     }
     myCasesPanel?.updateFromSettings()
+    updateWarningPanel()
   }
 
   override fun performCopy(dataContext: DataContext) {

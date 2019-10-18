@@ -17,6 +17,13 @@ internal class MarkListTest : TestCase() {
     val markList = MarkList<Int>(listOf())
     assertEquals(listOf<Int>(), markList.nonUsed())
   }
+
+  fun testMarked() {
+    val markList = MarkList(listOf(1, 2, 3))
+    assertFalse(markList.marked(0))
+    markList.mark(0)
+    assertTrue(markList.marked(0))
+  }
 }
 
 private fun <T> MarkList<T>.nonUsed() : List<Pair<Int, T>> {

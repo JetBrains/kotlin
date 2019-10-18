@@ -17,6 +17,14 @@ class MarkList<T>(private val items: List<T>) : Iterable<T> {
     myMarked[index] = true
   }
 
+  fun mark(index: Int, value: Boolean) {
+    myMarked[index] = value
+  }
+
+  fun marked(index: Int): Boolean {
+    return myMarked[index]
+  }
+
   fun iterateNonMarked(consumer: (Int, T) -> Unit) {
     var i = myMarked.nextClearBit(0)
     val itemsSize = items.size
