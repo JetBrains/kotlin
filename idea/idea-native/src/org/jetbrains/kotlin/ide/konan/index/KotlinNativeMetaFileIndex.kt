@@ -28,6 +28,9 @@ object KotlinNativeMetaFileIndex : KotlinFileIndexBase<KotlinNativeMetaFileIndex
     /*todo: check version?!*/
     private val INDEXER = indexer { fileContent ->
         val fragment = KotlinNativeLoadingMetadataCache.getInstance().getCachedPackageFragment(fileContent.file)
-        FqName(fragment.getExtension(KlibMetadataProtoBuf.fqName))
+        if (fragment != null)
+            FqName(fragment.getExtension(KlibMetadataProtoBuf.fqName))
+        else
+            null
     }
 }

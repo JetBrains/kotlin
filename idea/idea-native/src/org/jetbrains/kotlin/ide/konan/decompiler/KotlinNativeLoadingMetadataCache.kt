@@ -9,12 +9,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.BaseComponent
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.ContainerUtil.createConcurrentWeakValueMap
-import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
-import org.jetbrains.kotlin.library.KLIB_MODULE_METADATA_FILE_NAME
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import java.io.IOException
+import java.util.*
 
 class KotlinNativeLoadingMetadataCache : BaseComponent {
 
@@ -33,34 +34,72 @@ class KotlinNativeLoadingMetadataCache : BaseComponent {
         constructor(virtualFile: VirtualFile) : this(virtualFile.url, virtualFile.modificationStamp)
     }
 
-    private val packageFragmentCache = createConcurrentWeakValueMap<CacheKey, ProtoBuf.PackageFragment>()
-    private val moduleHeaderCache = createConcurrentWeakValueMap<CacheKey, KlibMetadataProtoBuf.Header>()
+    // ConcurrentWeakValueHashMap does not allow null values.
+    private class CacheValue<T : Any>(val value: T?)
 
-    fun getCachedPackageFragment(virtualFile: VirtualFile): ProtoBuf.PackageFragment =
-        packageFragmentCache.computeIfAbsent(CacheKey(virtualFile.ensurePackageMetadataFile)) {
-            virtualFile.createPackageFragmentCacheEntry
+    private val packageFragmentCache = createConcurrentWeakValueMap<CacheKey, CacheValue<ProtoBuf.PackageFragment>>()
+    private val moduleHeaderCache = createConcurrentWeakValueMap<CacheKey, CacheValue<KlibMetadataProtoBuf.Header>>()
+    private val libraryVersioningCache = createConcurrentWeakValueMap<CacheKey, CacheValue<KonanLibraryVersioning>>()
+
+    fun getCachedPackageFragment(packageFragmentFile: VirtualFile): ProtoBuf.PackageFragment? {
+        check(packageFragmentFile.extension == KLIB_METADATA_FILE_EXTENSION) {
+            "Not a package metadata file: $packageFragmentFile"
         }
 
-    fun getCachedModuleHeader(virtualFile: VirtualFile): KlibMetadataProtoBuf.Header =
-        moduleHeaderCache.computeIfAbsent(CacheKey(virtualFile.ensureModuleHeaderFile)) {
-            virtualFile.createModuleHeaderCacheEntry
+        return packageFragmentCache.computeIfAbsent(CacheKey(packageFragmentFile)) {
+            CacheValue(computePackageFragment(packageFragmentFile))
+        }.value
+    }
+
+    fun getCachedModuleHeader(moduleHeaderFile: VirtualFile): KlibMetadataProtoBuf.Header? {
+        check(moduleHeaderFile.name == KLIB_MODULE_METADATA_FILE_NAME) {
+            "Not a module header file: $moduleHeaderFile"
         }
 
-    private val VirtualFile.createPackageFragmentCacheEntry
-        get() = parsePackageFragment(contentsToByteArray(false))
+        return moduleHeaderCache.computeIfAbsent(CacheKey(moduleHeaderFile)) {
+            CacheValue(computeModuleHeader(moduleHeaderFile))
+        }.value
+    }
 
-    private val VirtualFile.createModuleHeaderCacheEntry
-        get() = parseModuleHeader(contentsToByteArray(false))
+    private fun isAbiCompatible(libraryRoot: VirtualFile): Boolean {
+        val manifestFile = libraryRoot.findChild(KLIB_MANIFEST_FILE_NAME) ?: return false
 
-    private val VirtualFile.ensurePackageMetadataFile
-        get() = if (isPackageMetadataFile) this else error("Not a package metadata file: $this")
+        val versioning = libraryVersioningCache.computeIfAbsent(CacheKey(manifestFile)) {
+            CacheValue(computeLibraryVersioning(manifestFile))
+        }.value
 
-    private val VirtualFile.isPackageMetadataFile
-        get() = extension == KLIB_METADATA_FILE_EXTENSION
+        return versioning?.abiVersion == KotlinAbiVersion.CURRENT
+    }
 
-    private val VirtualFile.ensureModuleHeaderFile
-        get() = if (isModuleHeaderFile) this else error("Not a module header file: $this")
+    private fun computePackageFragment(packageFragmentFile: VirtualFile): ProtoBuf.PackageFragment? {
+        if (!isAbiCompatible(packageFragmentFile.parent.parent.parent))
+            return null
 
-    private val VirtualFile.isModuleHeaderFile
-        get() = name == KLIB_MODULE_METADATA_FILE_NAME
+        return try {
+            parsePackageFragment(packageFragmentFile.contentsToByteArray(false))
+        } catch (_: IOException) {
+            null
+        }
+    }
+
+    private fun computeModuleHeader(moduleHeaderFile: VirtualFile): KlibMetadataProtoBuf.Header? {
+        if (!isAbiCompatible(moduleHeaderFile.parent.parent))
+            return null
+
+        return try {
+            parseModuleHeader(moduleHeaderFile.contentsToByteArray(false))
+        } catch (_: IOException) {
+            null
+        }
+    }
+
+    private fun computeLibraryVersioning(manifestFile: VirtualFile): KonanLibraryVersioning? = try {
+        Properties().apply { manifestFile.inputStream.use { load(it) } }.readKonanLibraryVersioning()
+    } catch (_: IOException) {
+        // ignore and cache null value
+        null
+    } catch (_: IllegalArgumentException) {
+        // ignore and cache null value
+        null
+    }
 }

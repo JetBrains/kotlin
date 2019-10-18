@@ -41,12 +41,12 @@ fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)
 internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
     override fun loadModuleHeader(library: KotlinLibrary): KlibMetadataProtoBuf.Header {
         val virtualFile = getVirtualFile(library, library.moduleHeaderFile)
-        return cache.getCachedModuleHeader(virtualFile)
+        return cache.getCachedModuleHeader(virtualFile)!!
     }
 
     override fun loadPackageFragment(library: KotlinLibrary, packageFqName: String, partName: String): ProtoBuf.PackageFragment {
         val virtualFile = getVirtualFile(library, library.packageFragmentFile(packageFqName, partName))
-        return cache.getCachedPackageFragment(virtualFile)
+        return cache.getCachedPackageFragment(virtualFile)!!
     }
 
     private fun getVirtualFile(library: KotlinLibrary, file: KFile): VirtualFile =

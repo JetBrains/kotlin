@@ -22,8 +22,8 @@ class KotlinNativeMetadataDecompiler : KotlinNativeMetadataDecompilerBase<Kotlin
 ) {
 
     override fun doReadFile(file: VirtualFile): FileWithMetadata? {
-        val proto = KotlinNativeLoadingMetadataCache.getInstance().getCachedPackageFragment(file)
-        return FileWithMetadata.Compatible(proto, KlibMetadataSerializerProtocol) //todo: check version compatibility
+        val fragment = KotlinNativeLoadingMetadataCache.getInstance().getCachedPackageFragment(file) ?: return null
+        return FileWithMetadata.Compatible(fragment, KlibMetadataSerializerProtocol) //todo: check version compatibility
     }
 }
 
