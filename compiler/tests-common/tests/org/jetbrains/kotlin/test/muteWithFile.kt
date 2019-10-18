@@ -55,10 +55,6 @@ fun testWithMuteInFile(test: DoTest, extraSuffix: String): DoTest {
 }
 
 private fun isMutedWithFile(testPathFile: File, extraSuffix: String): Boolean {
-    if (!testPathFile.isFile) {
-        return false
-    }
-
     return muteFile(testPathFile, extraSuffix) != null
 }
 
@@ -68,8 +64,21 @@ private fun createMuteFile(testDataFile: File, extraSuffix: String, text: String
     muteFileNoCheck(testDataFile, extraSuffix).writeText(text)
 }
 
+private fun rawFileNoChecks(testPathFile: File, extraSuffix: String, suffix: String): File {
+    return when {
+        testPathFile.isDirectory ->
+            File(testPathFile, "${testPathFile.name}$extraSuffix$suffix")
+        else ->
+            File("${testPathFile.path}$extraSuffix$suffix")
+    }
+}
+
 private fun muteFileNoCheck(testPathFile: File, extraSuffix: String): File {
-    return File("${testPathFile.path}$extraSuffix.mute")
+    return rawFileNoChecks(testPathFile, extraSuffix, ".mute")
+}
+
+private fun failFileNoCheck(testPathFile: File, extraSuffix: String): File {
+    return rawFileNoChecks(testPathFile, extraSuffix, ".fail")
 }
 
 private fun muteFile(testPathFile: File, extraSuffix: String): File? {
@@ -83,9 +92,8 @@ private fun muteFile(testPathFile: File, extraSuffix: String): File? {
 }
 
 private fun failFile(testDataFile: File, extraSuffix: String): File? {
-    if (!testDataFile.isFile) return null
+    val failFile = failFileNoCheck(testDataFile, extraSuffix)
 
-    val failFile = File("${testDataFile.path}$extraSuffix.fail")
     if (!failFile.exists() || !failFile.isFile) {
         return null
     }
