@@ -8,6 +8,7 @@ import com.intellij.execution.configuration.ConfigurationFactoryEx
 import com.intellij.execution.configurations.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionUtil
+import com.intellij.execution.runners.ProgramRunner
 import com.intellij.ide.util.PropertiesComponent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
@@ -212,6 +213,15 @@ open class RunManagerImpl @JvmOverloads constructor(val project: Project, shared
             configuration.name = settingsImpl.configuration.name
             settingsImpl.setConfiguration(configuration)
           }
+        }
+      }
+    }, project)
+
+    ProgramRunner.PROGRAM_RUNNER_EP.addExtensionPointListener(object : ExtensionPointListener<ProgramRunner<*>> {
+      override fun extensionRemoved(extension: ProgramRunner<*>, pluginDescriptor: PluginDescriptor) {
+        for (runnerAndConfigurationSettings in allSettings) {
+          val settingsImpl = runnerAndConfigurationSettings as RunnerAndConfigurationSettingsImpl
+          settingsImpl.handleRunnerRemoved(extension)
         }
       }
     }, project)
