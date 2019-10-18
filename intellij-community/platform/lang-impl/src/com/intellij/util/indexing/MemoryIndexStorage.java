@@ -72,8 +72,10 @@ public class MemoryIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key,
     }
   }
 
-  public void clearMemoryMap() {
+  public boolean clearMemoryMap() {
+    boolean modified = !myMap.isEmpty();
     myMap.clear();
+    return modified;
   }
 
   public boolean clearMemoryMapForId(Key key, int fileId) {

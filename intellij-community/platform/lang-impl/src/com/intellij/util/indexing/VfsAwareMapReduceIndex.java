@@ -247,7 +247,11 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   @Override
   public void cleanupMemoryStorage() {
     MemoryIndexStorage<Key, Value> memStorage = (MemoryIndexStorage<Key, Value>)getStorage();
-    ConcurrencyUtil.withLock(getWriteLock(), () -> memStorage.clearMemoryMap());
+    ConcurrencyUtil.withLock(getWriteLock(), () -> {
+      if (memStorage.clearMemoryMap()) {
+        myModificationStamp.incrementAndGet();
+      }
+    });
     memStorage.fireMemoryStorageCleared();
   }
 
