@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.spring.tests.inspections;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class SpringInspectionTestGenerated extends AbstractSpringInspectionTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInSpring() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("kotlin-ultimate/ultimate/testData/inspections/spring"), Pattern.compile("^(inspections\\.test)$"), TargetBackend.ANY);
+        KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("kotlin-ultimate/ultimate/testData/inspections/spring"), Pattern.compile("^(inspections\\.test)$"));
     }
 
     @TestMetadata("autowiredMembersInInvalidClass/inspectionData/inspections.test")

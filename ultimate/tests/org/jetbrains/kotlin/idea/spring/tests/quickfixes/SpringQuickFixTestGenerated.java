@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.spring.tests.quickfixes;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class SpringQuickFixTestGenerated extends AbstractSpringQuickFixTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInSpring() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("kotlin-ultimate/ultimate/testData/quickFixes/spring"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("kotlin-ultimate/ultimate/testData/quickFixes/spring"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
     }
 
     @TestMetadata("kotlin-ultimate/ultimate/testData/quickFixes/spring/addQualifierAnnotation")
@@ -34,11 +33,11 @@ public class SpringQuickFixTestGenerated extends AbstractSpringQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddQualifierAnnotation extends AbstractSpringQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddQualifierAnnotation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("kotlin-ultimate/ultimate/testData/quickFixes/spring/addQualifierAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("kotlin-ultimate/ultimate/testData/quickFixes/spring/addQualifierAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("ambiguousBean.kt")
