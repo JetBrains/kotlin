@@ -2189,19 +2189,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/ieee754/nullableDoubleEquals.kt");
         }
 
-        @TestMetadata("nullableDoubleEquals10.kt")
-        public void testNullableDoubleEquals10() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ieee754/nullableDoubleEquals10.kt");
-        }
-
         @TestMetadata("nullableDoubleNotEquals.kt")
         public void testNullableDoubleNotEquals() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/ieee754/nullableDoubleNotEquals.kt");
-        }
-
-        @TestMetadata("nullableDoubleNotEquals10.kt")
-        public void testNullableDoubleNotEquals10() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ieee754/nullableDoubleNotEquals10.kt");
         }
 
         @TestMetadata("nullableFloatEquals.kt")
@@ -2209,19 +2199,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/ieee754/nullableFloatEquals.kt");
         }
 
-        @TestMetadata("nullableFloatEquals10.kt")
-        public void testNullableFloatEquals10() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ieee754/nullableFloatEquals10.kt");
-        }
-
         @TestMetadata("nullableFloatNotEquals.kt")
         public void testNullableFloatNotEquals() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/ieee754/nullableFloatNotEquals.kt");
-        }
-
-        @TestMetadata("nullableFloatNotEquals10.kt")
-        public void testNullableFloatNotEquals10() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ieee754/nullableFloatNotEquals10.kt");
         }
 
         @TestMetadata("smartCastsForDouble.kt")
@@ -2229,19 +2209,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/ieee754/smartCastsForDouble.kt");
         }
 
-        @TestMetadata("smartCastsForDouble10.kt")
-        public void testSmartCastsForDouble10() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ieee754/smartCastsForDouble10.kt");
-        }
-
         @TestMetadata("smartCastsForFloat.kt")
         public void testSmartCastsForFloat() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/ieee754/smartCastsForFloat.kt");
-        }
-
-        @TestMetadata("smartCastsForFloat10.kt")
-        public void testSmartCastsForFloat10() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ieee754/smartCastsForFloat10.kt");
         }
 
         @TestMetadata("when.kt")
@@ -2249,19 +2219,62 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/ieee754/when.kt");
         }
 
-        @TestMetadata("when10.kt")
-        public void testWhen10() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ieee754/when10.kt");
-        }
-
         @TestMetadata("whenNullableSmartCast.kt")
         public void testWhenNullableSmartCast() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/ieee754/whenNullableSmartCast.kt");
         }
 
-        @TestMetadata("whenNullableSmartCast10.kt")
-        public void testWhenNullableSmartCast10() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/ieee754/whenNullableSmartCast10.kt");
+        @TestMetadata("compiler/testData/codegen/bytecodeText/ieee754/oldLanguageVersions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class OldLanguageVersions extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInOldLanguageVersions() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ieee754/oldLanguageVersions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("nullableDoubleEquals10.kt")
+            public void testNullableDoubleEquals10() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/ieee754/oldLanguageVersions/nullableDoubleEquals10.kt");
+            }
+
+            @TestMetadata("nullableDoubleNotEquals10.kt")
+            public void testNullableDoubleNotEquals10() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/ieee754/oldLanguageVersions/nullableDoubleNotEquals10.kt");
+            }
+
+            @TestMetadata("nullableFloatEquals10.kt")
+            public void testNullableFloatEquals10() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/ieee754/oldLanguageVersions/nullableFloatEquals10.kt");
+            }
+
+            @TestMetadata("nullableFloatNotEquals10.kt")
+            public void testNullableFloatNotEquals10() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/ieee754/oldLanguageVersions/nullableFloatNotEquals10.kt");
+            }
+
+            @TestMetadata("smartCastsForDouble10.kt")
+            public void testSmartCastsForDouble10() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/ieee754/oldLanguageVersions/smartCastsForDouble10.kt");
+            }
+
+            @TestMetadata("smartCastsForFloat10.kt")
+            public void testSmartCastsForFloat10() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/ieee754/oldLanguageVersions/smartCastsForFloat10.kt");
+            }
+
+            @TestMetadata("when10.kt")
+            public void testWhen10() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/ieee754/oldLanguageVersions/when10.kt");
+            }
+
+            @TestMetadata("whenNullableSmartCast10.kt")
+            public void testWhenNullableSmartCast10() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/ieee754/oldLanguageVersions/whenNullableSmartCast10.kt");
+            }
         }
     }
 

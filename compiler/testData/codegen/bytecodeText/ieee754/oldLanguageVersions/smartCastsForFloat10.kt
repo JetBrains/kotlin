@@ -1,5 +1,4 @@
 // !API_VERSION: 1.0
-// IGNORE_BACKEND: JVM_IR
 
 fun equals5(a: Any?, b: Any?) = if (a is Float && b is Float?) a == b else null!!
 
