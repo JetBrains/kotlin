@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService.Companion.createDeclarationProviderFactory
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class NativeResolverForModuleFactory(
     private val platformAnalysisParameters: PlatformAnalysisParameters,
@@ -67,7 +68,7 @@ class NativeResolverForModuleFactory(
                     moduleDescriptor
                 )
 
-            fragmentProviders.add(libPackageFragmentProvider)
+            fragmentProviders.addIfNotNull(libPackageFragmentProvider)
         }
 
         return ResolverForModule(CompositePackageFragmentProvider(fragmentProviders), container)
