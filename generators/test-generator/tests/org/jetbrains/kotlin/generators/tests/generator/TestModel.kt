@@ -24,10 +24,12 @@ interface TestEntityModel {
 }
 
 interface TestClassModel : TestEntityModel {
+    val imports: Collection<Class<*>>
     val innerTestClasses: Collection<TestClassModel>
     val methods: Collection<MethodModel>
     val isEmpty: Boolean
     val dataPathRoot: String?
+    val annotations: Collection<AnnotationModel>
 }
 
 interface MethodModel : TestEntityModel {

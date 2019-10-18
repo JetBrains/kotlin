@@ -61,4 +61,16 @@ public class DelegatingTestClassModel implements TestClassModel {
     public String getDataString() {
         return delegate.getDataString();
     }
+
+    @NotNull
+    @Override
+    public Collection<AnnotationModel> getAnnotations() {
+        return delegate.getAnnotations();
+    }
+
+    @NotNull
+    @Override
+    public Collection<Class<?>> getImports() {
+        return delegate.getImports();
+    }
 }

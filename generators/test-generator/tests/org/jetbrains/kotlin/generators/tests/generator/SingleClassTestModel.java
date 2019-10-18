@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SingleClassTestModel implements TestClassModel {
     @NotNull
@@ -52,6 +53,9 @@ public class SingleClassTestModel implements TestClassModel {
     private final String testRunnerMethodName;
     private final List<String> additionalRunnerArguments;
 
+    @NotNull
+    private final List<AnnotationModel> annotations;
+
     public SingleClassTestModel(
             @NotNull File rootFile,
             @NotNull Pattern filenamePattern,
@@ -61,7 +65,8 @@ public class SingleClassTestModel implements TestClassModel {
             @NotNull TargetBackend targetBackend,
             boolean skipIgnored,
             String testRunnerMethodName,
-            List<String> additionalRunnerArguments
+            List<String> additionalRunnerArguments,
+            @NotNull List<AnnotationModel> annotations
     ) {
         this.rootFile = rootFile;
         this.filenamePattern = filenamePattern;
@@ -72,6 +77,7 @@ public class SingleClassTestModel implements TestClassModel {
         this.skipIgnored = skipIgnored;
         this.testRunnerMethodName = testRunnerMethodName;
         this.additionalRunnerArguments = additionalRunnerArguments;
+        this.annotations = annotations;
     }
 
     @NotNull
@@ -132,6 +138,18 @@ public class SingleClassTestModel implements TestClassModel {
     @Override
     public String getName() {
         return testClassName;
+    }
+
+    @NotNull
+    @Override
+    public Collection<AnnotationModel> getAnnotations() {
+        return annotations;
+    }
+
+    @NotNull
+    @Override
+    public Collection<Class<?>> getImports() {
+        return annotations.stream().map(AnnotationModel::getAnnotation).collect(Collectors.toSet());
     }
 
     private class TestAllFilesPresentMethodModel implements TestMethodModel {

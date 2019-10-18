@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.utils.Printer;
 import java.io.File;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SimpleTestClassModel implements TestClassModel {
     private static final Comparator<TestEntityModel> BY_NAME = Comparator.comparing(TestEntityModel::getName);
@@ -43,6 +44,9 @@ public class SimpleTestClassModel implements TestClassModel {
     @Nullable
     private Collection<MethodModel> testMethods;
 
+    @NotNull
+    private final Collection<AnnotationModel> annotations;
+
     private final boolean skipIgnored;
     private final String testRunnerMethodName;
     private final List<String> additionalRunnerArguments;
@@ -60,7 +64,8 @@ public class SimpleTestClassModel implements TestClassModel {
             boolean skipIgnored,
             String testRunnerMethodName,
             List<String> additionalRunnerArguments,
-            Integer deep
+            Integer deep,
+            @NotNull Collection<AnnotationModel> annotations
     ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
@@ -75,6 +80,7 @@ public class SimpleTestClassModel implements TestClassModel {
         this.testRunnerMethodName = testRunnerMethodName;
         this.additionalRunnerArguments = additionalRunnerArguments;
         this.deep = deep;
+        this.annotations = annotations;
     }
 
     @NotNull
@@ -94,8 +100,9 @@ public class SimpleTestClassModel implements TestClassModel {
                         children.add(new SimpleTestClassModel(
                                 file, true, excludeParentDirs, filenamePattern, checkFilenameStartsLowerCase,
                                 doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()),
-                                skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep != null ? deep - 1 : null)
+                                skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep != null ? deep - 1 : null, annotations)
                         );
+
                     }
                 }
             }
@@ -221,6 +228,18 @@ public class SimpleTestClassModel implements TestClassModel {
     @Override
     public String getName() {
         return testClassName;
+    }
+
+    @NotNull
+    @Override
+    public Collection<AnnotationModel> getAnnotations() {
+        return annotations;
+    }
+
+    @NotNull
+    @Override
+    public Collection<Class<?>> getImports() {
+        return annotations.stream().map(AnnotationModel::getAnnotation).collect(Collectors.toSet());
     }
 
     private class TestAllFilesPresentMethodModel implements TestMethodModel {
