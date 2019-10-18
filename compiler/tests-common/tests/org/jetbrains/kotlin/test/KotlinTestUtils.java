@@ -709,7 +709,7 @@ public class KotlinTestUtils {
 
     @SuppressWarnings("unused")
     public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) throws Exception {
-        runTest(test, TargetBackend.ANY, testDataFile);
+        runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFile);
     }
 
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
@@ -719,7 +719,7 @@ public class KotlinTestUtils {
     }
 
     public static void runTestWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile, String ignoreDirective) throws Exception {
-        runTest(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), testDataFile);
+        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), null, testDataFile);
     }
 
     // In this test runner version, NONE of the parameters are annotated by `TestDataFile`.
@@ -731,11 +731,14 @@ public class KotlinTestUtils {
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
     public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
-        runTest(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), testDataFilePath);
+        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), null, testDataFilePath);
     }
 
-    private static void runTest(DoTest test, String testDataFilePath) throws Exception {
-        MuteWithFileKt.testWithMuteInFile(test).invoke(testDataFilePath);
+    private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
+        DoTest wrappedTest = testCase != null ?
+                             MuteWithFileKt.testWithMuteInFile(test, testCase) :
+                             MuteWithFileKt.testWithMuteInFile(test, "");
+        wrappedTest.invoke(testDataFilePath);
     }
 
     private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {

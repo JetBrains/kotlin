@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test
 
+import junit.framework.TestCase
 import org.jetbrains.kotlin.test.KotlinTestUtils.DoTest
 import org.junit.Assert
 import java.io.File
@@ -12,30 +13,38 @@ import java.io.File
 private val RUN_MUTED_TESTS = java.lang.Boolean.getBoolean("org.jetbrains.kotlin.run.muted.tests")
 private val AUTOMATICALLY_MUTE_FAILED_TESTS_WITH_CONTENT: String? = null
 
+annotation class MuteExtraSuffix(val value: String = "")
+
 @Throws(Exception::class)
-fun testWithMuteInFile(test: DoTest): DoTest {
+fun testWithMuteInFile(test: DoTest, testCase: TestCase): DoTest {
+    val extraSuffix = testCase.javaClass.getAnnotation(MuteExtraSuffix::class.java)?.value ?: ""
+    return testWithMuteInFile(test, extraSuffix)
+}
+
+@Throws(Exception::class)
+fun testWithMuteInFile(test: DoTest, extraSuffix: String): DoTest {
     return object : DoTest {
         override fun invoke(filePath: String) {
             val testDataFile = File(filePath)
 
-            val isMutedWithFile = isMutedWithFile(testDataFile)
+            val isMutedWithFile = isMutedWithFile(testDataFile, extraSuffix)
             if (isMutedWithFile && !RUN_MUTED_TESTS) {
                 System.err.println("IGNORED TEST: $filePath")
                 return
             }
 
-            val failFile = failFile(testDataFile)
+            val failFile = failFile(testDataFile, extraSuffix)
             val hasFailFile = failFile != null
 
             try {
                 test.invoke(filePath)
             } catch (e: Throwable) {
-                if (checkFailFile(e, testDataFile)) {
+                if (checkFailFile(e, testDataFile, extraSuffix)) {
                     return
                 }
 
                 if (!isMutedWithFile && !hasFailFile && AUTOMATICALLY_MUTE_FAILED_TESTS_WITH_CONTENT != null) {
-                    createMuteFile(testDataFile, AUTOMATICALLY_MUTE_FAILED_TESTS_WITH_CONTENT)
+                    createMuteFile(testDataFile, extraSuffix, AUTOMATICALLY_MUTE_FAILED_TESTS_WITH_CONTENT)
                 }
                 throw e
             }
@@ -45,24 +54,38 @@ fun testWithMuteInFile(test: DoTest): DoTest {
     }
 }
 
-private fun isMutedWithFile(testDataFile: File): Boolean {
-    if (!testDataFile.isFile) {
+private fun isMutedWithFile(testPathFile: File, extraSuffix: String): Boolean {
+    if (!testPathFile.isFile) {
         return false
     }
-    val muteFile = File("${testDataFile.path}.mute")
-    return muteFile.exists() && muteFile.isFile
+
+    return muteFile(testPathFile, extraSuffix) != null
 }
 
-private fun createMuteFile(testDataFile: File, text: String) {
+private fun createMuteFile(testDataFile: File, extraSuffix: String, text: String) {
     require(text.isNotEmpty()) { "Mute text must not be empty" }
 
-    File("${testDataFile.path}.mute").writeText(text)
+    muteFileNoCheck(testDataFile, extraSuffix).writeText(text)
 }
 
-private fun failFile(testDataFile: File): File? {
+private fun muteFileNoCheck(testPathFile: File, extraSuffix: String): File {
+    return File("${testPathFile.path}$extraSuffix.mute")
+}
+
+private fun muteFile(testPathFile: File, extraSuffix: String): File? {
+    val muteFile = muteFileNoCheck(testPathFile, extraSuffix)
+
+    if (muteFile.exists() && muteFile.isFile) {
+        return muteFile
+    }
+
+    return null
+}
+
+private fun failFile(testDataFile: File, extraSuffix: String): File? {
     if (!testDataFile.isFile) return null
 
-    val failFile = File("${testDataFile.path}.fail")
+    val failFile = File("${testDataFile.path}$extraSuffix.fail")
     if (!failFile.exists() || !failFile.isFile) {
         return null
     }
@@ -70,8 +93,8 @@ private fun failFile(testDataFile: File): File? {
     return failFile
 }
 
-private fun checkFailFile(failure: Throwable, testDataFile: File): Boolean {
-    val failFile = failFile(testDataFile) ?: return false
+private fun checkFailFile(failure: Throwable, testDataFile: File, extraSuffix: String): Boolean {
+    val failFile = failFile(testDataFile, extraSuffix) ?: return false
     val cause = failure.cause
     val muteMessage = failure.message +
             if (cause != null) {
