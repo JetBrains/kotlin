@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -18,19 +19,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirTypeAlias : FirClassLikeDeclaration<FirTypeAlias> {
-    override val psi: PsiElement?
-    override val session: FirSession
-    override val resolvePhase: FirResolvePhase
-    override val name: Name
-    override val typeParameters: List<FirTypeParameter>
-    override val status: FirDeclarationStatus
-    override val supertypesComputationStatus: SupertypesComputationStatus
-    override val symbol: FirTypeAliasSymbol
-    val expandedTypeRef: FirTypeRef
-    override val annotations: List<FirAnnotationCall>
+abstract class FirTypeAlias : FirPureAbstractElement(), FirClassLikeDeclaration<FirTypeAlias> {
+    abstract override val psi: PsiElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val name: Name
+    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val status: FirDeclarationStatus
+    abstract override val supertypesComputationStatus: SupertypesComputationStatus
+    abstract override val symbol: FirTypeAliasSymbol
+    abstract val expandedTypeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeAlias(this, data)
 
-    fun replaceExpandedTypeRef(newExpandedTypeRef: FirTypeRef)
+    abstract fun replaceExpandedTypeRef(newExpandedTypeRef: FirTypeRef)
 }

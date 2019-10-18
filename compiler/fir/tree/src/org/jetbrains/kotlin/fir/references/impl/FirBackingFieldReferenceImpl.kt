@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.references.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -22,7 +21,7 @@ class FirBackingFieldReferenceImpl(
     override val psi: PsiElement?,
     override val candidateSymbol: AbstractFirBasedSymbol<*>?,
     override val resolvedSymbol: FirBackingFieldSymbol
-) : FirPureAbstractElement(), FirBackingFieldReference {
+) : FirBackingFieldReference() {
     override val name: Name get() = Name.identifier("\$field")
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.references.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirExplicitThisReference(
     override val psi: PsiElement?,
     override val labelName: String?
-) : FirPureAbstractElement(), FirThisReference {
+) : FirThisReference() {
     override var boundSymbol: AbstractFirBasedSymbol<*>? = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

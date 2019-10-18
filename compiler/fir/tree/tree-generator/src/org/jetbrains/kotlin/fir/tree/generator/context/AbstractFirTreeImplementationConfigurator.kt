@@ -180,7 +180,7 @@ abstract class AbstractFirTreeImplementationConfigurator {
             }
         }
 
-        var kind: Implementation.Kind
+        var kind: Implementation.Kind?
             get() = implementation.kind
             set(value) {
                 implementation.kind = value

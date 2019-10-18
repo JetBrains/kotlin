@@ -20,14 +20,40 @@ fun main(args: Array<String>) {
     NodeConfigurator.configureFields()
     detectBaseTransformerTypes(FirTreeBuilder)
     ImplementationConfigurator.configureImplementations()
+    configureInterfacesAndAbstractClasses(FirTreeBuilder)
     removePreviousGeneratedFiles(generationPath)
     printElements(FirTreeBuilder, generationPath)
 //    printTable(FirTreeBuilder)
+//    printInterfaceClassGraph(FirTreeBuilder)
 }
 
 fun Element.traverseParents(block: (Element) -> Unit) {
     block(this)
     parents.forEach { it.traverseParents(block) }
+}
+
+private fun printInterfaceClassGraph(builder: AbstractFirTreeBuilder) {
+    fun Implementation.Kind.toColor(): String = when (this) {
+        Implementation.Kind.Interface -> "green"
+        else -> "red"
+    }
+    val elements = builder.elements + builder.elements.flatMap { it.allParents }
+
+    File("FirTree.dot").printWriter().use { printer ->
+        with(printer) {
+            println("digraph FirTree {")
+            elements.forEach {
+                println("    ${it.type} [color=${it.kind!!.toColor()}]")
+            }
+            println()
+            elements.forEach { element ->
+                element.allParents.forEach { parent ->
+                    println("    ${parent.type} -> ${element.type}")
+                }
+            }
+            println("}")
+        }
+    }
 }
 
 private fun detectBaseTransformerTypes(builder: AbstractFirTreeBuilder) {

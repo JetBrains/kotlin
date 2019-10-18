@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirLabel : FirElement {
-    override val psi: PsiElement?
-    val name: String
+abstract class FirLabel : FirPureAbstractElement(), FirElement {
+    abstract override val psi: PsiElement?
+    abstract val name: String
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLabel(this, data)
 }

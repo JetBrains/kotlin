@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 class FirImplicitTypeRefImpl(
     override val psi: PsiElement?
-) : FirPureAbstractElement(), FirImplicitTypeRef {
+) : FirImplicitTypeRef() {
     override val annotations: List<FirAnnotationCall> get() = emptyList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

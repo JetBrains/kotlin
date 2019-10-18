@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -14,18 +15,18 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirWhileLoop : FirLoop {
-    override val psi: PsiElement?
-    override val annotations: List<FirAnnotationCall>
-    override val label: FirLabel?
-    override val condition: FirExpression
-    override val block: FirBlock
+abstract class FirWhileLoop : FirPureAbstractElement(), FirLoop {
+    abstract override val psi: PsiElement?
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val label: FirLabel?
+    abstract override val condition: FirExpression
+    abstract override val block: FirBlock
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhileLoop(this, data)
 
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhileLoop
+    abstract override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhileLoop
 
-    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirWhileLoop
+    abstract override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirWhileLoop
 
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhileLoop
+    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhileLoop
 }

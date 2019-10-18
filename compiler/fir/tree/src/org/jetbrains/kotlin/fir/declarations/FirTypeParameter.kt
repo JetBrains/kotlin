@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -21,16 +22,16 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirTypeParameter : FirNamedDeclaration, FirSymbolOwner<FirTypeParameter>, FirAnnotationContainer {
-    override val psi: PsiElement?
-    override val session: FirSession
-    override val resolvePhase: FirResolvePhase
-    override val name: Name
-    override val symbol: FirTypeParameterSymbol
-    val variance: Variance
-    val isReified: Boolean
-    val bounds: List<FirTypeRef>
-    override val annotations: List<FirAnnotationCall>
+abstract class FirTypeParameter : FirPureAbstractElement(), FirNamedDeclaration, FirSymbolOwner<FirTypeParameter>, FirAnnotationContainer {
+    abstract override val psi: PsiElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val name: Name
+    abstract override val symbol: FirTypeParameterSymbol
+    abstract val variance: Variance
+    abstract val isReified: Boolean
+    abstract val bounds: List<FirTypeRef>
+    abstract override val annotations: List<FirAnnotationCall>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParameter(this, data)
 }

@@ -8,20 +8,21 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 class ImplementationWithArg(
     val implementation: Implementation,
     val argument: Importable?
-) : Importable by implementation, FieldContainer by implementation {
+) : FieldContainer by implementation, KindOwner by implementation {
     val element: Element get() = implementation.element
 }
 
-class Implementation(val element: Element, val name: String?) : Importable, FieldContainer {
+class Implementation(val element: Element, val name: String?) : FieldContainer, KindOwner {
     private val _parents = mutableListOf<ImplementationWithArg>()
     val parents: List<ImplementationWithArg> get() = _parents
 
+    override val allParents: List<KindOwner> get() = listOf(element) + parents
     val isDefault = name == null
     override val type = name ?: element.type + "Impl"
     override val allFields = element.allFields.toMutableList().mapTo(mutableListOf()) {
         FieldWithDefault(it)
     }
-    var kind: Kind = Kind.FinalClass
+    override var kind: Kind? = null
 
     override val packageName = element.packageName + ".impl"
     val usedTypes = mutableListOf<Importable>()

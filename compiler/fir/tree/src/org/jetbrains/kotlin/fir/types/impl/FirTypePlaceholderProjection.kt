@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-object FirTypePlaceholderProjection : FirPureAbstractElement(), FirTypeProjection {
+object FirTypePlaceholderProjection : FirTypeProjection() {
     override val psi: PsiElement? = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

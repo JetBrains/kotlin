@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.references.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirEmptyControlFlowGraphReference : FirPureAbstractElement(), FirControlFlowGraphReference {
+class FirEmptyControlFlowGraphReference : FirControlFlowGraphReference() {
     override val psi: PsiElement? = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

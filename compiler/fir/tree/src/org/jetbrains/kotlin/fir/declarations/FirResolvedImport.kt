@@ -16,16 +16,16 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirResolvedImport : FirImport {
-    override val psi: PsiElement?
-    override val importedFqName: FqName?
-    override val isAllUnder: Boolean
-    override val aliasName: Name?
-    val delegate: FirImport
-    val packageFqName: FqName
-    val relativeClassName: FqName?
-    val resolvedClassId: ClassId?
-    val importedName: Name?
+abstract class FirResolvedImport : FirImport() {
+    abstract override val psi: PsiElement?
+    abstract override val importedFqName: FqName?
+    abstract override val isAllUnder: Boolean
+    abstract override val aliasName: Name?
+    abstract val delegate: FirImport
+    abstract val packageFqName: FqName
+    abstract val relativeClassName: FqName?
+    abstract val resolvedClassId: ClassId?
+    abstract val importedName: Name?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedImport(this, data)
 }

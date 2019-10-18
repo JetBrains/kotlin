@@ -81,3 +81,9 @@ elementName.configure {
             - `defaultNull(fieldName, [withGetter: Boolean])`
     - If some fields should be `lateinit` you describe them in call `lateinit(vararg fields: String)`
     - If you use some types that shoub be imported list them in method `useTypes(vararg types: Type/Element)`   
+
+# Notes
+
+- There is algorithm that automatically makes as most abstract classes instead of interfaces as possible. If you want to some `Element` or `Implementation` should be always an interface you should:
+    - call `shouldBeAnInterface` when configuring a `Element` in `NodeConfigurator.kt`
+    - specify `kind = Interface` when configuring an `Implementation` in `ImplementationConfigurator.kt`

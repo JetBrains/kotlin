@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirControlFlowGraphOwner
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -24,38 +25,38 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirProperty : FirVariable<FirProperty>, FirControlFlowGraphOwner, FirTypeParametersOwner, FirCallableMemberDeclaration<FirProperty> {
-    override val psi: PsiElement?
-    override val session: FirSession
-    override val resolvePhase: FirResolvePhase
-    override val returnTypeRef: FirTypeRef
-    override val receiverTypeRef: FirTypeRef?
-    override val name: Name
-    override val initializer: FirExpression?
-    override val delegate: FirExpression?
-    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirProperty>?
-    override val isVar: Boolean
-    override val isVal: Boolean
-    override val getter: FirPropertyAccessor?
-    override val setter: FirPropertyAccessor?
-    override val annotations: List<FirAnnotationCall>
-    override val controlFlowGraphReference: FirControlFlowGraphReference
-    override val containerSource: DeserializedContainerSource?
-    override val symbol: FirPropertySymbol
-    val backingFieldSymbol: FirBackingFieldSymbol
-    val isLocal: Boolean
-    override val typeParameters: List<FirTypeParameter>
-    override val status: FirDeclarationStatus
+abstract class FirProperty : FirPureAbstractElement(), FirVariable<FirProperty>, FirControlFlowGraphOwner, FirTypeParametersOwner, FirCallableMemberDeclaration<FirProperty> {
+    abstract override val psi: PsiElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val returnTypeRef: FirTypeRef
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val name: Name
+    abstract override val initializer: FirExpression?
+    abstract override val delegate: FirExpression?
+    abstract override val delegateFieldSymbol: FirDelegateFieldSymbol<FirProperty>?
+    abstract override val isVar: Boolean
+    abstract override val isVal: Boolean
+    abstract override val getter: FirPropertyAccessor?
+    abstract override val setter: FirPropertyAccessor?
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val containerSource: DeserializedContainerSource?
+    abstract override val symbol: FirPropertySymbol
+    abstract val backingFieldSymbol: FirBackingFieldSymbol
+    abstract val isLocal: Boolean
+    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val status: FirDeclarationStatus
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitProperty(this, data)
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
 
-    override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirProperty
+    abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirProperty
 
-    override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirProperty
+    abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirProperty
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty
 
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirProperty
+    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirProperty
 }

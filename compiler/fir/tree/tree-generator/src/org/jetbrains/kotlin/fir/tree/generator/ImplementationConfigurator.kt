@@ -19,20 +19,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
     }
 
     private fun configure() = with(FirTreeBuilder) {
-        val callWithArgumentList = impl(call, "FirCallWithArgumentList") {
-            kind = Interface
-        }
+        val callWithArgumentList = impl(call, "FirCallWithArgumentList")
 
-        abstractAnnotatedElement = impl(annotationContainer, "FirAbstractAnnotatedElement") {
-            kind = Interface
-        }
+        abstractAnnotatedElement = impl(annotationContainer, "FirAbstractAnnotatedElement")
 
-        val modifiableTypeParametersOwner = impl(typeParametersOwner, "FirModifiableTypeParametersOwner") {
-            kind = Interface
-        }
+        val modifiableTypeParametersOwner = impl(typeParametersOwner, "FirModifiableTypeParametersOwner")
 
         val modifiableConstructor = impl(constructor, "FirModifiableConstructor") {
-            kind = Interface
             parents += modifiableTypeParametersOwner
         }
 
@@ -57,14 +50,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(resolvedDeclarationStatus)
         noImpl(field)
 
-        val modifiableClass = impl(klass, "FirModifiableClass") {
-            kind = Interface
-        }
+        val modifiableClass = impl(klass, "FirModifiableClass")
 
         val modifiableRegularClass = impl(regularClass, "FirModifiableRegularClass") {
             parents += modifiableClass
             parents += modifiableTypeParametersOwner
-            kind = Interface
         }
 
         val regularClassConfig: ImplementationContext.() -> Unit = {
@@ -153,7 +143,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         val modifiableQualifiedAccess = impl(qualifiedAccessWithoutCallee, "FirModifiableQualifiedAccess") {
-            kind = Interface
             isMutable("safe")
         }
 
@@ -196,9 +185,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(simpleNamedReferenceType, nameType, noReceiverExpressionType)
         }
 
-        val abstractLoop = impl(loop, "FirAbstractLoop") {
-            kind = Interface
-        }
+        val abstractLoop = impl(loop, "FirAbstractLoop")
 
         impl(whileLoop) {
             parents += abstractLoop
@@ -230,8 +217,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(implicitBooleanTypeRefType)
         }
 
-        impl(block) {
-        }
+        impl(block)
 
         val emptyExpressionBlock = impl(block, "FirEmptyExpressionBlock") {
             // TODO: make statements immutable
@@ -274,9 +260,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        val modifiableVariable = impl(variable, "FirModifiableVariable") {
-            kind = Interface
-        }
+        val modifiableVariable = impl(variable, "FirModifiableVariable")
 
         impl(property) {
             parents += modifiableVariable.withArg(property)
@@ -398,9 +382,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        val modifiableFunction = impl(function, "FirModifiableFunction") {
-            kind = Interface
-        }
+        val modifiableFunction = impl(function, "FirModifiableFunction")
 
         impl(anonymousFunction) {
             parents += modifiableFunction.withArg(anonymousFunction)
@@ -534,7 +516,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         val abstractLoopJump = impl(loopJump, "FirAbstractLoopJump") {
-            kind = Interface
             lateinit("target")
         }
 

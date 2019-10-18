@@ -8,12 +8,17 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 import org.jetbrains.kotlin.fir.tree.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.typeWithArguments
 
+interface KindOwner : Importable {
+    var kind: Implementation.Kind?
+    val allParents: List<KindOwner>
+}
+
 interface FieldContainer {
     val allFields: List<Field>
     operator fun get(fieldName: String): Field?
 }
 
-interface AbstractElement : FieldContainer, Importable {
+interface AbstractElement : FieldContainer, KindOwner {
     val fields: Set<Field>
     val parents: List<AbstractElement>
     val typeArguments: List<TypeArgument>
@@ -26,6 +31,8 @@ interface AbstractElement : FieldContainer, Importable {
     val allFirFields: List<Field>
     val defaultImplementation: Implementation?
     val customImplementations: List<Implementation>
+
+    override val allParents: List<KindOwner> get() = parents
 }
 
 class Element(val name: String, kind: Kind) : AbstractElement {
@@ -38,6 +45,13 @@ class Element(val name: String, kind: Kind) : AbstractElement {
     override val customImplementations = mutableListOf<Implementation>()
     override val typeArguments = mutableListOf<TypeArgument>()
     override val parentsArguments = mutableMapOf<AbstractElement, MutableMap<Importable, Importable>>()
+    override var kind: Implementation.Kind? = null
+        set(value) {
+            if (value != Implementation.Kind.Interface && value != Implementation.Kind.AbstractClass) {
+                throw IllegalArgumentException(value.toString())
+            }
+            field = value
+        }
     var _needTransformOtherChildren: Boolean = false
 
     override var baseTransformerType: Element? = null

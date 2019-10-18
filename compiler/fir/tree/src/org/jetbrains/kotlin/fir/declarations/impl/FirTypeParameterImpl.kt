@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -30,7 +29,7 @@ class FirTypeParameterImpl(
     override val symbol: FirTypeParameterSymbol,
     override val variance: Variance,
     override val isReified: Boolean
-) : FirPureAbstractElement(), FirTypeParameter, FirAbstractAnnotatedElement {
+) : FirTypeParameter(), FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val bounds: MutableList<FirTypeRef> = mutableListOf()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()

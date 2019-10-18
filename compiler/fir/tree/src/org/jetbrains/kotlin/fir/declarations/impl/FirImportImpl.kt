@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -22,7 +21,7 @@ class FirImportImpl(
     override val importedFqName: FqName?,
     override val isAllUnder: Boolean,
     override val aliasName: Name?
-) : FirPureAbstractElement(), FirImport {
+) : FirImport() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirImportImpl {

@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirSuperReference : FirReference {
-    override val psi: PsiElement?
-    val superTypeRef: FirTypeRef
+abstract class FirSuperReference : FirReference() {
+    abstract override val psi: PsiElement?
+    abstract val superTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSuperReference(this, data)
 
-    fun replaceSuperTypeRef(newSuperTypeRef: FirTypeRef)
+    abstract fun replaceSuperTypeRef(newSuperTypeRef: FirTypeRef)
 }

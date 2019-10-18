@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirWrappedDelegateExpression : FirWrappedExpression {
-    override val psi: PsiElement?
-    override val typeRef: FirTypeRef
-    override val annotations: List<FirAnnotationCall>
-    override val expression: FirExpression
-    val delegateProvider: FirExpression
+abstract class FirWrappedDelegateExpression : FirWrappedExpression() {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val expression: FirExpression
+    abstract val delegateProvider: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedDelegateExpression(this, data)
 }

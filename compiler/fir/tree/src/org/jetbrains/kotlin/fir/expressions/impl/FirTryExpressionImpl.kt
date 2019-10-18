@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCatch
@@ -27,7 +26,7 @@ class FirTryExpressionImpl(
     override val psi: PsiElement?,
     override var tryBlock: FirBlock,
     override var finallyBlock: FirBlock?
-) : FirPureAbstractElement(), FirTryExpression, FirAbstractAnnotatedElement {
+) : FirTryExpression(), FirAbstractAnnotatedElement {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var calleeReference: FirReference = FirStubReference()

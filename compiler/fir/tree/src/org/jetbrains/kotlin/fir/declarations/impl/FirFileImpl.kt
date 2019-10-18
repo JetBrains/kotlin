@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -27,7 +26,7 @@ class FirFileImpl(
     override val session: FirSession,
     override val name: String,
     override val packageFqName: FqName
-) : FirPureAbstractElement(), FirFile, FirAbstractAnnotatedElement {
+) : FirFile(), FirAbstractAnnotatedElement {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val imports: MutableList<FirImport> = mutableListOf()

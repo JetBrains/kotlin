@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -15,16 +16,16 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirCatch : FirElement {
-    override val psi: PsiElement?
-    val parameter: FirValueParameter
-    val block: FirBlock
+abstract class FirCatch : FirPureAbstractElement(), FirElement {
+    abstract override val psi: PsiElement?
+    abstract val parameter: FirValueParameter
+    abstract val block: FirBlock
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCatch(this, data)
 
-    fun <D> transformParameter(transformer: FirTransformer<D>, data: D): FirCatch
+    abstract fun <D> transformParameter(transformer: FirTransformer<D>, data: D): FirCatch
 
-    fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCatch
+    abstract fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCatch
 
-    fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirCatch
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirCatch
 }

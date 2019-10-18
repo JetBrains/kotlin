@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
@@ -25,7 +24,7 @@ class FirNamedArgumentExpressionImpl(
     override var expression: FirExpression,
     override val isSpread: Boolean,
     override val name: Name
-) : FirPureAbstractElement(), FirNamedArgumentExpression, FirAbstractAnnotatedElement {
+) : FirNamedArgumentExpression(), FirAbstractAnnotatedElement {
     override val typeRef: FirTypeRef get() = expression.typeRef
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 

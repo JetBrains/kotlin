@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -16,13 +17,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirResolvedQualifier : FirExpression {
-    override val psi: PsiElement?
-    override val typeRef: FirTypeRef
-    override val annotations: List<FirAnnotationCall>
-    val packageFqName: FqName
-    val relativeClassFqName: FqName?
-    val classId: ClassId?
+abstract class FirResolvedQualifier : FirPureAbstractElement(), FirExpression {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract val packageFqName: FqName
+    abstract val relativeClassFqName: FqName?
+    abstract val classId: ClassId?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedQualifier(this, data)
 }

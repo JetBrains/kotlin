@@ -72,6 +72,10 @@ abstract class AbstractFieldConfigurator {
         fun needTransformOtherChildren() {
             element._needTransformOtherChildren = true
         }
+
+        fun shouldBeAnInterface() {
+            element.kind = Implementation.Kind.Interface
+        }
     }
 
     inline fun Element.configure(block: ConfigureContext.() -> Unit) {

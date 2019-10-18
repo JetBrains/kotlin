@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirControlFlowGraphReference : FirReference {
-    override val psi: PsiElement?
+abstract class FirControlFlowGraphReference : FirReference() {
+    abstract override val psi: PsiElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitControlFlowGraphReference(this, data)
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -16,12 +17,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirReturnExpression : FirJump<FirFunction<*>> {
-    override val psi: PsiElement?
-    override val typeRef: FirTypeRef
-    override val annotations: List<FirAnnotationCall>
-    override val target: FirTarget<FirFunction<*>>
-    val result: FirExpression
+abstract class FirReturnExpression : FirPureAbstractElement(), FirJump<FirFunction<*>> {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val target: FirTarget<FirFunction<*>>
+    abstract val result: FirExpression
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitReturnExpression(this, data)
 }

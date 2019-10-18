@@ -294,6 +294,10 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             )
         }
 
+        resolvedDeclarationStatus.configure {
+            shouldBeAnInterface()
+        }
+
         constructor.configure {
             parentArg(memberFunction, "F", constructor)
             +symbol("FirConstructorSymbol")

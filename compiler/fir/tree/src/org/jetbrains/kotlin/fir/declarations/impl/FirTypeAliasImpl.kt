@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -32,7 +31,7 @@ class FirTypeAliasImpl(
     override var status: FirDeclarationStatus,
     override val symbol: FirTypeAliasSymbol,
     override var expandedTypeRef: FirTypeRef
-) : FirPureAbstractElement(), FirTypeAlias, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
+) : FirTypeAlias(), FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override var supertypesComputationStatus: SupertypesComputationStatus = SupertypesComputationStatus.NOT_COMPUTED

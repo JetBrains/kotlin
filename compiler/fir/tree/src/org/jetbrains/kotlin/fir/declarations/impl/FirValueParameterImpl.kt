@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -35,7 +34,7 @@ open class FirValueParameterImpl(
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
     override val isVararg: Boolean
-) : FirPureAbstractElement(), FirValueParameter, FirModifiableVariable<FirValueParameter>, FirAbstractAnnotatedElement {
+) : FirValueParameter(), FirModifiableVariable<FirValueParameter>, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override var receiverTypeRef: FirTypeRef? = null
     override var initializer: FirExpression? = null

@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirResolvedFunctionTypeRef : FirResolvedTypeRef, FirFunctionTypeRef {
-    override val psi: PsiElement?
-    override val annotations: List<FirAnnotationCall>
-    override val type: ConeKotlinType
-    override val isMarkedNullable: Boolean
-    override val receiverTypeRef: FirTypeRef?
-    override val valueParameters: List<FirValueParameter>
-    override val returnTypeRef: FirTypeRef
+abstract class FirResolvedFunctionTypeRef : FirResolvedTypeRef(), FirFunctionTypeRef {
+    abstract override val psi: PsiElement?
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val type: ConeKotlinType
+    abstract override val isMarkedNullable: Boolean
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val valueParameters: List<FirValueParameter>
+    abstract override val returnTypeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedFunctionTypeRef(this, data)
 }

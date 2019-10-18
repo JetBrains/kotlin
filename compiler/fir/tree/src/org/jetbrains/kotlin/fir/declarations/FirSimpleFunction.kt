@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -21,27 +22,27 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirSimpleFunction : FirMemberFunction<FirSimpleFunction> {
-    override val psi: PsiElement?
-    override val session: FirSession
-    override val resolvePhase: FirResolvePhase
-    override val returnTypeRef: FirTypeRef
-    override val receiverTypeRef: FirTypeRef?
-    override val controlFlowGraphReference: FirControlFlowGraphReference
-    override val typeParameters: List<FirTypeParameter>
-    override val valueParameters: List<FirValueParameter>
-    override val body: FirBlock?
-    override val name: Name
-    override val status: FirDeclarationStatus
-    override val containerSource: DeserializedContainerSource?
-    override val symbol: FirFunctionSymbol<FirSimpleFunction>
-    override val annotations: List<FirAnnotationCall>
+abstract class FirSimpleFunction : FirPureAbstractElement(), FirMemberFunction<FirSimpleFunction> {
+    abstract override val psi: PsiElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val returnTypeRef: FirTypeRef
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val valueParameters: List<FirValueParameter>
+    abstract override val body: FirBlock?
+    abstract override val name: Name
+    abstract override val status: FirDeclarationStatus
+    abstract override val containerSource: DeserializedContainerSource?
+    abstract override val symbol: FirFunctionSymbol<FirSimpleFunction>
+    abstract override val annotations: List<FirAnnotationCall>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSimpleFunction(this, data)
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+    abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 }

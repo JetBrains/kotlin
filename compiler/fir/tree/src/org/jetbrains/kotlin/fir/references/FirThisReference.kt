@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirThisReference : FirReference {
-    override val psi: PsiElement?
-    val labelName: String?
-    val boundSymbol: AbstractFirBasedSymbol<*>?
+abstract class FirThisReference : FirReference() {
+    abstract override val psi: PsiElement?
+    abstract val labelName: String?
+    abstract val boundSymbol: AbstractFirBasedSymbol<*>?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitThisReference(this, data)
 
-    fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>)
+    abstract fun replaceBoundSymbol(newBoundSymbol: AbstractFirBasedSymbol<*>)
 }

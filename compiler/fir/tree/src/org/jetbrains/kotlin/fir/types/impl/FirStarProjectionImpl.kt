@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.types.FirStarProjection
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 class FirStarProjectionImpl(
     override val psi: PsiElement?
-) : FirPureAbstractElement(), FirStarProjection {
+) : FirStarProjection() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirStarProjectionImpl {

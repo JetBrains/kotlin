@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -20,24 +21,24 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirEnumEntry : FirRegularClass {
-    override val psi: PsiElement?
-    override val session: FirSession
-    override val resolvePhase: FirResolvePhase
-    override val name: Name
-    override val annotations: List<FirAnnotationCall>
-    override val typeParameters: List<FirTypeParameter>
-    override val status: FirDeclarationStatus
-    override val supertypesComputationStatus: SupertypesComputationStatus
-    override val classKind: ClassKind
-    override val declarations: List<FirDeclaration>
-    override val symbol: FirClassSymbol
-    override val companionObject: FirRegularClass?
-    override val superTypeRefs: List<FirTypeRef>
-    val arguments: List<FirExpression>
-    val typeRef: FirTypeRef
+abstract class FirEnumEntry : FirPureAbstractElement(), FirRegularClass {
+    abstract override val psi: PsiElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val name: Name
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val status: FirDeclarationStatus
+    abstract override val supertypesComputationStatus: SupertypesComputationStatus
+    abstract override val classKind: ClassKind
+    abstract override val declarations: List<FirDeclaration>
+    abstract override val symbol: FirClassSymbol
+    abstract override val companionObject: FirRegularClass?
+    abstract override val superTypeRefs: List<FirTypeRef>
+    abstract val arguments: List<FirExpression>
+    abstract val typeRef: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEnumEntry(this, data)
 
-    fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirEnumEntry
+    abstract fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirEnumEntry
 }

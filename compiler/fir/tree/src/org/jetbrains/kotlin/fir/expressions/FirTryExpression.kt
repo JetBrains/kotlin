@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -15,24 +16,24 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirTryExpression : FirExpression, FirResolvable {
-    override val psi: PsiElement?
-    override val typeRef: FirTypeRef
-    override val annotations: List<FirAnnotationCall>
-    override val calleeReference: FirReference
-    val tryBlock: FirBlock
-    val catches: List<FirCatch>
-    val finallyBlock: FirBlock?
+abstract class FirTryExpression : FirPureAbstractElement(), FirExpression, FirResolvable {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val calleeReference: FirReference
+    abstract val tryBlock: FirBlock
+    abstract val catches: List<FirCatch>
+    abstract val finallyBlock: FirBlock?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTryExpression(this, data)
 
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirTryExpression
+    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirTryExpression
 
-    fun <D> transformTryBlock(transformer: FirTransformer<D>, data: D): FirTryExpression
+    abstract fun <D> transformTryBlock(transformer: FirTransformer<D>, data: D): FirTryExpression
 
-    fun <D> transformCatches(transformer: FirTransformer<D>, data: D): FirTryExpression
+    abstract fun <D> transformCatches(transformer: FirTransformer<D>, data: D): FirTryExpression
 
-    fun <D> transformFinallyBlock(transformer: FirTransformer<D>, data: D): FirTryExpression
+    abstract fun <D> transformFinallyBlock(transformer: FirTransformer<D>, data: D): FirTryExpression
 
-    fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirTryExpression
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirTryExpression
 }

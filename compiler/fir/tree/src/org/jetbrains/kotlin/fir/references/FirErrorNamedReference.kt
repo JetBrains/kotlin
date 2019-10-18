@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirErrorNamedReference : FirNamedReference {
-    override val psi: PsiElement?
-    override val name: Name
-    override val candidateSymbol: AbstractFirBasedSymbol<*>?
-    val errorReason: String
+abstract class FirErrorNamedReference : FirNamedReference() {
+    abstract override val psi: PsiElement?
+    abstract override val name: Name
+    abstract override val candidateSymbol: AbstractFirBasedSymbol<*>?
+    abstract val errorReason: String
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorNamedReference(this, data)
 }

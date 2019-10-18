@@ -15,23 +15,23 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirCallableReferenceAccess : FirQualifiedAccessExpression {
-    override val psi: PsiElement?
-    override val typeRef: FirTypeRef
-    override val annotations: List<FirAnnotationCall>
-    override val safe: Boolean
-    override val explicitReceiver: FirExpression?
-    override val dispatchReceiver: FirExpression
-    override val extensionReceiver: FirExpression
-    override val calleeReference: FirReference
+abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val safe: Boolean
+    abstract override val explicitReceiver: FirExpression?
+    abstract override val dispatchReceiver: FirExpression
+    abstract override val extensionReceiver: FirExpression
+    abstract override val calleeReference: FirReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitCallableReferenceAccess(this, data)
 
-    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
+    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
+    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
 
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
+    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
 
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
+    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccess
 }

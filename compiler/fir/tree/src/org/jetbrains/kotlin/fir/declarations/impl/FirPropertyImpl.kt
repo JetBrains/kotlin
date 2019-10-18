@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -43,7 +42,7 @@ class FirPropertyImpl(
     override val symbol: FirPropertySymbol,
     override val isLocal: Boolean,
     override var status: FirDeclarationStatus
-) : FirPureAbstractElement(), FirProperty, FirModifiableVariable<FirProperty>, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
+) : FirProperty(), FirModifiableVariable<FirProperty>, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = if (isLocal) FirResolvePhase.DECLARATIONS else FirResolvePhase.RAW_FIR
     override val delegateFieldSymbol: FirDelegateFieldSymbol<FirProperty>? = delegate?.let { FirDelegateFieldSymbol(symbol.callableId) }
     override val isVal: Boolean get() = !isVar

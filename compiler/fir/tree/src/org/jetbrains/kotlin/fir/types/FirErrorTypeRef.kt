@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirErrorTypeRef : FirResolvedTypeRef {
-    override val psi: PsiElement?
-    override val annotations: List<FirAnnotationCall>
-    override val type: ConeKotlinType
-    val reason: String
+abstract class FirErrorTypeRef : FirResolvedTypeRef() {
+    abstract override val psi: PsiElement?
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val type: ConeKotlinType
+    abstract val reason: String
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorTypeRef(this, data)
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -22,29 +23,29 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpression {
-    override val psi: PsiElement?
-    override val session: FirSession
-    override val resolvePhase: FirResolvePhase
-    override val annotations: List<FirAnnotationCall>
-    override val returnTypeRef: FirTypeRef
-    override val receiverTypeRef: FirTypeRef?
-    override val controlFlowGraphReference: FirControlFlowGraphReference
-    override val typeParameters: List<FirTypeParameter>
-    override val valueParameters: List<FirValueParameter>
-    override val body: FirBlock?
-    override val typeRef: FirTypeRef
-    override val symbol: FirAnonymousFunctionSymbol
-    val label: FirLabel?
-    val invocationKind: InvocationKind?
+abstract class FirAnonymousFunction : FirPureAbstractElement(), FirFunction<FirAnonymousFunction>, FirExpression {
+    abstract override val psi: PsiElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val returnTypeRef: FirTypeRef
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val valueParameters: List<FirValueParameter>
+    abstract override val body: FirBlock?
+    abstract override val typeRef: FirTypeRef
+    abstract override val symbol: FirAnonymousFunctionSymbol
+    abstract val label: FirLabel?
+    abstract val invocationKind: InvocationKind?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousFunction(this, data)
 
-    fun replaceInvocationKind(newInvocationKind: InvocationKind)
+    abstract fun replaceInvocationKind(newInvocationKind: InvocationKind)
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
+    abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 }

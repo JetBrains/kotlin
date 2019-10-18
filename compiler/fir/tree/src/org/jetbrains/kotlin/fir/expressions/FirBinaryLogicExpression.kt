@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -14,19 +15,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirBinaryLogicExpression : FirExpression {
-    override val psi: PsiElement?
-    override val typeRef: FirTypeRef
-    override val annotations: List<FirAnnotationCall>
-    val leftOperand: FirExpression
-    val rightOperand: FirExpression
-    val kind: LogicOperationKind
+abstract class FirBinaryLogicExpression : FirPureAbstractElement(), FirExpression {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract val leftOperand: FirExpression
+    abstract val rightOperand: FirExpression
+    abstract val kind: LogicOperationKind
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBinaryLogicExpression(this, data)
 
-    fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+    abstract fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
 
-    fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+    abstract fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
 
-    fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
 }

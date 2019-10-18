@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirStarProjection : FirTypeProjection {
-    override val psi: PsiElement?
+abstract class FirStarProjection : FirTypeProjection() {
+    abstract override val psi: PsiElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitStarProjection(this, data)
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.references
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -14,8 +15,8 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirReference : FirElement {
-    override val psi: PsiElement?
+abstract class FirReference : FirPureAbstractElement(), FirElement {
+    abstract override val psi: PsiElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitReference(this, data)
 }
