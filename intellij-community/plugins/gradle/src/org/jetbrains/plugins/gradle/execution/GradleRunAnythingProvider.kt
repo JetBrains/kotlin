@@ -56,6 +56,9 @@ class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
 
   override fun getHelpIcon(): Icon? = GradleIcons.Gradle
 
+  override fun getMainListItem(dataContext: DataContext, value: String) =
+    RunAnythingGradleItem(getCommand(value), getIcon(value))
+
   override fun getExecutionContexts(dataContext: DataContext): List<RunAnythingContext> {
     return super.getExecutionContexts(dataContext).filter {
       it !is ModuleContext || !it.module.isSourceRoot()
