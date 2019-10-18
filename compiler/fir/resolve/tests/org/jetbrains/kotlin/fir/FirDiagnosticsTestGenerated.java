@@ -40,6 +40,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/callableReferences"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("companions.kt")
+        public void testCompanions() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/companions.kt");
+        }
+
         @TestMetadata("differentLevels.kt")
         public void testDifferentLevels() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/differentLevels.kt");
@@ -53,6 +58,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("inferenceFromExpectedType.kt")
         public void testInferenceFromExpectedType() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/inferenceFromExpectedType.kt");
+        }
+
+        @TestMetadata("javaStatic.kt")
+        public void testJavaStatic() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/javaStatic.kt");
         }
 
         @TestMetadata("manyCandidatesInference.kt")

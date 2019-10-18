@@ -177,10 +177,14 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val outerCsBuilder = callInfo.outerCSBuilder ?: return
         val expectedType = callInfo.expectedType ?: return
-        val lhs = callInfo.lhs
+
+        val resultingReceiverType = when (callInfo.lhs) {
+            is DoubleColonLHS.Type -> callInfo.lhs.type.takeIf { callInfo.explicitReceiver !is FirResolvedQualifier }
+            else -> null
+        }
 
         val resultingType: ConeKotlinType = when (val fir = candidate.symbol.fir) {
-            is FirSimpleFunction -> createKFunctionType(fir, lhs)
+            is FirSimpleFunction -> createKFunctionType(fir, resultingReceiverType)
             is FirProperty -> createKPropertyType(fir)
             else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
         }.let(candidate.substitutor::substituteOrSelf)
@@ -212,9 +216,8 @@ private fun createKPropertyType(fir: FirProperty): ConeKotlinType {
 
 private fun createKFunctionType(
     function: FirSimpleFunction,
-    lhs: DoubleColonLHS?
+    receiverType: ConeKotlinType?
 ): ConeKotlinType {
-    val receiverType = (lhs as? DoubleColonLHS.Type)?.type
     val parameterTypes = function.valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter $it")
     }

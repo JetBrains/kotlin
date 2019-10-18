@@ -284,15 +284,40 @@ class FirCallResolver(
                 name, resultCollector, callableReferenceAccess.explicitReceiver, expectedType, outerConstraintSystemBuilder,
                 lhs
             )
-            is DoubleColonLHS.Type -> createCallableReferencesConsumerForReceiver(
+            is DoubleColonLHS.Type -> createCallableReferencesConsumerForReceivers(
                 name,
                 resultCollector,
-                FirExpressionStub(callableReferenceAccess.psi).apply { replaceTypeRef(FirResolvedTypeRefImpl(null, lhs.type)) },
                 expectedType,
                 outerConstraintSystemBuilder,
-                lhs
+                lhs,
+                FirExpressionStub(callableReferenceAccess.psi).apply { replaceTypeRef(FirResolvedTypeRefImpl(null, lhs.type)) },
+                callableReferenceAccess.explicitReceiver
             )
         }
+    }
+
+    private fun createCallableReferencesConsumerForReceivers(
+        name: Name,
+        resultCollector: CandidateCollector,
+        expectedType: ConeKotlinType?,
+        outerConstraintSystemBuilder: ConstraintSystemBuilder?,
+        lhs: DoubleColonLHS?,
+        vararg receivers: FirExpression?
+    ): TowerDataConsumer {
+        if (receivers.size == 1) {
+            return createCallableReferencesConsumerForReceiver(
+                name, resultCollector, receivers[0], expectedType, outerConstraintSystemBuilder, lhs
+            )
+        }
+
+        return PrioritizedTowerDataConsumer(
+            resultCollector,
+            *Array(receivers.size) { index ->
+                createCallableReferencesConsumerForReceiver(
+                    name, resultCollector, receivers[index], expectedType, outerConstraintSystemBuilder, lhs
+                )
+            }
+        )
     }
 
     private fun createCallableReferencesConsumerForReceiver(
