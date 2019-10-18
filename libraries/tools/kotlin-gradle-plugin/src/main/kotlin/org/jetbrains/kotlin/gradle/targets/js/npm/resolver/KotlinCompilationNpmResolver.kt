@@ -17,15 +17,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
-import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatCompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
 import org.jetbrains.kotlin.gradle.targets.js.npm.fixSemver
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import java.io.File
 import java.io.Serializable
 
@@ -246,12 +245,20 @@ internal class KotlinCompilationNpmResolver(
                 packageJson.dependencies[it.name] = it.version
             }
 
+            val dependencies = mutableMapOf<String, String>()
+
             externalNpmDependencies.forEach {
+                val module = it.key
+                dependencies[it.key] = chooseVersion(dependencies[module], it.version)
+            }
+
+            externalNpmDependencies.forEach {
+                val dependency = dependencies.getValue(it.key)
                 when (it.scope) {
-                    NORMAL -> packageJson.dependencies[it.key] = chooseVersion(packageJson.dependencies[it.key], it.version)
-                    DEV -> packageJson.devDependencies[it.key] = chooseVersion(packageJson.devDependencies[it.key], it.version)
-                    OPTIONAL -> packageJson.optionalDependencies[it.key] = chooseVersion(packageJson.optionalDependencies[it.key], it.version)
-                    PEER -> packageJson.peerDependencies[it.key] = chooseVersion(packageJson.peerDependencies[it.key], it.version)
+                    NORMAL -> packageJson.dependencies[it.key] = dependency
+                    DEV -> packageJson.devDependencies[it.key] = dependency
+                    OPTIONAL -> packageJson.optionalDependencies[it.key] = dependency
+                    PEER -> packageJson.peerDependencies[it.key] = dependency
                 }
             }
 
@@ -273,7 +280,14 @@ internal class KotlinCompilationNpmResolver(
             )
         }
 
-        private fun chooseVersion(oldVersion: String?, newVersion: String): String =
-            oldVersion ?: newVersion // todo: real versions conflict resolution
+        // TODO: real versions conflict resolution
+        private fun chooseVersion(oldVersion: String?, newVersion: String): String {
+            // https://yarnpkg.com/lang/en/docs/dependency-versions/#toc-x-ranges
+            if (oldVersion == "*") {
+                return newVersion
+            }
+
+            return oldVersion ?: newVersion
+        }
     }
 }
