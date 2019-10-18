@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
+import org.jetbrains.kotlin.ide.konan.NativeLibraryInfo.Companion.isAbiCompatible
 import org.jetbrains.kotlin.ide.konan.analyzer.NativeResolverForModuleFactory
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.lazyClosure
@@ -35,11 +36,8 @@ import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.library.KonanFactories
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
-import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
-import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
-import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
@@ -48,12 +46,16 @@ import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
+import java.io.IOException
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 
 fun KotlinLibrary.createPackageFragmentProvider(
     storageManager: StorageManager,
     languageVersionSettings: LanguageVersionSettings,
     moduleDescriptor: ModuleDescriptor
-): PackageFragmentProvider {
+): PackageFragmentProvider? {
+
+    if (!isAbiCompatible) return null
 
     val libraryProto = CachingIdeKonanLibraryMetadataLoader.loadModuleHeader(this)
 
@@ -183,7 +185,7 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
 private fun ModuleInfo.findNativeStdlib(): NativeLibraryInfo? =
     dependencies().lazyClosure { it.dependencies() }
         .filterIsInstance<NativeLibraryInfo>()
-        .firstOrNull { it.isStdlib }
+        .firstOrNull { it.isStdlib && it.isAbiCompatible }
 
 class NativeLibraryInfo(project: Project, library: Library, root: File) : LibraryInfo(project, library) {
 
@@ -191,17 +193,20 @@ class NativeLibraryInfo(project: Project, library: Library, root: File) : Librar
 
     private val roots = listOf(root.absolutePath)
 
-    val isStdlib by lazy { roots.first().endsWith(KONAN_STDLIB_NAME) }
+    val isStdlib by lazy(PUBLICATION) { roots.first().endsWith(KONAN_STDLIB_NAME) }
+
+    val isAbiCompatible get() = nativeLibrary.isAbiCompatible
 
     override fun getLibraryRoots() = roots
 
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
-        get() = super.capabilities +
-                mapOf(
-                    KlibModuleOrigin.CAPABILITY to this,
-                    ImplicitIntegerCoercion.MODULE_CAPABILITY to nativeLibrary.isInterop,
-                    NATIVE_LIBRARY_CAPABILITY to nativeLibrary
-                )
+        get() {
+            val capabilities = super.capabilities.toMutableMap()
+            capabilities += KlibModuleOrigin.CAPABILITY to DeserializedKlibModuleOrigin(nativeLibrary)
+            capabilities += NATIVE_LIBRARY_CAPABILITY to nativeLibrary
+            capabilities += ImplicitIntegerCoercion.MODULE_CAPABILITY to nativeLibrary.readSafe(false) { isInterop }
+            return capabilities
+        }
 
     override val platform: TargetPlatform
         get() = KonanPlatforms.defaultKonanPlatform
@@ -210,5 +215,13 @@ class NativeLibraryInfo(project: Project, library: Library, root: File) : Librar
 
     companion object {
         val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("KotlinNativeLibrary")
+
+        val KotlinLibrary.isAbiCompatible get() = this.readSafe(null) { versions.abiVersion } == KotlinAbiVersion.CURRENT
+
+        private fun <T> KotlinLibrary.readSafe(defaultValue: T, action: KotlinLibrary.() -> T) = try {
+            action()
+        } catch (_: IOException) {
+            defaultValue
+        }
     }
 }
