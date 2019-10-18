@@ -42,8 +42,10 @@ projectTest(parallel = true) {
     workingDir = rootDir
 }
 
-projectTest(taskName = "embeddableTest", parallel = true) {
-    workingDir = rootDir
-    dependsOn(embeddableTestRuntime)
-    classpath = embeddableTestRuntime
-}
+// This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
+// To make it work, the dependencies to the intellij sdk should be eliminated
+//projectTest(taskName = "embeddableTest", parallel = true) {
+//    workingDir = rootDir
+//    dependsOn(embeddableTestRuntime)
+//    classpath = embeddableTestRuntime
+//}

@@ -535,7 +535,8 @@ tasks {
         dependsOn(":kotlin-scripting-jvm:test")
         dependsOn(":kotlin-scripting-jvm-host-test:test")
         dependsOn(":kotlin-scripting-jsr223-test:test")
-        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
+        // see comments on the task in kotlin-scripting-jvm-host-test
+//        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
     }
