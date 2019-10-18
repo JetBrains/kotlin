@@ -43,6 +43,7 @@ import com.intellij.util.IconUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.JBCachingScalableIcon;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,7 +74,8 @@ public final class Bookmark implements Navigatable, Comparable<Bookmark> {
   private char myMnemonic;
   int index; // index in the list of bookmarks in the Navigate|Bookmarks|show
 
-  Bookmark(@NotNull String url, int line, @NotNull String description) {
+  @ApiStatus.Internal
+  public Bookmark(@NotNull String url, int line, @NotNull String description) {
     myUrl = url;
     myLine = line;
     myDescription = description;

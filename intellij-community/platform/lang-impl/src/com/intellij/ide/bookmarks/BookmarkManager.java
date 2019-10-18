@@ -218,7 +218,6 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
     return container;
   }
 
-
   @Override
   public void loadState(@NotNull Element state) {
     myPendingState.set(readExternal(state));
@@ -227,13 +226,18 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
       ApplicationManager.getApplication().invokeLater(() -> {
         List<Bookmark> newList = myPendingState.getAndSet(null);
         if (newList != null) {
-          applyNewState(newList);
+          applyNewState(newList, true);
         }
       }, myProject.getDisposedOrDisposeInProgress());
     });
   }
 
-  private void applyNewState(@NotNull List<Bookmark> newList) {
+  @TestOnly
+  public void applyNewStateInTestMode(@NotNull List<Bookmark> newList) {
+    applyNewState(newList, false);
+  }
+
+  private void applyNewState(@NotNull List<Bookmark> newList, boolean fireEvents) {
     if (!myBookmarks.isEmpty()) {
       Bookmark[] bookmarks = myBookmarks.values().toArray(new Bookmark[0]);
       for (Bookmark bookmark : bookmarks) {
@@ -255,8 +259,6 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
       }
 
       bookmark.index = bookmarkIndex--;
-      myBookmarks.putValue(target.getFile(), bookmark);
-      addedBookmarks.add(bookmark);
 
       char mnemonic = bookmark.getMnemonic();
       if (mnemonic != Character.MIN_VALUE ) {
@@ -265,10 +267,15 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
           removeBookmark(old);
         }
       }
+
+      myBookmarks.putValue(target.getFile(), bookmark);
+      addedBookmarks.add(bookmark);
     }
 
-    for (Bookmark bookmark : addedBookmarks) {
-      getPublisher().bookmarkAdded(bookmark);
+    if (fireEvents) {
+      for (Bookmark bookmark : addedBookmarks) {
+        getPublisher().bookmarkAdded(bookmark);
+      }
     }
   }
 
