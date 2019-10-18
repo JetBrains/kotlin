@@ -20,7 +20,8 @@ public abstract class AbstractTraverseWindowAction extends AnAction {
     if (!ActiveWindowsWatcher.isTheCurrentWindowOnTheActivatedList(w)) return;
     Window window = mapWindow.fun(w);
     Component recentFocusOwner = window.getMostRecentFocusOwner();
-    (recentFocusOwner == null ? window : recentFocusOwner).requestFocus();
+
+    (recentFocusOwner == null || !recentFocusOwner.isFocusable()? window : recentFocusOwner).requestFocus();
   }
 
   @Override
