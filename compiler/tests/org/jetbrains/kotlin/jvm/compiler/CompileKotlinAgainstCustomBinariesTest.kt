@@ -203,6 +203,10 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestBrokenLibrary("library", "a/A.class")
     }
 
+    fun testNonTransitiveDependencyWithJavac() {
+        doTestBrokenLibrary("library", "my/Some.class", additionalOptions = listOf("-Xuse-javac", "-Xcompile-java"))
+    }
+
     fun testComputeSupertypeWithMissingDependency() {
         doTestBrokenLibrary("library", "a/A.class")
     }
