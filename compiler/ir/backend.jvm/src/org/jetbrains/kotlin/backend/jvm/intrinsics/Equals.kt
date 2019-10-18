@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.*
+import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.genAreEqualCall
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
@@ -15,8 +16,8 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.isNullConst
@@ -95,18 +96,28 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
             }
         }
 
-        val arg0Type = expression.getValueArgument(0)!!.type.toKotlinType()
+        val arg0 = expression.getValueArgument(0)!!
+        val arg1 = expression.getValueArgument(1)!!
+
+        val arg0Type = arg0.type.toKotlinType()
         if (!arg0Type.isPrimitiveNumberOrNullableType() && !arg0Type.upperBoundedByPrimitiveNumberOrNullableType())
             throw AssertionError("Should be primitive or nullable primitive type: $arg0Type")
 
-        val arg1Type = expression.getValueArgument(1)!!.type.toKotlinType()
+        val arg1Type = arg1.type.toKotlinType()
         if (!arg1Type.isPrimitiveNumberOrNullableType() && !arg1Type.upperBoundedByPrimitiveNumberOrNullableType())
             throw AssertionError("Should be primitive or nullable primitive type: $arg1Type")
 
         val arg0isNullable = arg0Type.isNullable()
         val arg1isNullable = arg1Type.isNullable()
 
+        val useNonIEEE754Comparison =
+            !context.state.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)
+                    && (arg0.isSmartcastFromHigherThanNullable(context) || arg1.isSmartcastFromHigherThanNullable(context))
+
         return when {
+            useNonIEEE754Comparison ->
+                Ieee754AreEqual(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE)
+
             !arg0isNullable && !arg1isNullable ->
                 object : IrIntrinsicFunction(expression, signature, context, listOf(operandType, operandType)) {
                     override fun genInvokeInstruction(v: InstructionAdapter) {
@@ -126,3 +137,4 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
         }
     }
 }
+
