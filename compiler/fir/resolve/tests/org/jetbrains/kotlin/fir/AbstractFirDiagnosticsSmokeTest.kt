@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
@@ -102,6 +101,9 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
             checkResultingFirFiles(firFiles, testDataFile)
             assertFalse("Test is good but there is expected exception", failureFile.exists())
         } else {
+            if (!failureFile.exists()) {
+                throw failure
+            }
             checkFailureFile(failure, failureFile)
         }
     }
