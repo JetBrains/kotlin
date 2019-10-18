@@ -44,6 +44,7 @@ if (isMacos) {
     include(":opengl")
     include(":uikit")
     include(":coverage")
+    include(":watchos")
 }
 
 if (isWindows) {

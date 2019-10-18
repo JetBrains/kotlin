@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,32 +21,21 @@ fun main(args: Array<String>) {
 }
 
 class AppDelegate : UIResponder, UIApplicationDelegateProtocol {
-
-    @OverrideInit constructor() : super()
-
     companion object : UIResponderMeta(), UIApplicationDelegateProtocolMeta {}
+
+    @OverrideInit
+    constructor() : super()
 
     private var _window: UIWindow? = null
     override fun window() = _window
-    override fun setWindow(window: UIWindow?) { _window = window }
-}
+    override fun setWindow(window: UIWindow?) {
+        _window = window
+    }
 
-@ExportObjCClass
-class ViewController : UIViewController {
-
-    @OverrideInit constructor(coder: NSCoder) : super(coder)
-
-    @ObjCOutlet
-    lateinit var label: UILabel
-
-    @ObjCOutlet
-    lateinit var textField: UITextField
-
-    @ObjCOutlet
-    lateinit var button: UIButton
-
-    @ObjCAction
-    fun buttonPressed() {
-        label.text = "Konan says: 'Hello, ${textField.text}!'"
+    override fun application(application: UIApplication, didFinishLaunchingWithOptions: Map<Any?, *>?): Boolean {
+        window = UIWindow(frame = UIScreen.mainScreen.bounds)
+        window!!.rootViewController = ViewController()
+        window!!.makeKeyAndVisible()
+        return true
     }
 }
