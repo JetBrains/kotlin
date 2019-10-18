@@ -22,6 +22,7 @@ public final class GradleIcons {
 
   /** 16x16 */ public static final Icon Gradle = load("/icons/gradle.svg");
   /** 16x16 */ public static final Icon GradleFile = load("/icons/gradleFile.svg");
+  /** 16x16 */ public static final Icon GradleLoadChanges = load("/icons/gradleLoadChanges.svg");
   /** 16x16 */ public static final Icon GradleNavigate = load("/icons/gradleNavigate.svg");
   /** 13x13 */ public static final Icon ToolWindowGradle = load("/icons/toolWindowGradle.svg");
 
