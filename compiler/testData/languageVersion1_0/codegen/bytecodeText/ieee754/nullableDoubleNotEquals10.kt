@@ -1,5 +1,4 @@
 // !API_VERSION: 1.0
-// IGNORE_BACKEND: JVM_IR
 
 fun myNotEquals(a: Double?, b: Double?) = a != b
 

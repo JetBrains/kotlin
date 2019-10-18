@@ -1,8 +1,4 @@
-// !LANGUAGE: -ProperIeee754Comparisons
 // !API_VERSION: 1.0
-// IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND: JVM_IR
-// DONT_TARGET_EXACT_BACKEND: JS_IR
 
 fun box(): String {
     val plusZero: Any = 0.0
@@ -14,9 +10,8 @@ fun box(): String {
                 return "fail 1"
             }
             -0.0 -> {
-                return "fail 2"
             }
-            else -> {}
+            else -> return "fail 2"
         }
 
         if (minusZero is Double) {
@@ -25,12 +20,14 @@ fun box(): String {
                     return "fail 3"
                 }
                 minusZero -> {
-                    return "fail 4"
                 }
-                else -> {}
+                else -> return "fail 4"
             }
         }
     }
 
     return "OK"
 }
+
+// 4 areEqual \(Ljava/lang/Object;Ljava/lang/Object;\)Z
+// 4 areEqual
