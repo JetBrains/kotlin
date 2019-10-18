@@ -19,6 +19,7 @@
 #include "Exceptions.h"
 #include "KAssert.h"
 #include "Memory.h"
+#include "ObjCExportInit.h"
 #include "Porting.h"
 #include "Runtime.h"
 #include "Worker.h"
@@ -97,6 +98,11 @@ RuntimeState* initRuntime() {
   if (firstRuntime) {
     isMainThread = 1;
     konan::consoleInit();
+
+#if KONAN_OBJC_INTEROP
+    Kotlin_ObjCExport_initialize();
+#endif
+
     InitOrDeinitGlobalVariables(INIT_GLOBALS);
   }
   InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS);

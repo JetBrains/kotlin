@@ -21,6 +21,7 @@
 #import <dispatch/dispatch.h>
 
 #import "ObjCExport.h"
+#import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
 #import "MemoryPrivate.hpp"
 #import "Runtime.h"

@@ -36,6 +36,7 @@
 #import <dispatch/dispatch.h>
 
 #import "ObjCExport.h"
+#import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
 #import "MemoryPrivate.hpp"
 #import "Runtime.h"
@@ -321,7 +322,7 @@ static void initTypeAdapters() {
   initTypeAdaptersFrom(Kotlin_ObjCExport_sortedProtocolAdapters, Kotlin_ObjCExport_sortedProtocolAdaptersNum);
 }
 
-extern "C" void Kotlin_ObjCExport_initialize() {
+static void Kotlin_ObjCExport_initializeImpl() {
   initTypeAdapters();
 
   SEL toKotlinSelector = Kotlin_ObjCExport_toKotlinSelector;
@@ -361,6 +362,17 @@ extern "C" void Kotlin_ObjCExport_initialize() {
       RuntimeAssert(added, "Unable to add 'releaseAsAssociatedObject' method to SwiftObject class");
     }
   }
+}
+
+// Initializes ObjCExport for current process (if not initialized yet).
+// Generally this is equal to some "binary patching" (which is usually done at link time
+// but postponed until runtime here due to various reasons):
+// adds methods to Objective-C classes, initializes static memory with "constant" values etc.
+extern "C" void Kotlin_ObjCExport_initialize() {
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    Kotlin_ObjCExport_initializeImpl();
+  });
 }
 
 static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd) {

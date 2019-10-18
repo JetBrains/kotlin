@@ -19,7 +19,6 @@
 @end;
 
 extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz);
-extern "C" void Kotlin_ObjCExport_initialize(void);
 extern "C" const TypeInfo* Kotlin_ObjCExport_getAssociatedTypeInfo(Class clazz);
 extern "C" OBJ_GETTER(Kotlin_ObjCExport_convertUnmappedObjCObject, id obj);
 extern "C" SEL Kotlin_ObjCExport_toKotlinSelector;

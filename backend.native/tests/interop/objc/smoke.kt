@@ -15,8 +15,8 @@ fun main(args: Array<String>) {
 }
 
 fun run() {
-    testTypeOps()
     testConversions()
+    testTypeOps()
     testWeakRefs()
     testExceptions()
     testBlocks()
@@ -191,6 +191,7 @@ fun testConversions() {
     testMethodsOfAny(emptyList<Nothing>(), NSArray())
     testMethodsOfAny(listOf(1, "foo"), nsArrayOf(1, "foo"))
     testMethodsOfAny(42, NSNumber.numberWithInt(42), 17)
+    testMethodsOfAny(true, NSNumber.numberWithBool(true), false)
 }
 
 fun testMethodsOfAny(kotlinObject: Any, equalNsObject: NSObject, otherObject: Any = Any()) {
