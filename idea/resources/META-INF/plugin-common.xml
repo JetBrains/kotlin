@@ -3459,7 +3459,7 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedUnaryOperatorInspection"
                      displayName="Unused unary operator"
                      groupPath="Kotlin"
-                     groupName="Redundant constructs"
+                     groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"

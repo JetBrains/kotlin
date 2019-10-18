@@ -13,11 +13,10 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPrefixExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.prefixExpressionVisitor
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -34,9 +33,10 @@ class UnusedUnaryOperatorInspection : AbstractKotlinInspection() {
         if (!KotlinBuiltIns.isUnderKotlinPackage(operatorDescriptor)) return
 
         holder.registerProblem(
-            prefix.operationReference,
+            prefix,
             "Unused unary operator",
             ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+            prefix.operationReference.textRangeIn(prefix),
             RemoveUnaryOperatorFix()
         )
     })
@@ -47,8 +47,7 @@ class UnusedUnaryOperatorInspection : AbstractKotlinInspection() {
         override fun getFamilyName() = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val operatorReference = descriptor.psiElement as? KtSimpleNameExpression ?: return
-            val prefixExpression = operatorReference.getStrictParentOfType<KtPrefixExpression>() ?: return
+            val prefixExpression = descriptor.psiElement as? KtPrefixExpression ?: return
             val baseExpression = prefixExpression.baseExpression ?: return
             prefixExpression.replace(baseExpression)
         }
