@@ -45,7 +45,8 @@ import org.jetbrains.jps.incremental.BinaryContent;
 import org.jetbrains.jps.javac.*;
 import org.jetbrains.jps.javac.ast.api.JavacFileData;
 
-import javax.tools.*;
+import javax.tools.Diagnostic;
+import javax.tools.JavaFileObject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -415,7 +416,7 @@ public class CompilerManagerImpl extends CompilerManager {
     final Map<File, Set<File>> outs = Collections.singletonMap(outputDir, sourceRoots);
 
     final ExternalJavacManager javacManager = getJavacManager();
-    final CompilationPaths paths = CompilationPaths.create(platformCp, classpath, upgradeModulePath, modulePath, sourcePath);
+    final CompilationPaths paths = CompilationPaths.create(platformCp, classpath, upgradeModulePath, ModulePath.create(modulePath), sourcePath);
     // do not keep process alive in tests since every test expects all spawned processes to terminate in teardown
     boolean compiledOk = javacManager != null && javacManager.forkJavac(
       javaHome, -1, Collections.emptyList(), options, paths, files, outs, diagnostic, outputCollector,
