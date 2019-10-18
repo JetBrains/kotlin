@@ -4,6 +4,7 @@ package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.ui.UISettings
 import com.intellij.stats.completion.events.*
 import com.intellij.stats.storage.factors.LookupStorage
 
@@ -46,6 +47,7 @@ class CompletionFileLogger(private val installationUID: String,
         event.isOneLineMode = lookup.editor.isOneLineMode
         event.isAutoPopup = CompletionUtil.getCurrentCompletionParameters()?.isAutoPopup
         event.fillCompletionParameters()
+        event.additionalDetails["alphabetical"] = UISettings.instance.sortLookupElementsLexicographically.toString()
 
         eventLogger.log(event)
     }
