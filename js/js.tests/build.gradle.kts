@@ -16,7 +16,11 @@ node {
 }
 
 val antLauncherJar by configurations.creating
-val testJsRuntime by configurations.creating
+val testJsRuntime by configurations.creating {
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 
 dependencies {
     testRuntime(intellijDep())

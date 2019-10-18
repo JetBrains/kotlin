@@ -6,6 +6,15 @@ description = 'Kotlin-test integration tests for JS'
 
 apply plugin: 'kotlin-platform-js'
 
+configurations {
+    nodeModules {
+        extendsFrom testCompile
+        attributes {
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+        }
+    }
+}
+
 dependencies {
     compile project(':kotlin-test:kotlin-test-js')
 }
@@ -19,9 +28,10 @@ buildDir = "$projectDir/build"
 
 task populateNodeModules(type: Copy, dependsOn: compileKotlin2Js) {
     from compileKotlin2Js.destinationDir
+    dependsOn(configurations.nodeModules)
 
     from {
-        configurations.testCompile.collect {
+        configurations.nodeModules.collect {
             zipTree(it.absolutePath).matching { include '*.js' }
         }
     }
