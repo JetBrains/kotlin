@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileClassProvider
 import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.scripting.definitions.runReadAction
 
 class KtFileClassProviderImpl(val project: Project) : KtFileClassProvider {
 
@@ -29,7 +30,7 @@ class KtFileClassProviderImpl(val project: Project) : KtFileClassProvider {
         }
 
         // TODO We don't currently support finding light classes for scripts
-        if (file.isCompiled || file.isScript()) {
+        if (file.isCompiled || runReadAction { file.isScript() }) {
             return PsiClass.EMPTY_ARRAY
         }
 
