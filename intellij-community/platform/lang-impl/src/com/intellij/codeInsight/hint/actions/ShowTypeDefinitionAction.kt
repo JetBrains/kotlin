@@ -5,6 +5,7 @@ import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.codeInsight.hint.*
 import com.intellij.codeInsight.navigation.actions.TypeDeclarationProvider
+import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ReadAction
@@ -22,9 +23,11 @@ import com.intellij.util.Processor
 import org.jetbrains.annotations.TestOnly
 import java.awt.Component
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.annotations.TestOnly
+import java.awt.Component
 import kotlin.streams.asSequence
 
-class ShowTypeDefinitionAction : ShowImplementationsAction() {
+open class ShowTypeDefinitionAction : ShowImplementationsAction() {
   override fun getSessionFactories(): List<ImplementationViewSessionFactory> = listOf(TypeDefinitionsViewSessionFactory)
 
   override fun getPopupTitle(session: ImplementationViewSession): String {
@@ -98,6 +101,20 @@ class ShowTypeDefinitionAction : ShowImplementationsAction() {
         val definitions = ProgressManager.getInstance().runProcessWithProgressSynchronously(search, PROGRESS_MESSAGE, true, element.project)
         return definitions.map { PsiImplementationViewElement(it) }
       }
+    }
+  }
+
+  companion object {
+    @TestOnly
+    fun runForTests(context: Component): List<PsiElement> {
+      val showTypeDefinitionAction = ShowTypeDefinitionActionForTest()
+      showTypeDefinitionAction.performForContext(DataManager.getInstance().getDataContext(context))
+      return showTypeDefinitionAction.definitions.get().map { element -> (element as PsiImplementationViewElement).psiElement }
+    }
+
+    private class ShowTypeDefinitionActionForTest(val definitions: Ref<List<ImplementationViewElement>> = Ref()) : ShowTypeDefinitionAction() {
+      override fun showImplementations(session: ImplementationViewSession, invokedFromEditor: Boolean, invokedByShortcut: Boolean) =
+        definitions.set(session.implementationElements)
     }
   }
 }
