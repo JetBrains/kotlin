@@ -444,4 +444,14 @@ class Kotlin2JsGradlePluginIT : BaseGradleIT() {
             )
         }
     }
+
+    @Test
+    fun testNpmDependenciesClash() = with(Project("npm-dependencies-clash", GradleVersionRequired.AtLeast("4.10.2"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build("test") {
+            assertSuccessful()
+        }
+    }
 }
