@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -138,3 +137,12 @@ fun JvmBackendContext.createJvmIrBuilder(
 
 fun IrDeclaration.isInCurrentModule(): Boolean =
     getPackageFragment() is IrFile
+
+// Determine if the IrExpression is smartcast, and if so, if it is cast from higher than nullable target types.
+// This is needed to pinpoint exceptional treatment of IEEE754 floating point comparisons, where proper IEEE
+// comparisons are used "if values are statically known to be of primitive numeric types", taken to mean as
+// "not learned through smartcasting".
+fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext) =
+    this is IrTypeOperatorCall &&
+            operator == IrTypeOperator.IMPLICIT_CAST &&
+            !this.argument.type.isSubtypeOf(type.makeNullable(), context.irBuiltIns)
