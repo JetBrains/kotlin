@@ -3318,6 +3318,13 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.headers "$projectDir/interop/objc/msg_send/messaging.h"
         it.linkerOpts "-L$buildDir", "-lobjcmessaging"
     }
+
+    createInterop("objcKt34467") {
+        it.defFile 'interop/objc/kt34467/module_library.def'
+        def moduleMap = file("interop/objc/kt34467/module_library.modulemap").absolutePath
+        def includePath = file("interop/objc/kt34467").absolutePath
+        it.compilerOpts "-fmodule-map-file=$moduleMap", "-I$includePath"
+    }
 }
 
 createInterop("withSpaces") {
@@ -3563,6 +3570,13 @@ interopTest("interop_objc_msg_send") {
             UtilsKt.codesign(project, "$buildDir/libobjcmessaging.dylib")
         }
     }
+}
+
+interopTest("interop_objc_kt34467") {
+    disabled = !isAppleTarget(project)
+    source = "interop/objc/kt34467/foo.kt"
+    interop = 'objcKt34467'
+    goldValue = "OK\n42\n"
 }
 
 standaloneTest("jsinterop_math") {

@@ -958,7 +958,7 @@ fun buildNativeIndexImpl(library: NativeLibrary, verbose: Boolean): IndexerResul
 
 private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH {
     withIndex { index ->
-        val translationUnit = nativeIndex.library.parse(
+        val translationUnit = nativeIndex.library.copyWithArgsForPCH().parse(
                 index,
                 options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization
         )
