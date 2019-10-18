@@ -43,7 +43,7 @@ class ReplaceInfixOrOperatorCallFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
         val psiFactory = KtPsiFactory(file)
-        val elvis = elvisOrEmpty(notNullNeeded)
+        val elvis = element.elvisOrEmpty(notNullNeeded)
         var replacement: PsiElement? = null
         when (element) {
             is KtArrayAccessExpression -> {
@@ -83,7 +83,7 @@ class ReplaceInfixOrOperatorCallFix(
                 }
             }
         }
-        if (notNullNeeded) {
+        if (elvis.isNotEmpty()) {
             replacement?.moveCaretToEnd(editor, project)
         }
     }

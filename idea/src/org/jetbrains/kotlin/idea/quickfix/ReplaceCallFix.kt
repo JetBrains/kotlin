@@ -46,7 +46,7 @@ abstract class ReplaceCallFix(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val elvis = elvisOrEmpty(notNullNeeded)
+        val elvis = element.elvisOrEmpty(notNullNeeded)
         val betweenReceiverAndOperation = element.elementsBetweenReceiverAndOperation().joinToString(separator = "") { it.text }
         val newExpression = KtPsiFactory(element).createExpressionByPattern(
             "$0$betweenReceiverAndOperation$operation$1$elvis",
@@ -54,7 +54,7 @@ abstract class ReplaceCallFix(
             element.selectorExpression!!
         )
         val replacement = element.replace(newExpression)
-        if (notNullNeeded) {
+        if (elvis.isNotEmpty()) {
             replacement.moveCaretToEnd(editor, project)
         }
     }
@@ -78,10 +78,10 @@ class ReplaceImplicitReceiverCallFix(
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
-        val elvis = elvisOrEmpty(notNullNeeded)
+        val elvis = element.elvisOrEmpty(notNullNeeded)
         val newExpression = KtPsiFactory(element).createExpressionByPattern("this?.$0$elvis", element)
         val replacement = element.replace(newExpression)
-        if (notNullNeeded) {
+        if (elvis.isNotEmpty()) {
             replacement.moveCaretToEnd(editor, project)
         }
     }

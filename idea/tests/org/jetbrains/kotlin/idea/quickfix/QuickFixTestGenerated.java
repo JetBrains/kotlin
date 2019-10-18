@@ -10901,6 +10901,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/replaceInfixOrOperatorCall/callExpression.kt");
         }
 
+        @TestMetadata("hasElvis.kt")
+        public void testHasElvis() throws Exception {
+            runTest("idea/testData/quickfix/replaceInfixOrOperatorCall/hasElvis.kt");
+        }
+
         @TestMetadata("list.kt")
         public void testList() throws Exception {
             runTest("idea/testData/quickfix/replaceInfixOrOperatorCall/list.kt");
@@ -11096,6 +11101,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("functionCall.kt")
         public void testFunctionCall() throws Exception {
             runTest("idea/testData/quickfix/replaceWithSafeCall/functionCall.kt");
+        }
+
+        @TestMetadata("hasElvis.kt")
+        public void testHasElvis() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithSafeCall/hasElvis.kt");
+        }
+
+        @TestMetadata("hasElvis2.kt")
+        public void testHasElvis2() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithSafeCall/hasElvis2.kt");
         }
 
         @TestMetadata("invokeOperator.kt")
