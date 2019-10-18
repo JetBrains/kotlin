@@ -800,7 +800,27 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("jvm-on-mpp.mpp-mod-a.test") {
             }
         }
+    }
 
+    @Test
+    fun testCommonTestTargetPlatform() {
+        configureByFiles()
+        importProject(true)
+        checkProjectStructure(true, false, false) {
+            module("KotlinMPPL") {}
+            module("com.example.KotlinMPPL.commonMain") {
+                platform(CommonPlatforms.defaultCommonPlatform)
+            }
+            module("com.example.KotlinMPPL.commonTest") {
+                platform(CommonPlatforms.defaultCommonPlatform)
+            }
+            module("com.example.KotlinMPPL.jsMain") {
+                platform(JsPlatforms.defaultJsPlatform)
+            }
+            module("com.example.KotlinMPPL.jsTest") {
+                platform(JsPlatforms.defaultJsPlatform)
+            }
+        }
     }
 
     private fun checkProjectStructure(
