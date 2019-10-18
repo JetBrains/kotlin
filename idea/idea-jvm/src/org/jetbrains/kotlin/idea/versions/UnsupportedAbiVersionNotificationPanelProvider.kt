@@ -324,6 +324,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
             val badRoots = when {
                 platform.isJvm() -> getLibraryRootsWithAbiIncompatibleKotlinClasses(module)
                 platform.isJs() -> getLibraryRootsWithAbiIncompatibleForKotlinJs(module)
+                // TODO: also check it for Native KT-34525
                 else -> return emptyList()
             }
 
