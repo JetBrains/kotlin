@@ -82,6 +82,8 @@ object IdeDescriptorRenderers {
     val SOURCE_CODE_NOT_NULL_TYPE_APPROXIMATION: DescriptorRenderer = BASE.withOptions {
         classifierNamePolicy = ClassifierNamePolicy.SOURCE_CODE_QUALIFIED
         typeNormalizer = { APPROXIMATE_FLEXIBLE_TYPES_NOT_NULL(unwrapAnonymousType(it)) }
+        presentableUnresolvedTypes = true
+        informativeErrorType = false
     }
 
     @JvmField
