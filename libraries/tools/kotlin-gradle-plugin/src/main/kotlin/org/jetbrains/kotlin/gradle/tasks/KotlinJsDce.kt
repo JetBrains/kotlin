@@ -50,6 +50,10 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
     private val dceOptionsImpl = KotlinJsDceOptionsImpl()
 
+    // DCE can be broken in case of non-kotlin js files or modules
+    @Internal
+    var kotlinFilesOnly: Boolean = false
+
     @get:Internal
     override val dceOptions: KotlinJsDceOptions
         get() = dceOptionsImpl
@@ -68,7 +72,7 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
     @TaskAction
     fun performDce() {
         val inputFiles = (listOf(source) + classpath
-            .filter { isDceCandidate(it) }
+            .filter { !kotlinFilesOnly || isDceCandidate(it) }
             .map { project.fileTree(it) })
             .reduce(FileTree::plus)
             .files.map { it.path }
