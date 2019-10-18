@@ -257,7 +257,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         project: Project,
         dependencyMapper: KotlinDependencyMapper
     ): Collection<KotlinTarget>? {
-        return projectTargets.mapNotNull { buildTarget(it, sourceSetMap, dependencyResolver, project, dependencyMapper) }
+        val isHMPPEnabled = isHMPPEnabled(project)
+        return projectTargets.mapNotNull { buildTarget(it, sourceSetMap, dependencyResolver, project, dependencyMapper, isHMPPEnabled) }
     }
 
     private operator fun Any?.get(methodName: String, vararg params: Any): Any? {
@@ -312,7 +313,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         sourceSetMap: Map<String, KotlinSourceSet>,
         dependencyResolver: DependencyResolver,
         project: Project,
-        dependencyMapper: KotlinDependencyMapper
+        dependencyMapper: KotlinDependencyMapper,
+        isHMPPEnabled: Boolean
     ): KotlinTarget? {
         val targetClass = gradleTarget.javaClass
         val getPlatformType = targetClass.getMethodOrNull("getPlatformType") ?: return null
@@ -336,7 +338,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             if (compilation == null || platform != KotlinPlatform.ANDROID) {
                 compilation
             } else {
-                compilation.addDependsOnSourceSetsToCompilation(sourceSetMap)
+                compilation.addDependsOnSourceSetsToCompilation(sourceSetMap, isHMPPEnabled)
             }
         }
         val jar = buildTargetJar(gradleTarget, project)
@@ -359,9 +361,26 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         return target
     }
 
-    private fun KotlinCompilationImpl.addDependsOnSourceSetsToCompilation(sourceSetMap: Map<String, KotlinSourceSet>): KotlinCompilationImpl {
-        val closedSourceSets = this.sourceSets.union(this.sourceSets.flatMap { it.dependsOnSourceSets }.mapNotNull { sourceSetMap[it] })
-        return KotlinCompilationImpl(this.name, closedSourceSets, this.dependencies, this.output, this.arguments, this.dependencyClasspath, this.kotlinTaskProperties, this.nativeExtensions)
+    private fun KotlinCompilationImpl.addDependsOnSourceSetsToCompilation(sourceSetMap: Map<String, KotlinSourceSet>, isHMPPEnabled: Boolean): KotlinCompilationImpl {
+        val dependsOnSourceSets = this.sourceSets.flatMap { it.dependsOnSourceSets }.mapNotNull { sourceSetMap[it] }
+
+        if (!isHMPPEnabled) {
+            // intermediate source sets should be common if HMPP is disabled
+            dependsOnSourceSets.subtract(this.sourceSets).forEach {
+                it.actualPlatforms.addSimplePlatforms(listOf(KotlinPlatform.COMMON))
+            }
+        }
+
+        return KotlinCompilationImpl(
+            this.name,
+            this.sourceSets.union(dependsOnSourceSets),
+            this.dependencies,
+            this.output,
+            this.arguments,
+            this.dependencyClasspath,
+            this.kotlinTaskProperties,
+            this.nativeExtensions
+        )
     }
 
     private fun buildTestTasks(project: Project, gradleTarget: Named): Collection<KotlinTestTask> {
@@ -632,44 +651,32 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         targets: Collection<KotlinTarget>,
         isHMPPEnabled: Boolean
     ) {
-        val sourceSetToCompilations = LinkedHashMap<KotlinSourceSet, MutableSet<KotlinCompilation>>()
+        // includes only compilations where source set is listed
+        val compiledSourceSetToCompilations = LinkedHashMap<KotlinSourceSet, MutableSet<KotlinCompilation>>()
+        // includes compilations where source set is included via dependsOn
+        val allSourceSetToCompilations = LinkedHashMap<KotlinSourceSet, MutableSet<KotlinCompilation>>()
         for (target in targets) {
             for (compilation in target.compilations) {
                 for (sourceSet in compilation.sourceSets) {
-                    sourceSetToCompilations.getOrPut(sourceSet) { LinkedHashSet() } += compilation
+                    compiledSourceSetToCompilations.getOrPut(sourceSet) { LinkedHashSet() } += compilation
+                    allSourceSetToCompilations.getOrPut(sourceSet) { LinkedHashSet() } += compilation
                     sourceSet.dependsOnSourceSets.mapNotNull { sourceSets[it] }.forEach {
-                        sourceSetToCompilations.getOrPut(it) { LinkedHashSet() } += compilation
+                        allSourceSetToCompilations.getOrPut(it) { LinkedHashSet() } += compilation
                     }
                 }
             }
         }
 
         for (sourceSet in sourceSets.values) {
-            val compilations = sourceSetToCompilations[sourceSet]
-            if (compilations != null) {
+            (allSourceSetToCompilations[sourceSet]?.all { it.isTestModule }
+                ?: if (!isHMPPEnabled && sourceSet.name == KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME) true else null)?.let { isTest ->
+                sourceSet.isTestModule = isTest
+            }
+            (if (isHMPPEnabled) allSourceSetToCompilations[sourceSet] else compiledSourceSetToCompilations[sourceSet])?.let { compilations ->
                 val platforms = compilations.map { it.platform }
                 sourceSet.actualPlatforms.addSimplePlatforms(platforms)
-
-                sourceSet.dependsOnSourceSets.mapNotNull { sourceSets[it] }.forEach {
-                    it?.actualPlatforms?.addSimplePlatforms(platforms)
-                }
-
-
-                sourceSet.isTestModule = compilations.all { it.isTestModule }
-            } else {
-                //TODO(auskov): remove this branch as far as import of orphan source sets is dropped
-                val name = sourceSet.name
-                if (name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME) {
-                    sourceSet.isTestModule = false
-                    continue
-                }
-                if (name == KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME) {
-                    sourceSet.isTestModule = true
-                    continue
-                }
             }
-
-            if ((! isHMPPEnabled) && sourceSet.actualPlatforms.platforms.size > 1) {
+            if ((!isHMPPEnabled) && sourceSet.actualPlatforms.platforms.size != 1) {
                 sourceSet.actualPlatforms.addSimplePlatforms(listOf(KotlinPlatform.COMMON))
             }
         }
