@@ -20,14 +20,16 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import java.io.FileOutputStream
+import java.io.PrintStream
 import kotlin.system.measureNanoTime
 
 
 class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
-
-
     private var totalTime = 0L
     private var files = 0
+
+    private val times = mutableListOf<Long>()
 
     private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
         val project = environment.project
@@ -39,7 +41,12 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         files += environment.getSourceFiles().size
         totalTime += time
         println("Time is ${time * 1e-6} ms")
+    }
 
+    private fun dumpTime(message: String, time: Long) {
+        PrintStream(FileOutputStream(reportDir().resolve("report-$reportDateStr.log"), true)).use { stream ->
+            stream.println("$message: ${time * 1e-6} ms")
+        }
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
@@ -104,8 +111,13 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     fun testTotalKotlin() {
         for (i in 0 until PASSES) {
             runTestOnce(i)
-            println("Total time is ${totalTime * 1e-6} ms")
+            times += totalTime
+            dumpTime("Pass $i:", totalTime)
             totalTime = 0L
         }
+
+        val bestTime = times.min()!!
+        val bestPass = times.indexOf(bestTime)
+        dumpTime("Best pass: $bestPass", bestTime)
     }
 }
