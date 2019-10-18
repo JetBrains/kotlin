@@ -1,8 +1,11 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.storage.factors
 
+import com.intellij.codeInsight.completion.ml.ContextFeatures
+import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.completion.ml.ContextFeaturesStorage
 import com.intellij.completion.sorting.RankingModelWrapper
 import com.intellij.completion.sorting.RankingSupport
 import com.intellij.lang.Language
@@ -10,6 +13,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.stats.PerformanceTracker
 import com.intellij.stats.completion.idString
 import com.intellij.stats.personalization.UserFactorStorage
@@ -25,10 +29,9 @@ class MutableLookupStorage(
   override val userFactors: Map<String, String>
     get() = _userFactors ?: emptyMap()
 
-  @Volatile
-  private var _contextFactors: Map<String, String>? = null
+  private var contextFeaturesStorage: ContextFeatures? = null
   override val contextFactors: Map<String, String>
-    get() = _contextFactors ?: emptyMap()
+    get() = contextFeaturesStorage?.asMap() ?: emptyMap()
 
   private var _loggingEnabled: Boolean = false
   override val performanceTracker: PerformanceTracker = PerformanceTracker()
@@ -60,7 +63,7 @@ class MutableLookupStorage(
 
   override fun shouldComputeFeatures(): Boolean = model != null || _loggingEnabled
 
-  fun isContextFactorsInitialized(): Boolean = _contextFactors != null
+  fun isContextFactorsInitialized(): Boolean = contextFeaturesStorage != null
 
   fun fireElementScored(element: LookupElement, factors: MutableMap<String, Any>, mlScore: Double?) {
     getItemStorage(element.idString()).fireElementScored(factors, mlScore)
@@ -84,12 +87,17 @@ class MutableLookupStorage(
     }
   }
 
-  fun initContextFactors(contextFactors: Map<String, String>) {
-    if (_contextFactors != null) {
+  override fun contextProvidersResult(): ContextFeatures = contextFeaturesStorage ?: ContextFeaturesStorage.EMPTY
+
+  fun initContextFactors(contextFactors: MutableMap<String, MLFeatureValue>,
+                         environment: UserDataHolderBase) {
+    if (isContextFactorsInitialized()) {
       LOG.error("Context factors should be initialized only once")
     }
     else {
-      _contextFactors = contextFactors
+      val features = ContextFeaturesStorage(contextFactors)
+      environment.copyUserDataTo(features)
+      contextFeaturesStorage = features
     }
   }
 

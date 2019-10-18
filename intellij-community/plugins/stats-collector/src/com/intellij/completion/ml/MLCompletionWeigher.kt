@@ -5,13 +5,17 @@ import com.intellij.codeInsight.completion.CompletionLocation
 import com.intellij.codeInsight.completion.CompletionWeigher
 import com.intellij.codeInsight.completion.ml.ElementFeatureProvider
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupManager
+import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.stats.storage.factors.LookupStorage
 
 class MLCompletionWeigher : CompletionWeigher() {
   override fun weigh(element: LookupElement, location: CompletionLocation): Comparable<Nothing>? {
-    val psiFile = location.completionParameters.originalFile
-    val contextFeatures = ContextFeaturesStorage.extract(psiFile)
+    val storage = (LookupManager.getActiveLookup(location.completionParameters.editor) as? LookupImpl)
+                    ?.let { LookupStorage.get(it) } ?: return DummyComparable.EMPTY
     val result = mutableMapOf<String, Any>()
-    for (provider in ElementFeatureProvider.forLanguage(psiFile.language)) {
+    val contextFeatures = storage.contextProvidersResult()
+    for (provider in ElementFeatureProvider.forLanguage(storage.language)) {
       val name = provider.name
       for ((featureName, featureValue) in provider.calculateFeatures(element, location, contextFeatures)) {
         result["${name}_$featureName"] = featureValue

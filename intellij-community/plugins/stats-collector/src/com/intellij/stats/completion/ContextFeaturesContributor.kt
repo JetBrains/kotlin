@@ -10,13 +10,9 @@ import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.completion.ml.ContextFeaturesStorage
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.progress.ProgressManager
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.stats.storage.factors.MutableLookupStorage
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 class ContextFeaturesContributor : CompletionContributor() {
@@ -33,28 +29,23 @@ class ContextFeaturesContributor : CompletionContributor() {
 
 
   private fun calculateContextFactors(lookup: LookupImpl, parameters: CompletionParameters, storage: MutableLookupStorage) {
-    val file = lookup.psiFile
-    if (file != null) {
-      val context = MyEnvironment(lookup, parameters)
-      val contextFeatures = mutableMapOf<String, MLFeatureValue>()
-      for (provider in ContextFeatureProvider.forLanguage(storage.language)) {
-        ProgressManager.checkCanceled()
-        val providerName = provider.name
-        val start = System.nanoTime()
-        val features = provider.calculateFeatures(context)
-        for ((featureName, value) in features) {
-          contextFeatures["ml_ctx_${providerName}_$featureName"] = value
-        }
-
-        val timeSpent = System.nanoTime() - start
-        storage.performanceTracker.contextFeaturesCalculated(providerName, TimeUnit.NANOSECONDS.toMillis(timeSpent))
+    val environment = MyEnvironment(lookup, parameters)
+    val contextFeatures = mutableMapOf<String, MLFeatureValue>()
+    for (provider in ContextFeatureProvider.forLanguage(storage.language)) {
+      ProgressManager.checkCanceled()
+      val providerName = provider.name
+      val start = System.nanoTime()
+      val features = provider.calculateFeatures(environment)
+      for ((featureName, value) in features) {
+        contextFeatures["ml_ctx_${providerName}_$featureName"] = value
       }
 
-      ContextFeaturesStorage.setContextFeatures(file, contextFeatures, context)
-      Disposer.register(lookup, Disposable { ContextFeaturesStorage.clear(file) })
-      storage.initContextFactors(contextFeatures.mapValuesTo(ConcurrentHashMap()) { it.value.toString() })
+      val timeSpent = System.nanoTime() - start
+      storage.performanceTracker.contextFeaturesCalculated(providerName, TimeUnit.NANOSECONDS.toMillis(timeSpent))
     }
+    storage.initContextFactors(contextFeatures, environment)
   }
+
 
   private class MyEnvironment(
     private val lookup: LookupImpl,

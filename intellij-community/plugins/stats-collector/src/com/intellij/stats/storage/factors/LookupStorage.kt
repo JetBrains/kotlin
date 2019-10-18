@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.stats.storage.factors
 
+import com.intellij.codeInsight.completion.ml.ContextFeatures
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.completion.sorting.RankingModelWrapper
 import com.intellij.lang.Language
@@ -19,6 +20,7 @@ interface LookupStorage {
   val userFactors: Map<String, String>
   val contextFactors: Map<String, String>
   val performanceTracker: PerformanceTracker
+  fun contextProvidersResult(): ContextFeatures
   fun shouldComputeFeatures(): Boolean
   fun getItemStorage(id: String): LookupElementStorage
 }
