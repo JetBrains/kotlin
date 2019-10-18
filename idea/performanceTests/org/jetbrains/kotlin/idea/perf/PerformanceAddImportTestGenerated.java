@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.perf;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class PerformanceAddImportTestGenerated extends AbstractPerformanceAddImportTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doPerfTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInAddImport() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/addImport"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/addImport"), Pattern.compile("^([^.]+)\\.kt$"), true);
     }
 
     @TestMetadata("CannotImportClass1.kt")

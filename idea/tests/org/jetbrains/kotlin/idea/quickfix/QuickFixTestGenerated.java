@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.quickfix;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class QuickFixTestGenerated extends AbstractQuickFixTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInQuickfix() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
     }
 
     @TestMetadata("idea/testData/quickfix/abstract")
@@ -34,7 +33,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Abstract extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("abstractFunctionInNonAbstractClass.kt")
@@ -128,7 +127,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInAbstract() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/abstract"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/abstract"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("makeEnumEntryAbstract.kt")
@@ -212,11 +211,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddAnnotationTarget extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddAnnotationTarget() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addAnnotationTarget"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addAnnotationTarget"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic1.kt")
@@ -365,11 +364,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddConstructorParameterFromSuperTypeCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddConstructorParameterFromSuperTypeCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addConstructorParameterFromSuperTypeCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("backticks.kt")
@@ -418,11 +417,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddCrossinline extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddCrossinline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addCrossinline"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addCrossinline"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -441,7 +440,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddDataModifier extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("abstract.kt")
@@ -450,7 +449,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInAddDataModifier() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addDataModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addDataModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("inner.kt")
@@ -534,11 +533,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddDefaultConstructor extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddDefaultConstructor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addDefaultConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addDefaultConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("expect.kt")
@@ -562,11 +561,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddExclExclCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddExclExclCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addExclExclCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addExclExclCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("array.kt")
@@ -630,11 +629,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddGenericUpperBound extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddGenericUpperBound() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addGenericUpperBound"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addGenericUpperBound"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -673,11 +672,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddInitializer extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddInitializer() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("localVar.kt")
@@ -771,11 +770,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddInline extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddInline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addInline"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addInline"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -794,11 +793,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddInlineToReifiedFunctionFix extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddInlineToReifiedFunctionFix() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addInlineToReifiedFunctionFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addInlineToReifiedFunctionFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -812,11 +811,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddIsToWhenCondition extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddIsToWhenCondition() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addIsToWhenCondition"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addIsToWhenCondition"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("class.kt")
@@ -830,11 +829,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddJvmDefault extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddJvmDefault() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addJvmDefault"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addJvmDefault"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("functionOverride.kt")
@@ -853,11 +852,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddNewLineAfterAnnotations extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddNewLineAfterAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addNewLineAfterAnnotations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addNewLineAfterAnnotations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -886,11 +885,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddNoinline extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddNoinline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addNoinline"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addNoinline"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -909,11 +908,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddPropertyAccessors extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddPropertyAccessors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addPropertyAccessors"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addPropertyAccessors"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("val.kt")
@@ -942,7 +941,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddPropertyToSupertype extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("abstractClass.kt")
@@ -951,7 +950,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInAddPropertyToSupertype() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addPropertyToSupertype"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addPropertyToSupertype"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("interface.kt")
@@ -970,11 +969,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddReifiedToTypeParameterOfFunctionFix extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddReifiedToTypeParameterOfFunctionFix() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addReifiedToTypeParameterOfFunctionFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("doubleColonClass.kt")
@@ -998,11 +997,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddReturnToLastExpressionInFunction extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddReturnToLastExpressionInFunction() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addReturnToLastExpressionInFunction"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addReturnToLastExpressionInFunction"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("notSubtype.kt")
@@ -1041,11 +1040,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddReturnToUnusedLastExpressionInFunction extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddReturnToUnusedLastExpressionInFunction() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addReturnToUnusedLastExpressionInFunction"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addReturnToUnusedLastExpressionInFunction"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("notSubtype.kt")
@@ -1084,11 +1083,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddRunBeforeLambda extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddRunBeforeLambda() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addRunBeforeLambda"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addRunBeforeLambda"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -1102,11 +1101,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddSemicolonBeforeLambdaExpression extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddSemicolonBeforeLambdaExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addSemicolonBeforeLambdaExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addSemicolonBeforeLambdaExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -1130,11 +1129,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddStarProjections extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddStarProjections() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("qualifiedArrayList.kt")
@@ -1172,11 +1171,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Cast extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInCast() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/cast"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/cast"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("changeFunctionalToStarProjection.kt")
@@ -1295,11 +1294,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CheckType extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInCheckType() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/checkType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/checkType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("changeToStarProjectionMultipleParameters.kt")
@@ -1323,11 +1322,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Inner extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInInner() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/inner"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/inner"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("inner1.kt")
@@ -1376,11 +1375,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class When extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInWhen() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/when"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addStarProjections/when"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("qualifiedArrayList.kt")
@@ -1420,11 +1419,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddSuspend extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddSuspend() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addSuspend"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addSuspend"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("fakeOverride.kt")
@@ -1463,11 +1462,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddTypeAnnotationToValueParameter extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddTypeAnnotationToValueParameter() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addTypeAnnotationToValueParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addTypeAnnotationToValueParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("annotationWithArrayLiteralDouble.kt")
@@ -1526,7 +1525,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddValVar extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("addVal.kt")
@@ -1540,7 +1539,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInAddValVar() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addValVar"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addValVar"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
     }
 
@@ -1549,7 +1548,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddVarianceModifier extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("abstractIn.kt")
@@ -1563,7 +1562,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInAddVarianceModifier() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addVarianceModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addVarianceModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("emptyTest.kt")
@@ -1577,11 +1576,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AssignOperatorAmbiguity extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAssignOperatorAmbiguity() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal")
@@ -1589,11 +1588,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ChangeToVal extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInChangeToVal() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity/changeToVal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("arrayList.kt")
@@ -1637,11 +1636,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ReplaceWithAssignCall extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInReplaceWithAssignCall() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignOperatorAmbiguity/replaceWithAssignCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("arrayList.kt")
@@ -1681,11 +1680,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AssignToProperty extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAssignToProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignToProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/assignToProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("differentNameProperty.kt")
@@ -1754,11 +1753,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AutoImports extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAutoImports() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("checkNoStackOverflowInImportInnerClassInCurrentFile.kt")
@@ -1931,11 +1930,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Kt21515 extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInKt21515() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports/kt21515"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports/kt21515"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("callableReferenceFromDeprecated.kt")
@@ -1959,11 +1958,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MismatchingArgs extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInMismatchingArgs() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports/mismatchingArgs"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/autoImports/mismatchingArgs"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
         }
     }
@@ -1973,11 +1972,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CanBeParameter extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCanBeParameter() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/canBeParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/canBeParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("usedInDerivedClass.kt")
@@ -2006,11 +2005,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CanBePrimaryConstructorProperty extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCanBePrimaryConstructorProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/canBePrimaryConstructorProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/canBePrimaryConstructorProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("commentAfter.kt")
@@ -2044,11 +2043,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeFeatureSupport extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInChangeFeatureSupport() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeFeatureSupport"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeFeatureSupport"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("inlineClass.kt")
@@ -2062,11 +2061,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeObjectToClass extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInChangeObjectToClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeObjectToClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeObjectToClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("primaryConstructor.kt")
@@ -2085,7 +2084,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeSignature extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("addConstructorParameter.kt")
@@ -2199,7 +2198,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInChangeSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("changeFunctionLiteralParameters1.kt")
@@ -2372,11 +2371,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Jk extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInJk() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature/jk"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature/jk"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
         }
 
@@ -2385,11 +2384,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Kj extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInKj() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature/kj"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSignature/kj"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
         }
     }
@@ -2399,11 +2398,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeSuperTypeListEntryTypeArgument extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInChangeSuperTypeListEntryTypeArgument() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSuperTypeListEntryTypeArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeSuperTypeListEntryTypeArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("propertyTypeMismatchOnOverride.kt")
@@ -2432,11 +2431,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeToLabeledReturn extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInChangeToLabeledReturn() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeToLabeledReturn"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeToLabeledReturn"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("multipleInner.kt")
@@ -2465,11 +2464,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeToMutableCollection extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInChangeToMutableCollection() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeToMutableCollection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeToMutableCollection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("list.kt")
@@ -2503,11 +2502,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeToUseSpreadOperator extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInChangeToUseSpreadOperator() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeToUseSpreadOperator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/changeToUseSpreadOperator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("differentTypeParameter.kt")
@@ -2556,11 +2555,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CheckArguments extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCheckArguments() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/checkArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/checkArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("nonVarargSpread.kt")
@@ -2573,11 +2572,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AddNameToArgument extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInAddNameToArgument() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/checkArguments/addNameToArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/checkArguments/addNameToArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("invokeOnString.kt")
@@ -2622,11 +2621,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConflictingImports extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInConflictingImports() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/conflictingImports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/conflictingImports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("removeConflictingImport.kt")
@@ -2650,11 +2649,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConvertJavaInterfaceToClass extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInConvertJavaInterfaceToClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/convertJavaInterfaceToClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/convertJavaInterfaceToClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
     }
 
@@ -2663,11 +2662,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConvertLateinitPropertyToNotNullDelegate extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInConvertLateinitPropertyToNotNullDelegate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/convertLateinitPropertyToNotNullDelegate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/convertLateinitPropertyToNotNullDelegate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -2711,11 +2710,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConvertPropertyInitializerToGetter extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInConvertPropertyInitializerToGetter() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/convertPropertyInitializerToGetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/convertPropertyInitializerToGetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("val.kt")
@@ -2739,11 +2738,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConvertToAnonymousObject extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInConvertToAnonymousObject() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/convertToAnonymousObject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/convertToAnonymousObject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("labeledReturn.kt")
@@ -2782,11 +2781,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CreateFromUsage extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCreateFromUsage() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/createFromUsage/createClass")
@@ -2794,11 +2793,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateClass extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInCreateClass() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createClass/annotationEntry")
@@ -2806,11 +2805,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class AnnotationEntry extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInAnnotationEntry() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/annotationEntry"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/annotationEntry"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("annotationNoBrackets.kt")
@@ -2859,11 +2858,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class CallExpression extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInCallExpression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("callInAnnotationEntry.kt")
@@ -3061,11 +3060,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class TypeArguments extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
                     public void testAllFilesPresentInTypeArguments() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/callExpression/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                     }
 
                     @TestMetadata("callWithStarProjection.kt")
@@ -3135,11 +3134,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class DelegationSpecifier extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInDelegationSpecifier() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/delegationSpecifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("classDelegatorToSuperclass.kt")
@@ -3193,11 +3192,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class ImportDirective extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInImportDirective() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/importDirective"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/importDirective"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("annotationInPackage.kt")
@@ -3270,11 +3269,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Kt21515 extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
                     public void testAllFilesPresentInKt21515() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/importDirective/kt21515"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/importDirective/kt21515"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                     }
 
                     @TestMetadata("callableReferenceOnClass.kt")
@@ -3309,11 +3308,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class ReferenceExpression extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInReferenceExpression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/referenceExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/referenceExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("annotationByClassLiteral.kt")
@@ -3527,11 +3526,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class TypeReference extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInTypeReference() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/typeReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createClass/typeReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("annotationNotQualifierNoTypeArgs.kt")
@@ -3691,11 +3690,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateFunction extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInCreateFunction() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/binaryOperations")
@@ -3703,11 +3702,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class BinaryOperations extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInBinaryOperations() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/binaryOperations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/binaryOperations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("customOperationOnUserType.kt")
@@ -3796,11 +3795,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Call extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInCall() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("approximateAnonymousObjectRuntime.kt")
@@ -4143,11 +4142,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Abstract extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
                     public void testAllFilesPresentInAbstract() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/abstract"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/abstract"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                     }
 
                     @TestMetadata("classNoExplicitReceiver.kt")
@@ -4196,11 +4195,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class ExtensionByExtensionReceiver extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
                     public void testAllFilesPresentInExtensionByExtensionReceiver() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/extensionByExtensionReceiver"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/extensionByExtensionReceiver"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                     }
 
                     @TestMetadata("extensionFunction.kt")
@@ -4234,11 +4233,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class TypeArguments extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
                     public void testAllFilesPresentInTypeArguments() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                     }
 
                     @TestMetadata("callWithStarProjection.kt")
@@ -4318,11 +4317,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class CallableReferences extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInCallableReferences() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/callableReferences"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/callableReferences"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("extensionNoReceiverInCallableRef.kt")
@@ -4361,11 +4360,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Component extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInComponent() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/component"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/component"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("createComponentFromUsage1.kt")
@@ -4389,11 +4388,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class DelegateAccessors extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInDelegateAccessors() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/delegateAccessors"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/delegateAccessors"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("localVal.kt")
@@ -4432,11 +4431,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class FromJava extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInFromJava() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/fromJava"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/fromJava"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
             }
 
@@ -4445,11 +4444,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Get extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInGet() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/get"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/get"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("createGetFromUsage1.kt")
@@ -4523,11 +4522,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class HasNext extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInHasNext() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/hasNext"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/hasNext"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("createHasNextFromUsage1.kt")
@@ -4546,11 +4545,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Invoke extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInInvoke() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/invoke"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/invoke"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("invokeOnLibType.kt")
@@ -4584,11 +4583,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Iterator extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInIterator() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/iterator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/iterator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("createIteratorFromUsage1.kt")
@@ -4612,11 +4611,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Next extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInNext() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/next"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/next"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("createNextFromUsage1.kt")
@@ -4635,11 +4634,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Set extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInSet() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/set"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/set"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("createSetFromUsage1.kt")
@@ -4668,11 +4667,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class UnaryOperations extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInUnaryOperations() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/unaryOperations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/unaryOperations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("incOnUserType.kt")
@@ -4707,11 +4706,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateSecondaryConstructor extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInCreateSecondaryConstructor() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createSecondaryConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createSecondaryConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("argumentTypeMismatch.kt")
@@ -4800,11 +4799,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateTypeParameter extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInCreateTypeParameter() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration")
@@ -4812,11 +4811,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class InContainingDeclaration extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInInContainingDeclaration() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("backticks.kt")
@@ -4925,7 +4924,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class InReferencedDeclaration extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 @TestMetadata("addMultiple.kt")
@@ -4944,7 +4943,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
 
                 public void testAllFilesPresentInInReferencedDeclaration() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeParameter/inReferencedDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createTypeParameter/inReferencedDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("missingArguments.kt")
@@ -4969,11 +4968,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CreateVariable extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInCreateVariable() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable")
@@ -4981,11 +4980,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class LocalVariable extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInLocalVariable() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/localVariable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/localVariable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("assignedInFun.kt")
@@ -5104,11 +5103,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Parameter extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInParameter() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/parameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/parameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("assignedInFun.kt")
@@ -5382,11 +5381,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class PrimaryParameter extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInPrimaryParameter() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/primaryParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("localValNoReceiver.kt")
@@ -5460,11 +5459,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Property extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInProperty() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/property"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/property"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("callOnUserType.kt")
@@ -5687,11 +5686,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Abstract extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
                     public void testAllFilesPresentInAbstract() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/property/abstract"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/property/abstract"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                     }
 
                     @TestMetadata("classNoExplicitReceiver.kt")
@@ -5725,11 +5724,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class FieldFromJava extends AbstractQuickFixTest {
                     private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
                     public void testAllFilesPresentInFieldFromJava() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/property/fieldFromJava"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createVariable/property/fieldFromJava"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                     }
                 }
             }
@@ -5741,11 +5740,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CreateLabel extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCreateLabel() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createLabel"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createLabel"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("breakInLoop.kt")
@@ -5799,11 +5798,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DeclarationCantBeInlined extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInDeclarationCantBeInlined() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/declarationCantBeInlined"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/declarationCantBeInlined"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("inClass.kt")
@@ -5822,11 +5821,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DecreaseVisibility extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInDecreaseVisibility() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/decreaseVisibility"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/decreaseVisibility"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("exposedParameterType.kt")
@@ -5890,11 +5889,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DeprecatedJavaAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInDeprecatedJavaAnnotation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedJavaAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedJavaAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("withArgument.kt")
@@ -5923,7 +5922,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DeprecatedSymbolUsage extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("addImplicitReceiverNested.kt")
@@ -5932,7 +5931,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInDeprecatedSymbolUsage() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("callChainBug.kt")
@@ -6180,11 +6179,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ArgumentSideEffects extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInArgumentSideEffects() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/argumentSideEffects"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/argumentSideEffects"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("complexExpressionNotUsed1.kt")
@@ -6293,11 +6292,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassUsages extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInClassUsages() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("annotation1.kt")
@@ -6470,11 +6469,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class WholeProject extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInWholeProject() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/classUsages/wholeProject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("inheritance.kt")
@@ -6489,11 +6488,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FunctionLiteralArguments extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInFunctionLiteralArguments() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/functionLiteralArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/functionLiteralArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("cannotKeepOutside.kt")
@@ -6517,11 +6516,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Imports extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInImports() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/imports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/imports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
         }
 
@@ -6530,7 +6529,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class KeepComments extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             @TestMetadata("addArguments.kt")
@@ -6539,7 +6538,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
 
             public void testAllFilesPresentInKeepComments() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/keepComments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/keepComments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("commentBeforeArgument.kt")
@@ -6578,7 +6577,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class KeepLineBreaks extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             @TestMetadata("addArgument.kt")
@@ -6587,7 +6586,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
 
             public void testAllFilesPresentInKeepLineBreaks() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/keepLineBreaks"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/keepLineBreaks"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("lineBreakAfterReceiverRuntime.kt")
@@ -6606,11 +6605,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class OperatorCalls extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInOperatorCalls() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("in.kt")
@@ -6629,11 +6628,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class OptionalParameters extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInOptionalParameters() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("dropAll.kt")
@@ -6707,11 +6706,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Properties extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInProperties() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/properties"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/properties"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("callInAssignmentToProperty.kt")
@@ -6745,11 +6744,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PublishedApi extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInPublishedApi() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/publishedApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("existingStub.kt")
@@ -6808,11 +6807,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class SafeCall extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInSafeCall() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/safeCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/safeCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("changeThisSafeCall.kt")
@@ -6861,11 +6860,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TypeAliases extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInTypeAliases() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("compoundWithDeprecatedArgumentsAndConstructor.kt")
@@ -6928,11 +6927,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class WholeProject extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInWholeProject() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases/wholeProject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeAliases/wholeProject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
             }
         }
@@ -6942,11 +6941,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TypeArguments extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInTypeArguments() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("classLiteral.kt")
@@ -7010,7 +7009,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Vararg extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             @TestMetadata("addedNamedArgumentAfterRuntime.kt")
@@ -7029,7 +7028,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
 
             public void testAllFilesPresentInVararg() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/vararg"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/vararg"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("booleanArrayRuntime.kt")
@@ -7138,11 +7137,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WholeProject extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInWholeProject() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/wholeProject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/wholeProject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
         }
     }
@@ -7152,11 +7151,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Experimental extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInExperimental() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/experimental"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/experimental"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("annotationInTopLevelProperty.kt")
@@ -7255,11 +7254,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Expressions extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInExpressions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/expressions"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/expressions"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("fixNullableBinaryWithExclExcl.kt")
@@ -7438,11 +7437,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FoldTryCatch extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInFoldTryCatch() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/foldTryCatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/foldTryCatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("conditional.kt")
@@ -7476,11 +7475,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FunctionWithLambdaExpressionBody extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInFunctionWithLambdaExpressionBody() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/functionWithLambdaExpressionBody"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/functionWithLambdaExpressionBody"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/functionWithLambdaExpressionBody/removeBraces")
@@ -7488,11 +7487,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class RemoveBraces extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInRemoveBraces() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/functionWithLambdaExpressionBody/removeBraces"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/functionWithLambdaExpressionBody/removeBraces"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("functionHasComment.kt")
@@ -7541,11 +7540,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WrapRun extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInWrapRun() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/functionWithLambdaExpressionBody/wrapRun"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/functionWithLambdaExpressionBody/wrapRun"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("funtionIsUsed.kt")
@@ -7565,7 +7564,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Implement extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("abstract.kt")
@@ -7574,7 +7573,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInImplement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/implement"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/implement"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("annotation.kt")
@@ -7723,11 +7722,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class IncreaseVisibility extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInIncreaseVisibility() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/increaseVisibility"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/increaseVisibility"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("exposedParameterType.kt")
@@ -7835,11 +7834,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class InvisibleFake extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInInvisibleFake() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/increaseVisibility/invisibleFake"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/increaseVisibility/invisibleFake"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("methodToInternal.kt")
@@ -7899,11 +7898,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InitializeWithConstructorParameter extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInInitializeWithConstructorParameter() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/initializeWithConstructorParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/initializeWithConstructorParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("constructorWithThisDelegation.kt")
@@ -7992,11 +7991,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InlineTypeParameterFix extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInInlineTypeParameterFix() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/inlineTypeParameterFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/inlineTypeParameterFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -8020,11 +8019,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InsertDelegationCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInInsertDelegationCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/insertDelegationCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/insertDelegationCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("nonApplicableInsertSuper.kt")
@@ -8073,11 +8072,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class KdocMissingDocumentation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInKdocMissingDocumentation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/kdocMissingDocumentation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/kdocMissingDocumentation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("simple.kt")
@@ -8096,11 +8095,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Lateinit extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInLateinit() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/lateinit"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/lateinit"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("nullable.kt")
@@ -8139,7 +8138,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LeakingThis extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("accessOpenProperty.kt")
@@ -8158,7 +8157,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInLeakingThis() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/leakingThis"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/leakingThis"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("callOpenMethod.kt")
@@ -8192,11 +8191,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Libraries extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInLibraries() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/libraries"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/libraries"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("junit.kt")
@@ -8215,11 +8214,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LocalVariableWithTypeParameters extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInLocalVariableWithTypeParameters() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/localVariableWithTypeParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/localVariableWithTypeParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("removeTypeParametersFromLocalVariable.kt")
@@ -8233,11 +8232,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MakeConstructorParameterProperty extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMakeConstructorParameterProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/makeConstructorParameterProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/makeConstructorParameterProperty"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("inner.kt")
@@ -8271,11 +8270,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MakePrivateAndOverrideMember extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMakePrivateAndOverrideMember() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/makePrivateAndOverrideMember"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/makePrivateAndOverrideMember"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
     }
 
@@ -8284,11 +8283,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MakeTypeParameterReified extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMakeTypeParameterReified() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/makeTypeParameterReified"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/makeTypeParameterReified"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("noTypeParameter.kt")
@@ -8312,11 +8311,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MemberVisibilityCanBePrivate extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMemberVisibilityCanBePrivate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/memberVisibilityCanBePrivate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/memberVisibilityCanBePrivate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("constructorParam.kt")
@@ -8350,11 +8349,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Migration extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMigration() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/migration/commasInWhenWithoutArgument")
@@ -8362,11 +8361,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class CommasInWhenWithoutArgument extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInCommasInWhenWithoutArgument() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/commasInWhenWithoutArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/commasInWhenWithoutArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("commasInConditionWithNoArguments.kt")
@@ -8385,11 +8384,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ConflictingExtension extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInConflictingExtension() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/conflictingExtension"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/conflictingExtension"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("explicitThis.kt")
@@ -8468,11 +8467,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaAnnotationPositionedArguments extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInJavaAnnotationPositionedArguments() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/javaAnnotationPositionedArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/javaAnnotationPositionedArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
         }
 
@@ -8481,11 +8480,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JsExternal extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInJsExternal() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/jsExternal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/jsExternal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("externalExtensionFunJsRuntime.kt")
@@ -8619,11 +8618,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MissingConstructorKeyword extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInMissingConstructorKeyword() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/missingConstructorKeyword"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/missingConstructorKeyword"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("basic.kt")
@@ -8637,11 +8636,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ObsoleteLabelSyntax extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInObsoleteLabelSyntax() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/obsoleteLabelSyntax"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/obsoleteLabelSyntax"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("lambda.kt")
@@ -8660,11 +8659,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class RemoveNameFromFunctionExpression extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInRemoveNameFromFunctionExpression() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/removeNameFromFunctionExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/removeNameFromFunctionExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("basic.kt")
@@ -8678,11 +8677,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TypeParameterList extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInTypeParameterList() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/typeParameterList"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/typeParameterList"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("basic.kt")
@@ -8702,11 +8701,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MissingConstructorBrackets extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMissingConstructorBrackets() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/missingConstructorBrackets"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/missingConstructorBrackets"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -8720,7 +8719,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Modifiers extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("abstractModifierInEnum.kt")
@@ -8734,7 +8733,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInModifiers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("cannotMakeClassAnnotation.kt")
@@ -9022,11 +9021,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AddOpenToClassDeclaration extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInAddOpenToClassDeclaration() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/addOpenToClassDeclaration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("dataSuperType.kt")
@@ -9110,11 +9109,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Suspend extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInSuspend() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/suspend"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/modifiers/suspend"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("base.kt")
@@ -9169,11 +9168,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MoveMemberToCompanionObject extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMoveMemberToCompanionObject() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/moveMemberToCompanionObject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/moveMemberToCompanionObject"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("simple.kt")
@@ -9187,11 +9186,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MoveReceiverAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMoveReceiverAnnotation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/moveReceiverAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/moveReceiverAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("fun.kt")
@@ -9220,11 +9219,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MoveToConstructorParameters extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMoveToConstructorParameters() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/moveToConstructorParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/moveToConstructorParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("localVar.kt")
@@ -9293,11 +9292,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Nullables extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInNullables() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/nullables"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/nullables"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("removeRedundantNullable.kt")
@@ -9325,11 +9324,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class UnsafeInfixCall extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInUnsafeInfixCall() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/nullables/unsafeInfixCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/nullables/unsafeInfixCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("noComparison.kt")
@@ -9399,11 +9398,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ObsoleteCoroutines extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInObsoleteCoroutines() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/obsoleteCoroutines"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/obsoleteCoroutines"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("buildIteratorImport.kt")
@@ -9452,11 +9451,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class OptimizeImports extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInOptimizeImports() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/optimizeImports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/optimizeImports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("destructuringAtTop.kt")
@@ -9480,11 +9479,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Override extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInOverride() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("changeToInvocation.kt")
@@ -9587,7 +9586,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NothingToOverride extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             @TestMetadata("addFunction.kt")
@@ -9676,7 +9675,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
 
             public void testAllFilesPresentInNothingToOverride() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override/nothingToOverride"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("changeParameterType.kt")
@@ -9785,11 +9784,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TypeMismatchOnOverride extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInTypeMismatchOnOverride() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override/typeMismatchOnOverride"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/override/typeMismatchOnOverride"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("cantChangeMultipleOverriddenPropertiesTypes.kt")
@@ -9889,11 +9888,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PlatformClasses extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInPlatformClasses() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/platformClasses"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/platformClasses"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("mapPlatformClassToKotlin1.kt")
@@ -9922,11 +9921,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PlatformTypesInspection extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInPlatformTypesInspection() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/platformTypesInspection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/platformTypesInspection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("nestedNoAssertRuntime.kt")
@@ -9955,11 +9954,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PrimitiveCastToConversion extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInPrimitiveCastToConversion() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/primitiveCastToConversion"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/primitiveCastToConversion"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("boolean.kt")
@@ -9988,11 +9987,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Properties extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInProperties() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/properties"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/properties"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/properties/extensionPropertyInitializerToGetter")
@@ -10000,11 +9999,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ExtensionPropertyInitializerToGetter extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInExtensionPropertyInitializerToGetter() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/properties/extensionPropertyInitializerToGetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/properties/extensionPropertyInitializerToGetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("baseCase.kt")
@@ -10039,11 +10038,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ProtectedInFinal extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInProtectedInFinal() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/protectedInFinal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/protectedInFinal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("protected.kt")
@@ -10062,11 +10061,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RedundantIf extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRedundantIf() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantIf"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantIf"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("assignExpression.kt")
@@ -10115,11 +10114,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RedundantInline extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRedundantInline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantInline"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantInline"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("function.kt")
@@ -10133,11 +10132,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RedundantLateinit extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRedundantLateinit() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantLateinit"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantLateinit"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("simple.kt")
@@ -10151,11 +10150,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RedundantModalityModifier extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRedundantModalityModifier() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantModalityModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantModalityModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("redundantAbstract.kt")
@@ -10174,7 +10173,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RedundantSemicolon extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("afterImport.kt")
@@ -10188,7 +10187,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInRedundantSemicolon() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantSemicolon"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantSemicolon"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
     }
 
@@ -10197,11 +10196,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RedundantSuspend extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRedundantSuspend() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantSuspend"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantSuspend"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("inline.kt")
@@ -10215,11 +10214,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RedundantVisibilityModifier extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRedundantVisibilityModifier() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantVisibilityModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/redundantVisibilityModifier"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("getter.kt")
@@ -10238,11 +10237,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveAnnotation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("jvmOverloads.kt")
@@ -10261,11 +10260,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveAtFromAnnotationArgument extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveAtFromAnnotationArgument() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeAtFromAnnotationArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeAtFromAnnotationArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("arrayParam.kt")
@@ -10289,7 +10288,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveDefaultParameterValue extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("actualFunctionWithDefaultArguments.kt")
@@ -10298,7 +10297,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInRemoveDefaultParameterValue() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeDefaultParameterValue"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeDefaultParameterValue"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("defaultValueNotAllowedInOverride.kt")
@@ -10317,11 +10316,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveFinalUpperBound extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveFinalUpperBound() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeFinalUpperBound"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeFinalUpperBound"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -10340,11 +10339,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveNoConstructor extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveNoConstructor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeNoConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeNoConstructor"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("basic.kt")
@@ -10358,11 +10357,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveRedundantAssignment extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveRedundantAssignment() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeRedundantAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeRedundantAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("constant.kt")
@@ -10391,11 +10390,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveRedundantInitializer extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveRedundantInitializer() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeRedundantInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeRedundantInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("simple.kt")
@@ -10409,11 +10408,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveRedundantLabel extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveRedundantLabel() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeRedundantLabel"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeRedundantLabel"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("simple.kt")
@@ -10432,11 +10431,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveSingleLambdaParameter extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveSingleLambdaParameter() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeSingleLambdaParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeSingleLambdaParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("multiple.kt")
@@ -10465,11 +10464,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveSuspend extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveSuspend() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeSuspend"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeSuspend"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("fakeOverride.kt")
@@ -10508,11 +10507,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveToStringInStringTemplate extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveToStringInStringTemplate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeToStringInStringTemplate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeToStringInStringTemplate"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("call.kt")
@@ -10551,11 +10550,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveTypeVariance extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveTypeVariance() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeTypeVariance"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeTypeVariance"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("in.kt")
@@ -10574,11 +10573,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveUnused extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveUnused() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeUnused"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeUnused"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("companionViaImport3.kt")
@@ -10727,11 +10726,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveUnusedReceiver extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveUnusedReceiver() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeUnusedReceiver"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/removeUnusedReceiver"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("inFunction.kt")
@@ -10750,11 +10749,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RenameToRem extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRenameToRem() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameToRem"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameToRem"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("forbiddenModAsMember.kt")
@@ -10783,11 +10782,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RenameToUnderscore extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRenameToUnderscore() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameToUnderscore"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameToUnderscore"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("commonDestructuring.kt")
@@ -10836,11 +10835,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RenameUnresolvedReference extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRenameUnresolvedReference() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameUnresolvedReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameUnresolvedReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("qualifiedFunRef.kt")
@@ -10879,11 +10878,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ReplaceInfixOrOperatorCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInReplaceInfixOrOperatorCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceInfixOrOperatorCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceInfixOrOperatorCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("array.kt")
@@ -10942,11 +10941,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ReplaceJvmFieldWithConst extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInReplaceJvmFieldWithConst() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceJvmFieldWithConst"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceJvmFieldWithConst"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("class.kt")
@@ -11000,11 +10999,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ReplaceWithArrayCallInAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInReplaceWithArrayCallInAnnotation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithArrayCallInAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithArrayCallInAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("emptyLiteral.kt")
@@ -11033,11 +11032,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ReplaceWithDotCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInReplaceWithDotCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithDotCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithDotCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("comment.kt")
@@ -11066,11 +11065,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ReplaceWithSafeCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInReplaceWithSafeCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithSafeCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithSafeCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("apply.kt")
@@ -11174,11 +11173,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ReplaceWithSafeCallForScopeFunction extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInReplaceWithSafeCallForScopeFunction() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithSafeCallForScopeFunction"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/replaceWithSafeCallForScopeFunction"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("also.kt")
@@ -11272,11 +11271,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RestrictedRetentionForExpressionAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRestrictedRetentionForExpressionAnnotation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/restrictedRetentionForExpressionAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/restrictedRetentionForExpressionAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/restrictedRetentionForExpressionAnnotation/addSourceRetention")
@@ -11284,11 +11283,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AddSourceRetention extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInAddSourceRetention() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/restrictedRetentionForExpressionAnnotation/addSourceRetention"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/restrictedRetentionForExpressionAnnotation/addSourceRetention"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("binaryRetention.kt")
@@ -11322,11 +11321,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ChangeRetentionToSource extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInChangeRetentionToSource() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/restrictedRetentionForExpressionAnnotation/changeRetentionToSource"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/restrictedRetentionForExpressionAnnotation/changeRetentionToSource"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("binaryRetention.kt")
@@ -11360,11 +11359,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class RemoveExpressionTarget extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInRemoveExpressionTarget() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/restrictedRetentionForExpressionAnnotation/removeExpressionTarget"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/restrictedRetentionForExpressionAnnotation/removeExpressionTarget"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("binaryRetention.kt")
@@ -11404,11 +11403,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SimplifyComparison extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSimplifyComparison() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/simplifyComparison"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/simplifyComparison"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("doubleNull.kt")
@@ -11452,11 +11451,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SmartCastImpossibleInIfThen extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSmartCastImpossibleInIfThen() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/smartCastImpossibleInIfThen"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/smartCastImpossibleInIfThen"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("ifThen.kt")
@@ -11525,11 +11524,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SpecifyOverrideExplicitly extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSpecifyOverrideExplicitly() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/specifyOverrideExplicitly"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/specifyOverrideExplicitly"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("base.kt")
@@ -11573,11 +11572,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SuperTypeIsExtensionType extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSuperTypeIsExtensionType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/superTypeIsExtensionType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/superTypeIsExtensionType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("typeWith1Argument.kt")
@@ -11601,11 +11600,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Supercalls extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSupercalls() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/supercalls"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/supercalls"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("typeArgumentsRedundantInSuperQualifier.kt")
@@ -11619,7 +11618,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SupertypeInitialization extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("addImport.kt")
@@ -11678,7 +11677,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInSupertypeInitialization() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/supertypeInitialization"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/supertypeInitialization"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("baseConstructorError.kt")
@@ -11762,11 +11761,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Suppress extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSuppress() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/suppress/annotationPosition")
@@ -11774,11 +11773,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class AnnotationPosition extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInAnnotationPosition() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/annotationPosition"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/annotationPosition"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("paramWithModifier.kt")
@@ -11867,11 +11866,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Availability extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInAvailability() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/availability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/availability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("localFunSuppressForLocal.kt")
@@ -11930,11 +11929,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DeclarationKinds extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInDeclarationKinds() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/declarationKinds"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/declarationKinds"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("class.kt")
@@ -12003,11 +12002,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ErrorRecovery extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInErrorRecovery() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/errorRecovery"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/errorRecovery"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("nonStringInSuppress.kt")
@@ -12026,11 +12025,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class External extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInExternal() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/external"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/external"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("suppressActive.kt")
@@ -12049,11 +12048,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ForStatement extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInForStatement() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/forStatement"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/forStatement"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("andAnd.kt")
@@ -12251,11 +12250,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Unavailable extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInUnavailable() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/forStatement/unavailable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/forStatement/unavailable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("inAnnotationArgument.kt")
@@ -12320,11 +12319,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Inspections extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInInspections() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/inspections"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/inspections"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("constantConditionIf.kt")
@@ -12344,11 +12343,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SurroundWithArrayOfForNamedArgumentsToVarargs extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSurroundWithArrayOfForNamedArgumentsToVarargs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/surroundWithArrayOfForNamedArgumentsToVarargs"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/surroundWithArrayOfForNamedArgumentsToVarargs"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("replaceForVarargOfAny.kt")
@@ -12382,11 +12381,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SurroundWithNullCheck extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSurroundWithNullCheck() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/surroundWithNullCheck"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/surroundWithNullCheck"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("argumentNullable.kt")
@@ -12495,11 +12494,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SuspiciousCollectionReassignment extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSuspiciousCollectionReassignment() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("idea/testData/quickfix/suspiciousCollectionReassignment/changeTypeToMutable")
@@ -12507,11 +12506,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ChangeTypeToMutable extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInChangeTypeToMutable() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/changeTypeToMutable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/changeTypeToMutable"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("hasType.kt")
@@ -12575,11 +12574,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JoinWithInitializer extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInJoinWithInitializer() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/joinWithInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/joinWithInitializer"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("noInitializer.kt")
@@ -12608,11 +12607,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ReplaceWithAssignment extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInReplaceWithAssignment() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/replaceWithAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/replaceWithAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("differentType.kt")
@@ -12696,11 +12695,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ReplaceWithFilter extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInReplaceWithFilter() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/replaceWithFilter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/replaceWithFilter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("map.kt")
@@ -12729,11 +12728,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ReplaceWithOrdinaryAssignment extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInReplaceWithOrdinaryAssignment() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/replaceWithOrdinaryAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suspiciousCollectionReassignment/replaceWithOrdinaryAssignment"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("simple.kt")
@@ -12748,11 +12747,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ToString extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInToString() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/toString"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/toString"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("notNullableExpectedNullable.kt")
@@ -12781,11 +12780,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TooLongCharLiteralToString extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInTooLongCharLiteralToString() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/tooLongCharLiteralToString"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/tooLongCharLiteralToString"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("backslash.kt")
@@ -12829,11 +12828,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeAddition extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInTypeAddition() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeAddition"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeAddition"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("ambiguousFunctionReturnType.kt")
@@ -12937,11 +12936,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeImports extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInTypeImports() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeImports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeImports"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("hasThisImport.kt")
@@ -12975,11 +12974,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeInferenceExpectedTypeMismatch extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInTypeInferenceExpectedTypeMismatch() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeInferenceExpectedTypeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeInferenceExpectedTypeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("convertClassToKClass1Runtime.kt")
@@ -12993,7 +12992,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeMismatch extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("accessibleLocalClassInReturn.kt")
@@ -13047,7 +13046,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInTypeMismatch() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("anonymousObjectInCall.kt")
@@ -13400,11 +13399,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Casts extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInCasts() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/casts"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/casts"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("castQualifiedArgument.kt")
@@ -13473,11 +13472,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ComponentFunctionReturnTypeMismatch extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInComponentFunctionReturnTypeMismatch() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/componentFunctionReturnTypeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("componentFunctionReturnTypeMismatch1.kt")
@@ -13516,11 +13515,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ConvertCollection extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInConvertCollection() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/convertCollection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/convertCollection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("arrayToCollection.kt")
@@ -13584,11 +13583,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class FixOverloadedOperator extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInFixOverloadedOperator() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/fixOverloadedOperator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/fixOverloadedOperator"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("changeNotFunctionReturnType.kt")
@@ -13612,11 +13611,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class GenericVarianceViolation extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInGenericVarianceViolation() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/genericVarianceViolation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/genericVarianceViolation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
         }
 
@@ -13625,11 +13624,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NumberConversion extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInNumberConversion() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/numberConversion"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/numberConversion"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("convertBinaryExpression.kt")
@@ -13658,11 +13657,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ParameterTypeMismatch extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInParameterTypeMismatch() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/parameterTypeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/parameterTypeMismatch"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("changeFunctionParameterType1.kt")
@@ -13711,11 +13710,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class RoundNumber extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInRoundNumber() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/roundNumber"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/roundNumber"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("notApplicable.kt")
@@ -13754,11 +13753,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TypeMismatchOnReturnedExpression extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInTypeMismatchOnReturnedExpression() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/typeMismatchOnReturnedExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("assignmentTypeMismatch.kt")
@@ -13847,11 +13846,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WrapWithCollectionLiteral extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInWrapWithCollectionLiteral() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/wrapWithCollectionLiteral"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("inAnnotation.kt")
@@ -13930,11 +13929,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WrongPrimitive extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInWrongPrimitive() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/wrongPrimitive"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch/wrongPrimitive"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("doubleToIntDecimalPlaces.kt")
@@ -14014,11 +14013,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeOfAnnotationMember extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInTypeOfAnnotationMember() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeOfAnnotationMember"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeOfAnnotationMember"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("boolean.kt")
@@ -14072,11 +14071,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeParameters extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInTypeParameters() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("misplacedClassTypeParameter.kt")
@@ -14095,11 +14094,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeProjection extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInTypeProjection() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeProjection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeProjection"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("conflictingProjection.kt")
@@ -14143,11 +14142,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UnnecessaryLateinit extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInUnnecessaryLateinit() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/unnecessaryLateinit"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/unnecessaryLateinit"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("lateinitWithConstructor.kt")
@@ -14186,11 +14185,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class UnusedSuppressAnnotation extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInUnusedSuppressAnnotation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/unusedSuppressAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/unusedSuppressAnnotation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("notForDeprecated.kt")
@@ -14219,11 +14218,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Variables extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInVariables() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("unusedVariableWithAnonymousFunctionInitialize1.kt")
@@ -14276,11 +14275,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ChangeMutability extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInChangeMutability() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("capturedMemberValInitialization.kt")
@@ -14343,11 +14342,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             public static class CanBeVal extends AbstractQuickFixTest {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInCanBeVal() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability/canBeVal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability/canBeVal"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
                 }
 
                 @TestMetadata("const.kt")
@@ -14387,11 +14386,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ChangeToFunctionInvocation extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInChangeToFunctionInvocation() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToFunctionInvocation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToFunctionInvocation"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("funInvWithoutParentheses.kt")
@@ -14430,11 +14429,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ChangeToPropertyAccess extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInChangeToPropertyAccess() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToPropertyAccess"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeToPropertyAccess"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("enumEntryCall.kt")
@@ -14468,11 +14467,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class RemoveValVarFromParameter extends AbstractQuickFixTest {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInRemoveValVarFromParameter() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/removeValVarFromParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/removeValVarFromParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
             @TestMetadata("catchParameter.kt")
@@ -14517,7 +14516,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class When extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("addElseBranchEnumStatement.kt")
@@ -14596,7 +14595,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
 
         public void testAllFilesPresentInWhen() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/when"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/when"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("breakInWhen.kt")
@@ -14665,11 +14664,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WrapWithSafeLetCall extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInWrapWithSafeLetCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/wrapWithSafeLetCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/wrapWithSafeLetCall"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("argumentNullable.kt")
@@ -14738,11 +14737,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WrongLongSuffix extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInWrongLongSuffix() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/wrongLongSuffix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/wrongLongSuffix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("simple.kt")
@@ -14756,11 +14755,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class YieldUnsupported extends AbstractQuickFixTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInYieldUnsupported() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/yieldUnsupported"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/yieldUnsupported"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
         @TestMetadata("yieldAsSimpleName.kt")

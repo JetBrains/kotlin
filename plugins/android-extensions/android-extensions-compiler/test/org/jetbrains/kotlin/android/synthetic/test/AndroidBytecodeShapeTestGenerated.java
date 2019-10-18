@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.android.synthetic.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeShapeTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     @TestMetadata("activityWithEntityOptionsNoCache")
@@ -31,7 +30,7 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
     }
 
     public void testAllFilesPresentInBytecodeShape() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/codegen/bytecodeShape"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
     @TestMetadata("baseClass")

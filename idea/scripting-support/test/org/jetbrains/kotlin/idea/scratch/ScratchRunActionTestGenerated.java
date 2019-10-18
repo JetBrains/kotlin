@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.scratch;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -24,11 +23,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ScratchCompiling extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doScratchCompilingTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doScratchCompilingTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInScratchCompiling() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), false);
         }
 
         @TestMetadata("for.kts")
@@ -112,11 +111,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ScratchRepl extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doScratchReplTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doScratchReplTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInScratchRepl() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch"), Pattern.compile("^(.+)\\.kts$"), false);
         }
 
         @TestMetadata("for.kts")
@@ -200,11 +199,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ScratchMultiFile extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doScratchMultiFileTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doScratchMultiFileTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInScratchMultiFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/multiFile"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("inlineFun")
@@ -223,11 +222,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WorksheetCompiling extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doWorksheetCompilingTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doWorksheetCompilingTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInWorksheetCompiling() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), false);
         }
 
         @TestMetadata("simpleScriptRuntime.ws.kts")
@@ -241,11 +240,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WorksheetRepl extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doWorksheetReplTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doWorksheetReplTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInWorksheetRepl() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet"), Pattern.compile("^(.+)\\.ws.kts$"), false);
         }
 
         @TestMetadata("simpleScriptRuntime.ws.kts")
@@ -259,11 +258,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class WorksheetMultiFile extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doWorksheetMultiFileTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doWorksheetMultiFileTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInWorksheetMultiFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet/multiFile"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/worksheet/multiFile"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("inlineFunScriptRuntime")
@@ -282,11 +281,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ScratchRightPanelOutput extends AbstractScratchRunActionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doRightPreviewPanelOutputTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doRightPreviewPanelOutputTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInScratchRightPanelOutput() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/rightPanelOutput"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/rightPanelOutput"), Pattern.compile("^(.+)\\.kts$"), false);
         }
 
         @TestMetadata("bigSequentialOutputs.kts")

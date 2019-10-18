@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.intentions.declarations;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInJoinLines() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("idea/testData/joinLines/addSemicolon")
@@ -34,11 +33,11 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddSemicolon extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddSemicolon() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/addSemicolon"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/addSemicolon"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("ClassDeclarations.kt")
@@ -132,11 +131,11 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DeclarationAndAssignment extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInDeclarationAndAssignment() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/declarationAndAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("blankLineBetween.kt")
@@ -230,11 +229,11 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class InitializerAndIfToElvis extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInInitializerAndIfToElvis() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/initializerAndIfToElvis"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/initializerAndIfToElvis"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("simple.kt")
@@ -248,11 +247,11 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class NestedIfs extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInNestedIfs() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/nestedIfs"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/nestedIfs"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("BlockBody.kt")
@@ -291,11 +290,11 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class RemoveBraces extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInRemoveBraces() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/removeBraces"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/removeBraces"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("CommentAfterStatement.kt")
@@ -399,11 +398,11 @@ public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StringTemplate extends AbstractJoinLinesTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInStringTemplate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/joinLines/stringTemplate"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("firstLineVariable.kt")

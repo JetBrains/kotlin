@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.perf;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class PerformanceKeywordCompletionHandlerTestGenerated extends AbstractPerformanceKeywordCompletionHandlerTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doPerfTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
     }
 
     @TestMetadata("AddCompanionToObject.kt")
@@ -31,7 +30,7 @@ public class PerformanceKeywordCompletionHandlerTestGenerated extends AbstractPe
     }
 
     public void testAllFilesPresentInKeywords() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/keywords"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/keywords"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("Break.kt")

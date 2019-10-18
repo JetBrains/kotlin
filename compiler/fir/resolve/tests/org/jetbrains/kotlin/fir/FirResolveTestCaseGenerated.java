@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true, "stdlib", "cfg", "smartcasts");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), true, "stdlib", "cfg", "smartcasts");
     }
 
     @TestMetadata("cast.kt")
@@ -219,11 +218,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Arguments extends AbstractFirResolveTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInArguments() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("default.kt")
@@ -252,11 +251,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Builtins extends AbstractFirResolveTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInBuiltins() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/builtins"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("lists.kt")
@@ -270,7 +269,7 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Expresssions extends AbstractFirResolveTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("access.kt")
@@ -279,7 +278,7 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         }
 
         public void testAllFilesPresentInExpresssions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("checkArguments.kt")
@@ -402,11 +401,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Inference extends AbstractFirResolveTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInInference() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/inference"), Pattern.compile("^([^.]+)\\.kt$"), true);
             }
 
             @TestMetadata("id.kt")
@@ -430,11 +429,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Invoke extends AbstractFirResolveTestCase {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInInvoke() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/expresssions/invoke"), Pattern.compile("^([^.]+)\\.kt$"), true);
             }
 
             @TestMetadata("explicitReceiver.kt")
@@ -484,11 +483,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FromBuilder extends AbstractFirResolveTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInFromBuilder() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/fromBuilder"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("complexTypes.kt")
@@ -522,11 +521,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Multifile extends AbstractFirResolveTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMultifile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/multifile"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("Annotations.kt")
@@ -590,11 +589,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Nested extends AbstractFirResolveTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInNested() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/nested"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/nested"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("inner.kt")
@@ -613,11 +612,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Overrides extends AbstractFirResolveTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInOverrides() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/overrides"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("generics.kt")
@@ -646,11 +645,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class References extends AbstractFirResolveTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInReferences() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/references"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("simple.kt")

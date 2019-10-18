@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.debugger.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -24,11 +23,11 @@ public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SingleFile extends AbstractPositionManagerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSingleFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/positionManager"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/positionManager"), Pattern.compile("^(.+)\\.kt$"), false);
         }
 
         @TestMetadata("anonymousFunction.kt")
@@ -137,11 +136,11 @@ public class PositionManagerTestGenerated extends AbstractPositionManagerTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MultiFile extends AbstractPositionManagerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMultiFile() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/positionManager"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/positionManager"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("multiFilePackage")

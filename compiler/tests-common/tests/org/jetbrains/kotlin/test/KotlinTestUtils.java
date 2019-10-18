@@ -707,7 +707,6 @@ public class KotlinTestUtils {
         void invoke(@NotNull String filePath) throws Exception;
     }
 
-    @SuppressWarnings("unused")
     public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) throws Exception {
         runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFile);
     }

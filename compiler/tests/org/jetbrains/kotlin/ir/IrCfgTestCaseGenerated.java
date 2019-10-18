@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInIrCfg() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("expressionFun.kt")
@@ -64,11 +63,11 @@ public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Loop extends AbstractIrCfgTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInLoop() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg/loop"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg/loop"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("digitCount.kt")
@@ -92,11 +91,11 @@ public class IrCfgTestCaseGenerated extends AbstractIrCfgTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class When extends AbstractIrCfgTestCase {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInWhen() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg/when"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irCfg/when"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("cascadeIf.kt")

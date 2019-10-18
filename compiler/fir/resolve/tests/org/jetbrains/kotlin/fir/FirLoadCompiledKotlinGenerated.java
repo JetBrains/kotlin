@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotlin {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInCompiledKotlin() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("compiler/testData/loadJava/compiledKotlin/annotations")
@@ -34,11 +33,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotations extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("AnnotatedAnnotation.kt")
@@ -91,11 +90,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class ClassMembers extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInClassMembers() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classMembers"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("ClassObjectPropertyField.kt")
@@ -159,11 +158,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Classes extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInClasses() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("AnnotationInClassObject.kt")
@@ -247,11 +246,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PackageMembers extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInPackageMembers() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/packageMembers"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("DelegatedProperty.kt")
@@ -300,11 +299,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Parameters extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInParameters() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/parameters"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("Constructor.kt")
@@ -373,11 +372,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class PropertiesWithoutBackingFields extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInPropertiesWithoutBackingFields() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/propertiesWithoutBackingFields"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("Class.kt")
@@ -426,11 +425,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Types extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInTypes() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/types"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/types"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("ClassLiteralArgument.kt")
@@ -484,11 +483,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class WithUseSiteTarget extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInWithUseSiteTarget() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/annotations/withUseSiteTarget"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("DelegateTarget.kt")
@@ -518,11 +517,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Class extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("Class.kt")
@@ -710,11 +709,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class JavaBean extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInJavaBean() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class/javaBean"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/class/javaBean"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("DifferentGetterAndSetter.kt")
@@ -754,11 +753,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassFun extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInClassFun() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classFun"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("ClassInParamUsedInFun.kt")
@@ -792,11 +791,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ClassObject extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInClassObject() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/classObject"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("ClassObjectDeclaresVal.kt")
@@ -870,11 +869,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Constructor extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInConstructor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("Constructor0.kt")
@@ -962,11 +961,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Vararg extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInVararg() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/constructor/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("ConstructorNonLastVararg.kt")
@@ -986,11 +985,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Coroutines extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCoroutines() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/coroutines"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("Basic.kt")
@@ -1004,11 +1003,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DataClass extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInDataClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/dataClass"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("MixedComponents.kt")
@@ -1037,11 +1036,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Enum extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInEnum() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("enumVisibility.kt")
@@ -1080,11 +1079,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class FromLoadJava extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInFromLoadJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("ArrayTypeVariance.kt")
@@ -1262,7 +1261,7 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class KotlinSignature extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             @TestMetadata("AllBoundsInWhen.kt")
@@ -1271,7 +1270,7 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
             }
 
             public void testAllFilesPresentInKotlinSignature() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("ArrayType.kt")
@@ -1354,7 +1353,7 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Error extends AbstractFirLoadCompiledKotlin {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 @TestMetadata("AddingNullability.kt")
@@ -1363,7 +1362,7 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
                 }
 
                 public void testAllFilesPresentInError() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/error"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("ConflictingProjectionKind.kt")
@@ -1502,11 +1501,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Propagation extends AbstractFirLoadCompiledKotlin {
                 private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInPropagation() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
                 @TestMetadata("PropagateTypeArgumentNullable.kt")
@@ -1519,11 +1518,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Parameter extends AbstractFirLoadCompiledKotlin {
                     private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
                     public void testAllFilesPresentInParameter() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/parameter"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
 
                     @TestMetadata("ChangeProjectionKind1.kt")
@@ -1662,7 +1661,7 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class Return extends AbstractFirLoadCompiledKotlin {
                     private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
                     @TestMetadata("AddNotNullJavaSubtype.kt")
@@ -1696,7 +1695,7 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
                     }
 
                     public void testAllFilesPresentInReturn() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/return"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
 
                     @TestMetadata("CantMakeImmutableInSubclass.kt")
@@ -1845,11 +1844,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
                 @RunWith(JUnit3RunnerWithInners.class)
                 public static class TypeParameter extends AbstractFirLoadCompiledKotlin {
                     private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
                     public void testAllFilesPresentInTypeParameter() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/kotlinSignature/propagation/typeParameter"), Pattern.compile("^(.+)\\.kt$"), true);
                     }
 
                     @TestMetadata("InheritMutability.kt")
@@ -1905,11 +1904,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Library extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInLibrary() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/library"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("LoadIterable.kt")
@@ -1933,11 +1932,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Modality extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInModality() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/modality"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("ModalityOfFakeOverrides.kt")
@@ -1951,11 +1950,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NotNull extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInNotNull() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fromLoadJava/notNull"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("NotNullField.kt")
@@ -1990,11 +1989,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Fun extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInFun() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("Assert.kt")
@@ -2057,11 +2056,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class GenericWithTypeVariables extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInGenericWithTypeVariables() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithTypeVariables"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("FunGenericParam.kt")
@@ -2120,11 +2119,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class GenericWithoutTypeVariables extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInGenericWithoutTypeVariables() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/genericWithoutTypeVariables"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("FunClassParamNotNull.kt")
@@ -2158,11 +2157,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class NonGeneric extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInNonGeneric() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/nonGeneric"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("ClassFun.kt")
@@ -2251,11 +2250,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Vararg extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInVararg() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/fun/vararg"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("nonLastVararg.kt")
@@ -2280,11 +2279,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Inline extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInInline() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/inline"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/inline"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("inlineFunction.kt")
@@ -2298,11 +2297,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MemberOrder extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMemberOrder() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/memberOrder"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("callablesNameClash.kt")
@@ -2341,11 +2340,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Nested extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInNested() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nested"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nested"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("deepInnerGeneric.kt")
@@ -2369,11 +2368,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PlatformTypes extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInPlatformTypes() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("notnullTypeArgument.kt")
@@ -2392,11 +2391,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Prop extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInProp() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("ClassVal.kt")
@@ -2574,11 +2573,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
         @RunWith(JUnit3RunnerWithInners.class)
         public static class DefaultAccessors extends AbstractFirLoadCompiledKotlin {
             private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             public void testAllFilesPresentInDefaultAccessors() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("ClassVal.kt")
@@ -2638,11 +2637,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Type extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/type"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/type"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("Any.kt")
@@ -2806,11 +2805,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Typealias extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInTypealias() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/typealias"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/typealias"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("Annotations.kt")
@@ -2839,11 +2838,11 @@ public class FirLoadCompiledKotlinGenerated extends AbstractFirLoadCompiledKotli
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Visibility extends AbstractFirLoadCompiledKotlin {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInVisibility() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("InternalClass.kt")

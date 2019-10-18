@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.script;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -24,7 +23,7 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Highlighting extends AbstractScriptConfigurationHighlightingTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("acceptedAnnotations")
@@ -38,7 +37,7 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
         }
 
         public void testAllFilesPresentInHighlighting() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/highlighting"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/highlighting"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("asyncResolver")
@@ -137,11 +136,11 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Complex extends AbstractScriptConfigurationHighlightingTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doComplexTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doComplexTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInComplex() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/complex"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/script/definition/complex"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("errorResolver")

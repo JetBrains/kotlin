@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.scratch;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScratchLineMarkersTestGenerated extends AbstractScratchLineMarkersTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doScratchTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doScratchTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInLineMarker() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/lineMarker"), Pattern.compile("^(.+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/scripting-support/testData/scratch/lineMarker"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
     }
 
     @TestMetadata("binaryExpression.kts")

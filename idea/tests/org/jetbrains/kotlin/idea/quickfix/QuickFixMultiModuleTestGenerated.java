@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.quickfix;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModuleTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInMultiModuleQuickFix() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
     @TestMetadata("idea/testData/multiModuleQuickFix/accessibilityChecker")
@@ -34,11 +33,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AccessibilityChecker extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAccessibilityChecker() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/accessibilityChecker"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/accessibilityChecker"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("classPrimaryConstructor")
@@ -132,11 +131,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddMissingActualMembers extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAddMissingActualMembers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/addMissingActualMembers"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/addMissingActualMembers"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("classFunction")
@@ -215,7 +214,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ChangeSignature extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("actual")
@@ -224,7 +223,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
 
         public void testAllFilesPresentInChangeSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/changeSignature"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/changeSignature"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("expect")
@@ -268,7 +267,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CreateActual extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("abstract")
@@ -282,7 +281,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
 
         public void testAllFilesPresentInCreateActual() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/createActual"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/createActual"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("annotation")
@@ -451,11 +450,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CreateExpect extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCreateExpect() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/createExpect"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/createExpect"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("annotation")
@@ -744,7 +743,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @RunWith(JUnit3RunnerWithInners.class)
     public static class MakeOverridenMemberOpen extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("actual")
@@ -753,7 +752,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
 
         public void testAllFilesPresentInMakeOverridenMemberOpen() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/makeOverridenMemberOpen"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/makeOverridenMemberOpen"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("expect")
@@ -777,7 +776,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Other extends AbstractQuickFixMultiModuleTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("actualImplementAsConstructorParam")
@@ -826,7 +825,7 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
 
         public void testAllFilesPresentInOther() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/other"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/other"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
         @TestMetadata("convertActualEnumToSealedClass")
