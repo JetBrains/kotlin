@@ -483,7 +483,6 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (2)
           INVOKESTATIC (OptionalUser, access$prop$getUser$2, (LOptionalUser;)LUser;)
           INVOKEINTERFACE (kotlinx/serialization/CompositeEncoder, encodeSerializableElement, (Lkotlinx/serialization/SerialDescriptor;ILkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V)
-          GOTO (L6)
         LABEL (L6)
           ALOAD (4)
           ALOAD (3)
@@ -618,10 +617,8 @@ public final class OptionalUser : java/lang/Object {
         LABEL (L0)
           ALOAD (0)
           ACONST_NULL
-          CHECKCAST
           ICONST_1
           ACONST_NULL
-          CHECKCAST
           INVOKESPECIAL (OptionalUser, <init>, (LUser;ILkotlin/jvm/internal/DefaultConstructorMarker;)V)
           RETURN
         LABEL (L1)
