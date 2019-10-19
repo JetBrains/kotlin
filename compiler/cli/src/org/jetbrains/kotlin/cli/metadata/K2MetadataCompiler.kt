@@ -110,8 +110,7 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         return ExitCode.OK
     }
 
-    // TODO: update this once a launcher script for K2MetadataCompiler is available
-    override fun executableScriptFileName(): String = "kotlinc"
+    override fun executableScriptFileName(): String = "kotlinc-metadata"
 
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion = BuiltInsBinaryVersion(*versionArray)
 
