@@ -161,7 +161,7 @@ class CodeToInlineBuilder(
 
             //TODO: other types of references ('[]' etc)
             if (expression.canBeResolvedViaImport(target, bindingContext)) {
-                val importableFqName = if (target.isCompanionObject() && target.name.asString() == "Companion") {
+                val importableFqName = if (target.isCompanionObject()) {
                     target.containingDeclaration?.importableFqName
                 } else {
                     target.importableFqName
