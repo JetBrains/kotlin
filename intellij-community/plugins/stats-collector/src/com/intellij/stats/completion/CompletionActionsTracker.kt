@@ -2,6 +2,7 @@
 
 package com.intellij.stats.completion
 
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupEvent
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.openapi.application.ApplicationManager
@@ -29,19 +30,13 @@ class CompletionActionsTracker(private val lookup: LookupImpl,
 
         val timestamp = System.currentTimeMillis()
         deferredLog.log()
-        val items = lookup.items
         val currentItem = lookup.currentItem
         val performance = lookupStorage.performanceTracker.measurements()
-        if (currentItem == null) {
-            logger.completionCancelled(performance, timestamp)
-            return
-        }
 
-        val prefix = lookup.itemPattern(currentItem)
-        val wasTyped = items.firstOrNull()?.lookupString?.equals(prefix) ?: false
-        if (wasTyped || selectedByDotTyping) {
+        if (isSelectedByTyping(currentItem) || selectedByDotTyping) {
             logger.itemSelectedByTyping(lookup, performance, timestamp)
-        } else {
+        }
+        else {
             logger.completionCancelled(performance, timestamp)
         }
     }
@@ -66,7 +61,13 @@ class CompletionActionsTracker(private val lookup: LookupImpl,
 
         val timestamp = System.currentTimeMillis()
         deferredLog.log()
-        logger.itemSelectedCompletionFinished(lookup, lookupStorage.performanceTracker.measurements(), timestamp)
+        val performance = lookupStorage.performanceTracker.measurements()
+        if (isSelectedByTyping(lookup.currentItem)) {
+            logger.itemSelectedByTyping(lookup, performance, timestamp)
+        }
+        else {
+            logger.itemSelectedCompletionFinished(lookup, performance, timestamp)
+        }
     }
 
     override fun beforeDownPressed() {
@@ -140,5 +141,13 @@ class CompletionActionsTracker(private val lookup: LookupImpl,
         deferredLog.defer {
             logger.afterCharTyped(c, lookup, timestamp)
         }
+    }
+
+    private fun isSelectedByTyping(item: LookupElement?): Boolean {
+        if (item != null) {
+            val pattern = lookup.itemPattern(item)
+            return item.lookupString == pattern
+        }
+        return false
     }
 }

@@ -19,6 +19,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.stats.completion.Action.*
 import com.intellij.stats.completion.events.ExplicitSelectEvent
+import com.intellij.stats.completion.events.LogEvent
+import com.intellij.stats.completion.events.TypedSelectEvent
 import org.assertj.core.api.Assertions.assertThat
 
 
@@ -42,7 +44,7 @@ class CompletionEventsLoggingTest : CompletionLoggingTestBase() {
           TYPE,
           TYPE,
           TYPE,
-          EXPLICIT_SELECT //should be TYPED_SELECT investigate
+          TYPED_SELECT
         )
 
         checkLoggedAllElements(itemsOnStart)
@@ -57,8 +59,15 @@ class CompletionEventsLoggingTest : CompletionLoggingTestBase() {
     private fun checkSelectedCorrectId(itemsOnStart: MutableList<LookupElement>, selectedString: String) {
         val selectedIndex = itemsOnStart.indexOfFirst { it.lookupString == selectedString }
         val selectedId = completionStartedEvent.completionListIds[selectedIndex]
-        val select = trackedEvents.last() as ExplicitSelectEvent
-        assertThat(select.selectedId).isEqualTo(selectedId)
+        assertThat(trackedEvents.last().extractSelectedId()).isEqualTo(selectedId)
+    }
+
+    private fun LogEvent.extractSelectedId(): Int? {
+        return when (this) {
+            is ExplicitSelectEvent -> selectedId
+            is TypedSelectEvent -> selectedId
+            else -> null
+        }
     }
 
     fun `test wrong typing`() {
@@ -142,10 +151,26 @@ class CompletionEventsLoggingTest : CompletionLoggingTestBase() {
 
         trackedEvents.assertOrder(
           COMPLETION_STARTED,
+          TYPED_SELECT
+        )
+
+        checkSelectedCorrectId(elementsOnStart, "r")
+        checkLoggedAllElements(elementsOnStart)
+    }
+
+    fun `test dot selection logs as explicit select`() {
+        myFixture.completeBasic()
+        val elementsOnStart = lookup.items
+        myFixture.type('u')
+        myFixture.type('.')
+
+        trackedEvents.assertOrder(
+          COMPLETION_STARTED,
+          TYPE,
           EXPLICIT_SELECT
         )
 
+        checkSelectedCorrectId(elementsOnStart, "run")
         checkLoggedAllElements(elementsOnStart)
     }
-    
 }
