@@ -94,7 +94,7 @@ class ProcessStreamsSynchronizer {
   }
 
   boolean isProcessingScheduled() {
-    return myAlarm.isEmpty();
+    return !myAlarm.isEmpty();
   }
 
   long getNanoTime() {
