@@ -7,6 +7,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.encoding.EncodingManager;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -113,6 +114,12 @@ public class ConsoleViewRunningState extends ConsoleState {
   @Override
   public ConsoleState attachTo(@NotNull final ConsoleViewImpl console, final ProcessHandler processHandler) {
     return dispose().attachTo(console, processHandler);
+  }
+
+  @TestOnly
+  @NotNull
+  ProcessStreamsSynchronizer getStreamsSynchronizer() {
+    return myStreamsSynchronizer;
   }
 
   @Override

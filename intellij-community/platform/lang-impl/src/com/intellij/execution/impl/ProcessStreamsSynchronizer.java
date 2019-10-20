@@ -8,6 +8,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Alarm;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +159,26 @@ class ProcessStreamsSynchronizer {
     myLastFlushedChunkBaseOutputType = chunk.myBaseOutputType;
     myLastFlushedChunkCreatedNanoTime = chunk.myCreatedNanoTime;
     chunk.myFlushRunnable.run();
+  }
+
+  @TestOnly
+  void waitForAllFlushed() {
+    while (true) {
+      synchronized (myLock) {
+        if (myPendingChunks.isEmpty()) {
+          return;
+        }
+        if (myAlarm.isEmpty()) {
+          throw new RuntimeException("No requests scheduled");
+        }
+      }
+      try {
+        myAlarm.waitForAllExecuted(10, TimeUnit.SECONDS);
+      }
+      catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 
   private static class Chunk {

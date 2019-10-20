@@ -1507,6 +1507,12 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     return myState.isRunning();
   }
 
+  @TestOnly
+  @NotNull
+  ConsoleState getState() {
+    return myState;
+  }
+
   /**
    * Command line used to launch application/test from idea may be quite long.
    * Hence, it takes many visual lines during representation if soft wraps are enabled
