@@ -15,6 +15,9 @@ class JavaLanguageRuntimeUI(val config: JavaLanguageRuntimeConfiguration) :
       row("JDK home path:") {
         textField(config::homePath)
       }
+      row("JDK version:") {
+        textField(config::javaVersionString)
+      }
       /*row("Application folder:") {
         textField(config::applicationFolder)
       }*/
