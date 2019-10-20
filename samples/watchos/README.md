@@ -5,9 +5,13 @@ iWatch or simulator.
 
 To build and run the sample do the following:
 
+0.  Optional: install Kotlin Xcode plugin: https://github.com/touchlab/xcode-kotlin to have
+    syntax highlighting and better debugging support.
+
 1.  Open `watchosSample.xcodeproj` set development team to your own and make bundle ID unique
     in project setting.
    or
+
 1a.  Similarly modify `bundleIdPrefix`, `DEVELOPMENT_TEAM` and `WKAppBundleIdentifier` in `project.yml`
     and generate Xcode project with `xcodegen` (https://github.com/yonaskolb/XcodeGen/).
     Open generated `watchosSample.xcodeproj` with Xcode.
