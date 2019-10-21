@@ -207,14 +207,23 @@ data class KotlinWebpackConfig(
     private fun Appendable.appendEntry() {
         if (entry == null || outputPath == null) return
 
+        val multiEntryOutput = "${outputFileName!!.removeSuffix(".js")}-[name].js"
+
         //language=JavaScript 1.8
         appendln(
             """
                 // entry
-                config.entry = ${entry.canonicalPath.jsQuoted()};
+                config.entry = {
+                    main: [${entry.canonicalPath.jsQuoted()}]
+                };
+                
                 config.output = {
                     path: ${outputPath.canonicalPath.jsQuoted()},
-                    filename: ${outputFileName!!.jsQuoted()}
+                    filename: (chunkData) => {
+                        return chunkData.chunk.name === 'main'
+                            ? ${outputFileName.jsQuoted()}
+                            : ${multiEntryOutput.jsQuoted()};
+                    }
                 };
                 
             """.trimIndent()
