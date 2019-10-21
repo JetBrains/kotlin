@@ -118,6 +118,8 @@ class FirDeserializationContext(
 class FirDeserializationComponents
 
 class FirMemberDeserializer(private val c: FirDeserializationContext) {
+    private val contractDeserializer = FirContractDeserializer(c)
+
     private fun loadOldFlags(oldFlags: Int): Int {
         val lowSixBits = oldFlags and 0x3f
         val rest = (oldFlags shr 8) shl 6
@@ -221,7 +223,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
 
         // TODO: support contracts
-        return FirSimpleFunctionImpl(
+
+        val simpleFunction = FirSimpleFunctionImpl(
             null,
             c.session,
             proto.returnType(local.typeTable).toTypeRef(local),
@@ -235,6 +238,13 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
             annotations += local.annotationDeserializer.loadFunctionAnnotations(proto, local.nameResolver)
         }
+        if (proto.hasContract()) {
+            val contractDescription = contractDeserializer.loadContract(proto.contract, simpleFunction)
+            if (contractDescription != null) {
+                simpleFunction.contractDescription = contractDescription
+            }
+        }
+        return simpleFunction
     }
 
     fun loadConstructor(proto: ProtoBuf.Constructor, klass: FirRegularClass): FirConstructor {
