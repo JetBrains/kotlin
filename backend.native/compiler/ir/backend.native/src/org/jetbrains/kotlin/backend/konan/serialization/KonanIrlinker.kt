@@ -64,7 +64,7 @@ class KonanIrLinker(
 
     override fun checkAccessibility(declarationDescriptor: DeclarationDescriptor) = true
 
-    override fun handleNoModuleDeserializerFound(key: UniqId): DeserializationState {
+    override fun handleNoModuleDeserializerFound(key: UniqId): DeserializationState<*> {
         return globalDeserializationState
     }
 
