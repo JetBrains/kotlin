@@ -176,10 +176,10 @@ open class KotlinUClass private constructor(
 }
 
 open class KotlinConstructorUMethod(
-        private val ktClass: KtClassOrObject?,
-        override val psi: KtLightMethod,
-        givenParent: UElement?
-) : KotlinUMethod(psi, givenParent) {
+    private val ktClass: KtClassOrObject?,
+    override val psi: KtLightMethod,
+    givenParent: UElement?
+) : KotlinUMethod(psi, psi.kotlinOrigin, givenParent) {
 
     val isPrimary: Boolean
         get() = psi.kotlinOrigin.let { it is KtPrimaryConstructor || it is KtClassOrObject }
@@ -215,8 +215,6 @@ open class KotlinConstructorUMethod(
     }
 
     override val javaPsi = psi
-
-    override val sourcePsi = psi.kotlinOrigin
 
     open protected fun getBodyExpressions(): List<KtExpression> {
         if (isPrimary) return getInitializers()
@@ -307,16 +305,15 @@ class KotlinScriptUClass(
     override fun getOriginalElement(): PsiElement? = psi.originalElement
 
     class KotlinScriptConstructorUMethod(
-            script: KtScript,
-            override val psi: KtLightMethod,
-            givenParent: UElement?
-    ) : KotlinUMethod(psi, givenParent) {
+        script: KtScript,
+        override val psi: KtLightMethod,
+        givenParent: UElement?
+    ) : KotlinUMethod(psi, psi.kotlinOrigin, givenParent) {
         override val uastBody: UExpression? by lz {
             val initializers = script.declarations.filterIsInstance<KtScriptInitializer>()
             KotlinUBlockExpression.create(initializers, this)
         }
         override val javaPsi = psi
-        override val sourcePsi = psi.kotlinOrigin
     }
 }
 

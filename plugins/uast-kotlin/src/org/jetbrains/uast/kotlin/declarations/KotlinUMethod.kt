@@ -16,41 +16,39 @@
 
 package org.jetbrains.uast.kotlin.declarations
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isGetter
 import org.jetbrains.kotlin.asJava.elements.isSetter
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.uast.*
 import org.jetbrains.uast.java.internal.JavaUElementWithComments
 import org.jetbrains.uast.kotlin.*
 
 open class KotlinUMethod(
-        psi: KtLightMethod,
-        givenParent: UElement?
-) : KotlinAbstractUElement(givenParent), UAnnotationMethod, UMethodTypeSpecific, UAnchorOwner, JavaUElementWithComments, PsiMethod by psi {
+    psi: PsiMethod,
+    final override val sourcePsi: KtDeclaration?,
+    givenParent: UElement?
+) : KotlinAbstractUElement(givenParent), UMethodTypeSpecific, UAnchorOwner, JavaUElementWithComments, PsiMethod by psi {
+
+    constructor(psi: KtLightMethod, givenParent: UElement?) : this(psi, psi.kotlinOrigin, givenParent)
+
     override val comments: List<UComment>
         get() = super<KotlinAbstractUElement>.comments
 
-    override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
+    override val psi: PsiMethod = unwrap<UMethod, PsiMethod>(psi)
 
     override val javaPsi = psi
 
-    override val sourcePsi = psi.kotlinOrigin
-
     override fun getSourceElement() = sourcePsi ?: this
 
-    override val uastDefaultValue by lz {
-        val annotationParameter = psi.kotlinOrigin as? KtParameter ?: return@lz null
-        val defaultValue = annotationParameter.defaultValue ?: return@lz null
-        getLanguagePlugin().convertElement(defaultValue, this) as? UExpression
-    }
-
-    private val kotlinOrigin = (psi.originalElement as KtLightElement<*, *>).kotlinOrigin
+    private val kotlinOrigin = (psi.originalElement as? KtLightElement<*, *>)?.kotlinOrigin ?: sourcePsi
 
     override fun getContainingFile(): PsiFile? = unwrapFakeFileForLightClass(psi.containingFile)
 
@@ -95,8 +93,8 @@ open class KotlinUMethod(
         val bodyExpression = when (kotlinOrigin) {
             is KtFunction -> kotlinOrigin.bodyExpression
             is KtProperty -> when {
-                psi.isGetter -> kotlinOrigin.getter?.bodyExpression
-                psi.isSetter -> kotlinOrigin.setter?.bodyExpression
+                psi is KtLightMethod && psi.isGetter -> kotlinOrigin.getter?.bodyExpression
+                psi is KtLightMethod && psi.isSetter -> kotlinOrigin.setter?.bodyExpression
                 else -> null
             }
             else -> null
@@ -105,9 +103,6 @@ open class KotlinUMethod(
         wrapExpressionBody(this, bodyExpression)
     }
 
-    override fun getBody(): PsiCodeBlock? = super<UAnnotationMethod>.getBody()
-
-    override fun getOriginalElement(): PsiElement? = super<UAnnotationMethod>.getOriginalElement()
 
     override val returnTypeReference: UTypeReferenceExpression? by lz {
         (sourcePsi as? KtCallableDeclaration)?.typeReference?.let {
@@ -118,16 +113,36 @@ open class KotlinUMethod(
     override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
 
     companion object {
-        fun create(psi: KtLightMethod, containingElement: UElement?) =
-                if (psi.kotlinOrigin is KtConstructor<*>) {
-                    KotlinConstructorUMethod(
-                            psi.kotlinOrigin?.containingClassOrObject,
-                            psi, containingElement
-                    )
-                }
-                else
-                    KotlinUMethod(psi, containingElement)
+        fun create(psi: KtLightMethod, containingElement: UElement?): KotlinUMethod {
+            val kotlinOrigin = psi.kotlinOrigin
+            return if (kotlinOrigin is KtConstructor<*>) {
+                KotlinConstructorUMethod(
+                    kotlinOrigin.containingClassOrObject,
+                    psi,
+                    containingElement
+                )
+            } else if (kotlinOrigin is KtParameter && kotlinOrigin.getParentOfType<KtClass>(true)?.isAnnotation() == true)
+                KotlinUAnnotationMethod(psi, containingElement)
+            else
+                KotlinUMethod(psi, containingElement)
+        }
     }
+}
+
+open class KotlinUAnnotationMethod(
+    psi: KtLightMethod,
+    givenParent: UElement?
+) : KotlinUMethod(psi, psi.kotlinOrigin, givenParent), UAnnotationMethod {
+
+    override val psi: KtLightMethod = unwrap<UMethod, KtLightMethod>(psi)
+
+    override val uastDefaultValue by lz {
+        val annotationParameter = sourcePsi as? KtParameter ?: return@lz null
+        val defaultValue = annotationParameter.defaultValue ?: return@lz null
+        getLanguagePlugin().convertElement(defaultValue, this) as? UExpression
+    }
+
+
 }
 
 internal fun wrapExpressionBody(function: UElement, bodyExpression: KtExpression): UExpression? = when (bodyExpression) {

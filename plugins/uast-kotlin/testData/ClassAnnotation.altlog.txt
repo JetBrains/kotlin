@@ -8,7 +8,7 @@
         [1]:[UIdentifier (Identifier (A))]
     [1]:[UClass (name = MyAnnotation)]
         [1]:[UIdentifier (Identifier (MyAnnotation))]
-        [1]:[UDeclarationsExpression]
+        [1]:[UMethod (name = MyAnnotation)]
             [1]:[UDeclarationsExpression]
                 [1]:[UAnnotationMethod (name = text)]
                     [1]:[UIdentifier (Identifier (text))]

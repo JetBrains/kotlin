@@ -1,10 +1,10 @@
 UFile (package = )
     UClass (name = LocalDeclarationsKt)
-        UAnnotationMethod (name = foo)
+        UMethod (name = foo)
             UBlockExpression
                 UDeclarationsExpression
                     UClass (name = Local)
-                        UAnnotationMethod (name = LocalDeclarationsKt$foo$Local)
+                        UMethod (name = LocalDeclarationsKt$foo$Local)
                 UDeclarationsExpression
                     UVariable (name = bar)
                         ULambdaExpression
@@ -32,7 +32,7 @@ UFile (package = )
                     UClass (name = LocalObject)
                         UField (name = INSTANCE)
                             UAnnotation (fqName = null)
-                        UAnnotationMethod (name = LocalDeclarationsKt$foo$LocalObject)
+                        UMethod (name = LocalDeclarationsKt$foo$LocalObject)
                 UReturnExpression
                     UBinaryExpression (operator = ==)
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))

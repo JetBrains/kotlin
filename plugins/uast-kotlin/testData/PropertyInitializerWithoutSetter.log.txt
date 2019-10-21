@@ -3,10 +3,10 @@ UFile (package = )
         UField (name = withoutSetter)
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             ULiteralExpression (value = "/sdcard")
-        UAnnotationMethod (name = getWithoutSetter)
+        UMethod (name = getWithoutSetter)
             UBlockExpression
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = field)
-        UAnnotationMethod (name = setWithoutSetter)
+        UMethod (name = setWithoutSetter)
             UParameter (name = p)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)

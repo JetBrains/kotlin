@@ -21,8 +21,8 @@ UFile (package = )
                             UBinaryExpression (operator = +)
                                 ULiteralExpression (value = 1)
                                 ULiteralExpression (value = 1)
-        UAnnotationMethod (name = getSdCardPath)
-        UAnnotationMethod (name = localPropertyTest)
+        UMethod (name = getSdCardPath)
+        UMethod (name = localPropertyTest)
             UBlockExpression
                 UDeclarationsExpression
                     ULocalVariable (name = sdCardPathLocal)
@@ -33,4 +33,4 @@ UFile (package = )
                                 UBlockExpression
                                     UReturnExpression
                                         ULiteralExpression (value = "/sdcard")
-        UAnnotationMethod (name = getAnnotatedDelegate)
+        UMethod (name = getAnnotatedDelegate)

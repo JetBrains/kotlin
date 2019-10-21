@@ -17,7 +17,7 @@ UFile (package = ) [public final class StringTemplateKt {...]
                 USimpleNameReferenceExpression (identifier = bar) [bar] : PsiType:String
                 ULiteralExpression (value = " ") [" "] : PsiType:String
                 USimpleNameReferenceExpression (identifier = baz) [baz] : PsiType:String
-        UAnnotationMethod (name = getFoo) [public static final fun getFoo() : java.lang.String = UastEmptyExpression]
-        UAnnotationMethod (name = getBar) [public static final fun getBar() : java.lang.String = UastEmptyExpression]
-        UAnnotationMethod (name = getBaz) [public static final fun getBaz() : java.lang.String = UastEmptyExpression]
-        UAnnotationMethod (name = getFoobarbaz) [public static final fun getFoobarbaz() : java.lang.String = UastEmptyExpression]
+        UMethod (name = getFoo) [public static final fun getFoo() : java.lang.String = UastEmptyExpression]
+        UMethod (name = getBar) [public static final fun getBar() : java.lang.String = UastEmptyExpression]
+        UMethod (name = getBaz) [public static final fun getBaz() : java.lang.String = UastEmptyExpression]
+        UMethod (name = getFoobarbaz) [public static final fun getFoobarbaz() : java.lang.String = UastEmptyExpression]
