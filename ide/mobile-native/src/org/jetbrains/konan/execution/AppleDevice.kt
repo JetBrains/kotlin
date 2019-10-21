@@ -5,6 +5,7 @@
 
 package org.jetbrains.konan.execution
 
+import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.project.Project
@@ -15,6 +16,7 @@ import com.jetbrains.cidr.execution.deviceSupport.AMDevice
 import com.jetbrains.cidr.execution.deviceSupport.AMDeviceUtil
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
 import com.jetbrains.cidr.execution.testing.CidrLauncher
+import com.jetbrains.cidr.execution.testing.CidrTestScope
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.ArchitectureValue
 import org.jetbrains.konan.execution.testing.AppleXCTestCommandLineState
 import org.jetbrains.konan.execution.testing.MobileTestRunConfiguration
@@ -26,8 +28,15 @@ abstract class AppleDevice(id: String, name: String, osVersion: String) : Device
             it.consoleBuilder = CidrConsoleBuilder(configuration.project, null, configuration.project.basePath?.let { File(it) })
         }
 
-    override fun createState(configuration: MobileTestRunConfiguration, environment: ExecutionEnvironment): AppleXCTestCommandLineState =
-        AppleXCTestCommandLineState(configuration, createLauncher(configuration, environment), environment, environment.executor, null)
+    override fun createState(configuration: MobileTestRunConfiguration, environment: ExecutionEnvironment): CommandLineState =
+        createState(configuration, environment, null)
+
+    fun createState(
+        configuration: MobileTestRunConfiguration,
+        environment: ExecutionEnvironment,
+        testScope: CidrTestScope?
+    ): AppleXCTestCommandLineState =
+        AppleXCTestCommandLineState(configuration, createLauncher(configuration, environment), environment, environment.executor, testScope)
 
     protected abstract fun createLauncher(configuration: MobileRunConfiguration, environment: ExecutionEnvironment): CidrLauncher
 

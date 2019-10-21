@@ -53,11 +53,9 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
         (environment.executionTarget as? Device)?.createState(this, environment)
 
     override fun createTestRunProfile(
-        rerunFailedTestsAction: CidrRerunFailedTestsAction,
+        rerunAction: CidrRerunFailedTestsAction,
         testScope: CidrTestScope
-    ): CidrRerunFailedTestsAction.CidrReturnTestProfile {
-        TODO("not implemented")
-    }
+    ): CidrRerunFailedTestsAction.CidrReturnTestProfile = CidrRerunFailedTestsAction.CidrReturnTestProfile(rerunAction, this, testScope)
 
     override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher = throw IllegalStateException()
 

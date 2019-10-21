@@ -12,6 +12,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.jetbrains.cidr.execution.testing.CidrTestScope
 import com.jetbrains.cidr.execution.testing.xctest.OCUnitRunConfigurationData
 import com.jetbrains.cidr.execution.testing.xctest.OCUnitTestObject
+import org.jetbrains.konan.execution.AppleDevice
 
 class AppleXCTestRunConfigurationData private constructor(configuration: MobileTestRunConfiguration) :
     OCUnitRunConfigurationData<MobileTestRunConfiguration>(configuration) {
@@ -24,8 +25,8 @@ class AppleXCTestRunConfigurationData private constructor(configuration: MobileT
     override fun createTestConsoleProperties(executor: Executor, executionTarget: ExecutionTarget): AppleXCTestConsoleProperties =
         AppleXCTestConsoleProperties(myConfiguration, executor, executionTarget)
 
-    override fun createState(environment: ExecutionEnvironment, executor: Executor, testScope: CidrTestScope?): CommandLineState =
-        throw IllegalStateException()
+    override fun createState(environment: ExecutionEnvironment, executor: Executor, failedTests: CidrTestScope?): CommandLineState =
+        (environment.executionTarget as AppleDevice).createState(myConfiguration, environment, failedTests)
 
     override fun formatTestMethod(): String = "$testSuite.$testName"
 
