@@ -85,10 +85,14 @@ class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {
         return NEXT
     }
 
-    override fun processClassifiersByName(name: Name, position: FirPosition, processor: (FirClassifierSymbol<*>) -> Boolean): Boolean {
+    override fun processClassifiersByName(
+        name: Name,
+        position: FirPosition,
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+    ): ProcessorAction {
         val matchedClass = classIndex[name]
         if (matchedClass != null && !processor(matchedClass)) {
-            return false
+            return STOP
         }
 
         return super.processClassifiersByName(name, position, processor)

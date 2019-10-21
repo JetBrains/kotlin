@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
-import org.jetbrains.kotlin.fir.scopes.processClassifiersByNameWithAction
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeAbbreviatedType
@@ -133,7 +132,7 @@ class MemberScopeTowerLevel(
                 this.processFunctionsByName(name, symbol.cast())
             }
             TowerScopeLevel.Token.Objects -> processMembers(processor, explicitExtensionReceiver) { symbol ->
-                this.processClassifiersByNameWithAction(name, FirPosition.OTHER, symbol.cast())
+                this.processClassifiersByName(name, FirPosition.OTHER, symbol.cast())
             }
         }
     }
@@ -199,7 +198,7 @@ class ScopeTowerLevel(
                     ProcessorAction.NEXT
                 }
             }
-            TowerScopeLevel.Token.Objects -> scope.processClassifiersByNameWithAction(name, FirPosition.OTHER) {
+            TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name, FirPosition.OTHER) {
                 processor.consumeCandidate(
                     it as T, dispatchReceiverValue = null,
                     implicitExtensionReceiverValue = null
@@ -247,7 +246,7 @@ class QualifiedReceiverTowerLevel(
         }
 
         return when (token) {
-            TowerScopeLevel.Token.Objects -> scope.processClassifiersByNameWithAction(name, FirPosition.OTHER) {
+            TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name, FirPosition.OTHER) {
                 @Suppress("UNCHECKED_CAST")
                 processor.consumeCandidate(it as T, null, null)
             }
@@ -308,7 +307,7 @@ private fun FirScope.processFunctionsAndConstructorsByName(
 
 private fun FirScope.getFirstClassifierOrNull(name: Name): FirClassifierSymbol<*>? {
     var result: FirClassifierSymbol<*>? = null
-    processClassifiersByNameWithAction(name, FirPosition.OTHER) {
+    processClassifiersByName(name, FirPosition.OTHER) {
         result = it
         ProcessorAction.STOP
     }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -20,11 +21,11 @@ class FirNestedClassifierScope(
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (FirClassifierSymbol<*>) -> Boolean
-    ): Boolean {
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+    ): ProcessorAction {
         val child = classId.createNestedClassId(name)
-        val symbol = symbolProvider.getClassLikeSymbolByFqName(child)
+        val symbol = symbolProvider.getClassLikeSymbolByFqName(child) ?: return ProcessorAction.NONE
 
-        return symbol == null || processor(symbol)
+        return processor(symbol)
     }
 }

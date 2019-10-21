@@ -23,16 +23,16 @@ class FirCompositeScope(
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (FirClassifierSymbol<*>) -> Boolean
-    ): Boolean {
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+    ): ProcessorAction {
         val scopes = if (reversedPriority) scopes.asReversed() else scopes
         for (scope in scopes) {
             if (!position.allowTypeParameters && scope is FirTypeParameterScope) continue
             if (!scope.processClassifiersByName(name, position, processor)) {
-                return false
+                return STOP
             }
         }
-        return true
+        return NEXT
     }
 
     private inline fun <T> processComposite(

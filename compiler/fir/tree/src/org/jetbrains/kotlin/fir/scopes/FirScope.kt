@@ -6,22 +6,17 @@
 package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirScope {
-    @Deprecated(
-        "obsolete",
-        replaceWith = ReplaceWith("processClassifiersByNameWithAction(name, position) { if (processor()) ProcessorAction.NEXT else ProcessorAction.STOP }.next()")
-    )
     open fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (FirClassifierSymbol<*>) -> Boolean
-    ): Boolean = true
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+    ): ProcessorAction = NEXT
 
     open fun processFunctionsByName(
         name: Name,
@@ -33,18 +28,6 @@ abstract class FirScope {
         // NB: it'd be great to write FirVariableSymbol<*> here, but there is FirAccessorSymbol :(
         processor: (FirCallableSymbol<*>) -> ProcessorAction
     ): ProcessorAction = NEXT
-}
-
-
-inline fun FirScope.processClassifiersByNameWithAction(
-    name: Name,
-    position: FirPosition,
-    crossinline processor: (FirClassifierSymbol<*>) -> ProcessorAction
-): ProcessorAction {
-    val result = processClassifiersByName(name, position) {
-        processor(it).next()
-    }
-    return if (result) NEXT else STOP
 }
 
 enum class FirPosition(val allowTypeParameters: Boolean = true) {

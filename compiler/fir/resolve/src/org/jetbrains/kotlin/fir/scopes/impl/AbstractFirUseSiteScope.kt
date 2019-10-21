@@ -37,7 +37,11 @@ abstract class AbstractFirUseSiteScope(
         }
     }
 
-    override fun processClassifiersByName(name: Name, position: FirPosition, processor: (FirClassifierSymbol<*>) -> Boolean): Boolean {
+    override fun processClassifiersByName(
+        name: Name,
+        position: FirPosition,
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+    ): ProcessorAction {
         return declaredMemberScope.processClassifiersByName(name, position, processor)
     }
 }

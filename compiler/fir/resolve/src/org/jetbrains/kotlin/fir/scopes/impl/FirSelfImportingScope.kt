@@ -27,9 +27,9 @@ class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirSc
     override fun processClassifiersByName(
         name: Name,
         position: FirPosition,
-        processor: (FirClassifierSymbol<*>) -> Boolean
-    ): Boolean {
-        if (name.asString().isEmpty()) return true
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+    ): ProcessorAction {
+        if (name.asString().isEmpty()) return ProcessorAction.NONE
 
 
         val symbol = cache.getOrPut(name) {
@@ -40,7 +40,7 @@ class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirSc
         return if (symbol != null) {
             processor(symbol)
         } else {
-            true
+            ProcessorAction.NONE
         }
     }
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -63,7 +64,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
                         }
                         else -> error("!")
                     }
-                    resolvedSymbol == null
+                    if (resolvedSymbol == null) ProcessorAction.NEXT else ProcessorAction.STOP
                 }
 
                 // TODO: Imports
