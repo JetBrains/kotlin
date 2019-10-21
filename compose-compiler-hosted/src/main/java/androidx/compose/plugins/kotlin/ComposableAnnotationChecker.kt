@@ -262,7 +262,7 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
 
     /**
      * Analyze a KtElement
-     *  - Determine if it is @Compoasble (eg. the element or inferred type has an @Composable annotation)
+     *  - Determine if it is @Composable (eg. the element or inferred type has an @Composable annotation)
      *  - Update the binding context to cache analysis results
      *  - Report errors (eg. invocations of an @Composable, etc)
      *  - Return true if element is @Composable, else false
@@ -478,6 +478,12 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
 
             if (anyType == expectedType.lowerIfFlexible() &&
                 nullableAnyType == expectedType.upperIfFlexible()) return
+
+            val nullableNothingType = expectedType.builtIns.nullableNothingType
+
+            // Handle assigning null to a nullable composable type
+            if (expectedType.isMarkedNullable &&
+                expressionTypeWithSmartCast == nullableNothingType) return
 
             val expectedComposable = expectedType.hasComposableAnnotation()
             val isComposable = expressionType.hasComposableAnnotation()
