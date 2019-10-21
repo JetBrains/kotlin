@@ -51,6 +51,11 @@ import org.jetbrains.kotlin.utils.ifEmpty
 
 class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
     companion object {
+
+        private const val COMMAND_NAME = "Copy Declarations"
+
+        private val isUnitTestMode get() = ApplicationManager.getApplication().isUnitTestMode
+
         @set:TestOnly
         var Project.newName: String? by UserDataProperty(Key.create("NEW_NAME"))
 
@@ -99,12 +104,11 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
     private fun getOrCreateTargetFile(
         originalFile: KtFile,
         targetDirectory: PsiDirectory,
-        targetFileName: String,
-        commandName: String
+        targetFileName: String
     ): KtFile? {
         val existingFile = targetDirectory.findFile(targetFileName)
         if (existingFile == originalFile) return null
-        if (existingFile != null) when (getFilePolicy(existingFile, targetFileName, targetDirectory, commandName)) {
+        if (existingFile != null) when (getFilePolicy(existingFile, targetFileName, targetDirectory)) {
             ExistingFilePolicy.APPEND -> {
             }
             ExistingFilePolicy.OVERWRITE -> runWriteAction { existingFile.delete() }
@@ -122,16 +126,14 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
     private fun getFilePolicy(
         existingFile: PsiFile?,
         targetFileName: String,
-        targetDirectory: PsiDirectory,
-        commandName: String
+        targetDirectory: PsiDirectory
     ): ExistingFilePolicy {
-        val isUnitTestMode = ApplicationManager.getApplication().isUnitTestMode
         return if (existingFile !is KtFile) {
             if (isUnitTestMode) return ExistingFilePolicy.OVERWRITE
 
             val answer = Messages.showOkCancelDialog(
                 "File $targetFileName already exists in ${targetDirectory.virtualFile.path}",
-                commandName,
+                COMMAND_NAME,
                 "Overwrite",
                 "Cancel",
                 Messages.getQuestionIcon()
@@ -142,7 +144,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
 
             val answer = Messages.showYesNoCancelDialog(
                 "File $targetFileName already exists in ${targetDirectory.virtualFile.path}",
-                commandName,
+                COMMAND_NAME,
                 "Append",
                 "Overwrite",
                 "Cancel",
@@ -155,6 +157,98 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             }
         }
     }
+
+    private data class TargetData(
+        val openInEditor: Boolean,
+        val newName: String,
+        val targetDirWrapper: AutocreatingPsiDirectoryWrapper,
+        val targetSourceRoot: VirtualFile?
+    )
+
+    private data class SourceData(
+        val project: Project,
+        val singleElementToCopy: KtElement?,
+        val elementsToCopy: List<KtElement>,
+        val originalFile: KtFile,
+        val initialTargetDirectory: PsiDirectory
+    )
+
+    private fun getTargetDataForUnitTest(sourceData: SourceData): TargetData? {
+        with(sourceData) {
+            val targetSourceRoot: VirtualFile? = initialTargetDirectory.sourceRoot ?: return null
+            val newName: String = project.newName ?: singleElementToCopy?.name ?: originalFile.name ?: return null
+            if (singleElementToCopy != null && newName.isEmpty()) return null
+            return TargetData(
+                openInEditor = false,
+                newName = newName,
+                targetDirWrapper = initialTargetDirectory.toDirectoryWrapper(),
+                targetSourceRoot = targetSourceRoot
+            )
+        }
+    }
+
+    private fun getTargetDataForUX(sourceData: SourceData): TargetData? {
+
+        val openInEditor: Boolean
+        val newName: String?
+        val targetDirWrapper: AutocreatingPsiDirectoryWrapper?
+        val targetSourceRoot: VirtualFile?
+
+        val singleNamedSourceElement = sourceData.singleElementToCopy as? KtNamedDeclaration
+
+        if (singleNamedSourceElement !== null) {
+            val dialog = CopyKotlinDeclarationDialog(singleNamedSourceElement, sourceData.initialTargetDirectory, sourceData.project)
+            dialog.title = COMMAND_NAME
+            if (!dialog.showAndGet()) return null
+
+            openInEditor = dialog.openInEditor
+            newName = dialog.newName ?: singleNamedSourceElement.name
+            targetDirWrapper = dialog.targetDirectory?.toDirectoryWrapper()
+            targetSourceRoot = dialog.targetSourceRoot
+        } else {
+            val dialog = CopyFilesOrDirectoriesDialog(
+                arrayOf(sourceData.originalFile),
+                sourceData.initialTargetDirectory,
+                sourceData.project,
+                /*doClone = */false
+            )
+            if (!dialog.showAndGet()) return null
+            openInEditor = dialog.openInEditor()
+            newName = dialog.newName
+            targetDirWrapper = dialog.targetDirectory?.toDirectoryWrapper()
+            targetSourceRoot = dialog.targetDirectory?.sourceRoot
+        }
+
+        targetDirWrapper ?: return null
+        newName ?: return null
+
+        if (sourceData.singleElementToCopy != null && newName.isEmpty()) return null
+
+        return TargetData(
+            openInEditor = openInEditor,
+            newName = newName,
+            targetDirWrapper = targetDirWrapper,
+            targetSourceRoot = targetSourceRoot
+        )
+    }
+
+    private fun collectInternalUsages(sourceData: SourceData, targetData: TargetData) = runReadAction {
+        val targetPackageName = targetData.targetDirWrapper.getPackageName()
+        val changeInfo = ContainerChangeInfo(
+            ContainerInfo.Package(sourceData.originalFile.packageFqName),
+            ContainerInfo.Package(FqName(targetPackageName))
+        )
+        sourceData.elementsToCopy.flatMapTo(LinkedHashSet()) { elementToCopy ->
+            elementToCopy.getInternalReferencesToUpdateOnPackageNameChange(changeInfo).filter {
+                val referencedElement = (it as? MoveRenameUsageInfo)?.referencedElement
+                referencedElement == null || !elementToCopy.isAncestor(referencedElement)
+            }
+        }
+    }
+
+    private fun getTargetData(sourceData: SourceData) =
+        if (isUnitTestMode) getTargetDataForUnitTest(sourceData)
+        else getTargetDataForUX(sourceData)
 
     override fun doCopy(elements: Array<out PsiElement>, defaultTargetDirectory: PsiDirectory?) {
         if (!canCopyDeclarations(elements)) {
@@ -170,147 +264,163 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         val originalFile = elementsToCopy.first().containingFile as KtFile
         val initialTargetDirectory = defaultTargetDirectory ?: originalFile.containingDirectory ?: return
 
-        val isSingleDeclarationInFile =
-            singleElementToCopy is KtNamedDeclaration && originalFile.declarations.singleOrNull() == singleElementToCopy
-
         val project = initialTargetDirectory.project
 
-        val commandName = "Copy Declarations"
+        val sourceData = SourceData(
+            project = project,
+            singleElementToCopy = singleElementToCopy,
+            elementsToCopy = elementsToCopy,
+            originalFile = originalFile,
+            initialTargetDirectory = initialTargetDirectory
+        )
+        val targetData = getTargetData(sourceData) ?: return
 
-        var openInEditor = false
-        var newName: String? = singleElementToCopy?.name ?: originalFile.name
-        var targetDirWrapper: AutocreatingPsiDirectoryWrapper = initialTargetDirectory.toDirectoryWrapper()
-        var targetSourceRoot: VirtualFile? = initialTargetDirectory.sourceRoot ?: return
-
-        val isUnitTestMode = ApplicationManager.getApplication().isUnitTestMode
-
-        if (!isUnitTestMode) {
-            if (singleElementToCopy != null && singleElementToCopy is KtNamedDeclaration) {
-                val dialog = CopyKotlinDeclarationDialog(singleElementToCopy, initialTargetDirectory, project)
-                dialog.title = commandName
-                if (!dialog.showAndGet()) return
-
-                openInEditor = dialog.openInEditor
-                newName = dialog.newName ?: singleElementToCopy.name
-                targetDirWrapper = dialog.targetDirectory?.toDirectoryWrapper() ?: return
-                targetSourceRoot = dialog.targetSourceRoot
-            } else {
-                val dialog = CopyFilesOrDirectoriesDialog(arrayOf(originalFile), initialTargetDirectory, project, false)
-                if (!dialog.showAndGet()) return
-                openInEditor = dialog.openInEditor()
-                newName = dialog.newName
-                targetDirWrapper = dialog.targetDirectory?.toDirectoryWrapper() ?: return
-                targetSourceRoot = dialog.targetDirectory?.sourceRoot
-            }
-        } else {
-            project.newName?.let { newName = it }
-        }
-
-        if (singleElementToCopy != null && newName.isNullOrEmpty()) return
-
-        val internalUsages = runReadAction {
-            val targetPackageName = targetDirWrapper.getPackageName()
-            val changeInfo = ContainerChangeInfo(
-                ContainerInfo.Package(originalFile.packageFqName),
-                ContainerInfo.Package(FqName(targetPackageName))
-            )
-            elementsToCopy.flatMapTo(LinkedHashSet()) { elementToCopy ->
-                elementToCopy.getInternalReferencesToUpdateOnPackageNameChange(changeInfo).filter {
-                    val referencedElement = (it as? MoveRenameUsageInfo)?.referencedElement
-                    referencedElement == null || !elementToCopy.isAncestor(referencedElement)
-                }
-            }
-        }
+        val internalUsages = collectInternalUsages(sourceData, targetData)
         markInternalUsages(internalUsages)
 
-        fun doRefactor() {
-            val restoredInternalUsages = ArrayList<UsageInfo>()
+        val conflicts = collectConflicts(sourceData, targetData, internalUsages)
 
-            project.executeCommand(commandName) {
-                try {
-                    val targetDirectory = runWriteAction { targetDirWrapper.getOrCreateDirectory(initialTargetDirectory) }
-                    val targetFileName =
-                        if (newName?.contains(".") == true) newName!! else newName + "." + originalFile.virtualFile.extension
+        project.checkConflictsInteractively(conflicts) {
+            try {
+                project.executeCommand(COMMAND_NAME) {
+                    doRefactor(sourceData, targetData)
+                }
+            } finally {
+                cleanUpInternalUsages(internalUsages)
+            }
+        }
+    }
 
-                    val oldToNewElementsMapping = HashMap<PsiElement, PsiElement>()
+    private data class RefactoringResult(
+        val targetFile: PsiFile,
+        val copiedDeclaration: KtNamedDeclaration?,
+        val restoredInternalUsages: List<UsageInfo>? = null
+    )
 
-                    val fileToCopy = when {
-                        singleElementToCopy is KtFile -> singleElementToCopy
-                        isSingleDeclarationInFile -> originalFile
-                        else -> null
-                    }
+    private fun doRefactor(sourceData: SourceData, targetData: TargetData) {
 
-                    val targetFile: PsiFile
-                    val copiedDeclaration: KtNamedDeclaration?
-                    if (fileToCopy != null) {
-                        targetFile = runWriteAction {
-                            // implicit package prefix may change after copy
-                            val targetDirectoryFqName = targetDirectory.getFqNameWithImplicitPrefix()
-                            val copiedFile = targetDirectory.copyFileFrom(targetFileName, fileToCopy)
-                            if (copiedFile is KtFile && fileToCopy.packageMatchesDirectoryOrImplicit()) {
-                                targetDirectoryFqName?.let { copiedFile.packageFqName = it }
-                            }
-                            performDelayedRefactoringRequests(project)
-                            copiedFile
-                        }
-                        copiedDeclaration = if (isSingleDeclarationInFile && targetFile is KtFile) {
-                            targetFile.declarations.singleOrNull() as? KtNamedDeclaration
-                        } else null
-                    } else {
-                        targetFile =
-                            getOrCreateTargetFile(originalFile, targetDirectory, targetFileName, commandName) ?: return@executeCommand
-                        runWriteAction {
-                            val newElements = elementsToCopy.map { targetFile.add(it.copy()) as KtNamedDeclaration }
-                            elementsToCopy.zip(newElements).toMap(oldToNewElementsMapping)
-                            oldToNewElementsMapping[originalFile] = targetFile
+        var refactoringResult: RefactoringResult? = null
+        try {
+            val targetDirectory = runWriteAction {
+                targetData.targetDirWrapper.getOrCreateDirectory(sourceData.initialTargetDirectory)
+            }
 
-                            for (newElement in oldToNewElementsMapping.values) {
-                                restoredInternalUsages += restoreInternalUsages(newElement as KtElement, oldToNewElementsMapping, true)
-                                postProcessMoveUsages(restoredInternalUsages, oldToNewElementsMapping)
-                            }
+            val targetFileName =
+                if (targetData.newName.contains(".")) targetData.newName
+                else targetData.newName + "." + sourceData.originalFile.virtualFile.extension
 
-                            performDelayedRefactoringRequests(project)
-                        }
-                        copiedDeclaration = oldToNewElementsMapping.values.filterIsInstance<KtNamedDeclaration>().singleOrNull()
-                    }
+            val isSingleDeclarationInFile =
+                sourceData.singleElementToCopy is KtNamedDeclaration &&
+                        sourceData.originalFile.declarations.singleOrNull() == sourceData.singleElementToCopy
 
-                    copiedDeclaration?.let { newDeclaration ->
-                        if (newName == newDeclaration.name) return@let
-                        val selfReferences = ReferencesSearch.search(newDeclaration, LocalSearchScope(newDeclaration)).findAll()
-                        runWriteAction {
-                            selfReferences.forEach { it.handleElementRename(newName!!) }
-                            newDeclaration.setName(newName!!)
-                        }
-                    }
+            val fileToCopy = when {
+                sourceData.singleElementToCopy is KtFile -> sourceData.singleElementToCopy
+                isSingleDeclarationInFile -> sourceData.originalFile
+                else -> null
+            }
 
-                    if (openInEditor) {
-                        EditorHelper.openFilesInEditor(arrayOf(targetFile))
-                    }
-                } catch (e: IncorrectOperationException) {
-                    Messages.showMessageDialog(project, e.message, RefactoringBundle.message("error.title"), Messages.getErrorIcon())
-                } finally {
-                    cleanUpInternalUsages(internalUsages + restoredInternalUsages)
+            refactoringResult = if (fileToCopy !== null) {
+                doRefactoringOnFile(fileToCopy, sourceData, targetDirectory, targetFileName, isSingleDeclarationInFile)
+            } else {
+                val targetFile = getOrCreateTargetFile(sourceData.originalFile, targetDirectory, targetFileName) ?: return
+                doRefactoringOnElement(sourceData, targetFile)
+            }
+
+            refactoringResult.copiedDeclaration?.let { newDeclaration ->
+                if (targetData.newName == newDeclaration.name) return@let
+                val selfReferences = ReferencesSearch.search(newDeclaration, LocalSearchScope(newDeclaration)).findAll()
+                runWriteAction {
+                    selfReferences.forEach { it.handleElementRename(targetData.newName) }
+                    newDeclaration.setName(targetData.newName)
                 }
             }
-        }
 
-        val conflicts = MultiMap<PsiElement, String>()
-
-        if (!(isUnitTestMode && BaseRefactoringProcessor.ConflictsInTestsException.isTestIgnore())) {
-            val targetSourceRootPsi = targetSourceRoot?.toPsiDirectory(project)
-            if (targetSourceRootPsi != null && project == originalFile.project) {
-                val conflictChecker = MoveConflictChecker(
-                    project,
-                    elementsToCopy,
-                    KotlinDirectoryMoveTarget(FqName.ROOT, targetSourceRootPsi),
-                    originalFile
-                )
-                conflictChecker.checkModuleConflictsInDeclarations(internalUsages, conflicts)
-                conflictChecker.checkVisibilityInDeclarations(conflicts)
+            if (targetData.openInEditor) {
+                EditorHelper.openFilesInEditor(arrayOf(refactoringResult.targetFile))
             }
+        } catch (e: IncorrectOperationException) {
+            Messages.showMessageDialog(sourceData.project, e.message, RefactoringBundle.message("error.title"), Messages.getErrorIcon())
+        } finally {
+            refactoringResult?.restoredInternalUsages?.let { cleanUpInternalUsages(it) }
+        }
+    }
+
+
+    private fun doRefactoringOnFile(
+        fileToCopy: KtFile,
+        sourceData: SourceData,
+        targetDirectory: PsiDirectory,
+        targetFileName: String,
+        isSingleDeclarationInFile: Boolean
+    ): RefactoringResult {
+        val targetFile = runWriteAction {
+            // implicit package prefix may change after copy
+            val targetDirectoryFqName = targetDirectory.getFqNameWithImplicitPrefix()
+            val copiedFile = targetDirectory.copyFileFrom(targetFileName, fileToCopy)
+            if (copiedFile is KtFile && fileToCopy.packageMatchesDirectoryOrImplicit()) {
+                targetDirectoryFqName?.let { copiedFile.packageFqName = it }
+            }
+            performDelayedRefactoringRequests(sourceData.project)
+            copiedFile
         }
 
-        project.checkConflictsInteractively(conflicts, onAccept = ::doRefactor)
+        val copiedDeclaration = if (isSingleDeclarationInFile && targetFile is KtFile) {
+            targetFile.declarations.singleOrNull() as? KtNamedDeclaration
+        } else null
+
+        return RefactoringResult(targetFile, copiedDeclaration)
+    }
+
+    private fun doRefactoringOnElement(
+        sourceData: SourceData,
+        targetFile: KtFile
+    ): RefactoringResult {
+        val restoredInternalUsages = ArrayList<UsageInfo>()
+        val oldToNewElementsMapping = HashMap<PsiElement, PsiElement>()
+
+        runWriteAction {
+            val newElements = sourceData.elementsToCopy.map { targetFile.add(it.copy()) as KtNamedDeclaration }
+            sourceData.elementsToCopy.zip(newElements).toMap(oldToNewElementsMapping)
+            oldToNewElementsMapping[sourceData.originalFile] = targetFile
+
+            for (newElement in oldToNewElementsMapping.values) {
+                restoredInternalUsages += restoreInternalUsages(newElement as KtElement, oldToNewElementsMapping, forcedRestore = true)
+                postProcessMoveUsages(restoredInternalUsages, oldToNewElementsMapping)
+            }
+
+            performDelayedRefactoringRequests(sourceData.project)
+        }
+
+        val copiedDeclaration = oldToNewElementsMapping.values.filterIsInstance<KtNamedDeclaration>().singleOrNull()
+
+        return RefactoringResult(targetFile, copiedDeclaration, restoredInternalUsages)
+    }
+
+    private fun collectConflicts(
+        sourceData: SourceData,
+        targetData: TargetData,
+        internalUsages: HashSet<UsageInfo>
+    ): MultiMap<PsiElement, String> {
+
+        if (isUnitTestMode && BaseRefactoringProcessor.ConflictsInTestsException.isTestIgnore())
+            return MultiMap.empty()
+
+        val targetSourceRootPsi = targetData.targetSourceRoot?.toPsiDirectory(sourceData.project)
+            ?: return MultiMap.empty()
+
+        if (sourceData.project != sourceData.originalFile.project) return MultiMap.empty()
+
+        val conflictChecker = MoveConflictChecker(
+            sourceData.project,
+            sourceData.elementsToCopy,
+            KotlinDirectoryMoveTarget(FqName.ROOT, targetSourceRootPsi),
+            sourceData.originalFile
+        )
+
+        return MultiMap<PsiElement, String>().also {
+            conflictChecker.checkModuleConflictsInDeclarations(internalUsages, it)
+            conflictChecker.checkVisibilityInDeclarations(it)
+        }
     }
 
     override fun doClone(element: PsiElement) {
