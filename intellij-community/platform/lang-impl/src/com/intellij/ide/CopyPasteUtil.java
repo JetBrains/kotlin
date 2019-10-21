@@ -37,7 +37,7 @@ public class CopyPasteUtil {
      * @deprecated use {@link #DefaultCopyPasteListener(Consumer)}
      */
     @Deprecated
-    @ApiStatus.ScheduledForRemoval(inVersion = "2022.2")
+    @ApiStatus.ScheduledForRemoval(inVersion = "2020.2")
     public DefaultCopyPasteListener(AbstractTreeUpdater updater) {
       this(element -> updater.addSubtreeToUpdateByElement(element));
     }
