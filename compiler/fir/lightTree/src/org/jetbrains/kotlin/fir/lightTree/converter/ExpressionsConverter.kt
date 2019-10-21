@@ -860,8 +860,8 @@ class ExpressionsConverter(
         return FirWhenExpressionImpl(null, null, null).apply {
             val trueBranch = convertLoopBody(thenBlock)
             branches += FirWhenBranchImpl(null, firCondition, trueBranch)
-            elseBlock?.let {
-                val elseBranch = convertLoopBody(it)
+            val elseBranch = convertLoopBody(elseBlock)
+            if (elseBranch !is FirEmptyExpressionBlock) {
                 branches += FirWhenBranchImpl(
                     null, FirElseIfTrueCondition(null), elseBranch
                 )
