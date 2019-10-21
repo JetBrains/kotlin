@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.mainKts.test
 import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.junit.Assert
 import org.junit.Test
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
+import java.io.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.baseClassLoader
@@ -88,6 +86,32 @@ class MainKtsTest {
         }.lines()
 
         Assert.assertEquals(listOf("Hi from common", "Hi from middle", "sharedVar == 5"), out)
+    }
+
+    @Test
+    fun testCompilerOptions() {
+
+        val out = captureOut {
+            val res = evalFile(File("$TEST_DATA_ROOT/compile-java6.main.kts"))
+            assertSucceeded(res)
+            assertIsJava6Bytecode(res)
+        }.lines()
+
+        Assert.assertEquals(listOf("Hi from sub", "Hi from super", "Hi from random"), out)
+    }
+
+    private fun assertIsJava6Bytecode(res: ResultWithDiagnostics<EvaluationResult>) {
+        val scriptClassResource = res.valueOrThrow().returnValue.scriptClass!!.java.run {
+            getResource("$simpleName.class")
+        }
+
+        DataInputStream(ByteArrayInputStream(scriptClassResource.readBytes())).use { stream ->
+            val header = stream.readInt()
+            if (0xCAFEBABE.toInt() != header) throw IOException("Invalid header class header: $header")
+            val minor = stream.readUnsignedShort()
+            val major = stream.readUnsignedShort()
+            Assert.assertTrue(major == 50)
+        }
     }
 
     private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {
