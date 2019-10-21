@@ -150,8 +150,7 @@ fun createCallableReferencesConsumer(
     // TODO: Use SamePriorityConsumer
     return PrioritizedTowerDataConsumer(
         resultCollector,
-        createSimpleConsumer(session, name, TowerScopeLevel.Token.Functions, callInfo, bodyResolveComponents, resultCollector)
-        // TODO: Support properties
-        //  , createSimpleConsumer(session, name, TowerScopeLevel.Token.Properties, callInfo, bodyResolveComponents, resultCollector)
+        createSimpleConsumer(session, name, TowerScopeLevel.Token.Functions, callInfo, bodyResolveComponents, resultCollector),
+        createSimpleConsumer(session, name, TowerScopeLevel.Token.Properties, callInfo, bodyResolveComponents, resultCollector)
     )
 }

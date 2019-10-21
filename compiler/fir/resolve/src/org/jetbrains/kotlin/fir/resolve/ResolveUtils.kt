@@ -226,6 +226,15 @@ fun createFunctionalType(
     return ConeClassTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), receiverAndParameterTypes.toTypedArray(), isNullable = false)
 }
 
+fun createKPropertyType(
+    receiverType: ConeKotlinType?,
+    rawReturnType: ConeKotlinType
+): ConeLookupTagBasedType {
+    val arguments = if (receiverType != null) listOf(receiverType, rawReturnType) else listOf(rawReturnType)
+    val classId = StandardClassIds.reflectByName("KProperty${arguments.size - 1}")
+    return ConeClassTypeImpl(ConeClassLikeLookupTagImpl(classId), arguments.toTypedArray(), isNullable = false)
+}
+
 fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifier): FirTypeRef {
     val classId = resolvedQualifier.classId
     val resultType = resolvedQualifier.resultType

@@ -16,7 +16,7 @@ FILE: noAmbiguityBetweenTopLevelAndMemberProperty.kt
             public get(): R|kotlin/String|
 
     }
-    public final val someProperty0: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/property, /property]> = <Inapplicable(INAPPLICABLE): [/property, /property]>#(::subject#)
-        public get(): <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/property, /property]>
-    public final val someProperty1: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/property, /property]> = <Inapplicable(INAPPLICABLE): [/property, /property]>#(Q|O|::subject#)
-        public get(): <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/property, /property]>
+    public final val someProperty0: R|kotlin/Int| = R|/property|<R|kotlin/String|>(::R|/subject|)
+        public get(): R|kotlin/Int|
+    public final val someProperty1: R|kotlin/String| = R|/property|<R|O|, R|kotlin/String|>(Q|O|::R|/O.subject|)
+        public get(): R|kotlin/String|

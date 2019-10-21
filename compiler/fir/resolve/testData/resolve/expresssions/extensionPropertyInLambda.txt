@@ -23,5 +23,5 @@ FILE: extensionPropertyInLambda.kt
             R|/C.C|<R|kotlin/String|>(String(abc)).R|/y|
         }
         )
-        R|/use|(R|/C.C|<R|kotlin/String|>(String(abc))::R|/y|)
+        R|/use|(R|/C.C|<R|kotlin/String|>(String(abc))::R|/y<kotlin/String>|)
     }

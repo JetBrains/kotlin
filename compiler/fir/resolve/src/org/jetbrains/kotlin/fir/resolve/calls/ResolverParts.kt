@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.visibility
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.createKPropertyType
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -185,7 +186,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
 
         val resultingType: ConeKotlinType = when (val fir = candidate.symbol.fir) {
             is FirSimpleFunction -> createKFunctionType(fir, resultingReceiverType)
-            is FirProperty -> createKPropertyType(fir)
+            is FirProperty -> createKPropertyType(fir, resultingReceiverType)
             else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
         }.let(candidate.substitutor::substituteOrSelf)
 
@@ -210,8 +211,14 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
     }
 }
 
-private fun createKPropertyType(fir: FirProperty): ConeKotlinType {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+private fun createKPropertyType(
+    property: FirProperty,
+    receiverType: ConeKotlinType?
+): ConeKotlinType {
+    val propertyType = property.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for of $property")
+    return createKPropertyType(
+        receiverType, propertyType
+    )
 }
 
 private fun createKFunctionType(
