@@ -6,38 +6,15 @@
 package org.jetbrains.konan.execution.testing
 
 import com.intellij.openapi.project.Project
-import com.intellij.ui.components.JBTextField
-import com.intellij.util.ui.GridBag
 import org.jetbrains.konan.execution.MobileBuildConfigurationHelper
 import org.jetbrains.konan.execution.MobileRunConfiguration
 import org.jetbrains.konan.execution.MobileRunConfigurationEditor
-import java.io.File
-import javax.swing.JLabel
-import javax.swing.JPanel
 
 class MobileTestRunConfigurationEditor(project: Project, helper: MobileBuildConfigurationHelper) :
     MobileRunConfigurationEditor(project, helper) {
 
-    private lateinit var testBundlePathField: JBTextField
-
-    override fun createAdditionalControls(panel: JPanel, g: GridBag) {
-        super.createAdditionalControls(panel, g)
-
-        testBundlePathField = JBTextField()
-        val label = JLabel("Test bundle:")
-        panel.add(label, g.nextLine().next())
-        panel.add(testBundlePathField, g.next().coverLine())
-        label.labelFor = testBundlePathField
-    }
-
     override fun applyEditorTo(runConfiguration: MobileRunConfiguration) {
         super.applyEditorTo(runConfiguration)
-        (runConfiguration as MobileTestRunConfiguration).testRunner = File(testBundlePathField.text)
-        runConfiguration.recreateTestData() // TODO do this only when module is changed
-    }
-
-    override fun resetEditorFrom(runConfiguration: MobileRunConfiguration) {
-        super.resetEditorFrom(runConfiguration)
-        testBundlePathField.text = (runConfiguration as MobileTestRunConfiguration).testRunner.path
+        (runConfiguration as MobileTestRunConfiguration).recreateTestData() // TODO do this only when module is changed
     }
 }

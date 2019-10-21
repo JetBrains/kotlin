@@ -22,7 +22,15 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     MobileRunConfiguration(project, factory, name),
     CidrTestRunConfiguration {
 
-    fun getTestRunnerBundle(environment: ExecutionEnvironment): File = testRunner
+    fun getTestRunnerBundle(environment: ExecutionEnvironment): File {
+        val app = getProductBundle(environment)
+        val appName = app.nameWithoutExtension
+        return when {
+            canRunOnApple -> File(File(app, "PlugIns"), "${appName}Tests.xctest")
+            canRunOnAndroid -> File(File(File(app.parentFile.parentFile, "androidTest"), app.parentFile.name), "$appName-androidTest.apk")
+            else -> throw IllegalStateException()
+        }
+    }
 
     private lateinit var testData: CidrTestRunConfigurationData<MobileTestRunConfiguration>
 
@@ -53,12 +61,8 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
 
     override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher = throw IllegalStateException()
 
-    // TODO remove this
-    var testRunner: File = File("")
-
     override fun writeExternal(element: Element) {
         super<MobileRunConfiguration>.writeExternal(element)
-        element.setAttribute("TEST_RUNNER_PATH", testRunner.path)
         testData.writeExternal(element)
     }
 
@@ -66,7 +70,6 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
         super<MobileRunConfiguration>.readExternal(element)
         recreateTestData()
         testData.readExternal(element)
-        element.getAttributeValue("TEST_RUNNER_PATH")?.let { testRunner = File(it) }
     }
 
     override fun checkConfiguration() {

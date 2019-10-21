@@ -20,9 +20,8 @@ class AndroidTestRunConfigurationData private constructor(configuration: MobileT
     override fun createTestConsoleProperties(executor: Executor, executionTarget: ExecutionTarget): AndroidTestConsoleProperties =
         AndroidTestConsoleProperties(myConfiguration, executor)
 
-    override fun createState(environment: ExecutionEnvironment, executor: Executor, testScope: CidrTestScope?): CommandLineState {
-        TODO("not implemented")
-    }
+    override fun createState(environment: ExecutionEnvironment, executor: Executor, testScope: CidrTestScope?): CommandLineState =
+        throw IllegalStateException()
 
     override fun formatTestMethod(): String = "$testSuite.$testName"
 
