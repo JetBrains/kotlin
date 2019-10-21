@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.mainKts
 
 import org.jetbrains.kotlin.mainKts.impl.FilesAndIvyResolver
+import org.jetbrains.kotlin.script.util.CompilerOptions
 import org.jetbrains.kotlin.script.util.DependsOn
 import org.jetbrains.kotlin.script.util.Import
 import org.jetbrains.kotlin.script.util.Repository
@@ -35,17 +36,13 @@ abstract class MainKtsScript(val args: Array<String>)
 
 object MainKtsScriptDefinition : ScriptCompilationConfiguration(
     {
-        defaultImports(DependsOn::class, Repository::class, Import::class)
+        defaultImports(DependsOn::class, Repository::class, Import::class, CompilerOptions::class)
         jvm {
             dependenciesFromClassContext(MainKtsScriptDefinition::class, "kotlin-main-kts", "kotlin-stdlib", "kotlin-reflect")
         }
         refineConfiguration {
-            onAnnotations(DependsOn::class, Repository::class, Import::class, handler = MainKtsConfigurator())
-            beforeCompiling { context ->
-                configureProvidedPropertiesFromJsr223Context(
-                    ScriptConfigurationRefinementContext(context.script, context.compilationConfiguration, context.collectedData)
-                )
-            }
+            onAnnotations(DependsOn::class, Repository::class, Import::class, CompilerOptions::class, handler = MainKtsConfigurator())
+            beforeCompiling(::configureProvidedPropertiesFromJsr223Context)
         }
         ide {
             acceptedLocations(ScriptAcceptedLocation.Everywhere)
@@ -91,6 +88,9 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
                 FileScriptSource(scriptBaseDir?.resolve(sourceName) ?: File(sourceName))
             } ?: emptyList()
         }
+        val compileOptions = annotations.flatMap {
+            (it as? CompilerOptions)?.options?.toList() ?: emptyList()
+        }
 
         val resolvedClassPath = try {
             val scriptContents = object : ScriptContents {
@@ -107,6 +107,7 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
         return ScriptCompilationConfiguration(context.compilationConfiguration) {
             if (resolvedClassPath != null) updateClasspath(resolvedClassPath)
             if (importedSources.isNotEmpty()) importScripts.append(importedSources)
+            if (compileOptions.isNotEmpty()) compilerOptions.append(compileOptions)
         }.asSuccess(diagnostics)
     }
 }
