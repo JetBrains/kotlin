@@ -139,7 +139,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         if (mainView != null && mainView.getModel().getRoots().isEmpty() && contentManager.getContentCount() == 1) {
           hideToolWindow(toolWindowId, toolWindow);
         }
-        if (doShow) {
+        else if (doShow) {
           toolWindow.show(null);
         }
       }
