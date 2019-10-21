@@ -15,6 +15,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -237,12 +238,18 @@ public class FindInProjectUtil {
     findUsages(findModel, project, processPresentation, Collections.emptySet(), consumer);
   }
 
-  public static void findUsages(@NotNull FindModel findModel,
+  public static void findUsages(@NotNull final FindModel findModel,
                                 @NotNull final Project project,
-                                @NotNull FindUsagesProcessPresentation processPresentation,
-                                @NotNull Set<? extends VirtualFile> filesToStart,
+                                @NotNull final FindUsagesProcessPresentation processPresentation,
+                                @NotNull final Set<? extends VirtualFile> filesToStart,
                                 @NotNull final Processor<? super UsageInfo> consumer) {
-    new FindInProjectTask(findModel, project, filesToStart).findUsages(processPresentation, consumer);
+    Runnable runnable = () -> new FindInProjectTask(findModel, project, filesToStart).findUsages(processPresentation, consumer);
+    if (ProgressManager.getGlobalProgressIndicator() == null) {
+      ProgressManager.getInstance().runProcess(runnable, new EmptyProgressIndicator());
+    }
+    else {
+      runnable.run();
+    }
   }
 
   // returns number of hits
@@ -262,7 +269,9 @@ public class FindInProjectUtil {
     final int[] offset = {0};
     int count = 0;
     int found;
-    ProgressIndicator indicator = ProgressWrapper.unwrap(ProgressManager.getInstance().getProgressIndicator());
+    ProgressIndicator current = ProgressManager.getInstance().getProgressIndicator();
+    if (current == null) throw new IllegalStateException("must find usages under progress");
+    ProgressIndicator indicator = ProgressWrapper.unwrapAll(current);
     TooManyUsagesStatus tooManyUsagesStatus = TooManyUsagesStatus.getFrom(indicator);
     do {
       tooManyUsagesStatus.pauseProcessingIfTooManyUsages(); // wait for user out of read action

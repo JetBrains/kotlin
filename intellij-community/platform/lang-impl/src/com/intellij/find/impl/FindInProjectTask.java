@@ -17,6 +17,7 @@ import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.impl.CoreProgressManager;
 import com.intellij.openapi.progress.util.TooManyUsagesStatus;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -111,6 +112,8 @@ class FindInProjectTask {
   }
 
   public void findUsages(@NotNull FindUsagesProcessPresentation processPresentation, @NotNull Processor<? super UsageInfo> consumer) {
+    CoreProgressManager.assertUnderProgress(myProgress);
+
     try {
       myProgress.setIndeterminate(true);
       myProgress.setText("Scanning indexed files...");
