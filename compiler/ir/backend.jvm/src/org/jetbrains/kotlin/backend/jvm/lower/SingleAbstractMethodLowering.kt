@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -119,6 +120,15 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
                         putValueArgument(0, irGet(invokableVariable))
                     }
                     +irIfNull(superType, irGet(invokableVariable), irNull(), instance)
+                }
+            } else if (invokable !is IrGetValue) {
+                // Hack for the JVM inliner: since the SAM wrappers might be regenerated, avoid putting complex logic
+                // between the creation of the wrapper and the call of its `<init>`. `MethodInliner` tends to break
+                // otherwise, e.g. if the argument constructs an anonymous object, resulting in new-new-<init>-<init>.
+                // (See KT-21781 for a similar problem with anonymous object constructor arguments.)
+                irBlock(invokable, null, superType) {
+                    val invokableVariable = irTemporary(invokable)
+                    +irCall(implementation.constructors.single()).apply { putValueArgument(0, irGet(invokableVariable)) }
                 }
             } else {
                 irCall(implementation.constructors.single()).apply { putValueArgument(0, invokable) }
