@@ -17,7 +17,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.psi.codeStyle.WordPrefixMatcher;
@@ -72,9 +71,8 @@ public class GotoActionItemProvider implements ChooseByNameItemProvider {
 
     if (!processAbbreviations(pattern, consumer, dataContext)) return false;
     if (!processActions(pattern, consumer, dataContext)) return false;
-    if (!processIntentions(pattern, consumer, dataContext)) return false;
-    if (Registry.is("goto.action.skip.tophits.and.options")) return true;
     if (!processTopHits(pattern, consumer, dataContext)) return false;
+    if (!processIntentions(pattern, consumer, dataContext)) return false;
     if (!processOptions(pattern, consumer, dataContext)) return false;
 
     return true;
