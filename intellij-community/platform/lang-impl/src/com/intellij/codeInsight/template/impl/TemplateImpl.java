@@ -8,6 +8,7 @@ import com.intellij.openapi.options.SchemeElement;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -73,8 +74,8 @@ public class TemplateImpl extends Template implements SchemeElement {
   @NonNls private static final String SELECTION_END = "SELECTION_END";
   @NonNls public static final String ARG = "ARG";
 
-  public static final Set<String> INTERNAL_VARS_SET = new THashSet<>(Arrays.asList(
-    END, SELECTION, SELECTION_START, SELECTION_END));
+  public static final Set<String> INTERNAL_VARS_SET = ContainerUtil.set(
+    END, SELECTION, SELECTION_START, SELECTION_END);
 
   private boolean isDeactivated;
 

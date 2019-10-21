@@ -202,7 +202,7 @@ public class GenerationOptionsImpl extends GenerationOptions {
   }
 
   private ModuleChunk[] createModuleChunks(String[] representativeModuleNames) {
-    final Set<String> mainModuleNames = new HashSet<>(Arrays.asList(representativeModuleNames));
+    final Set<String> mainModuleNames = ContainerUtil.set(representativeModuleNames);
     final Graph<Chunk<Module>> chunkGraph = ModuleCompilerUtil.toChunkGraph(ModuleManager.getInstance(myProject).moduleGraph());
     final Map<Chunk<Module>, ModuleChunk> map = new HashMap<>();
     final Map<ModuleChunk, Chunk<Module>> reverseMap = new HashMap<>();

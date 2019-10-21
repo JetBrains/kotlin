@@ -70,7 +70,7 @@ class ClassMapCachingNulls<T> {
     Set<T> result = null;
     if (value != null) {
       assert value.length != 0;
-      result = new HashSet<>(Arrays.asList(value));
+      result = ContainerUtil.set(value);
     }
     for (Class<?> superclass : JBIterable.<Class<?>>of(aClass.getSuperclass()).append(aClass.getInterfaces())) {
       result = addFromUpper(result, superclass);

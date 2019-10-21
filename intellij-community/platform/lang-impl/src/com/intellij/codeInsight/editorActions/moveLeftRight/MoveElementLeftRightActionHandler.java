@@ -17,6 +17,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Range;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,10 +26,8 @@ import java.util.*;
 public class MoveElementLeftRightActionHandler extends EditorWriteActionHandler {
   private static final Comparator<PsiElement> BY_OFFSET = Comparator.comparingInt(PsiElement::getTextOffset);
 
-  private static final Set<String> OUR_ACTIONS = new HashSet<>(Arrays.asList(
-    IdeActions.MOVE_ELEMENT_LEFT,
-    IdeActions.MOVE_ELEMENT_RIGHT
-  ));
+  private static final Set<String> OUR_ACTIONS =
+    ContainerUtil.set(IdeActions.MOVE_ELEMENT_LEFT, IdeActions.MOVE_ELEMENT_RIGHT);
 
   private final boolean myIsLeft;
 

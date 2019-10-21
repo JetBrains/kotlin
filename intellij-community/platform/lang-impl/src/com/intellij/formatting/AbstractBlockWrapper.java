@@ -20,24 +20,21 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static java.util.Arrays.asList;
 
 /**
  * @author lesya
  */
 public abstract class AbstractBlockWrapper {
 
-  private static final Set<IndentImpl.Type> RELATIVE_INDENT_TYPES = new HashSet<>(asList(
-    Indent.Type.NORMAL, Indent.Type.CONTINUATION, Indent.Type.CONTINUATION_WITHOUT_FIRST
-  ));
+  private static final Set<IndentImpl.Type> RELATIVE_INDENT_TYPES =
+    ContainerUtil.set(Indent.Type.NORMAL, Indent.Type.CONTINUATION, Indent.Type.CONTINUATION_WITHOUT_FIRST);
 
   private @NotNull final WhiteSpace myWhiteSpaceBefore;
 

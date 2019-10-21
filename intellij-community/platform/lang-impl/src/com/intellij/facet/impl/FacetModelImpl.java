@@ -98,7 +98,7 @@ public class FacetModelImpl extends FacetModelBase implements ModifiableFacetMod
 
   @Override
   public boolean isModified() {
-    return !new HashSet<>(myFacets).equals(new HashSet<>(Arrays.asList(myManager.getAllFacets()))) || !myFacet2NewName.isEmpty();
+    return !new HashSet<>(myFacets).equals(ContainerUtil.set(myManager.getAllFacets())) || !myFacet2NewName.isEmpty();
   }
 
   @Override

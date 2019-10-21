@@ -116,7 +116,7 @@ public class CompileScopeUtil {
   }
 
   public static boolean allProjectModulesAffected(CompileContextImpl compileContext) {
-    final Set<Module> allModules = new HashSet<>(Arrays.asList(compileContext.getProjectCompileScope().getAffectedModules()));
+    final Set<Module> allModules = ContainerUtil.set(compileContext.getProjectCompileScope().getAffectedModules());
     allModules.removeAll(Arrays.asList(compileContext.getCompileScope().getAffectedModules()));
     return allModules.isEmpty();
   }

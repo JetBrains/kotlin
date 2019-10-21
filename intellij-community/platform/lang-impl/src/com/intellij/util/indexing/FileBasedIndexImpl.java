@@ -1218,7 +1218,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
     Document[] documents = myFileDocumentManager.getUnsavedDocuments();
     if (documents.length == 0) return Collections.emptySet();
     if (documents.length == 1) return Collections.singleton(documents[0]);
-    return new THashSet<>(Arrays.asList(documents));
+    return ContainerUtil.set(documents);
   }
 
   @NotNull

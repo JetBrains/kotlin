@@ -384,7 +384,7 @@ public final class FacetManagerImpl extends FacetManager implements ModuleCompon
   private void commit(final ModifiableFacetModel model, final boolean fireEvents) {
     LOG.assertTrue(!myInsideCommit, "Recursive commit");
 
-    Set<Facet<?>> toRemove = new HashSet<>(Arrays.asList(getAllFacets()));
+    Set<Facet<?>> toRemove = ContainerUtil.set(getAllFacets());
     List<Facet<?>> toAdd = new ArrayList<>();
     List<FacetRenameInfo> toRename = new ArrayList<>();
 

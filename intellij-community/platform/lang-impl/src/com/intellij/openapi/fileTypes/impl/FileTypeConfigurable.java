@@ -80,7 +80,7 @@ public class FileTypeConfigurable implements SearchableConfigurable, Configurabl
 
   @NotNull
   private static Set<FileType> getRegisteredFilesTypes() {
-    return new HashSet<>(Arrays.asList(FileTypeManager.getInstance().getRegisteredFileTypes()));
+    return ContainerUtil.set(FileTypeManager.getInstance().getRegisteredFileTypes());
   }
 
   @Override

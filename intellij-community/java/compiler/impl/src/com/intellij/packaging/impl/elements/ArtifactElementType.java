@@ -25,6 +25,7 @@ import com.intellij.packaging.elements.ComplexPackagingElementType;
 import com.intellij.packaging.elements.CompositePackagingElement;
 import com.intellij.packaging.impl.artifacts.ArtifactUtil;
 import com.intellij.packaging.ui.ArtifactEditorContext;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -67,7 +68,7 @@ public class ArtifactElementType extends ComplexPackagingElementType<ArtifactPac
   public static List<? extends Artifact> getAvailableArtifacts(@NotNull final ArtifactEditorContext context,
                                                                @NotNull final Artifact artifact,
                                                                final boolean notIncludedOnly) {
-    final Set<Artifact> result = new HashSet<>(Arrays.asList(context.getArtifactModel().getArtifacts()));
+    final Set<Artifact> result = ContainerUtil.set(context.getArtifactModel().getArtifacts());
     if (notIncludedOnly) {
       ArtifactUtil.processPackagingElements(artifact, ARTIFACT_ELEMENT_TYPE, artifactPackagingElement -> {
         result.remove(artifactPackagingElement.findArtifact(context));
