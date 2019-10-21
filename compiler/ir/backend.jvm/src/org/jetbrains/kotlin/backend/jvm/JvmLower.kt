@@ -13,12 +13,15 @@ import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -170,6 +173,23 @@ private val innerClassesPhase = makeIrFilePhase(
     prerequisite = setOf(localDeclarationsPhase)
 )
 
+private val initializersPhase = makeIrFilePhase<JvmBackendContext>(
+    { context -> InitializersLowering(context, JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, clinitNeeded = true) },
+    name = "Initializers",
+    description = "Merge init blocks and field initializers into constructors",
+    stickyPostconditions = setOf(fun(irFile: IrFile) {
+        irFile.acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
+                error("No anonymous initializers should remain at this stage")
+            }
+        })
+    })
+)
+
 private val returnableBlocksPhase = makeIrFilePhase(
     ::ReturnableBlockLowering,
     name = "ReturnableBlock",
@@ -256,7 +276,7 @@ private val jvmFilePhases =
 
         enumClassPhase then
         objectClassPhase then
-        makeInitializersPhase(JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, true) then
+        initializersPhase then
         collectionStubMethodLowering then
         functionNVarargBridgePhase then
         bridgePhase then

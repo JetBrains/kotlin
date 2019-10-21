@@ -9,10 +9,8 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.SetDeclarationsParentVisitor
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -28,33 +26,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-object SYNTHESIZED_INIT_BLOCK: IrStatementOriginImpl("SYNTHESIZED_INIT_BLOCK")
-
-fun makeInitializersPhase(origin: IrDeclarationOrigin, clinitNeeded: Boolean)= makeIrFilePhase<CommonBackendContext>(
-    { context -> InitializersLowering(context, origin, clinitNeeded) },
-    name = "Initializers",
-    description = "Handle initializer statements",
-    stickyPostconditions = setOf(::checkNonAnonymousInitializers)
-)
-
-fun checkNonAnonymousInitializers(irFile: IrFile) {
-    irFile.acceptVoid(object : IrElementVisitorVoid {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) {
-            error("No anonymous initializers should remain at this stage")
-        }
-    })
-}
+object SYNTHESIZED_INIT_BLOCK : IrStatementOriginImpl("SYNTHESIZED_INIT_BLOCK")
 
 class InitializersLowering(
     val context: CommonBackendContext,
-    val declarationOrigin: IrDeclarationOrigin,
+    private val declarationOrigin: IrDeclarationOrigin,
     private val clinitNeeded: Boolean
 ) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
@@ -68,13 +48,13 @@ class InitializersLowering(
         irClass.patchDeclarationParents(irClass.parent)
     }
 
-    fun handleNonStatics(irClass: IrClass) =
+    private fun handleNonStatics(irClass: IrClass) =
         irClass.declarations.filter {
             (it is IrField && !it.isStatic) || (it is IrAnonymousInitializer && !it.isStatic)
         }.mapNotNull { handleDeclaration(irClass, it) }
 
-    fun handleStatics(irClass: IrClass) =
-    // Hardcoded order of initializers
+    private fun handleStatics(irClass: IrClass) =
+        // Hardcoded order of initializers
         (irClass.declarations.filter { it is IrField && it.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY } +
                 irClass.declarations.filter { it is IrField && it.origin == IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES } +
                 irClass.declarations.filter { it is IrField && it.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE } +
@@ -87,13 +67,13 @@ class InitializersLowering(
                 })
             .mapNotNull { handleDeclaration(irClass, it) }
 
-    fun handleDeclaration(irClass: IrClass, declaration: IrDeclaration): IrStatement? = when(declaration) {
+    private fun handleDeclaration(irClass: IrClass, declaration: IrDeclaration): IrStatement? = when (declaration) {
         is IrField -> handleField(irClass, declaration)
         is IrAnonymousInitializer -> handleAnonymousInitializer(declaration)
         else -> null
     }
 
-    fun handleField(irClass: IrClass, declaration: IrField): IrStatement? {
+    private fun handleField(irClass: IrClass, declaration: IrField): IrStatement? {
         val irFieldInitializer = declaration.initializer?.expression ?: return null
 
         val receiver =
@@ -113,15 +93,14 @@ class InitializersLowering(
         )
     }
 
-
-    fun handleAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement = IrBlockImpl(
+    private fun handleAnonymousInitializer(declaration: IrAnonymousInitializer): IrStatement = IrBlockImpl(
         declaration.startOffset, declaration.endOffset,
         context.irBuiltIns.unitType,
         SYNTHESIZED_INIT_BLOCK,
         declaration.body.statements
     )
 
-    fun transformInstanceInitializerCallsInConstructors(irClass: IrClass, instanceInitializerStatements: List<IrStatement>) {
+    private fun transformInstanceInitializerCallsInConstructors(irClass: IrClass, instanceInitializerStatements: List<IrStatement>) {
         irClass.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall): IrExpression {
                 val copiedBlock =
@@ -133,7 +112,7 @@ class InitializersLowering(
         })
     }
 
-    fun createStaticInitializationMethod(irClass: IrClass, staticInitializerStatements: List<IrStatement>) {
+    private fun createStaticInitializationMethod(irClass: IrClass, staticInitializerStatements: List<IrStatement>) {
         // TODO: mark as synthesized
         val staticInitializerDescriptor = WrappedSimpleFunctionDescriptor()
         val staticInitializer = IrFunctionImpl(
@@ -165,7 +144,7 @@ class InitializersLowering(
     companion object {
         val clinitName = Name.special("<clinit>")
 
-        fun IrStatement.copy(containingDeclaration: IrDeclarationParent) = deepCopyWithSymbols(containingDeclaration)
-        fun IrExpression.copy(containingDeclaration: IrDeclarationParent) = deepCopyWithSymbols(containingDeclaration)
+        private fun IrStatement.copy(containingDeclaration: IrDeclarationParent) = deepCopyWithSymbols(containingDeclaration)
+        private fun IrExpression.copy(containingDeclaration: IrDeclarationParent) = deepCopyWithSymbols(containingDeclaration)
     }
 }
