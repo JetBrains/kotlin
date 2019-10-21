@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.codegen.SamWrapperCodegen.FUNCTION_FIELD_NAME
@@ -47,7 +47,7 @@ internal val singleAbstractMethodPhase = makeIrFilePhase(
     description = "Replace SAM conversions with instances of interface-implementing classes"
 )
 
-class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
+class SingleAbstractMethodLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     // SAM wrappers are cached, either in the file class (if it exists), or in a top-level enclosing class.
     // In the latter case, the names of SAM wrappers depend on the order of classes in the file. For example:
     //
@@ -96,9 +96,9 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
         if (expression.operator != IrTypeOperator.SAM_CONVERSION)
             return super.visitTypeOperator(expression)
-        // TODO: We have to erase type parameters here, since we cache SAM wrappers based on the erased
-        //       underlying representation. We should do the same for the underlying function type, otherwise
-        //       we end up with wrong generic information.
+        // TODO: there must be exactly one wrapper per Java interface; ideally, if the interface has generic
+        //       parameters, so should the wrapper. Currently, we just erase them and generate something that
+        //       erases to the same result at codegen time.
         val erasedSuperType = expression.typeOperand.erasedUpperBound.defaultType
         val superType = if (expression.typeOperand.isNullable()) erasedSuperType.makeNullable() else erasedSuperType
         val invokable = expression.argument.transform(this, null)
@@ -110,7 +110,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
             val inInlineFunctionScope = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
             val cache = if (inInlineFunctionScope) inlineCachedImplementations else cachedImplementations
             val implementation = cache.getOrPut(superType) {
-                createObjectProxy(superType, invokable.type, inInlineFunctionScope)
+                createObjectProxy(superType, inInlineFunctionScope)
             }
 
             return if (superType.isNullable() && invokable.type.isNullable()) {
@@ -138,7 +138,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
 
     // Construct a class that wraps an invokable object into an implementation of an interface:
     //     class sam$n(private val invokable: F) : Interface { override fun method(...) = invokable(...) }
-    private fun createObjectProxy(superType: IrType, invokableType: IrType, generatePublicWrapper: Boolean): IrClass {
+    private fun createObjectProxy(superType: IrType, generatePublicWrapper: Boolean): IrClass {
         val superClass = superType.classifierOrFail.owner as IrClass
         // The language documentation prohibits casting lambdas to classes, but if it was allowed,
         // the `irDelegatingConstructorCall` in the constructor below would need to be modified.
@@ -147,6 +147,11 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
         val superFqName = superClass.fqNameWhenAvailable!!.asString().replace('.', '_')
         val inlinePrefix = if (generatePublicWrapper) "\$i" else ""
         val wrapperName = Name.identifier("sam$inlinePrefix\$$superFqName$SAM_WRAPPER_SUFFIX")
+        val superMethod = superClass.functions.single { it.modality == Modality.ABSTRACT }
+        // TODO: have psi2ir cast the argument to the correct function type. Also see the TODO
+        //       about type parameters in `visitTypeOperator`.
+        val wrappedFunctionClass = context.ir.symbols.functionN(superMethod.valueParameters.size).owner
+        val wrappedFunctionType = wrappedFunctionClass.defaultType
 
         val wrapperVisibility = if (generatePublicWrapper) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY
         val subclass = buildClass {
@@ -161,7 +166,7 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
 
         val field = subclass.addField {
             name = Name.identifier(FUNCTION_FIELD_NAME)
-            type = invokableType
+            type = wrappedFunctionType
             origin = subclass.origin
             visibility = Visibilities.PRIVATE
         }
@@ -184,7 +189,6 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
             }
         }
 
-        val superMethod = superClass.functions.single { it.modality == Modality.ABSTRACT }
         subclass.addFunction {
             name = superMethod.name
             returnType = superMethod.returnType
@@ -194,9 +198,8 @@ class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLowe
             overriddenSymbols += superMethod.symbol
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
             superMethod.valueParameters.mapTo(valueParameters) { it.copyTo(this) }
-            val invokableClass = invokableType.classifierOrFail.owner as IrClass
             body = context.createIrBuilder(symbol).run {
-                irExprBody(irCall(invokableClass.functions.single { it.name == OperatorNameConventions.INVOKE }).apply {
+                irExprBody(irCall(wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }).apply {
                     dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
                     valueParameters.forEachIndexed { i, parameter -> putValueArgument(i, irGet(parameter)) }
                 })
