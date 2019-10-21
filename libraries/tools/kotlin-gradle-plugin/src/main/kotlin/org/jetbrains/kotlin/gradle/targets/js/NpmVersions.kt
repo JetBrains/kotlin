@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
 class NpmVersions {
     val dukat = NpmPackageVersion("dukat", "0.0.19")
 
-    val webpack = NpmPackageVersion("webpack", "4.41.1")
+    val webpack = NpmPackageVersion("webpack", "4.41.2")
     val webpackCli = NpmPackageVersion("webpack-cli", "3.3.9")
     val webpackBundleAnalyzer = NpmPackageVersion("webpack-bundle-analyzer", "3.5.2")
     val webpackDevServer = NpmPackageVersion("webpack-dev-server", "3.8.2")
@@ -26,10 +26,10 @@ class NpmVersions {
     val sourceMapLoader = NpmPackageVersion("source-map-loader", "0.2.4")
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.13")
 
-    val mocha = NpmPackageVersion("mocha", "6.2.1")
+    val mocha = NpmPackageVersion("mocha", "6.2.2")
     val mochaTeamCityReporter = NpmPackageVersion("mocha-teamcity-reporter", "3.0.0")
 
-    val karma = NpmPackageVersion("karma", "4.3.0")
+    val karma = NpmPackageVersion("karma", "4.4.1")
     val karmaTeamcityReporter = NpmPackageVersion("karma-teamcity-reporter", "1.1.0")
 
     val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "3.1.0")
