@@ -33,6 +33,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
+    private val commonWebpackConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
+    private val commonRunConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
 
     private lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
@@ -47,11 +49,11 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     }
 
     override fun runTask(body: KotlinWebpack.() -> Unit) {
-        TODO()
+        commonRunConfigurations.add(body)
     }
 
     override fun webpackTask(body: KotlinWebpack.() -> Unit) {
-        TODO()
+        commonWebpackConfigurations.add(body)
     }
 
     @ExperimentalDce
@@ -116,6 +118,10 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         it.dependsOn(compileKotlinTask)
                     }
                 }
+
+                commonRunConfigurations.forEach { configure ->
+                    it.configure()
+                }
             }
 
             dceTaskProvider.configure {
@@ -171,6 +177,10 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                         it.dependsOn(compileKotlinTask)
                     }
                 }
+
+                commonWebpackConfigurations.forEach { configure ->
+                    it.configure()
+                }
             }
 
             dceTaskProvider.configure {
@@ -198,8 +208,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val kotlinTask = compilation.compileKotlinTask
 
         return project.registerTask(dceTaskName) {
-            dceConfigurations.forEach { configuration ->
-                it.configuration()
+            dceConfigurations.forEach { configure ->
+                it.configure()
             }
 
             it.dependsOn(kotlinTask)

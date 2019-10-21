@@ -56,8 +56,8 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     var entry: File? = null
         get() = field ?: compilation.compileKotlinTask.outputFile
 
-    @Input
-    var resolveFromModulesFirst: Boolean = false
+    @get:Internal
+    internal var resolveFromModulesFirst: Boolean = false
 
     @Suppress("unused")
     val runtimeClasspath: FileCollection
