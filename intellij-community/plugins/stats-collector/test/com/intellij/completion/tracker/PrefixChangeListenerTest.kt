@@ -86,8 +86,10 @@ class PrefixChangeListenerTest: LightFixtureCompletionTestCase() {
     Assertions.assertThat(beforeChange).isEqualTo(lastLookupState)
   }
 
-  private fun setupCompletionContext(fixture: JavaCodeInsightTestFixture) {
-    fixture.addClass("""
+}
+
+internal fun setupCompletionContext(fixture: JavaCodeInsightTestFixture) {
+  fixture.addClass("""
 interface XRunnable {
   void man();
   void run();
@@ -97,6 +99,5 @@ interface XRunnable {
 }
 """)
 
-    fixture.configureByText(JavaFileType.INSTANCE, "class T { void r() { XRunnable x; x.<caret> } }")
-  }
+  fixture.configureByText(JavaFileType.INSTANCE, "class T { void r() { XRunnable x; x.<caret> } }")
 }
