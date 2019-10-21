@@ -235,7 +235,7 @@ public class IdeaProjectSerializationService implements SerializationService<Ide
         writer.setFieldName(OBJECT_ID_FIELD);
         writer.writeInt(objectId);
         if (isAdded) {
-          writeString(writer, "languageLevel", getJavaVersion(languageSettings.getLanguageLevel()));
+          writeString(writer, "languageLevel", getJavaVersion(getLanguageLevel(languageSettings)));
           writeString(writer, "targetBytecodeVersion",
                       getJavaVersion(nullizeUnsupported(new TargetBytecodeVersionGetter(languageSettings))));
           writer.setFieldName("jdk");
@@ -243,7 +243,7 @@ public class IdeaProjectSerializationService implements SerializationService<Ide
           if (jdk != null) {
             writer.stepIn(IonType.STRUCT);
             writeFile(writer, "javaHome", jdk.getJavaHome());
-            JavaVersion jdkJavaVersion = jdk.getJavaVersion();
+            JavaVersion jdkJavaVersion = getJavaVersion(jdk);
             writeString(writer, "javaVersion", jdkJavaVersion == null ? null : jdkJavaVersion.name());
             writer.stepOut();
           }
@@ -254,11 +254,6 @@ public class IdeaProjectSerializationService implements SerializationService<Ide
         writer.stepOut();
       }
     });
-  }
-
-  @Nullable
-  private static String getJavaVersion(JavaVersion javaVersion) {
-    return javaVersion == null ? null : javaVersion.name();
   }
 
   private static void writeContentRoots(IonWriter writer, DomainObjectSet<? extends IdeaContentRoot> roots) throws IOException {
@@ -969,7 +964,7 @@ public class IdeaProjectSerializationService implements SerializationService<Ide
         new TObjectHashingStrategy<IdeaJavaLanguageSettings>() {
           @Override
           public int computeHashCode(final IdeaJavaLanguageSettings object) {
-            return object == null ? 0 : Objects.hashCode(object.getLanguageLevel(),
+            return object == null ? 0 : Objects.hashCode(getLanguageLevel(object),
                                                          nullizeUnsupported(new TargetBytecodeVersionGetter(object)),
                                                          nullizeUnsupported(new JavaHomePathGetter(object)));
           }
@@ -978,7 +973,7 @@ public class IdeaProjectSerializationService implements SerializationService<Ide
           public boolean equals(IdeaJavaLanguageSettings o1, IdeaJavaLanguageSettings o2) {
             return o1 == o2 ||
                    o1 != null && o2 != null &&
-                   o1.getLanguageLevel() == o2.getLanguageLevel() &&
+                   getLanguageLevel(o1) == getLanguageLevel(o2) &&
                    equal(nullizeUnsupported(new TargetBytecodeVersionGetter(o1)),
                          nullizeUnsupported(new TargetBytecodeVersionGetter(o2))) &&
                    equal(nullizeUnsupported(new JavaHomePathGetter(o1)), nullizeUnsupported(new JavaHomePathGetter(o2)));
@@ -1027,6 +1022,41 @@ public class IdeaProjectSerializationService implements SerializationService<Ide
     }
   }
 
+  @Nullable
+  private static String getJavaVersion(@Nullable JavaVersion javaVersion) {
+    return javaVersion == null ? null : javaVersion.name();
+  }
+
+  @Nullable
+  private static JavaVersion getLanguageLevel(@NotNull IdeaJavaLanguageSettings languageSettings) {
+    try {
+      return languageSettings.getLanguageLevel();
+    }
+    catch (IllegalArgumentException e) {
+      return null;
+    }
+  }
+
+  @Nullable
+  private static JavaVersion getTargetBytecodeVersion(@NotNull IdeaJavaLanguageSettings languageSettings) {
+    try {
+      return languageSettings.getTargetBytecodeVersion();
+    }
+    catch (IllegalArgumentException e) {
+      return null;
+    }
+  }
+
+  @Nullable
+  private static JavaVersion getJavaVersion(@NotNull InstalledJdk jdk) {
+    try {
+      return jdk.getJavaVersion();
+    }
+    catch (IllegalArgumentException e) {
+      return null;
+    }
+  }
+
   private static class TargetBytecodeVersionGetter implements Getter<JavaVersion> {
     private final IdeaJavaLanguageSettings myObject;
 
@@ -1034,7 +1064,7 @@ public class IdeaProjectSerializationService implements SerializationService<Ide
 
     @Override
     public JavaVersion get() {
-      return myObject.getTargetBytecodeVersion();
+      return getTargetBytecodeVersion(myObject);
     }
   }
 
