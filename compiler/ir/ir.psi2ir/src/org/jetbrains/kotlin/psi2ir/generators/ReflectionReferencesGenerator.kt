@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 
@@ -58,22 +57,21 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
     fun generateCallableReference(ktCallableReference: KtCallableReferenceExpression): IrExpression {
         val resolvedCall = getResolvedCall(ktCallableReference.callableReference)!!
+        val resolvedDescriptor = resolvedCall.resultingDescriptor
 
-        val resultingDescriptor = resolvedCall.resultingDescriptor
-        val descriptorImportedFromObject = resultingDescriptor as? ImportedFromObjectCallableDescriptor<*>
-        val referencedDescriptor = descriptorImportedFromObject?.callableFromObject ?: resultingDescriptor
+        val callBuilder = unwrapCallableDescriptorAndTypeArguments(resolvedCall, context.extensions.samConversion)
 
         return statementGenerator.generateCallReceiver(
             ktCallableReference,
-            resultingDescriptor,
+            resolvedDescriptor,
             resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
             isSafe = false
         ).call { dispatchReceiverValue, extensionReceiverValue ->
             generateCallableReference(
                 ktCallableReference,
                 getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
-                referencedDescriptor,
-                resolvedCall.typeArguments
+                callBuilder.descriptor,
+                callBuilder.typeArguments
             ).also { irCallableReference ->
                 irCallableReference.dispatchReceiver = dispatchReceiverValue?.loadIfExists()
                 irCallableReference.extensionReceiver = extensionReceiverValue?.loadIfExists()

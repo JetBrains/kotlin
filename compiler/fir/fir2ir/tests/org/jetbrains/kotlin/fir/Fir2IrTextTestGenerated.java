@@ -1212,6 +1212,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/tryCatchWithImplicitCast.kt");
         }
 
+        @TestMetadata("typeAliasConstructorReference.kt")
+        public void testTypeAliasConstructorReference() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/typeAliasConstructorReference.kt");
+        }
+
         @TestMetadata("typeArguments.kt")
         public void testTypeArguments() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/typeArguments.kt");
