@@ -51,8 +51,8 @@ public class AnnotationProcessingConfigImpl implements AnnotationProcessingConfi
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     AnnotationProcessingConfigImpl config = (AnnotationProcessingConfigImpl)o;
-    return myProcessorOutput == config.myProcessorOutput &&
-           isTestSources == config.isTestSources &&
+    return isTestSources == config.isTestSources &&
+           Objects.equal(myProcessorOutput, config.myProcessorOutput) &&
            Objects.equal(myPaths, config.myPaths) &&
            Objects.equal(myArgs, config.myArgs);
   }
