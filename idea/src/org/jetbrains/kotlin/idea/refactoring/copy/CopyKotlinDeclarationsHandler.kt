@@ -10,11 +10,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiFileSystemItem
+import com.intellij.openapi.vfs.*
+import com.intellij.psi.*
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
@@ -52,7 +49,7 @@ import org.jetbrains.kotlin.utils.ifEmpty
 class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
     companion object {
 
-        private const val COMMAND_NAME = "Copy Declarations"
+        private val commandName = RefactoringBundle.message("copy.handler.copy.files.directories")
 
         private val isUnitTestMode get() = ApplicationManager.getApplication().isUnitTestMode
 
@@ -133,7 +130,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
 
             val answer = Messages.showOkCancelDialog(
                 "File $targetFileName already exists in ${targetDirectory.virtualFile.path}",
-                COMMAND_NAME,
+                commandName,
                 "Overwrite",
                 "Cancel",
                 Messages.getQuestionIcon()
@@ -144,7 +141,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
 
             val answer = Messages.showYesNoCancelDialog(
                 "File $targetFileName already exists in ${targetDirectory.virtualFile.path}",
-                COMMAND_NAME,
+                commandName,
                 "Append",
                 "Overwrite",
                 "Cancel",
@@ -198,7 +195,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
 
         if (singleNamedSourceElement !== null) {
             val dialog = CopyKotlinDeclarationDialog(singleNamedSourceElement, sourceData.initialTargetDirectory, sourceData.project)
-            dialog.title = COMMAND_NAME
+            dialog.title = commandName
             if (!dialog.showAndGet()) return null
 
             openInEditor = dialog.openInEditor
@@ -246,14 +243,62 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         }
     }
 
-    private fun getTargetData(sourceData: SourceData) =
-        if (isUnitTestMode) getTargetDataForUnitTest(sourceData)
-        else getTargetDataForUX(sourceData)
+    private fun trackedCopyFiles(sourceFiles: Array<out PsiElement>, initialTargetDirectory: PsiDirectory?): Set<VirtualFile> {
+        val mapper = object : VirtualFileListener {
+            val filesCopied = mutableSetOf<VirtualFile>()
+
+            override fun fileCopied(event: VirtualFileCopyEvent) {
+                filesCopied.add(event.file)
+            }
+
+            override fun fileCreated(event: VirtualFileEvent) {
+                filesCopied.add(event.file)
+            }
+        }
+
+        with(VirtualFileManager.getInstance()) {
+            try {
+                addVirtualFileListener(mapper)
+                copyFilesHandler.doCopy(sourceFiles, initialTargetDirectory)
+            } finally {
+                removeVirtualFileListener(mapper)
+            }
+        }
+        return mapper.filesCopied
+    }
+
+    private fun doCopyFiles(filesToCopy: Array<out PsiElement>, initialTargetDirectory: PsiDirectory?) {
+
+        if (filesToCopy.isEmpty()) return
+
+        val project = filesToCopy.first().project
+        val psiManager = PsiManager.getInstance(project)
+
+        project.executeCommand(commandName) {
+            val copiedFiles = trackedCopyFiles(filesToCopy, initialTargetDirectory)
+
+            copiedFiles.forEach { copiedFile ->
+                val targetKtFile = psiManager.findFile(copiedFile) as? KtFile
+                if (targetKtFile !== null) {
+                    runWriteAction {
+                        if (!targetKtFile.packageMatchesDirectoryOrImplicit()) {
+                            targetKtFile.containingDirectory?.getFqNameWithImplicitPrefix()?.let { targetDirectoryFqName ->
+                                targetKtFile.packageFqName = targetDirectoryFqName
+                            }
+                        }
+                        performDelayedRefactoringRequests(project)
+                    }
+                }
+            }
+        }
+    }
 
     override fun doCopy(elements: Array<out PsiElement>, defaultTargetDirectory: PsiDirectory?) {
+
+        if (elements.isEmpty()) return
+
         if (!canCopyDeclarations(elements)) {
-            val sourceFiles = getSourceFiles(elements) ?: return
-            return copyFilesHandler.doCopy(sourceFiles, defaultTargetDirectory)
+            return doCopyFiles(elements, defaultTargetDirectory)
         }
 
         val elementsToCopy = elements.mapNotNull { it.getCopyableElement() }
@@ -273,7 +318,9 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             originalFile = originalFile,
             initialTargetDirectory = initialTargetDirectory
         )
-        val targetData = getTargetData(sourceData) ?: return
+
+        val targetData = if (isUnitTestMode) getTargetDataForUnitTest(sourceData) else getTargetDataForUX(sourceData)
+        targetData ?: return
 
         val internalUsages = collectInternalUsages(sourceData, targetData)
         markInternalUsages(internalUsages)
@@ -282,7 +329,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
 
         project.checkConflictsInteractively(conflicts) {
             try {
-                project.executeCommand(COMMAND_NAME) {
+                project.executeCommand(commandName) {
                     doRefactor(sourceData, targetData)
                 }
             } finally {
@@ -297,6 +344,10 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
         val restoredInternalUsages: List<UsageInfo>? = null
     )
 
+    private fun getTargetFileName(sourceData: SourceData, targetData: TargetData) =
+        if (targetData.newName.contains(".")) targetData.newName
+        else targetData.newName + "." + sourceData.originalFile.virtualFile.extension
+
     private fun doRefactor(sourceData: SourceData, targetData: TargetData) {
 
         var refactoringResult: RefactoringResult? = null
@@ -305,9 +356,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
                 targetData.targetDirWrapper.getOrCreateDirectory(sourceData.initialTargetDirectory)
             }
 
-            val targetFileName =
-                if (targetData.newName.contains(".")) targetData.newName
-                else targetData.newName + "." + sourceData.originalFile.virtualFile.extension
+            val targetFileName = getTargetFileName(sourceData, targetData)
 
             val isSingleDeclarationInFile =
                 sourceData.singleElementToCopy is KtNamedDeclaration &&
@@ -322,7 +371,8 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             refactoringResult = if (fileToCopy !== null) {
                 doRefactoringOnFile(fileToCopy, sourceData, targetDirectory, targetFileName, isSingleDeclarationInFile)
             } else {
-                val targetFile = getOrCreateTargetFile(sourceData.originalFile, targetDirectory, targetFileName) ?: return
+                val targetFile = getOrCreateTargetFile(sourceData.originalFile, targetDirectory, targetFileName)
+                    ?: throw IncorrectOperationException("Could not create target file.")
                 doRefactoringOnElement(sourceData, targetFile)
             }
 
@@ -336,7 +386,7 @@ class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
             }
 
             if (targetData.openInEditor) {
-                EditorHelper.openFilesInEditor(arrayOf(refactoringResult.targetFile))
+                EditorHelper.openInEditor(refactoringResult.targetFile)
             }
         } catch (e: IncorrectOperationException) {
             Messages.showMessageDialog(sourceData.project, e.message, RefactoringBundle.message("error.title"), Messages.getErrorIcon())
