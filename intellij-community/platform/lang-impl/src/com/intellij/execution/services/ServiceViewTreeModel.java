@@ -45,6 +45,7 @@ class ServiceViewTreeModel extends BaseTreeModel<Object> implements InvokerSuppl
   @Override
   public List<?> getChildren(Object parent) {
     if (parent == myRoot) {
+      myModel.initRootsIfNeeded();
       return myModel.getVisibleRoots();
     }
     return myModel.getChildren(((ServiceViewItem)parent));
