@@ -30,3 +30,8 @@ artifacts {
 
 compileKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/module.js"
 compileTestKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/test/module-tests.js"
+
+if (project.findProperty("kotlin.js.useIrBackend")?.toBoolean() == true) {
+    compileKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-klib-dir", "-Xir-only"]
+    compileTestKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
+}

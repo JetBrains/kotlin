@@ -31,12 +31,17 @@ def outDir = "${buildDir}/kotlin2js/main/"
 
 compileKotlin2Js.kotlinOptions.outputFile = outDir + "test-library.js"
 
+def isIrBackend = project.findProperty("kotlin.js.useIrBackend")?.toBoolean()
+if (isIrBackend) {
+    compileKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-klib-dir"]
+}
+
 jar {
     from sourceSets.main.allSource
     include "**/*.kt"
 
     from outDir
-    include "**/*.js"
+    include (isIrBackend ? "**/*" : "**/*.js")
 
     manifest {
         attributes(

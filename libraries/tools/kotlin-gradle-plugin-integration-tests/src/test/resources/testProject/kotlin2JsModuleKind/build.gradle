@@ -16,6 +16,10 @@ def outDir = "${buildDir}/kotlin2js/main/"
 compileKotlin2Js.kotlinOptions.moduleKind = "amd"
 compileKotlin2Js.kotlinOptions.outputFile = outDir + "app.js"
 
+if (project.findProperty("kotlin.js.useIrBackend")?.toBoolean() == true) {
+    compileKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
+}
+
 repositories {
     mavenLocal()
     mavenCentral()

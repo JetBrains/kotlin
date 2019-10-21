@@ -22,6 +22,7 @@ fun <T> assertEquals(e: T, a: T) {
     if (e != a) throw Exception("Expected: $e, actual: $a")
 }
 
+@JsExport
 fun test() {
     assertEquals("CONST", CONST)
 

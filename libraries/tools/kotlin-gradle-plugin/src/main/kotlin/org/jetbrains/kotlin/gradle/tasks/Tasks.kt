@@ -46,6 +46,7 @@ import javax.inject.Inject
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_JVM_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JVM incremental compilation"
 const val USING_JS_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JS incremental compilation"
+const val USING_JS_IR_BACKEND_MESSAGE = "Using Kotlin/JS IR backend"
 
 abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
     : AbstractCompile(),
@@ -588,8 +589,8 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         logger.debug("Calling compiler")
         destinationDir.mkdirs()
 
-        if (args.isIrBackendEnabled()) {
-            logger.kotlinDebug("Using JS IR backend")
+        if (kotlinOptions.isIrBackendEnabled()) {
+            logger.info(USING_JS_IR_BACKEND_MESSAGE)
             incremental = false
         }
 
