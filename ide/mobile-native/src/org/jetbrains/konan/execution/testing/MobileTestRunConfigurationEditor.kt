@@ -8,7 +8,9 @@ package org.jetbrains.konan.execution.testing
 import com.intellij.openapi.project.Project
 import com.intellij.ui.components.JBTextField
 import com.intellij.util.ui.GridBag
-import org.jetbrains.konan.execution.*
+import org.jetbrains.konan.execution.MobileBuildConfigurationHelper
+import org.jetbrains.konan.execution.MobileRunConfiguration
+import org.jetbrains.konan.execution.MobileRunConfigurationEditor
 import java.io.File
 import javax.swing.JLabel
 import javax.swing.JPanel
@@ -31,6 +33,7 @@ class MobileTestRunConfigurationEditor(project: Project, helper: MobileBuildConf
     override fun applyEditorTo(runConfiguration: MobileRunConfiguration) {
         super.applyEditorTo(runConfiguration)
         (runConfiguration as MobileTestRunConfiguration).testRunner = File(testBundlePathField.text)
+        runConfiguration.recreateTestData() // TODO do this only when module is changed
     }
 
     override fun resetEditorFrom(runConfiguration: MobileRunConfiguration) {

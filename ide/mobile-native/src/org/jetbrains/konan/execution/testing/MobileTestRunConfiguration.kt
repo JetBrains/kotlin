@@ -24,8 +24,17 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
 
     fun getTestRunnerBundle(environment: ExecutionEnvironment): File = testRunner
 
-    private var testData: CidrTestRunConfigurationData<MobileTestRunConfiguration> =
-        MobileJUnitRunConfigurationData(this) // TODO choose based on module
+    private lateinit var testData: CidrTestRunConfigurationData<MobileTestRunConfiguration>
+
+    fun recreateTestData() {
+        testData = // TODO choose based on module
+            if (canRunOnAndroid) AndroidTestRunConfigurationData.FACTORY(this)
+            else AppleXCTestRunConfigurationData.FACTORY(this)
+    }
+
+    init {
+        recreateTestData()
+    }
 
     override fun getTestData(): CidrTestRunConfigurationData<MobileTestRunConfiguration> = testData
 
@@ -50,10 +59,24 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     override fun writeExternal(element: Element) {
         super<MobileRunConfiguration>.writeExternal(element)
         element.setAttribute("TEST_RUNNER_PATH", testRunner.path)
+        testData.writeExternal(element)
     }
 
     override fun readExternal(element: Element) {
         super<MobileRunConfiguration>.readExternal(element)
-        testRunner = File(element.getAttributeValue("TEST_RUNNER_PATH"))
+        recreateTestData()
+        testData.readExternal(element)
+        element.getAttributeValue("TEST_RUNNER_PATH")?.let { testRunner = File(it) }
+    }
+
+    override fun checkConfiguration() {
+        super<MobileRunConfiguration>.checkConfiguration()
+        testData.checkData()
+    }
+
+    override fun clone(): RunConfiguration {
+        val result = super.clone() as MobileTestRunConfiguration
+        result.testData = testData.cloneForConfiguration(result) as CidrTestRunConfigurationData<MobileTestRunConfiguration>
+        return result
     }
 }

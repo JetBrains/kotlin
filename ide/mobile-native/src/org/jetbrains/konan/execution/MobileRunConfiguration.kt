@@ -40,8 +40,8 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
 
     override fun getResolveConfiguration(target: ExecutionTarget): OCResolveConfiguration? = null
 
-    val canRunOnAndroid: Boolean get() = _executableData!!.path!!.endsWith(".apk")
-    val canRunOnApple: Boolean get() = _executableData!!.path!!.endsWith(".app")
+    val canRunOnAndroid: Boolean get() = _executableData?.path?.endsWith(".apk") == true
+    val canRunOnApple: Boolean get() = _executableData?.path?.endsWith(".app") == true
 
     private var _executableData: ExecutableData? = null
 

@@ -7,33 +7,83 @@ package org.jetbrains.konan.execution
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.configurations.SimpleProgramParameters
-import com.intellij.openapi.project.Project
-import com.jetbrains.cidr.execution.CidrCommandLineConfigurator
-import com.jetbrains.cidr.execution.Installer
+import com.intellij.execution.runners.ExecutionEnvironment
+import com.jetbrains.cidr.execution.OCCommandLineConfigurator
+import com.jetbrains.cidr.execution.OCInstaller
+import com.jetbrains.cidr.execution.deviceSupport.AMDevice
+import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
+import com.jetbrains.cidr.execution.simulatorSupport.SimulatorRuntime
+import com.jetbrains.cidr.execution.testing.OCTestCommandLineConfigurator
+import com.jetbrains.cidr.xcode.frameworks.ApplePlatform
+import com.jetbrains.cidr.xcode.frameworks.AppleSdkManager
+import org.jetbrains.konan.execution.testing.AppleXCTestCommandLineState
+import org.jetbrains.konan.execution.testing.MobileTestRunConfiguration
 import java.io.File
+import java.util.*
 
-class AppleInstaller(
-    private val project: Project,
-    private val bundle: File,
-    private val device: AppleDevice
-) : Installer {
-    private var alreadyInstalled: GeneralCommandLine? = null
+abstract class AppleInstaller(
+    private val configuration: MobileRunConfiguration,
+    environment: ExecutionEnvironment,
+    appBundle: File
+) : OCInstaller(environment, appBundle, appBundle, false) {
 
-    override fun install(): GeneralCommandLine {
-        alreadyInstalled?.let { return it }
-
+    override fun doInstall(): GeneralCommandLine {
+        val device = myEnvironment.executionTarget as AppleDevice
         val commandLine = device.install(bundle, project)
 
         val params = SimpleProgramParameters().also {
             it.workingDirectory = File(commandLine.exePath).parentFile.parent
             it.isPassParentEnvs = false
         }
-        CidrCommandLineConfigurator(project, params).configureCommandLine(commandLine)
+        val platform = AppleSdkManager.getInstance().findPlatformByType(
+            if (device is AppleSimulator) ApplePlatform.Type.IOS_SIMULATOR
+            else ApplePlatform.Type.IOS
+        )!!
 
-        alreadyInstalled = commandLine
+        val configurator =
+            if (configuration is MobileTestRunConfiguration) {
+                val testBundle = configuration.getTestRunnerBundle(myEnvironment)
+                val testScope = (myEnvironment.state as AppleXCTestCommandLineState).testScope()
+                val productFileName = bundle.nameWithoutExtension
+                val sessionID = UUID.randomUUID()
+
+                object : OCTestCommandLineConfigurator(
+                    this, params, platform, device.arch, null, productFileName,
+                    File(bundle, productFileName), testBundle.path, false, testScope, sessionID
+                ) {
+                    override fun getDevice(): AMDevice = rawDevice
+                    override fun getSimulator(): SimulatorRuntime = rawSimulator
+
+                    override fun getProductModuleName(): String? = null // TODO
+                }
+            } else {
+                OCCommandLineConfigurator(this, params, platform, device.arch, null)
+            }
+        configurator.configureCommandLine(commandLine)
+
         return commandLine
     }
 
-    override fun getExecutableFile(): File = bundle
-    override fun getAppWorkingDir(): File? = null
+    protected open val rawDevice: AMDevice get() = throw IllegalStateException()
+    protected open val rawSimulator: SimulatorRuntime get() = throw IllegalStateException()
+
+    override fun getRunConfiguration(): MobileRunConfiguration = configuration
+}
+
+class ApplePhysicalDeviceInstaller(
+    configuration: MobileRunConfiguration,
+    environment: ExecutionEnvironment,
+    appBundle: File,
+    raw: AMDevice
+) : AppleInstaller(configuration, environment, appBundle) {
+    override val rawDevice: AMDevice = raw
+}
+
+class AppleSimulatorInstaller(
+    configuration: MobileRunConfiguration,
+    environment: ExecutionEnvironment,
+    appBundle: File,
+    raw: SimulatorConfiguration
+) : AppleInstaller(configuration, environment, appBundle) {
+    override val rawSimulator: SimulatorRuntime = raw.runtime
 }

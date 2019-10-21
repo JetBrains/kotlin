@@ -9,7 +9,6 @@ import com.intellij.execution.filters.TextConsoleBuilderImpl
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil
-import com.intellij.execution.ui.ConsoleView
 import org.jetbrains.konan.execution.AndroidCommandLineState
 
 class AndroidTestCommandLineState(
@@ -20,7 +19,7 @@ class AndroidTestCommandLineState(
 
     init {
         consoleBuilder = object : TextConsoleBuilderImpl(project) {
-            override fun createConsole(): ConsoleView =
+            override fun createConsole() =
                 SMTestRunnerConnectionUtil.createConsole(configuration.createTestConsoleProperties(environment.executor))
         }
     }

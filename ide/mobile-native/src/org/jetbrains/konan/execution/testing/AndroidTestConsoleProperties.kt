@@ -12,4 +12,4 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties
 class AndroidTestConsoleProperties(
     configuration: RunConfiguration,
     executor: Executor
-) : SMTRunnerConsoleProperties(configuration, "Android/JUnit", executor)
+) : SMTRunnerConsoleProperties(configuration, "JUnit", executor)

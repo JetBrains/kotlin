@@ -31,6 +31,10 @@
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="org.jetbrains.konan.execution.MobileAppRunConfigurationType"/>
     <configurationType implementation="org.jetbrains.konan.execution.testing.MobileTestRunConfigurationType"/>
+
+    <applicationService serviceImplementation="org.jetbrains.konan.execution.testing.AppleXCTestLocator"
+                        serviceInterface="com.jetbrains.cidr.execution.testing.xctest.OCUnitTestLocator"/>
+
     <programRunner implementation="org.jetbrains.konan.execution.MobileRunner" order="first"/>
 
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
@@ -61,6 +65,10 @@
 
     <!--<externalAnnotator implementationClass="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator"
                        language="Swift"/>-->
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.lang">
+    <testFramework implementation="org.jetbrains.konan.execution.testing.AppleXCTestFramework"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
