@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -45,10 +47,7 @@ abstract class KotlinJsSubTarget(
 
         configureBuildVariants()
         configureTests()
-        configure {
-            configureRun(it)
-            configureBuild(it)
-        }
+        configureMain()
 
         target.compilations.all {
             val npmProject = it.npmProject
@@ -128,15 +127,23 @@ abstract class KotlinJsSubTarget(
 
     protected abstract fun configureDefaultTestFramework(it: KotlinJsTest)
 
-    fun configure(configurator: (KotlinJsCompilation) -> Unit) {
+    private fun configureMain() {
         target.compilations.all { compilation ->
             if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
-                configurator(compilation)
+                configureMain(compilation)
             }
         }
     }
 
-    protected abstract fun configureRun(compilation: KotlinJsCompilation)
+    protected abstract fun configureMain(compilation: KotlinJsCompilation)
 
-    protected abstract fun configureBuild(compilation: KotlinJsCompilation)
+    protected abstract fun configureRun(
+        compilation: KotlinJsCompilation,
+        dceTaskProvider: TaskProvider<KotlinJsDce>?
+    )
+
+    protected abstract fun configureBuild(
+        compilation: KotlinJsCompilation,
+        dceTaskProvider: TaskProvider<KotlinJsDce>?
+    )
 }

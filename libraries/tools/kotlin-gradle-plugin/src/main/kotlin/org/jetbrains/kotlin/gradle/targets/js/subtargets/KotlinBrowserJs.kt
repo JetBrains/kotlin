@@ -34,9 +34,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
     private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
     private val dceWebpackEntryAppliers: MutableList<KotlinJsDce.(File) -> Unit> = mutableListOf()
-    private lateinit var dceTaskProvider: TaskProvider<KotlinJsDceTask>
 
-    lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
+    private lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -61,16 +60,20 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         dceConfigurations.add(body)
     }
 
-    override fun configureRun(compilation: KotlinJsCompilation) {
+    override fun configureMain(compilation: KotlinJsCompilation) {
+        val dceTaskProvider = configureDce(compilation)
+
+        configureRun(compilation, dceTaskProvider)
+        configureBuild(compilation, dceTaskProvider)
+    }
+
+    override fun configureRun(
+        compilation: KotlinJsCompilation,
+        dceTaskProvider: TaskProvider<KotlinJsDceTask>?
+    ) {
 
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-
-        val dceTaskProvider = if (::dceTaskProvider.isInitialized) {
-            this.dceTaskProvider
-        } else {
-            configureDce(compilation)
-        }
 
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
@@ -121,15 +124,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
     }
 
-    override fun configureBuild(compilation: KotlinJsCompilation) {
+    override fun configureBuild(
+        compilation: KotlinJsCompilation,
+        dceTaskProvider: TaskProvider<KotlinJsDceTask>?
+    ) {
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-
-        val dceTaskProvider = if (::dceTaskProvider.isInitialized) {
-            this.dceTaskProvider
-        } else {
-            configureDce(compilation)
-        }
 
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
@@ -183,7 +183,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val kotlinTask = compilation.compileKotlinTask
 
-        return project.registerTask<KotlinJsDceTask>(dceTaskName) {
+        return project.registerTask(dceTaskName) {
             dceConfigurations.forEach { configuration ->
                 it.configuration()
             }
@@ -201,8 +201,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             }
 
             it.source(kotlinTask.outputFile)
-        }.also {
-            dceTaskProvider = it
         }
     }
 

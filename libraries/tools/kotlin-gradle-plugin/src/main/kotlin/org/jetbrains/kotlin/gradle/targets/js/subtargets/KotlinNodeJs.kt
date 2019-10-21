@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
 import javax.inject.Inject
 
 open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
@@ -26,12 +28,23 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
         it.useMocha { }
     }
 
-    override fun configureRun(compilation: KotlinJsCompilation) {
+    override fun configureMain(compilation: KotlinJsCompilation) {
+        configureRun(compilation, null)
+        configureBuild(compilation, null)
+    }
+
+    override fun configureRun(
+        compilation: KotlinJsCompilation,
+        dceTaskProvider: TaskProvider<KotlinJsDce>?
+    ) {
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased("run"))
         target.runTask.dependsOn(runTaskHolder)
     }
 
-    override fun configureBuild(compilation: KotlinJsCompilation) {
+    override fun configureBuild(
+        compilation: KotlinJsCompilation,
+        dceTaskProvider: TaskProvider<KotlinJsDce>?
+    ) {
     }
 
     override fun configureBuildVariants() {
