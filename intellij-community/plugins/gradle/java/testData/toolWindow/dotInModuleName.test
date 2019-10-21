@@ -1,5 +1,5 @@
 View root() {
-  rooot() {
+  rooot.dot() {
     Tasks() {
       build setup() {
         init()

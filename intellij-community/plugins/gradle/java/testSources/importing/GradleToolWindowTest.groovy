@@ -67,7 +67,7 @@ version '1.0-SNAPSHOT'
   @Test
   void testDotInModuleName() {
     createSettingsFile("""
-rootProject.name='rooot'
+rootProject.name='rooot.dot'
 include ':child1'
 include ':child2'
 include ':child2:dot.child'
