@@ -107,14 +107,14 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 it.outputs.upToDateWhen { false }
 
                 when (kind) {
-                    BuildVariantKind.RELEASE -> {
+                    BuildVariantKind.PRODUCTION -> {
                         dceOutputFileAppliers.add { file ->
                             it.entry = file
                         }
                         it.resolveFromModulesFirst = true
                         it.dependsOn(dceTaskProvider)
                     }
-                    BuildVariantKind.DEBUG -> {
+                    BuildVariantKind.DEVELOPMENT -> {
                         it.dependsOn(compileKotlinTask)
                     }
                 }
@@ -130,7 +130,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 }
             }
 
-            if (kind == BuildVariantKind.DEBUG) {
+            if (kind == BuildVariantKind.DEVELOPMENT) {
                 target.runTask.dependsOn(runTask)
             }
         }
@@ -166,14 +166,14 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 it.description = "build webpack ${kind.name.toLowerCase()} bundle"
 
                 when (kind) {
-                    BuildVariantKind.RELEASE -> {
+                    BuildVariantKind.PRODUCTION -> {
                         dceOutputFileAppliers.add { file ->
                             it.entry = file
                         }
                         it.resolveFromModulesFirst = true
                         it.dependsOn(dceTaskProvider)
                     }
-                    BuildVariantKind.DEBUG -> {
+                    BuildVariantKind.DEVELOPMENT -> {
                         it.dependsOn(compileKotlinTask)
                     }
                 }
@@ -189,7 +189,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                 }
             }
 
-            if (kind == BuildVariantKind.RELEASE) {
+            if (kind == BuildVariantKind.PRODUCTION) {
                 project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(webpackTask)
             }
         }
@@ -243,17 +243,17 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         releaseValue: T,
         debugValue: T
     ): T = when (kind) {
-        BuildVariantKind.RELEASE -> releaseValue
-        BuildVariantKind.DEBUG -> debugValue
+        BuildVariantKind.PRODUCTION -> releaseValue
+        BuildVariantKind.DEVELOPMENT -> debugValue
     }
 
     override fun configureBuildVariants() {
         buildVariants = project.container(BuildVariant::class.java)
-        buildVariants.create(RELEASE) {
-            it.kind = BuildVariantKind.RELEASE
+        buildVariants.create(PRODUCTION) {
+            it.kind = BuildVariantKind.PRODUCTION
         }
-        buildVariants.create(DEBUG) {
-            it.kind = BuildVariantKind.DEBUG
+        buildVariants.create(DEVELOPMENT) {
+            it.kind = BuildVariantKind.DEVELOPMENT
         }
     }
 
@@ -263,7 +263,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         const val DCE_DIR = "kotlin-dce"
 
-        const val RELEASE = "release"
-        const val DEBUG = "debug"
+        const val PRODUCTION = "production"
+        const val DEVELOPMENT = "development"
     }
 }

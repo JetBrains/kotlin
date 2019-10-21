@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Named
 
 class BuildVariant(private val name: String) : Named {
-    var kind: BuildVariantKind = BuildVariantKind.RELEASE
+    var kind: BuildVariantKind = BuildVariantKind.PRODUCTION
 
     override fun getName(): String {
         return name
@@ -16,6 +16,6 @@ class BuildVariant(private val name: String) : Named {
 }
 
 enum class BuildVariantKind {
-    RELEASE,
-    DEBUG
+    PRODUCTION,
+    DEVELOPMENT
 }
