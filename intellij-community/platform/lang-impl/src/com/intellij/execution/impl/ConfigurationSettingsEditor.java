@@ -18,7 +18,6 @@ import com.intellij.ui.ScrollingUtil;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Convertor;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.update.Activatable;
 import com.intellij.util.ui.update.UiNotifyConnector;
@@ -32,6 +31,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * @author dyoma
@@ -126,14 +126,14 @@ public class ConfigurationSettingsEditor extends CompositeSettingsEditor<RunnerA
     SettingsEditor<RunnerAndConfigurationSettings> wrappedRunEditor = null;
     if (configEditor != null) {
       wrappedConfigEditor = wrapEditor(configEditor,
-                                       configurationSettings -> configurationSettings.getConfigurationSettings(runner),
-                                       runner);
+                                       runner, configurationSettings -> configurationSettings.getConfigurationSettings(runner)
+      );
     }
 
     if (runnerEditor != null) {
       wrappedRunEditor = wrapEditor(runnerEditor,
-                                    configurationSettings -> configurationSettings.getRunnerSettings(runner),
-                                    runner);
+                                    runner, configurationSettings -> configurationSettings.getRunnerSettings(runner)
+      );
     }
 
     if (wrappedRunEditor != null && wrappedConfigEditor != null) {
@@ -149,8 +149,8 @@ public class ConfigurationSettingsEditor extends CompositeSettingsEditor<RunnerA
   }
 
   private <T> SettingsEditor<RunnerAndConfigurationSettings> wrapEditor(SettingsEditor<T> editor,
-                                                                        Convertor<? super RunnerAndConfigurationSettings, ? extends T> convertor,
-                                                                        ProgramRunner runner) {
+                                                                        ProgramRunner runner,
+                                                                        Function<? super RunnerAndConfigurationSettings, ? extends T> convertor) {
     SettingsEditor<RunnerAndConfigurationSettings> wrappedEditor = new SettingsEditorWrapper<>(editor, convertor);
 
     List<SettingsEditor> unwrappedEditors = myRunner2UnwrappedEditors.get(runner);

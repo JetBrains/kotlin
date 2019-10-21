@@ -23,27 +23,19 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ComparatorUtil;
-import com.intellij.util.containers.Convertor;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-
-import static com.intellij.util.containers.ContainerUtil.map;
-import static com.intellij.util.containers.ContainerUtil.skipNulls;
 
 /**
  * @author Eugene Zhuravlev
  */
 public class PathUtilEx {
-
-  private static final Function<Module, Sdk> MODULE_JDK = module -> ModuleRootManager.getInstance(module).getSdk();
-  private static final Convertor<Sdk, String> JDK_VERSION = jdk -> StringUtil.notNullize(jdk.getVersionString());
 
   @Nullable
   public static Sdk getAnyJdk(@NotNull Project project) {
@@ -61,11 +53,11 @@ public class PathUtilEx {
 
   @Nullable
   public static Sdk chooseJdk(@NotNull Collection<? extends Module> modules) {
-    List<Sdk> jdks = skipNulls(map(skipNulls(modules), MODULE_JDK));
+    List<Sdk> jdks = ContainerUtil.mapNotNull(modules, module -> module == null ? null : ModuleRootManager.getInstance(module).getSdk());
     if (jdks.isEmpty()) {
       return null;
     }
-    Collections.sort(jdks, ComparatorUtil.compareBy(JDK_VERSION, String.CASE_INSENSITIVE_ORDER));
+    jdks.sort(ComparatorUtil.compareBy(jdk -> StringUtil.notNullize(jdk.getVersionString()), String.CASE_INSENSITIVE_ORDER));
     return jdks.get(jdks.size() - 1);
   }
 }

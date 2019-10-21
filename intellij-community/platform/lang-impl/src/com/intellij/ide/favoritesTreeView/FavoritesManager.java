@@ -27,7 +27,6 @@ import com.intellij.util.Consumer;
 import com.intellij.util.SmartList;
 import com.intellij.util.TreeItem;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.Convertor;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +34,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
 
 import static com.intellij.ide.favoritesTreeView.FavoritesListProvider.EP_NAME;
 
@@ -237,12 +237,12 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
   }
 
   private <T> boolean findListToRemoveFrom(@NotNull String name, @NotNull final List<T> elements,
-                                           final Convertor<? super T, ? extends AbstractUrl> convertor) {
+                                           final Function<? super T, ? extends AbstractUrl> convertor) {
     Collection<TreeItem<Pair<AbstractUrl, String>>> list = getFavoritesListRootUrls(name);
     if (elements.size() > 1) {
       final List<T> sublist = elements.subList(0, elements.size() - 1);
       for (T obj : sublist) {
-        AbstractUrl objUrl = convertor.convert(obj);
+        AbstractUrl objUrl = convertor.apply(obj);
         final TreeItem<Pair<AbstractUrl, String>> item = findNextItem(objUrl, list);
         if (item == null || item.getChildren() == null) return false;
         list = item.getChildren();
@@ -250,7 +250,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
     }
 
     TreeItem<Pair<AbstractUrl, String>> found = null;
-    AbstractUrl url = convertor.convert(elements.get(elements.size() - 1));
+    AbstractUrl url = convertor.apply(elements.get(elements.size() - 1));
     if (url == null) return false;
     for (TreeItem<Pair<AbstractUrl, String>> pair : list) {
       if (url.equals(pair.getData().getFirst())) {
@@ -268,7 +268,7 @@ public class FavoritesManager implements ProjectComponent, JDOMExternalizable {
   }
 
   public synchronized boolean removeRoot(@NotNull String name, @NotNull List<? extends AbstractTreeNode> elements) {
-    final Convertor<AbstractTreeNode, AbstractUrl> convertor = obj -> createUrlByElement(obj.getValue(), myProject);
+    Function<AbstractTreeNode, AbstractUrl> convertor = obj -> createUrlByElement(obj.getValue(), myProject);
     boolean result = true;
     for (AbstractTreeNode element : elements) {
       final List<AbstractTreeNode> path = TaskDefaultFavoriteListProvider.getPathToUsualNode(element);
