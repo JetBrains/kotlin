@@ -24,6 +24,7 @@ import java.io.FileOutputStream
 import java.io.PrintStream
 import kotlin.system.measureNanoTime
 
+private val USE_NI = System.getProperty("fir.bench.oldfe.ni", "true") == "true"
 
 class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     private var totalTime = 0L
@@ -43,10 +44,14 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         println("Time is ${time * 1e-6} ms")
     }
 
-    private fun dumpTime(message: String, time: Long) {
+    private fun writeMessageToLog(message: String) {
         PrintStream(FileOutputStream(reportDir().resolve("report-$reportDateStr.log"), true)).use { stream ->
-            stream.println("$message: ${time * 1e-6} ms")
+            stream.println(message)
         }
+    }
+
+    private fun dumpTime(message: String, time: Long) {
+        writeMessageToLog("$message: ${time * 1e-6} ms")
     }
 
     override fun processModule(moduleData: ModuleData): ProcessorAction {
@@ -63,7 +68,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             CONTENT_ROOTS,
             moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })
 
-        if (System.getProperty("fir.bench.oldfe.ni", "true") == "true") {
+        if (USE_NI) {
             configuration.languageVersionSettings =
                 LanguageVersionSettingsImpl(
                     LanguageVersion.KOTLIN_1_4, ApiVersion.KOTLIN_1_3, specificFeatures = mapOf(
@@ -107,10 +112,12 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     override fun beforePass() {}
 
     fun testTotalKotlin() {
+        writeMessageToLog("use_ni: $USE_NI")
+
         for (i in 0 until PASSES) {
             runTestOnce(i)
             times += totalTime
-            dumpTime("Pass $i:", totalTime)
+            dumpTime("Pass $i", totalTime)
             totalTime = 0L
         }
 
