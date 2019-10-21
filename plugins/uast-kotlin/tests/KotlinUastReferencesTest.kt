@@ -99,25 +99,26 @@ fun registerReferenceProviders(disposable: Disposable, registerContributors: Psi
 }
 
 fun registerReferenceContributor(contributor: PsiReferenceContributor, disposable: Disposable) {
-    val referenceContributorEp = Extensions.getArea(null).getExtensionPoint<PsiReferenceContributorEP>(PsiReferenceContributor.EP_NAME.name)
-
-    val contributorEp = object : PsiReferenceContributorEP() {
-        override fun getInstance(): PsiReferenceContributor = contributor
-    }
-
-    referenceContributorEp.registerExtension(contributorEp)
-
-    val application = ApplicationManager.getApplication()
-
-    //we need a fresh ReferenceProvidersRegistry after updating ReferenceContributors
-    val oldReferenceProviderRegistry =
-        application.picoContainer.getComponentInstance(ReferenceProvidersRegistry::class.java) as ReferenceProvidersRegistry
-    application.registerServiceInstance(ReferenceProvidersRegistry::class.java, ReferenceProvidersRegistryImpl())
-
-    Disposer.register(disposable, Disposable {
-        referenceContributorEp.unregisterExtension(contributorEp)
-        application.registerServiceInstance(ReferenceProvidersRegistry::class.java, oldReferenceProviderRegistry)
-    })
+    error("PsiReferenceContributorEP is final in 193 platform")
+//    val referenceContributorEp = Extensions.getArea(null).getExtensionPoint<PsiReferenceContributorEP>(PsiReferenceContributor.EP_NAME.name)
+//
+//    val contributorEp = object : PsiReferenceContributorEP() {
+//        override fun getInstance(): PsiReferenceContributor = contributor
+//    }
+//
+//    referenceContributorEp.registerExtension(contributorEp)
+//
+//    val application = ApplicationManager.getApplication()
+//
+//    //we need a fresh ReferenceProvidersRegistry after updating ReferenceContributors
+//    val oldReferenceProviderRegistry =
+//        application.picoContainer.getComponentInstance(ReferenceProvidersRegistry::class.java) as ReferenceProvidersRegistry
+//    application.registerServiceInstance(ReferenceProvidersRegistry::class.java, ReferenceProvidersRegistryImpl())
+//
+//    Disposer.register(disposable, Disposable {
+//        referenceContributorEp.unregisterExtension(contributorEp)
+//        application.registerServiceInstance(ReferenceProvidersRegistry::class.java, oldReferenceProviderRegistry)
+//    })
 
 }
 

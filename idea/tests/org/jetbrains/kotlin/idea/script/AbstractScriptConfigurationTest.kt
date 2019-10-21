@@ -222,10 +222,6 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             compileLibToDir(it, *scriptClasspath())
         }
 
-        if (templateOutDir != null) {
-            System.setProperty("kotlin.script.classpath", templateOutDir.path)
-        }
-
         val libSrcDir = File("${path}lib").takeIf { it.isDirectory }
 
         val libClasses = libSrcDir?.let { compileLibToDir(it) }
@@ -306,12 +302,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             CustomScriptTemplateProvider(environment)
         }
 
-        PlatformTestUtil.registerExtension(
-            Extensions.getArea(project),
-            ScriptDefinitionContributor.EP_NAME,
-            provider,
-            testRootDisposable
-        )
+        ScriptDefinitionContributor.EP_NAME.getPoint(null).registerExtension(provider)
 
         ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitions()
 

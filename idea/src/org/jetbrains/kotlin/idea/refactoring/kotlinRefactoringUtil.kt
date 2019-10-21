@@ -483,7 +483,7 @@ private fun <T> copyTypeParameters(
         inserter(to, factory.createTypeParameterList())
         val targetTypeParamList = to.typeParameterList
         val newTypeParams = templateTypeParams.map {
-            factory.createTypeParameter(it.name, it.extendsList.referencedTypes)
+            factory.createTypeParameter(it.name!!, it.extendsList.referencedTypes)
         }
         ChangeSignatureUtil.synchronizeList(
             targetTypeParamList,

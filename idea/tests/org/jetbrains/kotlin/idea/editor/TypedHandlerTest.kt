@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.editor
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.openapi.project.Project
 import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
@@ -868,9 +869,9 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
     }
 
     fun testMoveThroughGT() {
-        LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
-        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')
-        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')
+        configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
+        EditorTestUtil.performTypingAction(editor, '>')
+        EditorTestUtil.performTypingAction(editor, '>')
         checkResultByText("val a: List<Set<Int>><caret>")
     }
 
@@ -878,31 +879,29 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         doTypeTest('\'', "val c = <caret>", "val c = ''")
     }
 
-    private fun enableSmartEnterWithTabs(): () -> Unit = {
-        val project = LightPlatformTestCase.getProject()
-        val indentOptions = CodeStyle.getSettings(project).getIndentOptions(KotlinFileType.INSTANCE)
+    private fun enableSmartEnterWithTabs(): (Project) -> Unit = {
+        val indentOptions = CodeStyle.getSettings(it).getIndentOptions(KotlinFileType.INSTANCE)
         indentOptions.USE_TAB_CHARACTER = true
         indentOptions.SMART_TABS = true
     }
 
-    private fun doTypeTest(ch: Char, beforeText: String, afterText: String, settingsModifier: (() -> Unit)? = null) {
+    private fun doTypeTest(ch: Char, beforeText: String, afterText: String, settingsModifier: ((Project) -> Unit)? = null) {
         doTypeTest(ch.toString(), beforeText, afterText, settingsModifier)
     }
 
-    private fun doTypeTest(text: String, beforeText: String, afterText: String, settingsModifier: (() -> Unit)? = null) {
+    private fun doTypeTest(text: String, beforeText: String, afterText: String, settingsModifier: ((Project) -> Unit)? = null) {
         try {
             if (settingsModifier != null) {
-                settingsModifier()
+                settingsModifier(project)
             }
 
-            LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", beforeText.trimMargin())
+            configureFromFileText("a.kt", beforeText.trimMargin())
             for (ch in text) {
-                EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), ch)
+                EditorTestUtil.performTypingAction(editor, ch)
             }
             checkResultByText(afterText.trimMargin())
         } finally {
             if (settingsModifier != null) {
-                val project = LightPlatformTestCase.getProject()
                 CodeStyle.getSettings(project).clearCodeStyleSettings()
             }
         }
@@ -914,12 +913,12 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
     }
 
     private fun doLtGtTest(initText: String, shouldCloseBeInsert: Boolean) {
-        LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", initText)
+        configureFromFileText("a.kt", initText)
 
-        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '<')
+        EditorTestUtil.performTypingAction(editor, '<')
         checkResultByText(if (shouldCloseBeInsert) initText.replace("<caret>", "<<caret>>") else initText.replace("<caret>", "<<caret>"))
 
-        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), EditorTestUtil.BACKSPACE_FAKE_CHAR)
+        EditorTestUtil.performTypingAction(editor, EditorTestUtil.BACKSPACE_FAKE_CHAR)
         checkResultByText(initText)
     }
 
@@ -928,8 +927,8 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
     }
 
     companion object {
-        private val ENABLE_KOTLIN_OFFICIAL_CODE_STYLE: () -> Unit = {
-            val settings = ktCodeStyleSettings(LightPlatformTestCase.getProject())?.all ?: error("No Settings")
+        private val ENABLE_KOTLIN_OFFICIAL_CODE_STYLE: (Project) -> Unit = {
+            val settings = ktCodeStyleSettings(it)?.all ?: error("No Settings")
             KotlinStyleGuideCodeStyle.apply(settings)
         }
     }
