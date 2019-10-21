@@ -2,15 +2,14 @@
 
 fun f(
     f1: () -> String = { f2() },
-    f2: () -> String = { "FAIL" }
+    f2: () -> String = { "Fail: should not be called" }
 ): String = f1()
 
 fun box(): String {
-    var result = "fail"
     try {
         f()
+        return "Fail: f() should have thrown NPE"
     } catch (e : Exception) {
-        result = "OK"
     }
     return f(f2 = { "O" }) + f(f1 = { "K" })
 }
