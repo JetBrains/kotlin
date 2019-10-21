@@ -79,10 +79,8 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             val kind = buildVariant.kind
             val runTask = project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
-                    lowerCamelCaseName(
-                        buildVariant.name,
-                        "run"
-                    )
+                    buildVariant.name,
+                    "run"
                 )
             ) {
                 val compileKotlinTask = compilation.compileKotlinTask
@@ -135,10 +133,9 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             val kind = buildVariant.kind
             val webpackTask = project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
-                    lowerCamelCaseName(
-                        buildVariant.name,
-                        "webpack"
-                    )
+                    buildVariant.name,
+                    "webpack"
+
                 )
             ) {
                 val compileKotlinTask = compilation.compileKotlinTask

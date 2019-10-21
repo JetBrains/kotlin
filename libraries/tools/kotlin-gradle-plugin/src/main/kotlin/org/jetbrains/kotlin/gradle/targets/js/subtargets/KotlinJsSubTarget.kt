@@ -54,8 +54,8 @@ abstract class KotlinJsSubTarget(
         testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }
 
-    protected fun disambiguateCamelCased(name: String): String =
-        lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, name)
+    protected fun disambiguateCamelCased(vararg names: String): String =
+        lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, *names)
 
     abstract fun configureBuildVariants()
 
