@@ -62,6 +62,7 @@ if (hasProperty("kotlinProjectPath")) {
             substitute module("org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion") with project(':kotlin-util-klib')
             substitute module("org.jetbrains.kotlin:kotlin-util-klib-metadata:$kotlinVersion") with project(':kotlin-util-klib-metadata')
             substitute module("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion") with project(':kotlin-native:kotlin-native-utils')
+            substitute module("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") with project(':kotlin-reflect')
         }
     }
 }

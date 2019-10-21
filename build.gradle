@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import kotlin.text.Regex
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.CopySamples
 import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.KotlinBuildPusher
+import org.jetbrains.kotlin.CollisionDetector
+import org.jetbrains.kotlin.CollisionTransformer
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 buildscript {
     apply from: "gradle/kotlinGradlePlugin.gradle"
@@ -27,12 +32,14 @@ buildscript {
         maven { url kotlinCompilerRepo }
         maven { url "https://kotlin.bintray.com/kotlinx" }
         maven { url "https://cache-redirector.jetbrains.com/maven-central" }
+        jcenter()
     }
 
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
         classpath "org.jetbrains.kotlin:kotlin-native-build-tools:$konanVersion"
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
     }
 }
 import org.jetbrains.kotlin.konan.*
@@ -63,8 +70,6 @@ ext {
     kotlinReflectModule="org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
     kotlinScriptRuntimeModule="org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
     kotlinNativeUtilsModule="org.jetbrains.kotlin:kotlin-native-utils:${kotlinVersion}"
-    kotlinUtilIoModule="org.jetbrains.kotlin:kotlin-util-io:${kotlinVersion}"
-    kotlinUtilKlibModule="org.jetbrains.kotlin:kotlin-util-klib:${kotlinVersion}"
     kotlinUtilKliMetadatabModule="org.jetbrains.kotlin:kotlin-util-klib-metadata:${kotlinVersion}"
 
     konanVersionFull = KonanVersionGeneratedKt.getCurrentKonanVersion()
@@ -72,6 +77,13 @@ ext {
 }
 
 allprojects {
+    buildscript {
+        repositories {
+            maven {
+                url 'https://cache-redirector.jetbrains.com/jcenter'
+            }
+        }
+    }
     if (path != ":dependencies") {
         evaluationDependsOn(":dependencies")
     }
@@ -166,6 +178,7 @@ void loadCommandLineProperties() {
 configurations {
     ftpAntTask
     kotlinCommonSources
+    distPack
 }
 
 dependencies {
@@ -173,6 +186,16 @@ dependencies {
     [kotlinCommonStdlibModule, kotlinTestCommonModule, kotlinTestAnnotationsCommonModule].each {
         kotlinCommonSources(it) { transitive = false }
     }
+    distPack project(':Interop:Runtime')
+    distPack project(':Interop:Indexer')
+    distPack project(':Interop:StubGenerator')
+    distPack project(':backend.native')
+    distPack project(':utilities')
+    distPack project(':klib')
+    distPack project(path: ':endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
+    distPack "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    distPack "org.jetbrains.kotlin:konan.metadata:$konanVersion"
+    distPack  "org.jetbrains.kotlin:konan.serializer:$konanVersion"
 }
 
 task sharedJar {
@@ -226,42 +249,60 @@ task distSources {
     dependsOn(distEndorsedSources)
 }
 
-def jarContent(def jarTask, FileTree baseFileTree, Iterable<String> excludedList = []) {
-    jarTask.from {
-        baseFileTree
-                .matching { include("*.jar") }
-                .collect { zipTree("${it.absolutePath}").matching { exclude(excludedList) } }
+task detectJarCollision(type: CollisionDetector) {
+    ignoredFiles.addAll(["META-INF/MANIFEST.MF", "META-INF/services/**"])
+    configurations = [project.configurations.distPack]
+    resolvingRules["META-INF/kotlin-util-klib.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["META-INF/kotlin-util-io.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["META-INF/descriptors.jvm.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["META-INF/descriptors.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["META-INF/descriptors.runtime.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["META-INF/deserialization.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["META-INF/metadata.jvm.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["META-INF/metadata.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["META-INF/type-system.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["META-INF/util.runtime.kotlin_module"] = "kotlin-compiler"
+    resolvingRules["kotlin/annotation/annotation.kotlin_builtins"] = "kotlin-compiler"
+    resolvingRules["kotlin/collections/collections.kotlin_builtins"] = "kotlin-compiler"
+    resolvingRules["kotlin/coroutines/coroutines.kotlin_builtins"] = "kotlin-compiler"
+    resolvingRules["kotlin/internal/internal.kotlin_builtins"] = "kotlin-compiler"
+    resolvingRules["kotlin/kotlin.kotlin_builtins"] = "kotlin-compiler"
+    resolvingRules["kotlin/ranges/ranges.kotlin_builtins"] = "kotlin-compiler"
+    resolvingRules["kotlin/reflect/reflect.kotlin_builtins"] = "kotlin-compiler"
+    resolvingRules["META-INF/maven/com.google.protobuf/protobuf-java/pom.properties"] = "kotlin-compiler"
+    resolvingRules["META-INF/maven/com.google.protobuf/protobuf-java/pom.xml"] = "kotlin-compiler"
+    librariesWithIgnoredClassCollisions.addAll(["kotlin-util-klib", "kotlin-util-io"])
+    if (project.hasProperty('kotlinProjectPath')) {
+        resolvingRulesWithRegexes[new Regex("META-INF/.+\\.kotlin_module")] = "kotlin-compiler"
+        resolvingRules["META-INF/extensions/compiler.xml"] = "kotlin-compiler"
+        resolvingRules["kotlinManifest.properties"] = "kotlin-compiler"
+        librariesWithIgnoredClassCollisions.addAll(["util", "container", "resolution", "serialization", "psi", "frontend",
+                                                    "frontend.common", "frontend.java", "cli-common", "ir.tree",
+                                                    "ir.psi2ir", "ir.backend.common", "backend.jvm", "backend.js",
+                                                    "backend.wasm", "ir.serialization.common", "ir.serialization.js",
+                                                    "backend-common", "backend", "plugin-api", "light-classes", "cli",
+                                                    "cli-js", "incremental-compilation-impl", "js.ast", "js.serializer",
+                                                    "js.parser", "js.frontend", "js.translator", "js.dce", "metadata",
+                                                    "metadata.jvm", "descriptors", "descriptors.jvm", "descriptors.runtime",
+                                                    "deserialization", "util.runtime", "type-system", "cones", "resolve",
+                                                    "tree", "psi2fir", "fir2ir", "java", "kotlin-build-common"])
     }
 }
 
-task mergeJars(type: Jar) {
-    dependsOn ':backend.native:jar'
-    dependsOn ':utilities:jar'
-    dependsOn ':klib:jar'
-    dependsOn ':sharedJar'
-    dependsOn ':endorsedLibraries:jvmJar'
-
-    archiveFileName = 'kotlin-native.jar'
-    destinationDirectory = file("$distDir/konan/lib")
-    
-    jarContent(it, project(':backend.native').fileTree('build/external_jars'),
-            ['META-INF/services/org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition'])
-    jarContent(it, project(':backend.native').fileTree('build/libs'))
-    jarContent(it, project(':utilities').fileTree('build/libs'))
-    jarContent(it, project('Interop').fileTree('Runtime/build/libs'))
-    jarContent(it, project('Interop').fileTree('Indexer/build/libs'))
-    jarContent(it, project('Interop').fileTree('StubGenerator/build/libs'))
-
-    jarContent(it, project(':klib').fileTree('build/libs'))
-    jarContent(it, project(':endorsedLibraries:kotlinx.cli').fileTree('build/libs'))
-    jarContent(it, fileTree("${gradle.includedBuild('kotlin-native-shared').projectDir}/build/libs"))
-    jarContent(it, fileTree("${gradle.includedBuild('konan.metadata').projectDir}/build/libs"))
-    jarContent(it, fileTree("${gradle.includedBuild('konan.serializer').projectDir}/build/libs"))
-
+task shadowJar(type: ShadowJar) {
+    dependsOn ':detectJarCollision'
+    mergeServiceFiles()
+    destinationDirectory.set(file("$distDir/konan/lib"))
+    archiveBaseName.set("kotlin-native")
+    configurations = [project.configurations.distPack]
+    archiveClassifier.set(null)
+    transform(CollisionTransformer.class) {
+        resolvedConflicts = detectJarCollision.resolvedConflicts
+    }
 }
 
 task distCompiler(type: Copy) {
-    dependsOn ':mergeJars'
+    dependsOn ':shadowJar'
 
     destinationDir distDir
 

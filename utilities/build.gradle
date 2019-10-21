@@ -16,8 +16,6 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-util-io:$kotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion"
     compile project(':backend.native')
     compile project(':Interop:StubGenerator')
     compile project(':klib')
