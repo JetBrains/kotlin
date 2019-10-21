@@ -71,8 +71,8 @@ public class GotoActionItemProvider implements ChooseByNameItemProvider {
     DataContext dataContext = DataManager.getInstance().getDataContext(myModel.getContextComponent());
 
     if (!processAbbreviations(pattern, consumer, dataContext)) return false;
-    if (!processIntentions(pattern, consumer, dataContext)) return false;
     if (!processActions(pattern, consumer, dataContext)) return false;
+    if (!processIntentions(pattern, consumer, dataContext)) return false;
     if (Registry.is("goto.action.skip.tophits.and.options")) return true;
     if (!processTopHits(pattern, consumer, dataContext)) return false;
     if (!processOptions(pattern, consumer, dataContext)) return false;
