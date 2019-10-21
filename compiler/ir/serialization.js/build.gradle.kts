@@ -3,6 +3,7 @@ plugins {
     id("jps-compatible")
 }
 
+// Please make sure this module doesn't depend on `backend.js` (neither directly, nor transitively)
 dependencies {
     compile(project(":compiler:ir.psi2ir"))
     compile(project(":compiler:ir.serialization.common"))
@@ -12,7 +13,7 @@ dependencies {
 
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:cli-js"))
+    testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:util"))
 
     testRuntime(project(":kotlin-reflect"))
