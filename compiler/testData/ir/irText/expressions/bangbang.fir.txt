@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/bangbang.kt
     TYPE_PARAMETER name:X index:0 variance: superTypes:[]
     VALUE_PARAMETER name:a index:0 type:X of <root>.test4
     BLOCK_BODY
-      WHEN type=kotlin.Any? origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/bangbang.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: GET_VAR 'val <bangbang>: kotlin.String? [val] declared in <root>.test4' type=kotlin.String origin=null
-      WHEN type=kotlin.Any? origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null

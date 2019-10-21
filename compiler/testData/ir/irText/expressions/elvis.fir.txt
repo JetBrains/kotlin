@@ -50,13 +50,13 @@ FILE fqName:<root> fileName:/elvis.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Any?
     VALUE_PARAMETER name:b index:1 type:kotlin.Any?
     BLOCK_BODY
-      WHEN type=kotlin.Any? origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'b: kotlin.Any? declared in <root>.test3' type=kotlin.Any? origin=null
           then: RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.Any?, b: kotlin.Any?): kotlin.String declared in <root>'
             CONST String type=kotlin.String value=""
-      WHEN type=kotlin.Any? origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'a: kotlin.Any? declared in <root>.test3' type=kotlin.Any? origin=null

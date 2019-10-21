@@ -561,7 +561,7 @@ open class FirBodyResolveTransformer(
 
     private fun FirWhenExpression.replaceReturnTypeIfNotExhaustive(): FirWhenExpression {
         if (!isExhaustive) {
-            resultType = resultType.resolvedTypeFromPrototype(session.builtinTypes.nullableAnyType.type)
+            resultType = resultType.resolvedTypeFromPrototype(session.builtinTypes.unitType.type)
         }
         return this
     }

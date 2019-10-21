@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
     VALUE_PARAMETER name:x index:0 type:T of <root>.test5
     VALUE_PARAMETER name:fn index:1 type:kotlin.Function1<S of <root>.test5, kotlin.Unit>
     BLOCK_BODY
-      WHEN type=kotlin.Any? origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ

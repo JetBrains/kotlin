@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/Derived.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Derived
       VALUE_PARAMETER name:v index:0 type:kotlin.Any
       BLOCK_BODY
-        WHEN type=kotlin.Any? origin=IF
+        WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String
               GET_VAR 'v: kotlin.Any declared in <root>.Derived.setValue' type=kotlin.Any origin=null
