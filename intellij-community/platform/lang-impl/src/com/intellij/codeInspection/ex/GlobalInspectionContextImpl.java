@@ -97,8 +97,8 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
   private Content myContent;
   private volatile boolean myViewClosed = true;
   private long myInspectionStartedTimestamp;
-  private GlobalReportedProblemFilter myGlobalReportedProblemFilter = null;
-  private ReportedProblemFilter myReportedProblemFilter = null;
+  private GlobalReportedProblemFilter myGlobalReportedProblemFilter;
+  private ReportedProblemFilter myReportedProblemFilter;
 
   public GlobalInspectionContextImpl(@NotNull Project project, @NotNull NotNullLazyValue<? extends ContentManager> contentManager) {
     super(project);
@@ -201,7 +201,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
   }
 
   protected void exportResults(@NotNull List<? super Path> inspectionsResults,
-                               @NotNull List<Tools> inspections,
+                               @NotNull List<? extends Tools> inspections,
                                @NotNull String outputPath,
                                @Nullable XMLOutputFactory xmlOutputFactory) {
     if (xmlOutputFactory == null) {
@@ -328,9 +328,8 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     // export global inspections
     if (!globalToolsWithProblems.isEmpty()) {
       XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
-      StreamEx.ofSubLists(globalToolsWithProblems, MAX_OPEN_GLOBAL_INSPECTION_XML_RESULT_FILES).forEach(inspections -> {
-        exportResults(inspectionsResults, inspections, outputPath, xmlOutputFactory);
-      });
+      StreamEx.ofSubLists(globalToolsWithProblems, MAX_OPEN_GLOBAL_INSPECTION_XML_RESULT_FILES).forEach(inspections ->
+        exportResults(inspectionsResults, inspections, outputPath, xmlOutputFactory));
     }
   }
 
@@ -791,7 +790,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
 
   private void appendPairedInspectionsForUnfairTools(@NotNull List<? super Tools> globalTools,
                                                      @NotNull List<? super Tools> globalSimpleTools,
-                                                     @NotNull List<? super Tools> localTools) {
+                                                     @NotNull List<Tools> localTools) {
     Tools[] larray = localTools.toArray(new Tools[0]);
     for (Tools tool : larray) {
       LocalInspectionToolWrapper toolWrapper = (LocalInspectionToolWrapper)tool.getTool();
@@ -800,13 +799,8 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
         String batchShortName = ((PairedUnfairLocalInspectionTool)localTool).getInspectionForBatchShortName();
         InspectionProfile currentProfile = getCurrentProfile();
         InspectionToolWrapper batchInspection;
-        if (currentProfile == null) {
-          batchInspection = null;
-        }
-        else {
-          final InspectionToolWrapper pairedWrapper = currentProfile.getInspectionTool(batchShortName, getProject());
-          batchInspection = pairedWrapper != null ? pairedWrapper.createCopy() : null;
-        }
+        final InspectionToolWrapper pairedWrapper = currentProfile.getInspectionTool(batchShortName, getProject());
+        batchInspection = pairedWrapper != null ? pairedWrapper.createCopy() : null;
         if (batchInspection != null && !getTools().containsKey(batchShortName)) {
           // add to existing inspections to run
           InspectionProfileEntry batchTool = batchInspection.getTool();
