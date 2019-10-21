@@ -3687,6 +3687,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testInSetWithSmartCast() throws Exception {
             runTest("compiler/testData/codegen/box/collections/inSetWithSmartCast.kt");
         }
+
+        @TestMetadata("removeClash.kt")
+        public void testRemoveClash() throws Exception {
+            runTest("compiler/testData/codegen/box/collections/removeClash.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/compatibility")
