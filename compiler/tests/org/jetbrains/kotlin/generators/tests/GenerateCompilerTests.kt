@@ -238,7 +238,12 @@ fun main(args: Array<String>) {
             model("loadJava/compiledKotlin", testMethod = "doTestCompiledKotlin")
             model("loadJava/compiledKotlinWithStdlib", testMethod = "doTestCompiledKotlinWithStdlib")
             model("loadJava/javaAgainstKotlin", extension = "txt", testMethod = "doTestJavaAgainstKotlin")
-            model("loadJava/kotlinAgainstCompiledJavaWithKotlin", extension = "kt", testMethod = "doTestKotlinAgainstCompiledJavaWithKotlin", recursive = false)
+            model(
+                "loadJava/kotlinAgainstCompiledJavaWithKotlin",
+                extension = "kt",
+                testMethod = "doTestKotlinAgainstCompiledJavaWithKotlin",
+                recursive = false
+            )
             model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava")
         }
 
@@ -249,7 +254,12 @@ fun main(args: Array<String>) {
             model("loadJava/compiledKotlin", testMethod = "doTestCompiledKotlin")
             model("loadJava/compiledKotlinWithStdlib", testMethod = "doTestCompiledKotlinWithStdlib")
             model("loadJava/javaAgainstKotlin", extension = "txt", testMethod = "doTestJavaAgainstKotlin")
-            model("loadJava/kotlinAgainstCompiledJavaWithKotlin", extension = "kt", testMethod = "doTestKotlinAgainstCompiledJavaWithKotlin", recursive = false)
+            model(
+                "loadJava/kotlinAgainstCompiledJavaWithKotlin",
+                extension = "kt",
+                testMethod = "doTestKotlinAgainstCompiledJavaWithKotlin",
+                recursive = false
+            )
             model("loadJava/sourceJava", extension = "java", testMethod = "doTestSourceJava")
         }
 
@@ -262,8 +272,18 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCompileJavaAgainstKotlinTest> {
-            model("compileJavaAgainstKotlin", testClassName = "WithoutJavac", testMethod = "doTestWithoutJavac", targetBackend = TargetBackend.JVM)
-            model("compileJavaAgainstKotlin", testClassName = "WithJavac", testMethod = "doTestWithJavac", targetBackend = TargetBackend.JVM)
+            model(
+                "compileJavaAgainstKotlin",
+                testClassName = "WithoutJavac",
+                testMethod = "doTestWithoutJavac",
+                targetBackend = TargetBackend.JVM
+            )
+            model(
+                "compileJavaAgainstKotlin",
+                testClassName = "WithJavac",
+                testMethod = "doTestWithJavac",
+                targetBackend = TargetBackend.JVM
+            )
         }
 
         testClass<AbstractCompileKotlinAgainstJavaTest> {
@@ -361,7 +381,14 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIrBlackBoxCodegenTest> {
-            model("codegen/box", targetBackend = TargetBackend.JVM_IR)
+            model(
+                "codegen/box",
+                targetBackend = TargetBackend.JVM_IR,
+                excludeDirs = listOf(
+                    "ieee754/oldLanguageVersions",
+                    "operatorConventions/oldLanguageVersions"
+                )
+            )
         }
 
         testClass<AbstractIrBlackBoxAgainstJavaCodegenTest> {
@@ -369,7 +396,12 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIrCompileJavaAgainstKotlinTest> {
-            model("compileJavaAgainstKotlin", testClassName = "WithoutJavac", testMethod = "doTestWithoutJavac", targetBackend = TargetBackend.JVM_IR)
+            model(
+                "compileJavaAgainstKotlin",
+                testClassName = "WithoutJavac",
+                testMethod = "doTestWithoutJavac",
+                targetBackend = TargetBackend.JVM_IR
+            )
             //model("compileJavaAgainstKotlin", testClassName = "WithJavac", testMethod = "doTestWithJavac", targetBackend = TargetBackend.JVM_IR)
         }
 
@@ -434,7 +466,13 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIrBytecodeTextTest> {
-            model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR)
+            model(
+                "codegen/bytecodeText",
+                targetBackend = TargetBackend.JVM_IR,
+                excludeDirs = listOf(
+                    "ieee754/oldLanguageVersions"
+                )
+            )
         }
     }
 
