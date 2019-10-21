@@ -34,7 +34,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsBrowserDsl {
 
     private val dceConfigurations: MutableList<KotlinJsDce.() -> Unit> = mutableListOf()
-    private val dceWebpackEntryAppliers: MutableList<KotlinJsDce.(File) -> Unit> = mutableListOf()
 
     private lateinit var buildVariants: NamedDomainObjectContainer<BuildVariant>
 
@@ -75,6 +74,10 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
+        val compileKotlinTask = compilation.compileKotlinTask
+
+        val dceOutputFileAppliers: MutableList<KotlinJsDce.(File) -> Unit> = mutableListOf()
+
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
             val runTask = project.registerTask<KotlinWebpack>(
@@ -83,7 +86,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     "run"
                 )
             ) {
-                val compileKotlinTask = compilation.compileKotlinTask
                 it.dependsOn(
                     nodeJs.npmInstallTask,
                     target.project.tasks.getByName(compilation.processResourcesTaskName)
@@ -104,7 +106,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 when (kind) {
                     BuildVariantKind.RELEASE -> {
-                        dceWebpackEntryAppliers.add { file ->
+                        dceOutputFileAppliers.add { file ->
                             it.entry = file
                         }
                         it.resolveFromModulesFirst = true
@@ -113,6 +115,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     BuildVariantKind.DEBUG -> {
                         it.dependsOn(compileKotlinTask)
                     }
+                }
+            }
+
+            dceTaskProvider.configure {
+                dceOutputFileAppliers.forEach { dceOutputFileApplier ->
+                    it.dceOutputFileApplier(it.destinationDir.resolve(compileKotlinTask.outputFile.name))
                 }
             }
 
@@ -129,6 +137,10 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
+        val compileKotlinTask = compilation.compileKotlinTask
+
+        val dceOutputFileAppliers: MutableList<KotlinJsDce.(File) -> Unit> = mutableListOf()
+
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
             val webpackTask = project.registerTask<KotlinWebpack>(
@@ -138,7 +150,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 )
             ) {
-                val compileKotlinTask = compilation.compileKotlinTask
                 it.dependsOn(
                     nodeJs.npmInstallTask
                 )
@@ -150,7 +161,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 when (kind) {
                     BuildVariantKind.RELEASE -> {
-                        dceWebpackEntryAppliers.add { file ->
+                        dceOutputFileAppliers.add { file ->
                             it.entry = file
                         }
                         it.resolveFromModulesFirst = true
@@ -159,6 +170,12 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     BuildVariantKind.DEBUG -> {
                         it.dependsOn(compileKotlinTask)
                     }
+                }
+            }
+
+            dceTaskProvider.configure {
+                dceOutputFileAppliers.forEach { dceOutputFileApplier ->
+                    it.dceOutputFileApplier(it.destinationDir.resolve(compileKotlinTask.outputFile.name))
                 }
             }
 
@@ -192,10 +209,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             it.classpath = project.configurations.getByName(compilation.compileDependencyConfigurationName)
             it.destinationDir = it.dceOptions.outputDirectory?.let { File(it) }
                 ?: compilation.npmProject.dir.resolve(DCE_DIR)
-
-            dceWebpackEntryAppliers.forEach { entryApplier ->
-                it.entryApplier(it.destinationDir.resolve(kotlinTask.outputFile.name))
-            }
 
             it.source(kotlinTask.outputFile)
         }
