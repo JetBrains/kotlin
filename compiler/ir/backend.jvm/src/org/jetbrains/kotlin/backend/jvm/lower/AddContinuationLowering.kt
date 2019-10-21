@@ -7,16 +7,14 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.ir.isSuspend
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrBlock
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeOfSuspendCallableReference
 import org.jetbrains.kotlin.codegen.coroutines.*
@@ -364,9 +362,15 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             val capturedThisField = irFunction.dispatchReceiverParameter?.let { addField("this\$0", it.type) }
             val labelField = addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaVisibilities.PACKAGE_VISIBILITY)
             addConstructorForNamedFunction(capturedThisField)
-            addInvokeSuspendForNamedFunction(irFunction, resultField, labelField, capturedThisField)
-
-            context.suspendFunctionContinuations[irFunction] = this
+            var function = irFunction
+            if (function is IrSimpleFunction && function.isOverridable && function.body != null) {
+                // Create static method for the suspend state machine method so that reentering the method
+                // does not lead to virtual dispatch to the wrong method.
+                context.suspendFunctionContinuations[function] = this
+                function = createStaticSuspendImpl(function)
+            }
+            addInvokeSuspendForNamedFunction(function, resultField, labelField, capturedThisField, function != irFunction)
+            context.suspendFunctionContinuations[function] = this
         }
     }
 
@@ -388,11 +392,19 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         }
     }
 
+
+    private fun Name.toSuspendImplementationName() = when {
+        isSpecial -> Name.special(asString() + SUSPEND_IMPL_NAME_SUFFIX)
+        else -> Name.identifier(asString() + SUSPEND_IMPL_NAME_SUFFIX)
+    }
+
+
     private fun IrClass.addInvokeSuspendForNamedFunction(
         irFunction: IrFunction,
         resultField: IrField,
         labelField: IrField,
-        capturedThisField: IrField?
+        capturedThisField: IrField?,
+        isStaticSuspendImpl: Boolean
     ) {
         val invokeSuspend = continuationImpl.owner.functions.single { it.name == Name.identifier(INVOKE_SUSPEND_METHOD_NAME) }
         addFunctionOverride(invokeSuspend).also { function ->
@@ -416,24 +428,67 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                         irInt(signBit)
                     )
                 )
+
                 +irReturn(irCall(irFunction).also {
                     for (i in irFunction.typeParameters.indices) {
                         it.putTypeArgument(i, context.irBuiltIns.anyNType)
                     }
-                    it.dispatchReceiver = capturedThisField?.let { irField ->
+                    val capturedThisValue = capturedThisField?.let { irField ->
                         irGetField(irGet(function.dispatchReceiverParameter!!), irField)
+                    }
+                    if (irFunction.dispatchReceiverParameter != null) {
+                        it.dispatchReceiver = capturedThisValue
                     }
                     if (irFunction.extensionReceiverParameter != null) {
                         it.extensionReceiver = irNull()
                     }
                     for ((i, parameter) in irFunction.valueParameters.withIndex()) {
                         val defaultValueForParameter = IrConstImpl.defaultValueForType(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type)
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type
+                        )
                         it.putValueArgument(i, defaultValueForParameter)
+                    }
+                    if (isStaticSuspendImpl) {
+                        it.putValueArgument(0, capturedThisValue)
                     }
                 })
             }
         }
+    }
+
+    private fun createStaticSuspendImpl(irFunction: IrSimpleFunction): IrSimpleFunction {
+        // Create static suspend impl method.
+        val static = createStaticFunctionWithReceivers(
+            irFunction.parent,
+            irFunction.name.toSuspendImplementationName(),
+            irFunction,
+            origin = JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
+            copyMetadata = false
+        )
+        copyBodyToStatic(irFunction, static)
+        (irFunction.parent as IrClass).declarations.add(static)
+        // Rewrite the body of the original suspend method to forward to the new static method.
+        irFunction.body = context.createIrBuilder(irFunction.symbol).irBlockBody {
+            +irReturn(irCall(static).also {
+                for (i in irFunction.typeParameters.indices) {
+                    it.putTypeArgument(i, context.irBuiltIns.anyNType)
+                }
+                var i = 0
+                if (irFunction.dispatchReceiverParameter != null) {
+                    it.putValueArgument(i++, irGet(irFunction.dispatchReceiverParameter!!))
+                }
+                if (irFunction.extensionReceiverParameter != null) {
+                    it.putValueArgument(i++, irNull())
+                }
+                for (parameter in irFunction.valueParameters) {
+                    val defaultValueForParameter = IrConstImpl.defaultValueForType(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type
+                    )
+                    it.putValueArgument(i++, defaultValueForParameter)
+                }
+            })
+        }
+        return static
     }
 
     // TODO: Generate two copies of inline suspend functions

@@ -66,7 +66,8 @@ internal fun generateStateMachineForNamedFunction(
         shouldPreserveClassInitialization = state.constructorCallNormalizationMode.shouldPreserveClassInitialization,
         containingClassInternalName = classCodegen.visitor.thisName,
         isForNamedFunction = true,
-        needDispatchReceiver = irFunction.dispatchReceiverParameter != null,
+        needDispatchReceiver = irFunction.dispatchReceiverParameter != null
+                || irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
         internalNameForDispatchReceiver = classCodegen.visitor.thisName,
         putContinuationParameterToLvt = false
     )
@@ -186,7 +187,7 @@ internal fun IrCall.createSuspendFunctionCallViewIfNeeded(
     if (!isSuspend) return this
     val view = (symbol.owner as IrSimpleFunction).getOrCreateSuspendFunctionViewIfNeeded(context)
     if (view == symbol.owner) return this
-    return IrCallImpl(startOffset, endOffset, view.returnType, view.symbol).also {
+    return IrCallImpl(startOffset, endOffset, view.returnType, view.symbol, superQualifierSymbol = superQualifierSymbol).also {
         it.copyTypeArgumentsFrom(this)
         it.dispatchReceiver = dispatchReceiver
         it.extensionReceiver = extensionReceiver
