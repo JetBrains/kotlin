@@ -41,8 +41,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
-    private val webpackTaskName = disambiguateCamelCased("webpack")
-
     override fun configureDefaultTestFramework(it: KotlinJsTest) {
         it.useKarma {
             useChromeHeadless()
@@ -50,11 +48,11 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     }
 
     override fun runTask(body: KotlinWebpack.() -> Unit) {
-        (project.tasks.getByName(runTaskName) as KotlinWebpack).body()
+        TODO()
     }
 
     override fun webpackTask(body: KotlinWebpack.() -> Unit) {
-        (project.tasks.getByName(webpackTaskName) as KotlinWebpack).body()
+        TODO()
     }
 
     @ExperimentalDce
@@ -69,9 +67,9 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         configureBuild(compilation, dceTaskProvider)
     }
 
-    override fun configureRun(
+    private fun configureRun(
         compilation: KotlinJsCompilation,
-        dceTaskProvider: TaskProvider<KotlinJsDceTask>?
+        dceTaskProvider: TaskProvider<KotlinJsDceTask>
     ) {
 
         val project = compilation.target.project
@@ -126,9 +124,9 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         }
     }
 
-    override fun configureBuild(
+    private fun configureBuild(
         compilation: KotlinJsCompilation,
-        dceTaskProvider: TaskProvider<KotlinJsDceTask>?
+        dceTaskProvider: TaskProvider<KotlinJsDceTask>
     ) {
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)

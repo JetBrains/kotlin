@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
-import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
 import javax.inject.Inject
 
 open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
@@ -19,6 +17,8 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsNodeDsl {
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside nodejs using the builtin test framework"
+
+    private val runTaskName = disambiguateCamelCased("run")
 
     override fun runTask(body: NodeJsExec.() -> Unit) {
         (project.tasks.getByName(runTaskName) as NodeJsExec).body()
@@ -29,22 +29,14 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     }
 
     override fun configureMain(compilation: KotlinJsCompilation) {
-        configureRun(compilation, null)
-        configureBuild(compilation, null)
+        configureRun(compilation)
     }
 
-    override fun configureRun(
-        compilation: KotlinJsCompilation,
-        dceTaskProvider: TaskProvider<KotlinJsDce>?
+    private fun configureRun(
+        compilation: KotlinJsCompilation
     ) {
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased("run"))
         target.runTask.dependsOn(runTaskHolder)
-    }
-
-    override fun configureBuild(
-        compilation: KotlinJsCompilation,
-        dceTaskProvider: TaskProvider<KotlinJsDce>?
-    ) {
     }
 
     override fun configureBuildVariants() {

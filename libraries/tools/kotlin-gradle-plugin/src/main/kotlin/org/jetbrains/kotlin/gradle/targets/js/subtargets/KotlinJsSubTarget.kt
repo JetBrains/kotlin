@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.tasks.KotlinJsDce
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -33,9 +31,6 @@ abstract class KotlinJsSubTarget(
 ) : KotlinJsSubTargetDsl {
     val project get() = target.project
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-
-    val runTaskName = disambiguateCamelCased("run")
-    val testTaskName = disambiguateCamelCased("test")
 
     abstract val testTaskDescription: String
 
@@ -136,14 +131,4 @@ abstract class KotlinJsSubTarget(
     }
 
     protected abstract fun configureMain(compilation: KotlinJsCompilation)
-
-    protected abstract fun configureRun(
-        compilation: KotlinJsCompilation,
-        dceTaskProvider: TaskProvider<KotlinJsDce>?
-    )
-
-    protected abstract fun configureBuild(
-        compilation: KotlinJsCompilation,
-        dceTaskProvider: TaskProvider<KotlinJsDce>?
-    )
 }
