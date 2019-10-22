@@ -35,6 +35,9 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             versions.mochaTeamCityReporter
         )
 
+    // https://mochajs.org/#-timeout-ms-t-ms
+    var timeout: String = DEFAULT_TIMEOUT
+
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
@@ -66,8 +69,9 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                 nodeModules.map {
                     npmProject.require(it)
                 } + cliArgs.toList() +
-                listOf("--reporter", "mocha-teamcity-reporter") +
-                listOf(
+                cliArg("--reporter", "mocha-teamcity-reporter") +
+                cliArg("--timeout", timeout) +
+                cliArg(
                     "-r", "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js"
                 )
 
@@ -77,6 +81,10 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             false,
             clientSettings
         )
+    }
+
+    private fun cliArg(cli: String, value: String?): List<String> {
+        return value?.let { listOf(cli, it) } ?: emptyList()
     }
 
     private fun createAdapterJs(task: KotlinJsTest) {
@@ -96,5 +104,7 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
     companion object {
         const val ADAPTER_NODEJS = "adapter-nodejs.js"
+
+        private const val DEFAULT_TIMEOUT = "2s"
     }
 }
