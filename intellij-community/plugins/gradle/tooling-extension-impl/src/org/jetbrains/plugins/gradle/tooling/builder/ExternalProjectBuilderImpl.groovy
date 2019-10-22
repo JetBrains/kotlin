@@ -566,13 +566,13 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
 
         if (copyActions) {
           copyActions.each { Action<? super FileCopyDetails> action ->
-            def filterClass = findPropertyWithType(action, Class, 'val$filterType')
+            def filterClass = findPropertyWithType(action, Class, 'val$filterType', 'arg$2', 'arg$1')
             if (filterClass != null) {
               //noinspection GrUnresolvedAccess
               def filterType = filterClass.name
               def filter = [filterType: filterType] as DefaultExternalFilter
 
-              def props = findPropertyWithType(action, Map, 'val$properties')
+              def props = findPropertyWithType(action, Map, 'val$properties', 'arg$1')
               if (props != null) {
                   if ('org.apache.tools.ant.filters.ExpandProperties' == filterType && props['project']) {
                     if (props['project']) filter.propertiesAsJsonMap = new GsonBuilder().create().toJson(props['project'].properties)
