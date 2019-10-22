@@ -6,17 +6,21 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.irCallConstructor
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.transform
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 internal val anonymousObjectSuperConstructorPhase = makeIrFilePhase(
     ::AnonymousObjectSuperConstructorLowering,
@@ -49,7 +53,8 @@ internal val anonymousObjectSuperConstructorPhase = makeIrFilePhase(
 // attempts to read them from fields, causing a bytecode validation error.
 //
 // (TODO fix the inliner instead. Then keep this code for one more version for backwards compatibility.)
-private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(),
+    FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid()
     }
@@ -100,14 +105,18 @@ private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCon
             }
         }
 
-        expression.statements[expression.statements.size - 1] = IrConstructorCallImpl.fromSymbolOwner(
-            objectConstructorCall.startOffset, objectConstructorCall.endOffset, objectConstructorCall.type,
-            objectConstructorCall.symbol, objectConstructorCall.origin
-        ).apply {
-            for (i in 0 until objectConstructorCall.valueArgumentsCount)
-                putValueArgument(i, objectConstructorCall.getValueArgument(i))
-            for ((i, argument) in newArguments.withIndex())
-                putValueArgument(i + objectConstructorCall.valueArgumentsCount, argument)
+        context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
+            expression.statements[expression.statements.size - 1] = irBlock(objectConstructorCall) {
+                +irCallConstructor(objectConstructor.symbol, listOf()).apply {
+                    for (i in 0 until objectConstructorCall.valueArgumentsCount)
+                        putValueArgument(i, objectConstructorCall.getValueArgument(i))
+                    // Avoid complex expressions between `new` and `<init>`, as the inliner gets confused if
+                    // an argument to `<init>` is an anonymous object. Put them in variables instead.
+                    // See KT-21781 for an example; in short, it looks like `object : S({ ... })` in an inline function.
+                    for ((i, argument) in newArguments.withIndex())
+                        putValueArgument(i + objectConstructorCall.valueArgumentsCount, irGet(irTemporary(argument)))
+                }
+            }
         }
         return super.visitBlock(expression)
     }
