@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import java.io.File
+import java.nio.file.Paths
 
 class FriendPathsTest : TestCaseWithTmpdir() {
     private fun getTestDataDirectory(): File = File("compiler/testData/friendPaths/")
@@ -38,9 +39,39 @@ class FriendPathsTest : TestCaseWithTmpdir() {
         )
     }
 
+    /** Regression test for KT-34251. */
+    fun testArchive_relativePath() {
+        val libSrc = File(getTestDataDirectory(), "lib.kt")
+        val libDest = File(tmpdir, "lib.jar").relativeTo(File("").absoluteFile)
+        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
+
+        CompilerTestUtil.executeCompilerAssertSuccessful(
+            K2JVMCompiler(),
+            listOf(
+                "-d", tmpdir.path, "-cp", libDest.path, File(getTestDataDirectory(), "usage.kt").path,
+                "-Xfriend-paths=${libDest.path}"
+            )
+        )
+    }
+
     fun testDirectory() {
         val libSrc = File(getTestDataDirectory(), "lib.kt")
         val libDest = File(tmpdir, "lib")
+        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
+
+        CompilerTestUtil.executeCompilerAssertSuccessful(
+            K2JVMCompiler(),
+            listOf(
+                "-d", tmpdir.path, "-cp", libDest.path, File(getTestDataDirectory(), "usage.kt").path,
+                "-Xfriend-paths=${libDest.path}"
+            )
+        )
+    }
+
+    /** Regression test for KT-34251. */
+    fun testDirectory_relativePath() {
+        val libSrc = File(getTestDataDirectory(), "lib.kt")
+        val libDest = File(tmpdir, "lib").relativeTo(File("").absoluteFile)
         CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
 
         CompilerTestUtil.executeCompilerAssertSuccessful(
