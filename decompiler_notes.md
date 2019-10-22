@@ -3,25 +3,20 @@
 ## ВОПРОСЫ
 
 - FAKE_OVERRIDE если из наследника залезаем в пропертю из родительского Primary конструктора
+- Как получить имя класса/инстанса, ссылку на метод которого используем через ::
+- Когда нам нужно протаскивать информацию о data в глубину визитора (например, return для лямбды)
 
 ## TODO-лист
 
-Пятница 18.10:
-
+- функции высших порядков и лямбды (https://kotlinlang.org/docs/reference/lambdas.html): **надо больше тестов**
+- Работа со scope functions - https://kotlinlang.org/docs/reference/scope-functions.html **надо больше тестов**
+- 
 - cast операторы as, as?
 - делегирование (https://kotlinlang.org/docs/reference/delegation.html, https://kotlinlang.org/docs/reference/delegated-properties.html)
-
-Суббота 19.10:
-
-- функции высших порядков и лямбды (https://kotlinlang.org/docs/reference/lambdas.html)
 - typealias со стрелкой (для функций высших порядков)
-- Работа со scope functions - https://kotlinlang.org/docs/reference/scope-functions.html
-
-Воскресенье:
-
+- кастомные геттер и сеттер
 - продолжить дженерики (https://kotlinlang.org/docs/reference/generics.html)
 - обход дерева и сбор импортов через full qualified names
-- кастомные геттер и сеттер
 
 ## LATER
 

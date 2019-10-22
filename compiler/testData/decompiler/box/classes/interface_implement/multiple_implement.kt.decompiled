@@ -6,11 +6,11 @@ interface AnotherInterface {
 }
 class Implemented(): MyInterface, AnotherInterface {
     override fun blaBlaBla(bla: Int) : String  {
-        return bla.toString()
+        return         bla.toString()
     }
 
     override fun blaBla(bla: Int) : String  {
-        return bla.unaryMinus().toString()
+        return         bla.unaryMinus().toString()
     }
 
 }

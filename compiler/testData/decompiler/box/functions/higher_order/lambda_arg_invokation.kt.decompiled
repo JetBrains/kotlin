@@ -1,0 +1,8 @@
+fun lambdaReceiver(body: () -> Unit) {
+    body.invoke()
+}
+
+fun box() : String  {
+    lambdaReceiver{ println() }
+    return "OK"
+}

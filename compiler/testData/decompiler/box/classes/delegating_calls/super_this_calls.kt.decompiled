@@ -1,6 +1,6 @@
 open  class MyParentClass() {
     open  fun blaBlaBla(bla: Int) : Int  {
-        return bla * 2
+        return         bla * 2
     }
 
 }
@@ -8,11 +8,11 @@ class MyChildClass(): MyParentClass () {
     override fun blaBlaBla(bla: Int) : Int  {
         val superCall : Int = super.blaBlaBla(bla)
         val thisCall : Int = this.inverse(superCall)
-        return thisCall * 2
+        return         thisCall * 2
     }
 
     fun inverse(value: Int) : Int  {
-        return -(value)
+        return         -(value)
     }
 
 }

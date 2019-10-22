@@ -36,7 +36,7 @@ abstract class AbstractIrDecompilerTextTestCase : AbstractIrGeneratorTestCase() 
         val ignoreErrors = shouldIgnoreErrors(wholeFile)
         val originalIrModule = generateIrModule(ignoreErrors)
         val originalIrString = originalIrModule.dump()
-        val decompiledSources = originalIrModule.decompile()
+        val decompiledSources = originalIrModule.decompile("")
         val decompiledFile = KotlinTestUtils.createFile(wholeFile.name, decompiledSources, myEnvironment.project)
         myFiles = CodegenTestFiles.create(listOf(decompiledFile))
         val decompiledIrModule = generateIrModule(ignoreErrors)
@@ -61,7 +61,7 @@ abstract class AbstractIrDecompilerBlackBoxTest : AbstractIrDecompilerTextTestCa
     override fun doTest(wholeFile: File, testFiles: List<TestFile>) {
         val ignoreErrors = shouldIgnoreErrors(wholeFile)
         val originalIrModule = generateIrModule(ignoreErrors)
-        val decompiledSources = originalIrModule.decompile()
+        val decompiledSources = originalIrModule.decompile("")
         val decompiledFileSources = File(wholeFile.absolutePath.replace(".kt", ".decompiled.kt"))
         KotlinTestUtils.assertEqualsToFile(decompiledFileSources, decompiledSources)
 

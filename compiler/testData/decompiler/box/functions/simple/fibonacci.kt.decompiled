@@ -5,7 +5,7 @@ fun fib_rec(i: Int) : Int  {
     if (i == 1) {
         return 1
     }
-    return fib_rec(i - 1) + fib_rec(i - 2)
+    return     fib_rec(i - 1) + fib_rec(i - 2)
 }
 
 fun fib_loop(i: Int) : Int  {

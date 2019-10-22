@@ -12,7 +12,7 @@ class ZN(val z: Z1?) {
 }
 fun wrap1(x: En) : Z1?  {
     return if (x.ordinal == 0) {
-        null
+null
     }
     else {
         Z1(x)
@@ -21,7 +21,7 @@ fun wrap1(x: En) : Z1?  {
 
 fun wrap2(x: En) : Z2?  {
     return if (x.ordinal == 0) {
-        null
+null
     }
     else {
         Z2(Z1(x))
@@ -30,7 +30,7 @@ fun wrap2(x: En) : Z2?  {
 
 fun wrapN(x: En) : ZN?  {
     return if (x.ordinal == 0) {
-        null
+null
     }
     else {
         ZN(Z1(x))

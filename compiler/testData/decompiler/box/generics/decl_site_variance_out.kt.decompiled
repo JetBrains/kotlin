@@ -1,7 +1,7 @@
 interface Source<out T> {
     abstract  fun nextT() : T
 }
-fun demo(strs: Source<String>) : Unit  {
+fun demo(strs: Source<String>) {
     val objects : Source<Any> = strs
 }
 

@@ -34,6 +34,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         runTest("compiler/testData/decompiler/box/dummy.kt");
     }
 
+    @TestMetadata("typealias_break.kt")
+    public void testTypealias_break() throws Exception {
+        runTest("compiler/testData/decompiler/box/typealias_break.kt");
+    }
+
     @TestMetadata("compiler/testData/decompiler/box/classes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -386,6 +391,34 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         @TestMetadata("default_named_args.kt")
         public void testDefault_named_args() throws Exception {
             runTest("compiler/testData/decompiler/box/functions/default_named_args.kt");
+        }
+
+        @TestMetadata("compiler/testData/decompiler/box/functions/higher_order")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Higher_order extends AbstractIrDecompilerBlackBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInHigher_order() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/functions/higher_order"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("apply_usage.kt")
+            public void testApply_usage() throws Exception {
+                runTest("compiler/testData/decompiler/box/functions/higher_order/apply_usage.kt");
+            }
+
+            @TestMetadata("custom_lambda_arg_fun.kt")
+            public void testCustom_lambda_arg_fun() throws Exception {
+                runTest("compiler/testData/decompiler/box/functions/higher_order/custom_lambda_arg_fun.kt");
+            }
+
+            @TestMetadata("lambda_arg_invokation.kt")
+            public void testLambda_arg_invokation() throws Exception {
+                runTest("compiler/testData/decompiler/box/functions/higher_order/lambda_arg_invokation.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/decompiler/box/functions/simple")

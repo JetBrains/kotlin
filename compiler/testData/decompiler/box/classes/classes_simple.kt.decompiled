@@ -1,13 +1,13 @@
 class TestClass() {
-    fun foo() : Unit  {
+    fun foo() {
     }
 
-    fun bar() : Unit  {
+    fun bar() {
     }
 
 }
 interface TestInterface {
-    abstract  fun foo() : Unit
+    abstract  fun foo()
 }
 object TestObject {
 }

@@ -1,5 +1,5 @@
 fun varargsOnlyFun(vararg args: Int) : List<Int>  {
-    val result : ArrayList<Int> = ArrayList<Int>()
+    val result : ArrayList<E> = ArrayList<Int>()
     val tmp0_iterator : IntIterator = args.iterator()
     while (tmp0_iterator.hasNext()) {
         val i : Int = tmp0_iterator.next()
@@ -8,7 +8,7 @@ fun varargsOnlyFun(vararg args: Int) : List<Int>  {
     return result
 }
 
-fun varargsMixedFun(lst: MutableList<Int>, vararg args: Int) : Unit  {
+fun varargsMixedFun(lst: MutableList<Int>, vararg args: Int) {
     val tmp0_iterator : IntIterator = args.iterator()
     while (tmp0_iterator.hasNext()) {
         val i : Int = tmp0_iterator.next()
@@ -17,7 +17,7 @@ fun varargsMixedFun(lst: MutableList<Int>, vararg args: Int) : Unit  {
 }
 
 fun <T> varargsGenericFun(vararg args: T) : List<T>  {
-    return listOf(*args)
+    return     listOf(*args)
 }
 
 class ClassWithPrimaryCtorVarargs(vararg val args: Double) {

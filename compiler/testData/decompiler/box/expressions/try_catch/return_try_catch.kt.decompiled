@@ -5,10 +5,10 @@ fun fail(message: String) : Nothing  {
 fun box() : String  {
     return try {
         val x : Nothing = fail("Testing fail")
-        "FAIL"
+"FAIL"
     }
     catch (e : IllegalArgumentException)  {
-        "OK"
+"OK"
     }
     finally  {
         "FAIL"

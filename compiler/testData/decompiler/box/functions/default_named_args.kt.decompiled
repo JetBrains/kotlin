@@ -1,18 +1,18 @@
 fun topLevelWithDefault(def: String  = "DEFAULT") : Int  {
-    return def.length
+    return     def.length
 }
 
 fun topLevelMixed(def: String  = "DEFAULT", nonDef: Int) : Boolean  {
-    return def.length == nonDef
+    return     def.length == nonDef
 }
 
 fun topLevel2Mixed(def1: String  = "DEF1", def2: String  = "DEF2", nonDef: Int) : Boolean  {
-    return def1.length + def2.length > nonDef
+    return     def1.length + def2.length > nonDef
 }
 
 class ClassWithDefaultArgsMethod(val str: String) {
     fun withDefaultCtorArg(defArg: String  = this.str) : Boolean  {
-        return defArg == this.str
+        return         defArg == this.str
     }
 
     fun withDefaultArgMixed(defArg: String  = "ARG", nonDefArg: String) : Boolean  {
