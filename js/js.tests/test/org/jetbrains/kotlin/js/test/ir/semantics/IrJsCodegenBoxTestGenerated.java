@@ -1004,6 +1004,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/bridges/fakeOverrideFromInterfaceThroughIntermediateClass.kt");
         }
 
+        @TestMetadata("fakeOverrideMultiFile.kt")
+        public void testFakeOverrideMultiFile() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/fakeOverrideMultiFile.kt");
+        }
+
         @TestMetadata("fakeOverrideOfTraitImpl.kt")
         public void testFakeOverrideOfTraitImpl() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/fakeOverrideOfTraitImpl.kt");

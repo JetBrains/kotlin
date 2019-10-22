@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.DescriptorsToIrRemapper
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.descriptors.Modality
@@ -29,13 +26,8 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -47,12 +39,10 @@ internal val interfaceDelegationPhase = makeIrFilePhase(
 )
 
 private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
-    val replacementMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
 
     override fun lower(irFile: IrFile) {
         irFile.acceptChildrenVoid(this)
-        // TODO: Replacer should be run on whole module, not on a single file.
-        irFile.acceptVoid(OverriddenSymbolsReplacer(replacementMap))
+        irFile.acceptVoid(OverriddenSymbolsReplacer())
     }
 
     override fun visitElement(element: IrElement) {
@@ -69,81 +59,44 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
     private fun generateInterfaceMethods(irClass: IrClass) {
         val toRemove = mutableListOf<IrSimpleFunction>()
         for (function in irClass.functions.toList()) { // Copy the list, because we are adding new declarations from the loop
-            if (function.origin !== IrDeclarationOrigin.FAKE_OVERRIDE) continue
+            function.getTargetForRedirection()?.let { implementation ->
+                toRemove.add(function)
 
-            // Only generate interface delegation for functions immediately inherited from an interface.
-            // (Otherwise, delegation will be present in the parent class)
-            if (function.overriddenSymbols.any { !it.owner.parentAsClass.isInterface && it.owner.modality != Modality.ABSTRACT }) {
-                continue
+                val delegation = generateDelegationToDefaultImpl(implementation, function)
+                irClass.declarations.add(delegation)
             }
-
-            val implementation = function.resolveFakeOverride() ?: continue
-
-            if (!implementation.hasInterfaceParent()
-                || Visibilities.isPrivate(implementation.visibility)
-                || implementation.isDefinitelyNotDefaultImplsMethod()
-                || implementation.isMethodOfAny()
-                || (!context.state.jvmDefaultMode.isCompatibility && implementation.hasJvmDefault())
-            ) {
-                continue
-            }
-
-            toRemove.add(function)
-
-            val delegation = generateDelegationToDefaultImpl(irClass, implementation, function)
-            irClass.declarations.add(delegation)
-            replacementMap[function.symbol] = delegation.symbol
         }
         irClass.declarations.removeAll(toRemove)
     }
 
+    private fun IrSimpleFunction.getTargetForRedirection(): IrSimpleFunction? {
+        if (origin != IrDeclarationOrigin.FAKE_OVERRIDE) return null
+        parent.let { if (it is IrClass && it.isJvmInterface) return null }
+
+        // Only generate interface delegation for functions immediately inherited from an interface.
+        // (Otherwise, delegation will be present in the parent class)
+        if (overriddenSymbols.any { !it.owner.parentAsClass.isInterface && it.owner.modality != Modality.ABSTRACT }) {
+            return null
+        }
+
+        val implementation = resolveFakeOverride() ?: return null
+        if (!implementation.hasInterfaceParent()
+            || Visibilities.isPrivate(implementation.visibility)
+            || implementation.isDefinitelyNotDefaultImplsMethod()
+            || implementation.isMethodOfAny()
+            || (!context.state.jvmDefaultMode.isCompatibility && implementation.hasJvmDefault())
+        ) {
+            return null
+        }
+
+        return implementation
+    }
+
     private fun generateDelegationToDefaultImpl(
-        irClass: IrClass,
         interfaceImplementation: IrSimpleFunction,
         classOverride: IrSimpleFunction
     ): IrSimpleFunction {
-        val inheritedProperty = classOverride.correspondingPropertySymbol?.owner
-        val descriptor = DescriptorsToIrRemapper.remapDeclaredSimpleFunction(classOverride.descriptor)
-
-        val irFunction =
-            IrFunctionImpl(
-                UNDEFINED_OFFSET,
-                UNDEFINED_OFFSET,
-                JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
-                IrSimpleFunctionSymbolImpl(descriptor),
-                classOverride.name,
-                Visibilities.PUBLIC,
-                classOverride.modality,
-                classOverride.returnType,
-                isInline = classOverride.isInline,
-                isExternal = false,
-                isTailrec = false,
-                isSuspend = classOverride.isSuspend,
-                isExpect = false
-            ).apply {
-                descriptor.bind(this)
-                parent = irClass
-                overriddenSymbols.addAll(classOverride.overriddenSymbols)
-                copyParameterDeclarationsFrom(classOverride)
-                annotations.addAll(classOverride.annotations)
-
-                if (inheritedProperty != null) {
-                    val propertyDescriptor = DescriptorsToIrRemapper.remapDeclaredProperty(inheritedProperty.descriptor)
-                    IrPropertyImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, IrPropertySymbolImpl(propertyDescriptor),
-                        inheritedProperty.name, Visibilities.PUBLIC, inheritedProperty.modality, inheritedProperty.isVar,
-                        isConst = inheritedProperty.isConst,
-                        isLateinit = inheritedProperty.isLateinit,
-                        isDelegated = inheritedProperty.isDelegated,
-                        isExpect = inheritedProperty.isExpect,
-                        isExternal = false
-                    ).apply {
-                        propertyDescriptor.bind(this)
-                        parent = irClass
-                        correspondingPropertySymbol = symbol
-                    }
-                }
-            }
+        val irFunction = context.declarationFactory.getDefaultImplsRedirection(classOverride)
 
         val defaultImplFun = context.declarationFactory.getDefaultImplsFunction(interfaceImplementation)
         context.createIrBuilder(irFunction.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
@@ -163,15 +116,18 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
         return irFunction
     }
 
-    private class OverriddenSymbolsReplacer(val replacementMap: Map<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>) :
-        IrElementVisitorVoid {
+    private inner class OverriddenSymbolsReplacer : IrElementVisitorVoid {
 
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-            declaration.overriddenSymbols.replaceAll { symbol -> replacementMap[symbol] ?: symbol }
+            declaration.overriddenSymbols.replaceAll { symbol ->
+                if (symbol.owner.getTargetForRedirection() != null)
+                    context.declarationFactory.getDefaultImplsRedirection(symbol.owner).symbol
+                else symbol
+            }
             super.visitSimpleFunction(declaration)
         }
     }
@@ -235,7 +191,6 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
         return super.visitCall(newCall)
     }
 }
-
 
 private fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod() =
     resolveFakeOverride()?.let { origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB } == true ||
