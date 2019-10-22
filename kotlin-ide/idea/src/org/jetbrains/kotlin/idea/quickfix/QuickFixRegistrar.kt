@@ -662,5 +662,7 @@ class QuickFixRegistrar : QuickFixContributor {
         MISSING_EXCEPTION_IN_THROWS_ON_SUSPEND.registerFactory(AddExceptionToThrowsFix)
         THROWS_LIST_EMPTY.registerFactory(RemoveAnnotationFix)
         INCOMPATIBLE_THROWS_OVERRIDE.registerFactory(RemoveAnnotationFix)
+
+        INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.registerFactory(InlineClassConstructorNotValParameterFactory)
     }
 }
