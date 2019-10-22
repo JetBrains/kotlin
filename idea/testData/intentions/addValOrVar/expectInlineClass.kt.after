@@ -1,2 +1,0 @@
-// DISABLE-ERRORS
-expect inline class A(val a: Int)
