@@ -40,9 +40,9 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.ExposedVisibilityChecker
 
 open class ChangeVisibilityFix(
-        element: KtModifierListOwner,
-        private val elementName: String,
-        private val visibilityModifier: KtModifierKeywordToken
+    element: KtModifierListOwner,
+    private val elementName: String,
+    private val visibilityModifier: KtModifierKeywordToken
 ) : KotlinQuickFixAction<KtModifierListOwner>(element) {
 
     override fun getText() = "Make '$elementName' $visibilityModifier"
@@ -64,10 +64,10 @@ open class ChangeVisibilityFix(
     }
 
     protected class ChangeToPublicFix(element: KtModifierListOwner, elementName: String) :
-            ChangeVisibilityFix(element, elementName, KtTokens.PUBLIC_KEYWORD), HighPriorityAction
+        ChangeVisibilityFix(element, elementName, KtTokens.PUBLIC_KEYWORD), HighPriorityAction
 
     protected class ChangeToProtectedFix(element: KtModifierListOwner, elementName: String) :
-            ChangeVisibilityFix(element, elementName, KtTokens.PROTECTED_KEYWORD) {
+        ChangeVisibilityFix(element, elementName, KtTokens.PROTECTED_KEYWORD) {
 
         override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
             val element = element ?: return false
@@ -76,7 +76,7 @@ open class ChangeVisibilityFix(
     }
 
     protected class ChangeToInternalFix(element: KtModifierListOwner, elementName: String) :
-            ChangeVisibilityFix(element, elementName, KtTokens.INTERNAL_KEYWORD) {
+        ChangeVisibilityFix(element, elementName, KtTokens.INTERNAL_KEYWORD) {
 
         override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
             val element = element ?: return false
@@ -85,7 +85,7 @@ open class ChangeVisibilityFix(
     }
 
     protected class ChangeToPrivateFix(element: KtModifierListOwner, elementName: String) :
-            ChangeVisibilityFix(element, elementName, KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
+        ChangeVisibilityFix(element, elementName, KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
 
         override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
             val element = element ?: return false
@@ -95,20 +95,20 @@ open class ChangeVisibilityFix(
 
     companion object {
         fun create(
-                declaration: KtModifierListOwner,
-                descriptor: DeclarationDescriptorWithVisibility,
-                targetVisibility: Visibility
-        ) : IntentionAction? {
+            declaration: KtModifierListOwner,
+            descriptor: DeclarationDescriptorWithVisibility,
+            targetVisibility: Visibility
+        ): IntentionAction? {
             if (!ExposedVisibilityChecker().checkDeclarationWithVisibility(declaration, descriptor, targetVisibility)) return null
 
             val name = descriptor.name.asString()
 
             return when (targetVisibility) {
-                Visibilities.PRIVATE ->   ChangeToPrivateFix(declaration, name)
-                Visibilities.INTERNAL ->  ChangeToInternalFix(declaration, name)
+                Visibilities.PRIVATE -> ChangeToPrivateFix(declaration, name)
+                Visibilities.INTERNAL -> ChangeToInternalFix(declaration, name)
                 Visibilities.PROTECTED -> ChangeToProtectedFix(declaration, name)
-                Visibilities.PUBLIC ->    ChangeToPublicFix(declaration, name)
-                else ->      null
+                Visibilities.PUBLIC -> ChangeToPublicFix(declaration, name)
+                else -> null
             }
         }
     }
