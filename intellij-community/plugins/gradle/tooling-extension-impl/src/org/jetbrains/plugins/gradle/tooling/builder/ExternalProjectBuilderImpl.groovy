@@ -566,22 +566,20 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
 
         if (copyActions) {
           copyActions.each { Action<? super FileCopyDetails> action ->
-            if (action.hasProperty('val$filterType')) {
+            def filterClass = findPropertyWithType(action, Class, 'val$filterType')
+            if (filterClass != null) {
               //noinspection GrUnresolvedAccess
-              def filterType = (action?.val$filterType as Class).name
+              def filterType = filterClass.name
               def filter = [filterType: filterType] as DefaultExternalFilter
 
-              if (action.hasProperty('val$properties')) {
-                //noinspection GrUnresolvedAccess
-                def props = action?.val$properties
-                if (props) {
+              def props = findPropertyWithType(action, Map, 'val$properties')
+              if (props != null) {
                   if ('org.apache.tools.ant.filters.ExpandProperties' == filterType && props['project']) {
                     if (props['project']) filter.propertiesAsJsonMap = new GsonBuilder().create().toJson(props['project'].properties)
                   }
                   else {
                     filter.propertiesAsJsonMap = new GsonBuilder().create().toJson(props)
                   }
-                }
               }
               filterReaders << filter
             }
@@ -617,6 +615,19 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
     return [includes, excludes, filterReaders]
   }
 
+
+  static <T> T findPropertyWithType(Object self, Class<T> type, String... propertyNames) {
+    for (String name in propertyNames) {
+      def property = self.hasProperty(name)
+      if (property != null) {
+        def value = property.getProperty(self)
+        if (type.isAssignableFrom(value.class)) {
+          return (value as T)
+        }
+      }
+    }
+    return null
+  }
 
   private static String wrap(Object o) {
     return o instanceof CharSequence ? o.toString() : ""
