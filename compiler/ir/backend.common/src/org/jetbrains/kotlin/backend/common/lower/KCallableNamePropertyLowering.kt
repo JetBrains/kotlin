@@ -76,7 +76,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
                     expression.startOffset,
                     expression.endOffset,
                     lower.context.irBuiltIns.stringType,
-                    callableReference.descriptor.name.asString()
+                    callableReference.symbol.descriptor.name.asString()
                 )
             )
         }

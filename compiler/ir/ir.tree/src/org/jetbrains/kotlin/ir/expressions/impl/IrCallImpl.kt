@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
@@ -49,8 +48,6 @@ class IrCallImpl(
             throw AssertionError("Should be IrConstructorCall: ${symbol.descriptor}")
         }
     }
-
-    override val descriptor: FunctionDescriptor get() = symbol.descriptor
 
     constructor(
         startOffset: Int,

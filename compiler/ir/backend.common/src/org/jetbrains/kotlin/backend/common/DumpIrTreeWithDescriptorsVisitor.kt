@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -87,38 +88,38 @@ class RenderIrElementWithDescriptorsVisitor : IrElementVisitor<String, Nothing?>
         "RETURN type=${expression.type.render()} from='${expression.returnTarget}'"
 
     override fun visitCall(expression: IrCall, data: Nothing?): String =
-        "CALL '${expression.descriptor}' ${expression.renderSuperQualifier()}" +
+        "CALL '${expression.symbol.descriptor}' ${expression.renderSuperQualifier()}" +
                 "type=${expression.type.render()} origin=${expression.origin}"
 
     private fun IrCall.renderSuperQualifier(): String =
         superQualifierSymbol?.let { "superQualifier=${it.owner.name} " } ?: ""
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
-        "DELEGATING_CONSTRUCTOR_CALL '${expression.descriptor}'"
+        "DELEGATING_CONSTRUCTOR_CALL '${expression.symbol.descriptor}'"
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: Nothing?): String =
-        "ENUM_CONSTRUCTOR_CALL '${expression.descriptor}'"
+        "ENUM_CONSTRUCTOR_CALL '${expression.symbol.descriptor}'"
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: Nothing?): String =
         "INSTANCE_INITIALIZER_CALL classDescriptor='${expression.classDescriptor}'"
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): String =
-        "GET_VAR '${expression.descriptor}' type=${expression.type.render()} origin=${expression.origin}"
+        "GET_VAR '${expression.symbol.descriptor}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
-        "SET_VAR '${expression.descriptor}' type=${expression.type.render()} origin=${expression.origin}"
+        "SET_VAR '${expression.symbol.descriptor}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): String =
-        "GET_FIELD '${expression.descriptor}' type=${expression.type.render()} origin=${expression.origin}"
+        "GET_FIELD '${expression.symbol.descriptor}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitSetField(expression: IrSetField, data: Nothing?): String =
-        "SET_FIELD '${expression.descriptor}' type=${expression.type.render()} origin=${expression.origin}"
+        "SET_FIELD '${expression.symbol.descriptor}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: Nothing?): String =
-        "GET_OBJECT '${expression.descriptor}' type=${expression.type.render()}"
+        "GET_OBJECT '${expression.symbol.descriptor}' type=${expression.type.render()}"
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): String =
-        "GET_ENUM '${expression.descriptor}' type=${expression.type.render()}"
+        "GET_ENUM '${expression.symbol.descriptor}' type=${expression.type.render()}"
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): String =
         "STRING_CONCATENATION type=${expression.type.render()}"
@@ -148,10 +149,10 @@ class RenderIrElementWithDescriptorsVisitor : IrElementVisitor<String, Nothing?>
         "THROW type=${expression.type.render()}"
 
     override fun visitCallableReference(expression: IrCallableReference, data: Nothing?): String =
-        "CALLABLE_REFERENCE '${expression.descriptor}' type=${expression.type.render()} origin=${expression.origin}"
+        "CALLABLE_REFERENCE '${expression.symbol.descriptor}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
-        "CLASS_REFERENCE '${expression.descriptor}' type=${expression.type.render()}"
+        "CLASS_REFERENCE '${expression.symbol.descriptor}' type=${expression.type.render()}"
 
     override fun visitGetClass(expression: IrGetClass, data: Nothing?): String =
         "GET_CLASS type=${expression.type.render()}"
@@ -271,16 +272,18 @@ class DumpIrTreeWithDescriptorsVisitor(out: Appendable) : IrElementVisitor<Unit,
         expression.dumpLabeledElementWith(data) {
             dumpTypeArguments(expression)
 
+            val descriptor = expression.symbol.descriptor as CallableDescriptor
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
-            for (valueParameter in expression.descriptor.valueParameters) {
+            for (valueParameter in descriptor.valueParameters) {
                 expression.getValueArgument(valueParameter.index)?.accept(this, valueParameter.name.asString())
             }
         }
     }
 
     private fun dumpTypeArguments(expression: IrMemberAccessExpression) {
-        for (typeParameter in expression.descriptor.original.typeParameters) {
+        val descriptor = expression.symbol.descriptor as CallableDescriptor
+        for (typeParameter in descriptor.original.typeParameters) {
             val typeArgument = expression.getTypeArgument(typeParameter) ?: continue
             val renderedParameter = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(typeParameter)
             val renderedType = typeArgument.render()

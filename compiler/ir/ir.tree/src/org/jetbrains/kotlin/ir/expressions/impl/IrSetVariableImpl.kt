@@ -46,8 +46,6 @@ class IrSetVariableImpl(
         this.value = value
     }
 
-    override val descriptor: VariableDescriptor get() = symbol.descriptor
-
     override lateinit var value: IrExpression
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {

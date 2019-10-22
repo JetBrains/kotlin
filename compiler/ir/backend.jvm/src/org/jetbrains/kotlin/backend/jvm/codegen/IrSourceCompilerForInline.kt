@@ -54,7 +54,7 @@ class IrSourceCompilerForInline(
         get() = codegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
 
     override val contextKind: OwnerKind
-        get() = OwnerKind.getMemberOwnerKind(callElement.descriptor.containingDeclaration)
+        get() = OwnerKind.getMemberOwnerKind(callElement.symbol.descriptor.containingDeclaration!!)
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
@@ -94,7 +94,7 @@ class IrSourceCompilerForInline(
         callDefault: Boolean,
         asmMethod: Method
     ): SMAPAndMethodNode {
-        assert(callableDescriptor == callee.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
+        assert(callableDescriptor == callee.symbol.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
         val irFunction = getFunctionToInline(jvmSignature, callDefault)
         return makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), false)
     }
@@ -144,10 +144,10 @@ class IrSourceCompilerForInline(
     }
 
     override val compilationContextDescriptor: DeclarationDescriptor
-        get() = callElement.descriptor
+        get() = callElement.symbol.descriptor
 
     override val compilationContextFunctionDescriptor: FunctionDescriptor
-        get() = callElement.descriptor as FunctionDescriptor
+        get() = callElement.symbol.descriptor as FunctionDescriptor
 
     override fun getContextLabels(): Set<String> {
         val name = codegen.irFunction.name.asString()

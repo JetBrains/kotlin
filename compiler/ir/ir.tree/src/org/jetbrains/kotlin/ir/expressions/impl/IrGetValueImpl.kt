@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -19,12 +18,11 @@ class IrGetValueImpl(
     symbol: IrValueSymbol,
     override val origin: IrStatementOrigin? = null
 ) :
-    IrTerminalDeclarationReferenceBase<IrValueSymbol, ValueDescriptor>(
+    IrTerminalDeclarationReferenceBase<IrValueSymbol>(
         startOffset,
         endOffset,
         type,
-        symbol,
-        symbol.descriptor
+        symbol
     ),
     IrGetValue {
 

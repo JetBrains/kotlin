@@ -424,7 +424,7 @@ interface IrBuilderExtension {
             val irExpression =
                 if (i is IrGetValueImpl && i.origin == IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER) {
                     // this is a primary constructor property, use corresponding default of value parameter
-                    defaultsMap.getValue(i.descriptor as ParameterDescriptor)
+                    defaultsMap.getValue(i.symbol.descriptor as ParameterDescriptor)
                 } else {
                     i
                 }

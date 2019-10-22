@@ -203,7 +203,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     irCall(referenceKind.wrapper).apply {
                         putValueArgument(0, irCall(referenceKind.reflectedSymbol.constructors.single()).apply {
                             putValueArgument(0, buildReflectedContainerReference(expression))
-                            putValueArgument(1, irString(expression.descriptor.name.asString()))
+                            putValueArgument(1, irString(expression.symbol.descriptor.name.asString()))
                             putValueArgument(2, irString(expression.signature))
                         })
                     }
@@ -262,7 +262,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                 val invoke = superClass.functions.find { it.name.asString() == "invoke" }
 
                 referenceClass.addSimpleDelegatingConstructor(superConstructor, context.irBuiltIns, isPrimary = true)
-                referenceClass.addOverride(getName) { irString(expression.descriptor.name.asString()) }
+                referenceClass.addOverride(getName) { irString(expression.symbol.descriptor.name.asString()) }
                 referenceClass.addOverride(getOwner) { buildReflectedContainerReference(expression) }
                 referenceClass.addOverride(getSignature) { irString(expression.signature) }
 

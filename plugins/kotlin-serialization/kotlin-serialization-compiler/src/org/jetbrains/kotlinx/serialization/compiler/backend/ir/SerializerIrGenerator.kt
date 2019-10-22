@@ -149,7 +149,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         method: IrFunctionSymbol
     ) {
         annotations.forEach { annotationCall ->
-            if ((annotationCall.descriptor as? ClassConstructorDescriptor)?.constructedClass?.isSerialInfoAnnotation == true)
+            if ((annotationCall.symbol.descriptor as? ClassConstructorDescriptor)?.constructedClass?.isSerialInfoAnnotation == true)
                 +irInvoke(irGet(receiver), method, annotationCall.deepCopyWithVariables())
         }
     }
@@ -394,7 +394,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
                                         }
                                 val typeArgs =
                                     if (decodeFuncToCall.owner.typeParameters.isNotEmpty()) listOf(property.type.toIrType()) else listOf()
-                                val args = mutableListOf(localSerialDesc.get(), irInt(index))
+                                val args = mutableListOf<IrExpression>(localSerialDesc.get(), irInt(index))
                                 if (innerSerial != null)
                                     args.add(innerSerial)
                                 // local$i = localInput.decode...(...)
@@ -457,7 +457,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             context: BackendContext,
             bindingContext: BindingContext
         ) {
-            val serializableDesc = getSerializableClassDescriptorBySerializer(irClass.descriptor) ?: return
+            val serializableDesc = getSerializableClassDescriptorBySerializer(irClass.symbol.descriptor) ?: return
             if (serializableDesc.isSerializableEnum()) {
                 SerializerForEnumsGenerator(irClass, context, bindingContext).generate()
             } else {

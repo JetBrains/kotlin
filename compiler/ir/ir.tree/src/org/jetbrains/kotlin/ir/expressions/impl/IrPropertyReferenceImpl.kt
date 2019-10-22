@@ -57,8 +57,6 @@ class IrPropertyReferenceImpl(
         typeArgumentsCount, field, getter, setter, origin
     )
 
-    override val descriptor: PropertyDescriptor get() = symbol.descriptor
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitPropertyReference(this, data)
 }

@@ -55,8 +55,6 @@ class IrDelegatingConstructorCallImpl(
         typeArgumentsCount: Int
     ) : this(startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size)
 
-    override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitDelegatingConstructorCall(this, data)
     }

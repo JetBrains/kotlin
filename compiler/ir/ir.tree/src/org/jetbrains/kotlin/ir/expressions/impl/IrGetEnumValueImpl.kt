@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -27,9 +26,7 @@ class IrGetEnumValueImpl(
     endOffset: Int,
     type: IrType,
     symbol: IrEnumEntrySymbol
-) :
-    IrTerminalDeclarationReferenceBase<IrEnumEntrySymbol, ClassDescriptor>(startOffset, endOffset, type, symbol, symbol.descriptor),
-    IrGetEnumValue {
+) : IrTerminalDeclarationReferenceBase<IrEnumEntrySymbol>(startOffset, endOffset, type, symbol), IrGetEnumValue {
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitGetEnumValue(this, data)

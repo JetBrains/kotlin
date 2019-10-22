@@ -130,12 +130,12 @@ open class InsertImplicitCasts(
 
     override fun visitSetVariable(expression: IrSetVariable): IrExpression =
         expression.transformPostfix {
-            value = value.cast(expression.descriptor.type)
+            value = value.cast(expression.symbol.descriptor.type)
         }
 
     override fun visitSetField(expression: IrSetField): IrExpression =
         expression.transformPostfix {
-            value = value.cast(expression.descriptor.type)
+            value = value.cast(expression.symbol.descriptor.type)
         }
 
     override fun visitVariable(declaration: IrVariable): IrVariable =

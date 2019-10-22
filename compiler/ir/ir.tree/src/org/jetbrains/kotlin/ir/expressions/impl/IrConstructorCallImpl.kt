@@ -30,8 +30,6 @@ class IrConstructorCallImpl(
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructorCall(this, data)
 
-    override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
-
     companion object {
 
         fun fromSymbolDescriptor(

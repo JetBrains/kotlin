@@ -294,7 +294,7 @@ class CheckIrElementVisitor(
         super.visitDeclarationReference(expression)
 
         // TODO: Fix unbound external declarations
-        if (expression.descriptor.isEffectivelyExternal())
+        if (expression.symbol.descriptor.isEffectivelyExternal())
             return
 
         // TODO: Fix unbound dynamic filed declarations
