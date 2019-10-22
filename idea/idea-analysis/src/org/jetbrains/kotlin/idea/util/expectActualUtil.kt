@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.idea.caches.project.implementingDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToParameterDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.toDescriptor
+import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -149,8 +149,32 @@ fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, useOnSel
     if (useOnSelf) f(this)
 }
 
-fun KtDeclaration.collectAllExpectAndActualDeclaration(): Set<KtDeclaration> = when {
-    isExpectDeclaration() -> actualsForExpected() + this
-    hasActualModifier() -> liftToExpected()?.let { it.actualsForExpected() + it }.orEmpty()
+fun KtDeclaration.collectAllExpectAndActualDeclaration(withSelf: Boolean = true): Set<KtDeclaration> = when {
+    isExpectDeclaration() -> actualsForExpected()
+    hasActualModifier() -> liftToExpected()?.let { it.actualsForExpected() + it - this }.orEmpty()
     else -> emptySet()
+}.let { if (withSelf) it + this else it }
+
+fun KtDeclaration.runCommandOnAllExpectAndActualDeclaration(
+    command: String = "",
+    writeAction: Boolean = false,
+    withSelf: Boolean = true,
+    f: (KtDeclaration) -> Unit
+) {
+    val (pointers, project) = runReadAction {
+        collectAllExpectAndActualDeclaration(withSelf).map { it.createSmartPointer() } to project
+    }
+
+    fun process() {
+        for (pointer in pointers) {
+            val declaration = pointer.element ?: continue
+            f(declaration)
+        }
+    }
+
+    if (writeAction) {
+        project.executeWriteCommand(command, ::process)
+    } else {
+        project.executeCommand(command, command = ::process)
+    }
 }

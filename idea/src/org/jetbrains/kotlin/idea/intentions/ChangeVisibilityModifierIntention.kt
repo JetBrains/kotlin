@@ -23,12 +23,14 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.collectAllExpectAndActualDeclaration
+import org.jetbrains.kotlin.idea.util.runCommandOnAllExpectAndActualDeclaration
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.toVisibility
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 
 open class ChangeVisibilityModifierIntention protected constructor(
     val modifier: KtModifierKeywordToken
@@ -81,21 +83,13 @@ open class ChangeVisibilityModifierIntention protected constructor(
     }
 
     override fun applyTo(element: KtDeclaration, editor: Editor?) {
-        val pointers = element.collectAllExpectAndActualDeclaration().map { it.createSmartPointer() }
-
-        val project = element.project
-        val factory = KtPsiFactory(project)
-        project.executeWriteCommand("Change visibility modifier") {
-            for (pointer in pointers) {
-                val declaration = pointer.element ?: continue
-
-                declaration.setVisibility(modifier)
-                if (declaration is KtPropertyAccessor) {
-                    declaration.modifierList?.nextSibling?.replace(factory.createWhiteSpace())
-                }
+        val factory = KtPsiFactory(element)
+        element.runCommandOnAllExpectAndActualDeclaration("Change visibility modifier", writeAction = true) {
+            it.setVisibility(modifier)
+            if (it is KtPropertyAccessor) {
+                it.modifierList?.nextSibling?.replace(factory.createWhiteSpace())
             }
         }
-
     }
 
     private fun noModifierYetApplicabilityRange(declaration: KtDeclaration): TextRange? {
