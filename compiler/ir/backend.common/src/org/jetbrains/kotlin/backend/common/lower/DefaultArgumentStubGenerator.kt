@@ -523,7 +523,8 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
                 isExternal = false,
                 isTailrec = false,
                 isSuspend = irFunction.isSuspend,
-                isExpect = irFunction.isExpect
+                isExpect = irFunction.isExpect,
+                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
             ).also {
                 descriptor.bind(it)
                 it.parent = irFunction.parent

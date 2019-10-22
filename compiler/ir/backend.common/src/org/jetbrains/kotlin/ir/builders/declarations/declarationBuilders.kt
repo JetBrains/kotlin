@@ -123,7 +123,8 @@ fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): 
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),
         name, visibility, modality, returnType,
-        isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect
+        isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
+        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
     ).also {
         wrappedDescriptor.bind(it)
     }

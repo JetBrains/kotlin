@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.deepCopyWithWrappedDescriptors
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.SetDeclarationsParentVisitor
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -18,16 +17,17 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
@@ -149,7 +149,8 @@ class InitializersLowering(
             isExternal = false,
             isTailrec = false,
             isSuspend = false,
-            isExpect = false
+            isExpect = false,
+            isFakeOverride = false
         ).apply {
             staticInitializerDescriptor.bind(this)
             body = IrBlockBodyImpl(irClass.startOffset, irClass.endOffset,

@@ -522,7 +522,8 @@ class LocalDeclarationsLowering(
                 isExternal = oldDeclaration.isExternal,
                 isTailrec = oldDeclaration.isTailrec,
                 isSuspend = oldDeclaration.isSuspend,
-                isExpect = oldDeclaration.isExpect
+                isExpect = oldDeclaration.isExpect,
+                isFakeOverride = oldDeclaration.isFakeOverride
             )
             newDescriptor.bind(newDeclaration)
 
