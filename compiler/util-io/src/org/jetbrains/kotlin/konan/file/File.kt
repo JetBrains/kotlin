@@ -125,12 +125,16 @@ data class File constructor(internal val javaPath: Path) {
     fun writeLines(lines: Iterable<String>) {
         Files.write(javaPath, lines)
     }
-    fun setPermissions(perms: String) {
-        when {
-            isFile -> Files.setPosixFilePermissions(javaPath, PosixFilePermissions.fromString(perms))!!
+
+    fun setPermissions(perms: String) = Files.setPosixFilePermissions(javaPath, PosixFilePermissions.fromString(perms))!!
+
+    fun recursiveSetPermissions(permissions: String, dirPermissions: String = permissions.replace(Regex("r.-"),"r-x")) =
+        postorder {
+            when {
+                File(it).isFile -> File(it).setPermissions(permissions)
+                File(it).isDirectory -> File(it).setPermissions(dirPermissions)
+            }
         }
-    }
-    fun recursiveSetPermissions(permissions: String) = postorder { File(it).setPermissions(permissions) }
 
     fun writeText(text: String): Unit = writeLines(listOf(text))
 
