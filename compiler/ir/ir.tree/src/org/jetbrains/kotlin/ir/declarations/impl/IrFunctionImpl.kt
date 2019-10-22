@@ -32,7 +32,8 @@ class IrFunctionImpl(
     isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean,
-    isExpect: Boolean
+    isExpect: Boolean,
+    override val isFakeOverride: Boolean
 ) :
     IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, returnType),
     IrSimpleFunction {
@@ -55,7 +56,8 @@ class IrFunctionImpl(
         isExternal = symbol.descriptor.isExternal,
         isTailrec = symbol.descriptor.isTailrec,
         isSuspend = symbol.descriptor.isSuspend,
-        isExpect = symbol.descriptor.isExpect
+        isExpect = symbol.descriptor.isExpect,
+        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
     )
 
     override val descriptor: FunctionDescriptor = symbol.descriptor

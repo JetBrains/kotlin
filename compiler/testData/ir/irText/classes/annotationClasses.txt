@@ -14,18 +14,18 @@ FILE fqName:<root> fileName:/annotationClasses.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-x>' type=<root>.Test1 origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Annotation
+        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2
@@ -44,18 +44,18 @@ FILE fqName:<root> fileName:/annotationClasses.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test2'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Annotation
+        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:Test3 modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test3
@@ -72,18 +72,18 @@ FILE fqName:<root> fileName:/annotationClasses.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): <root>.Test1 declared in <root>.Test3'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.Test1 visibility:private [final]' type=<root>.Test1 origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-x>' type=<root>.Test3 origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Annotation
+        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS ANNOTATION_CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test4
@@ -100,16 +100,16 @@ FILE fqName:<root> fileName:/annotationClasses.kt
           RETURN type=kotlin.Nothing from='public final fun <get-xs> (): kotlin.IntArray declared in <root>.Test4'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:xs type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
               receiver: GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.<get-xs>' type=<root>.Test4 origin=null
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Annotation
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
       VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Annotation
+        public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
       overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Annotation
+        public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

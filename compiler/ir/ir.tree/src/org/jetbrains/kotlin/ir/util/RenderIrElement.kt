@@ -371,7 +371,8 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "inline".takeIf { isInline },
             "external".takeIf { isExternal },
             "suspend".takeIf { isSuspend },
-            "expect".takeIf { isExpect }
+            "expect".takeIf { isExpect },
+            "fake_override".takeIf { isFakeOverride }
         )
 
     private fun IrFunction.renderTypeParameters(): String =

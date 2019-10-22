@@ -109,11 +109,11 @@ FILE fqName:<root> fileName:/dataClasses.kt
             $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
                 $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                  $this: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  $this: CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Int' type=kotlin.Int origin=null
                     $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                       receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
                   other: CONST Int type=kotlin.Int value=31
-                other: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+                other: CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.String' type=kotlin.Int origin=null
                   $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                     receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
               other: CONST Int type=kotlin.Int value=31
@@ -411,7 +411,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
                 $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
                   $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
                     $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                      $this: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
+                      $this: CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Double' type=kotlin.Int origin=null
                         $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Double visibility:private [final]' type=kotlin.Double origin=null
                           receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.hashCode' type=<root>.Test3 origin=null
                       other: CONST Int type=kotlin.Int value=31
@@ -424,11 +424,11 @@ FILE fqName:<root> fileName:/dataClasses.kt
                         then: CONST Int type=kotlin.Int value=0
                       BRANCH
                         if: CONST Boolean type=kotlin.Boolean value=true
-                        then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Double' type=kotlin.Int origin=null
+                        then: CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Double' type=kotlin.Int origin=null
                           $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dn type:kotlin.Double? visibility:private [final]' type=kotlin.Double? origin=null
                             receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.hashCode' type=<root>.Test3 origin=null
                   other: CONST Int type=kotlin.Int value=31
-                other: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
+                other: CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Float' type=kotlin.Int origin=null
                   $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Float visibility:private [final]' type=kotlin.Float origin=null
                     receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.hashCode' type=<root>.Test3 origin=null
               other: CONST Int type=kotlin.Int value=31
@@ -441,7 +441,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
                 then: CONST Int type=kotlin.Int value=0
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
-                then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Float' type=kotlin.Int origin=null
+                then: CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Float' type=kotlin.Int origin=null
                   $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:private [final]' type=kotlin.Float? origin=null
                     receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.hashCode' type=<root>.Test3 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test3, other:kotlin.Any?) returnType:kotlin.Boolean

@@ -21,16 +21,16 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
             correspondingProperty: PROPERTY name:avar visibility:public modality:ABSTRACT [var]
             $this: VALUE_PARAMETER name:<this> type:<root>.outer.ALocal
             VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
           overridden:
             public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
           overridden:
             public open fun hashCode (): kotlin.Int declared in kotlin.Any
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
           overridden:
             public open fun toString (): kotlin.String declared in kotlin.Any
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
@@ -81,16 +81,16 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
               SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
                 receiver: GET_VAR '<this>: <root>.outer.Local declared in <root>.outer.Local.<set-avar>' type=<root>.outer.Local origin=null
                 value: GET_VAR '<set-?>: kotlin.Int declared in <root>.outer.Local.<set-avar>' type=kotlin.Int origin=null
-        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+        FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
           overridden:
-            public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.outer.ALocal
+            public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override] declared in <root>.outer.ALocal
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           VALUE_PARAMETER name:other index:0 type:kotlin.Any?
-        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+        FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
           overridden:
-            public open fun hashCode (): kotlin.Int declared in <root>.outer.ALocal
+            public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.outer.ALocal
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+        FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
           overridden:
-            public open fun toString (): kotlin.String declared in <root>.outer.ALocal
+            public open fun toString (): kotlin.String [fake_override] declared in <root>.outer.ALocal
           $this: VALUE_PARAMETER name:<this> type:kotlin.Any

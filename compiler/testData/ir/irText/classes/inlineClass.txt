@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/inlineClass.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.hashCode' type=<root>.Test origin=null
     FUN GENERATED_INLINE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Test, other:kotlin.Any?) returnType:kotlin.Boolean

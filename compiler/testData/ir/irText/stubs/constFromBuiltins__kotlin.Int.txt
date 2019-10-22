@@ -1,287 +1,287 @@
 CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:public superTypes:[<unbound IrClassSymbolImpl>; <unbound IrClassSymbolImpl><kotlin.Int>; <unbound IrClassSymbolImpl>]
-  $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int [primary] 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:and visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
+  $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int [primary]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:and visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:OPEN <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
     overridden:
       public abstract fun compareTo (other: <unbound IrTypeParameterSymbolImpl>): kotlin.Int declared in kotlin.Comparable
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:dec visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> 
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:dec visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:div visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [fake_override]
     overridden:
-      public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.Number
-      public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.Comparable
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl> 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>? 
-  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
+      public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [fake_override] declared in kotlin.Number
+      public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> [fake_override] declared in kotlin.Comparable
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl>
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>?
+  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:kotlin.Int [fake_override]
     overridden:
-      public open fun hashCode (): kotlin.Int declared in kotlin.Number
-      public open fun hashCode (): kotlin.Int declared in kotlin.Comparable
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
+      public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Number
+      public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Comparable
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:inc visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:inv visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:minus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
     annotations:
       <unbound>(1 = 'Use rem(other) instead', 2 = <unbound>(1 = 'rem(other)', 2 = []), 3 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
     annotations:
       <unbound>(1 = 'Use rem(other) instead', 2 = <unbound>(1 = 'rem(other)', 2 = []), 3 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
     annotations:
       <unbound>(1 = 'Use rem(other) instead', 2 = <unbound>(1 = 'rem(other)', 2 = []), 3 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
     annotations:
       <unbound>(1 = 'Use rem(other) instead', 2 = <unbound>(1 = 'rem(other)', 2 = []), 3 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
     annotations:
       <unbound>(1 = 'Use rem(other) instead', 2 = <unbound>(1 = 'rem(other)', 2 = []), 3 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:mod visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
     annotations:
       <unbound>(1 = 'Use rem(other) instead', 2 = <unbound>(1 = 'rem(other)', 2 = []), 3 = GET_ENUM 'UNBOUND IrEnumEntrySymbolImpl' type=<unbound IrClassSymbolImpl>)
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:or visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:or visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:plus visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rangeTo visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
     annotations:
       <unbound>(1 = '1.1')
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
     annotations:
       <unbound>(1 = '1.1')
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
     annotations:
       <unbound>(1 = '1.1')
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
     annotations:
       <unbound>(1 = '1.1')
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
     annotations:
       <unbound>(1 = '1.1')
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
     annotations:
       <unbound>(1 = '1.1')
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:shl visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:shr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:shl visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:shr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl>
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:times visibility:public modality:FINAL <> ($this:kotlin.Int, other:<unbound IrClassSymbolImpl>) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toByte visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl>
     overridden:
       public abstract fun toByte (): <unbound IrClassSymbolImpl> declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toChar visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl>
     overridden:
       public abstract fun toChar (): <unbound IrClassSymbolImpl> declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toDouble visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toDouble visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl>
     overridden:
       public abstract fun toDouble (): <unbound IrClassSymbolImpl> declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toFloat visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toFloat visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl>
     overridden:
       public abstract fun toFloat (): <unbound IrClassSymbolImpl> declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Int 
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toInt visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:kotlin.Int
     overridden:
       public abstract fun toInt (): kotlin.Int declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toLong visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toLong visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl>
     overridden:
       public abstract fun toLong (): <unbound IrClassSymbolImpl> declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl> 
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:toShort visibility:public modality:OPEN <> ($this:kotlin.Int) returnType:<unbound IrClassSymbolImpl>
     overridden:
       public abstract fun toShort (): <unbound IrClassSymbolImpl> declared in kotlin.Number
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> 
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>) returnType:<unbound IrClassSymbolImpl> [fake_override]
     overridden:
-      public open fun toString (): <unbound IrClassSymbolImpl> declared in kotlin.Number
-      public open fun toString (): <unbound IrClassSymbolImpl> declared in kotlin.Comparable
-    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl> 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:unaryPlus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:ushr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int 
-  FUN IR_EXTERNAL_DECLARATION_STUB name:xor visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int 
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int 
-    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int 
+      public open fun toString (): <unbound IrClassSymbolImpl> [fake_override] declared in kotlin.Number
+      public open fun toString (): <unbound IrClassSymbolImpl> [fake_override] declared in kotlin.Comparable
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<unbound IrClassSymbolImpl>
+  FUN IR_EXTERNAL_DECLARATION_STUB name:unaryMinus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:unaryPlus visibility:public modality:FINAL <> ($this:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:ushr visibility:public modality:FINAL <> ($this:kotlin.Int, bitCount:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:bitCount index:0 type:kotlin.Int
+  FUN IR_EXTERNAL_DECLARATION_STUB name:xor visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
+    VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
   CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[<unbound IrClassSymbolImpl>]
-    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion 
-    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int.Companion [primary] 
-    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE visibility:public modality:FINAL [const,val] 
-      FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public [final] 
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
+    CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:private <> () returnType:kotlin.Int.Companion [primary]
+    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE visibility:public modality:FINAL [const,val]
+      FIELD IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=2147483647
-      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MAX_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int 
-        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE visibility:public modality:FINAL [const,val] 
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion 
-    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE visibility:public modality:FINAL [const,val] 
-      FIELD IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public [final] 
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MAX_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MAX_VALUE visibility:public modality:FINAL [const,val]
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
+    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE visibility:public modality:FINAL [const,val]
+      FIELD IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=-2147483648
-      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MIN_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int 
-        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE visibility:public modality:FINAL [const,val] 
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion 
-    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BITS visibility:public modality:FINAL [const,val] 
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-MIN_VALUE> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:MIN_VALUE visibility:public modality:FINAL [const,val]
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
+    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BITS visibility:public modality:FINAL [const,val]
       annotations:
         <unbound>(1 = '1.3')
       FIELD IR_EXTERNAL_DECLARATION_STUB name:SIZE_BITS type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=32
-      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-SIZE_BITS> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int 
-        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BITS visibility:public modality:FINAL [const,val] 
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion 
-    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BYTES visibility:public modality:FINAL [const,val] 
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-SIZE_BITS> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BITS visibility:public modality:FINAL [const,val]
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
+    PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BYTES visibility:public modality:FINAL [const,val]
       annotations:
         <unbound>(1 = '1.3')
       FIELD IR_EXTERNAL_DECLARATION_STUB name:SIZE_BYTES type:kotlin.Int visibility:public [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=4
-      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-SIZE_BYTES> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int 
-        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BYTES visibility:public modality:FINAL [const,val] 
-        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion 
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> 
+      FUN IR_EXTERNAL_DECLARATION_STUB name:<get-SIZE_BYTES> visibility:public modality:FINAL <> ($this:kotlin.Int.Companion) returnType:kotlin.Int
+        correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:SIZE_BYTES visibility:public modality:FINAL [const,val]
+        $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int.Companion
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:<unbound IrClassSymbolImpl>, other:<unbound IrClassSymbolImpl>?) returnType:<unbound IrClassSymbolImpl> [fake_override]
       overridden:
         public open fun equals (other: <unbound IrClassSymbolImpl>?): <unbound IrClassSymbolImpl> declared in kotlin.Any
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
       VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Any?
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassSymbolImpl>
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:<unbound IrClassSymbolImpl> [fake_override]
       overridden:
         public open fun toString (): <unbound IrClassSymbolImpl> declared in kotlin.Any
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any

@@ -169,7 +169,8 @@ open class DeepCopyIrTreeWithSymbols(
             isExternal = declaration.isExternal,
             isTailrec = declaration.isTailrec,
             isSuspend = declaration.isSuspend,
-            isExpect = declaration.isExpect
+            isExpect = declaration.isExpect,
+            isFakeOverride = declaration.isFakeOverride
         ).apply {
             declaration.overriddenSymbols.mapTo(overriddenSymbols) {
                 symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
