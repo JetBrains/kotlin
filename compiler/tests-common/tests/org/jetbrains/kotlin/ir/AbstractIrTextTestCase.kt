@@ -70,7 +70,8 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
         val path = wholeFile.path
         val replacedPath = path.replace(".kt", "__")
-        val externalFilePaths = wholeFile.parentFile.listFiles().mapNotNullTo(mutableListOf()) {
+        val filesInDir = wholeFile.parentFile.listFiles() ?: return
+        val externalFilePaths = filesInDir.mapNotNullTo(mutableListOf()) {
             if (it.path.startsWith(replacedPath)) it.path else null
         }
         for (externalClassFqn in parseDumpExternalClasses(wholeText)) {
@@ -229,6 +230,14 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
                         "$functionDescriptor: Value parameters mismatch: $declaredValueParameter != $actualValueParameter"
                     }
                 }
+            }
+        }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+            visitFunction(declaration)
+
+            require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
+                "${declaration.descriptor}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
             }
         }
 
