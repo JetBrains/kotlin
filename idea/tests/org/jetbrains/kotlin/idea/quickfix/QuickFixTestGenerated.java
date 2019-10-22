@@ -5980,6 +5980,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/importedObjectFunction.kt");
         }
 
+        @TestMetadata("importedObjectProperty.kt")
+        public void testImportedObjectProperty() throws Exception {
+            runTest("idea/testData/quickfix/deprecatedSymbolUsage/importedObjectProperty.kt");
+        }
+
         @TestMetadata("incorrectArgs.kt")
         public void testIncorrectArgs() throws Exception {
             runTest("idea/testData/quickfix/deprecatedSymbolUsage/incorrectArgs.kt");
