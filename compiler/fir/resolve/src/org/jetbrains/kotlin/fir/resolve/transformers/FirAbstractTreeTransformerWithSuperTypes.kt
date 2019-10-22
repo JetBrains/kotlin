@@ -6,9 +6,19 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.isCompanion
+import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirNestedClassifierScope
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.name.ClassId
 
 abstract class FirAbstractTreeTransformerWithSuperTypes(
     phase: FirResolvePhase,
@@ -25,6 +35,32 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
             towerScope.scopes.let { it.removeAt(it.size - 1) }
         }
         return result
+    }
+
+    private fun nestedClassifierScope(classId: ClassId): FirNestedClassifierScope? {
+        val classSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
+        return nestedClassifierScope(classSymbol.fir)
+    }
+
+    protected fun resolveNestedClassesSupertypes(
+        regularClass: FirRegularClass,
+        data: Nothing?
+    ): CompositeTransformResult<FirStatement> {
+        return withScopeCleanup {
+            // ? Is it Ok to use original file session here ?
+            lookupSuperTypes(regularClass, lookupInterfaces = false, deep = true, useSiteSession = session)
+                .asReversed().mapNotNullTo(towerScope.scopes) {
+                    nestedClassifierScope(it.lookupTag.classId)
+                }
+            val companionObjects = regularClass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
+            for (companionObject in companionObjects) {
+                towerScope.scopes += nestedClassifierScope(companionObject)
+            }
+            towerScope.scopes += nestedClassifierScope(regularClass)
+            regularClass.addTypeParametersScope()
+
+            transformElement(regularClass, data)
+        }
     }
 
     protected fun FirMemberDeclaration.addTypeParametersScope() {
