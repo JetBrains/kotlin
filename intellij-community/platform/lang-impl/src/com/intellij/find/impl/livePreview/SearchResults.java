@@ -219,7 +219,8 @@ public class SearchResults implements DocumentListener {
       }
 
       long documentTimeStamp = editor.getDocument().getModificationStamp();
-      final Runnable searchCompletedRunnable = () -> {
+
+      UIUtil.invokeLaterIfNeeded(() -> {
         if (editor.getDocument().getModificationStamp() == documentTimeStamp) {
           searchCompleted(results, editor, findModel, toChangeSelection, next, stamp);
           result.setDone();
@@ -227,14 +228,7 @@ public class SearchResults implements DocumentListener {
         else {
           result.setRejected();
         }
-      };
-
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        searchCompletedRunnable.run();
-      }
-      else {
-        UIUtil.invokeLaterIfNeeded(searchCompletedRunnable);
-      }
+      });
     });
     return result;
   }
