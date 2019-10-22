@@ -55,6 +55,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/extensionReceiverInference.kt");
         }
 
+        @TestMetadata("implicitTypes.kt")
+        public void testImplicitTypes() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/implicitTypes.kt");
+        }
+
         @TestMetadata("inferenceFromCallableReferenceType.kt")
         public void testInferenceFromCallableReferenceType() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/inferenceFromCallableReferenceType.kt");

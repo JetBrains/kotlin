@@ -176,16 +176,22 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val outerCsBuilder = callInfo.outerCSBuilder ?: return
         val expectedType = callInfo.expectedType ?: return
+        val candidateSymbol = candidate.symbol as? FirCallableSymbol<*> ?: return
 
         val resultingReceiverType = when (callInfo.lhs) {
             is DoubleColonLHS.Type -> callInfo.lhs.type.takeIf { callInfo.explicitReceiver !is FirResolvedQualifier }
             else -> null
         }
 
-        val fir = candidate.symbol.fir
+        val fir = with(candidate.bodyResolveComponents) {
+            candidateSymbol.phasedFir
+        }
+
+        val returnTypeRef = candidate.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(fir)
+
         val resultingType: ConeKotlinType = when (fir) {
-            is FirSimpleFunction -> createKFunctionType(fir, resultingReceiverType)
-            is FirProperty -> createKPropertyType(fir, resultingReceiverType)
+            is FirSimpleFunction -> createKFunctionType(fir, resultingReceiverType, returnTypeRef)
+            is FirProperty -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
             else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
         }.let(candidate.substitutor::substituteOrSelf)
 
@@ -224,9 +230,10 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
 
 private fun createKPropertyType(
     property: FirProperty,
-    receiverType: ConeKotlinType?
+    receiverType: ConeKotlinType?,
+    returnTypeRef: FirResolvedTypeRef
 ): ConeKotlinType {
-    val propertyType = property.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for of $property")
+    val propertyType = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for of $property")
     return createKPropertyType(
         receiverType, propertyType
     )
@@ -234,7 +241,8 @@ private fun createKPropertyType(
 
 private fun createKFunctionType(
     function: FirSimpleFunction,
-    receiverType: ConeKotlinType?
+    receiverType: ConeKotlinType?,
+    returnTypeRef: FirResolvedTypeRef
 ): ConeKotlinType {
     val parameterTypes = function.valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter $it")
@@ -242,7 +250,7 @@ private fun createKFunctionType(
 
     return createFunctionalType(
         parameterTypes, receiverType = receiverType,
-        rawReturnType = function.returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $function"),
+        rawReturnType = returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $function"),
         isKFunctionType = true
     )
 }
