@@ -102,14 +102,9 @@ public class AutoPopupControllerImpl extends AutoPopupController {
   }
 
   private void addRequest(final Runnable request, final int delay) {
-    Runnable runnable = () -> {
+    ApplicationManager.getApplication().invokeLater(() -> {
       if (!myAlarm.isDisposed()) myAlarm.addRequest(request, delay);
-    };
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
-      runnable.run();
-    } else {
-      ApplicationManager.getApplication().invokeLater(runnable);
-    }
+    });
   }
 
   @Override
