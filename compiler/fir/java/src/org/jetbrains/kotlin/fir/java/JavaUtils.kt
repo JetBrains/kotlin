@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -16,10 +17,10 @@ import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.constructClassType
@@ -314,5 +315,70 @@ private fun JavaType.toFirResolvedTypeRef(
         psi = null, type = ConeClassErrorType("Unexpected JavaType: $this")
     )
 }
+
+internal fun FirFunction<*>.computeJvmDescriptor(): String = buildString {
+    if (this@computeJvmDescriptor is FirJavaMethod) {
+        append(name.asString())
+    } else {
+        append("<init>")
+    }
+
+    append("(")
+    for (parameter in valueParameters) {
+        appendErasedType(parameter.returnTypeRef)
+    }
+    append(")")
+
+    if (this@computeJvmDescriptor !is FirJavaMethod || (returnTypeRef as FirJavaTypeRef).isVoid()) {
+        append("V")
+    } else {
+        appendErasedType(returnTypeRef)
+    }
+}
+
+// TODO: primitive types, arrays, etc.
+private fun StringBuilder.appendErasedType(typeRef: FirTypeRef) {
+    when (typeRef) {
+        is FirResolvedTypeRef -> appendConeType(typeRef.type)
+        is FirJavaTypeRef -> {
+            when (val javaType = typeRef.type) {
+                is JavaClassifierType -> {
+                    when (val classifier = javaType.classifier) {
+                        is JavaClass -> classifier.fqName?.let {
+                            append("L")
+                            append(it.asString().replace(".", "/"))
+                        }
+                        is JavaTypeParameter -> {
+                            append("L")
+                            append(classifier.name)
+                        }
+                        else -> return
+                    }
+                    append(";")
+                }
+            }
+        }
+    }
+}
+
+private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
+    if (coneType is ConeClassErrorType) return
+    append("L")
+    when (coneType) {
+        is ConeClassLikeType -> {
+            val classId = coneType.lookupTag.classId
+            append(classId.packageFqName.asString().replace(".", "/"))
+            append("/")
+            append(classId.relativeClassName)
+        }
+        is ConeTypeParameterType -> append(coneType.lookupTag.name)
+    }
+    append(";")
+}
+
+private fun FirJavaTypeRef.isVoid(): Boolean {
+    return type is JavaPrimitiveType && type.type == null
+}
+
 
 
