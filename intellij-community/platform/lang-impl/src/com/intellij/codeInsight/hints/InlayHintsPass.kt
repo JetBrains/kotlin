@@ -27,8 +27,8 @@ class InlayHintsPass(
       false,
       Processor { collector ->
         val traverser = SyntaxTraverser.psiTraverser(rootElement)
-        for (element in traverser.preOrderDfsTraversal()) {
-          if (settings.hintsEnabled(collector.key, collector.language)) {
+        if (settings.hintsEnabled(collector.key, collector.language)) {
+          for (element in traverser.preOrderDfsTraversal()) {
             if (!collector.collectHints(element, myEditor)) break
           }
         }
