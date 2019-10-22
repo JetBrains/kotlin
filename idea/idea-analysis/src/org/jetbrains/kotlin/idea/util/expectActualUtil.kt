@@ -146,3 +146,9 @@ fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, f: (KtDe
         actualsForExpected().forEach { f(it) }
     }
 }
+
+fun KtDeclaration.collectAllExpectAndActualDeclaration(): Set<KtDeclaration> = when {
+    isExpectDeclaration() -> actualsForExpected() + this
+    hasActualModifier() -> liftToExpected()?.let { it.actualsForExpected() + it }.orEmpty()
+    else -> emptySet()
+}

@@ -209,6 +209,29 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         }
     }
 
+    @TestMetadata("idea/testData/multiModuleQuickFix/changeModifier")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeModifier extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInChangeModifier() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/changeModifier"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("internal")
+        public void testInternal() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/changeModifier/internal/");
+        }
+
+        @TestMetadata("public")
+        public void testPublic() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/changeModifier/public/");
+        }
+    }
+
     @TestMetadata("idea/testData/multiModuleQuickFix/changeSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
