@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -97,9 +98,8 @@ class JvmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.jvm")
 
-    val suspendFunctionContinuations = mutableMapOf<IrFunction, IrClass>()
-    val suspendLambdaToOriginalFunctionMap = mutableMapOf<IrClass, IrFunction>()
-    val continuationClassBuilders = mutableMapOf<IrClass, ClassBuilder>()
+    val suspendLambdaToOriginalFunctionMap = mutableMapOf<IrFunctionReference, IrFunction>()
+    val continuationClassBuilders = mutableMapOf<IrSimpleFunction, ClassBuilder>()
     val suspendFunctionOriginalToView = mutableMapOf<IrFunction, IrFunction>()
     val suspendFunctionViewToOriginal = mutableMapOf<IrFunction, IrFunction>()
     val fakeContinuation: IrExpression = createFakeContinuation(this)

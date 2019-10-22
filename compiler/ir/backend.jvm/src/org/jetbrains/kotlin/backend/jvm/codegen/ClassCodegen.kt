@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
@@ -126,12 +127,6 @@ open class ClassCodegen protected constructor(
             } else null
         }
 
-        // Suspend function state-machine builder requires half-built continuation class
-        val continuationCodegens = nestedClasses.filter { it.irClass in context.suspendFunctionContinuations.values }
-        for (continuationCodegen in continuationCodegens) {
-            continuationCodegen.generate()
-        }
-
         val fileEntry = context.psiSourceManager.getFileEntry(irClass.fileParent)
         if (fileEntry != null) {
             /* TODO: Temporary workaround: ClassBuilder needs a pathless name. */
@@ -153,14 +148,14 @@ open class ClassCodegen protected constructor(
 
         // Generate nested classes at the end, to ensure that codegen for companion object will have the necessary JVM signatures in its
         // trace for properties moved to the outer class
-        for (codegen in (nestedClasses - continuationCodegens)) {
+        for (codegen in nestedClasses) {
             codegen.generate()
         }
 
         generateKotlinMetadataAnnotation()
 
-        if (irClass in context.suspendFunctionContinuations.values) {
-            context.continuationClassBuilders[irClass] = visitor
+        if (irClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
+            context.continuationClassBuilders[irClass.attributeOwnerId as IrSimpleFunction] = visitor
         } else {
             done()
         }

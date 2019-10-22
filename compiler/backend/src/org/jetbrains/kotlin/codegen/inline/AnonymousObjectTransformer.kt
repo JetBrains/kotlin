@@ -302,7 +302,8 @@ class AnonymousObjectTransformer(
                 sourceNode.name,
                 if (isConstructor) transformationInfo.newConstructorDescriptor else sourceNode.desc,
                 inliningContext.callSiteInfo.isInlineOrInsideInline,
-                isSuspendFunctionOrLambda(sourceNode)
+                isSuspendFunctionOrLambda(sourceNode),
+                inliningContext.root.sourceCompilerForInline.inlineCallSiteInfo.lineNumber
             ), null
         )
 

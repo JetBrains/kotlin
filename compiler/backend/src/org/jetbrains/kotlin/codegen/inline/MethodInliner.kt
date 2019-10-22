@@ -157,6 +157,7 @@ class MethodInliner(
             ), AsmTypeRemapper(remapper, result)
         )
 
+        val fakeContinuationName = CoroutineTransformer.findFakeContinuationConstructorClassName(node)
         val markerShift = calcMarkerShift(parameters, node)
         val lambdaInliner = object : InlineAdapter(remappingMethodAdapter, parameters.argsSizeOnStack, sourceMapper) {
             private var transformationInfo: TransformationInfo? = null
@@ -176,9 +177,7 @@ class MethodInliner(
                         inlineCallSiteInfo
                     )
                     val transformer = transformationInfo!!.createTransformer(
-                        childInliningContext,
-                        isSameModule,
-                        CoroutineTransformer.findFakeContinuationConstructorClassName(node)
+                        childInliningContext, isSameModule, fakeContinuationName
                     )
 
                     val transformResult = transformer.doTransform(nodeRemapper)

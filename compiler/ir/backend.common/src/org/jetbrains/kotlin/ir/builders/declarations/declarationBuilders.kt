@@ -176,13 +176,15 @@ fun IrDeclarationContainer.addFunction(
     returnType: IrType,
     modality: Modality = Modality.FINAL,
     isStatic: Boolean = false,
-    isSuspend: Boolean = false
+    isSuspend: Boolean = false,
+    origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
 ): IrSimpleFunction =
     addFunction {
         this.name = Name.identifier(name)
         this.returnType = returnType
         this.modality = modality
         this.isSuspend = isSuspend
+        this.origin = origin
     }.apply {
         if (!isStatic) {
             dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)

@@ -75,6 +75,8 @@ interface SourceCompilerForInline {
     val compilationContextFunctionDescriptor: FunctionDescriptor
 
     fun getContextLabels(): Set<String>
+
+    fun reportSuspensionPointInsideMonitor(stackTraceElement: String)
 }
 
 
@@ -120,7 +122,8 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
                 signature.asmMethod.name,
                 signature.asmMethod.descriptor,
                 compilationContextFunctionDescriptor.isInlineOrInsideInline(),
-                compilationContextFunctionDescriptor.isSuspend
+                compilationContextFunctionDescriptor.isSuspend,
+                CodegenUtil.getLineNumberForElement(callElement, false) ?: 0
             )
         }
 
@@ -363,6 +366,10 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
             DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor)?.containingFile as? KtFile,
             additionalInnerClasses
         )
+    }
+
+    override fun reportSuspensionPointInsideMonitor(stackTraceElement: String) {
+        org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor(callElement, state, stackTraceElement)
     }
 
     companion object {

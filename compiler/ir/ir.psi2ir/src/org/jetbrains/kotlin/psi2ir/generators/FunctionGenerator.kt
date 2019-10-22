@@ -56,10 +56,6 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             ?.let {
                 declareSimpleFunctionInner(it, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE).buildWithScope { irFunction ->
                     generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null)
-                    val overridenSymbol = irFunction.overriddenSymbols.first()
-                    if (overridenSymbol.isBound) {
-                        irFunction.copyAttributes(overridenSymbol.owner)
-                    }
                 }
             }
 

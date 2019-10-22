@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.inline.coroutines.SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -470,8 +473,9 @@ class CoroutineCodegenForLambda private constructor(
                     val stateMachineBuilder = CoroutineTransformerMethodVisitor(
                         mv, access, name, desc, null, null,
                         obtainClassBuilderForCoroutineState = { v },
-                        element = element,
-                        diagnostics = state.diagnostics,
+                        reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element, state, it) },
+                        lineNumber = CodegenUtil.getLineNumberForElement(element, false) ?: 0,
+                        sourceFile = element.containingKtFile.name,
                         shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                         containingClassInternalName = v.thisName,
                         isForNamedFunction = false,
@@ -767,4 +771,8 @@ private object FailingFunctionGenerationStrategy : FunctionGenerationStrategy() 
     ) {
         error("This functions must not be called")
     }
+}
+
+fun reportSuspensionPointInsideMonitor(element: KtElement, state: GenerationState, stackTraceElement: String) {
+    state.diagnostics.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR.on(element, stackTraceElement))
 }

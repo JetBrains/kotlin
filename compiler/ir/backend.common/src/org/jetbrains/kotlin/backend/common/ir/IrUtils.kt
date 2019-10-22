@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DumpIrTreeWithDescriptorsVisitor
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
+import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -566,9 +567,17 @@ fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
     val mapping: Map<IrValueParameter, IrValueParameter> =
         (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
             .zip(staticFunction.valueParameters).toMap()
-    staticFunction.body = oldFunction.body
+    copyBodyWithParametersMapping(staticFunction, oldFunction, mapping)
+}
+
+fun copyBodyWithParametersMapping(
+    newFunction: IrFunction,
+    oldFunction: IrFunction,
+    mapping: Map<IrValueParameter, IrValueParameter>
+) {
+    newFunction.body = oldFunction.body?.deepCopyWithSymbols(oldFunction)
         ?.transform(
-            object: IrElementTransformerVoid() {
+            object : IrElementTransformerVoid() {
                 // Remap return targets to the static method so they do not appear to be
                 // non-local returns.
                 override fun visitReturn(expression: IrReturn): IrExpression {
@@ -578,8 +587,9 @@ fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
                             expression.startOffset,
                             expression.endOffset,
                             expression.type,
-                            staticFunction.symbol,
-                            expression.value)
+                            newFunction.symbol,
+                            expression.value
+                        )
                     } else expression
                 }
 
@@ -589,8 +599,9 @@ fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
                         IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
                     } ?: expression
 
-            }, null)
-        ?.patchDeclarationParents(staticFunction)
+            }, null
+        )
+        ?.patchDeclarationParents(newFunction)
 }
 
 val IrSymbol.isSuspend: Boolean
