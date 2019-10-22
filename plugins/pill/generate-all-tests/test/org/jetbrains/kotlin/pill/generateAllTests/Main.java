@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.pill.generateAllTests;
 
-import org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt;
-import org.jetbrains.kotlin.generators.tests.GenerateJava8TestsKt;
-import org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt;
-import org.jetbrains.kotlin.generators.tests.GenerateTestsKt;
+import org.jetbrains.kotlin.generators.tests.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,5 +13,6 @@ public class Main {
         GenerateTestsKt.main(args);
         GenerateJsTestsKt.main(args);
         GenerateJava8TestsKt.main(args);
+        GenerateRuntimeDescriptorTestsKt.main();
     }
 }

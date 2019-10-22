@@ -40,3 +40,5 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateRu
 projectTest(parallel = true) {
     workingDir = rootDir
 }
+
+testsJar()
