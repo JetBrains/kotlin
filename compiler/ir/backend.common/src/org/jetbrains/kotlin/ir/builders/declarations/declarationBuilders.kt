@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.ir.builders.declarations
 
 import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
@@ -117,6 +115,8 @@ inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
 fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): IrFunctionImpl {
     val wrappedDescriptor = if (originalDescriptor is DescriptorWithContainerSource)
         WrappedFunctionDescriptorWithContainerSource(originalDescriptor.containerSource)
+    else if (originalDescriptor != null)
+        WrappedSimpleFunctionDescriptor(originalDescriptor)
     else
         WrappedSimpleFunctionDescriptor()
     return IrFunctionImpl(
