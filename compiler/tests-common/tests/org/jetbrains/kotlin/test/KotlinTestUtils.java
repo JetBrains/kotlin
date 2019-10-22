@@ -30,6 +30,7 @@ import junit.framework.TestCase;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.collections.SetsKt;
+import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -709,6 +710,11 @@ public class KotlinTestUtils {
 
     public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) throws Exception {
         runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFile);
+    }
+
+    public static void runTest(@NotNull TestCase testCase, @NotNull Function0 test) {
+        //noinspection unchecked
+        MuteWithDatabaseKt.runTest(testCase, test);
     }
 
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.

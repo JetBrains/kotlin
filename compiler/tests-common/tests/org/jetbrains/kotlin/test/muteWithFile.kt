@@ -18,6 +18,10 @@ annotation class MuteExtraSuffix(val value: String = "")
 
 @Throws(Exception::class)
 fun testWithMuteInFile(test: DoTest, testCase: TestCase): DoTest {
+    if (isMutedInDatabase(testCase)) {
+        return MutedDoTest(testCase)
+    }
+
     val extraSuffix = testCase.javaClass.getAnnotation(MuteExtraSuffix::class.java)?.value ?: ""
     return testWithMuteInFile(test, extraSuffix)
 }
@@ -30,7 +34,7 @@ fun testWithMuteInFile(test: DoTest, extraSuffix: String): DoTest {
 
             val isMutedWithFile = isMutedWithFile(testDataFile, extraSuffix)
             if (isMutedWithFile && !RUN_MUTED_TESTS) {
-                System.err.println("IGNORED TEST: $filePath")
+                System.err.println("MUTED TEST: $filePath")
                 return
             }
 
