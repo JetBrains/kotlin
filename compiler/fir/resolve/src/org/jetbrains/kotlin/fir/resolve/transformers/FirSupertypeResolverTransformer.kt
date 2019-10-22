@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -113,7 +112,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
 
                 regularClass.addTypeParametersScope()
 
-                val transformer = FirSpecificTypeResolverTransformer(towerScope, FirPosition.SUPER_TYPE_OR_EXPANSION, session)
+                val transformer = FirSpecificTypeResolverTransformer(towerScope, session)
                 val resolvedTypesRefs = regularClass.superTypeRefs.map {
                     transformer.transformTypeRef(it, data).single
                 }
@@ -144,7 +143,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
             return withScopeCleanup {
                 typeAlias.addTypeParametersScope()
 
-                val transformer = FirSpecificTypeResolverTransformer(towerScope, FirPosition.SUPER_TYPE_OR_EXPANSION, session)
+                val transformer = FirSpecificTypeResolverTransformer(towerScope, session)
                 val resolvedTypesRef = transformer.transformTypeRef(typeAlias.expandedTypeRef, data).single
                 val resultingTypeRef = resolveLoops(typeAlias, classId, listOf(resolvedTypesRef)).firstOrNull()
 

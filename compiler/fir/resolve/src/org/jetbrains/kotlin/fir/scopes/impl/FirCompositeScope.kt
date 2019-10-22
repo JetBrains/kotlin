@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.FirTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
@@ -22,13 +20,11 @@ class FirCompositeScope(
 ) : FirScope() {
     override fun processClassifiersByName(
         name: Name,
-        position: FirPosition,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
         val scopes = if (reversedPriority) scopes.asReversed() else scopes
         for (scope in scopes) {
-            if (!position.allowTypeParameters && scope is FirTypeParameterScope) continue
-            if (!scope.processClassifiersByName(name, position, processor)) {
+            if (!scope.processClassifiersByName(name, processor)) {
                 return STOP
             }
         }

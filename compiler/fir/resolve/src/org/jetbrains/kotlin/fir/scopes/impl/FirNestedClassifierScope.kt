@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -27,7 +26,6 @@ class FirNestedClassifierScope(val klass: FirRegularClass) : FirScope() {
 
     override fun processClassifiersByName(
         name: Name,
-        position: FirPosition,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
         val matchedClass = classIndex[name] ?: return ProcessorAction.NONE

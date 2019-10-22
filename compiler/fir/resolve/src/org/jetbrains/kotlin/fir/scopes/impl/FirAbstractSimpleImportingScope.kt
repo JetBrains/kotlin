@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
-import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -26,7 +25,6 @@ abstract class FirAbstractSimpleImportingScope(
 
     override fun processClassifiersByName(
         name: Name,
-        position: FirPosition,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
         val imports = simpleImports[name] ?: return ProcessorAction.NONE

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.memberScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
@@ -113,7 +112,6 @@ class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {
 
     override fun processClassifiersByName(
         name: Name,
-        position: FirPosition,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction
-    ): ProcessorAction = nestedClassifierScope.processClassifiersByName(name, position, processor)
+    ): ProcessorAction = nestedClassifierScope.processClassifiersByName(name, processor)
 }

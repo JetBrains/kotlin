@@ -14,7 +14,6 @@ abstract class FirTypeParameterScope : FirScope() {
 
     override fun processClassifiersByName(
         name: Name,
-        position: FirPosition,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
         val matchedTypeParameters = typeParameters[name] ?: return ProcessorAction.NEXT

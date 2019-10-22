@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorWithJump
-import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
@@ -132,7 +131,7 @@ class MemberScopeTowerLevel(
                 this.processFunctionsByName(name, symbol.cast())
             }
             TowerScopeLevel.Token.Objects -> processMembers(processor, explicitExtensionReceiver) { symbol ->
-                this.processClassifiersByName(name, FirPosition.OTHER, symbol.cast())
+                this.processClassifiersByName(name, symbol.cast())
             }
         }
     }
@@ -198,7 +197,7 @@ class ScopeTowerLevel(
                     ProcessorAction.NEXT
                 }
             }
-            TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name, FirPosition.OTHER) {
+            TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name) {
                 processor.consumeCandidate(
                     it as T, dispatchReceiverValue = null,
                     implicitExtensionReceiverValue = null
@@ -246,7 +245,7 @@ class QualifiedReceiverTowerLevel(
         }
 
         return when (token) {
-            TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name, FirPosition.OTHER) {
+            TowerScopeLevel.Token.Objects -> scope.processClassifiersByName(name) {
                 @Suppress("UNCHECKED_CAST")
                 processor.consumeCandidate(it as T, null, null)
             }
@@ -307,7 +306,7 @@ private fun FirScope.processFunctionsAndConstructorsByName(
 
 private fun FirScope.getFirstClassifierOrNull(name: Name): FirClassifierSymbol<*>? {
     var result: FirClassifierSymbol<*>? = null
-    processClassifiersByName(name, FirPosition.OTHER) {
+    processClassifiersByName(name) {
         result = it
         ProcessorAction.STOP
     }

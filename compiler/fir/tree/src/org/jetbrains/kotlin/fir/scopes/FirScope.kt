@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.name.Name
 abstract class FirScope {
     open fun processClassifiersByName(
         name: Name,
-        position: FirPosition,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction
     ): ProcessorAction = NEXT
 
@@ -28,11 +27,6 @@ abstract class FirScope {
         // NB: it'd be great to write FirVariableSymbol<*> here, but there is FirAccessorSymbol :(
         processor: (FirCallableSymbol<*>) -> ProcessorAction
     ): ProcessorAction = NEXT
-}
-
-enum class FirPosition(val allowTypeParameters: Boolean = true) {
-    SUPER_TYPE_OR_EXPANSION(allowTypeParameters = false),
-    OTHER
 }
 
 enum class ProcessorAction {

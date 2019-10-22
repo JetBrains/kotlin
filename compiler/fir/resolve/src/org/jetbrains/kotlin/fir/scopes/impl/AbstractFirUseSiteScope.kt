@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -39,9 +38,8 @@ abstract class AbstractFirUseSiteScope(
 
     override fun processClassifiersByName(
         name: Name,
-        position: FirPosition,
         processor: (FirClassifierSymbol<*>) -> ProcessorAction
     ): ProcessorAction {
-        return declaredMemberScope.processClassifiersByName(name, position, processor)
+        return declaredMemberScope.processClassifiersByName(name, processor)
     }
 }
