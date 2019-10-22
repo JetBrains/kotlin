@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
 abstract class FirAbstractPhaseTransformer<D>(
-    protected val transformerPhase: FirResolvePhase
+    val transformerPhase: FirResolvePhase
 ) : FirDefaultTransformer<D>() {
 
     abstract val session: FirSession
