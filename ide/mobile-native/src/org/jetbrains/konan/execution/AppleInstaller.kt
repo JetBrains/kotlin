@@ -57,7 +57,7 @@ abstract class AppleInstaller(
                     override fun getProductModuleName(): String? = null // TODO
                 }
             } else {
-                OCCommandLineConfigurator(this, params, platform, device.arch, null)
+                OCCommandLineConfigurator(project, params, platform, device.arch, null, false)
             }
         configurator.configureCommandLine(commandLine)
 
