@@ -19,34 +19,24 @@ package com.intellij.codeInsight.daemon.impl;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.Application;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
-import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
-import com.intellij.util.Alarm;
+import com.intellij.util.SingleAlarm;
 import org.jetbrains.annotations.NotNull;
 
-public class StatusBarUpdater implements Disposable {
+class StatusBarUpdater implements Disposable {
   private final Project myProject;
-  private final DumbAwareRunnable myUpdateStatusRunnable = new DumbAwareRunnable() {
-    @Override
-    public void run() {
-      if (!myProject.isDisposed()) {
-        updateStatus();
-      }
-    }
-  };
-  private final Alarm updateStatusAlarm = new Alarm();
+  private final SingleAlarm myAlarm;
 
   StatusBarUpdater(Project project) {
     myProject = project;
+    myAlarm = new SingleAlarm(() -> updateStatus(), 100, this);
 
     project.getMessageBus().connect(this).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, new FileEditorManagerListener() {
       @Override
@@ -64,14 +54,7 @@ public class StatusBarUpdater implements Disposable {
   }
 
   private void updateLater() {
-    final Application application = ApplicationManager.getApplication();
-    if (application.isUnitTestMode()) {
-      myUpdateStatusRunnable.run();
-    }
-    else {
-      updateStatusAlarm.cancelAllRequests();
-      updateStatusAlarm.addRequest(myUpdateStatusRunnable, 100);
-    }
+    myAlarm.cancelAndRequest();
   }
 
   @Override
