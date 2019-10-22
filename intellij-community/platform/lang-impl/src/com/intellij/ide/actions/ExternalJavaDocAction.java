@@ -2,7 +2,6 @@
 
 package com.intellij.ide.actions;
 
-import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.BrowserUtil;
@@ -25,7 +24,6 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +48,9 @@ public class ExternalJavaDocAction extends AnAction {
     }
 
     Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
-    PsiElement element = getElement(dataContext, editor);
+    PsiElement originalElement = getOriginalElement(dataContext, editor);
+    PsiElement element = getElement(dataContext, editor, originalElement);
+
     if (element == null) {
       Messages.showMessageDialog(
         project,
@@ -60,13 +60,6 @@ public class ExternalJavaDocAction extends AnAction {
       );
       return;
     }
-
-
-    PsiFile context = CommonDataKeys.PSI_FILE.getData(dataContext);
-
-    PsiElement originalElement = getOriginalElement(context, editor);
-    DocumentationManager.storeOriginalElement(project, originalElement, element);
-
     showExternalJavadoc(element, originalElement, null, dataContext);
   }
 
@@ -126,18 +119,31 @@ public class ExternalJavaDocAction extends AnAction {
   }
 
   @Nullable
-  private static PsiElement getOriginalElement(final PsiFile context, final Editor editor) {
-    return (context!=null && editor!=null)? context.findElementAt(editor.getCaretModel().getOffset()):null;
+  private static PsiElement getOriginalElement(@NotNull DataContext dataContext, @Nullable Editor editor) {
+    PsiFile file = CommonDataKeys.PSI_FILE.getData(dataContext);
+    return (file != null && editor != null) ? file.findElementAt(editor.getCaretModel().getOffset())
+                                            : null;
+  }
+
+  @Nullable
+  private static PsiElement getElement(@NotNull DataContext dataContext,
+                                       @Nullable Editor editor,
+                                       @Nullable PsiElement originalElement) {
+    return editor == null || originalElement == null
+                     ? CommonDataKeys.PSI_ELEMENT.getData(dataContext)
+                     : DocumentationManager.getInstance(originalElement.getProject())
+                       .findTargetElement(editor, originalElement.getContainingFile(), originalElement);
   }
 
   @Override
   public void update(@NotNull AnActionEvent event) {
     Presentation presentation = event.getPresentation();
     DataContext dataContext = event.getDataContext();
+
     Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
-    PsiElement element = getElement(dataContext, editor);
-    final PsiElement originalElement = getOriginalElement(CommonDataKeys.PSI_FILE.getData(dataContext), editor);
-    DocumentationManager.storeOriginalElement(CommonDataKeys.PROJECT.getData(dataContext), originalElement, element);
+    PsiElement originalElement = getOriginalElement(dataContext, editor);
+    PsiElement element = getElement(dataContext, editor, originalElement);
+
     final DocumentationProvider provider = DocumentationManager.getProviderFromElement(element);
     boolean enabled;
     if (provider instanceof ExternalDocumentationProvider) {
@@ -148,8 +154,8 @@ public class ExternalJavaDocAction extends AnAction {
       final List<String> urls = provider.getUrlFor(element, originalElement);
       enabled = urls != null && !urls.isEmpty();
     }
+    presentation.setEnabled(enabled);
     if (editor != null) {
-      presentation.setEnabled(enabled);
       if (ActionPlaces.isMainMenuOrActionSearch(event.getPlace())) {
         presentation.setVisible(true);
       }
@@ -158,19 +164,7 @@ public class ExternalJavaDocAction extends AnAction {
       }
     }
     else{
-      presentation.setEnabled(enabled);
       presentation.setVisible(true);
     }
-  }
-
-  private static PsiElement getElement(DataContext dataContext, Editor editor) {
-    PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
-    if (element == null && editor != null) {
-      PsiReference reference = TargetElementUtil.findReference(editor, editor.getCaretModel().getOffset());
-      if (reference != null) {
-        element = reference.getElement();
-      }
-    }
-    return element;
   }
 }
