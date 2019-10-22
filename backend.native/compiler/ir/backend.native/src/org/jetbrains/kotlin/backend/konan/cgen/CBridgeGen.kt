@@ -570,7 +570,8 @@ private fun KotlinStubs.createFakeKotlinExternalFunction(
             isInline = false,
             isExternal = true,
             isTailrec = false,
-            isSuspend = false
+            isSuspend = false,
+            isExpect = false
     )
     bridgeDescriptor.bind(bridge)
 
@@ -1195,7 +1196,7 @@ private class ObjCBlockPointerValuePassing(
                 OBJC_BLOCK_FUNCTION_IMPL, IrClassSymbolImpl(classDescriptor),
                 Name.identifier(stubs.getUniqueKotlinFunctionReferenceClassName("BlockFunctionImpl")),
                 ClassKind.CLASS, Visibilities.PRIVATE, Modality.FINAL,
-                isCompanion = false, isInner = false, isData = false, isExternal = false, isInline = false
+                isCompanion = false, isInner = false, isData = false, isExternal = false, isInline = false, isExpect = false
         )
         classDescriptor.bind(irClass)
         irClass.createParameterDeclarations()
@@ -1219,7 +1220,7 @@ private class ObjCBlockPointerValuePassing(
                 Name.special("<init>"),
                 Visibilities.PUBLIC,
                 irClass.defaultType,
-                isInline = false, isExternal = false, isPrimary = true
+                isInline = false, isExternal = false, isPrimary = true, isExpect = false
         )
         constructorDescriptor.bind(constructor)
         irClass.addChild(constructor)
@@ -1260,7 +1261,7 @@ private class ObjCBlockPointerValuePassing(
                 overriddenInvokeMethod.name,
                 Visibilities.PUBLIC, Modality.FINAL,
                 returnType = functionType.arguments.last().typeOrNull!!,
-                isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+                isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false
         )
         invokeMethodDescriptor.bind(invokeMethod)
         invokeMethod.overriddenSymbols += overriddenInvokeMethod.symbol

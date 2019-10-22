@@ -501,7 +501,8 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
             isExternal = false,
             isTailrec = false,
             isSuspend = false,
-            returnType = irConstructor.returnType
+            returnType = irConstructor.returnType,
+            isExpect = false
     ).apply {
         descriptor.bind(this)
         parent = irConstructor.parent

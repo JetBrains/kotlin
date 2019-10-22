@@ -39,7 +39,8 @@ internal fun makeEntryPoint(context: Context): IrFunction {
             isInline = false,
             isExternal = false,
             isTailrec = false,
-            isSuspend = false
+            isSuspend = false,
+            isExpect = false
     ).also { function ->
         function.valueParameters.add(WrappedValueParameterDescriptor().let {
             IrValueParameterImpl(

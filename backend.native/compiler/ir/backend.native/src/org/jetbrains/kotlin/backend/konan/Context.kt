@@ -140,7 +140,8 @@ internal class SpecialDeclarationsFactory(val context: Context) : KotlinMangler 
                 isExternal = false,
                 isTailrec = false,
                 isSuspend = function.isSuspend,
-                returnType = returnType
+                returnType = returnType,
+                isExpect = false
         ).apply {
             descriptor.bind(this)
             parent = function.parent

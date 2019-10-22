@@ -56,7 +56,8 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     isInner = false,
                     isData = false,
                     isExternal = false,
-                    isInline = false
+                    isInline = false,
+                    isExpect = false
             ).apply {
                 it.bind(this)
                 parent = enumClass
@@ -94,7 +95,8 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     isInline = false,
                     isExternal = false,
                     isTailrec = false,
-                    isSuspend = false
+                    isSuspend = false,
+                    isExpect = false
             ).apply {
                 it.bind(this)
                 parent = implObject

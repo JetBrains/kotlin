@@ -122,7 +122,8 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                         constructor.returnType,
                         isInline = false,
                         isExternal = false,
-                        isPrimary = constructor.isPrimary
+                        isPrimary = constructor.isPrimary,
+                        isExpect = false
                 ).apply {
                     it.bind(this)
                     parent = constructor.parent

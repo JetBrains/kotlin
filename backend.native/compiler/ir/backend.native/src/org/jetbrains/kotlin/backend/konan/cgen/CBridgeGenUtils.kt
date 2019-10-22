@@ -115,7 +115,8 @@ private fun createKotlinBridge(
             isInline = false,
             isExternal = isExternal,
             isTailrec = false,
-            isSuspend = false
+            isSuspend = false,
+            isExpect = false
     )
     bridgeDescriptor.bind(bridge)
     if (isExternal) {

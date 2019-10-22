@@ -349,7 +349,8 @@ internal class TestProcessor (val context: Context) {
                 isInline = false,
                 isExternal = false,
                 isTailrec = false,
-                isSuspend = false
+                isSuspend = false,
+                isExpect = false
         ).apply {
             descriptor.bind(this)
             parent = owner
@@ -385,7 +386,8 @@ internal class TestProcessor (val context: Context) {
                 isInline = false,
                 isExternal = false,
                 isTailrec = false,
-                isSuspend = false
+                isSuspend = false,
+                isExpect = false
         ).apply {
             descriptor.bind(this)
             parent = owner
@@ -430,7 +432,8 @@ internal class TestProcessor (val context: Context) {
                 testSuite.typeWithStarProjections,
                 isInline = false,
                 isExternal = false,
-                isPrimary = true
+                isPrimary = true,
+                isExpect = false
         ).apply {
             descriptor.bind(this)
             parent = owner
@@ -485,7 +488,8 @@ internal class TestProcessor (val context: Context) {
                 isInner = false,
                 isData = false,
                 isExternal = false,
-                isInline = false
+                isInline = false,
+                isExpect = false
         ).apply {
             descriptor.bind(this)
             createParameterDeclarations()
