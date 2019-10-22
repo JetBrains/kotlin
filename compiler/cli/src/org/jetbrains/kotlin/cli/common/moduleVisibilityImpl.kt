@@ -90,7 +90,7 @@ class CliModuleVisibilityManagerImpl(override val enabled: Boolean) : ModuleVisi
     }
 
     override fun addFriendPath(path: String) {
-        friendPaths.add(path)
+        friendPaths.add(File(path).absolutePath)
     }
 
     override fun dispose() {
