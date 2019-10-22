@@ -130,15 +130,10 @@ private fun KtUserType.applicableExpression(context: BindingContext): KtUserType
     val referenceExpression = referenceExpression as? KtNameReferenceExpression ?: return null
     val originalDescriptor = referenceExpression.mainReference.resolveToDescriptors(context).firstOrNull() ?: return null
 
-    if (originalDescriptor is ClassDescriptor && originalDescriptor.isInner) {
-        val outerClassDescriptor = originalDescriptor.containingDeclaration as? ClassDescriptor
-        if (outerClassDescriptor?.typeConstructor != null) {
-            if (getStrictParentOfType<KtPrimaryConstructor>() != null
-                || getStrictParentOfType<KtSuperTypeEntry>() != null
-                || containingClass()?.descriptor != outerClassDescriptor
-            ) return null
-        }
-    }
+    if (originalDescriptor is ClassDescriptor
+        && originalDescriptor.isInner
+        && (originalDescriptor.containingDeclaration as? ClassDescriptor)?.typeConstructor != null
+    ) return null
 
     val shortName = originalDescriptor.importableFqName?.shortName() ?: return null
     val scope = referenceExpression.getResolutionScope(context) ?: return null

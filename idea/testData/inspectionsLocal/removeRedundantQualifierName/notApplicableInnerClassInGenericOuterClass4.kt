@@ -1,3 +1,4 @@
+// PROBLEM: none
 class Outer<T>() {
     inner class Inner
 
