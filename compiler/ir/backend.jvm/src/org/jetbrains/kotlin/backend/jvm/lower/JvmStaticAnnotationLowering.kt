@@ -112,7 +112,8 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
             isExternal = false,
             isTailrec = false,
             isSuspend = target.isSuspend,
-            isExpect = false
+            isExpect = false,
+            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
         ).apply {
             descriptor.bind(this)
             parent = irClass
@@ -232,7 +233,8 @@ private class MakeCallsStatic(
             IrSimpleFunctionSymbolImpl(newDescriptor),
             name,
             visibility, modality, returnType,
-            isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect
+            isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
+            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
         ).also {
             newDescriptor.bind(it)
             it.parent = parent

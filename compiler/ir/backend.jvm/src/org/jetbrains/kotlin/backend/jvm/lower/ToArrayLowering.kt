@@ -84,7 +84,8 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 isExternal = false,
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false
+                isExpect = false,
+                isFakeOverride = false
             )
             functionDescriptor.bind(irFunction)
             irFunction.parent = irClass
@@ -154,7 +155,8 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 isExternal = false,
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false
+                isExpect = false,
+                isFakeOverride = false
             )
             functionDescriptor.bind(irFunction)
             irFunction.parent = irClass
