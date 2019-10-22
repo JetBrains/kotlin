@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.javac.*
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.debugInformation.AbstractIrLocalVariableTest
 import org.jetbrains.kotlin.codegen.debugInformation.AbstractIrSteppingTest
+import org.jetbrains.kotlin.codegen.debugInformation.AbstractLocalVariableTest
 import org.jetbrains.kotlin.codegen.debugInformation.AbstractSteppingTest
 import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsReflectionTest
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
@@ -373,6 +375,10 @@ fun main(args: Array<String>) {
             model("debug/stepping", targetBackend = TargetBackend.JVM)
         }
 
+        testClass<AbstractLocalVariableTest>(useJunit4 = true) {
+            model("debug/localVariables", targetBackend = TargetBackend.JVM)
+        }
+
         testClass<AbstractLocalClassProtoTest> {
             model("serialization/local")
         }
@@ -464,6 +470,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrSteppingTest>(useJunit4 = true) {
             model("debug/stepping", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrLocalVariableTest>(useJunit4 = true) {
+            model("debug/localVariables", targetBackend = TargetBackend.JVM_IR)
         }
 
         testClass<AbstractIrBlackBoxInlineCodegenTest> {

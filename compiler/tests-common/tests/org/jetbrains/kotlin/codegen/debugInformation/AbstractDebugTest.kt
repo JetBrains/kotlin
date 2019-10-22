@@ -11,7 +11,7 @@ import com.intellij.util.SystemProperties
 import com.sun.jdi.VirtualMachine
 import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest
-import com.sun.jdi.request.EventRequest.SUSPEND_NONE
+import com.sun.jdi.request.EventRequest.SUSPEND_ALL
 import com.sun.jdi.request.StepRequest
 import com.sun.tools.jdi.SocketAttachingConnector
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
@@ -53,7 +53,7 @@ abstract class AbstractDebugTest : CodegenTestCase() {
 
             val methodExitReq = manager.createMethodExitRequest()
             methodExitReq.addClassFilter(TEST_CLASS)
-            methodExitReq.setSuspendPolicy(EventRequest.SUSPEND_NONE)
+            methodExitReq.setSuspendPolicy(EventRequest.SUSPEND_ALL)
             methodExitReq.enable()
         }
 
@@ -178,7 +178,7 @@ abstract class AbstractDebugTest : CodegenTestCase() {
         var inBoxMethod = false
         vmLoop@
         while (true) {
-            val eventSet = virtualMachine.eventQueue().remove()
+            val eventSet = virtualMachine.eventQueue().remove(100)
             for (event in eventSet) {
                 when (event) {
                     is VMDeathEvent, is VMDisconnectEvent -> {
@@ -192,7 +192,7 @@ abstract class AbstractDebugTest : CodegenTestCase() {
                         if (!inBoxMethod && event.location().method().name() == BOX_METHOD) {
                             if (manager.stepRequests().isEmpty()) {
                                 val stepReq = manager.createStepRequest(event.thread(), StepRequest.STEP_LINE, StepRequest.STEP_INTO)
-                                stepReq.setSuspendPolicy(SUSPEND_NONE)
+                                stepReq.setSuspendPolicy(SUSPEND_ALL)
                                 stepReq.addClassExclusionFilter("java.*")
                                 stepReq.addClassExclusionFilter("sun.*")
                                 stepReq.addClassExclusionFilter("kotlin.*")
@@ -206,17 +206,21 @@ abstract class AbstractDebugTest : CodegenTestCase() {
                     is StepEvent -> {
                         // Handle the case where an Exception causing program to exit without MethodExitEvent.
                         if (inBoxMethod && event.location().method().name() == "run") {
+                            virtualMachine.resume()
                             break@vmLoop
                         }
                         if (inBoxMethod) {
                             storeStep(loggedItems, event)
                         }
+                        virtualMachine.resume()
                     }
                     is MethodExitEvent -> {
                         if (event.location().method().name() == BOX_METHOD) {
                             manager.stepRequests().map { it.disable() }
+                            virtualMachine.resume()
                             break@vmLoop
                         }
+                        virtualMachine.resume()
                     }
                     else -> {
                         throw IllegalStateException("event not handled: $event")
