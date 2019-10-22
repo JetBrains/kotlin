@@ -95,13 +95,8 @@ class IrSourceCompilerForInline(
         asmMethod: Method
     ): SMAPAndMethodNode {
         assert(callableDescriptor == callee.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
-        assert(codegen.lastLineNumber >= 0) { "lastLineNumber shall be not negative, but is ${codegen.lastLineNumber}" }
-
         val irFunction = getFunctionToInline(jvmSignature, callDefault)
-        lazySourceMapper.callSiteMarker = CallSiteMarker(codegen.lastLineNumber)
-        val nodeAndSmap = makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), false)
-        lazySourceMapper.callSiteMarker = null
-        return nodeAndSmap
+        return makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), false)
     }
 
     private fun getFunctionToInline(jvmSignature: JvmMethodSignature, callDefault: Boolean): IrFunction {
