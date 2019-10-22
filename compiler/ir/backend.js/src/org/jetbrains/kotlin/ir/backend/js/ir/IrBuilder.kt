@@ -136,7 +136,8 @@ object JsIrBuilder {
             isExternal = isExternal,
             isTailrec = isTailrec,
             isSuspend = isSuspend,
-            isExpect = isExpect
+            isExpect = isExpect,
+            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
         ).also {
             descriptor.bind(it)
             it.parent = parent

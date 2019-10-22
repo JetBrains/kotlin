@@ -163,7 +163,8 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                 startOffset, endOffset, origin,
                 symbol, name, visibility, modality,
                 returnType,
-                isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect
+                isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect,
+                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
             ).also {
                 descriptor.bind(it)
                 it.parent = parent
