@@ -4,6 +4,7 @@ package com.intellij.codeInsight.editorActions;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.openapi.editor.CaretModel;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.ex.EditorEx;
@@ -11,6 +12,8 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +29,18 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
   @Override
   public Result beforeSelectionRemoved(char c, @NotNull Project project, @NotNull Editor editor, @NotNull PsiFile file) {
     SelectionModel selectionModel = editor.getSelectionModel();
+    if (CodeInsightSettings.getInstance().AUTOINSERT_PAIR_QUOTE && selectionModel.hasSelection() && isDelimiter(c)) {
+      String selectedText = selectionModel.getSelectedText();
+      if (selectedText != null && selectedText.length() == 1) {
+        final char selectedChar = selectedText.charAt(0);
+        if (isSimilarDelimiters(selectedChar, c) &&
+            selectedChar != c &&
+            !shouldSkipReplacementOfQuotesOrBraces(file, editor, selectedText, c) &&
+            replaceQuotesBySelected(c, editor, file, selectionModel, selectedChar)) {
+          return Result.CONTINUE;
+        }
+      }
+    }
     if (CodeInsightSettings.getInstance().SURROUND_SELECTION_ON_QUOTE_TYPED && selectionModel.hasSelection() && isDelimiter(c)) {
       String selectedText = selectionModel.getSelectedText();
       if (!StringUtil.isEmpty(selectedText)) {
@@ -36,7 +51,7 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
           final char lastChar = selectedText.charAt(selectedText.length() - 1);
           if (isSimilarDelimiters(firstChar, c) && lastChar == getMatchingDelimiter(firstChar) &&
               (isQuote(firstChar) || firstChar != c) && !shouldSkipReplacementOfQuotesOrBraces(file, editor, selectedText, c) &&
-              selectedText.indexOf(lastChar, 1) == selectedText.length() - 1) {
+              !containsQuoteInside(selectedText, lastChar)) {
             selectedText = selectedText.substring(1, selectedText.length() - 1);
           }
         }
@@ -71,6 +86,43 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
       }
     }
     return super.beforeSelectionRemoved(c, project, editor, file);
+  }
+
+  private static boolean containsQuoteInside(String selectedText, char quote) {
+    return selectedText.indexOf(quote, 1) != selectedText.length() - 1;
+  }
+
+  private static boolean replaceQuotesBySelected(char c,
+                                                 @NotNull Editor editor,
+                                                 @NotNull PsiFile file,
+                                                 @NotNull SelectionModel selectionModel,
+                                                 char selectedChar) {
+    int selectionStart = selectionModel.getSelectionStart();
+    PsiElement element = file.findElementAt(selectionStart);
+    while (element != null) {
+      TextRange textRange = element.getTextRange();
+      if (textRange != null && textRange.getLength() >= 2) {
+        boolean isAtStart = textRange.getStartOffset() == selectionStart;
+        if (isAtStart || textRange.getEndOffset() == selectionStart + 1 && isQuote(c)) {
+          int matchingCharOffset = isAtStart ? textRange.getEndOffset() - 1 : textRange.getStartOffset();
+          Document document = editor.getDocument();
+          CharSequence charsSequence = document.getCharsSequence();
+          if (matchingCharOffset < charsSequence.length()) {
+            char matchingChar = charsSequence.charAt(matchingCharOffset);
+            if (isAtStart ? matchingChar == getMatchingDelimiter(selectedChar) : selectedChar == getMatchingDelimiter(matchingChar) &&
+                !containsQuoteInside(document.getText(textRange), charsSequence.charAt(textRange.getEndOffset() - 1))) {
+              document.replaceString(textRange.getStartOffset(), textRange.getStartOffset() + 1, Character.toString(c));
+              char c2 = getMatchingDelimiter(c);
+              document.replaceString(textRange.getEndOffset() - 1, textRange.getEndOffset(), Character.toString(c2));
+              return true;
+            }
+          }
+        }
+      }
+      if (element instanceof PsiFile) break;
+      element = element.getParent();
+    }
+    return false;
   }
 
   private static boolean shouldSkipReplacementOfQuotesOrBraces(PsiFile psiFile, Editor editor, String selectedText, char c) {
