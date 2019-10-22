@@ -25,52 +25,25 @@ class FriendPathsTest : TestCaseWithTmpdir() {
     private fun getTestDataDirectory(): File = File("compiler/testData/friendPaths/")
 
     fun testArchive() {
-        val libSrc = File(getTestDataDirectory(), "lib.kt")
-        val libDest = File(tmpdir, "lib.jar")
-        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
-
-        CompilerTestUtil.executeCompilerAssertSuccessful(
-            K2JVMCompiler(),
-            listOf(
-                "-d", tmpdir.path, "-cp", libDest.path, File(getTestDataDirectory(), "usage.kt").path,
-                "-Xfriend-paths=${libDest.path}"
-            )
-        )
+        doTestFriendPaths(File(tmpdir, "lib.jar"))
     }
 
     /** Regression test for KT-34251. */
-    fun testArchive_relativePath() {
-        val libSrc = File(getTestDataDirectory(), "lib.kt")
-        val libDest = File(tmpdir, "lib.jar").relativeTo(File("").absoluteFile)
-        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
-
-        CompilerTestUtil.executeCompilerAssertSuccessful(
-            K2JVMCompiler(),
-            listOf(
-                "-d", tmpdir.path, "-cp", libDest.path, File(getTestDataDirectory(), "usage.kt").path,
-                "-Xfriend-paths=${libDest.path}"
-            )
-        )
+    fun testArchiveWithRelativePath() {
+        doTestFriendPaths(File(tmpdir, "lib.jar").relativeTo(File("").absoluteFile))
     }
 
     fun testDirectory() {
-        val libSrc = File(getTestDataDirectory(), "lib.kt")
-        val libDest = File(tmpdir, "lib")
-        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
-
-        CompilerTestUtil.executeCompilerAssertSuccessful(
-            K2JVMCompiler(),
-            listOf(
-                "-d", tmpdir.path, "-cp", libDest.path, File(getTestDataDirectory(), "usage.kt").path,
-                "-Xfriend-paths=${libDest.path}"
-            )
-        )
+        doTestFriendPaths(File(tmpdir, "lib"))
     }
 
     /** Regression test for KT-34251. */
-    fun testDirectory_relativePath() {
+    fun testDirectoryWithRelativePath() {
+        doTestFriendPaths(File(tmpdir, "lib").relativeTo(File("").absoluteFile))
+    }
+
+    private fun doTestFriendPaths(libDest: File) {
         val libSrc = File(getTestDataDirectory(), "lib.kt")
-        val libDest = File(tmpdir, "lib").relativeTo(File("").absoluteFile)
         CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
 
         CompilerTestUtil.executeCompilerAssertSuccessful(
