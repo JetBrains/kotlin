@@ -8503,6 +8503,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/inlineClassConstructorNotValParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InlineClassConstructorNotValParameter extends AbstractQuickFixTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInlineClassConstructorNotValParameter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/quickfix/inlineClassConstructorNotValParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/quickfix/inlineClassConstructorNotValParameter/basic.kt");
+        }
+
+        @TestMetadata("var.kt")
+        public void testVar() throws Exception {
+            runTest("idea/testData/quickfix/inlineClassConstructorNotValParameter/var.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/inlineTypeParameterFix")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

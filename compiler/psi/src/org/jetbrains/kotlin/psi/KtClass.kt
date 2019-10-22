@@ -34,6 +34,7 @@ open class KtClass : KtClassOrObject {
     fun isData(): Boolean = hasModifier(KtTokens.DATA_KEYWORD)
     fun isSealed(): Boolean = hasModifier(KtTokens.SEALED_KEYWORD)
     fun isInner(): Boolean = hasModifier(KtTokens.INNER_KEYWORD)
+    fun isInline(): Boolean = hasModifier(KtTokens.INLINE_KEYWORD)
 
     override fun getCompanionObjects(): List<KtObjectDeclaration> = body?.allCompanionObjects.orEmpty()
 
