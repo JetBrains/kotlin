@@ -19,8 +19,7 @@ import java.io.File
 import java.util.*
 import kotlin.collections.HashSet
 
-private val DEBUG_INTRODUCED = KonanVersionImpl(MetaVersion.DEV, 1, 3, 50, -1)
-private val DEBUG_UPDATE_1 = KonanVersionImpl(MetaVersion.DEV, 1, 3, 60, -1)
+private val DEBUG_POSSIBLE = KonanVersionImpl(MetaVersion.DEV, 1, 3, 60, -1)
 
 fun compare(lhs: KonanVersion, rhs: KonanVersion): Int {
     if (lhs.major != rhs.major) return lhs.major - rhs.major
@@ -71,12 +70,7 @@ class IdeaKonanWorkspace(val project: Project) : PersistentStateComponent<Elemen
     var konanVersion: KonanVersion? = null
         set(value) {
             value?.let {
-                if (compare(it, DEBUG_INTRODUCED) < 0) {
-                    KonanLog.MESSAGES.createNotification(
-                        KonanBundle.message("warning.versionPrior1_3_50", it),
-                        NotificationType.WARNING
-                    ).notify(project)
-                } else if (compare(it, DEBUG_UPDATE_1) < 0) {
+                if (compare(it, DEBUG_POSSIBLE) < 0) {
                     KonanLog.MESSAGES.createNotification(
                         KonanBundle.message("warning.versionPrior1_3_60", it),
                         NotificationType.WARNING
@@ -90,7 +84,7 @@ class IdeaKonanWorkspace(val project: Project) : PersistentStateComponent<Elemen
     val isDebugPossible: Boolean
         get() {
             konanVersion?.let {
-                return compare(it, DEBUG_INTRODUCED) >= 0
+                return compare(it, DEBUG_POSSIBLE) >= 0
             }
 
             return false
