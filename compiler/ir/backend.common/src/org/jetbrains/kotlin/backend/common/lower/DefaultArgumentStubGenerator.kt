@@ -283,6 +283,7 @@ open class DefaultParameterInjector(
                 expression.endOffset,
                 expression.type,
                 it as IrConstructorSymbol,
+                it.owner.parentAsClass.typeParameters.size,
                 DEFAULT_DISPATCH_CALL
             )
         }

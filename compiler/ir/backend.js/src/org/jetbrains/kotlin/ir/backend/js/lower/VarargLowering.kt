@@ -79,7 +79,8 @@ private class VarargTransformer(
                     startOffset,
                     endOffset,
                     arrayInlineClass.defaultType,
-                    arrayInlineClass.constructors.single { it.isPrimary }.symbol
+                    arrayInlineClass.constructors.single { it.isPrimary }.symbol,
+                    arrayInlineClass.typeParameters.size
                 ).also {
                     it.putValueArgument(0, array)
                 }

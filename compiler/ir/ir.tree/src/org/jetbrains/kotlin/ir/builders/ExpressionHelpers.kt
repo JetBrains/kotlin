@@ -232,7 +232,8 @@ fun IrBuilderWithScope.irCallConstructor(callee: IrConstructorSymbol, typeArgume
         startOffset,
         endOffset,
         callee.owner.returnType,
-        callee
+        callee,
+        typeArguments.size - callee.owner.typeParameters.size
     ).apply {
         typeArguments.forEachIndexed { index, irType ->
             this.putTypeArgument(index, irType)

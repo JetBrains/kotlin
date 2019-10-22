@@ -202,9 +202,10 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
                     val valueParameters = expression.getArgumentsWithIr().drop(1) // Skip dispatch receiver.
 
                     val immediateCall = with(expression) {
-                        if (function is IrConstructor)
-                            IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, function.returnType, function.symbol)
-                        else
+                        if (function is IrConstructor) {
+                            val classTypeParametersCount = function.parentAsClass.typeParameters.size
+                            IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, function.returnType, function.symbol, classTypeParametersCount)
+                        } else
                             IrCallImpl(startOffset, endOffset, function.returnType, functionArgument.symbol)
                     }.apply {
                         functionParameters.forEach {

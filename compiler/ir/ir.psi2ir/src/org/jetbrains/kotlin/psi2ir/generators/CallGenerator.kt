@@ -248,7 +248,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             val irType = constructorDescriptor.returnType.toIrType()
             val originalSymbol = context.symbolTable.referenceConstructor(constructorDescriptor.original)
 
-            IrConstructorCallImpl.fromSubstitutedDescriptor(
+            IrConstructorCallImpl.fromSymbolDescriptor(
                 startOffset, endOffset,
                 irType,
                 originalSymbol,

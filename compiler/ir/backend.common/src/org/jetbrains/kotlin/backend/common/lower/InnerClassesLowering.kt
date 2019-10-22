@@ -128,8 +128,9 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : FileLowe
                 if (!parent.isInner) return expression
 
                 val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(callee.owner)
+                val classTypeParametersCount = expression.typeArgumentsCount - expression.constructorTypeArgumentsCount
                 val newCall = IrConstructorCallImpl.fromSymbolOwner(
-                    expression.startOffset, expression.endOffset, expression.type, newCallee.symbol, expression.origin
+                    expression.startOffset, expression.endOffset, expression.type, newCallee.symbol, classTypeParametersCount, expression.origin
                 )
 
                 newCall.copyTypeArgumentsFrom(expression)
