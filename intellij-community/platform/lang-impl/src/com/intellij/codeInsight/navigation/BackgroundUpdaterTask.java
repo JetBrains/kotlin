@@ -61,5 +61,11 @@ public abstract class BackgroundUpdaterTask extends BackgroundUpdaterTaskBase<Ps
     //which is necessary for binary compatibility with some external plugins.
     return super.updateComponent(element);
   }
+
+  @Nullable
+  @Override
+  protected PsiElement getTheOnlyOneElement() {
+    return super.getTheOnlyOneElement();
+  }
 }
 
