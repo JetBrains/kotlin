@@ -43,7 +43,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-language-version",
         valueDescription = "<version>",
-        description = "Provide source compatibility with specified language version"
+        description = "Provide source compatibility with the specified version of Kotlin"
     )
     var languageVersion: String? by NullableStringFreezableVar(null)
 
@@ -54,14 +54,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-api-version",
         valueDescription = "<version>",
-        description = "Allow to use declarations only from the specified version of bundled libraries"
+        description = "Allow using declarations only from the specified version of bundled libraries"
     )
     var apiVersion: String? by NullableStringFreezableVar(null)
 
     @Argument(
         value = "-kotlin-home",
         valueDescription = "<path>",
-        description = "Path to Kotlin compiler home directory, used for runtime libraries discovery"
+        description = "Path to the home directory of Kotlin compiler used for discovery of runtime libraries"
     )
     var kotlinHome: String? by NullableStringFreezableVar(null)
 
@@ -76,7 +76,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var progressiveMode by FreezableVar(false)
 
-    @Argument(value = "-script", description = "Evaluate the script file")
+    @Argument(value = "-script", description = "Evaluate the given Kotlin script (*.kts) file")
     var script: Boolean by FreezableVar(false)
 
     @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")

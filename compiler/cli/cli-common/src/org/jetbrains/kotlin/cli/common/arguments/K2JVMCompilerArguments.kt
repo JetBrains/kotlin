@@ -18,31 +18,35 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-d", valueDescription = "<directory|jar>", description = "Destination for generated class files")
     var destination: String? by NullableStringFreezableVar(null)
 
-    @Argument(value = "-classpath", shortName = "-cp", valueDescription = "<path>", description = "Paths where to find user class files")
+    @Argument(
+        value = "-classpath",
+        shortName = "-cp",
+        valueDescription = "<path>",
+        description = "List of directories and JAR/ZIP archives to search for user class files")
     var classpath: String? by NullableStringFreezableVar(null)
 
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
-    @Argument(value = "-include-runtime", description = "Include Kotlin runtime into the resulting .jar")
+    @Argument(value = "-include-runtime", description = "Include Kotlin runtime into the resulting JAR")
     var includeRuntime: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.StringNullDefault::class)
     @Argument(
         value = "-jdk-home",
         valueDescription = "<path>",
-        description = "Path to JDK home directory to include into classpath, if differs from default JAVA_HOME"
+        description = "Include a custom JDK from the specified location into the classpath instead of the default JAVA_HOME"
     )
     var jdkHome: String? by NullableStringFreezableVar(null)
 
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
-    @Argument(value = "-no-jdk", description = "Don't include Java runtime into classpath")
+    @Argument(value = "-no-jdk", description = "Don't automatically include the Java runtime into the classpath")
     var noJdk: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
-    @Argument(value = "-no-stdlib", description = "Don't include kotlin-stdlib.jar or kotlin-reflect.jar into classpath")
+    @Argument(value = "-no-stdlib", description = "Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath")
     var noStdlib: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
-    @Argument(value = "-no-reflect", description = "Don't include kotlin-reflect.jar into classpath")
+    @Argument(value = "-no-reflect", description = "Don't automatically include Kotlin reflection into the classpath")
     var noReflect: Boolean by FreezableVar(false)
 
     @Argument(
