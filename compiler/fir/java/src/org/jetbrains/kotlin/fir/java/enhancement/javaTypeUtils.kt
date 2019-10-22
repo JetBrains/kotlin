@@ -31,7 +31,8 @@ import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_NULL_FQ_NAME
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME
 import org.jetbrains.kotlin.load.java.descriptors.AnnotationDefaultValue
 import org.jetbrains.kotlin.load.java.descriptors.NullDefaultValue
 import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
@@ -288,15 +289,18 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
 }
 
 internal fun FirValueParameter.getDefaultValueFromAnnotation(): AnnotationDefaultValue? {
-    annotations.find { it.resolvedFqName == JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME }
+    annotations.find { it.classId == DEFAULT_VALUE_ID }
         ?.arguments?.firstOrNull()
         ?.safeAs<FirConstExpression<*>>()?.value?.safeAs<String>()
         ?.let { return StringDefaultValue(it) }
 
-    if (annotations.any { it.resolvedFqName == JvmAnnotationNames.DEFAULT_NULL_FQ_NAME }) {
+    if (annotations.any { it.classId == DEFAULT_NULL_ID }) {
         return NullDefaultValue
     }
 
     return null
 }
+
+private val DEFAULT_VALUE_ID = ClassId.topLevel(DEFAULT_VALUE_FQ_NAME)
+private val DEFAULT_NULL_ID = ClassId.topLevel(DEFAULT_NULL_FQ_NAME)
 

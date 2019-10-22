@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorLoop
@@ -16,13 +15,13 @@ import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.ClassId
 
 inline val FirAnnotationCall.coneClassLikeType: ConeClassLikeType?
     get() = ((annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeClassLikeType)?.takeIf { it !is ConeClassErrorType }
 
-inline val FirAnnotationCall.resolvedFqName: FqName?
-    get() = coneClassLikeType?.lookupTag?.classId?.asSingleFqName()
+inline val FirAnnotationCall.classId: ClassId?
+    get() = coneClassLikeType?.lookupTag?.classId
 
 fun <T> FirConstExpressionImpl(psi: PsiElement?, kind: IrConstKind<T>, value: T?, errorReason: String): FirExpression =
     value?.let { FirConstExpressionImpl(psi, kind, it) } ?: FirErrorExpressionImpl(psi, errorReason)
