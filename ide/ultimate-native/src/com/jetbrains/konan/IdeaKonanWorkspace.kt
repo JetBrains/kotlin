@@ -36,21 +36,34 @@ class IdeaKonanWorkspace(val project: Project) : PersistentStateComponent<Elemen
     private val basePath = File(project.basePath!!)
     var konanHome: String? = null
 
-    val lldbHome: File
+    val lldbHome: File?
         get() {
-            val propertiesPath = "$konanHome/konan/konan.properties"
-            val hostDependenciesKey = "dependencies.${HostManager.host}"
-
-            val propertiesFile = File(propertiesPath).apply {
-                if (!exists()) throw ExecutionException("Kotlin/Native properties file is absent at $propertiesPath")
+            if (konanHome == null || !File(konanHome).exists()) {
+                return null
             }
 
-            val hostDependencies = Properties().apply {
-                propertiesFile.inputStream().use(::load)
-            }.getProperty(hostDependenciesKey) ?: throw ExecutionException("No property $hostDependenciesKey at $propertiesPath")
+            val propertiesPath = "$konanHome/konan/konan.properties"
+            val propertiesFile = File(propertiesPath)
+            val hostDependenciesKey = "dependencies.${HostManager.host}"
+
+            if (!propertiesFile.exists()) {
+                KonanLog.LOG.error("Kotlin/Native properties file is absent at $propertiesPath")
+                return null
+            }
+
+            val hostDependencies = Properties().apply { propertiesFile.inputStream().use(::load) }.getProperty(hostDependenciesKey)
+
+            if (hostDependencies == null) {
+                KonanLog.LOG.error("No property $hostDependenciesKey at $propertiesPath")
+                return null
+            }
 
             val lldbRelative = hostDependencies.split(" ").firstOrNull { it.startsWith("lldb-") }
-                ?: throw ExecutionException("Property $hostDependenciesKey at $propertiesPath does not specify lldb")
+
+            if (lldbRelative == null) {
+                KonanLog.LOG.error("Property $hostDependenciesKey at $propertiesPath does not specify lldb")
+                return null
+            }
 
             return DependencyDirectories.defaultDependenciesRoot.resolve(lldbRelative)
         }

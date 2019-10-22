@@ -32,7 +32,7 @@ class KonanGradleTaskManagerExtension : GradleTaskManagerExtension {
         val project = ProjectManager.getInstance().openProjects.firstOrNull { it.basePath == projectPath } ?: return false
         val workspace = IdeaKonanWorkspace.getInstance(project)
 
-        if (workspace.konanHome == null || HostManager.host == KonanTarget.MINGW_X64) {
+        if (HostManager.host == KonanTarget.MINGW_X64 || workspace.lldbHome == null) {
             return super.executeTasks(id, taskNames, projectPath, settings, jvmParametersSetup, listener)
         }
 
@@ -48,7 +48,7 @@ class KonanGradleTaskManagerExtension : GradleTaskManagerExtension {
             }
         }
 
-        params[DEBUG_SERVER_PATH_KEY] = workspace.lldbHome.resolve(debugServerPath).toString()
+        params[DEBUG_SERVER_PATH_KEY] = workspace.lldbHome!!.resolve(debugServerPath).toString()
 
         val serializedParams = params.map { (key, value) -> "$key=$value" }.joinToString(separator = ForkedDebuggerHelper.PARAMETERS_SEPARATOR)
 

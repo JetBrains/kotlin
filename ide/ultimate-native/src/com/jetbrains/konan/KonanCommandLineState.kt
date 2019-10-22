@@ -43,9 +43,10 @@ class KonanCommandLineState(
 
     @Throws(ExecutionException::class)
     fun startDebugProcess(session: XDebugSession): XDebugProcess {
-        val workspace = IdeaKonanWorkspace.getInstance(configuration.project)
+        val lldbHome = IdeaKonanWorkspace.getInstance(configuration.project).lldbHome
+            ?: throw ExecutionException("Debug is impossible without lldb binaries required by Kotlin/Native")
         val installer = KonanLLDBInstaller(runFile, configuration)
-        val lldbConfiguration = KonanLLDBDriverConfiguration(workspace.lldbHome)
+        val lldbConfiguration = KonanLLDBDriverConfiguration(lldbHome)
         val result = KonanLocalDebugProcess(
             TrivialRunParameters(lldbConfiguration, installer),
             session,
