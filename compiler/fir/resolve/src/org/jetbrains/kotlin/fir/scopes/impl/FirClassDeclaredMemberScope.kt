@@ -18,12 +18,14 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirClassDeclaredMemberScopeProvider : FirSessionComponent {
+class FirMemberScopeProvider : FirSessionComponent {
 
     private val declaredMemberCache = mutableMapOf<FirRegularClass, FirClassDeclaredMemberScope>()
     private val nestedClassifierCache = mutableMapOf<FirRegularClass, FirNestedClassifierScope>()
+    private val selfImportingCache = mutableMapOf<FqName, FirSelfImportingScope>()
 
     fun declaredMemberScope(klass: FirRegularClass): FirClassDeclaredMemberScope {
         return declaredMemberCache.getOrPut(klass) {
@@ -34,6 +36,12 @@ class FirClassDeclaredMemberScopeProvider : FirSessionComponent {
     fun nestedClassifierScope(klass: FirRegularClass): FirNestedClassifierScope {
         return nestedClassifierCache.getOrPut(klass) {
             FirNestedClassifierScope(klass)
+        }
+    }
+
+    fun selfImportingScope(fqName: FqName, session: FirSession): FirSelfImportingScope {
+        return selfImportingCache.getOrPut(fqName) {
+            FirSelfImportingScope(fqName, session)
         }
     }
 }
@@ -54,6 +62,10 @@ fun nestedClassifierScope(klass: FirRegularClass): FirNestedClassifierScope {
 
 fun nestedClassifierScope(classId: ClassId, session: FirSession): FirLazyNestedClassifierScope {
     return FirLazyNestedClassifierScope(classId, session)
+}
+
+fun selfImportingScope(fqName: FqName, session: FirSession): FirSelfImportingScope {
+    return session.memberScopeProvider.selfImportingScope(fqName, session)
 }
 
 class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {

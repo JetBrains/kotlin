@@ -22,7 +22,9 @@ class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirSc
 
     private val symbolProvider = FirSymbolProvider.getInstance(session)
 
-    private val cache = mutableMapOf<Name, FirClassifierSymbol<*>?>()
+    private val classifierCache = mutableMapOf<Name, FirClassifierSymbol<*>?>()
+
+    private val callableCache = mutableMapOf<Name, List<FirCallableSymbol<*>>>()
 
     override fun processClassifiersByName(
         name: Name,
@@ -32,7 +34,7 @@ class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirSc
         if (name.asString().isEmpty()) return ProcessorAction.NONE
 
 
-        val symbol = cache.getOrPut(name) {
+        val symbol = classifierCache.getOrPut(name) {
             val unambiguousFqName = ClassId(fqName, name)
             symbolProvider.getClassLikeSymbolByFqName(unambiguousFqName)
         }
@@ -45,7 +47,9 @@ class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirSc
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
-        val symbols = symbolProvider.getTopLevelCallableSymbols(fqName, name)
+        val symbols = callableCache.getOrPut(name) {
+            symbolProvider.getTopLevelCallableSymbols(fqName, name)
+        }
         for (symbol in symbols) {
             if (symbol is FirFunctionSymbol<*> && !processor(symbol)) {
                 return ProcessorAction.STOP
@@ -55,7 +59,9 @@ class FirSelfImportingScope(val fqName: FqName, val session: FirSession) : FirSc
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
-        val symbols = symbolProvider.getTopLevelCallableSymbols(fqName, name)
+        val symbols = callableCache.getOrPut(name) {
+            symbolProvider.getTopLevelCallableSymbols(fqName, name)
+        }
         for (symbol in symbols) {
             if (symbol is FirPropertySymbol && !processor(symbol)) {
                 return ProcessorAction.STOP

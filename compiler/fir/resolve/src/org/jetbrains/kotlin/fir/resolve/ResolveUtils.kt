@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScopeProvider
+import org.jetbrains.kotlin.fir.scopes.impl.FirMemberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -41,7 +41,7 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
 val FirSession.firSymbolProvider: FirSymbolProvider by componentArrayAccessor()
 val FirSession.firProvider: FirProvider by componentArrayAccessor()
 val FirSession.correspondingSupertypesCache: FirCorrespondingSupertypesCache by componentArrayAccessor()
-val FirSession.memberScopeProvider: FirClassDeclaredMemberScopeProvider by componentArrayAccessor()
+val FirSession.memberScopeProvider: FirMemberScopeProvider by componentArrayAccessor()
 
 fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
     val firSymbolProvider = useSiteSession.firSymbolProvider
