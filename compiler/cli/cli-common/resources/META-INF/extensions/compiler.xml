@@ -3,6 +3,15 @@
     <version>1.2</version>
 
     <extensionPoints>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.analyzeCompleteHandlerExtension"
+                        interface="org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension"
+                        area="IDEA_PROJECT"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.callResolutionInterceptorExtension"
+                        interface="org.jetbrains.kotlin.extensions.CallResolutionInterceptorExtension"
+                        area="IDEA_PROJECT"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.typeResolutionInterceptorExtension"
+                        interface="org.jetbrains.kotlin.extensions.TypeResolutionInterceptorExtension"
+                        area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.diagnosticSuppressor"
                         interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.expressionCodegenExtension"
