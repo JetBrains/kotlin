@@ -422,6 +422,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             origin = null,
             superQualifierSymbol = null
         ).apply {
+            context.callToSubstitutedDescriptorMap[this] = functionDescriptor
             dispatchReceiver = receiver
         }
     }
@@ -506,6 +507,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             checkNotNullSymbol,
             origin
         ).apply {
+            context.callToSubstitutedDescriptorMap[this] = checkNotNullSubstituted
             putTypeArgument(0, argumentType.toIrType().makeNotNull())
             putValueArgument(0, irArgument)
         }

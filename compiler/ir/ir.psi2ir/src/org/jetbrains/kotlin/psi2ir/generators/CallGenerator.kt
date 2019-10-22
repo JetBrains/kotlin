@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi.KtElement
@@ -127,6 +126,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             IrCallImpl(
                 startOffset, endOffset, descriptor.type.toIrType(), getterSymbol, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY
             ).apply {
+                context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments(typeArguments) { it.toIrType() }
             }
         } else
@@ -142,6 +142,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 context.irBuiltIns.unitType,
                 constructorSymbol
             ).apply {
+                context.callToSubstitutedDescriptorMap[this] = descriptor
                 putTypeArguments(call.typeArguments) { it.toIrType() }
                 this.dispatchReceiver = dispatchReceiver?.load()
                 this.extensionReceiver = extensionReceiver?.load()
@@ -160,6 +161,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
             val constructorSymbol = context.symbolTable.referenceConstructor(constructorDescriptor.original)
             val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, context.irBuiltIns.unitType, constructorSymbol)
+            context.callToSubstitutedDescriptorMap[irCall] = constructorDescriptor
             addParametersToCall(startOffset, endOffset, call, irCall, context.irBuiltIns.unitType)
         }
     }
@@ -208,6 +210,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                         IrStatementOrigin.GET_PROPERTY,
                         superQualifierSymbol
                     ).apply {
+                        context.callToSubstitutedDescriptorMap[this] = getMethodDescriptor
                         putTypeArguments(call.typeArguments) { it.toIrType() }
                         dispatchReceiver = dispatchReceiverValue?.load()
                         extensionReceiver = extensionReceiverValue?.load()
@@ -254,6 +257,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 originalSymbol,
                 origin
             ).run {
+                context.callToSubstitutedDescriptorMap[this] = constructorDescriptor
                 putTypeArguments(call.typeArguments) { it.toIrType() }
                 dispatchReceiver = dispatchReceiverValue?.load()
                 extensionReceiver = extensionReceiverValue?.load()
@@ -328,6 +332,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                     origin,
                     call.superQualifier?.let { context.symbolTable.referenceClass(it) }
                 ).run {
+                    context.callToSubstitutedDescriptorMap[this] = functionDescriptor
                     putTypeArguments(call.typeArguments) { it.toIrType() }
                     dispatchReceiver = dispatchReceiverValue?.load()
                     extensionReceiver = extensionReceiverValue?.load()

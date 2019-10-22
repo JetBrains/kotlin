@@ -285,6 +285,7 @@ class ClassGenerator(
             originalSymbol,
             substitutedOverridden.typeParametersCount
         ).apply {
+            context.callToSubstitutedDescriptorMap[this] = substitutedOverridden
             val typeArguments = getTypeArgumentsForOverriddenDescriptorDelegatingCall(delegated, overridden)
             putTypeArguments(typeArguments) { it.toIrType() }
         }

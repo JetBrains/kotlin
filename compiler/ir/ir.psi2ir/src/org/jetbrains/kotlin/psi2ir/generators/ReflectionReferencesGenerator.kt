@@ -122,7 +122,9 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             context.symbolTable.referenceLocalDelegatedProperty(variableDescriptor),
             irDelegateSymbol, getterSymbol, setterSymbol,
             origin
-        )
+        ).apply {
+            context.callToSubstitutedDescriptorMap[this] = variableDescriptor
+        }
     }
 
     private fun generatePropertyReference(
@@ -148,6 +150,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             originalSetter?.let { context.symbolTable.referenceSimpleFunction(it) },
             origin
         ).apply {
+            context.callToSubstitutedDescriptorMap[this] = propertyDescriptor
             putTypeArguments(typeArguments) { it.toIrType() }
         }
     }
@@ -174,6 +177,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             startOffset, endOffset, type.toIrType(),
             symbol, descriptor.typeParametersCount, origin
         ).apply {
+            context.callToSubstitutedDescriptorMap[this] = descriptor
             putTypeArguments(typeArguments) { it.toIrType() }
         }
 }

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -27,9 +26,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
 abstract class PropertyLValueBase(
-    protected val context: IrGeneratorContext,
+    protected val context: GeneratorContext,
     val scope: Scope,
     val startOffset: Int,
     val endOffset: Int,
@@ -66,7 +66,7 @@ abstract class PropertyLValueBase(
 }
 
 class FieldPropertyLValue(
-    context: IrGeneratorContext,
+    context: GeneratorContext,
     scope: Scope,
     startOffset: Int,
     endOffset: Int,
@@ -117,7 +117,7 @@ class FieldPropertyLValue(
 }
 
 class AccessorPropertyLValue(
-    context: IrGeneratorContext,
+    context: GeneratorContext,
     scope: Scope,
     startOffset: Int,
     endOffset: Int,
@@ -150,6 +150,7 @@ class AccessorPropertyLValue(
                 origin,
                 superQualifier
             ).apply {
+                context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments()
                 dispatchReceiver = dispatchReceiverValue?.load()
                 extensionReceiver = extensionReceiverValue?.load()
@@ -166,6 +167,7 @@ class AccessorPropertyLValue(
                 origin,
                 superQualifier
             ).apply {
+                context.callToSubstitutedDescriptorMap[this] = setterDescriptor
                 putTypeArguments()
                 dispatchReceiver = dispatchReceiverValue?.load()
                 extensionReceiver = extensionReceiverValue?.load()

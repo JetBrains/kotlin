@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
@@ -44,7 +46,13 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
     element.transformChildren(
-        InsertImplicitCasts(context.builtIns, context.irBuiltIns, context.typeTranslator, context.extensions.samConversion),
+        InsertImplicitCasts(
+            context.builtIns,
+            context.irBuiltIns,
+            context.typeTranslator,
+            context.callToSubstitutedDescriptorMap,
+            context.extensions.samConversion
+        ),
         null
     )
 }
@@ -53,30 +61,38 @@ open class InsertImplicitCasts(
     private val builtIns: KotlinBuiltIns,
     private val irBuiltIns: IrBuiltIns,
     private val typeTranslator: TypeTranslator,
+    private val callToSubstitutedDescriptorMap: Map<IrMemberAccessExpression, CallableDescriptor>,
     private val samConversion: GeneratorExtensions.SamConversion
 ) : IrElementTransformerVoid() {
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    override fun visitCallableReference(expression: IrCallableReference): IrExpression =
-        expression.transformPostfix {
-            transformReceiverArguments()
-        }
+    private val IrMemberAccessExpression.substitutedDescriptor
+        get() = callToSubstitutedDescriptorMap[this] ?: symbol.descriptor as CallableDescriptor
 
-    private fun IrMemberAccessExpression.transformReceiverArguments() {
-        dispatchReceiver = dispatchReceiver?.cast(descriptor.dispatchReceiverParameter?.type)
-        extensionReceiver = extensionReceiver?.cast(descriptor.extensionReceiverParameter?.type)
+    override fun visitCallableReference(expression: IrCallableReference): IrExpression {
+        val substitutedDescriptor = expression.substitutedDescriptor
+        return expression.transformPostfix {
+            transformReceiverArguments(substitutedDescriptor)
+        }
     }
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression =
-        expression.transformPostfix {
-            transformReceiverArguments()
-            for (index in descriptor.valueParameters.indices) {
+    private fun IrMemberAccessExpression.transformReceiverArguments(substitutedDescriptor: CallableDescriptor) {
+        dispatchReceiver = dispatchReceiver?.cast(substitutedDescriptor.dispatchReceiverParameter?.type)
+        extensionReceiver = extensionReceiver?.cast(substitutedDescriptor.extensionReceiverParameter?.type)
+    }
+
+    override fun visitMemberAccess(expression: IrMemberAccessExpression): IrExpression {
+        val substitutedDescriptor = expression.substitutedDescriptor
+        return expression.transformPostfix {
+            transformReceiverArguments(substitutedDescriptor)
+            for (index in substitutedDescriptor.valueParameters.indices) {
                 val argument = getValueArgument(index) ?: continue
-                val parameterType = descriptor.valueParameters[index].type
+                val parameterType = substitutedDescriptor.valueParameters[index].type
                 putValueArgument(index, argument.cast(parameterType))
             }
         }
+    }
 
     override fun visitBlockBody(body: IrBlockBody): IrBody =
         body.transformPostfix {
