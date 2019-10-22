@@ -59,9 +59,6 @@ val KotlinType.isFunctionType: Boolean
 val KotlinType.isSuspendFunctionType: Boolean
     get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.SuspendFunction
 
-val KotlinType.isCallableReflectionType: Boolean
-    get() = ReflectionTypes.isKCallableType(this)
-
 val KotlinType.isKSuspendFunctionType: Boolean
     get() = constructor.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.KSuspendFunction
 
@@ -144,7 +141,7 @@ fun KotlinType.getValueParameterTypesFromFunctionType(): List<TypeProjection> {
 }
 
 fun KotlinType.getAllParameterProjectionsFromCallableReflectionType(): List<TypeProjection> {
-    assert(isCallableReflectionType) { "Not a callable reflection type: $this" }
+    assert(ReflectionTypes.isKCallableType(this)) { "Not a callable reflection type: $this" }
     val arguments = arguments
     val last = arguments.size - 1
     assert(last >= 0) { "Unexpected number of type arguments in type: $this" }
