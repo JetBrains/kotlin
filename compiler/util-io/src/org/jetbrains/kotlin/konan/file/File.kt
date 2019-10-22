@@ -128,7 +128,10 @@ data class File constructor(internal val javaPath: Path) {
 
     fun setPermissions(perms: String) = Files.setPosixFilePermissions(javaPath, PosixFilePermissions.fromString(perms))!!
 
-    fun recursiveSetPermissions(permissions: String, dirPermissions: String = permissions.replace(Regex("r.-"),"r-x")) =
+    fun recursiveSetPermissions(permissions: String,
+                                dirPermissions: String =
+                                permissions.replace(Regex("r.-"),
+                                transform = {(it.value.substring(0,2).plus("x"))})) =
         postorder {
             when {
                 File(it).isFile -> File(it).setPermissions(permissions)
