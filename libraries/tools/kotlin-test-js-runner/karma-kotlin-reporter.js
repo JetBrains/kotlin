@@ -89,6 +89,21 @@ const escapeMessage = function (message) {
         .replace(/]/g, '|]')
 };
 
+const hashString = function (s) {
+    let hash = 0
+    let i
+    let chr
+    let len
+
+    if (s === 0) return hash
+    for (i = 0, len = s.length; i < len; i++) {
+        chr = s.charCodeAt(i)
+        hash = ((hash << 5) - hash) + chr
+        hash |= 0
+    }
+    return hash
+}
+
 const formatMessage = function () {
     const args = Array.prototype.slice.call(arguments);
 
@@ -103,19 +118,45 @@ const formatMessage = function () {
 //  It is necessary, because karma-teamcity-reporter can't write browser's log
 //  And additionally it overrides flushLogs, because flushLogs adds redundant spaces after some messages
 const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
-    const teamcityReporter = require("karma-teamcity-reporter")["reporter:teamcity"][1];
-    teamcityReporter.call(this, baseReporterDecorator);
+    baseReporterDecorator(this)
+    const self = this
 
-    const formatError = createFormatError(config, emitter);
+    const formatError = createFormatError(config, emitter)
 
-    const END_KOTLIN_TEST = "'--END_KOTLIN_TEST--";
+    this.TEST_IGNORED = "##teamcity[testIgnored name='%s' flowId='']"
+    this.SUITE_START = "##teamcity[testSuiteStarted name='%s' flowId='']"
+    this.SUITE_END = "##teamcity[testSuiteFinished name='%s' flowId='']"
+    this.TEST_START = "##teamcity[testStarted name='%s' flowId='']"
+    this.TEST_FAILED = "##teamcity[testFailed name='%s' message='FAILED' details='%s' flowId='']"
+    this.TEST_END = "##teamcity[testFinished name='%s' duration='%s' flowId='']"
+    this.BLOCK_OPENED = "##teamcity[blockOpened name='%s' flowId='']"
+    this.BLOCK_CLOSED = "##teamcity[blockClosed name='%s' flowId='']"
 
-    const tcOnBrowserStart = this.onBrowserStart;
+    const END_KOTLIN_TEST = "'--END_KOTLIN_TEST--"
+
+    const reporter = this
+    const initializeBrowser = function (browser) {
+        reporter.browserResults[browser.id] = {
+            name: browser.name,
+            log: [],
+            consoleCollector: [],
+            consoleResultCollector: [],
+            lastSuite: null,
+            flowId: 'karmaTC' + hashString(browser.name + ((new Date()).getTime())) + browser.id
+        }
+    }
+
+    this.onRunStart = function (browsers) {
+        this.write(formatMessage(this.BLOCK_OPENED, 'JavaScript Unit Tests'))
+
+        this.browserResults = {}
+        // Support Karma 0.10 (TODO: remove)
+        browsers.forEach(initializeBrowser)
+    }
+
     this.onBrowserStart = function (browser) {
-        tcOnBrowserStart.call(this, browser);
-        this.browserResults[browser.id].consoleCollector = [];
-        this.browserResults[browser.id].consoleResultCollector = {};
-    };
+        initializeBrowser(browser)
+    }
 
     const concatenateFqn = function (result) {
         return `${result.suite.join(".")}.${result.description}`
@@ -125,7 +166,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
         const browserResult = this.browserResults[browser.id];
 
         if (log.startsWith(END_KOTLIN_TEST)) {
-            var result = JSON.parse(log.substring(END_KOTLIN_TEST.length, log.length - 1));
+            const result = JSON.parse(log.substring(END_KOTLIN_TEST.length, log.length - 1));
             browserResult.consoleResultCollector[concatenateFqn(result)] = browserResult.consoleCollector;
             browserResult.consoleCollector = [];
             return
@@ -136,24 +177,24 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
         }
     };
 
-    const tcSpecSuccess = this.specSuccess;
     this.specSuccess = function (browser, result) {
-        tcSpecSuccess.call(this, browser, result);
+        const log = this.getLog(browser, result)
+        const testName = result.description
 
-        const log = this.getLog(browser, result);
-
-        const endMessage = log.pop();
+        log.push(formatMessage(this.TEST_START, testName))
         this.browserResults[browser.id].consoleResultCollector[concatenateFqn(result)].forEach(item => {
             log.push(item)
         });
-        log.push(endMessage);
-    };
+
+        log.push(formatMessage(this.TEST_END, testName, result.time))
+    }
 
     this.specFailure = function (browser, result) {
-        const log = this.getLog(browser, result);
-        const testName = result.description;
+        const log = this.getLog(browser, result)
+        const testName = result.description
 
-        log.push(formatMessage(this.TEST_START, testName));
+        log.push(formatMessage(this.TEST_START, testName))
+
         this.browserResults[browser.id].consoleResultCollector[concatenateFqn(result)].forEach(item => {
             log.push(item)
         });
@@ -163,8 +204,50 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
                                    .map(log => formatError(log))
                                    .join('\n\n')
         ));
-        log.push(formatMessage(this.TEST_END, testName, result.time));
-    };
+
+        log.push(formatMessage(this.TEST_END, testName, result.time))
+    }
+
+    this.specSkipped = function (browser, result) {
+        const log = this.getLog(browser, result)
+        const testName = result.description
+
+        log.push(formatMessage(this.TEST_IGNORED, testName))
+    }
+
+    this.onRunComplete = function () {
+        Object.keys(this.browserResults).forEach(function (browserId) {
+            const browserResult = self.browserResults[browserId]
+            const log = browserResult.log
+            if (browserResult.lastSuite) {
+                log.push(formatMessage(self.SUITE_END, browserResult.lastSuite))
+            }
+
+            self.flushLogs(browserResult)
+        })
+        self.write(formatMessage(self.BLOCK_CLOSED, 'JavaScript Unit Tests'))
+    }
+
+    this.getLog = function (browser, result) {
+        const browserResult = this.browserResults[browser.id]
+        let suiteName = browser.name
+        const moduleName = result.suite.join(' ')
+
+        if (moduleName) {
+            suiteName = moduleName.concat('.', suiteName)
+        }
+
+        const log = browserResult.log
+        if (browserResult.lastSuite !== suiteName) {
+            if (browserResult.lastSuite) {
+                log.push(formatMessage(this.SUITE_END, browserResult.lastSuite))
+            }
+            this.flushLogs(browserResult)
+            browserResult.lastSuite = suiteName
+            log.push(formatMessage(this.SUITE_START, suiteName))
+        }
+        return log
+    }
 
     this.flushLogs = function (browserResult) {
         while (browserResult.log.length > 0) {
@@ -174,7 +257,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
             this.write(line);
         }
     }
-};
+}
 
 KarmaKotlinReporter.$inject = ['baseReporterDecorator', 'config', 'emitter'];
 

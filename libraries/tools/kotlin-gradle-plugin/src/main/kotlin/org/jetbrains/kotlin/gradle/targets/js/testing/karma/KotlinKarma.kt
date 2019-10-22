@@ -62,7 +62,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     }
 
     private fun useKotlinReporter() {
-        requiredDependencies.add(versions.karmaTeamcityReporter)
         config.reporters.add("karma-kotlin-reporter")
 
         confJsWriters.add {

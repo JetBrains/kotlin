@@ -30,7 +30,6 @@ class NpmVersions {
     val mochaTeamCityReporter = NpmPackageVersion("mocha-teamcity-reporter", "3.0.0")
 
     val karma = NpmPackageVersion("karma", "4.4.1")
-    val karmaTeamcityReporter = NpmPackageVersion("karma-teamcity-reporter", "1.1.0")
 
     val karmaChromeLauncher = NpmPackageVersion("karma-chrome-launcher", "3.1.0")
     val karmaPhantomJsLauncher = NpmPackageVersion("karma-phantomjs-launcher", "1.0.4")
