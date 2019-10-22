@@ -1057,7 +1057,8 @@ abstract class IrFileDeserializer(
                     isExternal = proto.base.isExternal,
                     isTailrec = proto.isTailrec,
                     isSuspend = proto.isSuspend,
-                    isExpect = proto.base.isExpect
+                    isExpect = proto.base.isExpect,
+                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
                 )
             }.apply {
                 proto.overriddenList.mapTo(overriddenSymbols) { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
