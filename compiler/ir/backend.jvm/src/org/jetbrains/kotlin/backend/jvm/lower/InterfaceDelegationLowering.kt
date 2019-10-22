@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.descriptors.Modality
@@ -108,7 +109,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
             IrFunctionImpl(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
-                IrDeclarationOrigin.DEFINED,
+                JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
                 IrSimpleFunctionSymbolImpl(descriptor),
                 classOverride.name,
                 Visibilities.PUBLIC,

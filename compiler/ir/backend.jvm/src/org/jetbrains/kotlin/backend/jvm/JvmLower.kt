@@ -217,8 +217,6 @@ private val jvmFilePhases =
         returnableBlocksPhase then
         localDeclarationsPhase then
 
-        addContinuationPhase then
-
         jvmOverloadsAnnotationPhase then
         jvmDefaultConstructorPhase then
 
@@ -234,6 +232,8 @@ private val jvmFilePhases =
         interfaceDelegationPhase then
         interfaceSuperCallsPhase then
         interfaceDefaultCallsPhase then
+
+        addContinuationPhase then
 
         innerClassesPhase then
         innerClassConstructorCallsPhase then

@@ -108,8 +108,16 @@ internal fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean = isSuspen
         (parent as? IrClass)?.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
 
 internal fun IrFunction.isKnownToBeTailCall(): Boolean =
-    origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
-            isInvokeOfSuspendCallableReference()
+    when (origin) {
+        IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+        JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+        JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
+        JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,
+        IrDeclarationOrigin.BRIDGE,
+        IrDeclarationOrigin.BRIDGE_SPECIAL,
+        IrDeclarationOrigin.DELEGATED_MEMBER -> true
+        else -> isInvokeOfSuspendCallableReference()
+    }
 
 internal fun IrFunction.shouldNotContainSuspendMarkers(context: JvmBackendContext): Boolean =
     isInvokeSuspendOfContinuation(context) || isKnownToBeTailCall()

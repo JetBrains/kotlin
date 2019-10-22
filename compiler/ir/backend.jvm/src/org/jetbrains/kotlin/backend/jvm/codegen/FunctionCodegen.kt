@@ -78,7 +78,8 @@ open class FunctionCodegen(
             val continuationClassBuilder = context.continuationClassBuilders[irClass]
             methodVisitor = when {
                 irFunction.isSuspend &&
-                        // We do not generate continuation and state-machine for synthetic accessors, in a sense, they are tail-call
+                        // We do not generate continuation and state-machine for synthetic accessors, bridges, and delegated members,
+                        // in a sense, they are tail-call
                         !irFunction.isKnownToBeTailCall() &&
                         // TODO: We should generate two versions of inline suspend function: one with state-machine and one without
                         !irFunction.isInline ->
