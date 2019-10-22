@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -73,6 +74,7 @@ class Candidate(
 
     lateinit var substitutor: ConeSubstitutor
     var resultingTypeForCallableReference: ConeKotlinType? = null
+    var outerConstraintBuilderEffect: (ConstraintSystemOperation.() -> Unit)? = null
 
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
     val postponedAtoms = mutableListOf<PostponedResolvedAtomMarker>()

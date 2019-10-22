@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.visibility
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
@@ -25,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
@@ -184,22 +182,35 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             else -> null
         }
 
-        val resultingType: ConeKotlinType = when (val fir = candidate.symbol.fir) {
+        val fir = candidate.symbol.fir
+        val resultingType: ConeKotlinType = when (fir) {
             is FirSimpleFunction -> createKFunctionType(fir, resultingReceiverType)
             is FirProperty -> createKPropertyType(fir, resultingReceiverType)
             else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
         }.let(candidate.substitutor::substituteOrSelf)
 
         candidate.resultingTypeForCallableReference = resultingType
-
-        var isApplicable = true
-
-        outerCsBuilder.runTransaction {
+        candidate.outerConstraintBuilderEffect = fun ConstraintSystemOperation.() {
             addOtherSystem(candidate.system.asReadOnlyStorage())
 
             val position = SimpleConstraintSystemConstraintPosition //TODO
 
             addSubtypeConstraint(resultingType, expectedType, position)
+
+            val declarationReceiverType: ConeKotlinType? =
+                (fir as? FirCallableMemberDeclaration<*>)?.receiverTypeRef?.coneTypeSafe<ConeKotlinType>()
+                    ?.let(candidate.substitutor::substituteOrSelf)
+
+            if (resultingReceiverType != null && declarationReceiverType != null) {
+                addSubtypeConstraint(resultingReceiverType, declarationReceiverType, position)
+            }
+        }
+
+        var isApplicable = true
+
+        outerCsBuilder.runTransaction {
+            candidate.outerConstraintBuilderEffect!!(this)
+
             isApplicable = !hasContradiction
 
             false

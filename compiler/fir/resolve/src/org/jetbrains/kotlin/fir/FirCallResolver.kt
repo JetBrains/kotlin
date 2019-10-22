@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class FirCallResolver(
@@ -257,10 +256,7 @@ class FirCallResolver(
 
         val chosenCandidate = reducedCandidates.single()
         constraintSystemBuilder.runTransaction {
-            addOtherSystem(chosenCandidate.system.asReadOnlyStorage())
-
-            val position = SimpleConstraintSystemConstraintPosition //TODO
-            addSubtypeConstraint(chosenCandidate.resultingTypeForCallableReference!!, expectedType, position)
+            chosenCandidate.outerConstraintBuilderEffect!!(this)
 
             true
         }
