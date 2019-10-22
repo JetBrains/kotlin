@@ -194,7 +194,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
                     override fun visitReturn(expression: IrReturn): IrExpression {
                         val ret = super.visitReturn(expression) as IrReturn
-                        return IrReturnImpl(ret.startOffset, ret.endOffset, context.irBuiltIns.anyType, function.symbol, ret.value)
+                        return IrReturnImpl(ret.startOffset, ret.endOffset, ret.type, function.symbol, ret.value)
                     }
                 })
                 (irFunction.parent as IrDeclarationContainer).declarations.remove(irFunction)
