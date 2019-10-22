@@ -82,9 +82,8 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                         IrFunctionReferenceImpl(
                             expression.startOffset, expression.endOffset,
                             expression.type,
-                            it.symbol, it.descriptor,
-                            expression.typeArgumentsCount, expression.valueArgumentsCount,
-                            expression.origin
+                            it.symbol, expression.typeArgumentsCount,
+                            expression.valueArgumentsCount, expression.origin
                         )
                     }
                 } ?: expression
@@ -113,8 +112,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass
                 val newExpression = IrCallImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type,
-                    staticTarget.symbol, staticTarget.descriptor,
-                    expression.typeArgumentsCount,
+                    staticTarget.symbol, expression.typeArgumentsCount,
                     expression.origin,
                     expression.superQualifierSymbol
                 )

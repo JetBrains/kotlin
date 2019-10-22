@@ -33,7 +33,7 @@ fun primitiveOp1(
     origin: IrStatementOrigin,
     dispatchReceiver: IrExpression
 ): IrExpression =
-    IrCallImpl(startOffset, endOffset, primitiveOpReturnType, primitiveOpSymbol, primitiveOpSymbol.descriptor, origin = origin).also {
+    IrCallImpl(startOffset, endOffset, primitiveOpReturnType, primitiveOpSymbol, origin = origin).also {
         it.dispatchReceiver = dispatchReceiver
     }
 
@@ -47,8 +47,7 @@ fun primitiveOp2(
     IrCallImpl(
         startOffset, endOffset,
         primitiveOpReturnType,
-        primitiveOpSymbol, primitiveOpSymbol.descriptor,
-        typeArgumentsCount = 0,
+        primitiveOpSymbol, typeArgumentsCount = 0,
         valueArgumentsCount = 2,
         origin = origin
     ).apply {

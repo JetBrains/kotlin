@@ -218,7 +218,6 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         endOffset,
                         type,
                         newFunction.symbol,
-                        newFunction.descriptor,
                         typeArgumentsCount,
                         origin
                     ).apply {

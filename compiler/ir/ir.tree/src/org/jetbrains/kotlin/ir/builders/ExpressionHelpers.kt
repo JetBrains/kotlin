@@ -196,7 +196,6 @@ fun IrBuilderWithScope.irGet(type: IrType, receiver: IrExpression?, getterSymbol
         startOffset, endOffset,
         type,
         getterSymbol as IrSimpleFunctionSymbol,
-        getterSymbol.descriptor,
         typeArgumentsCount = getterSymbol.owner.typeParameters.size,
         valueArgumentsCount = 0,
         origin = IrStatementOrigin.GET_PROPERTY
@@ -209,7 +208,6 @@ fun IrBuilderWithScope.irSet(type: IrType, receiver: IrExpression?, setterSymbol
         startOffset, endOffset,
         type,
         setterSymbol as IrSimpleFunctionSymbol,
-        setterSymbol.descriptor,
         typeArgumentsCount = setterSymbol.owner.typeParameters.size,
         valueArgumentsCount = 1,
         origin = IrStatementOrigin.EQ
@@ -242,7 +240,7 @@ fun IrBuilderWithScope.irCallConstructor(callee: IrConstructorSymbol, typeArgume
     }
 
 fun IrBuilderWithScope.irCall(callee: IrSimpleFunctionSymbol, type: IrType): IrCall =
-    IrCallImpl(startOffset, endOffset, type, callee, callee.descriptor)
+    IrCallImpl(startOffset, endOffset, type, callee)
 
 fun IrBuilderWithScope.irCall(callee: IrConstructorSymbol, type: IrType): IrConstructorCall =
     IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, type, callee)
@@ -264,7 +262,7 @@ fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrFunctionAccessExpress
     irCall(callee, callee.owner.returnType)
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDescriptor, type: IrType): IrCall =
-    IrCallImpl(startOffset, endOffset, type, callee as IrSimpleFunctionSymbol, descriptor)
+    IrCallImpl(startOffset, endOffset, type, callee as IrSimpleFunctionSymbol)
 
 fun IrBuilderWithScope.irCall(callee: IrFunction): IrFunctionAccessExpression =
     irCall(callee.symbol)
@@ -273,12 +271,13 @@ fun IrBuilderWithScope.irCall(callee: IrFunction, origin: IrStatementOrigin): Ir
     IrCallImpl(
         startOffset, endOffset, callee.returnType,
         callee.symbol as IrSimpleFunctionSymbol,
-        callee.descriptor, origin
+        callee.typeParameters.size, callee.valueParameters.size,
+        origin
     )
 
 fun IrBuilderWithScope.irDelegatingConstructorCall(callee: IrConstructor): IrDelegatingConstructorCall =
     IrDelegatingConstructorCallImpl(
-        startOffset, endOffset, context.irBuiltIns.unitType, callee.symbol, callee.descriptor,
+        startOffset, endOffset, context.irBuiltIns.unitType, callee.symbol,
         callee.parentAsClass.typeParameters.size, callee.valueParameters.size
     )
 
@@ -378,15 +377,4 @@ inline fun IrBuilderWithScope.irBlockBody(
         startOffset,
         endOffset
     ).blockBody(body)
-
-fun IrBuilderWithScope.irThrowIse(origin: IrStatementOrigin? = null) =
-    IrCallImpl(
-        startOffset, endOffset,
-        context.irBuiltIns.nothingType,
-        context.irBuiltIns.throwIseSymbol,
-        context.irBuiltIns.throwIseSymbol.descriptor,
-        typeArgumentsCount = 0,
-        valueArgumentsCount = 0,
-        origin = origin
-    )
 

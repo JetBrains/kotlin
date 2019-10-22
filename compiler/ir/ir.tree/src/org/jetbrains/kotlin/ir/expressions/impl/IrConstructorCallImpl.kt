@@ -19,7 +19,6 @@ class IrConstructorCallImpl(
     endOffset: Int,
     type: IrType,
     override val symbol: IrConstructorSymbol,
-    override val descriptor: ClassConstructorDescriptor,
     typeArgumentsCount: Int,
     override val constructorTypeArgumentsCount: Int,
     valueArgumentsCount: Int,
@@ -30,6 +29,8 @@ class IrConstructorCallImpl(
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructorCall(this, data)
+
+    override val descriptor: ClassConstructorDescriptor get() = symbol.descriptor
 
     companion object {
         fun fromSubstitutedDescriptor(
@@ -48,7 +49,6 @@ class IrConstructorCallImpl(
                 startOffset, endOffset,
                 type,
                 constructorSymbol,
-                constructorDescriptor,
                 totalTypeParametersCount,
                 totalTypeParametersCount - classTypeParametersCount,
                 valueParametersCount,
@@ -83,7 +83,6 @@ class IrConstructorCallImpl(
                 startOffset, endOffset,
                 type,
                 constructorSymbol,
-                constructorSymbol.descriptor,
                 totalTypeParametersCount,
                 constructorTypeParametersCount,
                 valueParametersCount,

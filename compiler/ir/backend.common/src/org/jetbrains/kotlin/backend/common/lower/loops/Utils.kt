@@ -44,7 +44,7 @@ internal fun IrExpression.negate(): IrExpression {
                 it.name == OperatorNameConventions.UNARY_MINUS &&
                         it.valueParameters.isEmpty()
             }
-            IrCallImpl(startOffset, endOffset, type, unaryMinusFun.symbol, unaryMinusFun.descriptor).apply {
+            IrCallImpl(startOffset, endOffset, type, unaryMinusFun.symbol).apply {
                 dispatchReceiver = this@negate
             }
         }
@@ -62,7 +62,7 @@ internal fun IrExpression.decrement(): IrExpression {
                 it.name == OperatorNameConventions.DEC &&
                         it.valueParameters.isEmpty()
             }
-            IrCallImpl(startOffset, endOffset, type, decFun.symbol, decFun.descriptor).apply {
+            IrCallImpl(startOffset, endOffset, type, decFun.symbol).apply {
                 dispatchReceiver = this@decrement
             }
         }

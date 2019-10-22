@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -32,7 +31,6 @@ class IrCallImpl(
     endOffset: Int,
     type: IrType,
     override val symbol: IrFunctionSymbol,
-    override val descriptor: FunctionDescriptor,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     origin: IrStatementOrigin? = null,
@@ -47,22 +45,23 @@ class IrCallImpl(
     IrCall {
 
     init {
-        if (descriptor is ConstructorDescriptor) {
-            throw AssertionError("Should be IrConstructorCall: $descriptor")
+        if (symbol is IrConstructorSymbol) {
+            throw AssertionError("Should be IrConstructorCall: ${symbol.descriptor}")
         }
     }
+
+    override val descriptor: FunctionDescriptor get() = symbol.descriptor
 
     constructor(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
         symbol: IrFunctionSymbol,
-        descriptor: FunctionDescriptor,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
     ) : this(
-        startOffset, endOffset, type, symbol, descriptor, descriptor.typeParametersCount,
-        descriptor.valueParameters.size, origin, superQualifierSymbol
+        startOffset, endOffset, type, symbol, symbol.descriptor.typeParametersCount, symbol.descriptor.valueParameters.size,
+        origin, superQualifierSymbol
     )
 
     constructor(
@@ -70,13 +69,12 @@ class IrCallImpl(
         endOffset: Int,
         type: IrType,
         symbol: IrFunctionSymbol,
-        descriptor: FunctionDescriptor,
         typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
     ) : this(
-        startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount,
-        descriptor.valueParameters.size, origin, superQualifierSymbol
+        startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size,
+        origin, superQualifierSymbol
     )
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

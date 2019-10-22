@@ -150,8 +150,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : FileLowe
 
                 val newCallee = context.declarationFactory.getInnerClassConstructorWithOuterThisParameter(classConstructor)
                 val newCall = IrDelegatingConstructorCallImpl(
-                    expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee.symbol, newCallee.descriptor,
-                    expression.typeArgumentsCount
+                    expression.startOffset, expression.endOffset, context.irBuiltIns.unitType, newCallee.symbol, expression.typeArgumentsCount
                 ).apply { copyTypeArgumentsFrom(expression) }
 
                 newCall.putValueArgument(0, dispatchReceiver)
@@ -177,7 +176,6 @@ class InnerClassConstructorCallsLowering(val context: BackendContext) : FileLowe
                         endOffset,
                         type,
                         newCallee.symbol,
-                        newCallee.descriptor,
                         typeArgumentsCount,
                         origin
                     )

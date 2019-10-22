@@ -92,7 +92,6 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             callable.startOffset, callable.endOffset,
             newTarget.symbol.owner.returnType,
             newTarget.symbol,
-            newTarget.symbol.descriptor,
             callable.origin
         ).apply {
             copyTypeArgumentsFrom(callable)

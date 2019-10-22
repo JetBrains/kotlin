@@ -284,8 +284,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                         IrCallImpl(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                             maybeOrphanedTarget.returnType,
-                            maybeOrphanedTarget.symbol, maybeOrphanedTarget.descriptor,
-                            origin = IrStatementOrigin.BRIDGE_DELEGATION,
+                            maybeOrphanedTarget.symbol, origin = IrStatementOrigin.BRIDGE_DELEGATION,
                             superQualifierSymbol = if (invokeStatically) maybeOrphanedTarget.parentAsClass.symbol else null
                         ).apply {
                             passTypeArgumentsFrom(this@createBridgeBody)

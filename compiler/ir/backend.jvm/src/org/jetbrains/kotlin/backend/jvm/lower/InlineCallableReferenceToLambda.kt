@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -106,7 +105,6 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 expression.endOffset,
                 field.type,
                 function.symbol,
-                function.symbol.descriptor,
                 typeArgumentsCount = 0,
                 origin = IrStatementOrigin.LAMBDA
             ).apply {
@@ -145,7 +143,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                     expression.endOffset
                 ).run {
                     irExprBody(irCall(referencedFunction).apply {
-                        this@apply.descriptor.typeParameters.forEach {
+                        this@apply.symbol.owner.allTypeParameters.forEach {
                             putTypeArgument(it.index, expression.getTypeArgument(it.index))
                         }
 
@@ -176,7 +174,6 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 expression.endOffset,
                 referencedFunction.returnType,
                 function.symbol,
-                function.symbol.descriptor,
                 referencedFunction.typeParameters.size,
                 IrStatementOrigin.LAMBDA
             ).apply {

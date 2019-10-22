@@ -145,8 +145,7 @@ class AccessorPropertyLValue(
             IrCallImpl(
                 startOffset, endOffset,
                 type,
-                getter!!, getterDescriptor,
-                typeArgumentsCount,
+                getter!!, typeArgumentsCount,
                 0,
                 origin,
                 superQualifier
@@ -162,8 +161,7 @@ class AccessorPropertyLValue(
             IrCallImpl(
                 startOffset, endOffset,
                 context.irBuiltIns.unitType,
-                setter!!, setterDescriptor,
-                typeArgumentsCount,
+                setter!!, typeArgumentsCount,
                 1,
                 origin,
                 superQualifier

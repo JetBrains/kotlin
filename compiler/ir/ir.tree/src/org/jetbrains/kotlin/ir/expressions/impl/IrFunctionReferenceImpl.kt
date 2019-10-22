@@ -28,7 +28,6 @@ class IrFunctionReferenceImpl(
     endOffset: Int,
     type: IrType,
     override val symbol: IrFunctionSymbol,
-    override val descriptor: FunctionDescriptor,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     origin: IrStatementOrigin? = null
@@ -48,10 +47,11 @@ class IrFunctionReferenceImpl(
         endOffset: Int,
         type: IrType,
         symbol: IrFunctionSymbol,
-        descriptor: FunctionDescriptor,
         typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null
-    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, descriptor.valueParameters.size, origin)
+    ) : this(startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size, origin)
+
+    override val descriptor: FunctionDescriptor get() = symbol.descriptor
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFunctionReference(this, data)

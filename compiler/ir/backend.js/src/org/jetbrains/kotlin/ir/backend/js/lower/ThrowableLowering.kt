@@ -6,23 +6,16 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.callsSuper
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.isNullableString
-import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isThrowable
-import org.jetbrains.kotlin.ir.util.isThrowableTypeOrSubtype
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 
@@ -74,7 +67,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
             val (messageArg, causeArg) = expression.extractThrowableArguments()
 
             return expression.run {
-                IrCallImpl(startOffset, endOffset, type, newThrowableFunction, newThrowableFunction.descriptor).also {
+                IrCallImpl(startOffset, endOffset, type, newThrowableFunction).also {
                     it.putValueArgument(0, messageArg)
                     it.putValueArgument(1, causeArg)
                 }
@@ -91,7 +84,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : FileLoweringPass {
             val thisReceiver = IrGetValueImpl(expression.startOffset, expression.endOffset, klass.thisReceiver!!.symbol)
 
             return expression.run {
-                IrCallImpl(startOffset, endOffset, type, extendThrowableFunction, extendThrowableFunction.descriptor).also {
+                IrCallImpl(startOffset, endOffset, type, extendThrowableFunction).also {
                     it.putValueArgument(0, thisReceiver)
                     it.putValueArgument(1, messageArg)
                     it.putValueArgument(2, causeArg)

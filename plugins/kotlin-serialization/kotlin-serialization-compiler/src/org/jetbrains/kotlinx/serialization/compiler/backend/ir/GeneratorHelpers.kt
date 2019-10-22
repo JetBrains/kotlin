@@ -226,8 +226,7 @@ interface IrBuilderExtension {
             +IrDelegatingConstructorCallImpl(
                 startOffset, endOffset,
                 compilerContext.irBuiltIns.unitType,
-                compilerContext.externalSymbols.referenceConstructor(anyConstructor),
-                anyConstructor
+                compilerContext.externalSymbols.referenceConstructor(anyConstructor)
             )
         }
     }

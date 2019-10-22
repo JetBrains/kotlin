@@ -412,18 +412,19 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         endOffset: Int,
         functionDescriptor: FunctionDescriptor,
         receiver: IrExpression
-    ): IrExpression =
-        IrCallImpl(
+    ): IrExpression {
+        val originalSymbol = context.symbolTable.referenceFunction(functionDescriptor.original)
+        return IrCallImpl(
             startOffset,
             endOffset,
             functionDescriptor.returnType!!.toIrType(),
-            context.symbolTable.referenceFunction(functionDescriptor.original),
-            functionDescriptor,
-            origin = null, // TODO origin for widening conversions?
+            originalSymbol,
+            origin = null,
             superQualifierSymbol = null
         ).apply {
             dispatchReceiver = receiver
         }
+    }
 
     private fun KotlinType.findConversionFunctionTo(targetType: KotlinType): FunctionDescriptor? {
         val targetTypeName = targetType.constructor.declarationDescriptor?.name?.asString() ?: return null
@@ -498,11 +499,11 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 )
             ) ?: throw AssertionError("Substitution failed for $checkNotNull: T=$argumentType")
 
+        val checkNotNullSymbol = context.irBuiltIns.checkNotNullSymbol
         return IrCallImpl(
             ktOperator.startOffsetSkippingComments, ktOperator.endOffset,
             expressionType.toIrType(),
-            context.irBuiltIns.checkNotNullSymbol,
-            checkNotNullSubstituted,
+            checkNotNullSymbol,
             origin
         ).apply {
             putTypeArgument(0, argumentType.toIrType().makeNotNull())

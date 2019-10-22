@@ -482,7 +482,6 @@ fun irConstructorCall(
             endOffset,
             type,
             newSymbol,
-            newSymbol.descriptor,
             typeArgumentsCount,
             0,
             call.valueArgumentsCount,
@@ -521,7 +520,6 @@ fun irCall(
             endOffset,
             type,
             newSymbol,
-            newSymbol.descriptor,
             typeArgumentsCount,
             origin
         ).apply {

@@ -279,10 +279,10 @@ class ClassGenerator(
         val substitutedOverridden = substituteOverriddenDescriptorForDelegate(delegated, overridden)
         val returnType = substitutedOverridden.returnType!!
         val irReturnType = returnType.toIrType()
+        val originalSymbol = context.symbolTable.referenceFunction(overridden.original)
         val irCall = IrCallImpl(
             startOffset, endOffset, irReturnType,
-            context.symbolTable.referenceFunction(overridden.original),
-            substitutedOverridden,
+            originalSymbol,
             substitutedOverridden.typeParametersCount
         ).apply {
             val typeArguments = getTypeArgumentsForOverriddenDescriptorDelegatingCall(delegated, overridden)

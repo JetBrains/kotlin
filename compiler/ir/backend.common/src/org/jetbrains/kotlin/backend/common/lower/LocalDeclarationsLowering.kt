@@ -283,7 +283,6 @@ class LocalDeclarationsLowering(
                     expression.startOffset, expression.endOffset,
                     context.irBuiltIns.unitType,
                     newCallee.symbol,
-                    newCallee.descriptor,
                     expression.typeArgumentsCount
                 ).also {
                     it.fillArguments2(expression, newCallee)
@@ -341,7 +340,6 @@ class LocalDeclarationsLowering(
                     expression.startOffset, expression.endOffset,
                     expression.type, // TODO functional type for transformed descriptor
                     newCallee.symbol,
-                    newCallee.descriptor,
                     expression.typeArgumentsCount,
                     expression.origin
                 ).also {
@@ -440,9 +438,9 @@ class LocalDeclarationsLowering(
                 oldCall.startOffset, oldCall.endOffset,
                 newCallee.returnType,
                 newCallee.symbol,
-                newCallee.descriptor,
                 oldCall.typeArgumentsCount,
-                oldCall.origin, oldCall.superQualifierSymbol
+                oldCall.origin,
+                oldCall.superQualifierSymbol
             ).also {
                 it.copyTypeArgumentsFrom(oldCall)
             }

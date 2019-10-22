@@ -32,7 +32,6 @@ object JsIrBuilder {
             UNDEFINED_OFFSET,
             type ?: target.owner.returnType,
             target,
-            target.descriptor,
             target.descriptor.typeParametersCount,
             SYNTHESIZED_STATEMENT
         ).apply {
@@ -186,7 +185,7 @@ object JsIrBuilder {
         IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, SYNTHESIZED_STATEMENT, statements)
 
     fun buildFunctionReference(type: IrType, symbol: IrFunctionSymbol) =
-        IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, symbol.descriptor, 0, null)
+        IrFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, 0, null)
 
     fun buildVar(
         type: IrType,

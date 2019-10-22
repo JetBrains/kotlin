@@ -680,8 +680,7 @@ class Fir2IrVisitor(
             when {
                 symbol is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
                 symbol is IrSimpleFunctionSymbol -> IrCallImpl(
-                    startOffset, endOffset, type, symbol, symbol.descriptor,
-                    origin = calleeReference.statementOrigin()
+                    startOffset, endOffset, type, symbol, origin = calleeReference.statementOrigin()
                 )
                 symbol is IrPropertySymbol && symbol.isBound -> {
                     val getter = symbol.owner.getter
@@ -827,7 +826,7 @@ class Fir2IrVisitor(
                 is IrFunctionSymbol -> {
                     IrFunctionReferenceImpl(
                         startOffset, endOffset, type, symbol,
-                        symbol.descriptor, 0
+                        0
                     )
                 }
                 else -> {
@@ -904,7 +903,7 @@ class Fir2IrVisitor(
                 listOf(
                     anonymousClass,
                     IrConstructorCallImpl.fromSymbolOwner(
-                        startOffset, endOffset, anonymousClassType, anonymousClass.constructors.first().symbol
+                        startOffset, endOffset, anonymousClassType, anonymousClass.constructors.first().symbol, anonymousClass.typeParameters.size
                     )
                 )
             )
