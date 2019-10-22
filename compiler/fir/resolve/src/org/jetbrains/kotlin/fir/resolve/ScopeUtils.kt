@@ -20,7 +20,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
         is ConeClassLikeType -> {
             // TODO: for ConeClassLikeType they might be a type alias instead of a regular class
             val fir = this.lookupTag.toSymbol(useSiteSession)?.fir as? FirRegularClass ?: return null
-            wrapSubstitutionScopeIfNeed(useSiteSession, fir.buildUseSiteScope(useSiteSession, scopeSession)!!, fir, scopeSession)
+            wrapSubstitutionScopeIfNeed(useSiteSession, fir.buildUseSiteMemberScope(useSiteSession, scopeSession)!!, fir, scopeSession)
         }
         is ConeTypeParameterType -> {
             // TODO: support LibraryTypeParameterSymbol or get rid of it

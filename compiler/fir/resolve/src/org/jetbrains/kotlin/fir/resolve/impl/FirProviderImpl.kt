@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.buildDefaultUseSiteScope
+import org.jetbrains.kotlin.fir.resolve.buildDefaultUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -216,7 +216,7 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
         scopeSession: ScopeSession
     ): FirScope? {
         return when (val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null) {
-            is FirClassSymbol -> symbol.fir.buildDefaultUseSiteScope(useSiteSession, scopeSession)
+            is FirClassSymbol -> symbol.fir.buildDefaultUseSiteMemberScope(useSiteSession, scopeSession)
             is FirTypeAliasSymbol -> {
                 val expandedTypeRef = symbol.fir.expandedTypeRef as FirResolvedTypeRef
                 val expandedType = expandedTypeRef.type as? ConeLookupTagBasedType ?: return null

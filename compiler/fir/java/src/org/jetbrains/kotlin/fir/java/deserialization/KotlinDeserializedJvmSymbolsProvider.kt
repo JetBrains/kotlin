@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.createConstant
 import org.jetbrains.kotlin.fir.java.topLevelName
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.*
@@ -143,7 +142,7 @@ class KotlinDeserializedJvmSymbolsProvider(
     ): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
 
-        return symbol.fir.buildDefaultUseSiteScope(session, scopeSession)
+        return symbol.fir.buildDefaultUseSiteMemberScope(session, scopeSession)
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {

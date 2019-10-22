@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirClassUseSiteScope(
+class FirClassUseSiteMemberScope(
     session: FirSession,
     superTypesScope: FirSuperTypeScope,
     declaredMemberScope: FirScope
-) : AbstractFirUseSiteScope(session, superTypesScope, declaredMemberScope) {
+) : AbstractFirUseSiteMemberScope(session, superTypesScope, declaredMemberScope) {
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         val seen = mutableSetOf<FirCallableSymbol<*>>()

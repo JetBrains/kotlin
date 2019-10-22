@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirClassSubstitutionScope(
     private val session: FirSession,
-    private val useSiteScope: FirScope,
+    private val useSiteMemberScope: FirScope,
     scopeSession: ScopeSession,
     substitution: Map<FirTypeParameterSymbol, ConeKotlinType>
 ) : FirScope() {
@@ -35,7 +35,7 @@ class FirClassSubstitutionScope(
     private val substitutor = substitutorByMap(substitution)
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
-        useSiteScope.processFunctionsByName(name) process@{ original ->
+        useSiteMemberScope.processFunctionsByName(name) process@{ original ->
 
             val function = fakeOverrideFunctions.getOrPut(original) { createFakeOverrideFunction(original) }
             processor(function)
@@ -46,7 +46,7 @@ class FirClassSubstitutionScope(
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
-        return useSiteScope.processPropertiesByName(name) process@{ original ->
+        return useSiteMemberScope.processPropertiesByName(name) process@{ original ->
             if (original is FirPropertySymbol) {
                 val property = fakeOverrideProperties.getOrPut(original) { createFakeOverrideProperty(original) }
                 processor(property)

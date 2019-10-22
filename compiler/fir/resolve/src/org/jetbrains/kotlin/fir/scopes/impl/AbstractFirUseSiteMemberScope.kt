@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
-abstract class AbstractFirUseSiteScope(
+abstract class AbstractFirUseSiteMemberScope(
     session: FirSession,
     protected val superTypesScope: FirSuperTypeScope,
     protected val declaredMemberScope: FirScope

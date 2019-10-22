@@ -350,8 +350,8 @@ private fun processConstructors(
     try {
         if (matchedSymbol != null) {
             val scope = when (matchedSymbol) {
-                is FirTypeAliasSymbol -> matchedSymbol.fir.buildUseSiteScope(session, scopeSession)
-                is FirClassSymbol -> matchedSymbol.fir.buildUseSiteScope(session, scopeSession)
+                is FirTypeAliasSymbol -> matchedSymbol.fir.buildUseSiteMemberScope(session, scopeSession)
+                is FirClassSymbol -> matchedSymbol.fir.buildUseSiteMemberScope(session, scopeSession)
             }
 
 

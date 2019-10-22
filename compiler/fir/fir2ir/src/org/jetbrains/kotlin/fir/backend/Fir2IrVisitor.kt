@@ -195,11 +195,11 @@ class Fir2IrVisitor(
     private fun IrClass.addFakeOverrides(klass: FirClass, processedCallableNames: MutableList<Name>) {
         if (fakeOverrideMode == FakeOverrideMode.NONE) return
         val superTypesCallableNames = klass.collectCallableNamesFromSupertypes()
-        val useSiteScope = (klass as? FirRegularClass)?.buildUseSiteScope(session, ScopeSession()) ?: return
+        val useSiteMemberScope = (klass as? FirRegularClass)?.buildUseSiteMemberScope(session, ScopeSession()) ?: return
         for (name in superTypesCallableNames) {
             if (name in processedCallableNames) continue
             processedCallableNames += name
-            useSiteScope.processFunctionsByName(name) { functionSymbol ->
+            useSiteMemberScope.processFunctionsByName(name) { functionSymbol ->
                 // TODO: think about overloaded functions. May be we should process all names.
                 if (functionSymbol is FirNamedFunctionSymbol) {
                     val originalFunction = functionSymbol.fir
@@ -228,7 +228,7 @@ class Fir2IrVisitor(
                 }
                 ProcessorAction.STOP
             }
-            useSiteScope.processPropertiesByName(name) { propertySymbol ->
+            useSiteMemberScope.processPropertiesByName(name) { propertySymbol ->
                 if (propertySymbol is FirPropertySymbol) {
                     val originalProperty = propertySymbol.fir
                     val origin = IrDeclarationOrigin.FAKE_OVERRIDE

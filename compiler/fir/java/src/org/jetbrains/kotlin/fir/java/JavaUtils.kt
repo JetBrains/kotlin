@@ -71,7 +71,7 @@ internal fun FirTypeRef.toNotNullConeKotlinType(
             val javaType = type
             javaType.toNotNullConeKotlinType(session, javaTypeParameterStack)
         }
-        else -> ConeKotlinErrorType("Unexpected type reference in JavaClassUseSiteScope: ${this::class.java}")
+        else -> ConeKotlinErrorType("Unexpected type reference in JavaClassUseSiteMemberScope: ${this::class.java}")
     }
 
 internal fun JavaType?.toNotNullConeKotlinType(

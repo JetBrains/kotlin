@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.*
-import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteScope
+import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -24,12 +24,12 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
 
-class JavaClassUseSiteScope(
+class JavaClassUseSiteMemberScope(
     klass: FirRegularClass,
     session: FirSession,
     superTypesScope: FirSuperTypeScope,
     declaredMemberScope: FirScope
-) : AbstractFirUseSiteScope(session, superTypesScope, declaredMemberScope) {
+) : AbstractFirUseSiteMemberScope(session, superTypesScope, declaredMemberScope) {
     internal val symbol = klass.symbol
 
     private val javaTypeParameterStack: JavaTypeParameterStack =

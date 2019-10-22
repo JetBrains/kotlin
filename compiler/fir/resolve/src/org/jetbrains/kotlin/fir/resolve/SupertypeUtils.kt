@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -51,19 +51,19 @@ val USE_SITE = scopeSessionKey<FirScope>()
 
 data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassSubstitutionScope>() {}
 
-fun FirRegularClass.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
+fun FirRegularClass.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
     val symbolProvider = useSiteSession.firSymbolProvider
     return symbolProvider.getClassUseSiteMemberScope(this.classId, useSiteSession, builder)
 }
 
-fun FirTypeAlias.buildUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
+fun FirTypeAlias.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
     val type = expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>()
     return type.scope(useSiteSession, builder)?.let {
         type.wrapSubstitutionScopeIfNeed(useSiteSession, it, this, builder)
     }
 }
 
-fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
+fun FirRegularClass.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
     return builder.getOrBuild(symbol, USE_SITE) {
 
         val declaredScope = declaredMemberScope(this)
@@ -72,30 +72,30 @@ fun FirRegularClass.buildDefaultUseSiteScope(useSiteSession: FirSession, builder
                 if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
                 val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
                 if (symbol is FirClassSymbol) {
-                    val useSiteScope = symbol.fir.buildUseSiteScope(useSiteSession, builder)!!
-                    useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, useSiteScope, symbol.fir, builder)
+                    val useSiteMemberScope = symbol.fir.buildUseSiteMemberScope(useSiteSession, builder)!!
+                    useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, useSiteMemberScope, symbol.fir, builder)
                 } else {
                     null
                 }
             }
-        FirClassUseSiteScope(useSiteSession, FirSuperTypeScope(useSiteSession, scopes), declaredScope)
+        FirClassUseSiteMemberScope(useSiteSession, FirSuperTypeScope(useSiteSession, scopes), declaredScope)
     }
 }
 
 fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     session: FirSession,
-    useSiteScope: FirScope,
+    useSiteMemberScope: FirScope,
     declaration: FirClassLikeDeclaration<*>,
     builder: ScopeSession
 ): FirScope {
-    if (this.typeArguments.isEmpty()) return useSiteScope
+    if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
         @Suppress("UNCHECKED_CAST")
         val substitution = declaration.typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
             typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
         }.filter { (_, type) -> type != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
 
-        FirClassSubstitutionScope(session, useSiteScope, builder, substitution)
+        FirClassSubstitutionScope(session, useSiteMemberScope, builder, substitution)
     }
 }
 
