@@ -67,10 +67,4 @@ public class DelegatingTestClassModel extends TestClassModel {
     public Collection<AnnotationModel> getAnnotations() {
         return delegate.getAnnotations();
     }
-
-    @NotNull
-    @Override
-    public Collection<Class<?>> getOwnImports() {
-        return delegate.getOwnImports();
-    }
 }

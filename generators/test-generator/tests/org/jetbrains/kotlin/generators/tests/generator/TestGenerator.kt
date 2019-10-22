@@ -120,10 +120,7 @@ class TestGenerator(
                 override val annotations: Collection<AnnotationModel>
                     get() = emptyList()
 
-                override val ownImports: Collection<Class<*>>
-                    get() = emptyList()
-
-                override val imports: Collection<Class<*>>
+                override val imports: Set<Class<*>>
                     get() = super.imports
             }
         }

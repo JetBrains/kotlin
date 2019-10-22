@@ -236,12 +236,6 @@ public class SimpleTestClassModel extends TestClassModel {
         return annotations;
     }
 
-    @NotNull
-    @Override
-    public Collection<Class<?>> getOwnImports() {
-        return annotations.stream().map(AnnotationModel::getAnnotation).collect(Collectors.toSet());
-    }
-
     private class TestAllFilesPresentMethodModel extends TestMethodModel {
         @NotNull
         @Override

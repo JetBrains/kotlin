@@ -24,20 +24,19 @@ interface TestEntityModel {
 }
 
 interface ClassModel : TestEntityModel {
-    val ownImports: Collection<Class<*>>
     val innerTestClasses: Collection<TestClassModel>
     val methods: Collection<MethodModel>
     val isEmpty: Boolean
     val dataPathRoot: String?
     val annotations: Collection<AnnotationModel>
-    val imports: Collection<Class<*>>
+    val imports: Set<Class<*>>
 }
 
 abstract class TestClassModel : ClassModel {
-    override val imports: Collection<Class<*>>
+    override val imports: Set<Class<*>>
         get() {
-            return mutableListOf<Class<*>>().also { allImports ->
-                allImports.addAll(ownImports)
+            return mutableSetOf<Class<*>>().also { allImports ->
+                annotations.mapTo(allImports) { it.annotation }
                 methods.flatMapTo(allImports) { it.imports() }
                 innerTestClasses.flatMapTo(allImports) { it.imports }
             }
