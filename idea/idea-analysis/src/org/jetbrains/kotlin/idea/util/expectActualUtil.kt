@@ -133,7 +133,7 @@ fun KtDeclaration.isEffectivelyActual(checkConstructor: Boolean = true): Boolean
     else -> false
 }
 
-fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, f: (KtDeclaration) -> Unit) {
+fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, useOnSelf: Boolean = false, f: (KtDeclaration) -> Unit) {
     if (hasActualModifier()) {
         val expectElement = liftToExpected()
         expectElement?.actualsForExpected()?.forEach {
@@ -145,6 +145,8 @@ fun KtDeclaration.runOnExpectAndAllActuals(checkExpect: Boolean = true, f: (KtDe
     } else if (!checkExpect || isExpectDeclaration()) {
         actualsForExpected().forEach { f(it) }
     }
+
+    if (useOnSelf) f(this)
 }
 
 fun KtDeclaration.collectAllExpectAndActualDeclaration(): Set<KtDeclaration> = when {

@@ -71,9 +71,10 @@ open class AddModifierFix(
     override fun invokeImpl(project: Project, editor: Editor?, file: PsiFile) {
         val originalElement = element
         if (originalElement is KtDeclaration && modifier.isMultiplatformPersistent()) {
-            originalElement.runOnExpectAndAllActuals { invokeOnElement(it) }
+            originalElement.runOnExpectAndAllActuals(useOnSelf = true) { invokeOnElement(it) }
+        } else {
+            invokeOnElement(originalElement)
         }
-        invokeOnElement(originalElement)
     }
 
     override fun isAvailableImpl(project: Project, editor: Editor?, file: PsiFile): Boolean {
