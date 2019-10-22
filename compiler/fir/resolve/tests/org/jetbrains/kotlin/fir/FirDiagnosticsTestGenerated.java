@@ -100,6 +100,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/properties.kt");
         }
 
+        @TestMetadata("sam.kt")
+        public void testSam() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/sam.kt");
+        }
+
         @TestMetadata("simpleClassReceiver.kt")
         public void testSimpleClassReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/simpleClassReceiver.kt");
