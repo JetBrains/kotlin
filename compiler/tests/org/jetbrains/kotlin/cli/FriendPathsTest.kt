@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.test.CompilerTestUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import java.io.File
-import java.nio.file.Paths
 
 class FriendPathsTest : TestCaseWithTmpdir() {
     private fun getTestDataDirectory(): File = File("compiler/testData/friendPaths/")
