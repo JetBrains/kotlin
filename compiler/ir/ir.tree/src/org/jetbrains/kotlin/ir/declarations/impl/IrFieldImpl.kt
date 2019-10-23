@@ -43,7 +43,8 @@ class IrFieldImpl(
     override val visibility: Visibility,
     override val isFinal: Boolean,
     override val isExternal: Boolean,
-    override val isStatic: Boolean
+    override val isStatic: Boolean,
+    override val isFakeOverride: Boolean
 ) : IrDeclarationBase(startOffset, endOffset, origin),
     IrField {
 
@@ -60,7 +61,8 @@ class IrFieldImpl(
                 symbol.descriptor.name, type, visibility,
                 isFinal = !symbol.descriptor.isVar,
                 isExternal = symbol.descriptor.isEffectivelyExternal(),
-                isStatic = symbol.descriptor.dispatchReceiverParameter == null
+                isStatic = symbol.descriptor.dispatchReceiverParameter == null,
+                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
             )
 
     constructor(

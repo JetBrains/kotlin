@@ -21,6 +21,7 @@ interface IrField :
     val isFinal: Boolean
     val isExternal: Boolean
     val isStatic: Boolean
+    val isFakeOverride: Boolean
 
     var initializer: IrExpressionBody?
 
