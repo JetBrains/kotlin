@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -162,7 +159,14 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer(phase = FirRe
 
             val resultingTypeRefs = mutableListOf<FirTypeRef>()
             for (superTypeRef in resolvedTypesRefs) {
-                val resolvedType = superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
+                val coneType = (superTypeRef as FirResolvedTypeRef).type
+                if (coneType is ConeTypeParameterType) {
+                    resultingTypeRefs.add(
+                        FirErrorTypeRefImpl(superTypeRef.psi, "Type parameter cannot be a super-type: ${coneType.render()}")
+                    )
+                    continue
+                }
+                val resolvedType = coneType as ConeClassLikeType
                 val superTypeClassId = resolvedType.lookupTag.classId
 
                 if (superTypeClassId.outerClasses().any { it.areSupertypesComputing() }) {
