@@ -158,9 +158,10 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
             fieldName,
             builtIns.anyNType,
             Visibilities.PUBLIC,
-            false,
-            false,
-            false
+            isFinal = false,
+            isExternal = false,
+            isStatic = false,
+            isFakeOverride = false
         ).also {
             descriptor.bind(it)
             it.parent = closureBoxClassDeclaration

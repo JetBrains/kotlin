@@ -62,9 +62,10 @@ class JsDeclarationFactory : DeclarationFactory {
             name,
             fieldType,
             visibility,
-            true,
-            false,
-            false
+            isFinal = true,
+            isExternal = false,
+            isStatic = false,
+            isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
         ).also {
             descriptor.bind(it)
             it.parent = parent

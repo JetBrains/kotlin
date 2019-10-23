@@ -66,7 +66,11 @@ class EnumUsageLowering(val context: JsIrBackendContext) : FileLoweringPass {
         val descriptor = WrappedFieldDescriptor()
         val symbol = IrFieldSymbolImpl(descriptor)
         return entry.run {
-            IrFieldImpl(startOffset, endOffset, origin, symbol, name, irClass.defaultType, Visibilities.PUBLIC, false, true, true).also {
+            IrFieldImpl(
+                startOffset, endOffset, origin, symbol, name, irClass.defaultType, Visibilities.PUBLIC,
+                isFinal = false, isExternal = true, isStatic = true,
+                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+            ).also {
                 descriptor.bind(it)
                 it.parent = irClass
                 irClass.declarations += it
