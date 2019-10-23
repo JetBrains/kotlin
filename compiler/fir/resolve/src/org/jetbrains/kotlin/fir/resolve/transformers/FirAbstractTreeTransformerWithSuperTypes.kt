@@ -43,12 +43,12 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
                 .asReversed().mapTo(towerScope.scopes) {
                     nestedClassifierScope(it.lookupTag.classId, session)
                 }
+            regularClass.addTypeParametersScope()
             val companionObjects = regularClass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
             for (companionObject in companionObjects) {
                 towerScope.scopes += nestedClassifierScope(companionObject)
             }
             towerScope.scopes += nestedClassifierScope(regularClass)
-            regularClass.addTypeParametersScope()
 
             transformElement(regularClass, data)
         }
