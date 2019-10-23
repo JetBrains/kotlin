@@ -76,7 +76,7 @@ class PostponedArgumentsAnalyzer(
             callResolver.resolveCallableReference(candidate.csBuilder, atom)
         }
 
-        val callableReferenceAccess = atom.atom
+        val callableReferenceAccess = atom.reference
         atom.analyzed = true
         val (candidate, applicability) = atom.resultingCandidate ?: Pair(null, CandidateApplicability.INAPPLICABLE)
 

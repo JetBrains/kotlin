@@ -50,7 +50,7 @@ fun Candidate.preprocessCallableReference(
     expectedType: ConeKotlinType
 ) {
     val lhs = bodyResolveComponents.doubleColonExpressionResolver.resolveDoubleColonLHS(argument)
-    postponedAtoms += EagerCallableReferenceAtom(argument, expectedType, lhs)
+    postponedAtoms += ResolvedCallableReferenceAtom(argument, expectedType, lhs)
 }
 
 val ConeKotlinType.isBuiltinFunctionalType: Boolean
@@ -207,8 +207,8 @@ class ResolvedLambdaAtom(
     override val outputType: ConeKotlinType get() = returnType
 }
 
-abstract class ResolvedCallableReferenceAtom(
-    val atom: FirCallableReferenceAccess,
+class ResolvedCallableReferenceAtom(
+    val reference: FirCallableReferenceAccess,
     val expectedType: ConeKotlinType?,
     val lhs: DoubleColonLHS?
 ) : PostponedResolvedAtomMarker {
@@ -216,13 +216,6 @@ abstract class ResolvedCallableReferenceAtom(
     var postponed: Boolean = false
 
     var resultingCandidate: Pair<Candidate, CandidateApplicability>? = null
-}
-
-class EagerCallableReferenceAtom(
-    atom: FirCallableReferenceAccess,
-    expectedType: ConeKotlinType?,
-    lhs: DoubleColonLHS?
-) : ResolvedCallableReferenceAtom(atom, expectedType, lhs) {
 
     override val inputTypes: Collection<ConeKotlinType>
         get() {

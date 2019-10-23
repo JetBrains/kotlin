@@ -221,7 +221,7 @@ class FirCallResolver(
         constraintSystemBuilder: ConstraintSystemBuilder,
         resolvedCallableReferenceAtom: ResolvedCallableReferenceAtom
     ): Boolean {
-        val callableReferenceAccess = resolvedCallableReferenceAtom.atom
+        val callableReferenceAccess = resolvedCallableReferenceAtom.reference
         val lhs = resolvedCallableReferenceAtom.lhs
         val coneSubstitutor = constraintSystemBuilder.buildCurrentSubstitutor() as ConeSubstitutor
         val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf)
