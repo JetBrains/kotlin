@@ -214,6 +214,7 @@ private fun removeAfterOffset(offset: Int, whiteSpace: PsiWhiteSpace): PsiElemen
     return whiteSpace
 }
 
+@JvmOverloads
 fun <T : KtDeclaration> insertMembersAfter(
     editor: Editor?,
     classOrObject: KtClassOrObject,
