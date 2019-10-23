@@ -1218,7 +1218,8 @@ abstract class IrFileDeserializer(
                     isLateinit = proto.isLateinit,
                     isDelegated = proto.isDelegated,
                     isExpect = proto.isExpect,
-                    isExternal = proto.isExternal
+                    isExternal = proto.isExternal,
+                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
                 )
             }.apply {
                 if (proto.hasGetter()) {
