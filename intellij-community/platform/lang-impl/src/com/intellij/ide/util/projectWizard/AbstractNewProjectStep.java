@@ -198,6 +198,6 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
     else if (generator != null) {
       options.callback = (p, module) -> generator.generateProject(p, baseDir, settings, module);
     }
-    return PlatformProjectOpenProcessor.openExistingProject(location, location, options, null);
+    return PlatformProjectOpenProcessor.openExistingProject(location, location, options);
   }
 }
