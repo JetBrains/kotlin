@@ -558,7 +558,8 @@ class Fir2IrDeclarationStorage(
                         field.name, type, field.visibility,
                         isFinal = field.modality == Modality.FINAL,
                         isExternal = false,
-                        isStatic = field.isStatic
+                        isStatic = field.isStatic,
+                        isFakeOverride = false
                     ).apply {
                         descriptor.bind(this)
                     }
