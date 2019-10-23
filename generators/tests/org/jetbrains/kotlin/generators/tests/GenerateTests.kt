@@ -308,11 +308,11 @@ fun main(args: Array<String>) {
             model("navigation/gotoSymbol", testMethod = "doSymbolTest")
         }
 
-        testClass<AbstractNavigateToLibrarySourceTest> {
+        testClass<AbstractNavigateToLibrarySourceTest>(annotations = listOf(muteExtraSuffix(".libsrc"))) {
             model("decompiler/navigation/usercode")
         }
 
-        testClass<AbstractNavigateToLibrarySourceTestWithJS> {
+        testClass<AbstractNavigateToLibrarySourceTestWithJS>(annotations = listOf(muteExtraSuffix(".libsrcjs"))) {
             model("decompiler/navigation/usercode", testClassName = "UsercodeWithJSModule")
         }
 

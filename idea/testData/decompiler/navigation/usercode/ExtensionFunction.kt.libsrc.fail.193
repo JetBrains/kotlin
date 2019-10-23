@@ -1,0 +1,5 @@
+Actual data differs from file content: ExtensionFunction.source.expected expected:<[main.kt
+public inline fun <T> T.<1>filter(predicate: (T)-> Boolean) : T? = this]
+> but was:<[ MainKt.class
+public inline fun <T> T.<1>filter(predicate: (T) -> kotlin.Boolean): T? { /* compiled code */ }]
+>

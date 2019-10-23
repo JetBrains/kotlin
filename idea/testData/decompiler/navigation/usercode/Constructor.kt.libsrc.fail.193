@@ -1,0 +1,7 @@
+Actual data differs from file content: Constructor.source.expected expected:<[main.kt
+public class <1><3>ClassWithConstructor<2>(val a: String, b: Any) {
+    <4>constructor(a: String): this(a, a)]
+> but was:<[ ClassWithConstructor.class
+public final class <1><3>ClassWithConstructor public <2>constructor(a: kotlin.String, b: kotlin.Any) {
+    public <4>constructor(a: kotlin.String) { /* compiled code */ }]
+>

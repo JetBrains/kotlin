@@ -1,0 +1,9 @@
+Actual data differs from file content: SameNameInDifferentSources.source.expected expected:<[extra.kt
+public fun <1>func(str : kotlin.String) {
+ main.kt
+public fun <2>func(a : Int, b : String = "55") {]
+> but was:<[ ExtraKt.class
+public fun <1>func(str: kotlin.String): kotlin.Unit { /* compiled code */ }
+ MainKt.class
+public fun <2>func(a: kotlin.Int, b: kotlin.String /* = compiled code */): kotlin.Unit { /* compiled code */ }]
+>

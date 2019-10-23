@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
 import org.jetbrains.kotlin.generators.tests.generator.TestGroup
+import org.jetbrains.kotlin.generators.tests.generator.muteExtraSuffix
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
@@ -305,11 +306,11 @@ fun main(args: Array<String>) {
             model("navigation/gotoSymbol", testMethod = "doSymbolTest")
         }
 
-        testClass<AbstractNavigateToLibrarySourceTest> {
+        testClass<AbstractNavigateToLibrarySourceTest>(annotations = listOf(muteExtraSuffix(".libsrc"))) {
             model("decompiler/navigation/usercode")
         }
 
-        testClass<AbstractNavigateToLibrarySourceTestWithJS> {
+        testClass<AbstractNavigateToLibrarySourceTestWithJS>(annotations = listOf(muteExtraSuffix(".libsrcjs"))) {
             model("decompiler/navigation/usercode", testClassName ="UsercodeWithJSModule")
         }
 

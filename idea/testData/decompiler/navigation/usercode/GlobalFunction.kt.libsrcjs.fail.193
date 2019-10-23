@@ -1,0 +1,17 @@
+Actual data differs from file content: GlobalFunction.source.expected expected:<[main.kt
+public fun <1><2>func(a : Int, b : String = "55") {
+}
+
+public fun <3>func(a : Int, b : Int) {
+}
+
+public fun <4>func() {]
+> but was:<[ MainKt.class
+public fun <4>func(): kotlin.Unit { /* compiled code */ }
+
+public fun func(cs: kotlin.CharSequence): kotlin.Unit { /* compiled code */ }
+
+public fun <3>func(a: kotlin.Int, b: kotlin.Int): kotlin.Unit { /* compiled code */ }
+
+public fun <1><2>func(a: kotlin.Int, b: kotlin.String /* = compiled code */): kotlin.Unit { /* compiled code */ }]
+>

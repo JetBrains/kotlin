@@ -1,0 +1,7 @@
+Actual data differs from file content: ClassObject.source.expected expected:<[main.kt
+    companion <1>object {
+        fun <2>foo() {]
+> but was:<[ WithInnerAndObject.class
+    public companion <1>object {
+        public final fun <2>foo(): kotlin.Unit { /* compiled code */ }]
+>

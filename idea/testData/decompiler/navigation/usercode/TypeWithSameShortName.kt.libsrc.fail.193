@@ -1,0 +1,13 @@
+Actual data differs from file content: TypeWithSameShortName.source.expected expected:< [extra.kt
+public fun <2>processDouble(d: Double) {}
+
+public fun <1>processDouble(d: kotlin.Double) {}
+ main.kt
+public class <3>Double]
+> but was:< [Double.class
+public final class Double public <3>constructor() {
+ ExtraKt.class
+public fun <1>processDouble(d: kotlin.Double): kotlin.Unit { /* compiled code */ }
+
+public fun <2>processDouble(d: testData.libraries.Double): kotlin.Unit { /* compiled code */ }]
+>

@@ -1,0 +1,10 @@
+Actual data differs from file content: OverloadedFunWithTypeParam.source.expected expected:<[main.kt
+public fun <T: CharSequence> <2>funWithTypeParam(t: T) {
+}
+
+public fun <T: Number> <1>funWithTypeParam(t: T) {]
+> but was:<[ MainKt.class
+public fun <T : kotlin.CharSequence> <2>funWithTypeParam(t: T): kotlin.Unit { /* compiled code */ }
+
+public fun <T : kotlin.Number> <1>funWithTypeParam(t: T): kotlin.Unit { /* compiled code */ }]
+>

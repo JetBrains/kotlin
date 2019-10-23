@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.MuteExtraSuffix;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("idea/testData/decompiler/navigation/usercode")
 @TestDataPath("$PROJECT_ROOT")
+@MuteExtraSuffix(".libsrc")
 @RunWith(JUnit3RunnerWithInners.class)
 public class NavigateToLibrarySourceTestGenerated extends AbstractNavigateToLibrarySourceTest {
     private void runTest(String testDataFilePath) throws Exception {

@@ -1,0 +1,5 @@
+Actual data differs from file content: GenericFunctionWithExplicitlyDeclaredTypeArguments.source.expected expected:<[main.kt
+public fun <T> <1>genericFunc() : T = throw Exception()]
+> but was:<[ MainKt.class
+public fun <T> <1>genericFunc(): T { /* compiled code */ }]
+>

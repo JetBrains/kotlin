@@ -1,0 +1,5 @@
+Actual data differs from file content: TypeAlias.source.expected expected:< [main.kt
+typealias <1><2>SimpleClassAlias = ]SimpleClass
+> but was:< [MainKt.class
+public typealias <1><2>SimpleClassAlias = testData.libraries.]SimpleClass
+>

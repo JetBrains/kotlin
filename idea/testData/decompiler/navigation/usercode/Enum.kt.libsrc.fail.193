@@ -1,0 +1,13 @@
+Actual data differs from file content: Enum.source.expected expected:<[main.kt
+public enum class <1><2>Color(val <4>rgb : Int) {
+    <3>RED(0xFF0000),]
+> but was:<[ Color.class
+public final enum class <1><2>Color private constructor(rgb: kotlin.Int) : kotlin.Enum<testData.libraries.Color> {
+    <3>RED,
+
+    GREEN,
+
+    BLUE;
+
+    public final val <4>rgb: kotlin.Int /* compiled code */]
+>
