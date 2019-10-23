@@ -48,15 +48,25 @@ repositories {
 
 dependencies {
     cli_bc project(path: ':backend.native', configuration: 'cli_bc')
+    def updateTestData = true
     if (project.hasProperty("kotlinProjectPath")) {
-        /**
-         * TODO: It's desired to get archives from composite build automatically, but still user have to execute :kotlin:zipTestData,
-         * unfortuantly `buildBy` on ConfigurableFileCollection doesn't work as desired and added dependsOn `:kotlin:zipTestData` in tasks
-         * using `update_external_tests` fails on evaluation phase.
-         */
-        update_tests files(Paths.get(project.property("kotlinProjectPath").toString(), "dist", "kotlin-test-data.zip").toFile())
-        update_stdlib_tests files(Paths.get(project.property("kotlinProjectPath").toString(), "dist", "kotlin-stdlib-tests.zip").toFile())
-    } else {
+        def kotlinProj = project.property("kotlinProjectPath").toString()
+        def testDataZip = Paths.get(kotlinProj, "dist", "kotlin-test-data.zip").toFile()
+        if (testDataZip.exists()) {
+            update_tests files(testDataZip)
+            updateTestData = false
+        } else {
+            println("WARN: using tests provided by gradle.properties. Please execute :kotlin:zipTestData")
+        }
+        def stdlibTestsZip = Paths.get(kotlinProj, "dist", "kotlin-stdlib-tests.zip").toFile()
+        if (stdlibTestsZip.exists()) {
+            update_stdlib_tests files(stdlibTestsZip)
+            updateTestData = false
+        } else {
+            println("WARNING: using stdlib tests provided by gradle.properties. Please execute :kotlin:zipTestData")
+        }
+    }
+    if (updateTestData) {
         update_tests(group: 'org', name: 'Kotlin_KotlinPublic_Compiler', version: testKotlinCompilerVersion) {
             artifact {
                 name = 'internal/kotlin-test-data'
