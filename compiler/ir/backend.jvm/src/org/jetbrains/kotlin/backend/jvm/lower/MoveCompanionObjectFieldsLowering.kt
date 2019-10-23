@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
@@ -214,7 +213,8 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
             oldField.name, oldField.type, oldField.visibility,
             isFinal = oldField.isFinal,
             isExternal = oldField.isExternal,
-            isStatic = true
+            isStatic = true,
+            isFakeOverride = false
         ).apply {
             descriptor.bind(this)
             parent = fieldParent

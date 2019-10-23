@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -103,7 +104,8 @@ private class FieldRenamer(private val newNames: Map<IrField, Name>) : IrElement
         val symbol = IrFieldSymbolImpl(descriptor)
         return IrFieldImpl(
             declaration.startOffset, declaration.endOffset, declaration.origin, symbol, newName,
-            declaration.type, declaration.visibility, declaration.isFinal, declaration.isExternal, declaration.isStatic
+            declaration.type, declaration.visibility, declaration.isFinal, declaration.isExternal, declaration.isStatic,
+            isFakeOverride = declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE
         ).also {
             descriptor.bind(it)
             it.parent = declaration.parent

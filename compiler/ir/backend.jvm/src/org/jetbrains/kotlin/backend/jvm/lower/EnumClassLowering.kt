@@ -237,7 +237,8 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 Visibilities.PRIVATE,
                 isFinal = true,
                 isExternal = false,
-                isStatic = true
+                isStatic = true,
+                isFakeOverride = false
             ).also {
                 descriptor.bind(it)
                 it.parent = irClass

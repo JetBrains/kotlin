@@ -67,7 +67,8 @@ private class ObjectClassLowering(val context: JvmBackendContext) : IrElementTra
                 Visibilities.PROTECTED/* TODO package local */,
                 isFinal = true,
                 isExternal = false,
-                isStatic = true
+                isStatic = true,
+                isFakeOverride = false
             ).apply {
                 privateFieldDescriptor.bind(this)
                 parent = irClass
