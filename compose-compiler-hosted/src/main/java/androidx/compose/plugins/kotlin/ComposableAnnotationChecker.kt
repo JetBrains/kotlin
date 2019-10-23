@@ -457,13 +457,12 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
                     if (expression.parent is KtAnnotatedExpression)
                         expression.parent as KtExpression
                     else expression
-                c.trace.reportFromPlugin(
-                    ComposeErrors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE.on(
+                c.trace.report(
+                    Errors.TYPE_MISMATCH.on(
                         reportOn,
                         expectedType,
                         expressionTypeWithSmartCast
-                    ),
-                    ComposeDefaultErrorMessages
+                    )
                 )
             }
             return
@@ -493,13 +492,12 @@ open class ComposableAnnotationChecker : CallChecker, DeclarationChecker,
                     if (expression.parent is KtAnnotatedExpression)
                         expression.parent as KtExpression
                     else expression
-                c.trace.reportFromPlugin(
-                    ComposeErrors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE.on(
+                c.trace.report(
+                    Errors.TYPE_MISMATCH.on(
                         reportOn,
                         expectedType,
                         expressionTypeWithSmartCast
-                    ),
-                    ComposeDefaultErrorMessages
+                    )
                 )
             }
             return

@@ -57,8 +57,6 @@ public interface ComposeErrors {
             CHILDREN_MUST_BE_LAST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement>
             ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory2<KtElement, KotlinType, KotlinType>
-            TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE = DiagnosticFactory2.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object INITIALIZER = new Object() {

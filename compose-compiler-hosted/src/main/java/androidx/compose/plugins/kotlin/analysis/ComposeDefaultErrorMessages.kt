@@ -2,13 +2,20 @@ package androidx.compose.plugins.kotlin.analysis
 
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_COLLECTION_OF_TYPES
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers.RENDER_TYPE_WITH_ANNOTATIONS
+import org.jetbrains.kotlin.diagnostics.rendering.RenderingContext
 
 object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
     private val MAP = DiagnosticFactoryToRendererMap("Compose")
     override fun getMap() = MAP
+
+    val OUR_STRING_RENDERER = object : DiagnosticParameterRenderer<String> {
+        override fun render(obj: String, renderingContext: RenderingContext): String {
+            return obj
+        }
+    }
 
     init {
         MAP.put(
@@ -36,7 +43,7 @@ object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
             "Composer of type ''{0}'' was found to be an invalid Composer implementation. " +
                     "Reason: {1}",
             Renderers.RENDER_TYPE,
-            Renderers.STRING
+            OUR_STRING_RENDERER
         )
         MAP.put(
             ComposeErrors.SUSPEND_FUNCTION_USED_AS_SFC,
@@ -50,7 +57,7 @@ object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
             ComposeErrors.SVC_INVOCATION,
             "Stateless Functional Components (SFCs) should not be invoked, use <{0} /> " +
                     "syntax instead",
-            Renderers.STRING
+            OUR_STRING_RENDERER
         )
         MAP.put(
             ComposeErrors.COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,
@@ -66,13 +73,6 @@ object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
         MAP.put(
             ComposeErrors.ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE,
             "Try catch is not supported around composable function invocations."
-        )
-        MAP.put(
-            ComposeErrors.TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH_COMPOSABLE,
-            "Type inference failed. Expected type mismatch: inferred type is {1} but {0}" +
-                    " was expected",
-            RENDER_TYPE_WITH_ANNOTATIONS,
-            RENDER_TYPE_WITH_ANNOTATIONS
         )
     }
 }
