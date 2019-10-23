@@ -1164,9 +1164,10 @@ abstract class IrFileDeserializer(
                     deserializeName(proto.name),
                     type,
                     deserializeVisibility(proto.visibility),
-                    proto.isFinal,
-                    proto.isExternal,
-                    proto.isStatic
+                    isFinal = proto.isFinal,
+                    isExternal = proto.isExternal,
+                    isStatic = proto.isStatic,
+                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
                 )
             }.usingParent {
                 if (proto.hasInitializer())
