@@ -29,18 +29,46 @@ private val KotlinLibrary.fileSources: KlibMetadataFileRegistry get() {
 }
 
 
-class KlibMetadataPackageFragment(
+class KlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     private val library: KotlinLibrary,
     private val packageAccessHandler: PackageAccessHandler?,
     storageManager: StorageManager,
     module: ModuleDescriptor,
     private val partName: String
-) : DeserializedPackageFragment(fqName, storageManager, module) {
+) : KlibMetadataPackageFragment(fqName, storageManager, module) {
+
+    // The proto field is lazy so that we can load only needed
+    // packages from the library.
+    override val protoForNames: ProtoBuf.PackageFragment by lazy {
+        (packageAccessHandler ?: SimplePackageAccessHandler).loadPackageFragment(library, fqName.asString(), partName)
+    }
 
     val fileRegistry: KlibMetadataFileRegistry by lazy {
-            library.fileSources
+        library.fileSources
     }
+
+
+    override val proto: ProtoBuf.PackageFragment
+        get() {
+            packageAccessHandler?.markNeededForLink(library, fqName.asString())
+            return protoForNames
+        }
+}
+
+class KlibMetadataCachedPackageFragment(
+    byteArray: ByteArray,
+    storageManager: StorageManager,
+    module: ModuleDescriptor,
+    override val protoForNames: ProtoBuf.PackageFragment = parsePackageFragment(byteArray),
+    fqName: FqName = FqName(protoForNames.getExtension(KlibMetadataProtoBuf.fqName))
+) :  KlibMetadataPackageFragment(fqName, storageManager, module)
+
+abstract class KlibMetadataPackageFragment(
+    fqName: FqName,
+    storageManager: StorageManager,
+    module: ModuleDescriptor
+) : DeserializedPackageFragment(fqName, storageManager, module) {
 
     lateinit var components: DeserializationComponents
 
@@ -50,15 +78,10 @@ class KlibMetadataPackageFragment(
 
     // The proto field is lazy so that we can load only needed
     // packages from the library.
-    private val protoForNames: ProtoBuf.PackageFragment by lazy {
-        (packageAccessHandler ?: SimplePackageAccessHandler).loadPackageFragment(library, fqName.asString(), partName)
-    }
+    abstract val protoForNames: ProtoBuf.PackageFragment
 
-    val proto: ProtoBuf.PackageFragment
-        get() {
-            packageAccessHandler?.markNeededForLink(library, fqName.asString())
-            return protoForNames
-        }
+    open val proto: ProtoBuf.PackageFragment
+        get() = protoForNames
 
     private val nameResolver by lazy {
         NameResolverImpl(protoForNames.strings, protoForNames.qualifiedNames)

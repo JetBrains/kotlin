@@ -6,17 +6,12 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.descriptors.propertyIfAccessor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.KlibMetadataPackageFragment
+import org.jetbrains.kotlin.library.metadata.KlibMetadataDeserializedPackageFragment
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
@@ -56,7 +51,7 @@ val ModuleDescriptor.isForwardDeclarationModule get() =
     name == Name.special("<forward declarations>")
 
 private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
-    val fragment = descriptor.findPackage() as KlibMetadataPackageFragment
+    val fragment = descriptor.findPackage() as KlibMetadataDeserializedPackageFragment
     return fragment.fileRegistry.sourceFile(index)
 }
 

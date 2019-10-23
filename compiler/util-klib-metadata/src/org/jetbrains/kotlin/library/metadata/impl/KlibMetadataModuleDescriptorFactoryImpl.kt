@@ -78,6 +78,22 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         return moduleDescriptor
     }
 
+    override fun createCachedPackageFragmentProvider(
+        byteArrays: List<ByteArray>,
+        storageManager: StorageManager,
+        moduleDescriptor: ModuleDescriptor,
+        configuration: DeserializationConfiguration
+
+    ):  PackageFragmentProvider {
+        val deserializedPackageFragments = packageFragmentsFactory.createCachedPackageFragments(
+            byteArrays, moduleDescriptor, storageManager
+        )
+
+        val provider = PackageFragmentProviderImpl(deserializedPackageFragments)
+        return initializePackageFragmentProvider(provider, deserializedPackageFragments, storageManager,
+            moduleDescriptor, configuration, null)
+    }
+
     override fun createPackageFragmentProvider(
         library: KotlinLibrary,
         packageAccessHandler: PackageAccessHandler?,
@@ -98,6 +114,18 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         )
 
         val provider = PackageFragmentProviderImpl(deserializedPackageFragments + syntheticPackageFragments)
+        return initializePackageFragmentProvider(provider, deserializedPackageFragments, storageManager,
+            moduleDescriptor, configuration, compositePackageFragmentAddend)
+    }
+
+    fun initializePackageFragmentProvider(
+        provider: PackageFragmentProviderImpl,
+        fragmentsToInitialize: List<DeserializedPackageFragment>,
+        storageManager: StorageManager,
+        moduleDescriptor: ModuleDescriptor,
+        configuration: DeserializationConfiguration,
+        compositePackageFragmentAddend: PackageFragmentProvider?
+    ): PackageFragmentProvider {
 
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
 
@@ -124,8 +152,8 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry
         )
 
-        for (packageFragment in deserializedPackageFragments) {
-            packageFragment.initialize(components)
+        fragmentsToInitialize.forEach {
+            it.initialize(components)
         }
 
         return compositePackageFragmentAddend?.let {

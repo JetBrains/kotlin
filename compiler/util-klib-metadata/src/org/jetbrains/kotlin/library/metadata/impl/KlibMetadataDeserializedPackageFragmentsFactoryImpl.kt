@@ -7,6 +7,8 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.metadata.KlibMetadataCachedPackageFragment
+import org.jetbrains.kotlin.library.metadata.KlibMetadataDeserializedPackageFragment
 import org.jetbrains.kotlin.library.metadata.KlibMetadataPackageFragment
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 import org.jetbrains.kotlin.name.FqName
@@ -34,10 +36,17 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         val fqName = FqName(it)
         val parts = library.packageMetadataParts(fqName.asString())
         parts.map { partName ->
-            KlibMetadataPackageFragment(fqName, library, packageAccessedHandler, storageManager, moduleDescriptor, partName)
+            KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessedHandler, storageManager, moduleDescriptor, partName)
         }
     }
 
+    override fun createCachedPackageFragments(
+        packageFragments: List<ByteArray>,
+        moduleDescriptor: ModuleDescriptor,
+        storageManager: StorageManager
+    ) = packageFragments.map { byteArray ->
+        KlibMetadataCachedPackageFragment(byteArray, storageManager, moduleDescriptor)
+    }
 
     override fun createSyntheticPackageFragments(
         library: KotlinLibrary,
