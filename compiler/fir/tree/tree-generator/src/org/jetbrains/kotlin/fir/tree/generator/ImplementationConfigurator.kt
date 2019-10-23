@@ -434,7 +434,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultNull("candidateSymbol", withGetter = true)
         }
 
-        impl(resolvedRealCallableReference) {
+        impl(resolvedCallableReference) {
             defaultNull("candidateSymbol", withGetter = true)
         }
 

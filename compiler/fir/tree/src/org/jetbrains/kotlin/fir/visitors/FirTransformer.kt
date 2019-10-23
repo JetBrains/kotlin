@@ -103,7 +103,7 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
-import org.jetbrains.kotlin.fir.references.FirResolvedRealCallableReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirDelegatedTypeRef
@@ -512,8 +512,8 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(backingFieldReference, data)
     }
 
-    open fun transformResolvedRealCallableReference(resolvedRealCallableReference: FirResolvedRealCallableReference, data: D): CompositeTransformResult<FirReference> {
-        return transformElement(resolvedRealCallableReference, data)
+    open fun transformResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): CompositeTransformResult<FirReference> {
+        return transformElement(resolvedCallableReference, data)
     }
 
     open fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
@@ -944,8 +944,8 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformBackingFieldReference(backingFieldReference, data)
     }
 
-    final override fun visitResolvedRealCallableReference(resolvedRealCallableReference: FirResolvedRealCallableReference, data: D): CompositeTransformResult<FirReference> {
-        return transformResolvedRealCallableReference(resolvedRealCallableReference, data)
+    final override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): CompositeTransformResult<FirReference> {
+        return transformResolvedCallableReference(resolvedCallableReference, data)
     }
 
     final override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: D): CompositeTransformResult<FirTypeRef> {

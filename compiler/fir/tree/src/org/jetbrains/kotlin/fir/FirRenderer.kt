@@ -818,7 +818,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print(symbol.render())
 
 
-        if (resolvedNamedReference is FirResolvedRealCallableReference) {
+        if (resolvedNamedReference is FirResolvedCallableReference) {
             if (resolvedNamedReference.inferredTypeArguments.isNotEmpty()) {
                 print("<")
 
@@ -844,8 +844,8 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print("|")
     }
 
-    override fun visitResolvedRealCallableReference(resolvedRealCallableReference: FirResolvedRealCallableReference) {
-        visitResolvedRealCallableReference(resolvedRealCallableReference)
+    override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
+        visitResolvedNamedReference(resolvedCallableReference)
     }
 
     override fun visitThisReference(thisReference: FirThisReference) {

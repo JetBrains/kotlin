@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedRealCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
@@ -78,7 +78,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         return callableReferenceAccess.transformCalleeReference(
             StoreCalleeReference,
-            FirResolvedRealCallableReferenceImpl(
+            FirResolvedCallableReferenceImpl(
                 calleeReference.psi,
                 calleeReference.name,
                 calleeReference.candidateSymbol

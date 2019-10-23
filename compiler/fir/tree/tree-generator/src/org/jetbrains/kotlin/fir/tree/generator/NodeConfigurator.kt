@@ -452,7 +452,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +field("resolvedSymbol", abstractFirBasedSymbolType, "*")
         }
 
-        resolvedRealCallableReference.configure {
+        resolvedCallableReference.configure {
             +fieldList("inferredTypeArguments", coneKotlinTypeType)
         }
 

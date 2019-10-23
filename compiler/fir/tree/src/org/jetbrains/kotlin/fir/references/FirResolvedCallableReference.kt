@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirResolvedRealCallableReference : FirResolvedNamedReference() {
+abstract class FirResolvedCallableReference : FirResolvedNamedReference() {
     abstract override val psi: PsiElement?
     abstract override val name: Name
     abstract override val candidateSymbol: AbstractFirBasedSymbol<*>?
     abstract override val resolvedSymbol: AbstractFirBasedSymbol<*>
     abstract val inferredTypeArguments: List<ConeKotlinType>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedRealCallableReference(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedCallableReference(this, data)
 }
