@@ -28,12 +28,13 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-abstract class MoveMemberOutOfObjectIntention(text: String) : SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, text) {
+abstract class MoveMemberOutOfObjectIntention(text: String) :
+    SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, text) {
     override fun startInWriteAction() = false
 
-    abstract fun getDestination(element: KtNamedDeclaration) : KtElement
+    abstract fun getDestination(element: KtNamedDeclaration): KtElement
 
-    abstract fun addConflicts(element: KtNamedDeclaration,conflicts: MultiMap<PsiElement, String>)
+    abstract fun addConflicts(element: KtNamedDeclaration, conflicts: MultiMap<PsiElement, String>)
 
     override fun applyTo(element: KtNamedDeclaration, editor: Editor?) {
         val project = element.project
