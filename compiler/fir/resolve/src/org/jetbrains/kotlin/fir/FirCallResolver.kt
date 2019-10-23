@@ -224,7 +224,7 @@ class FirCallResolver(
         val callableReferenceAccess = resolvedCallableReferenceAtom.atom
         val lhs = resolvedCallableReferenceAtom.lhs
         val coneSubstitutor = constraintSystemBuilder.buildCurrentSubstitutor() as ConeSubstitutor
-        val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf) ?: return false
+        val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf)
 
         val result = CandidateCollector(this, resolutionStageRunner)
         val consumer =

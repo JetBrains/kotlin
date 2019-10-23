@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTransformer) :
     FirPartialBodyResolveTransformer(transformer) {
 
-    private val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(components)
+    private val syntheticCallGenerator: FirSyntheticCallGenerator get() = components.syntheticCallGenerator
     private val whenExhaustivenessTransformer = FirWhenExhaustivenessTransformer(components)
 
 

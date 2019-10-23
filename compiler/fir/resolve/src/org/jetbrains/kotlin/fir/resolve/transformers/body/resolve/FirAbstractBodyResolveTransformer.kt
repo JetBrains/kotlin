@@ -98,6 +98,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession)
         val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
         val dataFlowAnalyzer: FirDataFlowAnalyzer = FirDataFlowAnalyzer(this)
+        override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this, callCompleter)
 
         internal var _container: FirDeclaration? = null
         override var container: FirDeclaration

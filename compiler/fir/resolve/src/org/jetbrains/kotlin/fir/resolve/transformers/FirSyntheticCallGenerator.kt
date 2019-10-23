@@ -14,12 +14,15 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -35,9 +38,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.Variance
 
-class FirSyntheticCallGenerator(private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents) : BodyResolveComponents by components {
+class FirSyntheticCallGenerator(
+    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
+    private val callCompleter: FirCallCompleter
+) : BodyResolveComponents by components {
     private val whenSelectFunction: FirSimpleFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
     private val trySelectFunction: FirSimpleFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
+    private val idFunction: FirSimpleFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.ID)
 
     fun generateCalleeForWhenExpression(whenExpression: FirWhenExpression): FirWhenExpression? {
         val stubReference = whenExpression.calleeReference
@@ -77,12 +84,28 @@ class FirSyntheticCallGenerator(private val components: FirAbstractBodyResolveTr
         return tryExpression.copy(calleeReference = reference)
     }
 
+    fun resolveCallableReferenceWithSyntheticOuterCall(
+        callableReferenceAccess: FirCallableReferenceAccess,
+        expectedTypeRef: FirTypeRef?
+    ): FirCallableReferenceAccess? {
+        val arguments = listOf(callableReferenceAccess)
+
+        val reference =
+            generateCalleeReferenceWithCandidate(
+                idFunction, arguments, SyntheticCallableId.ID.callableName, CallKind.SyntheticIdForCallableReferencesResolution
+            ) ?: return null
+        val fakeCallElement = FirFunctionCallImpl(null).copy(calleeReference = reference, arguments = arguments)
+
+        return callCompleter.completeCall(fakeCallElement, expectedTypeRef).arguments[0] as FirCallableReferenceAccess?
+    }
+
     private fun generateCalleeReferenceWithCandidate(
         function: FirSimpleFunctionImpl,
         arguments: List<FirExpression>,
-        name: Name
+        name: Name,
+        callKind: CallKind = CallKind.SyntheticSelect
     ): FirNamedReferenceWithCandidate? {
-        val callInfo = generateCallInfo(arguments)
+        val callInfo = generateCallInfo(arguments, callKind)
         val candidate = generateCandidate(callInfo, function)
         val applicability = resolutionStageRunner.processCandidate(candidate)
         if (applicability <= CandidateApplicability.INAPPLICABLE) {
@@ -100,8 +123,8 @@ class FirSyntheticCallGenerator(private val components: FirAbstractBodyResolveTr
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
         )
 
-    private fun generateCallInfo(arguments: List<FirExpression>) = CallInfo(
-        callKind = CallKind.SyntheticSelect,
+    private fun generateCallInfo(arguments: List<FirExpression>, callKind: CallKind) = CallInfo(
+        callKind = callKind,
         explicitReceiver = null,
         arguments = arguments,
         isSafeCall = false,
@@ -111,7 +134,7 @@ class FirSyntheticCallGenerator(private val components: FirAbstractBodyResolveTr
         container = container
     ) { it.resultType }
 
-    private fun generateSyntheticSelectFunction(callableId: CallableId): FirSimpleFunctionImpl {
+    private fun generateSyntheticSelectFunction(callableId: CallableId, isVararg: Boolean = true): FirSimpleFunctionImpl {
         val functionSymbol = FirSyntheticFunctionSymbol(callableId)
         val typeParameterSymbol = FirTypeParameterSymbol()
         val typeParameter = FirTypeParameterImpl(null, session, Name.identifier("K"), typeParameterSymbol, Variance.INVARIANT, false)
@@ -123,7 +146,7 @@ class FirSyntheticCallGenerator(private val components: FirAbstractBodyResolveTr
 
         return generateMemberFunction(session, functionSymbol, callableId.callableName, typeArgument.typeRef).apply {
             typeParameters += typeParameter
-            valueParameters += argumentType.toValueParameter(session, "branches", isVararg = true)
+            valueParameters += argumentType.toValueParameter(session, "branches", isVararg)
         }
     }
 

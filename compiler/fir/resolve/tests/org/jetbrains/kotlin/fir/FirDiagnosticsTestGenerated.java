@@ -40,6 +40,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/callableReferences"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("beyoundCalls.kt")
+        public void testBeyoundCalls() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/beyoundCalls.kt");
+        }
+
         @TestMetadata("companions.kt")
         public void testCompanions() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/companions.kt");

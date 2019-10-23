@@ -17,4 +17,8 @@ object SyntheticCallableId {
         FqName("_synthetic"),
         Name.identifier("TRY_CALL")
     )
+    val ID = CallableId(
+        FqName("_synthetic"),
+        Name.identifier("ID_CALL")
+    )
 }

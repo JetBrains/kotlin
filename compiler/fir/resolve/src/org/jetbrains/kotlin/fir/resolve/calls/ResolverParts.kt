@@ -175,7 +175,7 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
 internal object CheckCallableReferenceExpectedType : CheckerStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val outerCsBuilder = callInfo.outerCSBuilder ?: return
-        val expectedType = callInfo.expectedType ?: return
+        val expectedType = callInfo.expectedType
         val candidateSymbol = candidate.symbol as? FirCallableSymbol<*> ?: return
 
         val resultingReceiverType = when (callInfo.lhs) {
@@ -201,7 +201,9 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
 
             val position = SimpleConstraintSystemConstraintPosition //TODO
 
-            addSubtypeConstraint(resultingType, expectedType, position)
+            if (expectedType != null) {
+                addSubtypeConstraint(resultingType, expectedType, position)
+            }
 
             val declarationReceiverType: ConeKotlinType? =
                 (fir as? FirCallableMemberDeclaration<*>)?.receiverTypeRef?.coneTypeSafe<ConeKotlinType>()
