@@ -191,6 +191,7 @@
 
     <extensions defaultExtensionNs="org.jetbrains.uast">
         <uastLanguagePlugin implementation="org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin"/>
+        <analysis.uastAnalysisPlugin implementation="org.jetbrains.uast.kotlin.analysis.KotlinUastAnalysisPlugin"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
