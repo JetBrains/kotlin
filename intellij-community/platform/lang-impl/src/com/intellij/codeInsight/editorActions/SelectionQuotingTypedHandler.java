@@ -12,7 +12,6 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -32,12 +31,12 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
     if (CodeInsightSettings.getInstance().AUTOINSERT_PAIR_QUOTE && selectionModel.hasSelection() && isDelimiter(c)) {
       String selectedText = selectionModel.getSelectedText();
       if (selectedText != null && selectedText.length() == 1) {
-        final char selectedChar = selectedText.charAt(0);
+        char selectedChar = selectedText.charAt(0);
         if (isSimilarDelimiters(selectedChar, c) &&
             selectedChar != c &&
             !shouldSkipReplacementOfQuotesOrBraces(file, editor, selectedText, c) &&
             replaceQuotesBySelected(c, editor, file, selectionModel, selectedChar)) {
-          return Result.CONTINUE;
+          return Result.STOP;
         }
       }
     }
@@ -109,11 +108,15 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
           CharSequence charsSequence = document.getCharsSequence();
           if (matchingCharOffset < charsSequence.length()) {
             char matchingChar = charsSequence.charAt(matchingCharOffset);
-            if (isAtStart ? matchingChar == getMatchingDelimiter(selectedChar) : selectedChar == getMatchingDelimiter(matchingChar) &&
+            boolean otherQuoteMatchesSelected =
+              isAtStart ? matchingChar == getMatchingDelimiter(selectedChar) : selectedChar == getMatchingDelimiter(matchingChar);
+            if (otherQuoteMatchesSelected &&
                 !containsQuoteInside(document.getText(textRange), charsSequence.charAt(textRange.getEndOffset() - 1))) {
-              document.replaceString(textRange.getStartOffset(), textRange.getStartOffset() + 1, Character.toString(c));
+              replaceChar(document, textRange.getStartOffset(), c);
               char c2 = getMatchingDelimiter(c);
-              document.replaceString(textRange.getEndOffset() - 1, textRange.getEndOffset(), Character.toString(c2));
+              replaceChar(document, textRange.getEndOffset() - 1, c2);
+              editor.getCaretModel().moveToOffset(selectionModel.getSelectionEnd());
+              selectionModel.removeSelection();
               return true;
             }
           }
@@ -154,6 +157,10 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
 
   private static boolean isSimilarDelimiters(final char c1, final char c2) {
     return (isBracket(c1) && isBracket(c2)) || (isQuote(c1) && isQuote(c2));
+  }
+
+  private static void replaceChar(Document document, int offset, char newChar) {
+    document.replaceString(offset, offset + 1, String.valueOf(newChar));
   }
 
   public static abstract class DequotingFilter {
