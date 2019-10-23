@@ -144,6 +144,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             ExternalSystemApiUtil.findAll(ideModule, GradleSourceSetData.KEY)
         } else listOf(ideModule)
 
+        var dirtyDependencies = true
         for (currentModuleNode in moduleNodesToProcess) {
             val toProcess = ArrayDeque<DataNode<out ModuleData>>().apply { add(currentModuleNode) }
             val discovered = HashSet<DataNode<out ModuleData>>().apply { add(currentModuleNode) }
@@ -178,14 +179,18 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                             addDependency(currentModuleNode, targetMainSourceSet)
                         }
                     } else {
+                        dirtyDependencies = true
                         addDependency(currentModuleNode, targetModule)
                     }
                 }
 
-                val dependencies = if (useModulePerSourceSet()) moduleNode.getDependencies(ideProject) else getDependencyModules(
-                    ideModule,
-                    gradleModule.project
-                )
+                val dependencies = if (useModulePerSourceSet()) {
+                    moduleNode.getDependencies(ideProject)
+                } else {
+                    if (dirtyDependencies) getDependencyModules(ideModule, gradleModule.project).also {
+                        dirtyDependencies = false
+                    } else emptyList()
+                }
                 // queue only those dependencies that haven't been discovered earlier
                 dependencies.filterTo(toProcess, discovered::add)
             }
