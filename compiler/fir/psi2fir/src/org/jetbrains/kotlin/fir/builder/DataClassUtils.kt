@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.addDeclaration
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.impl.FirImplicitThisReference
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -60,7 +63,7 @@ fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
                             dispatchReceiver = FirThisReceiverExpressionImpl(null, FirImplicitThisReference(firClass.symbol)).apply {
                                 typeRef = firPrimaryConstructor.returnTypeRef
                             }
-                            calleeReference = FirResolvedCallableReferenceImpl(
+                            calleeReference = FirResolvedNamedReferenceImpl(
                                 ktParameter,
                                 parameterName, firProperty.symbol
                             )
@@ -113,7 +116,7 @@ fun List<Pair<KtParameter?, FirProperty>>.generateCopyFunction(
                         dispatchReceiver = FirThisReceiverExpressionImpl(null, FirImplicitThisReference(firClass.symbol)).apply {
                             typeRef = firPrimaryConstructor.returnTypeRef
                         }
-                        calleeReference = FirResolvedCallableReferenceImpl(ktParameter, name, firProperty.symbol)
+                        calleeReference = FirResolvedNamedReferenceImpl(ktParameter, name, firProperty.symbol)
                     },
                     isCrossinline = false, isNoinline = false, isVararg = false
                 )

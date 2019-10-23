@@ -965,7 +965,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     simpleName(reference.name)
                 }
             }
-            is FirResolvedCallableReference -> {
+            is FirResolvedNamedReference -> {
                 resolved {
                     symbolRef(reference.resolvedSymbol) {
                         simpleName(reference.name)

@@ -117,11 +117,11 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val thisReference = element("ThisReference", Reference, reference)
     val controlFlowGraphReference = element("ControlFlowGraphReference", Reference, reference)
 
-    val resolvedCallableReference = element("ResolvedCallableReference", Reference, namedReference)
-    val delegateFieldReference = element("DelegateFieldReference", Reference, resolvedCallableReference)
-    val backingFieldReference = element("BackingFieldReference", Reference, resolvedCallableReference)
+    val resolvedNamedReference = element("ResolvedNamedReference", Reference, namedReference)
+    val delegateFieldReference = element("DelegateFieldReference", Reference, resolvedNamedReference)
+    val backingFieldReference = element("BackingFieldReference", Reference, resolvedNamedReference)
 
-    val resolvedRealCallableReference = element("ResolvedRealCallableReference", Reference, resolvedCallableReference)
+    val resolvedRealCallableReference = element("ResolvedRealCallableReference", Reference, resolvedNamedReference)
 
     val resolvedTypeRef = element("ResolvedTypeRef", TypeRef, typeRef)
     val errorTypeRef = element("ErrorTypeRef", TypeRef, resolvedTypeRef)

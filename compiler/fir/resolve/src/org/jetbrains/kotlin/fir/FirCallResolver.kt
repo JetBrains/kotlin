@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirBackingFieldReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -191,7 +191,7 @@ class FirCallResolver(
         }
 
         val referencedSymbol = when (nameReference) {
-            is FirResolvedCallableReference -> nameReference.resolvedSymbol
+            is FirResolvedNamedReference -> nameReference.resolvedSymbol
             is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol
             else -> null
         }
@@ -367,7 +367,7 @@ class FirCallResolver(
                             coneSymbol !is FirPropertySymbol ||
                                     (coneSymbol.phasedFir(session) as FirMemberDeclaration).typeParameters.isEmpty()
                             ) ->
-                        FirResolvedCallableReferenceImpl(psi, name, coneSymbol)
+                        FirResolvedNamedReferenceImpl(psi, name, coneSymbol)
                     else -> FirNamedReferenceWithCandidate(psi, name, candidate)
                 }
             }

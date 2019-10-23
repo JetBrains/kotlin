@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeImplementationConfigurator
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
-import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.*
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.Object
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind.OpenClass
 
 object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() {
     private lateinit var abstractAnnotatedElement: Implementation
@@ -425,11 +426,11 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(resolvedCallableReference) {
+        impl(resolvedNamedReference) {
             defaultNull("candidateSymbol", withGetter = true)
         }
 
-        impl(resolvedCallableReference, "FirPropertyFromParameterCallableReference") {
+        impl(resolvedNamedReference, "FirPropertyFromParameterResolvedNamedReference") {
             defaultNull("candidateSymbol", withGetter = true)
         }
 

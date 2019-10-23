@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -19,7 +20,10 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
-import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.Variance
@@ -105,7 +109,7 @@ fun FirClassifierSymbol<*>.toIrSymbol(session: FirSession, declarationStorage: F
 
 fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? {
     return when (this) {
-        is FirResolvedCallableReference -> resolvedSymbol.toSymbol(declarationStorage)
+        is FirResolvedNamedReference -> resolvedSymbol.toSymbol(declarationStorage)
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol?.toSymbol(declarationStorage)) {
                 is IrClassSymbol -> boundSymbol.owner.thisReceiver?.symbol

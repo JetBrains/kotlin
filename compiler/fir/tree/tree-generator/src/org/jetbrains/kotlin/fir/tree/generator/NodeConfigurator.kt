@@ -448,7 +448,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +field("candidateSymbol", abstractFirBasedSymbolType, "*", nullable = true)
         }
 
-        resolvedCallableReference.configure {
+        resolvedNamedReference.configure {
             +field("resolvedSymbol", abstractFirBasedSymbolType, "*")
         }
 

@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.idea.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.runResolve
@@ -176,7 +177,7 @@ fun KtElement.getOrBuildFir(
 
             override fun visitNamedReference(namedReference: FirNamedReference) {}
 
-            override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {}
+            override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {}
 
             override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference) {}
 

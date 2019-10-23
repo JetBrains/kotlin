@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirBackingFieldReference : FirResolvedCallableReference() {
+abstract class FirBackingFieldReference : FirResolvedNamedReference() {
     abstract override val psi: PsiElement?
     abstract override val name: Name
     abstract override val candidateSymbol: AbstractFirBasedSymbol<*>?

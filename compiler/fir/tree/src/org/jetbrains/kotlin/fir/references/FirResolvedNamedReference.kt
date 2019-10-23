@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirResolvedCallableReference : FirNamedReference() {
+abstract class FirResolvedNamedReference : FirNamedReference() {
     abstract override val psi: PsiElement?
     abstract override val name: Name
     abstract override val candidateSymbol: AbstractFirBasedSymbol<*>?
     abstract val resolvedSymbol: AbstractFirBasedSymbol<*>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedCallableReference(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedNamedReference(this, data)
 }

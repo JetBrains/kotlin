@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStackImpl
@@ -486,12 +486,12 @@ class FirDataFlowAnalyzer(components: FirAbstractBodyResolveTransformer.BodyReso
             if (it is FirExplicitThisReference) {
                 it.boundSymbol
             } else {
-                (it as? FirResolvedCallableReference)?.resolvedSymbol
+                (it as? FirResolvedNamedReference)?.resolvedSymbol
             }
         }
 
     private fun FirFunctionCall.isBooleanNot(): Boolean {
-        val symbol = calleeReference.safeAs<FirResolvedCallableReference>()?.resolvedSymbol as? FirNamedFunctionSymbol ?: return false
+        val symbol = calleeReference.safeAs<FirResolvedNamedReference>()?.resolvedSymbol as? FirNamedFunctionSymbol ?: return false
         return symbol.callableId == KOTLIN_BOOLEAN_NOT
     }
 

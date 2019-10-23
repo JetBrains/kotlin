@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.toConeProjection
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -261,7 +261,7 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
             }
             if (firStaticProperty != null) {
                 FirQualifiedAccessExpressionImpl(null).apply {
-                    calleeReference = FirResolvedCallableReferenceImpl(
+                    calleeReference = FirResolvedNamedReferenceImpl(
                         null, name, firStaticProperty.symbol as FirCallableSymbol<*>
                     )
                 }

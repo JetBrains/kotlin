@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.impl.FirDelegateFieldReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
@@ -251,7 +251,7 @@ fun generateAccessExpression(psi: PsiElement?, name: Name): FirQualifiedAccessEx
 
 fun generateResolvedAccessExpression(psi: PsiElement?, variable: FirVariable<*>): FirQualifiedAccessExpression =
     FirQualifiedAccessExpressionImpl(psi).apply {
-        calleeReference = FirResolvedCallableReferenceImpl(psi, variable.name, variable.symbol)
+        calleeReference = FirResolvedNamedReferenceImpl(psi, variable.name, variable.symbol)
     }
 
 internal fun generateDestructuringBlock(
@@ -326,7 +326,7 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
         else FirConstExpressionImpl(null, IrConstKind.Null, null)
 
     fun propertyRef() = FirCallableReferenceAccessImpl(null).apply {
-        calleeReference = FirResolvedCallableReferenceImpl(null, variable.name, variable.symbol)
+        calleeReference = FirResolvedNamedReferenceImpl(null, variable.name, variable.symbol)
         typeRef = FirImplicitKPropertyTypeRef(null, ConeStarProjection)
     }
 
@@ -385,7 +385,7 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
                     arguments += thisRef()
                     arguments += propertyRef()
                     arguments += FirQualifiedAccessExpressionImpl(null).apply {
-                        calleeReference = FirResolvedCallableReferenceImpl(psi, DELEGATED_SETTER_PARAM, parameter.symbol)
+                        calleeReference = FirResolvedNamedReferenceImpl(psi, DELEGATED_SETTER_PARAM, parameter.symbol)
                     }
                 }
             )

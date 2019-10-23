@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -133,7 +133,7 @@ abstract class AbstractAnnotationDeserializer(
                 val entryLookupTag = ConeClassLikeLookupTagImpl(entryClassId)
                 val entrySymbol = entryLookupTag.toSymbol(this@AbstractAnnotationDeserializer.session)
                 this.calleeReference = entrySymbol?.let {
-                    FirResolvedCallableReferenceImpl(null, entryName, it)
+                    FirResolvedNamedReferenceImpl(null, entryName, it)
                 } ?: FirErrorNamedReferenceImpl(
                     null,
                     errorReason = "Strange deserialized enum value: $classId.$entryName"

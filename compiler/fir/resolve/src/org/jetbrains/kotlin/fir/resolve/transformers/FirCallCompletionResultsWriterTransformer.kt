@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedRealCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
@@ -52,7 +52,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         return qualifiedAccessExpression.transformCalleeReference(
             StoreCalleeReference,
-            FirResolvedCallableReferenceImpl(
+            FirResolvedNamedReferenceImpl(
                 calleeReference.psi,
                 calleeReference.name,
                 calleeReference.candidateSymbol
@@ -96,7 +96,7 @@ class FirCallCompletionResultsWriterTransformer(
             ?: return variableAssignment.compose()
         return variableAssignment.transformCalleeReference(
             StoreCalleeReference,
-            FirResolvedCallableReferenceImpl(
+            FirResolvedNamedReferenceImpl(
                 calleeReference.psi,
                 calleeReference.name,
                 calleeReference.candidateSymbol
@@ -148,7 +148,7 @@ class FirCallCompletionResultsWriterTransformer(
         return functionCall.copy(
             resultType = resultType,
             typeArguments = typeArguments,
-            calleeReference = FirResolvedCallableReferenceImpl(
+            calleeReference = FirResolvedNamedReferenceImpl(
                 calleeReference.psi,
                 calleeReference.name,
                 calleeReference.candidateSymbol
@@ -214,7 +214,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         return whenExpression.copy(
             resultType = resultType,
-            calleeReference = FirResolvedCallableReferenceImpl(
+            calleeReference = FirResolvedNamedReferenceImpl(
                 calleeReference.psi,
                 calleeReference.name,
                 calleeReference.candidateSymbol
@@ -240,7 +240,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         return tryExpression.copy(
             resultType = resultType,
-            calleeReference = FirResolvedCallableReferenceImpl(
+            calleeReference = FirResolvedNamedReferenceImpl(
                 calleeReference.psi,
                 calleeReference.name,
                 calleeReference.candidateSymbol

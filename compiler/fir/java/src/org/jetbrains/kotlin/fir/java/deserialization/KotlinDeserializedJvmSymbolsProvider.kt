@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.createConstant
 import org.jetbrains.kotlin.fir.java.topLevelName
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
-import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -214,12 +214,12 @@ class KotlinDeserializedJvmSymbolsProvider(
 
                     this.calleeReference = when {
                         entryClassSymbol != null && (entryClassSymbol as? FirClassSymbol)?.fir is FirEnumEntry -> {
-                            FirResolvedCallableReferenceImpl(
+                            FirResolvedNamedReferenceImpl(
                                 null, name, entryClassSymbol
                             )
                         }
                         entryCallableSymbol != null -> {
-                            FirResolvedCallableReferenceImpl(
+                            FirResolvedNamedReferenceImpl(
                                 null, name, entryCallableSymbol
                             )
                         }

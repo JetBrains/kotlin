@@ -100,7 +100,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.references.FirResolvedRealCallableReference
@@ -500,8 +500,8 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(controlFlowGraphReference, data)
     }
 
-    open fun transformResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): CompositeTransformResult<FirReference> {
-        return transformElement(resolvedCallableReference, data)
+    open fun transformResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: D): CompositeTransformResult<FirReference> {
+        return transformElement(resolvedNamedReference, data)
     }
 
     open fun transformDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: D): CompositeTransformResult<FirReference> {
@@ -932,8 +932,8 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformControlFlowGraphReference(controlFlowGraphReference, data)
     }
 
-    final override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): CompositeTransformResult<FirReference> {
-        return transformResolvedCallableReference(resolvedCallableReference, data)
+    final override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: D): CompositeTransformResult<FirReference> {
+        return transformResolvedNamedReference(resolvedNamedReference, data)
     }
 
     final override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: D): CompositeTransformResult<FirReference> {

@@ -807,22 +807,22 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print("|")
     }
 
-    override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
+    override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
         print("R|")
-        val isFakeOverride = (resolvedCallableReference.resolvedSymbol as? FirNamedFunctionSymbol)?.isFakeOverride == true
+        val isFakeOverride = (resolvedNamedReference.resolvedSymbol as? FirNamedFunctionSymbol)?.isFakeOverride == true
 
         if (isFakeOverride) {
             print("FakeOverride<")
         }
-        val symbol = resolvedCallableReference.resolvedSymbol
+        val symbol = resolvedNamedReference.resolvedSymbol
         print(symbol.render())
 
 
-        if (resolvedCallableReference is FirResolvedRealCallableReference) {
-            if (resolvedCallableReference.inferredTypeArguments.isNotEmpty()) {
+        if (resolvedNamedReference is FirResolvedRealCallableReference) {
+            if (resolvedNamedReference.inferredTypeArguments.isNotEmpty()) {
                 print("<")
 
-                resolvedCallableReference.inferredTypeArguments.renderTypesSeparated()
+                resolvedNamedReference.inferredTypeArguments.renderTypesSeparated()
 
                 print(">")
             }
@@ -845,7 +845,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     override fun visitResolvedRealCallableReference(resolvedRealCallableReference: FirResolvedRealCallableReference) {
-        visitResolvedCallableReference(resolvedRealCallableReference)
+        visitResolvedRealCallableReference(resolvedRealCallableReference)
     }
 
     override fun visitThisReference(thisReference: FirThisReference) {

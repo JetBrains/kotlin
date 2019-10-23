@@ -9,11 +9,11 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
@@ -198,7 +198,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitReferenceExpression(expression: KtReferenceExpression) {
             if (expression is KtOperationReferenceExpression) return
 
-            expression.firstOfTypeWithLocalReplace<FirResolvedCallableReference> { this.name.asString() }
+            expression.firstOfTypeWithLocalReplace<FirResolvedNamedReference> { this.name.asString() }
                 ?: expression.firstOfTypeWithRender<FirResolvedQualifier>()
                 ?: expression.firstOfTypeWithRender<FirElement>() //fallback for errors
             super.visitReferenceExpression(expression)
@@ -363,8 +363,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             visitElement(namedReference, data)
         }
 
-        override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: StringBuilder) {
-            val symbol = resolvedCallableReference.resolvedSymbol
+        override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: StringBuilder) {
+            val symbol = resolvedNamedReference.resolvedSymbol
             data.append(renderSymbol(symbol))
         }
 
@@ -399,7 +399,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitFunctionCall(functionCall: FirFunctionCall, data: StringBuilder) {
             when (val callee = functionCall.calleeReference) {
-                is FirResolvedCallableReference -> {
+                is FirResolvedNamedReference -> {
                     if (callee.resolvedSymbol is FirConstructorSymbol) {
                         data.append(renderSymbol(callee.resolvedSymbol))
                         visitArguments(functionCall.arguments, data)
