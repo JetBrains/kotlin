@@ -46,7 +46,7 @@ public class ReflectProperties {
     // A delegate for a lazy property, whose initializer may be invoked multiple times including simultaneously from different threads
     public static class LazyVal<T> extends Val<T> {
         private final Function0<T> initializer;
-        private Object value = null;
+        private volatile Object value = null;
 
         public LazyVal(@NotNull Function0<T> initializer) {
             this.initializer = initializer;
@@ -70,7 +70,7 @@ public class ReflectProperties {
     // including simultaneously from different threads
     public static class LazySoftVal<T> extends Val<T> {
         private final Function0<T> initializer;
-        private SoftReference<Object> value = null;
+        private volatile SoftReference<Object> value = null;
 
         public LazySoftVal(@Nullable T initialValue, @NotNull Function0<T> initializer) {
             this.initializer = initializer;
