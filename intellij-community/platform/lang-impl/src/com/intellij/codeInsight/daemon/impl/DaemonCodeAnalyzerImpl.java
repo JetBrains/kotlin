@@ -9,6 +9,7 @@ import com.intellij.codeInsight.daemon.*;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.intention.impl.FileLevelIntentionComponent;
 import com.intellij.codeInsight.intention.impl.IntentionHintComponent;
+import com.intellij.codeInspection.ex.GlobalInspectionContextBase;
 import com.intellij.diagnostic.ThreadDumper;
 import com.intellij.ide.PowerSaveMode;
 import com.intellij.lang.annotation.HighlightSeverity;
@@ -38,7 +39,6 @@ import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.impl.FileTypeManagerImpl;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -222,10 +222,7 @@ public class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implements Pers
     if (!ApplicationManager.getApplication().isReadAccessAllowed()) {
       throw new IllegalStateException("Must run highlighting from under read action");
     }
-    ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-    if (!(indicator instanceof DaemonProgressIndicator)) {
-      throw new IllegalStateException("Must run highlighting under progress with DaemonProgressIndicator");
-    }
+    GlobalInspectionContextBase.assertUnderDaemonProgress();
     // clear status maps to run passes from scratch so that refCountHolder won't conflict and try to restart itself on partially filled maps
     myFileStatusMap.markAllFilesDirty("prepare to run main passes");
     stopProcess(false, "disable background daemon");
