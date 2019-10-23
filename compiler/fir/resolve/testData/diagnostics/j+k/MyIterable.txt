@@ -6,3 +6,7 @@ FILE: test.kt
         }
 
     }
+    public final fun test(some: R|kotlin/collections/Iterable<kotlin/String>|): R|kotlin/Unit| {
+        lval it: R|kotlin/collections/Iterator<kotlin/String>| = R|<local>/some|.R|FakeOverride<kotlin/collections/Iterable.iterator: R|kotlin/collections/Iterator<kotlin/String>|>|()
+        lval split: <ERROR TYPE REF: Unresolved name: spliterator> = R|<local>/some|.<Unresolved name: spliterator>#()
+    }

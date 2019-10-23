@@ -9,3 +9,8 @@ interface UseIterable : MyIterable<String> {
         val split = spliterator()
     }
 }
+
+fun test(some: Iterable<String>) {
+    val it = some.iterator()
+    val split = some.spliterator()
+}

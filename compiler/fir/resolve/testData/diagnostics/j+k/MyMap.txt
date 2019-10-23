@@ -4,4 +4,34 @@ FILE: test.kt
             String(value)
         }
         )
+        lval otherResult: R|kotlin/String| = R|<local>/map|.R|FakeOverride<kotlin/collections/Map.getOrDefault: R|kotlin/String|>|(String(key), String(value))
+        lval anotherResult: <ERROR TYPE REF: Unresolved name: replace> = R|<local>/map|.<Unresolved name: replace>#(String(key), String(value))
+        R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(key: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|, value: R|kotlin/Any?|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
+        }
+        )
+        R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(<destruct>: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            lval key: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component1|<R|kotlin/String|, R|kotlin/String|>()
+            lval value: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component2|<R|kotlin/String|, R|kotlin/String|>()
+            R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
+        }
+        )
+    }
+    public final fun test(map: R|kotlin/collections/MutableMap<kotlin/String, kotlin/String>|): R|kotlin/Unit| {
+        lval result: R|kotlin/String| = R|<local>/map|.R|kotlin/collections/getOrPut|<R|kotlin/String|, R|kotlin/String|>(String(key), <L> = getOrPut@fun <anonymous>(): R|kotlin/String| <kind=EXACTLY_ONCE>  {
+            String(value)
+        }
+        )
+        lval otherResult: R|kotlin/String| = R|<local>/map|.R|FakeOverride<kotlin/collections/Map.getOrDefault: R|kotlin/String|>|(String(key), String(value))
+        lval anotherResult: <ERROR TYPE REF: Unresolved name: replace> = R|<local>/map|.<Unresolved name: replace>#(String(key), String(value))
+        R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(key: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|, value: R|kotlin/Any?|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
+        }
+        )
+        R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(<destruct>: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            lval key: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component1|<R|kotlin/String|, R|kotlin/String|>()
+            lval value: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component2|<R|kotlin/String|, R|kotlin/String|>()
+            R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
+        }
+        )
     }
