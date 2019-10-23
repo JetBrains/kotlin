@@ -220,6 +220,7 @@ private val jvmFilePhases =
         jvmOverloadsAnnotationPhase then
         jvmDefaultConstructorPhase then
 
+        forLoopsPhase then
         flattenStringConcatenationPhase then
         foldConstantLoweringPhase then
         computeStringTrimPhase then
@@ -237,7 +238,6 @@ private val jvmFilePhases =
 
         innerClassesPhase then
         innerClassConstructorCallsPhase then
-        forLoopsPhase then
 
         makePatchParentsPhase(2) then
 

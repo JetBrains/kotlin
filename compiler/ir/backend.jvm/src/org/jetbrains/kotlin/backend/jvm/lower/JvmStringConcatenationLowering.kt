@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.FlattenStringConcatenationLowering
+import org.jetbrains.kotlin.backend.common.lower.flattenStringConcatenationPhase
+import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.JvmIrBuilder
@@ -30,7 +32,10 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 internal val jvmStringConcatenationLowering = makeIrFilePhase(
     ::JvmStringConcatenationLowering,
     name = "StringConcatenation",
-    description = "Replace IrStringConcatenation with string builders"
+    description = "Replace IrStringConcatenation with string builders",
+    // flattenStringConcatenationPhase consolidates string concatenation expressions.
+    // forLoopsPhase may produce IrStringConcatenations.
+    prerequisite = setOf(flattenStringConcatenationPhase, forLoopsPhase)
 )
 
 /**
