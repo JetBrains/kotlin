@@ -1,4 +1,15 @@
-const util = require('util');
+import {
+    BLOCK_CLOSED,
+    BLOCK_OPENED,
+    formatMessage,
+    SUITE_END,
+    SUITE_START,
+    TEST_END,
+    TEST_FAILED,
+    TEST_IGNORED,
+    TEST_START
+} from "./src/teamcity-format";
+
 const resolve = require('path').resolve;
 
 /**
@@ -72,23 +83,6 @@ function createFormatError(config, emitter) {
  * The MIT License
  * Copyright (C) 2011-2013 Vojta Jína and contributors
  */
-const escapeMessage = function (message) {
-    if (message === null || message === undefined) {
-        return ''
-    }
-
-    return message.toString()
-        .replace(/\|/g, '||')
-        .replace(/'/g, "|'")
-        .replace(/\n/g, '|n')
-        .replace(/\r/g, '|r')
-        .replace(/\u0085/g, '|x')
-        .replace(/\u2028/g, '|l')
-        .replace(/\u2029/g, '|p')
-        .replace(/\[/g, '|[')
-        .replace(/]/g, '|]')
-};
-
 const hashString = function (s) {
     let hash = 0
     let i
@@ -104,16 +98,6 @@ const hashString = function (s) {
     return hash
 }
 
-const formatMessage = function () {
-    const args = Array.prototype.slice.call(arguments);
-
-    for (let i = args.length - 1; i > 0; i--) {
-        args[i] = escapeMessage(args[i])
-    }
-
-    return util.format.apply(null, args) + '\n'
-};
-
 // This reporter extends karma-teamcity-reporter
 //  It is necessary, because karma-teamcity-reporter can't write browser's log
 //  And additionally it overrides flushLogs, because flushLogs adds redundant spaces after some messages
@@ -122,15 +106,6 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
     const self = this
 
     const formatError = createFormatError(config, emitter)
-
-    this.TEST_IGNORED = "##teamcity[testIgnored name='%s' flowId='']"
-    this.SUITE_START = "##teamcity[testSuiteStarted name='%s' flowId='']"
-    this.SUITE_END = "##teamcity[testSuiteFinished name='%s' flowId='']"
-    this.TEST_START = "##teamcity[testStarted name='%s' flowId='']"
-    this.TEST_FAILED = "##teamcity[testFailed name='%s' message='FAILED' details='%s' flowId='']"
-    this.TEST_END = "##teamcity[testFinished name='%s' duration='%s' flowId='']"
-    this.BLOCK_OPENED = "##teamcity[blockOpened name='%s' flowId='']"
-    this.BLOCK_CLOSED = "##teamcity[blockClosed name='%s' flowId='']"
 
     const END_KOTLIN_TEST = "'--END_KOTLIN_TEST--"
 
@@ -147,7 +122,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
     }
 
     this.onRunStart = function (browsers) {
-        this.write(formatMessage(this.BLOCK_OPENED, 'JavaScript Unit Tests'))
+        this.write(formatMessage(BLOCK_OPENED, 'JavaScript Unit Tests'))
 
         this.browserResults = {}
         // Support Karma 0.10 (TODO: remove)
@@ -181,38 +156,38 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
         const log = this.getLog(browser, result)
         const testName = result.description
 
-        log.push(formatMessage(this.TEST_START, testName))
+        log.push(formatMessage(TEST_START, testName))
         this.browserResults[browser.id].consoleResultCollector[concatenateFqn(result)].forEach(item => {
             log.push(item)
         });
 
-        log.push(formatMessage(this.TEST_END, testName, result.time))
+        log.push(formatMessage(TEST_END, testName, result.time))
     }
 
     this.specFailure = function (browser, result) {
         const log = this.getLog(browser, result)
         const testName = result.description
 
-        log.push(formatMessage(this.TEST_START, testName))
+        log.push(formatMessage(TEST_START, testName))
 
         this.browserResults[browser.id].consoleResultCollector[concatenateFqn(result)].forEach(item => {
             log.push(item)
         });
 
-        log.push(formatMessage(this.TEST_FAILED, testName,
+        log.push(formatMessage(TEST_FAILED, testName, "FAILED",
                                result.log
                                    .map(log => formatError(log))
                                    .join('\n\n')
         ));
 
-        log.push(formatMessage(this.TEST_END, testName, result.time))
+        log.push(formatMessage(TEST_END, testName, result.time))
     }
 
     this.specSkipped = function (browser, result) {
         const log = this.getLog(browser, result)
         const testName = result.description
 
-        log.push(formatMessage(this.TEST_IGNORED, testName))
+        log.push(formatMessage(TEST_IGNORED, testName))
     }
 
     this.onRunComplete = function () {
@@ -220,12 +195,12 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
             const browserResult = self.browserResults[browserId]
             const log = browserResult.log
             if (browserResult.lastSuite) {
-                log.push(formatMessage(self.SUITE_END, browserResult.lastSuite))
+                log.push(formatMessage(SUITE_END, browserResult.lastSuite))
             }
 
             self.flushLogs(browserResult)
         })
-        self.write(formatMessage(self.BLOCK_CLOSED, 'JavaScript Unit Tests'))
+        self.write(formatMessage(BLOCK_CLOSED, 'JavaScript Unit Tests'))
     }
 
     this.getLog = function (browser, result) {
@@ -240,11 +215,11 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
         const log = browserResult.log
         if (browserResult.lastSuite !== suiteName) {
             if (browserResult.lastSuite) {
-                log.push(formatMessage(this.SUITE_END, browserResult.lastSuite))
+                log.push(formatMessage(SUITE_END, browserResult.lastSuite))
             }
             this.flushLogs(browserResult)
             browserResult.lastSuite = suiteName
-            log.push(formatMessage(this.SUITE_START, suiteName))
+            log.push(formatMessage(SUITE_START, suiteName))
         }
         return log
     }
@@ -252,7 +227,7 @@ const KarmaKotlinReporter = function (baseReporterDecorator, config, emitter) {
     this.flushLogs = function (browserResult) {
         while (browserResult.log.length > 0) {
             let line = browserResult.log.shift();
-            line = line.replace("flowId=''", "flowId='" + browserResult.flowId + "'");
+            line = line.replace("flowId='%s'", "flowId='" + browserResult.flowId + "'");
 
             this.write(line);
         }

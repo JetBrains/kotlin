@@ -11,19 +11,20 @@
  */
 'use strict';
 
-const processPID = process.pid.toString();
-const TEST_IGNORED = `##teamcity[testIgnored name='%s' message='%s' flowId='%s']`;
-const SUITE_START = `##teamcity[testSuiteStarted name='%s' flowId='%s']`;
-const SUITE_END = `##teamcity[testSuiteFinished name='%s' duration='%s' flowId='%s']`;
-const SUITE_END_NO_DURATION = `##teamcity[testSuiteFinished name='%s' flowId='%s']`;
-const TEST_START = `##teamcity[testStarted name='%s' captureStandardOutput='true' flowId='%s']`;
-const TEST_FAILED = `##teamcity[testFailed name='%s' message='%s' details='%s' captureStandardOutput='true' flowId='%s']`;
-const TEST_FAILED_COMPARISON = `##teamcity[testFailed type='comparisonFailure' name='%s' message='%s' \
-details='%s' captureStandardOutput='true' actual='%s' expected='%s' flowId='%s']`;
-const TEST_END = `##teamcity[testFinished name='%s' duration='%s' flowId='%s']`;
-const TEST_END_NO_DURATION = `##teamcity[testFinished name='%s' flowId='%s']`;
+import {
+    formatMessage,
+    SUITE_END,
+    SUITE_END_NO_DURATION,
+    SUITE_START,
+    TEST_END,
+    TEST_END_NO_DURATION,
+    TEST_FAILED,
+    TEST_FAILED_COMPARISON,
+    TEST_IGNORED,
+    TEST_START
+} from "./src/teamcity-format";
 
-const util = require('util');
+const processPID = process.pid.toString();
 
 let Base, log, logError;
 
@@ -31,42 +32,9 @@ Base = require('mocha').reporters.Base;
 log = console.log;
 logError = console.error;
 
-/**
- * Escape the given `str`.
- */
-
-function escape(str) {
-    if (!str) return '';
-    return str
-        .toString()
-        .replace(/\x1B.*?m/g, '') // eslint-disable-line no-control-regex
-        .replace(/\|/g, '||')
-        .replace(/\n/g, '|n')
-        .replace(/\r/g, '|r')
-        .replace(/\[/g, '|[')
-        .replace(/\]/g, '|]')
-        .replace(/\u0085/g, '|x')
-        .replace(/\u2028/g, '|l')
-        .replace(/\u2029/g, '|p')
-        .replace(/'/g, '|\'');
-}
-
 function isNil(value) {
     return value == null; 	// eslint-disable-line
 }
-
-function formatString() {
-    let formattedArguments = [];
-    const args = Array.prototype.slice.call(arguments, 0);
-    // Format all arguments for TC display (it escapes using the pipe char).
-    let tcMessage = args.shift();
-    args.forEach((param) => {
-        formattedArguments.push(escape(param));
-    });
-    formattedArguments.unshift(tcMessage);
-    return util.format.apply(util, formattedArguments);
-}
-
 
 /**
  * Initialize a new `Teamcity` reporter.
@@ -96,39 +64,41 @@ function Teamcity(runner, options) {
     runner.on('suite', function (suite) {
         if (suite.root) {
             if (topLevelSuite) {
-                log(formatString(SUITE_START, topLevelSuite, flowId));
+                log(formatMessage(SUITE_START, topLevelSuite, flowId));
             }
             return;
         }
         suite.startDate = new Date();
-        log(formatString(SUITE_START, suite.title, flowId));
+        log(formatMessage(SUITE_START, suite.title, flowId));
     });
 
     runner.on('test', function (test) {
-        log(formatString(TEST_START, test.title, flowId));
+        log(formatMessage(TEST_START, test.title, flowId));
     });
 
     runner.on('fail', function (test, err) {
         if (actualVsExpected && (err.actual && err.expected)) {
             if (useStdError) {
-                logError(formatString(TEST_FAILED_COMPARISON, test.title, err.message, err.stack, err.actual, err.expected, flowId));
+                logError(formatMessage(TEST_FAILED_COMPARISON, test.title, err.message, err.stack, err.actual,
+                                       err.expected, flowId));
             }
             else {
-                log(formatString(TEST_FAILED_COMPARISON, test.title, err.message, err.stack, err.actual, err.expected, flowId));
+                log(formatMessage(TEST_FAILED_COMPARISON, test.title, err.message, err.stack, err.actual,
+                                  err.expected, flowId));
             }
         }
         else {
             if (useStdError) {
-                logError(formatString(TEST_FAILED, test.title, err.message, err.stack, flowId));
+                logError(formatMessage(TEST_FAILED, test.title, err.message, err.stack, flowId));
             }
             else {
-                log(formatString(TEST_FAILED, test.title, err.message, err.stack, flowId));
+                log(formatMessage(TEST_FAILED, test.title, err.message, err.stack, flowId));
             }
         }
     });
 
     runner.on('pending', function (test) {
-        log(formatString(TEST_IGNORED, test.title, test.title, flowId));
+        log(formatMessage(TEST_IGNORED, test.title, test.title, flowId));
     });
 
     runner.on('test end', function (test) {
@@ -136,30 +106,30 @@ function Teamcity(runner, options) {
         if (test.isPending()) return
 
         if (isNil(test.duration)) {
-            log(formatString(TEST_END_NO_DURATION, test.title, flowId));
+            log(formatMessage(TEST_END_NO_DURATION, test.title, flowId));
         }
         else {
-            log(formatString(TEST_END, test.title, test.duration.toString(), flowId));
+            log(formatMessage(TEST_END, test.title, test.duration.toString(), flowId));
         }
     });
 
     runner.on('hook', function (test) {
         if (recordHookFailures) {
-            log(formatString(TEST_START, test.title, flowId));
+            log(formatMessage(TEST_START, test.title, flowId));
         }
     });
 
     runner.on('suite end', function (suite) {
         if (suite.root) return;
-        log(formatString(SUITE_END, suite.title, new Date() - suite.startDate, flowId));
+        log(formatMessage(SUITE_END, suite.title, new Date() - suite.startDate, flowId));
     });
 
     runner.on('end', function () {
         let duration;
         (typeof stats === 'undefined') ? duration = null : duration = stats.duration;
         if (topLevelSuite) {
-            isNil(duration) ? log(formatString(SUITE_END_NO_DURATION, topLevelSuite, flowId)) : log(
-                formatString(SUITE_END, topLevelSuite, duration, flowId));
+            isNil(duration) ? log(formatMessage(SUITE_END_NO_DURATION, topLevelSuite, flowId)) : log(
+                formatMessage(SUITE_END, topLevelSuite, duration, flowId));
         }
     });
 }
