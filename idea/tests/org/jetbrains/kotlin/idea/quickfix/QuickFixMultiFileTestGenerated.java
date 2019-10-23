@@ -1115,6 +1115,11 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 runTest("idea/testData/quickfix/autoImports/mismatchingArgs/extensionWrongReceiver.test");
             }
 
+            @TestMetadata("extensionWrongTypeParam.test")
+            public void testExtensionWrongTypeParam() throws Exception {
+                runTest("idea/testData/quickfix/autoImports/mismatchingArgs/extensionWrongTypeParam.test");
+            }
+
             @TestMetadata("ignoreErrorsOutsideCall.test")
             public void testIgnoreErrorsOutsideCall() throws Exception {
                 runTest("idea/testData/quickfix/autoImports/mismatchingArgs/ignoreErrorsOutsideCall.test");

@@ -567,7 +567,8 @@ internal class ImportForMismatchingArgumentsFix(
                 callExpression.valueArguments.mapNotNull { it.getArgumentName()?.referenceExpression } +
                 listOfNotNull(
                     callExpression.valueArgumentList,
-                    callExpression.referenceExpression()
+                    callExpression.referenceExpression(),
+                    callExpression.typeArgumentList
                 )
     }
 
