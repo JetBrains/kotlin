@@ -29,7 +29,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var outputFile: String? by NullableStringFreezableVar(null)
 
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
-    @Argument(value = "-no-stdlib", description = "Don't add the Kotlin/JS stdlib to compilation dependencies")
+    @Argument(value = "-no-stdlib", description = "Don't use the default Kotlin/JS stdlib as a compilation dependency")
     var noStdlib: Boolean by FreezableVar(false)
 
     @Argument(
