@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
+// TODO: we could get rid of this scope and use FirNestedClassifierScope instead,
+// but in this case we should make JavaSymbolProvider greedy related to nested classifiers
+// (or make possible to calculate nested classifiers on-the-fly)
 class FirLazyNestedClassifierScope(
     val classId: ClassId,
     session: FirSession

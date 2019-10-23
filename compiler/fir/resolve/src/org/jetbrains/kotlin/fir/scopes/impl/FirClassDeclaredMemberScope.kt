@@ -38,6 +38,7 @@ class FirMemberScopeProvider : FirSessionComponent {
         }
     }
 
+    // TODO: it's better to cache this scope in ScopeSession
     fun selfImportingScope(fqName: FqName, session: FirSession): FirSelfImportingScope {
         return selfImportingCache.getOrPut(fqName) {
             FirSelfImportingScope(fqName, session)
