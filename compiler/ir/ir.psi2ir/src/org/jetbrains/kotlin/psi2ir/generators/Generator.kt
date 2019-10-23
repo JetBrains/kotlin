@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.builders.IrGenerator
 import org.jetbrains.kotlin.ir.builders.IrGeneratorWithScope
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
@@ -44,11 +45,20 @@ fun <K, V : Any> Generator.getOrFail(slice: ReadOnlySlice<K, V>, key: K): V =
 inline fun <K, V : Any> Generator.getOrFail(slice: ReadOnlySlice<K, V>, key: K, message: (K) -> String): V =
     context.bindingContext[slice, key] ?: throw RuntimeException(message(key))
 
-fun Generator.getInferredTypeWithImplicitCasts(key: KtExpression): KotlinType? =
+fun Generator.getTypeInferredByFrontend(key: KtExpression): KotlinType? =
     context.bindingContext.getType(key)
 
-fun Generator.getInferredTypeWithImplicitCastsOrFail(key: KtExpression): KotlinType =
-    getInferredTypeWithImplicitCasts(key) ?: throw RuntimeException("No type for expression: ${key.text}")
+fun Generator.getTypeInferredByFrontendOrFail(key: KtExpression): KotlinType =
+    getTypeInferredByFrontend(key) ?: throw RuntimeException("No type for expression: ${key.text}")
+
+fun Generator.getExpressionTypeWithCoercionToUnit(key: KtExpression): KotlinType? =
+    if (key.isUsedAsExpression(context.bindingContext))
+        getTypeInferredByFrontend(key)
+    else
+        context.builtIns.unitType
+
+fun Generator.getExpressionTypeWithCoercionToUnitOrFail(key: KtExpression): KotlinType =
+    getExpressionTypeWithCoercionToUnit(key) ?: throw RuntimeException("No type for expression: ${key.text}")
 
 fun Generator.getResolvedCall(key: KtElement): ResolvedCall<out CallableDescriptor>? =
     key.getResolvedCall(context.bindingContext)

@@ -36,22 +36,22 @@ FILE fqName:<root> fileName:/ifElseIf.kt
   FUN name:testEmptyBranches2 visibility:public modality:FINAL <> (flag:kotlin.Boolean) returnType:kotlin.Unit
     VALUE_PARAMETER name:flag index:0 type:kotlin.Boolean
     BLOCK_BODY
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        WHEN type=kotlin.Any origin=IF
-          BRANCH
-            if: GET_VAR 'flag: kotlin.Boolean declared in <root>.testEmptyBranches2' type=kotlin.Boolean origin=null
-            then: BLOCK type=kotlin.Unit origin=null
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: CONST Boolean type=kotlin.Boolean value=true
-      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        WHEN type=kotlin.Any origin=IF
-          BRANCH
-            if: GET_VAR 'flag: kotlin.Boolean declared in <root>.testEmptyBranches2' type=kotlin.Boolean origin=null
-            then: CONST Boolean type=kotlin.Boolean value=true
-          BRANCH
-            if: CONST Boolean type=kotlin.Boolean value=true
-            then: BLOCK type=kotlin.Unit origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: GET_VAR 'flag: kotlin.Boolean declared in <root>.testEmptyBranches2' type=kotlin.Boolean origin=null
+          then: BLOCK type=kotlin.Unit origin=null
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            CONST Boolean type=kotlin.Boolean value=true
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: GET_VAR 'flag: kotlin.Boolean declared in <root>.testEmptyBranches2' type=kotlin.Boolean origin=null
+          then: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            CONST Boolean type=kotlin.Boolean value=true
+        BRANCH
+          if: CONST Boolean type=kotlin.Boolean value=true
+          then: BLOCK type=kotlin.Unit origin=null
   FUN name:testEmptyBranches3 visibility:public modality:FINAL <> (flag:kotlin.Boolean) returnType:kotlin.Unit
     VALUE_PARAMETER name:flag index:0 type:kotlin.Boolean
     BLOCK_BODY

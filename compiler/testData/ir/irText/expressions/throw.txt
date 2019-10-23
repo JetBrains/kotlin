@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/throw.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Throwable
             GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Any origin=null
-          then: BLOCK type=kotlin.Nothing origin=null
+          then: BLOCK type=kotlin.Unit origin=null
             THROW type=kotlin.Nothing
               TYPE_OP type=kotlin.Throwable origin=IMPLICIT_CAST typeOperand=kotlin.Throwable
                 GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Any origin=null

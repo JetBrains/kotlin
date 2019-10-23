@@ -161,7 +161,7 @@ class StatementGenerator(
         val isBlockBody = expression.parent is KtDeclarationWithBody && expression.parent !is KtFunctionLiteral
         if (isBlockBody) throw AssertionError("Use IrBlockBody and corresponding body generator to generate blocks as function bodies")
 
-        val returnType = getInferredTypeWithImplicitCasts(expression) ?: context.builtIns.unitType
+        val returnType = getExpressionTypeWithCoercionToUnitOrFail(expression)
         val irBlock = IrBlockImpl(expression.startOffsetSkippingComments, expression.endOffset, returnType.toIrType())
 
         expression.statements.forEach {
@@ -226,14 +226,14 @@ class StatementGenerator(
         context.constantValueGenerator.generateConstantValueAsExpression(
             expression.startOffsetSkippingComments,
             expression.endOffset,
-            constant.toConstantValue(getInferredTypeWithImplicitCastsOrFail(expression))
+            constant.toConstantValue(getTypeInferredByFrontendOrFail(expression))
         )
 
     override fun visitStringTemplateExpression(expression: KtStringTemplateExpression, data: Nothing?): IrStatement {
         val startOffset = expression.startOffsetSkippingComments
         val endOffset = expression.endOffset
 
-        val resultType = getInferredTypeWithImplicitCastsOrFail(expression).toIrType()
+        val resultType = getTypeInferredByFrontendOrFail(expression).toIrType()
         val entries = expression.entries.map { it.genExpr() }.postprocessStringTemplateEntries()
 
         return when (entries.size) {

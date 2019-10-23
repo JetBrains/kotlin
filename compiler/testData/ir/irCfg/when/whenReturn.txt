@@ -2,10 +2,10 @@
 // FUN: toString
 BB 0
 CONTENT
-      1 FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String 
+      1 FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String
       2 GET_VAR 'grade: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
-      3 VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.String [val] 
-      4 WHEN type=kotlin.Nothing origin=WHEN
+      3 VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.String [val]
+      4 WHEN type=kotlin.Unit origin=WHEN
       5 GET_VAR 'val tmp0_subject: kotlin.String [val] declared in <root>.toString' type=kotlin.String origin=null
       6 CONST String type=kotlin.String value="A"
 OUTGOING -> BB 1, 5
@@ -47,7 +47,7 @@ CONTENT
       1 CONST String type=kotlin.String value="Excellent"
       2 RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
 OUTGOING -> NONE
-    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String 
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String
 BB 6
 INCOMING <- BB 1
     CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -55,7 +55,7 @@ CONTENT
       1 CONST String type=kotlin.String value="Good"
       2 RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
 OUTGOING -> NONE
-    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String 
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String
 BB 7
 INCOMING <- BB 2
     CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -63,7 +63,7 @@ CONTENT
       1 CONST String type=kotlin.String value="Mediocre"
       2 RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
 OUTGOING -> NONE
-    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String 
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String
 BB 8
 INCOMING <- BB 3
     CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -71,7 +71,7 @@ CONTENT
       1 CONST String type=kotlin.String value="Fair"
       2 RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
 OUTGOING -> NONE
-    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String 
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String
 BB 9
 INCOMING <- BB 4
     CONST Boolean type=kotlin.Boolean value=true
@@ -79,7 +79,7 @@ CONTENT
       1 CONST String type=kotlin.String value="Failure"
       2 RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
 OUTGOING -> NONE
-    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String 
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String
 BB 10
 INCOMING <- BB 4
     CONST Boolean type=kotlin.Boolean value=true
@@ -87,7 +87,7 @@ CONTENT
       1 CONST String type=kotlin.String value="???"
       2 RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
 OUTGOING -> NONE
-    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String 
+    Function exit: FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String
 
 // END FUN: toString
 

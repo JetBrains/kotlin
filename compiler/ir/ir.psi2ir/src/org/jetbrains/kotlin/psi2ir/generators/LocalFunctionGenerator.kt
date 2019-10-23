@@ -28,7 +28,7 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
 
     fun generateLambda(ktLambda: KtLambdaExpression): IrStatement {
         val ktFun = ktLambda.functionLiteral
-        val lambdaExpressionType = getInferredTypeWithImplicitCastsOrFail(ktLambda).toIrType()
+        val lambdaExpressionType = getTypeInferredByFrontendOrFail(ktLambda).toIrType()
         val irLambdaFunction = FunctionGenerator(context).generateLambdaFunctionDeclaration(ktFun)
 
         return IrFunctionExpressionImpl(
@@ -43,7 +43,7 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
         val irFun = generateFunctionDeclaration(ktFun)
         if (ktFun.name != null) return irFun
 
-        val funExpressionType = getInferredTypeWithImplicitCastsOrFail(ktFun).toIrType()
+        val funExpressionType = getTypeInferredByFrontendOrFail(ktFun).toIrType()
         return IrFunctionExpressionImpl(
             ktFun.startOffset, ktFun.endOffset,
             funExpressionType,
