@@ -165,12 +165,13 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             //language=ES6
             it.appendln(
                 """
-                (function() {
+                // noinspection JSUnnecessarySemicolon
+                ;(function(config) {
                     const webpack = require('webpack');
                     config.plugins.push(new webpack.SourceMapDevToolPlugin({
                         moduleFilenameTemplate: "[absolute-resource-path]"
                     }))
-                })();
+                })(config);
             """.trimIndent()
             )
 
@@ -244,16 +245,16 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private fun createAdapterJs() {
         configurators.add {
             val npmProject = compilation.npmProject
-            val files = it.nodeModulesToLoad.map { npmProject.require(it) }
+            val file = it.nodeModulesToLoad
+                .map { npmProject.require(it) }
+                .single()
 
             val adapterJs = npmProject.dir.resolve("adapter-browser.js")
             adapterJs.printWriter().use { writer ->
                 val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
                 writer.println("require(${karmaRunner.jsQuoted()})")
 
-                files.forEach { file ->
-                    writer.println("require(${file.jsQuoted()})")
-                }
+                writer.println("module.exports = require(${file.jsQuoted()})")
             }
 
             config.files.add(adapterJs.canonicalPath)

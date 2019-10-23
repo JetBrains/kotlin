@@ -98,7 +98,7 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             val adapter = npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-runner.js")
             writer.println("require(${adapter.jsQuoted()})")
 
-            writer.println("require(${file.jsQuoted()})")
+            writer.println("module.exports = require(${file.jsQuoted()})")
         }
     }
 

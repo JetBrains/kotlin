@@ -227,7 +227,8 @@ data class KotlinWebpackConfig(
         appendln(
             """
                 // Report progress to console
-                (function(config) {
+                // noinspection JSUnnecessarySemicolon
+                ;(function(config) {
                     const webpack = require('webpack');
                     const handler = (percentage, message, ...args) => {
                         let p = percentage * 100;
