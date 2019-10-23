@@ -306,7 +306,7 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         return if (provideDelegateResolvedCall != null)
             provideDelegateResolvedCall.resultingDescriptor.returnType!!
         else
-            getInferredTypeWithImplicitCastsOrFail(ktDelegate.expression!!)
+            getTypeInferredByFrontendOrFail(ktDelegate.expression!!)
     }
 
     private fun generateInitializerForLocalDelegatedPropertyDelegate(

@@ -66,7 +66,7 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
     }
 
     private fun getErrorExpressionType(ktExpression: KtExpression) =
-        getInferredTypeWithImplicitCasts(ktExpression) ?: ErrorUtils.createErrorType("")
+        getTypeInferredByFrontend(ktExpression) ?: ErrorUtils.createErrorType("")
 
     fun generateErrorSimpleName(ktName: KtSimpleNameExpression): IrExpression = generateErrorExpression(ktName) {
         val type = getErrorExpressionType(ktName).toIrType()

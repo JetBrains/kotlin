@@ -29,7 +29,7 @@ class LocalClassGenerator(statementGenerator: StatementGenerator) : StatementGen
     fun generateObjectLiteral(ktObjectLiteral: KtObjectLiteralExpression): IrStatement {
         val startOffset = ktObjectLiteral.startOffsetSkippingComments
         val endOffset = ktObjectLiteral.endOffset
-        val objectLiteralType = getInferredTypeWithImplicitCastsOrFail(ktObjectLiteral).toIrType()
+        val objectLiteralType = getTypeInferredByFrontendOrFail(ktObjectLiteral).toIrType()
         val irBlock = IrBlockImpl(startOffset, endOffset, objectLiteralType, IrStatementOrigin.OBJECT_LITERAL)
 
         val irClass = DeclarationGenerator(statementGenerator.context).generateClassOrObjectDeclaration(ktObjectLiteral.objectDeclaration)

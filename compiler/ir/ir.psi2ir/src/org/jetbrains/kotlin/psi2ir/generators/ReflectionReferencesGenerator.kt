@@ -37,7 +37,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     fun generateClassLiteral(ktClassLiteral: KtClassLiteralExpression): IrExpression {
         val ktArgument = ktClassLiteral.receiverExpression!!
         val lhs = getOrFail(BindingContext.DOUBLE_COLON_LHS, ktArgument)
-        val resultType = getInferredTypeWithImplicitCastsOrFail(ktClassLiteral).toIrType()
+        val resultType = getTypeInferredByFrontendOrFail(ktClassLiteral).toIrType()
 
         return if (lhs is DoubleColonLHS.Expression && !lhs.isObjectQualifier) {
             IrGetClassImpl(
@@ -69,7 +69,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         ).call { dispatchReceiverValue, extensionReceiverValue ->
             generateCallableReference(
                 ktCallableReference,
-                getInferredTypeWithImplicitCastsOrFail(ktCallableReference),
+                getTypeInferredByFrontendOrFail(ktCallableReference),
                 callBuilder.descriptor,
                 callBuilder.typeArguments
             ).also { irCallableReference ->

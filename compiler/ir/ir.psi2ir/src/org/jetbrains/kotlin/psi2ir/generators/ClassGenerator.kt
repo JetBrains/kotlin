@@ -173,7 +173,7 @@ class ClassGenerator(
         delegatedMembers: List<CallableMemberDescriptor>
     ) {
         val ktDelegateExpression = ktEntry.delegateExpression!!
-        val delegateType = getInferredTypeWithImplicitCastsOrFail(ktDelegateExpression)
+        val delegateType = getTypeInferredByFrontendOrFail(ktDelegateExpression)
         val superType = getOrFail(BindingContext.TYPE, ktEntry.typeReference!!)
         val superTypeConstructorDescriptor = superType.constructor.declarationDescriptor
         val superClass = superTypeConstructorDescriptor as? ClassDescriptor
