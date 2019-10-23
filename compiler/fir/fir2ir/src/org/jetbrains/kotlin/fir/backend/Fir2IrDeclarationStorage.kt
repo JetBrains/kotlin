@@ -510,7 +510,8 @@ class Fir2IrDeclarationStorage(
                         isDelegated = property.delegate != null,
                         // TODO
                         isExternal = false,
-                        isExpect = property.isExpect
+                        isExpect = property.isExpect,
+                        isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
                     ).apply {
                         descriptor.bind(this)
                         val type = property.returnTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
