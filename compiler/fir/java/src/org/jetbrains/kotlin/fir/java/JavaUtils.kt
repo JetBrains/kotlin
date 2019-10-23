@@ -338,19 +338,27 @@ internal fun FirFunction<*>.computeJvmDescriptor(): String = buildString {
 
 // TODO: primitive types, arrays, etc.
 private fun StringBuilder.appendErasedType(typeRef: FirTypeRef) {
+    fun appendClass(klass: JavaClass) {
+        klass.fqName?.let {
+            append("L")
+            append(it.asString().replace(".", "/"))
+        }
+    }
+
     when (typeRef) {
         is FirResolvedTypeRef -> appendConeType(typeRef.type)
         is FirJavaTypeRef -> {
             when (val javaType = typeRef.type) {
                 is JavaClassifierType -> {
                     when (val classifier = javaType.classifier) {
-                        is JavaClass -> classifier.fqName?.let {
-                            append("L")
-                            append(it.asString().replace(".", "/"))
-                        }
+                        is JavaClass -> appendClass(classifier)
                         is JavaTypeParameter -> {
-                            append("L")
-                            append(classifier.name)
+                            val representative = classifier.upperBounds.firstOrNull { it.classifier is JavaClass }
+                            if (representative == null) {
+                                append("Ljava/lang/Object")
+                            } else {
+                                appendClass(representative.classifier as JavaClass)
+                            }
                         }
                         else -> return
                     }
@@ -362,16 +370,30 @@ private fun StringBuilder.appendErasedType(typeRef: FirTypeRef) {
 }
 
 private fun StringBuilder.appendConeType(coneType: ConeKotlinType) {
+    fun appendClassLikeType(type: ConeClassLikeType) {
+        append("L")
+        val classId = type.lookupTag.classId
+        append(classId.packageFqName.asString().replace(".", "/"))
+        append("/")
+        append(classId.relativeClassName)
+    }
+
     if (coneType is ConeClassErrorType) return
-    append("L")
     when (coneType) {
         is ConeClassLikeType -> {
-            val classId = coneType.lookupTag.classId
-            append(classId.packageFqName.asString().replace(".", "/"))
-            append("/")
-            append(classId.relativeClassName)
+            appendClassLikeType(coneType)
         }
-        is ConeTypeParameterType -> append(coneType.lookupTag.name)
+        is ConeTypeParameterType -> {
+            val representative = coneType.lookupTag.typeParameterSymbol.fir.bounds.firstOrNull {
+                (it as? FirResolvedTypeRef)?.type is ConeClassLikeType
+            }
+            if (representative == null) {
+                append("Ljava/lang/Object")
+            } else {
+                appendClassLikeType(representative.coneTypeUnsafe())
+            }
+            append(coneType.lookupTag.name)
+        }
     }
     append(";")
 }
