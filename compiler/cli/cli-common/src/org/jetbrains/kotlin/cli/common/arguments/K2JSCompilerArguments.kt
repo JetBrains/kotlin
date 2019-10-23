@@ -29,7 +29,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var outputFile: String? by NullableStringFreezableVar(null)
 
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
-    @Argument(value = "-no-stdlib", description = "Exclude kotlin-stdlib-js.jar from the compilation dependencies")
+    @Argument(value = "-no-stdlib", description = "Don't add the Kotlin/JS stdlib to compilation dependencies")
     var noStdlib: Boolean by FreezableVar(false)
 
     @Argument(
@@ -100,7 +100,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(
             value = "-output-postfix",
             valueDescription = "<path>",
-            description = "Add the content of the specified file to the end of output file."
+            description = "Add the content of the specified file to the end of output file"
     )
     var outputPostfix: String? by NullableStringFreezableVar(null)
 
