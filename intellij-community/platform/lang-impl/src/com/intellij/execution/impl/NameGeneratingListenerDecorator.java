@@ -47,7 +47,12 @@ public class NameGeneratingListenerDecorator implements RefactoringElementListen
     boolean hasGeneratedName = myConfiguration.isGeneratedName();
     myListener.elementRenamed(newElement);
     if (hasGeneratedName) {
+      RunManagerImpl runManager = RunManagerImpl.getInstanceImpl(myConfiguration.getProject());
       myConfiguration.setName(myConfiguration.suggestedName());
+      RunnerAndConfigurationSettingsImpl settings = runManager.getSettings(myConfiguration);
+      if (settings != null) {
+        runManager.addConfiguration(settings);
+      }
     }
   }
 
