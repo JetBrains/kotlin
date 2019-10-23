@@ -48,9 +48,9 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m2.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1
         VALUE_PARAMETER name:value index:0 type:T of <root>.Derived1
         BLOCK_BODY
-    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Derived1) returnType:T of <root>.Derived1 [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-x> (): T of <root>.Base declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Derived1

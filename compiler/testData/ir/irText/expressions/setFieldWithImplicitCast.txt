@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/Derived.kt
                 receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setValue' type=<root>.Derived origin=null
                 value: TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
                   GET_VAR 'v: kotlin.Any declared in <root>.Derived.setValue' type=kotlin.Any origin=null
-    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [var]
+    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,var]
       FIELD FAKE_OVERRIDE name:value type:kotlin.String? visibility:public
         overridden:
           FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.String? visibility:public

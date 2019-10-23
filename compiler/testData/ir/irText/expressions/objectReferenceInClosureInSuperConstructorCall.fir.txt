@@ -40,9 +40,9 @@ FILE fqName:<root> fileName:/objectReferenceInClosureInSuperConstructorCall.kt
               BLOCK_BODY
                 ERROR_CALL 'Unresolved reference: Test#' type=IrErrorType
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Test modality:FINAL visibility:public superTypes:[<root>.Base]'
-    PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL [val]
+    PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-lambda> visibility:public modality:FINAL <> ($this:<root>.Test) returnType:kotlin.Function0<kotlin.Any> [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:lambda visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-lambda> (): kotlin.Function0<kotlin.Any> declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Test

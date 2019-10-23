@@ -417,6 +417,7 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             "lateinit".takeIf { isLateinit },
             "delegated".takeIf { isDelegated },
             "expect".takeIf { isExpect },
+            "fake_override".takeIf { isFakeOverride },
             if (isVar) "var" else "val"
         )
 

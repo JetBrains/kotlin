@@ -10,4 +10,3 @@ FILE fqName:<root> fileName:/simple.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
-

@@ -118,9 +118,9 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-g2> (): T of <uninitialized parent> declared in <root>.C'
             ERROR_CALL 'Unresolved reference: this@R|/C.g2|' type=T of <uninitialized parent>
-    PROPERTY FAKE_OVERRIDE name:fromClass visibility:public modality:FINAL [val]
+    PROPERTY FAKE_OVERRIDE name:fromClass visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-fromClass> visibility:public modality:FINAL <> ($this:<root>.C) returnType:T of <uninitialized parent> [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:fromClass visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:fromClass visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-fromClass> (): T of <uninitialized parent> declared in <root>.BaseClass
         $this: VALUE_PARAMETER name:<this> type:<root>.C

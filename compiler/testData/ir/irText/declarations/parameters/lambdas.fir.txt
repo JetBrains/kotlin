@@ -51,4 +51,3 @@ FILE fqName:<root> fileName:/lambdas.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:private [final,static]' type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=null
-

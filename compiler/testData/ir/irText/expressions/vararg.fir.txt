@@ -33,4 +33,3 @@ FILE fqName:<root> fileName:/vararg.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:private [final,static]' type=IrErrorType origin=null
-

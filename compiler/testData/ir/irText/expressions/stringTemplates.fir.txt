@@ -96,4 +96,3 @@ FILE fqName:<root> fileName:/stringTemplates.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test9> (): kotlin.Int declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test9 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
-

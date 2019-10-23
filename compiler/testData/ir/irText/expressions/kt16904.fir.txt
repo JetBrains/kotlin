@@ -86,20 +86,20 @@ FILE fqName:<root> fileName:/kt16904.kt
             other: CONST Int type=kotlin.Int value=42
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.A]'
-    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:<root>.B [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-x> (): <root>.B declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1
-    PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
+    PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
         overridden:
           public final fun <get-y> (): kotlin.Int declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       FUN FAKE_OVERRIDE name:<set-y> visibility:public modality:FINAL <> ($this:<root>.Test1, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
         overridden:
           public final fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1

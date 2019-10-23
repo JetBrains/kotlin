@@ -35,6 +35,7 @@ interface IrProperty :
     val isDelegated: Boolean
     val isExternal: Boolean
     val isExpect: Boolean
+    val isFakeOverride: Boolean
 
     var backingField: IrField?
     var getter: IrSimpleFunction?

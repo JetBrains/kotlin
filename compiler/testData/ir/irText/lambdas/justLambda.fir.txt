@@ -23,4 +23,3 @@ FILE fqName:<root> fileName:/justLambda.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Function0<kotlin.Unit> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function0<kotlin.Unit> visibility:private [final,static]' type=kotlin.Function0<kotlin.Unit> origin=null
-

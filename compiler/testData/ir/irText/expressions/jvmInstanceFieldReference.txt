@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/Derived.kt
         SET_FIELD 'FIELD FAKE_OVERRIDE name:value type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.setValue' type=<root>.Derived origin=null
           value: GET_VAR 'value: kotlin.Int declared in <root>.Derived.setValue' type=kotlin.Int origin=null
-    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [var]
+    PROPERTY FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,var]
       FIELD FAKE_OVERRIDE name:value type:kotlin.Int visibility:public
         overridden:
           FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:value type:kotlin.Int visibility:public

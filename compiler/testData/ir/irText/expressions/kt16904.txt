@@ -93,20 +93,20 @@ FILE fqName:<root> fileName:/kt16904.kt
               $this: CALL 'public final fun <get-y> (): kotlin.Int [fake_override] declared in <root>.Test1' type=kotlin.Int origin=PLUSEQ
                 $this: GET_VAR 'val tmp1_this: <root>.Test1 [val] declared in <root>.Test1.<init>' type=<root>.Test1 origin=null
               other: CONST Int type=kotlin.Int value=42
-    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.A) returnType:<root>.B [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-x> (): <root>.B declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.A
-    PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
+    PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
         overridden:
           public final fun <get-y> (): kotlin.Int declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.A
       FUN FAKE_OVERRIDE name:<set-y> visibility:public modality:FINAL <> ($this:<root>.A, <set-?>:kotlin.Int) returnType:kotlin.Unit [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [var]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,var]
         overridden:
           public final fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.A
         $this: VALUE_PARAMETER name:<this> type:<root>.A
@@ -135,7 +135,7 @@ FILE fqName:<root> fileName:/kt16904.kt
         SET_FIELD 'FIELD FAKE_OVERRIDE name:field type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
           receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2' type=<root>.Test2 origin=null
           value: CONST Int type=kotlin.Int value=42
-    PROPERTY FAKE_OVERRIDE name:field visibility:public modality:FINAL [var]
+    PROPERTY FAKE_OVERRIDE name:field visibility:public modality:FINAL [fake_override,var]
       FIELD FAKE_OVERRIDE name:field type:kotlin.Int visibility:public
         overridden:
           FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:field type:kotlin.Int visibility:public

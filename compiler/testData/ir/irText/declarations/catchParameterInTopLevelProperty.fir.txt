@@ -12,4 +12,3 @@ FILE fqName:<root> fileName:/catchParameterInTopLevelProperty.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Unit declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Unit visibility:private [final,static]' type=kotlin.Unit origin=null
-

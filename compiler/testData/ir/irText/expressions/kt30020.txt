@@ -232,9 +232,9 @@ FILE fqName:<root> fileName:/kt30020.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableList<kotlin.Int>
       VALUE_PARAMETER name:fromIndex index:0 type:kotlin.Int
       VALUE_PARAMETER name:toIndex index:1 type:kotlin.Int
-    PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [val]
+    PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-size> visibility:public modality:ABSTRACT <> ($this:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Int [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:size visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int [fake_override] declared in kotlin.collections.MutableList
         $this: VALUE_PARAMETER name:<this> type:kotlin.collections.List<kotlin.Int>

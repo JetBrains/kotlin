@@ -57,15 +57,15 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
             x: GET_VAR 'val tmp1_x: kotlin.Int [val] declared in <root>.Test1.<init>' type=kotlin.Int origin=null
             y: GET_VAR 'val tmp0_y: kotlin.Int [val] declared in <root>.Test1.<init>' type=kotlin.Int origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.Base]'
-    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-x> (): kotlin.Int declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Base
-    PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [val]
+    PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-y> (): kotlin.Int declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Base
@@ -110,15 +110,15 @@ FILE fqName:<root> fileName:/argumentReorderingInDelegatingConstructorCall.kt
           DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (xx: kotlin.Int, yy: kotlin.Int) declared in <root>.Test2'
             xx: GET_VAR 'val tmp1_xx: kotlin.Int [val] declared in <root>.Test2.<init>' type=kotlin.Int origin=null
             yy: GET_VAR 'val tmp0_yy: kotlin.Int [val] declared in <root>.Test2.<init>' type=kotlin.Int origin=null
-    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+    PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-x> (): kotlin.Int declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Base
-    PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [val]
+    PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:kotlin.Int [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:y visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-y> (): kotlin.Int declared in <root>.Base
         $this: VALUE_PARAMETER name:<this> type:<root>.Base

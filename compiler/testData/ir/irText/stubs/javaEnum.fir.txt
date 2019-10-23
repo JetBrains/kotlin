@@ -8,4 +8,3 @@ FILE fqName:<root> fileName:/javaEnum.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): <root>.JEnum? declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:<root>.JEnum? visibility:private [final,static]' type=<root>.JEnum? origin=null
-

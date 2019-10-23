@@ -40,9 +40,9 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
         public abstract fun foo (x: kotlin.Int): kotlin.Unit declared in <root>.IBase
       $this: VALUE_PARAMETER name:<this> type:<root>.IBase
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
-    PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [val]
+    PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
       FUN FAKE_OVERRIDE name:<get-bar> visibility:public modality:ABSTRACT <> ($this:<root>.Test) returnType:kotlin.Int [fake_override]
-        correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [val]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:bar visibility:public modality:ABSTRACT [fake_override,val]
         overridden:
           public abstract fun <get-bar> (): kotlin.Int declared in <root>.IBase
         $this: VALUE_PARAMETER name:<this> type:<root>.Test

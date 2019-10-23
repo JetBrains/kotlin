@@ -72,4 +72,3 @@ FILE fqName:<root> fileName:/constValInitializers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-STR4> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:STR4 type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
-
