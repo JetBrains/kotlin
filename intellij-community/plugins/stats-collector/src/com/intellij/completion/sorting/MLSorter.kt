@@ -147,7 +147,7 @@ class MLSorter : CompletionFinalSorter() {
     }
 
     if (mlScoresUsed) {
-      lookupStorage.performanceTracker.reorderedByML()
+      lookupStorage.fireReorderedUsingMLScores()
       val topItemsCount = if (reorderOnlyTopItems) REORDER_ONLY_TOP_K else Int.MAX_VALUE
       return items.reorderByMLScores(element2score, topItemsCount).addDiagnosticsIfNeeded(positionsBefore, topItemsCount)
     }

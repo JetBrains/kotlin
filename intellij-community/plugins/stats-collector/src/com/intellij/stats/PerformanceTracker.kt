@@ -9,9 +9,14 @@ class PerformanceTracker {
 
   private val measures: ConcurrentHashMap<String, LongAdder> = ConcurrentHashMap()
 
+  private var totalMlContribution: Long = 0L
+
+  fun totalMLTimeContribution(): Long = totalMlContribution
+
   fun sortingPerformed(itemsCount: Int, totalTime: Long) {
     addByKey("sorting.items.$sortingCount", itemsCount.toLong())
     addByKey("sorting.time.$sortingCount", totalTime)
+    totalMlContribution += totalTime
     sortingCount += 1
   }
 

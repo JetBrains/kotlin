@@ -20,6 +20,7 @@ interface LookupStorage {
   val userFactors: Map<String, String>
   val contextFactors: Map<String, String>
   val performanceTracker: PerformanceTracker
+  fun mlUsed(): Boolean
   fun contextProvidersResult(): ContextFeatures
   fun shouldComputeFeatures(): Boolean
   fun getItemStorage(id: String): LookupElementStorage

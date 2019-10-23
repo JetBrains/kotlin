@@ -37,6 +37,8 @@ class MutableLookupStorage(
   override val contextFactors: Map<String, String>
     get() = contextFeaturesStorage?.asMap() ?: emptyMap()
 
+  private var mlUsed: Boolean = false
+
   private var _loggingEnabled: Boolean = false
   override val performanceTracker: PerformanceTracker = PerformanceTracker()
 
@@ -75,6 +77,13 @@ class MutableLookupStorage(
 
   override fun getItemStorage(id: String): MutableElementStorage = item2storage.computeIfAbsent(id) {
     MutableElementStorage()
+  }
+
+  override fun mlUsed(): Boolean = mlUsed
+
+  fun fireReorderedUsingMLScores() {
+    mlUsed = true
+    performanceTracker.reorderedByML()
   }
 
   override fun shouldComputeFeatures(): Boolean = model != null || _loggingEnabled || (isUnitTestMode() && alwaysComputeFeaturesInTests)
