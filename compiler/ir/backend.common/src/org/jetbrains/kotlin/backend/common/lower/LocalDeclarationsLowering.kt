@@ -662,7 +662,8 @@ class LocalDeclarationsLowering(
                 visibility,
                 isFinal = true,
                 isExternal = false,
-                isStatic = false
+                isStatic = false,
+                isFakeOverride = false
             ).also {
                 descriptor.bind(it)
                 it.parent = parent
