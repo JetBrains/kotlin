@@ -27,7 +27,6 @@ class NpmVersions {
     val sourceMapSupport = NpmPackageVersion("source-map-support", "0.5.13")
 
     val mocha = NpmPackageVersion("mocha", "6.2.2")
-    val mochaTeamCityReporter = NpmPackageVersion("mocha-teamcity-reporter", "3.0.0")
 
     val karma = NpmPackageVersion("karma", "4.4.1")
 

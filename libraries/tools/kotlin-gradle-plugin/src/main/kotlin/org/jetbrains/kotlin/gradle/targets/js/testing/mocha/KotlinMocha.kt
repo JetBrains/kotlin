@@ -31,8 +31,7 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = listOf(
             KotlinGradleNpmPackage("test-js-runner"),
-            versions.mocha,
-            versions.mochaTeamCityReporter
+            versions.mocha
         )
 
     // https://mochajs.org/#-timeout-ms-t-ms
@@ -69,7 +68,7 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                 nodeModules.map {
                     npmProject.require(it)
                 } + cliArgs.toList() +
-                cliArg("--reporter", "mocha-teamcity-reporter") +
+                cliArg("--reporter", "kotlin-test-js-runner/mocha-kotlin-reporter.js") +
                 cliArg("--timeout", timeout) +
                 cliArg(
                     "-r", "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js"
