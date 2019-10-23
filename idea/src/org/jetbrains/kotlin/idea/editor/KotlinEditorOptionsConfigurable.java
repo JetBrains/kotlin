@@ -21,6 +21,9 @@ public class KotlinEditorOptionsConfigurable extends BeanConfigurable<KotlinEdit
         checkBox("Don't show Java to Kotlin conversion dialog on paste",
                  instance::isDonTShowConversionDialog,
                  instance::setDonTShowConversionDialog);
+        checkBox("Auto add val keyword to data/inline class constructor parameters",
+                 instance::isAutoAddValKeywordToDataClassParameters,
+                 instance::setAutoAddValKeywordToDataClassParameters);
     }
 
     @Override

@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public class KotlinEditorOptions implements PersistentStateComponent<KotlinEditorOptions> {
     private boolean donTShowConversionDialog = false;
     private boolean enableJavaToKotlinConversion = true;
+    private boolean autoAddValKeywordToDataClassParameters = true;
 
     public boolean isDonTShowConversionDialog() {
         return donTShowConversionDialog;
@@ -40,6 +41,14 @@ public class KotlinEditorOptions implements PersistentStateComponent<KotlinEdito
 
     public void setDonTShowConversionDialog(boolean donTShowConversionDialog) {
         this.donTShowConversionDialog = donTShowConversionDialog;
+    }
+
+    public boolean isAutoAddValKeywordToDataClassParameters() {
+        return autoAddValKeywordToDataClassParameters;
+    }
+
+    public void setAutoAddValKeywordToDataClassParameters(boolean autoAddValKeywordToDataClassParameters) {
+        this.autoAddValKeywordToDataClassParameters = autoAddValKeywordToDataClassParameters;
     }
 
     public boolean isEnableJavaToKotlinConversion() {
