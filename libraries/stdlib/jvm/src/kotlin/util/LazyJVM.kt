@@ -90,7 +90,7 @@ private class SynchronizedLazyImpl<out T>(initializer: () -> T, lock: Any? = nul
 private class SafePublicationLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
     @Volatile private var initializer: (() -> T)? = initializer
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
-    // this final field is required to enable safe publication of constructed instance
+    // this final field is required to enable safe initialization of the constructed instance
     private val final: Any = UNINITIALIZED_VALUE
 
     override val value: T
