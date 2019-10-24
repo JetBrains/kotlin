@@ -118,6 +118,8 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
             }
             isTransitive = false
         }
+
+        add("compileOnly", "kotlin.build:gradle:$ideVersion")
     }
 }
 fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
