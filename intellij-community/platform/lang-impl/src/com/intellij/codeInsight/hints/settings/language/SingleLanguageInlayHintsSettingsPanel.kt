@@ -253,7 +253,7 @@ class SingleLanguageInlayHintsSettingsPanel(
       loadMainCheckBoxValue = { model.isEnabled },
       onUserChangedMainCheckBox = { model.isEnabled = it },
       listener = model.onChangeListener!!, // must be installed at this point
-      disabledExternally = { !config.hintsEnabled(myLanguage) }
+      disabledExternally = { !(config.hintsEnabled(myLanguage) && config.hintsEnabledGlobally()) }
     )
     myCasesPanel = casesPanel
     return casesPanel
