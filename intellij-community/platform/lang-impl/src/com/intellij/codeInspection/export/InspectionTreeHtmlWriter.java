@@ -21,11 +21,13 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author Dmitry Batkovich
  */
 public final class InspectionTreeHtmlWriter {
+  @SuppressWarnings("SpellCheckingInspection")
   private static final String ERROR_COLOR = "ffabab";
   private static final String WARNING_COLOR = "f2f794";
 
@@ -47,7 +49,7 @@ public final class InspectionTreeHtmlWriter {
     HTMLExportUtil.writeFile(myOutputDir, "index.html", myTree.getContext().getProject(), w -> {
       appendHeader(w);
       w.append("<div style=\"width:100%;\"><div style=\"float:left; width:50%;\"><h4>Inspection tree:</h4>");
-      final InspectionTreeTailRenderer<IOException> tailRenderer = new InspectionTreeTailRenderer<IOException>(myTree.getContext()) {
+      InspectionTreeTailRenderer<IOException> tailRenderer = new InspectionTreeTailRenderer<IOException>(myTree.getContext()) {
         @Override
         protected void appendText(String text, SimpleTextAttributes attributes) throws IOException {
           w.append(escapeNonBreakingSymbols(text));
@@ -59,38 +61,36 @@ public final class InspectionTreeHtmlWriter {
         }
       };
       InspectionTreeModel model = myTree.getInspectionTreeModel();
-      traverseInspectionTree(model.getRoot(),
-                             (n) -> {
-                               final int nodeId = System.identityHashCode(n);
-                               w
-                                 .append("<li><label for=\"")
-                                 .append(String.valueOf(nodeId))
-                                 .append("\">")
-                                 .append(convertNodeToHtml(n))
-                                 .append("&nbsp;<span class=\"grayout\">");
-                               tailRenderer.appendTailText(n);
-                               w.append("</span></label><input type=\"checkbox\" ");
-                               if (n instanceof InspectionRootNode) {
-                                 w.append("checked");
-                               }
-                               w.append(" onclick=\"navigate(").append(String.valueOf(nodeId)).append(")\" ");
-                               w.append(" id=\"").append(String.valueOf(nodeId)).append("\" />");
-                               if (n instanceof SuppressableInspectionTreeNode) {
-                                 RefEntity e = ((SuppressableInspectionTreeNode)n).getElement();
-                                 if (e != null) {
-                                   w
-                                     .append("<div id=\"d")
-                                     .append(String.valueOf(nodeId))
-                                     .append("\" style=\"display:none\">");
-                                   StringBuffer buf = new StringBuffer();
-                                   ((SuppressableInspectionTreeNode)n).getPresentation().getComposer().compose(buf, e);
-                                   w.append(buf.toString());
-                                   w.append("</div>");
-                                 }
-                               }
-                               w.append("<ol class=\"tree\">");
-                             },
-                             (n) -> w.append("</ol></li>"));
+      traverseInspectionTree(model.getRoot(), (n) -> {
+        int nodeId = System.identityHashCode(n);
+        w
+          .append("<li><label for=\"")
+          .append(String.valueOf(nodeId))
+          .append("\">")
+          .append(convertNodeToHtml(n))
+          .append("&nbsp;<span class=\"grayout\">");
+        tailRenderer.appendTailText(n);
+        w.append("</span></label><input type=\"checkbox\" ");
+        if (n instanceof InspectionRootNode) {
+          w.append("checked");
+        }
+        w.append(" onclick=\"navigate(").append(String.valueOf(nodeId)).append(")\" ");
+        w.append(" id=\"").append(String.valueOf(nodeId)).append("\" />");
+        if (n instanceof SuppressableInspectionTreeNode) {
+          RefEntity e = ((SuppressableInspectionTreeNode)n).getElement();
+          if (e != null) {
+            w
+              .append("<div id=\"d")
+              .append(String.valueOf(nodeId))
+              .append("\" style=\"display:none\">");
+            StringBuffer buf = new StringBuffer();
+            ((SuppressableInspectionTreeNode)n).getPresentation().getComposer().compose(buf, e);
+            w.append(buf.toString());
+            w.append("</div>");
+          }
+        }
+        w.append("<ol class=\"tree\">");
+      }, (n) -> w.append("</ol></li>"));
       w.append("</div><div style=\"float:left; width:50%;\"><h4>Problem description:</h4>" +
                "<div id=\"preview\">Select a problem element in tree</div></div><div></body></html>");
     });
@@ -120,10 +120,10 @@ public final class InspectionTreeHtmlWriter {
       String warningLevelName = "";
       String color = null;
       if (descriptor instanceof ProblemDescriptorBase) {
-        final InspectionToolWrapper tool = ((ProblemDescriptionNode)node).getToolWrapper();
-        final HighlightDisplayKey key = HighlightDisplayKey.find(tool.getShortName());
+        InspectionToolWrapper<?, ?> tool = ((ProblemDescriptionNode)node).getToolWrapper();
+        HighlightDisplayKey key = HighlightDisplayKey.find(tool.getShortName());
         HighlightSeverity severity = myProfile.getErrorLevel(key, ((ProblemDescriptorBase)descriptor).getStartElement()).getSeverity();
-        final HighlightDisplayLevel level = HighlightDisplayLevel.find(severity);
+        HighlightDisplayLevel level = HighlightDisplayLevel.find(severity);
         if (HighlightDisplayLevel.ERROR.equals(level)) {
           color = ERROR_COLOR;
         }
@@ -146,7 +146,7 @@ public final class InspectionTreeHtmlWriter {
       return sb.toString();
     }
     else if (node instanceof RefElementNode) {
-      final String type = myManager.getType(((RefElementNode)node).getElement());
+      String type = myManager.getType(Objects.requireNonNull(((RefElementNode)node).getElement()));
       return type + "&nbsp;<b>" + node.toString() + "</b>";
     }
     else if (node instanceof InspectionNode) {
@@ -160,14 +160,14 @@ public final class InspectionTreeHtmlWriter {
     }
   }
 
-  private static void appendHeader(Writer writer) throws IOException {
+  private static void appendHeader(@NotNull Writer writer) throws IOException {
     String title = ApplicationNamesInfo.getInstance().getFullProductName() + " inspection report";
     writer.append("<html><head>" +
-                     "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">" +
-                     "<meta name=\"author\" content=\"JetBrains\">" +
-                     "<script type=\"text/javascript\" src=\"script.js\"></script>" +
-                     "<link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"/>" +
-                     "<title>")
+                  "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">" +
+                  "<meta name=\"author\" content=\"JetBrains\">" +
+                  "<script type=\"text/javascript\" src=\"script.js\"></script>" +
+                  "<link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\"/>" +
+                  "<title>")
       .append(title)
       .append("</title></head><body><h3>")
       .append(title)
