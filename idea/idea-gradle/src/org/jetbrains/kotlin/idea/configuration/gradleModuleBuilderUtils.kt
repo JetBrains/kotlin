@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
 import com.intellij.openapi.externalSystem.model.project.ProjectId
+import com.intellij.openapi.externalSystem.service.project.wizard.AbstractExternalModuleBuilder
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectCoreUtil
@@ -30,7 +31,7 @@ import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import org.jetbrains.plugins.groovy.lang.psi.GroovyPsiElementFactory
 import java.io.File
 
-internal var Module.gradleModuleBuilder: GradleModuleBuilder? by UserDataProperty(Key.create("GRADLE_MODULE_BUILDER"))
+internal var Module.gradleModuleBuilder: AbstractExternalModuleBuilder<*>? by UserDataProperty(Key.create("GRADLE_MODULE_BUILDER"))
 private var Module.settingsScriptBuilder: SettingsScriptBuilder<out PsiFile>? by UserDataProperty(Key.create("SETTINGS_SCRIPT_BUILDER"))
 
 internal fun findSettingsGradleFile(module: Module): VirtualFile? {
@@ -202,7 +203,7 @@ class KotlinGradleFrameworkSupportInModuleConfigurable(
             val builder = model.moduleBuilder
             val projectId = (builder as? GradleModuleBuilder)?.projectId ?: ProjectId(null, module.name, null)
             try {
-                module.gradleModuleBuilder = builder as? GradleModuleBuilder
+                module.gradleModuleBuilder = builder as? AbstractExternalModuleBuilder<*>
                 supportProvider.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
             } finally {
                 flushSettingsGradleCopy(module)
