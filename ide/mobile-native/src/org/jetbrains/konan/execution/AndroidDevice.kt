@@ -105,8 +105,8 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
         runTests: (RemoteAndroidTestRunner, AndroidProcessHandler) -> Unit
     ): AndroidProcessHandler =
         execute(project, waitForDebugger) { handler, indicator ->
-            val appId = getAppId(testApk)
-            handler.appId = appId
+            val testAppId = getAppId(testApk)
+            handler.appId = getAppId(appApk)
 
             indicator.fraction = 0.3
             indicator.text = MobileBundle.message("run.installing")
@@ -121,7 +121,8 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
             indicator.fraction = 0.8
             indicator.text = MobileBundle.message("run.starting.tests")
 
-            val testRunner = RemoteAndroidTestRunner(appId, "androidx.test.runner.AndroidJUnitRunner", handler.raw)
+            val testRunner = RemoteAndroidTestRunner(testAppId, "androidx.test.runner.AndroidJUnitRunner", handler.raw)
+            testRunner.setDebug(waitForDebugger)
             log.info("Running tests: ${testRunner.amInstrumentCommand}")
 
             ProcessIOExecutorService.INSTANCE.execute {

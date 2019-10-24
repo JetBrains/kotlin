@@ -5,28 +5,47 @@
 
 package org.jetbrains.konan.execution.testing
 
+import com.android.ddmlib.testrunner.RemoteAndroidTestRunner
 import com.intellij.execution.filters.TextConsoleBuilderImpl
-import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.testframework.sm.SMTestRunnerConnectionUtil
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.konan.execution.AndroidCommandLineState
+import org.jetbrains.konan.execution.AndroidProcessHandler
 
 class AndroidTestCommandLineState(
     configuration: MobileTestRunConfiguration,
     environment: ExecutionEnvironment
 ) : AndroidCommandLineState(configuration, environment) {
     private val testRunnerApk = configuration.getTestRunnerBundle(environment)
+    private val testData = configuration.testData as AndroidTestRunConfigurationData
 
     init {
         consoleBuilder = object : TextConsoleBuilderImpl(project) {
             override fun createConsole() =
-                SMTestRunnerConnectionUtil.createConsole(configuration.createTestConsoleProperties(environment.executor))
+                SMTestRunnerConnectionUtil.createConsole(configuration.createTestConsoleProperties(environment.executor)).also {
+                    Disposer.register(project, it)
+                }
         }
     }
 
-    override fun startProcess(): ProcessHandler {
-        return device.installAndRunTests(apk, testRunnerApk, project) { testRunner, handler ->
-            testRunner.run(AndroidTestListener(handler))
+    override fun startProcess(): AndroidProcessHandler =
+        device.installAndRunTests(apk, testRunnerApk, project, runTests = ::runTests)
+
+    override fun startDebugProcess(): AndroidProcessHandler =
+        device.installAndRunTests(apk, testRunnerApk, project, waitForDebugger = true, runTests = ::runTests)
+
+    private fun runTests(testRunner: RemoteAndroidTestRunner, handler: AndroidProcessHandler) {
+        handler.shouldHandleTermination = false
+
+        val testSuite = testData.testSuite
+        val testName = testData.testName
+        if (testSuite != null && testName != null) {
+            testRunner.setMethodName(testSuite, testName)
+        } else if (testSuite != null) {
+            testRunner.setClassName(testSuite)
         }
+
+        testRunner.run(AndroidTestListener(handler))
     }
 }

@@ -15,7 +15,6 @@ import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.RemoteConnection
 import com.intellij.execution.configurations.RemoteState
 import com.intellij.execution.executors.DefaultDebugExecutor
-import com.intellij.execution.filters.TextConsoleBuilderFactory
 import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.process.ProcessIOExecutorService
 import com.intellij.execution.runners.ExecutionEnvironment
@@ -36,25 +35,14 @@ abstract class AndroidCommandLineState(
     protected val project = configuration.project
     protected val device = environment.executionTarget as AndroidDevice
     protected val apk = configuration.getProductBundle(environment)
-}
-
-open class AndroidAppCommandLineState(
-    configuration: MobileRunConfiguration,
-    environment: ExecutionEnvironment
-) : AndroidCommandLineState(configuration, environment) {
-
-    override fun startProcess(): ProcessHandler {
-        return device.installAndLaunch(apk, project)
-    }
 
     override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {
         val isDebug = environment.executor.id == DefaultDebugExecutor.EXECUTOR_ID
         if (!isDebug) return super.execute(executor, runner)
 
-        val consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project)
         val runConsole = consoleBuilder.console
         val debugConsole = consoleBuilder.console
-        val handler = device.installAndLaunch(apk, project, waitForDebugger = true)
+        val handler = startDebugProcess()
         runConsole.attachToProcess(handler)
         debugConsole.attachToProcess(handler)
 
@@ -92,6 +80,8 @@ open class AndroidAppCommandLineState(
         return DefaultExecutionResult(runConsole, wrapper)
     }
 
+    protected abstract fun startDebugProcess(): AndroidProcessHandler
+
     private class DebugProcessHandlerWrapper(val wrapped: AndroidProcessHandler) : ProcessHandler() {
         override fun getProcessInput(): OutputStream? = wrapped.processInput
         override fun detachIsDefault(): Boolean = wrapped.detachIsDefault()
@@ -103,6 +93,18 @@ open class AndroidAppCommandLineState(
     }
 
     companion object {
-        private val log = logger<AndroidAppCommandLineState>()
+        private val log = logger<AndroidCommandLineState>()
     }
+}
+
+open class AndroidAppCommandLineState(
+    configuration: MobileRunConfiguration,
+    environment: ExecutionEnvironment
+) : AndroidCommandLineState(configuration, environment) {
+
+    override fun startProcess(): AndroidProcessHandler =
+        device.installAndLaunch(apk, project)
+
+    override fun startDebugProcess(): AndroidProcessHandler =
+        device.installAndLaunch(apk, project, waitForDebugger = true)
 }

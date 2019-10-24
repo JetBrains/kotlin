@@ -9,7 +9,10 @@ import com.android.ddmlib.*
 import com.android.ddmlib.logcat.LogCatListener
 import com.android.ddmlib.logcat.LogCatMessage
 import com.android.ddmlib.logcat.LogCatReceiverTask
-import com.intellij.execution.process.*
+import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessEvent
+import com.intellij.execution.process.ProcessHandler
+import com.intellij.execution.process.ProcessOutputType
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.konan.MobileBundle
@@ -19,6 +22,7 @@ import java.util.concurrent.CompletableFuture
 class AndroidProcessHandler : ProcessHandler() {
     lateinit var raw: IDevice
     lateinit var appId: String
+    var shouldHandleTermination: Boolean = true
     private var processClient: Client? = null
 
     val debuggerPort = CompletableFuture<Int>()
@@ -49,6 +53,7 @@ class AndroidProcessHandler : ProcessHandler() {
 
     private val deviceListener = object : AndroidDebugBridge.IDeviceChangeListener {
         override fun deviceChanged(device: IDevice, changeMask: Int) {
+            if (!shouldHandleTermination) return
             if (!isRelevantEvent(device, changeMask, IDevice.CHANGE_CLIENT_LIST)) return
 
             synchronized(this@AndroidProcessHandler) {
