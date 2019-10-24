@@ -30,7 +30,8 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
         get() = error()
 
     @SinceKotlin("1.1")
-    override fun isInstance(value: Any?): Boolean = error()
+    override fun isInstance(value: Any?): Boolean =
+        isInstance(value, jClass)
 
     @SinceKotlin("1.1")
     override val typeParameters: List<KTypeParameter>
@@ -88,6 +89,15 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
         jClass.toString() + Reflection.REFLECTION_NOT_AVAILABLE
 
     companion object {
+        private val FUNCTION_CLASSES =
+            listOf(
+                Function0::class.java, Function1::class.java, Function2::class.java, Function3::class.java, Function4::class.java,
+                Function5::class.java, Function6::class.java, Function7::class.java, Function8::class.java, Function9::class.java,
+                Function10::class.java, Function11::class.java, Function12::class.java, Function13::class.java, Function14::class.java,
+                Function15::class.java, Function16::class.java, Function17::class.java, Function18::class.java, Function19::class.java,
+                Function20::class.java, Function21::class.java, Function22::class.java
+            ).mapIndexed { i, clazz -> clazz to i }.toMap()
+
         private val primitiveFqNames = HashMap<String, String>().apply {
             put("boolean", "kotlin.Boolean")
             put("char", "kotlin.Char")
@@ -137,8 +147,8 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
             primitiveFqNames.values.associateTo(this) { kotlinName ->
                 "kotlin.jvm.internal.${kotlinName.substringAfterLast('.')}CompanionObject" to "$kotlinName.Companion"
             }
-            for (arity in 0 until 23) {
-                put("kotlin.jvm.functions.Function$arity", "kotlin.Function$arity")
+            for ((klass, arity) in FUNCTION_CLASSES) {
+                put(klass.name, "kotlin.Function$arity")
             }
         }
 
@@ -173,6 +183,14 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
                 } ?: "kotlin.Array"
             }
             else -> classFqNames[jClass.name] ?: jClass.canonicalName
+        }
+
+        public fun isInstance(value: Any?, jClass: Class<*>): Boolean {
+            FUNCTION_CLASSES[jClass]?.let { arity ->
+                return TypeIntrinsics.isFunctionOfArity(value, arity)
+            }
+            val objectType = if (jClass.isPrimitive) jClass.kotlin.javaObjectType else jClass
+            return objectType.isInstance(value)
         }
     }
 }

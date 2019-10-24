@@ -3299,6 +3299,7 @@ public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/Clas
 public final class kotlin/jvm/internal/ClassReference$Companion {
 	public final fun getClassQualifiedName (Ljava/lang/Class;)Ljava/lang/String;
 	public final fun getClassSimpleName (Ljava/lang/Class;)Ljava/lang/String;
+	public final fun isInstance (Ljava/lang/Object;Ljava/lang/Class;)Z
 }
 
 public final class kotlin/jvm/internal/CollectionToArray {
@@ -4380,6 +4381,11 @@ public abstract interface class kotlin/reflect/KClass : kotlin/reflect/KAnnotate
 	public abstract fun isInstance (Ljava/lang/Object;)Z
 	public abstract fun isOpen ()Z
 	public abstract fun isSealed ()Z
+}
+
+public final class kotlin/reflect/KClasses {
+	public static final fun cast (Lkotlin/reflect/KClass;Ljava/lang/Object;)Ljava/lang/Object;
+	public static final fun safeCast (Lkotlin/reflect/KClass;Ljava/lang/Object;)Ljava/lang/Object;
 }
 
 public abstract interface class kotlin/reflect/KClassifier {

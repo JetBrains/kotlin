@@ -39,6 +39,7 @@ fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.<!NO_REFLECTION_IN_CLASS_PATH!>isCompanion<!>
 
     k.<!NO_REFLECTION_IN_CLASS_PATH!>annotations<!>
+    k.isInstance(42)
 
     k == kt
     k.hashCode()

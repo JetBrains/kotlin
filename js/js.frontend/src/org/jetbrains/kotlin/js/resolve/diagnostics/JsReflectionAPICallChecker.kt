@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.AbstractReflectionApiCallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -39,9 +38,6 @@ class JsReflectionAPICallChecker(
     reflectionTypes: ReflectionTypes,
     storageManager: StorageManager
 ) : AbstractReflectionApiCallChecker(reflectionTypes, storageManager) {
-    override fun isAllowedKClassMember(name: Name): Boolean =
-        super.isAllowedKClassMember(name) || name.asString() == "isInstance"
-
     override val isWholeReflectionApiAvailable: Boolean
         get() = false
 

@@ -48,7 +48,7 @@ abstract class AbstractReflectionApiCallChecker(
     private val kClass by storageManager.createLazyValue { reflectionTypes.kClass }
 
     protected open fun isAllowedKClassMember(name: Name): Boolean =
-        name.asString() == "simpleName"
+        name.asString() == "simpleName" || name.asString() == "isInstance"
 
     final override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (isWholeReflectionApiAvailable) return

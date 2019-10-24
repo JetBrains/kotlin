@@ -40,18 +40,6 @@ val Class<*>.primitiveByWrapper: Class<*>?
 val Class<*>.wrapperByPrimitive: Class<*>?
     get() = PRIMITIVE_TO_WRAPPER[this]
 
-private val FUNCTION_CLASSES =
-    listOf(
-        Function0::class.java, Function1::class.java, Function2::class.java, Function3::class.java, Function4::class.java,
-        Function5::class.java, Function6::class.java, Function7::class.java, Function8::class.java, Function9::class.java,
-        Function10::class.java, Function11::class.java, Function12::class.java, Function13::class.java, Function14::class.java,
-        Function15::class.java, Function16::class.java, Function17::class.java, Function18::class.java, Function19::class.java,
-        Function20::class.java, Function21::class.java, Function22::class.java
-    ).mapIndexed { i, clazz -> clazz to i }.toMap()
-
-val Class<*>.functionClassArity: Int?
-    get() = FUNCTION_CLASSES[this]
-
 /**
  * NOTE: does not perform a Java -> Kotlin mapping. If this is not expected, consider using KClassImpl#classId instead
  */

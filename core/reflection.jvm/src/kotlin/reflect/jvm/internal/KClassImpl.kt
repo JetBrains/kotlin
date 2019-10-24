@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
-import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
-import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -36,7 +34,6 @@ import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.utils.compact
 import kotlin.jvm.internal.ClassReference
-import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
@@ -218,13 +215,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
     override val objectInstance: T? get() = data().objectInstance
 
-    override fun isInstance(value: Any?): Boolean {
-        // TODO: use Kotlin semantics for mutable/read-only collections once KT-11754 is supported (see TypeIntrinsics)
-        jClass.functionClassArity?.let { arity ->
-            return TypeIntrinsics.isFunctionOfArity(value, arity)
-        }
-        return (jClass.wrapperByPrimitive ?: jClass).isInstance(value)
-    }
+    override fun isInstance(value: Any?): Boolean = ClassReference.isInstance(value, jClass)
 
     override val typeParameters: List<KTypeParameter> get() = data().typeParameters
 

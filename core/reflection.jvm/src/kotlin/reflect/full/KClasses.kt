@@ -24,11 +24,8 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.DFS
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.KCallableImpl
-import kotlin.reflect.jvm.internal.KClassImpl
-import kotlin.reflect.jvm.internal.KFunctionImpl
-import kotlin.reflect.jvm.internal.KTypeImpl
-import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.*
+import kotlin.reflect.safeCast as commonSafeCast
 
 /**
  * Returns the primary constructor of this class, or `null` if this class has no primary constructor.
@@ -253,6 +250,7 @@ fun KClass<*>.isSuperclassOf(derived: KClass<*>): Boolean =
  */
 @SinceKotlin("1.1")
 fun <T : Any> KClass<T>.cast(value: Any?): T {
+    // Note: can't use kotlin.reflect.cast because it throws ClassCastException.
     if (!isInstance(value)) throw TypeCastException("Value cannot be cast to $qualifiedName")
     return value as T
 }
@@ -265,9 +263,9 @@ fun <T : Any> KClass<T>.cast(value: Any?): T {
  * @see [KClass.cast]
  */
 @SinceKotlin("1.1")
-fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
-    return if (isInstance(value)) value as T else null
-}
+fun <T : Any> KClass<T>.safeCast(value: Any?): T? =
+    @UseExperimental(ExperimentalStdlibApi::class)
+    commonSafeCast(value)
 
 
 /**
