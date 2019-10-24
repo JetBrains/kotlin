@@ -1,33 +1,35 @@
+// !DIAGNOSTICS: -UNUSED_VALUE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // SKIP_TXT
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-100
+ * SPEC VERSION: 0.1-201
  * PLACE: expressions, when-expression -> paragraph 6 -> sentence 11
  * NUMBER: 1
- * DESCRIPTION: 'When' without bound value and with 'else' branch not in the last position.
+ * DESCRIPTION: 'When' with bound value and non-expressions in 'when condition'.
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(<!UNUSED_PARAMETER!>value_1<!>: Int): String = when {
-    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> ""
-    <!UNREACHABLE_CODE!>value_1 == 1 -> ""<!>
-}
-
-// TESTCASE NUMBER: 2
-fun case_2(value_1: Int): String = when {
-    value_1 == 1 -> ""
-    <!ELSE_MISPLACED_IN_WHEN!>else<!> -> ""
-    <!UNREACHABLE_CODE!>value_1 == 2 -> ""<!>
-}
-
-// TESTCASE NUMBER: 3
-fun case_3(): String {
-    when {
-        <!ELSE_MISPLACED_IN_WHEN!>else<!> -> return ""
-        <!UNREACHABLE_CODE!>else -> return ""<!>
+fun case_1(value_1: Int, value_2: List<Int>): String {
+    when (value_1) {
+        <!EXPRESSION_EXPECTED!>while (false) {}<!> -> return ""
+        <!EXPRESSION_EXPECTED!>do {} while (false)<!> -> return ""
+        <!EXPRESSION_EXPECTED!>for (value in value_2) {}<!> -> return ""
     }
 
-    <!UNREACHABLE_CODE!>return ""<!>
+    return ""
+}
+
+// TESTCASE NUMBER: 4
+fun case_4(value_1: Int): String {
+    var value_2: Int
+    var value_3 = 10
+
+    when (value_1) {
+        <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>value_2 = 10<!> -> return ""
+        <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>value_3 %= 10<!> -> return ""
+    }
+
+    return ""
 }

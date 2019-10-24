@@ -1,6 +1,14 @@
 {
   "6": {
     "neg": {
+      "12": [
+        {
+          "specVersion": "0.1-201",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 with invalid else condition.",
+          "unexpectedBehaviour": false
+        }
+      ],
       "1": [
         {
           "specVersion": "0.1-100",
@@ -23,19 +31,11 @@
           "unexpectedBehaviour": false
         }
       ],
-      "8": [
+      "9": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-201",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and not allowed spread operator in \u0027when condition\u0027.",
-          "unexpectedBehaviour": false
-        }
-      ],
-      "11": [
-        {
-          "specVersion": "0.1-100",
-          "casesNumber": 0,
-          "description": "\u0027When\u0027 with invalid else condition.",
           "unexpectedBehaviour": false
         }
       ]

@@ -65,7 +65,7 @@ class SpecTestsConsistencyTest : TestCase() {
             val paragraphForTestSentences =
                 specSentencesForCurrentTest[sectionsPath] ?: throw Exception("$sectionsPath not found")
             if (paragraphForTestSentences.size < sentenceNumber) {
-                throw Exception("$sentenceNumber not found")
+                fail("Sentence #$sentenceNumber not found (${file.path})")
             }
             val expectedSentence = paragraphForTestSentences[sentenceNumber - 1]
             val actualSentence = paragraphSentences[sentenceNumber - 1]
