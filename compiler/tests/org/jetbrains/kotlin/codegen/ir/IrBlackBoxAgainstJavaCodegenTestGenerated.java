@@ -1087,6 +1087,11 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
                 runTest("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/overrideProtectedFunInPackage.kt");
             }
 
+            @TestMetadata("protectedAccessor.kt")
+            public void testProtectedAccessor() throws Exception {
+                runTest("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedAccessor.kt");
+            }
+
             @TestMetadata("protectedFunInPackage.kt")
             public void testProtectedFunInPackage() throws Exception {
                 runTest("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedFunInPackage.kt");
