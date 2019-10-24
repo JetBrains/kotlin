@@ -68,4 +68,10 @@ class TypeBackspaceValidatorTest {
         state.accept(LogEventFixtures.backspace_event_pos_0_left_0_1_2)
         Assertions.assertThat(state.isCurrentlyValid()).isEqualTo(true)
     }
+
+    @Test
+    fun `selecting by typing updates validators state`() {
+        state.accept(LogEventFixtures.type_event_no_items)
+        state.accept(LogEventFixtures.selected_by_typing_0)
+    }
 }
