@@ -38,7 +38,7 @@ public class NameGeneratingListenerDecorator implements RefactoringElementListen
     boolean hasGeneratedName = myConfiguration.isGeneratedName();
     myListener.elementMoved(newElement);
     if (hasGeneratedName) {
-      myConfiguration.setName(myConfiguration.suggestedName());
+      updateSuggestedName();
     }
   }
 
@@ -47,7 +47,7 @@ public class NameGeneratingListenerDecorator implements RefactoringElementListen
     boolean hasGeneratedName = myConfiguration.isGeneratedName();
     myListener.elementRenamed(newElement);
     if (hasGeneratedName) {
-      myConfiguration.setName(myConfiguration.suggestedName());
+      updateSuggestedName();
     }
   }
 
@@ -57,8 +57,17 @@ public class NameGeneratingListenerDecorator implements RefactoringElementListen
       boolean hasGeneratedName = myConfiguration.isGeneratedName();
       ((UndoRefactoringElementListener) myListener).undoElementMovedOrRenamed(newElement, oldQualifiedName);
       if (hasGeneratedName) {
-        myConfiguration.setName(myConfiguration.suggestedName());
+        updateSuggestedName();
       }
+    }
+  }
+
+  private void updateSuggestedName() {
+    RunManagerImpl runManager = RunManagerImpl.getInstanceImpl(myConfiguration.getProject());
+    myConfiguration.setName(myConfiguration.suggestedName());
+    RunnerAndConfigurationSettingsImpl settings = runManager.getSettings(myConfiguration);
+    if (settings != null) {
+      runManager.addConfiguration(settings);
     }
   }
 }

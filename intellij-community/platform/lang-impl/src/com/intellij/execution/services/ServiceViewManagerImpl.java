@@ -147,7 +147,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   private void hideToolWindow(String toolWindowId, ToolWindow toolWindow) {
-    ToolWindowManagerEx.getInstanceEx(myProject).hideToolWindow(toolWindowId, true);
+    ToolWindowManagerEx.getInstanceEx(myProject).hideToolWindow(toolWindowId, false);
     toolWindow.setShowStripeButton(false);
   }
 

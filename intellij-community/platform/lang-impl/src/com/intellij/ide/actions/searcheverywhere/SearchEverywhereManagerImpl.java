@@ -2,6 +2,7 @@
 package com.intellij.ide.actions.searcheverywhere;
 
 import com.intellij.ide.actions.GotoActionBase;
+import com.intellij.ide.actions.searcheverywhere.statistics.SearchEverywhereUsageTriggerCollector;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
@@ -29,6 +30,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collector;
 
 import static com.intellij.ide.actions.SearchEverywhereAction.SEARCH_EVERYWHERE_POPUP;
+import static com.intellij.ide.actions.searcheverywhere.statistics.SearchEverywhereUsageTriggerCollector.DIALOG_CLOSED;
 
 public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
 
@@ -98,6 +100,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
       .setCancelKeyEnabled(false)
       .setCancelCallback(() -> {
         saveSearchText();
+        SearchEverywhereUsageTriggerCollector.trigger(myProject, DIALOG_CLOSED);
         return true;
       })
       .addUserData("SIMPLE_WINDOW")

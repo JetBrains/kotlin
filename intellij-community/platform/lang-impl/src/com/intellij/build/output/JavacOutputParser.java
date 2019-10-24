@@ -6,6 +6,7 @@ import com.intellij.build.events.BuildEvent;
 import com.intellij.build.events.MessageEvent;
 import com.intellij.build.events.impl.FileMessageEventImpl;
 import com.intellij.build.events.impl.MessageEventImpl;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NonNls;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -21,14 +23,25 @@ import java.util.function.Consumer;
  * Parses javac's output.
  */
 public class JavacOutputParser implements BuildOutputParser {
-  private static final String COMPILER_MESSAGES_GROUP = "Java compiler";
+  private static final String COMPILER_MESSAGES_GROUP = "Compiler";
 
   private static final char COLON = ':';
   private static final String WARNING_PREFIX = "warning:"; // default value
   private static final String ERROR_PREFIX = "error:";
+  private final String[] myFileExtensions;
+
+  public JavacOutputParser() {
+    this("java");
+  }
+
+  public JavacOutputParser(@NotNull String... fileExtensions) {
+    myFileExtensions = fileExtensions;
+  }
 
   @Override
-  public boolean parse(@NotNull String line, @NotNull BuildOutputInstantReader reader, @NotNull Consumer<? super BuildEvent> messageConsumer) {
+  public boolean parse(@NotNull String line,
+                       @NotNull BuildOutputInstantReader reader,
+                       @NotNull Consumer<? super BuildEvent> messageConsumer) {
     int colonIndex1 = line.indexOf(COLON);
     if (colonIndex1 == 1) { // drive letter
       colonIndex1 = line.indexOf(COLON, colonIndex1 + 1);
@@ -83,14 +96,14 @@ public class JavacOutputParser implements BuildOutputParser {
           if (text.startsWith(WARNING_PREFIX)) {
             text = text.substring(WARNING_PREFIX.length()).trim();
             kind = MessageEvent.Kind.WARNING;
-          } else if (text.startsWith(ERROR_PREFIX)) {
+          }
+          else if (text.startsWith(ERROR_PREFIX)) {
             text = text.substring(ERROR_PREFIX.length()).trim();
             kind = MessageEvent.Kind.ERROR;
           }
 
-          // Only slurp up line pointer (^) information if this is really javac
-          if (!file.getPath().endsWith(".java")) {
-            // Fall back to the MergingExceptionParser (which handles similar messageEventConsumer in a more general way)
+          // Only slurp up line pointer (^) information if this is required source files
+          if (!isRelatedFile(file)) {
             return false;
           }
 
@@ -145,6 +158,11 @@ public class JavacOutputParser implements BuildOutputParser {
     }
 
     return false;
+  }
+
+  private boolean isRelatedFile(File file) {
+    String filePath = file.getPath();
+    return Arrays.stream(myFileExtensions).anyMatch(extension -> FileUtilRt.extensionEquals(filePath, extension));
   }
 
   private static String amendNextInfoLinesIfNeeded(String str, BuildOutputInstantReader reader) {

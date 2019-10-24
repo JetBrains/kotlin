@@ -48,11 +48,12 @@ public class RunAnythingManager {
     if (searchText != null && !searchText.isEmpty()) {
       myRunAnythingUI.getSearchField().setText(searchText);
     }
+
+    predefineSelectedText(searchText);
+
     if (selectSearchText) {
       myRunAnythingUI.getSearchField().selectAll();
     }
-
-    predefineSelectedText(searchText);
 
     myBalloon = JBPopupFactory.getInstance().createComponentPopupBuilder(myRunAnythingUI, myRunAnythingUI.getSearchField())
       .setProject(myProject)
@@ -101,7 +102,6 @@ public class RunAnythingManager {
 
     if (StringUtil.isNotEmpty(searchText)) {
       myRunAnythingUI.getSearchField().setText(searchText);
-      myRunAnythingUI.getSearchField().selectAll();
     }
   }
 

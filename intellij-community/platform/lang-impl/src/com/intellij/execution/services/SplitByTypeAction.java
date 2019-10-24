@@ -14,7 +14,7 @@ public class SplitByTypeAction extends DumbAwareAction {
   @Override
   public void update(@NotNull AnActionEvent e) {
     Project project = e.getProject();
-    if (project == null) {
+    if (project == null || !ActionPlaces.isPopupPlace(e.getPlace())) {
       e.getPresentation().setEnabledAndVisible(false);
       return;
     }
@@ -27,8 +27,7 @@ public class SplitByTypeAction extends DumbAwareAction {
 
     Presentation presentation = e.getPresentation();
     boolean enabled = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).isSplitByTypeEnabled(selectedView);
-    presentation.setEnabled(enabled);
-    presentation.setVisible(enabled || !ActionPlaces.isPopupPlace(e.getPlace()));
+    presentation.setEnabledAndVisible(enabled);
   }
 
   @Override

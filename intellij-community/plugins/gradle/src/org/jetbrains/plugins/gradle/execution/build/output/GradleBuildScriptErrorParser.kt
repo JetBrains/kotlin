@@ -82,7 +82,7 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
     exception?.also { description.appendln().append(it) }
 
     // compilation errors should be added by the respective compiler output parser
-    if (reason == "Compilation failed; see the compiler error output for details" ||
+    if (reason.startsWith("Compilation failed") ||
         reason == "Compilation error. See log for more details" ||
         reason == "Script compilation error:" ||
         reason.contains("compiler failed")) return false

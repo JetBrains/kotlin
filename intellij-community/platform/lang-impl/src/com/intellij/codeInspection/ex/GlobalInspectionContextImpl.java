@@ -7,6 +7,7 @@ import com.intellij.analysis.AnalysisUIOptions;
 import com.intellij.analysis.PerformAnalysisInBackgroundOption;
 import com.intellij.codeInsight.FileModificationService;
 import com.intellij.codeInsight.daemon.ProblemHighlightFilter;
+import com.intellij.codeInsight.daemon.impl.DaemonProgressIndicator;
 import com.intellij.codeInsight.daemon.impl.HighlightInfoProcessor;
 import com.intellij.codeInsight.daemon.impl.LocalInspectionsPass;
 import com.intellij.codeInspection.*;
@@ -475,7 +476,10 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
           LOG.info(file.getName() + "; scope: " + scope + "; " + virtualFile);
           return true;
         }
-        inspectFile(file, getEffectiveRange(searchScope, file), inspectionManager, localTools, globalSimpleTools, map);
+        boolean includeDoNotShow = includeDoNotShow(getCurrentProfile());
+        inspectFile(file, getEffectiveRange(searchScope, file), inspectionManager, map,
+                    getWrappersFromTools(globalSimpleTools, file, includeDoNotShow, wrapper -> !(wrapper.getTool() instanceof ExternalAnnotatorBatchInspection)),
+                    getWrappersFromTools(localTools, file, includeDoNotShow, wrapper -> !(wrapper.getTool() instanceof ExternalAnnotatorBatchInspection)));
         return true;
       }, "Inspect code is not available until indices are ready");
       if (readActionSuccess == null || !readActionSuccess) {
@@ -486,8 +490,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
       List<InspectionToolWrapper> externalAnnotatable = ContainerUtil.concat(
         getWrappersFromTools(localTools, file, includeDoNotShow, wrapper -> wrapper.getTool() instanceof ExternalAnnotatorBatchInspection),
         getWrappersFromTools(globalSimpleTools, file, includeDoNotShow, wrapper -> wrapper.getTool() instanceof ExternalAnnotatorBatchInspection));
-      externalAnnotatable
-        .forEach(wrapper -> {
+      externalAnnotatable.forEach(wrapper -> {
           ProblemDescriptor[] descriptors = ((ExternalAnnotatorBatchInspection)wrapper.getTool()).checkFile(file, this, inspectionManager);
           InspectionToolPresentation toolPresentation = getPresentation(wrapper);
           ReadAction.run(() -> BatchModeDescriptorsUtil
@@ -500,8 +503,8 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
       final Queue<PsiFile> filesFailedToInspect = new LinkedBlockingQueue<>();
       while (true) {
         Disposable disposable = Disposer.newDisposable();
-        ProgressIndicator wrapper = new SensitiveProgressWrapper(progressIndicator);
-
+        ProgressIndicator wrapper = new DaemonProgressIndicator();
+        dependentIndicators.add(wrapper);
         try {
           // avoid "attach listener"/"write action" race
           ReadAction.run(() -> {
@@ -529,6 +532,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
           ApplicationManager.getApplication().runReadAction(EmptyRunnable.getInstance());
         }
         finally {
+          dependentIndicators.remove(wrapper);
           Disposer.dispose(disposable);
         }
       }
@@ -574,32 +578,33 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     return new TextRange(0, file.getTextLength());
   }
 
+  // indicators which should be canceled once the main indicator myProgressIndicator is
+  private final List<ProgressIndicator> dependentIndicators = ContainerUtil.createLockFreeCopyOnWriteList();
+
+  @Override
+  protected void canceled() {
+    super.canceled();
+    dependentIndicators.forEach(ProgressIndicator::cancel);
+  }
+
   private void inspectFile(@NotNull final PsiFile file,
                            @NotNull final TextRange range,
                            @NotNull final InspectionManager inspectionManager,
-                           @NotNull List<? extends Tools> localTools,
-                           @NotNull List<? extends Tools> globalSimpleTools,
-                           @NotNull final Map<String, InspectionToolWrapper> wrappersMap) {
+                           @NotNull final Map<String, InspectionToolWrapper> wrappersMap,
+                           @NotNull List<? extends GlobalInspectionToolWrapper> globalSimpleTools,
+                           @NotNull List<? extends LocalInspectionToolWrapper> localTools) {
     Document document = PsiDocumentManager.getInstance(getProject()).getDocument(file);
     if (document == null) return;
 
-    VirtualFile virtualFile = file.getVirtualFile();
-    String url = ProjectUtilCore.displayUrlRelativeToProject(virtualFile, virtualFile.getPresentableUrl(), getProject(), true, false);
-
-    final LocalInspectionsPass pass = new LocalInspectionsPass(file, document, range.getStartOffset(),
-                                                               range.getEndOffset(), LocalInspectionsPass.EMPTY_PRIORITY_RANGE, true,
-                                                               HighlightInfoProcessor.getEmpty(), INSPECT_INJECTED_PSI);
+    LocalInspectionsPass pass = new LocalInspectionsPass(file, document, range.getStartOffset(),
+                                                         range.getEndOffset(), LocalInspectionsPass.EMPTY_PRIORITY_RANGE, true,
+                                                         HighlightInfoProcessor.getEmpty(), INSPECT_INJECTED_PSI);
     try {
-      boolean includeDoNotShow = includeDoNotShow(getCurrentProfile());
-      List<LocalInspectionToolWrapper> notExternalAnnotatableLocals =
-        getWrappersFromTools(localTools, file, includeDoNotShow, wrapper -> !(wrapper.getTool() instanceof ExternalAnnotatorBatchInspection));
+      pass.doInspectInBatch(this, inspectionManager, localTools);
 
-      pass.doInspectInBatch(this, inspectionManager, notExternalAnnotatableLocals);
+      assertUnderDaemonProgress();
 
-      List<GlobalInspectionToolWrapper> notExternalAnnotatableSimple =
-        getWrappersFromTools(globalSimpleTools, file, includeDoNotShow, wrapper -> !(wrapper.getTool() instanceof ExternalAnnotatorBatchInspection));
-
-      JobLauncher.getInstance().invokeConcurrentlyUnderProgress(notExternalAnnotatableSimple, myProgressIndicator, toolWrapper -> {
+      JobLauncher.getInstance().invokeConcurrentlyUnderProgress(globalSimpleTools, ProgressManager.getGlobalProgressIndicator(), toolWrapper -> {
         GlobalSimpleInspectionTool tool = (GlobalSimpleInspectionTool)toolWrapper.getTool();
         ProblemsHolder holder = new ProblemsHolder(inspectionManager, file, false);
         ProblemDescriptionsProcessor problemDescriptionProcessor = getProblemDescriptionProcessor(toolWrapper, wrappersMap);
@@ -608,17 +613,11 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
         BatchModeDescriptorsUtil.addProblemDescriptors(holder.getResults(), false, this, null, CONVERT, toolPresentation);
         return true;
       });
-      incrementJobDoneAmount(getStdJobDescriptors().LOCAL_ANALYSIS, url);
+      VirtualFile virtualFile = file.getVirtualFile();
+      String displayUrl = ProjectUtilCore.displayUrlRelativeToProject(virtualFile, virtualFile.getPresentableUrl(), getProject(), true, false);
+      incrementJobDoneAmount(getStdJobDescriptors().LOCAL_ANALYSIS, displayUrl);
     }
-    catch (ProcessCanceledException e) {
-      final Throwable cause = e.getCause();
-      if (cause == null) {
-        throw e;
-      }
-
-      LOG.error("In file: " + file.getName(), cause);
-    }
-    catch (IndexNotReadyException e) {
+    catch (ProcessCanceledException | IndexNotReadyException e) {
       throw e;
     }
     catch (Throwable e) {

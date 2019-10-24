@@ -3,6 +3,7 @@ package com.intellij.platform
 
 import com.intellij.CommonBundle
 import com.intellij.configurationStore.StoreUtil
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.module.Module
@@ -91,7 +92,8 @@ class ModuleAttachProcessor : ProjectAttachProcessor() {
   override fun attachToProject(project: Project, projectDir: Path, callback: ProjectOpenedCallback?): Boolean {
     val dotIdeaDir = projectDir.resolve(Project.DIRECTORY_STORE_FOLDER)
     if (!dotIdeaDir.exists()) {
-      val newProject = ProjectManagerEx.getInstanceEx().newProject(projectDir, true) ?: return false
+      val options = OpenProjectTask(useDefaultProjectAsTemplate = true, isNewProject = true)
+      val newProject = ProjectManagerEx.getInstanceEx().newProject(projectDir, null, options) ?: return false
       PlatformProjectOpenProcessor.runDirectoryProjectConfigurators(projectDir, newProject, true)
       StoreUtil.saveSettings(newProject)
       runWriteAction { Disposer.dispose(newProject) }

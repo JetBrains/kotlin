@@ -179,6 +179,7 @@ class CompletionValidationState(event: CompletionStartedEvent) : LogEventVisitor
     }
 
     override fun visit(event: TypedSelectEvent) {
+        updateState(event)
         val id = event.selectedId
         updateValid(completionList[currentPosition] == id,
                 "Element selected by typing is not the same id")

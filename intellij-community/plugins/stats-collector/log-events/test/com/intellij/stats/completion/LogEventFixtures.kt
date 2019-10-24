@@ -21,6 +21,7 @@ object LogEventFixtures {
     val type_event_current_pos_0_left_ids_1_2 = TypeEvent(userId, sessionId, lookupState(listOf(1, 2), 0), 1, bucket, System.currentTimeMillis())
     val type_event_current_pos_0_left_ids_0_1 = TypeEvent(userId, sessionId, lookupState(listOf(0, 1), 0), 1, bucket, System.currentTimeMillis())
     val type_event_current_pos_0_left_id_0 = TypeEvent(userId, sessionId, lookupState(listOf(0), 0), 1, bucket, System.currentTimeMillis())
+    val type_event_no_items = TypeEvent(userId, sessionId, lookupState(emptyList(), -1), 1, bucket, System.currentTimeMillis())
 
     val up_pressed_new_pos_0 = UpPressedEvent(userId, sessionId, TEST_STATE.withSelected(0), bucket, System.currentTimeMillis())
     val up_pressed_new_pos_1 = UpPressedEvent(userId, sessionId, TEST_STATE.withSelected(1), bucket, System.currentTimeMillis())

@@ -3,6 +3,7 @@
 package com.intellij.codeInspection.actions;
 
 import com.intellij.codeInsight.FileModificationService;
+import com.intellij.codeInsight.daemon.impl.DaemonProgressIndicator;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.intention.EmptyIntentionAction;
 import com.intellij.codeInsight.intention.FileModifier;
@@ -12,7 +13,6 @@ import com.intellij.codeInspection.*;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -57,7 +57,7 @@ public class CleanupInspectionIntention implements IntentionAction, HighPriority
       ProgressManager.getInstance().runProcess(() -> {
         InspectionManager inspectionManager = InspectionManager.getInstance(project);
         return InspectionEngine.runInspectionOnFile(targetFile, myToolWrapper, inspectionManager.createNewGlobalContext());
-      }, new EmptyProgressIndicator());
+      }, new DaemonProgressIndicator());
 
     if (descriptions.isEmpty() || !FileModificationService.getInstance().preparePsiElementForWrite(targetFile)) return;
 

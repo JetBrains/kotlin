@@ -75,8 +75,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     final AnAction toolbarAction;
     final AnAction runContextAction;
     if (executor instanceof ExecutorGroup) {
-      final ActionGroup toolbarActionGroup = new ExecutorGroupActionGroup((ExecutorGroup<?>)executor, ExecutorAction::new);
-      toolbarActionGroup.setPopup(true);
+      ActionGroup toolbarActionGroup = new SplitButtonAction(new ExecutorGroupActionGroup((ExecutorGroup<?>)executor, ExecutorAction::new));
       final Presentation presentation = toolbarActionGroup.getTemplatePresentation();
       presentation.setIcon(executor.getIcon());
       presentation.setText(executor.getStartActionText());

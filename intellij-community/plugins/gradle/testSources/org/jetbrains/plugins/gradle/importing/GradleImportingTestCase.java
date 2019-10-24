@@ -115,8 +115,10 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   }
 
   protected void assumeTestJavaRuntime(@NotNull JavaVersion javaRuntimeVersion) {
-    Assume.assumeFalse("Skip integration tests running on JDK 9+ for Gradle < 3.0",
-                       javaRuntimeVersion.feature > 9 && getCurrentGradleBaseVersion().compareTo(GradleVersion.version("3.0")) < 0);
+    int javaVer = javaRuntimeVersion.feature;
+    GradleVersion gradleBaseVersion = getCurrentGradleBaseVersion();
+    Assume.assumeFalse("Skip integration tests running on JDK " + javaVer+ "(>9) for "+gradleBaseVersion +"(<3.0)",
+                       javaVer > 9 && gradleBaseVersion.compareTo(GradleVersion.version("3.0")) < 0);
   }
 
   @NotNull

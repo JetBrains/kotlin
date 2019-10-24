@@ -884,15 +884,18 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     }
 
     boolean closePopup = false;
-    boolean isAllTab = isAllTabSelected();
     for (int i : indexes) {
       SearchEverywhereContributor<Object> contributor = myListModel.getContributorForIndex(i);
       Object value = myListModel.getElementAt(i);
-      if (isAllTab) {
-        String reportableContributorID = SearchEverywhereUsageTriggerCollector.getReportableContributorID(contributor);
-        FeatureUsageData data = SearchEverywhereUsageTriggerCollector.createData(reportableContributorID);
-        featureTriggered(SearchEverywhereUsageTriggerCollector.CONTRIBUTOR_ITEM_SELECTED, data);
-      }
+
+      String selectedTabContributorID = mySelectedTab.getContributor()
+        .map(SearchEverywhereUsageTriggerCollector::getReportableContributorID)
+        .orElse(SearchEverywhereManagerImpl.ALL_CONTRIBUTORS_GROUP_ID);
+
+      String reportableContributorID = SearchEverywhereUsageTriggerCollector.getReportableContributorID(contributor);
+      FeatureUsageData data = SearchEverywhereUsageTriggerCollector.createData(reportableContributorID, selectedTabContributorID);
+      featureTriggered(SearchEverywhereUsageTriggerCollector.CONTRIBUTOR_ITEM_SELECTED, data);
+
       closePopup |= contributor.processSelectedItem(value, modifiers, searchText);
     }
 

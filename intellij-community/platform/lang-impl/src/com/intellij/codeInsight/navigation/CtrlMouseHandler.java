@@ -820,7 +820,7 @@ public final class CtrlMouseHandler {
         .withDocumentsCommitted(myProject)
         .expireWith(hintDisposable)
         .expireWhen(() -> !info.isValid(editor.getDocument()))
-        .coalesceBy(hint)
+        .coalesceBy(CtrlMouseHandler.class, hint)
         .submit(AppExecutorUtil.getAppExecutorService()));
     }
 

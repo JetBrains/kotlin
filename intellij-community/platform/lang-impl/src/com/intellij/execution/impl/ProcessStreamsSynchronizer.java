@@ -3,6 +3,7 @@ package com.intellij.execution.impl;
 
 import com.intellij.execution.process.ProcessOutputType;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Alarm;
@@ -38,6 +39,7 @@ class ProcessStreamsSynchronizer {
   private final Object myLock = new Object();
   private final List<Chunk> myPendingChunks = new ArrayList<>();
   private final Alarm myAlarm;
+  private final boolean isUnitTestMode = ApplicationManager.getApplication().isUnitTestMode();
   private boolean myFlushedChunksEndWithNewline = true;
   private ProcessOutputType myLastFlushedChunkBaseOutputType = null;
   private long myLastFlushedChunkCreatedNanoTime = 0;
@@ -136,7 +138,7 @@ class ProcessStreamsSynchronizer {
       // All pending chunks should have the same base output type (`chunk.myBaseOutputType`).
       Chunk eldestChunk = myPendingChunks.get(0);
       long awaitNano = eldestChunk.getNanoTimePassedSinceLastFlushedChunk(nowNano);
-      if ((awaitNano >= AWAIT_SAME_STREAM_TEXT_NANO && myFlushedChunksEndWithNewline) || myReschedules > 1) {
+      if ((awaitNano >= AWAIT_SAME_STREAM_TEXT_NANO && myFlushedChunksEndWithNewline) || myReschedules > (isUnitTestMode ? 10 : 1)) {
         flushAllPendingChunks();
       }
       if (!myPendingChunks.isEmpty()) {
