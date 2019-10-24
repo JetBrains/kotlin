@@ -37,12 +37,18 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class FirCallResolver(
-    private val transformer: FirExpressionsResolveTransformer,
+    components: BodyResolveComponents,
     topLevelScopes: List<FirScope>,
     localScopes: List<FirLocalScope>,
     override val implicitReceiverStack: ImplicitReceiverStack,
     private val qualifiedResolver: FirQualifiedNameResolver
-) : BodyResolveComponents by transformer.components {
+) : BodyResolveComponents by components {
+
+    private lateinit var transformer: FirExpressionsResolveTransformer
+
+    fun initTransformer(transformer: FirExpressionsResolveTransformer) {
+        this.transformer = transformer
+    }
 
     private val towerResolver = FirTowerResolver(
         returnTypeCalculator, this, resolutionStageRunner,

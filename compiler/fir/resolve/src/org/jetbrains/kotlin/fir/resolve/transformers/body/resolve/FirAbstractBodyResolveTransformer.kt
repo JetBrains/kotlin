@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.fir.FirCallResolver
+import org.jetbrains.kotlin.fir.FirQualifiedNameResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -96,6 +98,15 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val inferenceComponents: InferenceComponents = inferenceComponents(session, returnTypeCalculator, scopeSession)
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner(inferenceComponents)
         override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession)
+        override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver = FirDoubleColonExpressionResolver(session)
+        private val qualifiedResolver: FirQualifiedNameResolver = FirQualifiedNameResolver(this)
+        override val callResolver: FirCallResolver = FirCallResolver(
+            this,
+            topLevelScopes,
+            localScopes,
+            implicitReceiverStack,
+            qualifiedResolver
+        )
         val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
         val dataFlowAnalyzer: FirDataFlowAnalyzer = FirDataFlowAnalyzer(this)
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this, callCompleter)
