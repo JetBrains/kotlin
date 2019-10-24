@@ -729,9 +729,9 @@ internal class ObjCExportTranslatorImpl(
 
     private fun mapReturnType(returnBridge: MethodBridge.ReturnValue, method: FunctionDescriptor, objCExportScope: ObjCExportScope): ObjCType = when (returnBridge) {
         MethodBridge.ReturnValue.Void -> ObjCVoidType
-        MethodBridge.ReturnValue.HashCode -> ObjCPrimitiveType("NSUInteger")
+        MethodBridge.ReturnValue.HashCode -> ObjCPrimitiveType.NSUInteger
         is MethodBridge.ReturnValue.Mapped -> mapType(method.returnType!!, returnBridge.bridge, objCExportScope)
-        MethodBridge.ReturnValue.WithError.Success -> ObjCPrimitiveType("BOOL")
+        MethodBridge.ReturnValue.WithError.Success -> ObjCPrimitiveType.BOOL
         is MethodBridge.ReturnValue.WithError.RefOrNull -> {
             val successReturnType = mapReturnType(returnBridge.successBridge, method, objCExportScope) as? ObjCNonNullReferenceType
                     ?: error("Function is expected to have non-null return type: $method")
@@ -900,18 +900,18 @@ internal class ObjCExportTranslatorImpl(
         is BlockPointerBridge -> mapFunctionType(kotlinType, objCExportScope, typeBridge)
         is ValueTypeBridge -> {
             when (typeBridge.objCValueType) {
-                ObjCValueType.BOOL -> ObjCPrimitiveType("BOOL")
-                ObjCValueType.UNICHAR -> ObjCPrimitiveType("unichar")
-                ObjCValueType.CHAR -> ObjCPrimitiveType("int8_t")
-                ObjCValueType.SHORT -> ObjCPrimitiveType("int16_t")
-                ObjCValueType.INT -> ObjCPrimitiveType("int32_t")
-                ObjCValueType.LONG_LONG -> ObjCPrimitiveType("int64_t")
-                ObjCValueType.UNSIGNED_CHAR -> ObjCPrimitiveType("uint8_t")
-                ObjCValueType.UNSIGNED_SHORT -> ObjCPrimitiveType("uint16_t")
-                ObjCValueType.UNSIGNED_INT -> ObjCPrimitiveType("uint32_t")
-                ObjCValueType.UNSIGNED_LONG_LONG -> ObjCPrimitiveType("uint64_t")
-                ObjCValueType.FLOAT -> ObjCPrimitiveType("float")
-                ObjCValueType.DOUBLE -> ObjCPrimitiveType("double")
+                ObjCValueType.BOOL -> ObjCPrimitiveType.BOOL
+                ObjCValueType.UNICHAR -> ObjCPrimitiveType.unichar
+                ObjCValueType.CHAR -> ObjCPrimitiveType.int8_t
+                ObjCValueType.SHORT -> ObjCPrimitiveType.int16_t
+                ObjCValueType.INT -> ObjCPrimitiveType.int32_t
+                ObjCValueType.LONG_LONG -> ObjCPrimitiveType.int64_t
+                ObjCValueType.UNSIGNED_CHAR -> ObjCPrimitiveType.uint8_t
+                ObjCValueType.UNSIGNED_SHORT -> ObjCPrimitiveType.uint16_t
+                ObjCValueType.UNSIGNED_INT -> ObjCPrimitiveType.uint32_t
+                ObjCValueType.UNSIGNED_LONG_LONG -> ObjCPrimitiveType.uint64_t
+                ObjCValueType.FLOAT -> ObjCPrimitiveType.float
+                ObjCValueType.DOUBLE -> ObjCPrimitiveType.double
                 ObjCValueType.POINTER -> ObjCPointerType(ObjCVoidType, kotlinType.binaryRepresentationIsNullable())
             }
             // TODO: consider other namings.

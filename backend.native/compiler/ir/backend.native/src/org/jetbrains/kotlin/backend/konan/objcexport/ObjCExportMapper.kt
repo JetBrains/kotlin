@@ -320,21 +320,21 @@ internal fun ObjCExportMapper.bridgePropertyType(descriptor: PropertyDescriptor)
 }
 
 internal enum class NSNumberKind(val mappedKotlinClassId: ClassId?, val objCType: ObjCType) {
-    CHAR(PrimitiveType.BYTE, "char"),
-    UNSIGNED_CHAR(UnsignedType.UBYTE, "unsigned char"),
-    SHORT(PrimitiveType.SHORT, "short"),
-    UNSIGNED_SHORT(UnsignedType.USHORT, "unsigned short"),
-    INT(PrimitiveType.INT, "int"),
-    UNSIGNED_INT(UnsignedType.UINT, "unsigned int"),
-    LONG("long"),
-    UNSIGNED_LONG("unsigned long"),
-    LONG_LONG(PrimitiveType.LONG, "long long"),
-    UNSIGNED_LONG_LONG(UnsignedType.ULONG, "unsigned long long"),
-    FLOAT(PrimitiveType.FLOAT, "float"),
-    DOUBLE(PrimitiveType.DOUBLE, "double"),
-    BOOL(PrimitiveType.BOOLEAN, "BOOL"),
-    INTEGER("NSInteger"),
-    UNSIGNED_INTEGER("NSUInteger")
+    CHAR(PrimitiveType.BYTE, ObjCPrimitiveType.char),
+    UNSIGNED_CHAR(UnsignedType.UBYTE, ObjCPrimitiveType.unsigned_char),
+    SHORT(PrimitiveType.SHORT, ObjCPrimitiveType.short),
+    UNSIGNED_SHORT(UnsignedType.USHORT, ObjCPrimitiveType.unsigned_short),
+    INT(PrimitiveType.INT, ObjCPrimitiveType.int),
+    UNSIGNED_INT(UnsignedType.UINT, ObjCPrimitiveType.unsigned_int),
+    LONG(ObjCPrimitiveType.long),
+    UNSIGNED_LONG(ObjCPrimitiveType.unsigned_long),
+    LONG_LONG(PrimitiveType.LONG, ObjCPrimitiveType.long_long),
+    UNSIGNED_LONG_LONG(UnsignedType.ULONG, ObjCPrimitiveType.unsigned_long_long),
+    FLOAT(PrimitiveType.FLOAT, ObjCPrimitiveType.float),
+    DOUBLE(PrimitiveType.DOUBLE, ObjCPrimitiveType.double),
+    BOOL(PrimitiveType.BOOLEAN, ObjCPrimitiveType.BOOL),
+    INTEGER(ObjCPrimitiveType.NSInteger),
+    UNSIGNED_INTEGER(ObjCPrimitiveType.NSUInteger)
 
     ;
 
@@ -348,19 +348,14 @@ internal enum class NSNumberKind(val mappedKotlinClassId: ClassId?, val objCType
     val factorySelector = "numberWith${kindName.capitalize()}:" // numberWithUnsignedShort:
 
     constructor(
-            mappedKotlinClassId: ClassId?,
-            objCPrimitiveTypeName: String
-    ) : this(mappedKotlinClassId, ObjCPrimitiveType(objCPrimitiveTypeName))
-
-    constructor(
             primitiveType: PrimitiveType,
-            objCPrimitiveTypeName: String
-    ) : this(ClassId.topLevel(primitiveType.typeFqName), objCPrimitiveTypeName)
+            objCPrimitiveType: ObjCPrimitiveType
+    ) : this(ClassId.topLevel(primitiveType.typeFqName), objCPrimitiveType)
 
     constructor(
             unsignedType: UnsignedType,
-            objCPrimitiveTypeName: String
-    ) : this(unsignedType.classId, objCPrimitiveTypeName)
+            objCPrimitiveType: ObjCPrimitiveType
+    ) : this(unsignedType.classId, objCPrimitiveType)
 
-    constructor(objCPrimitiveTypeName: String) : this(null, ObjCPrimitiveType(objCPrimitiveTypeName))
+    constructor(objCPrimitiveType: ObjCPrimitiveType) : this(null, objCPrimitiveType)
 }
