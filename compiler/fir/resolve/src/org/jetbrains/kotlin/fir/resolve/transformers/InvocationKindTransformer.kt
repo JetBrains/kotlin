@@ -7,49 +7,87 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirLambdaArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.isInline
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
-object InvocationKindTransformer : FirTransformer<InvocationKind?>() {
-    override fun <E : FirElement> transformElement(element: E, data: InvocationKind?): CompositeTransformResult<E> {
+object InvocationKindTransformer : FirTransformer<Nothing?>() {
+    private object ArgumentsTransformer : FirTransformer<Pair<Map<FirExpression, InvocationKind>, InvocationKind?>>() {
+        override fun <E : FirElement> transformElement(element: E, data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>): CompositeTransformResult<E> {
+            return element.compose()
+        }
+
+        override fun transformAnonymousFunction(
+            anonymousFunction: FirAnonymousFunction,
+            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>
+        ): CompositeTransformResult<FirStatement> {
+            val kind = data.second ?: data.first[anonymousFunction]
+            if (kind != null) {
+                anonymousFunction.replaceInvocationKind(kind)
+            }
+            return anonymousFunction.compose()
+        }
+
+        override fun transformLambdaArgumentExpression(
+            lambdaArgumentExpression: FirLambdaArgumentExpression,
+            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>
+        ): CompositeTransformResult<FirStatement> {
+            return data.first[lambdaArgumentExpression]?.let {
+                (lambdaArgumentExpression.transformChildren(this, data.first to it) as FirStatement).compose()
+            } ?: lambdaArgumentExpression.compose()
+        }
+
+        override fun transformNamedArgumentExpression(
+            namedArgumentExpression: FirNamedArgumentExpression,
+            data: Pair<Map<FirExpression, InvocationKind>, InvocationKind?>
+        ): CompositeTransformResult<FirStatement> {
+            return data.first[namedArgumentExpression]?.let {
+                (namedArgumentExpression.transformChildren(this, data.first to it) as FirStatement).compose()
+            } ?: namedArgumentExpression.compose()
+        }
+    }
+
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
-    override fun transformAnonymousFunction(
-        anonymousFunction: FirAnonymousFunction,
-        data: InvocationKind?
-    ): CompositeTransformResult<FirStatement> {
-        if (data != null) {
-            anonymousFunction.replaceInvocationKind(data)
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Nothing?): CompositeTransformResult<FirStatement> {
+        val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate ?: return functionCall.compose()
+        val argumentMapping = calleeReference.candidate.argumentMapping ?: return functionCall.compose()
+        val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return functionCall.compose()
+
+        val callsEffects = function.contractDescription.effects.filterIsInstance<ConeCallsEffectDeclaration>()
+
+        val isInline = function.isInline
+        if (callsEffects.isEmpty() && !isInline) {
+            return functionCall.compose()
         }
-        return anonymousFunction.compose()
-    }
 
-    override fun transformLambdaArgumentExpression(
-        lambdaArgumentExpression: FirLambdaArgumentExpression,
-        data: InvocationKind?
-    ): CompositeTransformResult<FirStatement> {
-        lambdaArgumentExpression.transformChildren(this, data)
-        return lambdaArgumentExpression.compose()
-    }
+        val reversedArgumentMapping = argumentMapping.entries.map { (argument, parameter) ->
+            parameter to argument
+        }.toMap()
 
-    override fun transformNamedArgumentExpression(
-        namedArgumentExpression: FirNamedArgumentExpression,
-        data: InvocationKind?
-    ): CompositeTransformResult<FirStatement> {
-        namedArgumentExpression.transformChildren(this, data)
-        return namedArgumentExpression.compose()
-    }
-
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: InvocationKind?): CompositeTransformResult<FirStatement> {
-        // TODO: add contracts handling and inline handling
-        return (functionCall.transformChildren(this, InvocationKind.EXACTLY_ONCE) as FirFunctionCall).compose()
+        val invocationKindMapping = mutableMapOf<FirExpression, InvocationKind>()
+        for (effect in callsEffects) {
+            // TODO: Support callsInPlace contracts on receivers
+            val valueParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex) ?: continue
+            val argument = reversedArgumentMapping[valueParameter] ?: continue
+            invocationKindMapping[argument] = effect.kind
+        }
+        if (isInline) {
+            for (argument in functionCall.arguments) {
+                invocationKindMapping.putIfAbsent(argument, InvocationKind.UNKNOWN)
+            }
+        }
+        if (invocationKindMapping.isEmpty()) {
+            return functionCall.compose()
+        }
+        return functionCall.transformArguments(ArgumentsTransformer, invocationKindMapping to null).compose()
     }
 }

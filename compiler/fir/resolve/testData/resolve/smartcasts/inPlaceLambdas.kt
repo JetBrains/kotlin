@@ -7,7 +7,7 @@ interface B {
 }
 
 
-fun run(block: () -> Unit) {
+inline fun run(block: () -> Unit) {
     block()
 }
 

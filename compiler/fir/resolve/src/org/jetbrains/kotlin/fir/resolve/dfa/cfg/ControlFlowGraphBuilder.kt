@@ -24,6 +24,7 @@ class ControlFlowGraphBuilder {
 
     private val exitNodes: Stack<CFGNode<*>> = stackOf()
 
+    private val functionEnterNodes: SymbolBasedNodeStorage<FirFunction<*>, FunctionEnterNode> = SymbolBasedNodeStorage()
     private val functionExitNodes: SymbolBasedNodeStorage<FirFunction<*>, FunctionExitNode> = SymbolBasedNodeStorage()
 
     private val whenExitNodes: NodeStorage<FirWhenExpression, WhenExitNode> = NodeStorage()
@@ -86,17 +87,14 @@ class ControlFlowGraphBuilder {
 
         @Suppress("NON_EXHAUSTIVE_WHEN")
         when (invocationKind) {
-            InvocationKind.AT_LEAST_ONCE -> addEdge(exitNode, enterNode)
-            InvocationKind.AT_MOST_ONCE -> addEdge(enterNode, exitNode)
-            InvocationKind.UNKNOWN -> {
-                addEdge(exitNode, enterNode)
-                addEdge(enterNode, exitNode)
-            }
+            InvocationKind.AT_MOST_ONCE, InvocationKind.UNKNOWN -> addEdge(enterNode, exitNode)
         }
 
         functionExitNodes.push(exitNode)
         if (!isInplace) {
             exitNodes.push(exitNode)
+        } else {
+            functionEnterNodes.push(enterNode)
         }
         levelCounter++
         return enterNode to previousNode
@@ -105,12 +103,17 @@ class ControlFlowGraphBuilder {
     fun exitFunction(function: FirFunction<*>): Pair<FunctionExitNode, ControlFlowGraph?> {
         levelCounter--
         val exitNode = functionExitNodes.pop()
-        val isInplace = function.isInplace()
+        val invocationKind = function.invocationKind
+        val isInplace = invocationKind != null
         if (!isInplace) {
             exitNodes.pop()
         }
         if (isInplace) {
             addNewSimpleNode(exitNode)
+            val enterNode = functionEnterNodes.pop()
+            when (invocationKind) {
+                InvocationKind.AT_LEAST_ONCE, InvocationKind.UNKNOWN -> addEdge(exitNode, enterNode, propagateDeadness = false)
+            }
         } else {
             addEdge(lastNodes.pop(), exitNode)
             lexicalScopes.pop()
@@ -615,11 +618,6 @@ class ControlFlowGraphBuilder {
         get() = (this as? FirAnonymousFunction)?.invocationKind
 
     private fun InvocationKind?.isInplace(): Boolean {
-        return this != null && this != InvocationKind.UNKNOWN
-    }
-
-    private fun FirFunction<*>.isInplace(): Boolean {
-        val invocationKind = this.invocationKind
-        return invocationKind != null && invocationKind != InvocationKind.UNKNOWN
+        return this != null
     }
 }

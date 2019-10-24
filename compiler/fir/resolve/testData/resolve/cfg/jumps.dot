@@ -391,7 +391,7 @@ digraph jumps_kt {
         }
         131 [label="Exit function anonymousFunction"];
       }
-      132 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+      132 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
     ^@run Unit
 }
 )"];
@@ -402,13 +402,13 @@ digraph jumps_kt {
 
   124 -> {125};
   125 -> {126};
-  126 -> {127};
+  126 -> {131 127};
   127 -> {128};
   128 -> {131};
   128 -> {129} [style=dotted];
   129 -> {130} [style=dotted];
   130 -> {131} [style=dotted];
-  131 -> {132};
+  131 -> {126 132};
   132 -> {133};
   133 -> {134};
 

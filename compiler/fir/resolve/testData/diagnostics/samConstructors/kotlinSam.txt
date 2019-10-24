@@ -6,11 +6,11 @@ FILE: kotlinSam.kt
     public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/foo|(R|/MyRunnable|(<L> = MyRunnable@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE>  {
+        R|/foo|(R|/MyRunnable|(<L> = MyRunnable@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
             >(R|<local>/x|, Int(1))
         }
         ))
-        R|/foo|(R|/MyRunnable|(MyRunnable@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE>  {
+        R|/foo|(R|/MyRunnable|(MyRunnable@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| {
             >(R|<local>/it|, Int(1))
         }
         ))

@@ -33,22 +33,22 @@ FILE: kotlinSam.kt
             >(R|<local>/t|, Int(1))
         }
 
-        R|/foo1|(<L> = foo1@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE>  {
+        R|/foo1|(<L> = foo1@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
             >(R|<local>/x|, Int(1))
         }
         )
         R|/foo1|(R|<local>/f|)
-        R|/foo2|(<L> = foo2@fun <anonymous>(x: R|kotlin/Nothing|): kotlin/Boolean <kind=EXACTLY_ONCE>  {
+        R|/foo2|(<L> = foo2@fun <anonymous>(x: R|kotlin/Nothing|): kotlin/Boolean {
             >(R|<local>/x|, Int(1))
         }
         )
         <Inapplicable(INAPPLICABLE): [/foo2]>#(R|<local>/f|)
-        <Ambiguity: foo3, [/foo3, /foo3]>#(<L> = foo3@fun <implicit>.<anonymous>(x: <implicit>): <implicit> <kind=EXACTLY_ONCE>  {
+        <Ambiguity: foo3, [/foo3, /foo3]>#(<L> = foo3@fun <implicit>.<anonymous>(x: <implicit>): <implicit> {
             >(x#, Int(1))
         }
         )
         R|/foo3|(R|<local>/f|)
-        <Unresolved name: foo4>#(<L> = foo4@fun <implicit>.<anonymous>(x: <implicit>): <implicit> <kind=EXACTLY_ONCE>  {
+        <Unresolved name: foo4>#(<L> = foo4@fun <implicit>.<anonymous>(x: <implicit>): <implicit> {
             >(x#, Int(1))
         }
         )

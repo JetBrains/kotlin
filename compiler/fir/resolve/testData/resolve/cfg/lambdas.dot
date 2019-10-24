@@ -53,7 +53,7 @@ digraph lambdas_kt {
             }
             20 [label="Exit function anonymousFunction"];
           }
-          21 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+          21 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
     R|<local>/x|.R|kotlin/Int.inc|()
 }
 )"];
@@ -77,12 +77,12 @@ digraph lambdas_kt {
   12 -> {24};
   13 -> {14};
   14 -> {15};
-  15 -> {16};
+  15 -> {20 16};
   16 -> {17};
   17 -> {18};
   18 -> {19};
   19 -> {20};
-  20 -> {21};
+  20 -> {15 21};
   21 -> {22};
   22 -> {23};
   23 -> {24};
@@ -197,16 +197,16 @@ digraph lambdas_kt {
           63 [label="Stub" style="filled" fillcolor=gray];
           64 [label="Exit block" style="filled" fillcolor=gray];
         }
-        65 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
+        65 [label="Exit function anonymousFunction"];
       }
-      66 [label="Function call: R|/getInt|(<L> = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+      66 [label="Function call: R|/getInt|(<L> = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
     ^test_3 Int(1)
 }
-)" style="filled" fillcolor=gray];
-      67 [label="Jump: ^test_3 R|/getInt|(<L> = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+)"];
+      67 [label="Jump: ^test_3 R|/getInt|(<L> = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
     ^test_3 Int(1)
 }
-)" style="filled" fillcolor=gray];
+)"];
       68 [label="Stub" style="filled" fillcolor=gray];
       69 [label="Exit block" style="filled" fillcolor=gray];
     }
@@ -215,16 +215,17 @@ digraph lambdas_kt {
 
   57 -> {58};
   58 -> {59};
-  59 -> {60};
+  59 -> {65 60};
   60 -> {61};
   61 -> {62};
   62 -> {70};
   62 -> {63} [style=dotted];
   63 -> {64} [style=dotted];
   64 -> {65} [style=dotted];
-  65 -> {66} [style=dotted];
-  66 -> {67} [style=dotted];
-  67 -> {70 68} [style=dotted];
+  65 -> {59 66};
+  66 -> {67};
+  67 -> {70};
+  67 -> {68} [style=dotted];
   68 -> {69} [style=dotted];
   69 -> {70} [style=dotted];
 
@@ -245,16 +246,16 @@ digraph lambdas_kt {
           77 [label="Stub" style="filled" fillcolor=gray];
           78 [label="Exit block" style="filled" fillcolor=gray];
         }
-        79 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
+        79 [label="Exit function anonymousFunction"];
       }
-      80 [label="Function call: R|/getInt|(block = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+      80 [label="Function call: R|/getInt|(block = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
     ^test_4 Int(1)
 }
-)" style="filled" fillcolor=gray];
-      81 [label="Jump: ^test_4 R|/getInt|(block = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+)"];
+      81 [label="Jump: ^test_4 R|/getInt|(block = getInt@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
     ^test_4 Int(1)
 }
-)" style="filled" fillcolor=gray];
+)"];
       82 [label="Stub" style="filled" fillcolor=gray];
       83 [label="Exit block" style="filled" fillcolor=gray];
     }
@@ -263,16 +264,17 @@ digraph lambdas_kt {
 
   71 -> {72};
   72 -> {73};
-  73 -> {74};
+  73 -> {79 74};
   74 -> {75};
   75 -> {76};
   76 -> {84};
   76 -> {77} [style=dotted];
   77 -> {78} [style=dotted];
   78 -> {79} [style=dotted];
-  79 -> {80} [style=dotted];
-  80 -> {81} [style=dotted];
-  81 -> {84 82} [style=dotted];
+  79 -> {73 80};
+  80 -> {81};
+  81 -> {84};
+  81 -> {82} [style=dotted];
   82 -> {83} [style=dotted];
   83 -> {84} [style=dotted];
 

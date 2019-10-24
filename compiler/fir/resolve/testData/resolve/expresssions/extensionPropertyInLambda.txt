@@ -19,7 +19,7 @@ FILE: extensionPropertyInLambda.kt
     public final fun use(f: R|kotlin/Function0<kotlin/String>|): R|kotlin/Unit| {
     }
     public final fun test1(): R|kotlin/Unit| {
-        R|/use|(<L> = use@fun <anonymous>(): R|kotlin/String| <kind=EXACTLY_ONCE>  {
+        R|/use|(<L> = use@fun <anonymous>(): R|kotlin/String| {
             R|/C.C|<R|kotlin/String|>(String(abc)).R|/y|
         }
         )

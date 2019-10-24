@@ -1,5 +1,5 @@
 FILE: simpleLazy.kt
-    public final val x: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <kind=EXACTLY_ONCE>  {
+    public final val x: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| {
         String(Hello)
     }
     )
@@ -8,7 +8,7 @@ FILE: simpleLazy.kt
         }
     public final fun foo(): R|kotlin/Unit| {
         R|/x|.R|kotlin/String.length|
-        lval y: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <kind=EXACTLY_ONCE>  {
+        lval y: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| {
             String(Bye)
         }
         )

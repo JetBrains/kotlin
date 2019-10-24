@@ -25,7 +25,7 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
     }
 
     public void testAllFilesPresentInStdlib() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), true, "contracts");
     }
 
     @TestMetadata("arrayFirstOrNull.kt")

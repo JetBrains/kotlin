@@ -506,13 +506,17 @@ fun main(args: Array<String>) {
             model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib", "cfg", "smartcasts"))
         }
 
-        testClass<AbstractFirResolveTestCaseWithStdlib> {
-            model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
-        }
-
         testClass<AbstractFirCfgBuildingTest> {
             model("resolve/cfg", pattern = KT_WITHOUT_DOTS_IN_NAME)
             model("resolve/smartcasts", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractFirResolveTestCaseWithStdlib> {
+            model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("contracts"))
+        }
+
+        testClass<AbstractFirCfgBuildingWithStdlibTest> {
+            model("resolve/stdlib/contracts", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 

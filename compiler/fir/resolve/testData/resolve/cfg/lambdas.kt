@@ -1,4 +1,4 @@
-fun run(block: () -> Unit) {
+inline fun run(block: () -> Unit) {
     block()
 }
 
@@ -19,7 +19,7 @@ fun test_2(x: Any?) {
 }
 
 
-fun getInt(block: () -> Unit): Int {
+inline fun getInt(block: () -> Unit): Int {
     block()
     return 1
 }

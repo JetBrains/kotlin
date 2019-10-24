@@ -5,11 +5,11 @@ FILE: main.kt
         ^MyRunnable Int(1)
     }
     public final fun main(): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): [/foo]>#(R|/MyRunnable|(<L> = MyRunnable@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE>  {
+        <Inapplicable(INAPPLICABLE): [/foo]>#(R|/MyRunnable|(<L> = MyRunnable@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
             >(R|<local>/x|, Int(1))
         }
         ))
-        <Inapplicable(INAPPLICABLE): [/foo]>#(R|/MyRunnable|(MyRunnable@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <kind=EXACTLY_ONCE>  {
+        <Inapplicable(INAPPLICABLE): [/foo]>#(R|/MyRunnable|(MyRunnable@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| {
             >(R|<local>/it|, Int(1))
         }
         ))

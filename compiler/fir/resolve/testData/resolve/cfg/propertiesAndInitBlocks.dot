@@ -164,9 +164,9 @@ digraph propertiesAndInitBlocks_kt {
         50 [label="Stub" style="filled" fillcolor=gray];
         51 [label="Exit block" style="filled" fillcolor=gray];
       }
-      52 [label="Exit function anonymousFunction" style="filled" fillcolor=gray];
+      52 [label="Exit function anonymousFunction"];
     }
-    53 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    53 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
     local final fun foo(): R|kotlin/Unit| {
         lval c: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
         throw R|java/lang/Exception.Exception|()
@@ -186,20 +186,20 @@ digraph propertiesAndInitBlocks_kt {
 
     throw R|java/lang/Exception.Exception|()
 }
-)" style="filled" fillcolor=gray];
+)"];
     54 [label="Exit property" style="filled" fillcolor=red];
   }
 
   45 -> {46};
-  46 -> {47};
+  46 -> {52 47};
   47 -> {48};
   48 -> {49};
   49 -> {54};
   49 -> {50} [style=dotted];
   50 -> {51} [style=dotted];
   51 -> {52} [style=dotted];
-  52 -> {53} [style=dotted];
-  53 -> {54} [style=dotted];
+  52 -> {46 53};
+  53 -> {54};
 
   subgraph cluster_18 {
     color=red

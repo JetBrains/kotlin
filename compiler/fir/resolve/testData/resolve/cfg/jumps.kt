@@ -40,7 +40,7 @@ fun test_5(b: Boolean) {
     }
 }
 
-fun run(block: () -> Unit) {
+inline fun run(block: () -> Unit) {
     block()
 }
 
