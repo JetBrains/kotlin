@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection.export;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
@@ -19,22 +19,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 /**
  * @author Dmitry Batkovich
  */
-public class InspectionTreeHtmlWriter {
+public final class InspectionTreeHtmlWriter {
   private static final String ERROR_COLOR = "ffabab";
   private static final String WARNING_COLOR = "f2f794";
 
   private final InspectionTree myTree;
-  private final String myOutputDir;
+  private final Path myOutputDir;
   private final InspectionProfile myProfile;
   private final RefManager myManager;
 
-  public InspectionTreeHtmlWriter(InspectionResultsView view,
-                                  String outputDir) {
+  public InspectionTreeHtmlWriter(@NotNull InspectionResultsView view,
+                                  @NotNull Path outputDir) {
     myTree = view.getTree();
     myOutputDir = outputDir;
     myProfile = view.getCurrentProfile();
@@ -93,7 +94,6 @@ public class InspectionTreeHtmlWriter {
       w.append("</div><div style=\"float:left; width:50%;\"><h4>Problem description:</h4>" +
                "<div id=\"preview\">Select a problem element in tree</div></div><div></body></html>");
     });
-
 
     InspectionTreeHtmlExportResources.copyInspectionReportResources(myOutputDir);
   }

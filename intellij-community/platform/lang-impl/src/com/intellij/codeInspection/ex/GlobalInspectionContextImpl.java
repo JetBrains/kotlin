@@ -72,7 +72,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
@@ -94,7 +93,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
 
   private final NotNullLazyValue<? extends ContentManager> myContentManager;
   private volatile InspectionResultsView myView;
-  private volatile String myOutputPath;
+  private volatile Path myOutputDir;
   private Content myContent;
   private volatile boolean myViewClosed = true;
   private long myInspectionStartedTimestamp;
@@ -168,29 +167,29 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     super.doInspections(scope);
   }
 
-  public void launchInspectionsOffline(@NotNull final AnalysisScope scope,
-                                       @NotNull final String outputPath,
-                                       final boolean runGlobalToolsOnly,
-                                       @NotNull final List<? super Path> inspectionsResults) {
+  public void launchInspectionsOffline(@NotNull AnalysisScope scope,
+                                       @NotNull Path outputPath,
+                                       boolean runGlobalToolsOnly,
+                                       @NotNull List<? super Path> inspectionsResults) {
     performInspectionsWithProgressAndExportResults(scope, runGlobalToolsOnly, true, outputPath, inspectionsResults);
   }
 
   public void performInspectionsWithProgressAndExportResults(@NotNull final AnalysisScope scope,
                                                              final boolean runGlobalToolsOnly,
                                                              final boolean isOfflineInspections,
-                                                             @NotNull final String outputPath,
+                                                             @NotNull Path outputDir,
                                                              @NotNull final List<? super Path> inspectionsResults) {
     cleanupTools();
     setCurrentScope(scope);
 
     final Runnable action = () -> {
-      myOutputPath = outputPath;
+      myOutputDir = outputDir;
       try {
         performInspectionsWithProgress(scope, runGlobalToolsOnly, isOfflineInspections);
-        exportResultsSmart(inspectionsResults, outputPath);
+        exportResultsSmart(inspectionsResults, outputDir);
       }
       finally {
-        myOutputPath = null;
+        myOutputDir = null;
       }
     };
     if (isOfflineInspections) {
@@ -203,7 +202,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
 
   protected void exportResults(@NotNull List<? super Path> inspectionsResults,
                                @NotNull List<? extends Tools> inspections,
-                               @NotNull String outputPath,
+                               @NotNull Path outputDir,
                                @Nullable XMLOutputFactory xmlOutputFactory) {
     if (xmlOutputFactory == null) {
       xmlOutputFactory = XMLOutputFactory.newInstance();
@@ -215,9 +214,9 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     try {
       int i = 0;
       for (Tools inspection : inspections) {
-        inspectionsResults.add(ExportHTMLAction.getInspectionResultPath(outputPath, inspection.getShortName()));
+        inspectionsResults.add(ExportHTMLAction.getInspectionResultPath(outputDir, inspection.getShortName()));
         try {
-          BufferedWriter writer = ExportHTMLAction.getWriter(outputPath, inspection.getShortName());
+          BufferedWriter writer = ExportHTMLAction.getWriter(outputDir, inspection.getShortName());
           writers[i] = writer;
           XMLStreamWriter xmlWriter = xmlOutputFactory.createXMLStreamWriter(writer);
           xmlWriters[i++] = xmlWriter;
@@ -225,7 +224,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
           xmlWriter.writeCharacters("\n");
           xmlWriter.flush();
         }
-        catch (FileNotFoundException | XMLStreamException e) {
+        catch (IOException | XMLStreamException e) {
           LOG.error(e);
         }
       }
@@ -289,7 +288,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     }
   }
 
-  private void exportResultsSmart(@NotNull List<? super Path> inspectionsResults, @NotNull String outputPath) {
+  private void exportResultsSmart(@NotNull List<? super Path> inspectionsResults, @NotNull Path outputDir) {
     final List<Tools> globalToolsWithProblems = new ArrayList<>();
     for (Map.Entry<String,Tools> entry : getTools().entrySet()) {
       final Tools sameTools = entry.getValue();
@@ -299,7 +298,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
         for (ScopeToolState toolDescr : sameTools.getTools()) {
           InspectionToolWrapper toolWrapper = toolDescr.getTool();
           if (toolWrapper instanceof LocalInspectionToolWrapper) {
-            hasProblems = ExportHTMLAction.getInspectionResultFile(outputPath, toolWrapper.getShortName()).exists();
+            hasProblems = Files.exists(ExportHTMLAction.getInspectionResultFile(outputDir, toolWrapper.getShortName()));
           }
           else {
             InspectionToolPresentation presentation = getPresentation(toolWrapper);
@@ -316,7 +315,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
       // close "problem" tag for local inspections (see DefaultInspectionToolPresentation.addProblemElement())
       if (hasProblems) {
         try {
-          final Path file = ExportHTMLAction.getInspectionResultPath(outputPath, sameTools.getShortName());
+          final Path file = ExportHTMLAction.getInspectionResultPath(outputDir, sameTools.getShortName());
           inspectionsResults.add(file);
           Files.write(file, ("</" + PROBLEMS_TAG_NAME + ">").getBytes(StandardCharsets.UTF_8), StandardOpenOption.APPEND);
         }
@@ -330,7 +329,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     if (!globalToolsWithProblems.isEmpty()) {
       XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
       StreamEx.ofSubLists(globalToolsWithProblems, MAX_OPEN_GLOBAL_INSPECTION_XML_RESULT_FILES).forEach(inspections ->
-        exportResults(inspectionsResults, inspections, outputPath, xmlOutputFactory));
+        exportResults(inspectionsResults, inspections, outputDir, xmlOutputFactory));
     }
   }
 
@@ -353,8 +352,9 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
     return myView;
   }
 
-  public String getOutputPath() {
-    return myOutputPath;
+  @Nullable
+  public Path getOutputPath() {
+    return myOutputDir;
   }
 
   private static void resolveElementRecursively(@NotNull InspectionToolPresentation presentation, @NotNull RefEntity refElement) {

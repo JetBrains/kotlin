@@ -212,7 +212,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
           reportMessage(0, "modified file" + file.getPath());
         }
         try {
-          runAnalysisOnScope(projectPath, 
+          runAnalysisOnScope(projectPath,
                              parentDisposable, project, myInspectionProfile,
                              new AnalysisScope(project, files));
         }
@@ -254,7 +254,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
     return context;
   }
 
-  private void runAnalysisOnScope(Path projectPath, 
+  private void runAnalysisOnScope(Path projectPath,
                                   @NotNull Disposable parentDisposable,
                                   Project project,
                                   InspectionProfileImpl inspectionProfile, AnalysisScope scope)
@@ -305,10 +305,10 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
   }
 
   private void runAnalysis(Project project,
-                           Path projectPath, 
+                           Path projectPath,
                            InspectionProfileImpl inspectionProfile,
-                           AnalysisScope scope, 
-                           InspectionsReportConverter reportConverter, 
+                           AnalysisScope scope,
+                           InspectionsReportConverter reportConverter,
                            Path resultsDataPath) throws IOException {
     GlobalInspectionContextImpl context = createGlobalInspectionContext(project);
     if (myAnalyzeChanges) {
@@ -509,7 +509,7 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
         gracefulExit();
         return;
       }
-      context.launchInspectionsOffline(scope, resultsDataPath.toString(), myRunGlobalToolsOnly, inspectionsResults);
+      context.launchInspectionsOffline(scope, resultsDataPath, myRunGlobalToolsOnly, inspectionsResults);
       reportMessage(1, "\n" + InspectionsBundle.message("inspection.capitalized.done") + "\n");
       if (!myErrorCodeRequired) {
         closeProject(project);
@@ -702,10 +702,8 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
 
   @Nullable
   private static String getPrefix(final String text) {
-    //noinspection HardCodedStringLiteral
     int idx = text.indexOf(" in ");
     if (idx == -1) {
-      //noinspection HardCodedStringLiteral
       idx = text.indexOf(" of ");
     }
 

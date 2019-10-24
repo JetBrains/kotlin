@@ -20,7 +20,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
@@ -37,11 +36,11 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -236,9 +235,14 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
 
   @Override
   public void addProblemElement(@Nullable RefEntity refElement, boolean filterSuppressed, @NotNull final CommonProblemDescriptor... descriptors) {
-    if (refElement == null || descriptors.length == 0) return;
+    if (refElement == null || descriptors.length == 0) {
+      return;
+    }
+
     ReportedProblemFilter filter = myContext.getReportedProblemFilter();
-    if (filter != null && !filter.shouldReportProblem(refElement, descriptors)) return;
+    if (filter != null && !filter.shouldReportProblem(refElement, descriptors)) {
+      return;
+    }
 
     checkFromSameFile(refElement, descriptors);
     if (filterSuppressed) {
@@ -246,7 +250,12 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
         myProblemElements.put(refElement, descriptors);
       }
       else {
-        writeOutput(descriptors, refElement);
+        try {
+          writeOutput(descriptors, refElement);
+        }
+        catch (IOException e) {
+          LOG.error(e);
+        }
       }
     }
     else {
@@ -266,18 +275,22 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
     return isDisposed;
   }
 
-  private synchronized void writeOutput(@NotNull final CommonProblemDescriptor[] descriptions, @NotNull RefEntity refElement) {
-    final File file = ExportHTMLAction.getInspectionResultFile(myContext.getOutputPath(), myToolWrapper.getShortName());
-    boolean exists = file.exists();
-    FileUtil.createParentDirs(file);
-    try (PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, true), StandardCharsets.UTF_8)))) {
-
+  private synchronized void writeOutput(@NotNull CommonProblemDescriptor[] descriptions, @NotNull RefEntity refElement) throws IOException {
+    Path file = ExportHTMLAction.getInspectionResultFile(myContext.getOutputPath(), myToolWrapper.getShortName());
+    boolean exists = Files.exists(file);
+    Files.createDirectories(file.getParent());
+    try (Writer writer = Files.newBufferedWriter(file, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND)) {
       if (!exists) {
-        XMLStreamWriter xmlWriter = XMLOutputFactory.newInstance().createXMLStreamWriter(writer);
-        xmlWriter.writeStartElement(GlobalInspectionContextBase.PROBLEMS_TAG_NAME);
-        xmlWriter.writeAttribute(GlobalInspectionContextBase.LOCAL_TOOL_ATTRIBUTE, Boolean.toString(myToolWrapper instanceof LocalInspectionToolWrapper));
-        xmlWriter.writeCharacters("\n");
-        xmlWriter.flush();
+        writer.write('<');
+        writer.write(GlobalInspectionContextBase.PROBLEMS_TAG_NAME);
+        writer.write(' ');
+        writer.write(GlobalInspectionContextBase.LOCAL_TOOL_ATTRIBUTE);
+        writer.write('=');
+        writer.write('"');
+        writer.write(Boolean.toString(myToolWrapper instanceof LocalInspectionToolWrapper));
+        writer.write('"');
+        writer.write('>');
+        writer.write('\n');
       }
 
       exportResults(descriptions, refElement, p -> {
@@ -289,10 +302,7 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
         }
       }, d -> false);
 
-      writer.append("\n");
-    }
-    catch (XMLStreamException | IOException e) {
-      LOG.error(e);
+      writer.write('\n');
     }
   }
 
