@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.declarations
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPropertyAccessor> {
+abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPropertyAccessor>, FirContractDescriptionOwner {
     abstract override val psi: PsiElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
@@ -30,6 +31,7 @@ abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPr
     abstract override val typeParameters: List<FirTypeParameter>
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
+    abstract override val contractDescription: FirContractDescription
     abstract override val symbol: FirPropertyAccessorSymbol
     abstract val isGetter: Boolean
     abstract val isSetter: Boolean
@@ -43,4 +45,6 @@ abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPr
     abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
+
+    abstract override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 }

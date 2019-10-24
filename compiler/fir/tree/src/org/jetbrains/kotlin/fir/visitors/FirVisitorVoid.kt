@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -113,6 +114,7 @@ import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 
 /*
  * This file was generated automatically
@@ -256,6 +258,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>) {
         visitElement(function)
+    }
+
+    open fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner) {
+        visitElement(contractDescriptionOwner)
     }
 
     open fun <F : FirMemberFunction<F>> visitMemberFunction(memberFunction: FirMemberFunction<F>) {
@@ -550,6 +556,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(implicitTypeRef)
     }
 
+    open fun visitContractDescription(contractDescription: FirContractDescription) {
+        visitElement(contractDescription)
+    }
+
     final override fun visitElement(element: FirElement, data: Nothing?) {
         visitElement(element)
     }
@@ -688,6 +698,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>, data: Nothing?) {
         visitFunction(function)
+    }
+
+    final override fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: Nothing?) {
+        visitContractDescriptionOwner(contractDescriptionOwner)
     }
 
     final override fun <F : FirMemberFunction<F>> visitMemberFunction(memberFunction: FirMemberFunction<F>, data: Nothing?) {
@@ -980,6 +994,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Nothing?) {
         visitImplicitTypeRef(implicitTypeRef)
+    }
+
+    final override fun visitContractDescription(contractDescription: FirContractDescription, data: Nothing?) {
+        visitContractDescription(contractDescription)
     }
 
 }

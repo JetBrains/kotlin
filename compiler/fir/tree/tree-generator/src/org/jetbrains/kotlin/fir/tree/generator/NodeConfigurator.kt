@@ -266,6 +266,10 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             parentArg(memberFunction, "F", simpleFunction)
         }
 
+        contractDescriptionOwner.configure {
+            +field(contractDescription).withTransform()
+        }
+
         property.configure {
             parentArg(variable, "F", property)
             parentArg(callableMemberDeclaration, "F", property)
@@ -523,6 +527,10 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         errorNamedReference.configure {
             +stringField("errorReason")
+        }
+
+        contractDescription.configure {
+            +fieldList("effects", effectDeclarationType)
         }
     }
 }

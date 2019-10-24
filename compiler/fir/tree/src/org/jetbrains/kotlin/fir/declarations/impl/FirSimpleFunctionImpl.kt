@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -44,6 +46,7 @@ open class FirSimpleFunctionImpl(
     override var body: FirBlock? = null
     override var containerSource: DeserializedContainerSource? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override var contractDescription: FirContractDescription = FirEmptyContractDescription
 
     init {
         symbol.bind(this)
@@ -58,6 +61,7 @@ open class FirSimpleFunctionImpl(
         body?.accept(visitor, data)
         status.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
+        contractDescription.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
@@ -69,6 +73,7 @@ open class FirSimpleFunctionImpl(
         body = body?.transformSingle(transformer, data)
         status = status.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
+        transformContractDescription(transformer, data)
         return this
     }
 
@@ -84,6 +89,11 @@ open class FirSimpleFunctionImpl(
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         valueParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        contractDescription = contractDescription.transformSingle(transformer, data)
         return this
     }
 

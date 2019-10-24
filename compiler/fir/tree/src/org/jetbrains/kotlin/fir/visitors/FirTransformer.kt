@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirMemberFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -113,6 +114,7 @@ import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 
 /*
@@ -258,6 +260,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: D): CompositeTransformResult<FirStatement> {
         return transformElement(function, data)
+    }
+
+    open fun transformContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: D): CompositeTransformResult<FirContractDescriptionOwner> {
+        return transformElement(contractDescriptionOwner, data)
     }
 
     open fun <F : FirMemberFunction<F>> transformMemberFunction(memberFunction: FirMemberFunction<F>, data: D): CompositeTransformResult<FirDeclaration> {
@@ -552,6 +558,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(implicitTypeRef, data)
     }
 
+    open fun transformContractDescription(contractDescription: FirContractDescription, data: D): CompositeTransformResult<FirContractDescription> {
+        return transformElement(contractDescription, data)
+    }
+
     final override fun visitElement(element: FirElement, data: D): CompositeTransformResult<FirElement> {
         return transformElement(element, data)
     }
@@ -690,6 +700,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>, data: D): CompositeTransformResult<FirStatement> {
         return transformFunction(function, data)
+    }
+
+    final override fun visitContractDescriptionOwner(contractDescriptionOwner: FirContractDescriptionOwner, data: D): CompositeTransformResult<FirContractDescriptionOwner> {
+        return transformContractDescriptionOwner(contractDescriptionOwner, data)
     }
 
     final override fun <F : FirMemberFunction<F>> visitMemberFunction(memberFunction: FirMemberFunction<F>, data: D): CompositeTransformResult<FirDeclaration> {
@@ -982,6 +996,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
         return transformImplicitTypeRef(implicitTypeRef, data)
+    }
+
+    final override fun visitContractDescription(contractDescription: FirContractDescription, data: D): CompositeTransformResult<FirContractDescription> {
+        return transformContractDescription(contractDescription, data)
     }
 
 }

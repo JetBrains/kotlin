@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -41,6 +43,7 @@ open class FirPropertyAccessorImpl(
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
+    override var contractDescription: FirContractDescription = FirEmptyContractDescription
     override val isSetter: Boolean get() = !isGetter
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
@@ -55,6 +58,7 @@ open class FirPropertyAccessorImpl(
         typeParameters.forEach { it.accept(visitor, data) }
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
+        contractDescription.accept(visitor, data)
         status.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
@@ -66,6 +70,7 @@ open class FirPropertyAccessorImpl(
         typeParameters.transformInplace(transformer, data)
         transformValueParameters(transformer, data)
         body = body?.transformSingle(transformer, data)
+        transformContractDescription(transformer, data)
         status = status.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
         return this
@@ -83,6 +88,11 @@ open class FirPropertyAccessorImpl(
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         valueParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
+        contractDescription = contractDescription.transformSingle(transformer, data)
         return this
     }
 

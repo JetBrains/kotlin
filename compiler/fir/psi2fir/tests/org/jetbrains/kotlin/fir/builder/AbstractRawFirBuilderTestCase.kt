@@ -15,6 +15,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
@@ -129,7 +130,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         override fun visitElement(element: FirElement) {
             // NB: types are reused sometimes (e.g. in accessors)
             if (!result.add(element)) {
-                if (element !is FirTypeRef && element !is FirNoReceiverExpression) {
+                if (element !is FirTypeRef && element !is FirNoReceiverExpression && element !is FirEmptyContractDescription) {
                     val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
                     throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
                 }
@@ -146,7 +147,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 
         override fun <E : FirElement> transformElement(element: E, data: Unit): CompositeTransformResult<E> {
             if (!result.add(element)) {
-                if (element !is FirTypeRef && element !is FirNoReceiverExpression) {
+                if (element !is FirTypeRef && element !is FirNoReceiverExpression && element !is FirEmptyContractDescription) {
                     val elementDump = StringBuilder().also { element.accept(FirRenderer(it)) }.toString()
                     throw AssertionError("FirElement ${element.javaClass} is visited twice: $elementDump")
                 }

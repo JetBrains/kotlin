@@ -62,3 +62,5 @@ val delegateFieldSymbolType = type("fir.symbols.impl", "FirDelegateFieldSymbol")
 val classSymbolType = type("fir.symbols.impl", "FirClassSymbol")
 
 val pureAbstractElementType = generatedType("FirPureAbstractElement")
+val effectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")
+val emptyContractDescriptionType = generatedType("contracts.impl", "FirEmptyContractDescription")
