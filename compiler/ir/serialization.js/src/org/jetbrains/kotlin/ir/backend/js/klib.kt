@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.ExpectDeclarationRemover
 import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.KonanVersionImpl
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -50,7 +48,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KFile
@@ -202,7 +199,7 @@ fun GeneratorContext.generateModuleFragment(files: List<KtFile>, deserializer: I
 
 
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}
-private val JsFactories = KlibMetadataFactories(::createBuiltIns, DynamicTypeDeserializer)
+internal val JsFactories = KlibMetadataFactories(::createBuiltIns, DynamicTypeDeserializer)
 
 fun getModuleDescriptorByLibrary(current: KotlinLibrary, mapping: Map<String, ModuleDescriptorImpl>): ModuleDescriptorImpl {
     val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
@@ -243,7 +240,7 @@ private class ModulesStructure(
 
     fun runAnalysis(): JsAnalysisResult {
         val analysisResult =
-            TopDownAnalyzerFacadeForJS.analyzeFiles(
+            TopDownAnalyzerFacadeForJSIR.analyzeFiles(
                 files,
                 project,
                 compilerConfiguration,
@@ -254,7 +251,7 @@ private class ModulesStructure(
             )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        TopDownAnalyzerFacadeForJS.checkForErrors(files, analysisResult.bindingContext)
+        TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext)
 
         return analysisResult
     }
@@ -361,11 +358,11 @@ fun serializeModuleIntoKlib(
         processCompiledFileData(VfsUtilCore.virtualToIoFile(ktFile.virtualFile), compiledKotlinFile)
     }
 
-    val compiledKotlinFiles = cleanFiles + additionalFiles
+    val compiledKotlinFiles = (cleanFiles + additionalFiles)
 
     val header = metadataSerializer.serializeHeader(
         moduleDescriptor,
-        compiledKotlinFiles.map { it.irData.fqName }.distinct(),
+        compiledKotlinFiles.map { it.irData.fqName }.distinct().sorted(),
         emptyList()
     ).toByteArray()
     incrementalResultsConsumer?.run {
