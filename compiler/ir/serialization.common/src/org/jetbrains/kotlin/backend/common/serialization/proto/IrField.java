@@ -109,6 +109,11 @@ public final class IrField extends
             type_ = input.readInt32();
             break;
           }
+          case 72: {
+            bitField0_ |= 0x00000100;
+            isFakeOverride_ = input.readBool();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -263,6 +268,21 @@ public final class IrField extends
     return type_;
   }
 
+  public static final int IS_FAKE_OVERRIDE_FIELD_NUMBER = 9;
+  private boolean isFakeOverride_;
+  /**
+   * <code>required bool is_fake_override = 9;</code>
+   */
+  public boolean hasIsFakeOverride() {
+    return ((bitField0_ & 0x00000100) == 0x00000100);
+  }
+  /**
+   * <code>required bool is_fake_override = 9;</code>
+   */
+  public boolean getIsFakeOverride() {
+    return isFakeOverride_;
+  }
+
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     initializer_ = 0;
@@ -272,6 +292,7 @@ public final class IrField extends
     isExternal_ = false;
     isStatic_ = false;
     type_ = 0;
+    isFakeOverride_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -304,6 +325,10 @@ public final class IrField extends
       return false;
     }
     if (!hasType()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasIsFakeOverride()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -346,6 +371,9 @@ public final class IrField extends
     if (((bitField0_ & 0x00000080) == 0x00000080)) {
       output.writeInt32(8, type_);
     }
+    if (((bitField0_ & 0x00000100) == 0x00000100)) {
+      output.writeBool(9, isFakeOverride_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -386,6 +414,10 @@ public final class IrField extends
     if (((bitField0_ & 0x00000080) == 0x00000080)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(8, type_);
+    }
+    if (((bitField0_ & 0x00000100) == 0x00000100)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeBoolSize(9, isFakeOverride_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -497,6 +529,8 @@ public final class IrField extends
       bitField0_ = (bitField0_ & ~0x00000040);
       type_ = 0;
       bitField0_ = (bitField0_ & ~0x00000080);
+      isFakeOverride_ = false;
+      bitField0_ = (bitField0_ & ~0x00000100);
       return this;
     }
 
@@ -552,6 +586,10 @@ public final class IrField extends
         to_bitField0_ |= 0x00000080;
       }
       result.type_ = type_;
+      if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+        to_bitField0_ |= 0x00000100;
+      }
+      result.isFakeOverride_ = isFakeOverride_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -581,6 +619,9 @@ public final class IrField extends
       }
       if (other.hasType()) {
         setType(other.getType());
+      }
+      if (other.hasIsFakeOverride()) {
+        setIsFakeOverride(other.getIsFakeOverride());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -613,6 +654,10 @@ public final class IrField extends
         return false;
       }
       if (!hasType()) {
+        
+        return false;
+      }
+      if (!hasIsFakeOverride()) {
         
         return false;
       }
@@ -954,6 +999,38 @@ public final class IrField extends
     public Builder clearType() {
       bitField0_ = (bitField0_ & ~0x00000080);
       type_ = 0;
+      
+      return this;
+    }
+
+    private boolean isFakeOverride_ ;
+    /**
+     * <code>required bool is_fake_override = 9;</code>
+     */
+    public boolean hasIsFakeOverride() {
+      return ((bitField0_ & 0x00000100) == 0x00000100);
+    }
+    /**
+     * <code>required bool is_fake_override = 9;</code>
+     */
+    public boolean getIsFakeOverride() {
+      return isFakeOverride_;
+    }
+    /**
+     * <code>required bool is_fake_override = 9;</code>
+     */
+    public Builder setIsFakeOverride(boolean value) {
+      bitField0_ |= 0x00000100;
+      isFakeOverride_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>required bool is_fake_override = 9;</code>
+     */
+    public Builder clearIsFakeOverride() {
+      bitField0_ = (bitField0_ & ~0x00000100);
+      isFakeOverride_ = false;
       
       return this;
     }

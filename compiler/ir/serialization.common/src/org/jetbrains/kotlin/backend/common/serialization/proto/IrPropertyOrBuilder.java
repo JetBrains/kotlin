@@ -123,4 +123,13 @@ public interface IrPropertyOrBuilder extends
    * <code>required bool is_expect = 13;</code>
    */
   boolean getIsExpect();
+
+  /**
+   * <code>required bool is_fake_override = 14;</code>
+   */
+  boolean hasIsFakeOverride();
+  /**
+   * <code>required bool is_fake_override = 14;</code>
+   */
+  boolean getIsFakeOverride();
 }

@@ -109,6 +109,11 @@ public final class IrFunction extends
             input.popLimit(limit);
             break;
           }
+          case 64: {
+            bitField0_ |= 0x00000010;
+            isFakeOverride_ = input.readBool();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -210,10 +215,6 @@ public final class IrFunction extends
   private java.util.List<java.lang.Integer> overridden_;
   /**
    * <code>repeated int32 overridden = 5;</code>
-   *
-   * <pre>
-   *optional UniqId corresponding_property = 7;
-   * </pre>
    */
   public java.util.List<java.lang.Integer>
       getOverriddenList() {
@@ -221,23 +222,38 @@ public final class IrFunction extends
   }
   /**
    * <code>repeated int32 overridden = 5;</code>
-   *
-   * <pre>
-   *optional UniqId corresponding_property = 7;
-   * </pre>
    */
   public int getOverriddenCount() {
     return overridden_.size();
   }
   /**
    * <code>repeated int32 overridden = 5;</code>
+   */
+  public int getOverridden(int index) {
+    return overridden_.get(index);
+  }
+
+  public static final int IS_FAKE_OVERRIDE_FIELD_NUMBER = 8;
+  private boolean isFakeOverride_;
+  /**
+   * <code>required bool is_fake_override = 8;</code>
    *
    * <pre>
    *optional UniqId corresponding_property = 7;
    * </pre>
    */
-  public int getOverridden(int index) {
-    return overridden_.get(index);
+  public boolean hasIsFakeOverride() {
+    return ((bitField0_ & 0x00000010) == 0x00000010);
+  }
+  /**
+   * <code>required bool is_fake_override = 8;</code>
+   *
+   * <pre>
+   *optional UniqId corresponding_property = 7;
+   * </pre>
+   */
+  public boolean getIsFakeOverride() {
+    return isFakeOverride_;
   }
 
   private void initFields() {
@@ -246,6 +262,7 @@ public final class IrFunction extends
     isTailrec_ = false;
     isSuspend_ = false;
     overridden_ = java.util.Collections.emptyList();
+    isFakeOverride_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -266,6 +283,10 @@ public final class IrFunction extends
       return false;
     }
     if (!hasIsSuspend()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasIsFakeOverride()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -294,6 +315,9 @@ public final class IrFunction extends
     }
     for (int i = 0; i < overridden_.size(); i++) {
       output.writeInt32(5, overridden_.get(i));
+    }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      output.writeBool(8, isFakeOverride_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -328,6 +352,10 @@ public final class IrFunction extends
       }
       size += dataSize;
       size += 1 * getOverriddenList().size();
+    }
+    if (((bitField0_ & 0x00000010) == 0x00000010)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeBoolSize(8, isFakeOverride_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -433,6 +461,8 @@ public final class IrFunction extends
       bitField0_ = (bitField0_ & ~0x00000008);
       overridden_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000010);
+      isFakeOverride_ = false;
+      bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
 
@@ -477,6 +507,10 @@ public final class IrFunction extends
         bitField0_ = (bitField0_ & ~0x00000010);
       }
       result.overridden_ = overridden_;
+      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+        to_bitField0_ |= 0x00000010;
+      }
+      result.isFakeOverride_ = isFakeOverride_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -505,6 +539,9 @@ public final class IrFunction extends
         }
         
       }
+      if (other.hasIsFakeOverride()) {
+        setIsFakeOverride(other.getIsFakeOverride());
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -524,6 +561,10 @@ public final class IrFunction extends
         return false;
       }
       if (!hasIsSuspend()) {
+        
+        return false;
+      }
+      if (!hasIsFakeOverride()) {
         
         return false;
       }
@@ -721,10 +762,6 @@ public final class IrFunction extends
     }
     /**
      * <code>repeated int32 overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
      */
     public java.util.List<java.lang.Integer>
         getOverriddenList() {
@@ -732,30 +769,18 @@ public final class IrFunction extends
     }
     /**
      * <code>repeated int32 overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
      */
     public int getOverriddenCount() {
       return overridden_.size();
     }
     /**
      * <code>repeated int32 overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
      */
     public int getOverridden(int index) {
       return overridden_.get(index);
     }
     /**
      * <code>repeated int32 overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
      */
     public Builder setOverridden(
         int index, int value) {
@@ -766,10 +791,6 @@ public final class IrFunction extends
     }
     /**
      * <code>repeated int32 overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
      */
     public Builder addOverridden(int value) {
       ensureOverriddenIsMutable();
@@ -779,10 +800,6 @@ public final class IrFunction extends
     }
     /**
      * <code>repeated int32 overridden = 5;</code>
-     *
-     * <pre>
-     *optional UniqId corresponding_property = 7;
-     * </pre>
      */
     public Builder addAllOverridden(
         java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -794,14 +811,58 @@ public final class IrFunction extends
     }
     /**
      * <code>repeated int32 overridden = 5;</code>
+     */
+    public Builder clearOverridden() {
+      overridden_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000010);
+      
+      return this;
+    }
+
+    private boolean isFakeOverride_ ;
+    /**
+     * <code>required bool is_fake_override = 8;</code>
      *
      * <pre>
      *optional UniqId corresponding_property = 7;
      * </pre>
      */
-    public Builder clearOverridden() {
-      overridden_ = java.util.Collections.emptyList();
-      bitField0_ = (bitField0_ & ~0x00000010);
+    public boolean hasIsFakeOverride() {
+      return ((bitField0_ & 0x00000020) == 0x00000020);
+    }
+    /**
+     * <code>required bool is_fake_override = 8;</code>
+     *
+     * <pre>
+     *optional UniqId corresponding_property = 7;
+     * </pre>
+     */
+    public boolean getIsFakeOverride() {
+      return isFakeOverride_;
+    }
+    /**
+     * <code>required bool is_fake_override = 8;</code>
+     *
+     * <pre>
+     *optional UniqId corresponding_property = 7;
+     * </pre>
+     */
+    public Builder setIsFakeOverride(boolean value) {
+      bitField0_ |= 0x00000020;
+      isFakeOverride_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>required bool is_fake_override = 8;</code>
+     *
+     * <pre>
+     *optional UniqId corresponding_property = 7;
+     * </pre>
+     */
+    public Builder clearIsFakeOverride() {
+      bitField0_ = (bitField0_ & ~0x00000020);
+      isFakeOverride_ = false;
       
       return this;
     }

@@ -1058,7 +1058,7 @@ abstract class IrFileDeserializer(
                     isTailrec = proto.isTailrec,
                     isSuspend = proto.isSuspend,
                     isExpect = proto.base.isExpect,
-                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                    isFakeOverride = proto.isFakeOverride
                 )
             }.apply {
                 proto.overriddenList.mapTo(overriddenSymbols) { deserializeIrSymbol(it) as IrSimpleFunctionSymbol }
@@ -1167,7 +1167,7 @@ abstract class IrFileDeserializer(
                     isFinal = proto.isFinal,
                     isExternal = proto.isExternal,
                     isStatic = proto.isStatic,
-                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                    isFakeOverride = proto.isFakeOverride
                 )
             }.usingParent {
                 if (proto.hasInitializer())
@@ -1220,7 +1220,7 @@ abstract class IrFileDeserializer(
                     isDelegated = proto.isDelegated,
                     isExpect = proto.isExpect,
                     isExternal = proto.isExternal,
-                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                    isFakeOverride = proto.isFakeOverride
                 )
             }.apply {
                 if (proto.hasGetter()) {

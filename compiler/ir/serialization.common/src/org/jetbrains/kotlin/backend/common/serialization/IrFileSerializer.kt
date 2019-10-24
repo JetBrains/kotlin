@@ -1067,6 +1067,7 @@ open class IrFileSerializer(
             .setModality(serializeModality(declaration.modality))
             .setIsTailrec(declaration.isTailrec)
             .setIsSuspend(declaration.isSuspend)
+            .setIsFakeOverride(declaration.isFakeOverride)
 
         declaration.overriddenSymbols.forEach {
             proto.addOverridden(serializeIrSymbol(it))
@@ -1110,6 +1111,7 @@ open class IrFileSerializer(
             .setIsDelegated(property.isDelegated)
             .setIsExternal(property.isExternal)
             .setIsExpect(property.isExpect)
+            .setIsFakeOverride(property.isFakeOverride)
 
         val backingField = property.backingField
         val getter = property.getter
@@ -1133,6 +1135,7 @@ open class IrFileSerializer(
             .setIsExternal(field.isExternal)
             .setIsStatic(field.isStatic)
             .setType(serializeIrType(field.type))
+            .setIsFakeOverride(field.isFakeOverride)
         val initializer = field.initializer?.expression
         if (initializer != null) {
             proto.initializer = serializeIrExpressionBody(initializer)

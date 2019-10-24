@@ -78,4 +78,13 @@ public interface IrFieldOrBuilder extends
    * <code>required int32 type = 8;</code>
    */
   int getType();
+
+  /**
+   * <code>required bool is_fake_override = 9;</code>
+   */
+  boolean hasIsFakeOverride();
+  /**
+   * <code>required bool is_fake_override = 9;</code>
+   */
+  boolean getIsFakeOverride();
 }

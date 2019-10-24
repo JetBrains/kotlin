@@ -527,6 +527,7 @@ message IrFunction {
   required bool is_suspend = 4;
   repeated int32 overridden = 5;
   //optional UniqId corresponding_property = 7;
+  required bool is_fake_override = 8;
 }
 
 message IrConstructor {
@@ -543,6 +544,7 @@ message IrField {
   required bool is_external = 6;
   required bool is_static = 7;
   required int32 type = 8;
+  required bool is_fake_override = 9;
 }
 
 message IrLocalDelegatedProperty {
@@ -569,6 +571,7 @@ message IrProperty {
   optional IrFunction getter = 11;
   optional IrFunction setter = 12;
   required bool is_expect = 13;
+  required bool is_fake_override = 14;
 }
 
 message IrVariable {
