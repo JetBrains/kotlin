@@ -27,9 +27,7 @@ abstract class FirAbstractImportingScope(
 
     private fun getStaticsScope(classId: ClassId): FirScope? {
         provider.getClassUseSiteMemberScope(classId, session, scopeSession)?.let { return it }
-
-
-        val symbol = provider.getClassLikeSymbolByFqName(classId) ?: error("No scope/symbol for $classId")
+        val symbol = provider.getClassLikeSymbolByFqName(classId) ?: return null
         if (symbol is FirTypeAliasSymbol) {
             val expansionSymbol = symbol.fir.expandedConeType?.lookupTag?.toSymbol(session)
             if (expansionSymbol != null) {
