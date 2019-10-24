@@ -10,6 +10,6 @@ Exception Details:
     locals: { uninitializedThis }
     stack: { uninitializedThis, uninitializedThis }
   Bytecode:
-    0x0000000: 2a2a c000 02b6 000a b700 0db1
+    0000000: 2a2a c000 02b6 000a b700 0db1
 
 Foo.<clinit>(13.kt)

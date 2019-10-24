@@ -13,14 +13,13 @@ import org.jetbrains.kotlin.spec.utils.models.LinkedSpecTest
 import org.jetbrains.kotlin.spec.utils.models.LinkedSpecTest.Companion.getInstanceForImplementationTest
 import org.jetbrains.kotlin.spec.utils.models.SpecPlace
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
+import org.jetbrains.kotlin.spec.utils.parsers.CommonParser.parseImplementationTest
 import org.jetbrains.kotlin.spec.utils.parsers.ImplementationTestPatterns
 import java.io.File
 
 object TestsJsonMapGenerator {
     private const val LINKED_TESTS_PATH = "linked"
     const val TESTS_MAP_FILENAME = "testsMap.json"
-
-    private val testsMap = JsonObject()
 
     private inline fun <reified T : JsonElement> JsonObject.getOrCreate(key: String): T {
         if (!has(key)) {
@@ -50,7 +49,9 @@ object TestsJsonMapGenerator {
             )
         }
 
-    private fun collectInfoFromSpecTests() {
+    private fun collectInfoFromSpecTests(): JsonObject {
+        val testsMap = JsonObject()
+
         TestArea.values().forEach { testArea ->
             File("${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testArea.testDataPath}/$LINKED_TESTS_PATH").walkTopDown()
                 .forEach testFiles@{ file ->
@@ -70,50 +71,41 @@ object TestsJsonMapGenerator {
                     }
                 }
         }
+
+        return testsMap
     }
 
-    private fun collectInfoFromImplementationTests() {
+    private fun collectInfoFromImplementationTests(): JsonObject {
+        val testsMap = JsonObject()
+
         TestArea.values().forEach { testArea ->
-            File("${GeneralConfiguration.TESTDATA_PATH}/${testArea.testDataPath}").walkTopDown()
-                .forEach testFiles@{ file ->
-                    if (!file.isFile || file.extension != "kt") return@testFiles
+            val files = File("${GeneralConfiguration.TESTDATA_PATH}/${testArea.testDataPath}").walkTopDown()
 
-                    val matcher = ImplementationTestPatterns.testInfoPattern.matcher(file.readText())
+            for (file in files) {
+                if (!file.isFile || file.extension != "kt") continue
 
-                    if (!matcher.find()) return@testFiles
+                val parserImplementationTest = parseImplementationTest(file, testArea)
+                val relevantPlaces = parserImplementationTest.relevantPlaces ?: listOf()
 
-                    val specVersion = matcher.group("specVersion")
-                    val testType = TestType.fromValue(matcher.group("testType"))!!
-                    val testSpecSentenceList = matcher.group("testSpecSentenceList")
-                    val specSentenceListMatcher = ImplementationTestPatterns.relevantSpecSentencesPattern.matcher(testSpecSentenceList)
-                    val specPlaces = mutableSetOf<SpecPlace>()
-
-                    while (specSentenceListMatcher.find()) {
-                        specPlaces.add(
-                            SpecPlace(
-                                sections = specSentenceListMatcher.group("specSections").split(Regex(""",\s*""")),
-                                paragraphNumber = specSentenceListMatcher.group("specParagraph").toInt(),
-                                sentenceNumber = specSentenceListMatcher.group("specSentence").toInt()
-                            )
-                        )
-                    }
-
-                    specPlaces.forEach { specPlace ->
-                        testsMap.getOrCreateSpecTestObject(specPlace, testArea, testType).add(
-                            getTestInfo(
-                                getInstanceForImplementationTest(specVersion, testArea, testType, specPlace, file.nameWithoutExtension),
-                                file
-                            )
-                        )
-                    }
+                (relevantPlaces + parserImplementationTest.place).forEach { specPlace ->
+                    testsMap.getOrCreateSpecTestObject(specPlace, testArea, parserImplementationTest.testType).add(
+                        getTestInfo(parseImplementationTest(file, testArea), file)
+                    )
                 }
+            }
         }
+
+        return testsMap
     }
+
+    operator fun JsonObject.plus(other: JsonObject) =
+        JsonObject().also { new ->
+            this.keySet().forEach { new.add(it, this.get(it)) }
+            other.keySet().forEach { new.add(it, other.get(it)) }
+        }
 
     fun buildTestsMapPerSection() {
-        collectInfoFromSpecTests()
-        collectInfoFromImplementationTests()
-
+        val testsMap = collectInfoFromSpecTests() + collectInfoFromImplementationTests()
         val gson = GsonBuilder().setPrettyPrinting().create()
 
         testsMap.keySet().forEach { testPath ->

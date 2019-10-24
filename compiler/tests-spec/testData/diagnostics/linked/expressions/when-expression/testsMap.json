@@ -1,6 +1,42 @@
 {
   "6": {
     "neg": {
+      "12": [
+        {
+          "specVersion": "0.1-201",
+          "casesNumber": 3,
+          "description": "\u0027When\u0027 without bound value and with \u0027else\u0027 branch not in the last position.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "11": [
+        {
+          "specVersion": "0.1-201",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 with bound value and not allowed break and continue expression (without labels) in \u0027when condition\u0027.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-201",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 with bound value and non-expressions in \u0027when condition\u0027.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "When",
+          "path": "compiler/testData/diagnostics/tests/when/When.kt",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "Redundant else",
+          "path": "compiler/testData/diagnostics/tests/when/RedundantElse.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
       "1": [
         {
           "specVersion": "0.1-100",
@@ -85,54 +121,11 @@
           "unexpectedBehaviour": false
         }
       ],
-      "9": [
+      "7": [
         {
-          "specVersion": "0.1-100",
-          "casesNumber": 2,
-          "description": "\u0027When\u0027 with bound value and non-expressions in \u0027when condition\u0027.",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-100",
-          "casesNumber": 2,
-          "description": "\u0027When\u0027 with bound value and not allowed break and continue expression (without labels) in \u0027when condition\u0027.",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-155",
-          "casesNumber": 0,
-          "description": "When",
-          "path": "compiler/testData/diagnostics/tests/when/When.kt",
-          "unexpectedBehaviour": false
-        }
-      ],
-      "6": [
-        {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-201",
           "casesNumber": 3,
           "description": "\u0027When\u0027 with bound value and with else branch not in the last position.",
-          "unexpectedBehaviour": false
-        }
-      ],
-      "11": [
-        {
-          "specVersion": "0.1-100",
-          "casesNumber": 3,
-          "description": "\u0027When\u0027 without bound value and with \u0027else\u0027 branch not in the last position.",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-155",
-          "casesNumber": 0,
-          "description": "When",
-          "path": "compiler/testData/diagnostics/tests/when/When.kt",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-155",
-          "casesNumber": 0,
-          "description": "Redundant else",
-          "path": "compiler/testData/diagnostics/tests/when/RedundantElse.kt",
           "unexpectedBehaviour": false
         }
       ],
@@ -166,6 +159,15 @@
           "unexpectedBehaviour": false
         }
       ],
+      "9": [
+        {
+          "specVersion": "0.1-155",
+          "casesNumber": 0,
+          "description": "When",
+          "path": "compiler/testData/diagnostics/tests/when/When.kt",
+          "unexpectedBehaviour": false
+        }
+      ],
       "10": [
         {
           "specVersion": "0.1-155",
@@ -184,6 +186,14 @@
       ]
     },
     "pos": {
+      "12": [
+        {
+          "specVersion": "0.1-201",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 without bound value and with else branch in the last position.",
+          "unexpectedBehaviour": false
+        }
+      ],
       "1": [
         {
           "specVersion": "0.1-100",
@@ -231,6 +241,20 @@
           "unexpectedBehaviour": false
         }
       ],
+      "10": [
+        {
+          "specVersion": "0.1-201",
+          "casesNumber": 26,
+          "description": "\u0027When\u0027 with different variants of the arithmetic expressions (additive expression and multiplicative expression) in \u0027when condition\u0027.",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-201",
+          "casesNumber": 23,
+          "description": "\u0027When\u0027 with enumeration of the different variants of expressions in \u0027when condition\u0027.",
+          "unexpectedBehaviour": false
+        }
+      ],
       "3": [
         {
           "specVersion": "0.1-100",
@@ -245,33 +269,11 @@
           "unexpectedBehaviour": false
         }
       ],
-      "9": [
+      "7": [
         {
-          "specVersion": "0.1-100",
-          "casesNumber": 23,
-          "description": "\u0027When\u0027 with enumeration of the different variants of expressions in \u0027when condition\u0027.",
-          "unexpectedBehaviour": false
-        },
-        {
-          "specVersion": "0.1-100",
-          "casesNumber": 26,
-          "description": "\u0027When\u0027 with different variants of the arithmetic expressions (additive expression and multiplicative expression) in \u0027when condition\u0027.",
-          "unexpectedBehaviour": true
-        }
-      ],
-      "6": [
-        {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-201",
           "casesNumber": 3,
           "description": "\u0027When\u0027 with bound value and else branch.",
-          "unexpectedBehaviour": false
-        }
-      ],
-      "11": [
-        {
-          "specVersion": "0.1-100",
-          "casesNumber": 2,
-          "description": "\u0027When\u0027 without bound value and with else branch in the last position.",
           "unexpectedBehaviour": false
         }
       ],

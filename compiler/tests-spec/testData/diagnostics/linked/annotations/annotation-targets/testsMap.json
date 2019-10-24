@@ -3,7 +3,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Annotated when statement",
           "path": "compiler/testData/diagnostics/tests/when/AnnotatedWhenStatement.kt",

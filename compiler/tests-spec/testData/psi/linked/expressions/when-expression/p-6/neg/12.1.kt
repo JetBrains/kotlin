@@ -1,8 +1,8 @@
 /*
  * KOTLIN PSI SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-100
- * PLACE: expressions, when-expression -> paragraph 6 -> sentence 11
+ * SPEC VERSION: 0.1-201
+ * PLACE: expressions, when-expression -> paragraph 6 -> sentence 12
  * NUMBER: 1
  * DESCRIPTION: 'When' with invalid else condition.
  */

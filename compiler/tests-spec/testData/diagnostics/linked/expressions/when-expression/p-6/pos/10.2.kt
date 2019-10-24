@@ -3,8 +3,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-100
- * PLACE: expressions, when-expression -> paragraph 6 -> sentence 9
+ * SPEC VERSION: 0.1-201
+ * PLACE: expressions, when-expression -> paragraph 6 -> sentence 10
  * NUMBER: 2
  * DESCRIPTION: 'When' with different variants of the arithmetic expressions (additive expression and multiplicative expression) in 'when condition'.
  * HELPERS: typesProvider, classes, functions

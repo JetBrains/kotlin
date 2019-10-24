@@ -3,7 +3,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "Kt10809",
           "path": "compiler/testData/diagnostics/tests/when/kt10809.kt",
@@ -14,7 +14,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "When with nothing and lambdas",
           "path": "compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt",
@@ -23,7 +23,7 @@
       ],
       "2": [
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "When with nothing and lambdas",
           "path": "compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt",
@@ -36,7 +36,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-155",
+          "specVersion": "0.1-152",
           "casesNumber": 0,
           "description": "When with nothing and lambdas",
           "path": "compiler/testData/diagnostics/tests/when/whenWithNothingAndLambdas.kt",

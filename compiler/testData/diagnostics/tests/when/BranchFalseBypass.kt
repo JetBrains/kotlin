@@ -1,5 +1,5 @@
 /*
- * RELEVANT SPEC SENTENCES (spec version: 0.1-155, test type: pos):
+ * RELEVANT SPEC SENTENCES (spec version: 0.1-152, test type: pos):
  *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 9
  *  - expressions, when-expression -> paragraph 6 -> sentence 1
  *  - expressions, when-expression -> paragraph 5 -> sentence 1
@@ -15,6 +15,6 @@ fun test(a: My): String {
         My.A -> q = "1"
         My.B -> q = "2"
     }<!>
-    // When is exhaustives
+    // When is exhaustive
     return <!DEBUG_INFO_SMARTCAST!>q<!>
 }

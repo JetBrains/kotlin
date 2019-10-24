@@ -1,6 +1,6 @@
 // !WITH_NEW_INFERENCE
 /*
- * RELEVANT SPEC SENTENCES (spec version: 0.1-155, test type: pos):
+ * RELEVANT SPEC SENTENCES (spec version: 0.1-152, test type: pos):
  *  - expressions, when-expression -> paragraph 2 -> sentence 1
  *  - expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 1
  *  - expressions, when-expression -> paragraph 9 -> sentence 1
