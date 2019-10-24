@@ -36,8 +36,8 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
 
     fun recreateTestData() {
         testData = // TODO choose based on module
-            if (canRunOnAndroid) AndroidTestRunConfigurationData.FACTORY(this)
-            else AppleXCTestRunConfigurationData.FACTORY(this)
+            if (canRunOnAndroid) AndroidTestRunConfigurationData(this)
+            else AppleXCTestRunConfigurationData(this)
     }
 
     init {

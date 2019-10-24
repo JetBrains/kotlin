@@ -12,7 +12,7 @@ import com.intellij.execution.runners.ExecutionEnvironment
 import com.jetbrains.cidr.execution.testing.CidrTestRunConfigurationData
 import com.jetbrains.cidr.execution.testing.CidrTestScope
 
-class AndroidTestRunConfigurationData private constructor(configuration: MobileTestRunConfiguration) :
+class AndroidTestRunConfigurationData(configuration: MobileTestRunConfiguration) :
     CidrTestRunConfigurationData<MobileTestRunConfiguration>(configuration) {
 
     override fun getTestingFrameworkId(): String = "JUnit"
@@ -26,8 +26,4 @@ class AndroidTestRunConfigurationData private constructor(configuration: MobileT
     override fun formatTestMethod(): String = "$testSuite.$testName"
 
     override fun checkData() {}
-
-    companion object {
-        val FACTORY: (MobileTestRunConfiguration) -> AndroidTestRunConfigurationData = ::AndroidTestRunConfigurationData
-    }
 }

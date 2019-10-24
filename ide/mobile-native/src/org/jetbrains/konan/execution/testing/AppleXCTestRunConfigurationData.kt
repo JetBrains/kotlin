@@ -14,7 +14,7 @@ import com.jetbrains.cidr.execution.testing.xctest.OCUnitRunConfigurationData
 import com.jetbrains.cidr.execution.testing.xctest.OCUnitTestObject
 import org.jetbrains.konan.execution.AppleDevice
 
-class AppleXCTestRunConfigurationData private constructor(configuration: MobileTestRunConfiguration) :
+class AppleXCTestRunConfigurationData(configuration: MobileTestRunConfiguration) :
     OCUnitRunConfigurationData<MobileTestRunConfiguration>(configuration) {
 
     override fun getTestingFrameworkId(): String = "XCTest"
@@ -29,8 +29,4 @@ class AppleXCTestRunConfigurationData private constructor(configuration: MobileT
         (environment.executionTarget as AppleDevice).createState(myConfiguration, environment, failedTests)
 
     override fun formatTestMethod(): String = "$testSuite.$testName"
-
-    companion object {
-        val FACTORY: (MobileTestRunConfiguration) -> AppleXCTestRunConfigurationData = ::AppleXCTestRunConfigurationData
-    }
 }
