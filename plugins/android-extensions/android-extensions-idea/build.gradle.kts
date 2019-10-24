@@ -19,6 +19,7 @@ dependencies {
     compileOnly(project(":idea:idea-gradle"))
     compileOnly(project(":kotlin-android-extensions-runtime"))
     compileOnly(intellijPluginDep("android"))
+    compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijPluginDep("Groovy"))
     compileOnly(intellijDep())
 
