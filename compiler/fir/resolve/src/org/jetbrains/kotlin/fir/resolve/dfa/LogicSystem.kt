@@ -47,11 +47,11 @@ abstract class LogicSystem(private val context: DataFlowInferenceContext) {
         flow: Flow,
         sourceVariable: DataFlowVariable,
         newVariable: DataFlowVariable,
-        transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo)? = null
+        transform: ((ConditionalFirDataFlowInfo) -> ConditionalFirDataFlowInfo?)? = null
     ) {
         var infos = flow.getConditionalInfos(sourceVariable)
         if (transform != null) {
-            infos = infos.map(transform)
+            infos = infos.mapNotNull(transform)
         }
         flow.conditionalInfos.putAll(newVariable, infos)
         if (sourceVariable.isSynthetic()) {

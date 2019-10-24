@@ -156,6 +156,9 @@ class StubNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, le
 class VariableDeclarationNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int) : CFGNode<FirProperty>(owner, level)
 class VariableAssignmentNode(owner: ControlFlowGraph, override val fir: FirVariableAssignment, level: Int) : CFGNode<FirVariableAssignment>(owner, level)
 
+class EnterContractNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int) : CFGNode<FirFunctionCall>(owner, level), EnterNode
+class ExitContractNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int) : CFGNode<FirFunctionCall>(owner, level), ExitNode
+
 // ----------------------------------- Other -----------------------------------
 
 class AnnotationEnterNode(owner: ControlFlowGraph, override val fir: FirAnnotationCall, level: Int) : CFGNode<FirAnnotationCall>(owner, level), EnterNode

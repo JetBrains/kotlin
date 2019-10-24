@@ -145,6 +145,9 @@ fun CFGNode<*>.render(): String =
                 is AnnotationEnterNode -> "Enter annotation"
                 is AnnotationExitNode -> "Exit annotation"
 
+                is EnterContractNode -> "Enter contract"
+                is ExitContractNode -> "Exit contract"
+
                 else -> TODO(this@render.toString())
             }
         )

@@ -32,4 +32,9 @@ public class FirCfgBuildingWithStdlibTestGenerated extends AbstractFirCfgBuildin
     public void testCallsInPlace() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/contracts/callsInPlace.kt");
     }
+
+    @TestMetadata("conditionalEffects.kt")
+    public void testConditionalEffects() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/contracts/conditionalEffects.kt");
+    }
 }

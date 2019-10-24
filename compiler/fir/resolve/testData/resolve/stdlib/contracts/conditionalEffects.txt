@@ -1,0 +1,45 @@
+FILE: conditionalEffects.kt
+    public final fun test_1(x: R|kotlin/Any|): R|kotlin/Unit| {
+        R|kotlin/require|((R|<local>/x| is R|kotlin/Int|))
+        R|<local>/x|.R|kotlin/Int.inc|()
+    }
+    public final fun test_2(x: R|kotlin/String?|): R|kotlin/Unit| {
+        R|kotlin/requireNotNull|<R|kotlin/String|>(R|<local>/x|)
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun test_3(x: R|kotlin/String?|): R|kotlin/Unit| {
+        R|kotlin/require|(!=(R|<local>/x|, Null(null)))
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun test_4(x: R|kotlin/Any|, y: R|kotlin/String?|): R|kotlin/Unit| {
+        R|kotlin/require|((R|<local>/x| is R|kotlin/String|) && !=(R|<local>/y|, Null(null)))
+        R|<local>/x|.R|kotlin/String.length|
+        R|<local>/y|.R|kotlin/String.length|
+    }
+    public final fun test_5(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b| ->  {
+                R|kotlin/require|((R|<local>/x| is R|kotlin/String|))
+                R|<local>/x|.R|kotlin/String.length|
+            }
+            else ->  {
+                R|<local>/x|.<Unresolved name: length>#
+            }
+        }
+
+        R|<local>/x|.<Unresolved name: length>#
+    }
+    public final fun test_6(x: R|kotlin/Any|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b| ->  {
+                R|kotlin/require|((R|<local>/x| is R|kotlin/String|))
+                R|<local>/x|.R|kotlin/String.length|
+            }
+            else ->  {
+                R|kotlin/require|((R|<local>/x| is R|kotlin/String|))
+                R|<local>/x|.R|kotlin/String.length|
+            }
+        }
+
+        R|<local>/x|.R|kotlin/String.length|
+    }

@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSymbolOwner
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.contracts.description.*
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -18,6 +17,8 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStackImpl
 import org.jetbrains.kotlin.fir.resolve.dfa.Condition.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
+import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
+import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -26,13 +27,14 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class FirDataFlowAnalyzer(components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents) : BodyResolveComponents by components {
+class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents) : BodyResolveComponents by components {
     companion object {
         private val KOTLIN_BOOLEAN_NOT = CallableId(FqName("kotlin"), FqName("Boolean"), Name.identifier("not"))
     }
@@ -470,7 +472,54 @@ class FirDataFlowAnalyzer(components: FirAbstractBodyResolveTransformer.BodyReso
             exitBooleanNot(functionCall, node)
             return
         }
+        processConditionalContract(functionCall)
     }
+
+    private fun processConditionalContract(functionCall: FirFunctionCall) {
+        val contractDescription = (functionCall.resolvedSymbol?.fir as? FirSimpleFunction)?.contractDescription ?: return
+        val conditionalEffects = contractDescription.effects.filterIsInstance<ConeConditionalEffectDeclaration>()
+        if (conditionalEffects.isEmpty()) return
+        val argumentsMapping = createArgumentsMapping(functionCall) ?: return
+        graphBuilder.enterContract(functionCall).mergeIncomingFlow()
+        val functionCallVariable = getOrCreateVariable(functionCall)
+        for (conditionalEffect in conditionalEffects) {
+            val fir = conditionalEffect.buildContractFir(argumentsMapping) ?: continue
+            val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
+            fir.transformSingle(components.transformer, null)
+            val argumentVariable = getOrCreateVariable(fir)
+            val lastNode = graphBuilder.lastNode
+            when (val value = effect.value) {
+                ConeConstantReference.WILDCARD -> {
+                    lastNode.flow = logicSystem.approveFactsInsideFlow(
+                        argumentVariable,
+                        EqTrue,
+                        lastNode.flow,
+                        shouldForkFlow = false,
+                        shouldRemoveSynthetics = true
+                    )
+                }
+
+                ConeBooleanConstantReference.TRUE, ConeBooleanConstantReference.FALSE -> {
+                    logicSystem.changeVariableForConditionFlow(lastNode.flow, argumentVariable, functionCallVariable) {
+                        it.takeIf { it.condition == if (value == ConeBooleanConstantReference.TRUE) EqTrue else EqFalse }
+                    }
+                }
+
+                ConeConstantReference.NOT_NULL, ConeConstantReference.NULL -> {
+                    logicSystem.changeVariableForConditionFlow(lastNode.flow, argumentVariable, functionCallVariable) {
+                        it.takeIf { it.condition == EqTrue }?.let {
+                            val condition = if (value == ConeConstantReference.NOT_NULL) Condition.NotEqNull else NotEqNull
+                            ConditionalFirDataFlowInfo(condition, it.variable, it.info)
+                        }
+                    }
+                }
+
+                else -> throw IllegalArgumentException(value.toString())
+            }
+        }
+        graphBuilder.exitContract(functionCall).mergeIncomingFlow()
+    }
+
 
     private val FirElement.resolvedSymbol: AbstractFirBasedSymbol<*>?
         get() {
