@@ -14,6 +14,7 @@ import com.intellij.stats.experiment.WebServiceStatus
 object RankingSupport {
   private val EP_NAME: ExtensionPointName<RankingModelProvider> = ExtensionPointName("com.intellij.completion.ml.model")
   private val LOG = logger<RankingSupport>()
+  var enabledInTests: Boolean = false
 
   fun getRankingModel(language: Language): RankingModelWrapper? {
     val provider = findProviderForLanguage(language)
@@ -47,7 +48,7 @@ object RankingSupport {
   private fun shouldSortByML(provider: RankingModelProvider): Boolean {
     val application = ApplicationManager.getApplication()
     val webServiceStatus = WebServiceStatus.getInstance()
-    if (application.isUnitTestMode) return false
+    if (application.isUnitTestMode) return enabledInTests
     val settings = CompletionMLRankingSettings.getInstance()
     if (application.isEAP && webServiceStatus.isExperimentOnCurrentIDE() && settings.isCompletionLogsSendAllowed) {
       // AB experiment
