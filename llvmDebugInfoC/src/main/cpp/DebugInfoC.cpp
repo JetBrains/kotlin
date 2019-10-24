@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <assert.h>
 #include <llvm/IR/DebugInfo.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/IRBuilder.h>
@@ -21,6 +22,7 @@
 #include <llvm/IR/DebugInfoMetadata.h>
 #include <llvm/IR/Instruction.h>
 #include <llvm/Support/Casting.h>
+#include <llvm-c/DebugInfo.h>
 #include "DebugInfoC.h"
 /**
  * c++ --std=c++14 llvmDebugInfoC/src/DebugInfoC.cpp -IllvmDebugInfoC/include/ -Idependencies/all/clang+llvm-3.9.0-darwin-macos/include -Ldependencies/all/clang+llvm-3.9.0-darwin-macos/lib  -lLLVMCore -lLLVMSupport -lncurses -shared -o libLLVMDebugInfoC.dylib
@@ -52,18 +54,9 @@ DEFINE_SIMPLE_CONVERSION_FUNCTIONS(DIExpression,     DIExpressionRef)
 #define DI_FORWARD_DECLARAION (4)
 extern "C" {
 
-DIBuilderRef DICreateBuilder(LLVMModuleRef module) {
-  return llvm::wrap(new llvm::DIBuilder(* llvm::unwrap(module)));
-}
-
 void DIFinalize(DIBuilderRef builder) {
   auto diBuilder = llvm::unwrap(builder);
   diBuilder->finalize();
-}
-
-void DIDispose(DIBuilderRef builder) {
-  auto diBuilder = llvm::unwrap(builder);
-  delete diBuilder;
 }
 
 DICompileUnitRef DICreateCompilationUnit(DIBuilderRef builder, unsigned int lang,
@@ -128,21 +121,15 @@ DICompositeTypeRef DICreateStructType(DIBuilderRef refBuilder,
                                       DICompositeTypeRef refPlace) {
   auto builder = llvm::unwrap(refBuilder);
   if ((flags & DI_FORWARD_DECLARAION) != 0) {
-    return llvm::wrap(builder->createStructType(llvm::unwrap(scope), name, NULL, 0, 0, 0, (llvm::DINode::DIFlags)flags, NULL, NULL));
+    auto tmp = builder->createReplaceableCompositeType(
+        llvm::dwarf::DW_TAG_structure_type, name, llvm::unwrap(scope), llvm::unwrap(file), lineNumber, 0, sizeInBits, alignInBits,
+        (llvm::DINode::DIFlags)flags);
+    builder->replaceTemporary(llvm::TempDIType(tmp), tmp);
+    builder->retainType(tmp);
+    return llvm::wrap(tmp);
   }
-  std::vector<llvm::Metadata *> typeElements;
-  for(int i = 0; i < elementsCount; ++i) {
-    typeElements.push_back(llvm::unwrap(elements[i]));
-  }
-  auto elementsArray = builder->getOrCreateArray(typeElements);
-  auto composite = builder->createStructType(llvm::unwrap(scope),
-                                              name, llvm::unwrap(file),
-                                              lineNumber,
-                                              sizeInBits, alignInBits, (llvm::DINode::DIFlags)flags,
-                                              llvm::unwrap(derivedFrom),
-                                              elementsArray);
-  builder->replaceTemporary(llvm::TempDIType(llvm::unwrap(refPlace)), composite);
-  return llvm::wrap(composite);
+  assert(false);
+  return nullptr;
 }
 
 
@@ -152,8 +139,10 @@ DICompositeTypeRef DICreateArrayType(DIBuilderRef refBuilder,
                                      uint64_t elementsCount) {
   auto builder = llvm::unwrap(refBuilder);
   auto range = std::vector<llvm::Metadata*>({llvm::dyn_cast<llvm::Metadata>(builder->getOrCreateSubrange(0, size))});
-  return llvm::wrap(builder->createArrayType(size, alignInBits, llvm::unwrap(refType),
-                                             builder->getOrCreateArray(range)));
+  auto type = builder->createArrayType(size, alignInBits, llvm::unwrap(refType),
+                                                           builder->getOrCreateArray(range));
+  builder->retainType(type);
+  return llvm::wrap(type);
 }
 
 
@@ -185,20 +174,29 @@ DICompositeTypeRef DICreateReplaceableCompositeType(DIBuilderRef refBuilder,
                                                     DIScopeOpaqueRef refScope,
                                                     DIFileRef refFile,
                                                     unsigned line) {
-  return llvm::wrap(llvm::unwrap(refBuilder)->createReplaceableCompositeType(
-                      tag, name, llvm::unwrap(refScope), llvm::unwrap(refFile), line));
+  auto builder = llvm::unwrap(refBuilder);
+  auto type = builder->createReplaceableCompositeType(
+                                    tag, name, llvm::unwrap(refScope), llvm::unwrap(refFile), line);
+  builder->retainType(type);
+  return llvm::wrap(type);
 }
 
 DIDerivedTypeRef DICreateReferenceType(DIBuilderRef refBuilder, DITypeOpaqueRef refType) {
-  return llvm::wrap(llvm::unwrap(refBuilder)->createReferenceType(
-                      llvm::dwarf::DW_TAG_reference_type,
-                      llvm::unwrap(refType)));
+  auto builder = llvm::unwrap(refBuilder);
+  auto type = builder->createReferenceType(
+                                    llvm::dwarf::DW_TAG_reference_type,
+                                    llvm::unwrap(refType));
+  builder->retainType(type);
+  return llvm::wrap(type);
 }
 
 DIDerivedTypeRef DICreatePointerType(DIBuilderRef refBuilder, DITypeOpaqueRef refType) {
-  return llvm::wrap(llvm::unwrap(refBuilder)->createReferenceType(
-                      llvm::dwarf::DW_TAG_pointer_type,
-                      llvm::unwrap(refType)));
+  auto builder = llvm::unwrap(refBuilder);
+  auto type = builder->createReferenceType(
+                                    llvm::dwarf::DW_TAG_pointer_type,
+                                    llvm::unwrap(refType));
+  builder->retainType(type);
+  return llvm::wrap(type);
 }
 
 DISubroutineTypeRef DICreateSubroutineType(DIBuilderRef builder,
@@ -210,7 +208,9 @@ DISubroutineTypeRef DICreateSubroutineType(DIBuilderRef builder,
   }
   llvm::DIBuilder *b = llvm::unwrap(builder);
   llvm::DITypeRefArray typeArray = b->getOrCreateTypeArray(parameterTypes);
-  return llvm::wrap(b->createSubroutineType(typeArray));
+  auto type = b->createSubroutineType(typeArray);
+  b->retainType(type);
+  return llvm::wrap(type);
 }
 
 void DIFunctionAddSubprogram(LLVMValueRef fn, DISubprogramRef sp) {

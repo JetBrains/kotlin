@@ -29,7 +29,7 @@ internal val contextLLVMSetupPhase = makeKonanModuleOpPhase(
             llvmContext = LLVMContextCreate()!!
             val llvmModule = LLVMModuleCreateWithNameInContext("out", llvmContext)!!
             context.llvmModule = llvmModule
-            context.debugInfo.builder = DICreateBuilder(llvmModule)
+            context.debugInfo.builder = LLVMCreateDIBuilder(llvmModule)
         }
 )
 

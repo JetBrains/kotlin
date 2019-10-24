@@ -128,7 +128,7 @@ internal fun generateDebugInfoHeader(context: Context) {
         @Suppress("UNCHECKED_CAST")
         context.debugInfo.module   = DICreateModule(
                 builder            = context.debugInfo.builder,
-                scope              = context.llvmModule as DIScopeOpaqueRef,
+                scope              = null,
                 name               = path.path(),
                 configurationMacro = "",
                 includePath        = "",
