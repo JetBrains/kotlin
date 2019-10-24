@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.DFS
-import java.util.*
 
 /**
  * Binds the arguments explicitly represented in the IR to the parameters of the accessed function.
@@ -225,7 +224,13 @@ val IrSimpleFunction.isSynthesized: Boolean get() = descriptor.kind == CallableM
 
 val IrDeclaration.isReal: Boolean get() = !isFakeOverride
 
-val IrDeclaration.isFakeOverride: Boolean get() = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+val IrDeclaration.isFakeOverride: Boolean
+    get() = when (this) {
+        is IrSimpleFunction -> isFakeOverride
+        is IrProperty -> isFakeOverride
+        is IrField -> isFakeOverride
+        else -> false
+    }
 
 fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
 
