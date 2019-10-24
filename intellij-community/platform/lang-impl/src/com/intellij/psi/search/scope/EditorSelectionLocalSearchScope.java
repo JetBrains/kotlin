@@ -177,7 +177,7 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
   }
 
   @Override
-  public int calcHashCode() {
+  protected int calcHashCode() {
     int result = 0;
     TextRange[] ranges = getRanges();
     VirtualFile[] files = getVirtualFiles();
