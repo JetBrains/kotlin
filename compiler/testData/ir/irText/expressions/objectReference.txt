@@ -98,9 +98,8 @@ FILE fqName:<root> fileName:/objectReference.kt
                 CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=EQ
                   $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
                   <set-?>: CONST Int type=kotlin.Int value=1
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.Z.aLambda'
-                  CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
-                    $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
+                CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
+                  $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aLambda> visibility:public modality:FINAL <> ($this:<root>.Z) returnType:kotlin.Function0<kotlin.Unit>
         correspondingProperty: PROPERTY name:aLambda visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Z

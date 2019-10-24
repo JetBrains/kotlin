@@ -1286,6 +1286,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/whenReturn.kt");
         }
 
+        @TestMetadata("whenReturnUnit.kt")
+        public void testWhenReturnUnit() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/whenReturnUnit.kt");
+        }
+
         @TestMetadata("whenUnusedExpression.kt")
         public void testWhenUnusedExpression() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/whenUnusedExpression.kt");

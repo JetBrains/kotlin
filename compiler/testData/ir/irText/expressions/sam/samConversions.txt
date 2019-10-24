@@ -15,8 +15,7 @@ FILE fqName:<root> fileName:/samConversions.kt
           FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test1'
-                  CALL 'public final fun test1 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                CALL 'public final fun test1 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
   FUN name:test2 visibility:public modality:FINAL <> ($receiver:<root>.J) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.J
     BLOCK_BODY
@@ -26,8 +25,7 @@ FILE fqName:<root> fileName:/samConversions.kt
           FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test2'
-                  CALL 'public final fun test1 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                CALL 'public final fun test1 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
   FUN name:test3 visibility:public modality:FINAL <> ($receiver:<root>.J, a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.J
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>

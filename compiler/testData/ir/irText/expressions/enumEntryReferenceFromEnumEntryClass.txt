@@ -53,9 +53,8 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                     CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=EQ
                       $this: GET_ENUM 'ENUM_ENTRY name:Z' type=<root>.MyEnum.Z
                       <set-?>: CONST Int type=kotlin.Int value=1
-                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.MyEnum.Z.aLambda'
-                      CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
-                        $this: GET_ENUM 'ENUM_ENTRY name:Z' type=<root>.MyEnum.Z
+                    CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
+                      $this: GET_ENUM 'ENUM_ENTRY name:Z' type=<root>.MyEnum.Z
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aLambda> visibility:public modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:kotlin.Function0<kotlin.Unit>
             correspondingProperty: PROPERTY name:aLambda visibility:public modality:FINAL [val]
             $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z
