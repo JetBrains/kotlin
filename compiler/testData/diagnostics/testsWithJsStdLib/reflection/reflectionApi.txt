@@ -1,6 +1,8 @@
 package
 
 public fun </*0*/ T : kotlin.Any> kclass(/*0*/ k: kotlin.reflect.KClass<*>, /*1*/ kt: kotlin.reflect.KClass<T>): kotlin.Unit
+public inline fun </*0*/ reified T : kotlin.Any> reifiedProjectedTypeParameter(/*0*/ instance: kotlin.reflect.KClass<out T>): kotlin.Unit
+public inline fun </*0*/ reified T : kotlin.Any> reifiedTypeParameter(/*0*/ instance: kotlin.reflect.KClass<T>): kotlin.Unit
 public fun testSomeValidCases(/*0*/ p0: kotlin.reflect.KProperty0<kotlin.Int>, /*1*/ pm0: kotlin.reflect.KMutableProperty0<kotlin.String>, /*2*/ f: kotlin.reflect.KFunction<kotlin.String>, /*3*/ p1: kotlin.reflect.KProperty1<kotlin.String, kotlin.Int>, /*4*/ p2: kotlin.reflect.KProperty2<kotlin.String, kotlin.String, kotlin.Int>): kotlin.Unit
 
 public final class Foo {

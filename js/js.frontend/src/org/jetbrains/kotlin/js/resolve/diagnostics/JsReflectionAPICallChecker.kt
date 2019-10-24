@@ -24,12 +24,18 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.AbstractReflectionApiCallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
 
 private val ALLOWED_KCLASS_MEMBERS = setOf("simpleName", "isInstance")
 private val ALLOWED_CLASSES = setOf(
@@ -54,8 +60,34 @@ class JsReflectionAPICallChecker(
 
     private val kClass by storageManager.createLazyValue { reflectionTypes.kClass }
 
-    override fun isAllowedReflectionApi(descriptor: CallableDescriptor, containingClass: ClassDescriptor): Boolean =
-        super.isAllowedReflectionApi(descriptor, containingClass) ||
-                DescriptorUtils.isSubclass(containingClass, kClass) && descriptor.name.asString() in ALLOWED_KCLASS_MEMBERS ||
-                containingClass.fqNameSafe in ALLOWED_CLASSES
+    override fun isAllowedReflectionApi(
+        resolvedCall: ResolvedCall<*>,
+        descriptor: CallableDescriptor,
+        containingClass: ClassDescriptor,
+        context: CallCheckerContext
+    ): Boolean = super.isAllowedReflectionApi(resolvedCall, descriptor, containingClass, context) ||
+            DescriptorUtils.isSubclass(containingClass, kClass) && descriptor.name.asString() in ALLOWED_KCLASS_MEMBERS ||
+            DescriptorUtils.isSubclass(
+                containingClass,
+                kClass
+            ) && descriptor.name.asString() == "qualifiedName" && isSupportedQualifiedName(resolvedCall, descriptor) ||
+            containingClass.fqNameSafe in ALLOWED_CLASSES
+
+    private fun isSupportedQualifiedName(resolvedCall: ResolvedCall<*>, descriptor: CallableDescriptor): Boolean {
+        val receiver = descriptor.dispatchReceiverParameter ?: return false
+        val receiverType = (receiver.type as? SimpleType)
+            ?.arguments
+            ?.singleOrNull()
+            ?.takeIf { it.projectionKind == Variance.INVARIANT }
+            ?.type
+            ?: return false
+
+        if (TypeUtils.isTypeParameter(receiverType)) {
+            return TypeUtils.isReifiedTypeParameter(receiverType)
+        }
+
+        val expression = resolvedCall.getReceiverExpression()
+
+        return expression is KtClassLiteralExpression
+    }
 }

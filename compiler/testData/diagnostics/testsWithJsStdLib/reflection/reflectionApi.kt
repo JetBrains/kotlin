@@ -22,6 +22,9 @@ fun testSomeValidCases(p0: KProperty0<Int>, pm0: KMutableProperty0<String>, f: K
     p1.equals(p2)
     p0.hashCode()
     f.toString()
+
+    String::class.qualifiedName
+    Foo::class.qualifiedName
 }
 
 fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
@@ -47,4 +50,14 @@ fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k == kt
     k.hashCode()
     k.toString()
+}
+
+inline fun <reified T : Any> reifiedTypeParameter(instance: KClass<T>) {
+    T::class.qualifiedName
+    instance.qualifiedName
+}
+
+inline fun <reified T : Any> reifiedProjectedTypeParameter(instance: KClass<out T>) {
+    T::class.qualifiedName
+    instance.<!UNSUPPORTED!>qualifiedName<!>
 }

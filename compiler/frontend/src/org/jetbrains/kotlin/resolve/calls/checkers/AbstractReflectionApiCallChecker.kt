@@ -58,11 +58,21 @@ abstract class AbstractReflectionApiCallChecker(
         val containingClass = descriptor.containingDeclaration as? ClassDescriptor ?: return
         if (!ReflectionTypes.isReflectionClass(containingClass)) return
 
-        if (!isAllowedReflectionApi(descriptor, containingClass)) {
+        if (!isAllowedReflectionApi(resolvedCall, descriptor, containingClass, context)) {
             report(reportOn, context)
         }
     }
 
+    protected open fun isAllowedReflectionApi(
+        resolvedCall: ResolvedCall<*>,
+        descriptor: CallableDescriptor,
+        containingClass: ClassDescriptor,
+        context: CallCheckerContext
+    ): Boolean {
+        return isAllowedReflectionApi(descriptor, containingClass)
+    }
+
+    @Deprecated("Override isAllowedReflectionApi/4 instead.")
     protected open fun isAllowedReflectionApi(descriptor: CallableDescriptor, containingClass: ClassDescriptor): Boolean {
         val name = descriptor.name
         return name.asString() in ANY_MEMBER_NAMES ||

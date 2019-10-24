@@ -6930,6 +6930,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/reified/extensionMethod.kt");
         }
 
+        @TestMetadata("fullyQualifiedName.kt")
+        public void testFullyQualifiedName() throws Exception {
+            runTest("js/js.translator/testData/box/reified/fullyQualifiedName.kt");
+        }
+
         @TestMetadata("innerObject.kt")
         public void testInnerObject() throws Exception {
             runTest("js/js.translator/testData/box/reified/innerObject.kt");

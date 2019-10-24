@@ -68,7 +68,8 @@ class KTypeConstructor(val context: TranslationContext) {
         val arguments = JsArrayLiteral(type.arguments.map { createKTypeProjection(it) })
         val isMarkedNullable = JsBooleanLiteral(type.isMarkedNullable)
         return callHelperFunction(
-            Namer.CREATE_KTYPE,
+            Namer.CREATE_NAMED_KTYPE,
+            JsStringLiteral(classifier.fqNameUnsafe.asString()),
             kClassifier,
             arguments,
             isMarkedNullable

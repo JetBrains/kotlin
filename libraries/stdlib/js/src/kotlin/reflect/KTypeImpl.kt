@@ -12,6 +12,8 @@ internal class KTypeImpl(
     override val arguments: List<KTypeProjection>,
     override val isMarkedNullable: Boolean
 ) : KType {
+    internal var qualifiedName: String? = null
+
     override val annotations: List<Annotation>
         get() = emptyList()
 

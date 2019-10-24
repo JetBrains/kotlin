@@ -40,7 +40,8 @@ class FunctionIntrinsics {
         CoroutineContextFIF,
         SuspendCoroutineUninterceptedOrReturnFIF,
         InterceptedFIF,
-        TypeOfFIF
+        TypeOfFIF,
+        FullyQualifiedNameFIF
     )
 
     fun getIntrinsic(descriptor: FunctionDescriptor, context: TranslationContext): FunctionIntrinsic? {

@@ -19,6 +19,17 @@ internal fun createKType(
 ) =
     KTypeImpl(classifier, arguments.asList(), isMarkedNullable)
 
+@JsName("createNamedKType")
+internal fun createNamedKType(
+    name: String,
+    classifier: KClassifier,
+    arguments: Array<KTypeProjection>,
+    isMarkedNullable: Boolean
+) =
+    KTypeImpl(classifier, arguments.asList(), isMarkedNullable).apply {
+        qualifiedName = name
+    }
+
 @JsName("createDynamicKType")
 internal fun createDynamicKType(): KType = DynamicKType
 
