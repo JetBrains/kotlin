@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -59,6 +58,14 @@ class CheckIrElementVisitor(
         }
     }
 
+    private fun IrExpression.ensureNullable() {
+        if (!config.checkTypes)
+            return
+
+        if (!type.isNullable())
+            reportError(this, "expected a nullable type, got ${type.render()}")
+    }
+
     private fun IrExpression.ensureTypeIs(expectedType: IrType) {
         ensureTypesEqual(type, expectedType)
     }
@@ -73,7 +80,10 @@ class CheckIrElementVisitor(
         super.visitConst(expression)
 
         val naturalType = when (expression.kind) {
-            IrConstKind.Null -> irBuiltIns.nothingNType
+            IrConstKind.Null -> {
+                expression.ensureNullable()
+                return
+            }
             IrConstKind.Boolean -> irBuiltIns.booleanType
             IrConstKind.Char -> irBuiltIns.charType
             IrConstKind.Byte -> irBuiltIns.byteType
