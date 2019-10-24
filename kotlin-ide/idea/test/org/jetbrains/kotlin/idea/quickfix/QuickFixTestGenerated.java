@@ -6332,6 +6332,11 @@ public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
             public void testKeepOutside() throws Exception {
                 runTest("testData/quickfix/deprecatedSymbolUsage/functionLiteralArguments/keepOutside.kt");
             }
+
+            @TestMetadata("keepOutsideWithNamedArgument.kt")
+            public void testKeepOutsideWithNamedArgument() throws Exception {
+                runTest("testData/quickfix/deprecatedSymbolUsage/functionLiteralArguments/keepOutsideWithNamedArgument.kt");
+            }
         }
 
         @RunWith(JUnit3RunnerWithInners.class)
