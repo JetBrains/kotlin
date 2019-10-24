@@ -46,8 +46,6 @@ class JavaClassesInScriptDependenciesShortNameCache(private val project: Project
 
     override fun getAllMethodNames() = emptyArray<String>()
 
-    override fun getAllMethodNames(set: HashSet<String>) {}
-
     override fun getFieldsByName(name: String, scope: GlobalSearchScope) = PsiField.EMPTY_ARRAY
 
     override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int) = PsiMethod.EMPTY_ARRAY
@@ -55,8 +53,6 @@ class JavaClassesInScriptDependenciesShortNameCache(private val project: Project
     override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>) = true
 
     override fun getAllFieldNames() = emptyArray<String>()
-
-    override fun getAllFieldNames(set: HashSet<String>) {}
 
     override fun getFieldsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int) = PsiField.EMPTY_ARRAY
 }

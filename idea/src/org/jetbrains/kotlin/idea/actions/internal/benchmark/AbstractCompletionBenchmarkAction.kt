@@ -83,9 +83,7 @@ abstract class AbstractCompletionBenchmarkAction : AnAction() {
             generateSequence { this.randomElement(random) }.distinct()
 
         internal fun collectSuitableKotlinFiles(project: Project, filePredicate: (KtFile) -> Boolean): MutableList<KtFile> {
-            val scope = object : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
-                override fun isSearchOutsideRootModel(): Boolean = false
-            }
+            val scope = GlobalSearchScope.allScope(project)
 
             fun KtFile.isUsableForBenchmark(): Boolean {
                 val moduleInfo = this.getNullableModuleInfo() ?: return false

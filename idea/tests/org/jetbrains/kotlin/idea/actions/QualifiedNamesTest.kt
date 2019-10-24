@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.actions
 import com.intellij.ide.actions.CopyReferenceAction
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightCodeInsightTestCase
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
@@ -16,9 +15,9 @@ import org.junit.runner.RunWith
 import java.util.*
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class QualifiedNamesTest: LightCodeInsightTestCase() {
+class QualifiedNamesTest : LightCodeInsightTestCase() {
     fun testClassRef() {
-        LightPlatformCodeInsightTestCase.configureFromFileText(
+        configureFromFileText(
                 "class.kt",
                 """
                     package foo.bar
@@ -42,7 +41,7 @@ class QualifiedNamesTest: LightCodeInsightTestCase() {
     }
 
     fun testFunRef() {
-        LightPlatformCodeInsightTestCase.configureFromFileText(
+        configureFromFileText(
                 "fun.kt",
                 """
                     package foo.bar
@@ -65,7 +64,7 @@ class QualifiedNamesTest: LightCodeInsightTestCase() {
 
     private fun getQualifiedNamesForDeclarations(): List<String?> {
         val result = ArrayList<String?>()
-        LightPlatformCodeInsightTestCase.myFile.accept(object : KtVisitorVoid() {
+        file.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
                 element.acceptChildren(this)
             }

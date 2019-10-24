@@ -1,5 +1,5 @@
 <node text="packageFun(String)  ()" base="true">
-  <node text="JA  ()"/>
+  <node text="JA"/>
   <node text="JA.foo()  ()"/>
   <node text="KClient  ()"/>
   <node text="KClient  ()"/>

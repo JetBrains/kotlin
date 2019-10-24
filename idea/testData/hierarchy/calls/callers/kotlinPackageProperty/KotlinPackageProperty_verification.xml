@@ -1,5 +1,5 @@
 <node text="packageVal  ()" base="true">
-  <node text="JA  ()"/>
+  <node text="JA"/>
   <node text="JA.getName()(2 usages)  ()"/>
   <node text="KClient  ()"/>
   <node text="KClient  ()"/>

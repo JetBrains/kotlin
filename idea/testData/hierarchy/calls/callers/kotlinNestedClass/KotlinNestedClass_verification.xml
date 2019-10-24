@@ -1,5 +1,5 @@
 <node text="T.KA  ()" base="true">
-  <node text="JA  ()"/>
+  <node text="JA"/>
   <node text="JA.newKA()  ()"/>
   <node text="KClient  ()"/>
   <node text="KClient  ()"/>

@@ -26,18 +26,19 @@ class ShowKotlinGradleDslLogs : IntentionAction, AnAction(), DumbAware {
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        openLogsDirIfPresent(e.project)
+        val project = e.project ?: return
+        openLogsDirIfPresent(project)
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) = ShowFilePathAction.isSupported()
 
     override fun update(e: AnActionEvent) {
         val presentation = e.presentation
-        presentation.isVisible = ShowFilePathAction.isSupported()
+        presentation.isEnabledAndVisible = e.project != null && ShowFilePathAction.isSupported()
         presentation.text = NAME
     }
 
-    private fun openLogsDirIfPresent(project: Project?) {
+    private fun openLogsDirIfPresent(project: Project) {
         val logsDir = findLogsDir()
         if (logsDir != null) {
             ShowFilePathAction.openDirectory(logsDir)

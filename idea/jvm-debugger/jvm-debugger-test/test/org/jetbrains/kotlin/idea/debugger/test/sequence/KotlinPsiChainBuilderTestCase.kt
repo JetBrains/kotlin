@@ -10,7 +10,6 @@ import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
-import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -34,18 +33,18 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
         super.setUp()
         ApplicationManager.getApplication().runWriteAction {
             @Suppress("UnstableApiUsage")
-            if (ProjectLibraryTable.getInstance(LightPlatformTestCase.getProject()).getLibraryByName(stdLibName) == null) {
+            if (ProjectLibraryTable.getInstance(project).getLibraryByName(stdLibName) == null) {
                 val stdLibPath = ForTestCompileRuntime.runtimeJarForTests()
                 PsiTestUtil.addLibrary(
                     testRootDisposable,
-                    LightPlatformTestCase.getModule(),
+                    module,
                     stdLibName,
                     stdLibPath.parent,
                     stdLibPath.name
                 )
             }
         }
-        LibraryModificationTracker.getInstance(LightPlatformTestCase.getProject()).incModificationCount()
+        LibraryModificationTracker.getInstance(project).incModificationCount()
     }
 
 

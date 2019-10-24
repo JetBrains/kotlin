@@ -1,0 +1,11 @@
+<node text="packageFun(String)  ()" base="true">
+  <node text="JA  ()"/>
+  <node text="JA.foo()  ()"/>
+  <node text="KClient  ()"/>
+  <node text="KClient  ()"/>
+  <node text="KClient.bar  ()"/>
+  <node text="KClient.bar()  ()"/>
+  <node text="KClient.bar.localFun()  ()"/>
+  <node text="KClientObj  ()"/>
+  <node text="main0.kt  ()"/>
+</node>

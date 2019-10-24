@@ -1,5 +1,5 @@
 <node text="KA.name  ()" base="true">
-  <node text="JA(2 usages)  ()"/>
+  <node text="JA(2 usages)"/>
   <node text="JA.getName()(2 usages)  ()"/>
   <node text="KClient(2 usages)  ()"/>
   <node text="KClient(2 usages)  ()"/>

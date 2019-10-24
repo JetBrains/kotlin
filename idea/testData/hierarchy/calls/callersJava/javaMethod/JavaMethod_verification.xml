@@ -1,5 +1,5 @@
 <node text="J.foo()  ()" base="true">
-    <node text="A(2 usages)  ()"/>
-    <node text="Main1Kt.test(J)  ()"/>
-    <node text="Main1Kt  ()"/>
+  <node text="A(2 usages)"/>
+  <node text="Main1Kt"/>
+  <node text="Main1Kt.test(J)  ()"/>
 </node>
