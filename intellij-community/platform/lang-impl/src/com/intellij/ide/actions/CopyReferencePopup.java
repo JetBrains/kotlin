@@ -3,7 +3,9 @@ package com.intellij.ide.actions;
 
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
+import com.intellij.openapi.actionSystem.impl.PresentationFactory;
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext;
+import com.intellij.openapi.actionSystem.impl.Utils;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -18,10 +20,12 @@ import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.intellij.util.ui.UIUtil.DEFAULT_HGAP;
 
@@ -29,23 +33,28 @@ public class CopyReferencePopup extends DumbAwareAction {
   private static final Logger LOG = Logger.getInstance(CopyReferencePopup.class);
   private static final String COPY_REFERENCE_POPUP_PLACE = "CopyReferencePopupPlace";
   private static final int DEFAULT_WIDTH = JBUIScale.scale(500);
+  private static final PresentationFactory PRESENTATION_FACTORY = new PresentationFactory();
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    e.getPresentation().setEnabledAndVisible(CopyPathsAction.isCopyReferencePopupAvailable());
+    ActionGroup actionGroup = getCopyReferenceActionGroup();
+    if (actionGroup == null) {
+      e.getPresentation().setEnabledAndVisible(false);
+      return;
+    }
+
+    List<AnAction> actions = Utils.expandActionGroup(false, actionGroup, PRESENTATION_FACTORY, e.getDataContext(), e.getPlace());
+    e.getPresentation().setEnabledAndVisible(CopyPathsAction.isCopyReferencePopupAvailable() && !actions.isEmpty());
   }
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    AnAction popupGroup = ActionManager.getInstance().getAction("CopyReferencePopupGroup");
-    if (!(popupGroup instanceof DefaultActionGroup)) {
-      LOG.warn("Cannot find 'CopyReferencePopup' action to show popup");
-      return;
-    }
+    ActionGroup actionGroup = getCopyReferenceActionGroup();
+    if (actionGroup == null) return;
 
     DataContext dataContext = cloneDataContext(e);
     ListPopup popup =
-      new PopupFactoryImpl.ActionGroupPopup("Copy", (ActionGroup)popupGroup, e.getDataContext(), true, true, false, true, null, -1, null,
+      new PopupFactoryImpl.ActionGroupPopup("Copy", actionGroup, e.getDataContext(), true, true, false, true, null, -1, null,
                                             COPY_REFERENCE_POPUP_PLACE) {
       @Override
       protected ListCellRenderer<PopupFactoryImpl.ActionItem> getListElementRenderer() {
@@ -113,6 +122,16 @@ public class CopyReferencePopup extends DumbAwareAction {
     updatePopupSize(popup);
 
     popup.showInBestPositionFor(e.getDataContext());
+  }
+
+  @Nullable
+  public ActionGroup getCopyReferenceActionGroup() {
+    AnAction popupGroup = ActionManager.getInstance().getAction("CopyReferencePopupGroup");
+    if (!(popupGroup instanceof DefaultActionGroup)) {
+      LOG.warn("Cannot find 'CopyReferencePopup' action to show popup");
+      return null;
+    }
+    return (ActionGroup)popupGroup;
   }
 
   private static void updatePopupSize(@NotNull ListPopup popup) {
