@@ -621,7 +621,6 @@ class CodeInliner<TCallElement : KtElement>(
 
             val argument = expr.parent as? KtValueArgument ?: return
             if (argument is KtLambdaArgument) return
-            if (argument.isNamed()) return
             val argumentList = argument.parent as? KtValueArgumentList ?: return
             if (argument != argumentList.arguments.last()) return
             val callExpression = argumentList.parent as? KtCallExpression ?: return
