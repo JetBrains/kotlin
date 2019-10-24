@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
+import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.isLambda
 import org.jetbrains.kotlin.backend.jvm.ir.shouldBeHidden
 import org.jetbrains.kotlin.descriptors.Modality
@@ -46,7 +47,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private val inlineLambdaToCallSite = mutableMapOf<IrFunction, IrDeclaration?>()
 
     override fun lower(irFile: IrFile) {
-        inlineLambdaToCallSite.putAll(InlineReferenceLocator.scan(context, irFile).lambdaToCallSite)
+        inlineLambdaToCallSite.putAll(IrInlineReferenceLocator.scan(context, irFile).lambdaToCallSite)
         irFile.transformChildrenVoid(this)
         pendingTransformations.forEach { it() }
     }
