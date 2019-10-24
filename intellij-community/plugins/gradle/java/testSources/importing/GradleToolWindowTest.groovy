@@ -315,7 +315,7 @@ include 'p1:leaf', 'p2:leaf'
     assertSameLinesWithFile(path, sw.toString())
   }
 
-  private String getPath() {
+  protected String getPath() {
     def communityPath = PlatformTestUtil.getCommunityPath().replace(File.separatorChar, '/'.charAt(0))
     def testName = getTestName(true)
     testName = testName.substring(0, testName.indexOf("_"))

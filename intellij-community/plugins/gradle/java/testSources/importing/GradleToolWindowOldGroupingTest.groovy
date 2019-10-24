@@ -7,4 +7,15 @@ class GradleToolWindowOldGroupingTest extends GradleToolWindowTest {
     super.setUp()
     currentExternalProjectSettings.useQualifiedModuleNames = false
   }
+
+  @Override
+  protected String getPath() {
+    def testDataPath = super.getPath()
+    String testDataForOldGrouping = testDataPath + ".old"
+    if (new File(testDataForOldGrouping).exists()) {
+      return testDataForOldGrouping;
+    } else {
+      return testDataPath
+    }
+  }
 }
