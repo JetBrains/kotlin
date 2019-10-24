@@ -33,7 +33,7 @@ public class DescriptorComposer extends HTMLComposerImpl {
   }
 
   @Override
-  public void compose(StringBuffer buf, RefEntity refEntity) {
+  public void compose(@NotNull StringBuilder buf, RefEntity refEntity) {
     genPageHeader(buf, refEntity);
     if (myTool.getDescriptions(refEntity) != null) {
       appendHeading(buf, InspectionsBundle.message("inspection.problem.synopsis"));
@@ -77,10 +77,10 @@ public class DescriptorComposer extends HTMLComposerImpl {
     return XmlStringUtil.isWrappedInHtml(text) ? XmlStringUtil.stripHtml(text) : StringUtil.escapeXmlEntities(text);
   }
 
-  protected void composeAdditionalDescription(@NotNull StringBuffer buf, @NotNull RefEntity refEntity) {}
+  protected void composeAdditionalDescription(@NotNull StringBuilder buf, @NotNull RefEntity refEntity) {}
 
   @Override
-  public void compose(StringBuffer buf, RefEntity refElement, CommonProblemDescriptor descriptor) {
+  public void compose(@NotNull StringBuilder buf, RefEntity refElement, CommonProblemDescriptor descriptor) {
     CommonProblemDescriptor[] descriptions = myTool.getDescriptions(refElement);
 
     int problemIdx = 0;
@@ -124,7 +124,7 @@ public class DescriptorComposer extends HTMLComposerImpl {
     }
   }
 
-  protected void composeDescription(@NotNull CommonProblemDescriptor description, int i, @NotNull StringBuffer buf, @NotNull RefEntity refElement) {
+  protected void composeDescription(@NotNull CommonProblemDescriptor description, int i, @NotNull StringBuilder buf, @NotNull RefEntity refElement) {
     PsiElement expression = description instanceof ProblemDescriptor ? ((ProblemDescriptor)description).getPsiElement() : null;
     StringBuilder anchor = new StringBuilder();
     VirtualFile vFile = null;

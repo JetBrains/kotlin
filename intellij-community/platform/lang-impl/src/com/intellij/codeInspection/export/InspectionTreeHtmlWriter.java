@@ -83,7 +83,7 @@ public final class InspectionTreeHtmlWriter {
               .append("<div id=\"d")
               .append(String.valueOf(nodeId))
               .append("\" style=\"display:none\">");
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             ((SuppressableInspectionTreeNode)n).getPresentation().getComposer().compose(buf, e);
             w.append(buf.toString());
             w.append("</div>");
