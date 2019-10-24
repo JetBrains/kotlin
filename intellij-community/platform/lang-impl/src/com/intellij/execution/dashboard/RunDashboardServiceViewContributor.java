@@ -45,10 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.intellij.execution.dashboard.RunDashboardCustomizer.NODE_LINKS;
 import static com.intellij.execution.dashboard.RunDashboardManagerImpl.findActionToolbar;
@@ -431,6 +428,21 @@ public class RunDashboardServiceViewContributor
         return ((WeighedItem)value).getWeight();
       }
       return 0;
+    }
+
+    @Nullable
+    @Override
+    public Runnable getRemover() {
+      ConfigurationType type = ObjectUtils.tryCast(((RunDashboardGroupImpl<?>)myGroup).getValue(), ConfigurationType.class);
+      if (type != null) {
+        return () -> {
+          RunDashboardManager runDashboardManager = RunDashboardManager.getInstance(myNode.getProject());
+          Set<String> types = new HashSet<>(runDashboardManager.getTypes());
+          types.remove(type.getId());
+          runDashboardManager.setTypes(types);
+        };
+      }
+      return null;
     }
 
     private static String getId(GroupingNode node) {

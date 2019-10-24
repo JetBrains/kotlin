@@ -3,17 +3,21 @@ package com.intellij.execution.dashboard.actions;
 
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.dashboard.RunDashboardManager;
-import com.intellij.execution.dashboard.RunDashboardManagerImpl;
-import com.intellij.execution.dashboard.RunDashboardServiceViewContributor;
+import com.intellij.execution.dashboard.*;
+import com.intellij.execution.dashboard.tree.GroupingNode;
+import com.intellij.execution.dashboard.tree.RunDashboardGroupImpl;
 import com.intellij.execution.services.ServiceViewActionUtils;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.JBIterable;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -32,7 +36,7 @@ public class RestoreHiddenConfigurationsAction extends DumbAwareAction {
       e.getPresentation().setEnabledAndVisible(!hiddenConfigurations.isEmpty());
       return;
     }
-    Set<ConfigurationType> types = RunDashboardActionUtils.getTargetTypes(e);
+    Set<ConfigurationType> types = getTargetTypes(e);
     if (types.isEmpty()) {
       e.getPresentation().setEnabledAndVisible(false);
       return;
@@ -57,10 +61,34 @@ public class RestoreHiddenConfigurationsAction extends DumbAwareAction {
       return;
     }
 
-    Set<ConfigurationType> types = RunDashboardActionUtils.getTargetTypes(e);
+    Set<ConfigurationType> types = getTargetTypes(e);
     RunDashboardManagerImpl runDashboardManager = (RunDashboardManagerImpl)RunDashboardManager.getInstance(project);
     List<RunConfiguration> configurations =
       ContainerUtil.filter(runDashboardManager.getHiddenConfigurations(), configuration -> types.contains(configuration.getType()));
     runDashboardManager.restoreConfigurations(configurations);
+  }
+
+  private static Set<ConfigurationType> getTargetTypes(AnActionEvent e) {
+    JBIterable<RunDashboardNode> targets = ServiceViewActionUtils.getTargets(e, RunDashboardNode.class);
+    if (targets.isEmpty()) return Collections.emptySet();
+
+    Set<ConfigurationType> types = new HashSet<>();
+    for (RunDashboardNode node : targets) {
+      if (node instanceof RunDashboardRunConfigurationNode) {
+        types.add(((RunDashboardRunConfigurationNode)node).getConfigurationSettings().getType());
+      }
+      else if (node instanceof GroupingNode) {
+        RunDashboardGroupImpl<?> group = (RunDashboardGroupImpl<?>)((GroupingNode)node).getGroup();
+        ConfigurationType type = ObjectUtils.tryCast(group.getValue(), ConfigurationType.class);
+        if (type == null) {
+          return Collections.emptySet();
+        }
+        types.add(type);
+      }
+      else {
+        return Collections.emptySet();
+      }
+    }
+    return types;
   }
 }
