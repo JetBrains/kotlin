@@ -26,11 +26,34 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
   private final Editor myEditor;
   private final Project myProject;
   private PsiElement[] myPsiElements;
+  private VirtualFile[] myVirtualFiles; // only ever 0 or 1 elements long
+  private TextRange[] myRanges;
   private final boolean myIgnoreInjectedPsi;
   @NotNull
   private final String myDisplayName;
 
   private LocalSearchScope myLocalSearchScope;
+
+  private void initVirtualFilesAndRanges() {
+    if (myRanges != null) {
+      return;
+    }
+    SelectionModel selectionModel = myEditor.getSelectionModel();
+    if (!selectionModel.hasSelection()) {
+      myVirtualFiles = VirtualFile.EMPTY_ARRAY;
+      myRanges = TextRange.EMPTY_ARRAY;
+      return;
+    }
+
+    myVirtualFiles = new VirtualFile[]{FileDocumentManager.getInstance().getFile(myEditor.getDocument())};
+
+    int[] selectionStarts = selectionModel.getBlockSelectionStarts();
+    int[] selectionEnds = selectionModel.getBlockSelectionEnds();
+    myRanges = new TextRange[selectionStarts.length];
+    for (int i = 0; i < selectionStarts.length; ++i) {
+      myRanges[i] = new TextRange(selectionStarts[i], selectionEnds[i]);
+    }
+  }
 
   private void init() {
     ReadAction.run(() -> {
@@ -87,18 +110,8 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
   }
 
   private TextRange[] getRanges() {
-    SelectionModel selectionModel = myEditor.getSelectionModel();
-    if (!selectionModel.hasSelection()) {
-      return TextRange.EMPTY_ARRAY;
-    }
-
-    int[] selectionStarts = selectionModel.getBlockSelectionStarts();
-    int[] selectionEnds = selectionModel.getBlockSelectionEnds();
-    TextRange[] ranges = new TextRange[selectionStarts.length];
-    for (int i = 0; i < selectionStarts.length; ++i) {
-      ranges[i] = new TextRange(selectionStarts[i], selectionEnds[i]);
-    }
-    return ranges;
+    initVirtualFilesAndRanges();
+    return myRanges;
   }
 
   public EditorSelectionLocalSearchScope(@NotNull Editor editor, Project project,
@@ -131,13 +144,8 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
   @NotNull
   @Override
   public VirtualFile[] getVirtualFiles() {
-    SelectionModel selectionModel = myEditor.getSelectionModel();
-    if (!selectionModel.hasSelection()) {
-      return VirtualFile.EMPTY_ARRAY;
-    }
-    VirtualFile[] files = new VirtualFile[selectionModel.getBlockSelectionStarts().length];
-    Arrays.fill(files, FileDocumentManager.getInstance().getFile(myEditor.getDocument()));
-    return files;
+    initVirtualFilesAndRanges();
+    return myVirtualFiles;
   }
 
   @Override
@@ -146,14 +154,18 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
     if (!(o instanceof EditorSelectionLocalSearchScope)) return false;
     EditorSelectionLocalSearchScope other = (EditorSelectionLocalSearchScope)o;
 
+    VirtualFile[] files = getVirtualFiles();
+    VirtualFile[] otherFiles = other.getVirtualFiles();
+    if (!Comparing.equal(files.length, otherFiles.length)) return false;
+    if (files.length > 0) {
+      if (!Comparing.equal(files[0], otherFiles[0])) return false;
+    }
+
     TextRange[] ranges = getRanges();
     TextRange[] otherRanges = other.getRanges();
     if (ranges.length != otherRanges.length) return false;
 
-    VirtualFile[] files = getVirtualFiles();
-    VirtualFile[] otherFiles = other.getVirtualFiles();
     for (int i = 0; i < ranges.length; ++i) {
-      if (!Comparing.equal(files[i], otherFiles[i])) return false;
       if (!Comparing.equal(ranges[i], otherRanges[i])) return false;
     }
 
@@ -165,10 +177,12 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
     StringBuilder builder = new StringBuilder();
     TextRange[] ranges = getRanges();
     VirtualFile[] files = getVirtualFiles();
+    if (files.length > 0) {
+      builder.append(files[0].toString());
+    }
     for (int i = 0; i < ranges.length; ++i) {
       if (i > 0) builder.append(',');
       builder.append('{');
-      builder.append(files[i].toString());
       builder.append(ranges[i].toString());
       builder.append('}');
     }
@@ -181,9 +195,11 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
     int result = 0;
     TextRange[] ranges = getRanges();
     VirtualFile[] files = getVirtualFiles();
-    for (int i = 0; i < ranges.length; ++i) {
-      result += files[i].hashCode();
-      result += ranges[i].hashCode();
+    if (files.length > 0) {
+      result += files[0].hashCode();
+    }
+    for (TextRange range : ranges) {
+      result += range.hashCode();
     }
     return result;
   }
@@ -192,10 +208,13 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
   public boolean containsRange(@NotNull PsiFile file, @NotNull TextRange range) {
     VirtualFile virtualFile = file.getVirtualFile();
     if (virtualFile == null) virtualFile = file.getNavigationElement().getContainingFile().getVirtualFile();
-    TextRange[] ranges = getRanges();
     VirtualFile[] files = getVirtualFiles();
-    for (int i = 0; i < ranges.length; ++i) {
-      if (files[i].equals(virtualFile) && ranges[i].contains(range)) {
+    if (files.length == 0) return false;
+    if (!files[0].equals(virtualFile)) return false;
+
+    TextRange[] ranges = getRanges();
+    for (TextRange textRange : ranges) {
+      if (textRange.contains(range)) {
         return true;
       }
     }
