@@ -33,14 +33,13 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
         block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3'
-                CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run [inline] declared in kotlin' type=kotlin.Nothing origin=null
-                  <R>: kotlin.Nothing
-                  block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
-                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
-                      BLOCK_BODY
-                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3'
-                          GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run [inline] declared in kotlin' type=kotlin.Nothing origin=null
+                <R>: kotlin.Nothing
+                block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
+                    BLOCK_BODY
+                      RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3'
+                        GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:testLrmFoo1 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit
     VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int>
     BLOCK_BODY
@@ -58,9 +57,8 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                     arg1: CONST Int type=kotlin.Int value=0
                   then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo1'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo1'
-                CALL 'public final fun print (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
-                  message: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo1.<anonymous>' type=kotlin.Int origin=null
+              CALL 'public final fun print (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+                message: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo1.<anonymous>' type=kotlin.Int origin=null
   FUN name:testLrmFoo2 visibility:public modality:FINAL <> (ints:kotlin.collections.List<kotlin.Int>) returnType:kotlin.Unit
     VALUE_PARAMETER name:ints index:0 type:kotlin.collections.List<kotlin.Int>
     BLOCK_BODY
@@ -78,6 +76,5 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                     arg1: CONST Int type=kotlin.Int value=0
                   then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo2'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-              RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo2'
-                CALL 'public final fun print (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
-                  message: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo2.<anonymous>' type=kotlin.Int origin=null
+              CALL 'public final fun print (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+                message: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo2.<anonymous>' type=kotlin.Int origin=null

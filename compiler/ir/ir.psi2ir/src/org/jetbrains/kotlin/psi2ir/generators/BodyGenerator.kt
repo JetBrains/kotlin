@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
@@ -56,7 +58,13 @@ class BodyGenerator(
         if (ktBody is KtBlockExpression) {
             statementGenerator.generateStatements(ktBody.statements, irBlockBody)
         } else {
-            statementGenerator.generateReturnExpression(ktBody, irBlockBody)
+            val irBody = statementGenerator.generateStatement(ktBody)
+            irBlockBody.statements.add(
+                if (ktBody.isUsedAsExpression(context.bindingContext) && irBody is IrExpression)
+                    generateReturnExpression(irBody.startOffset, irBody.endOffset, irBody)
+                else
+                    irBody
+            )
         }
 
         return irBlockBody
@@ -90,7 +98,14 @@ class BodyGenerator(
                 irBlockBody.statements.add(statementGenerator.generateStatement(ktStatement))
             }
             val ktReturnedValue = ktBodyStatements.last()
-            statementGenerator.generateReturnExpression(ktReturnedValue, irBlockBody)
+            val irReturnedValue = statementGenerator.generateStatement(ktReturnedValue)
+            irBlockBody.statements.add(
+                if (ktReturnedValue.isUsedAsResultOfLambda(context.bindingContext) && irReturnedValue is IrExpression) {
+                    generateReturnExpression(irReturnedValue.startOffset, irReturnedValue.endOffset, irReturnedValue)
+                } else {
+                    irReturnedValue
+                }
+            )
         } else {
             irBlockBody.statements.add(
                 generateReturnExpression(
@@ -106,23 +121,6 @@ class BodyGenerator(
         return irBlockBody
     }
 
-    private fun StatementGenerator.generateReturnExpression(ktExpression: KtExpression, irBlockBody: IrBlockBodyImpl) {
-        val irReturnExpression = generateStatement(ktExpression)
-        if (irReturnExpression is IrExpression) {
-            irBlockBody.statements.add(irReturnExpression.wrapWithReturn())
-        } else {
-            irBlockBody.statements.add(irReturnExpression)
-        }
-    }
-
-    private fun IrExpression.wrapWithReturn() =
-        if (this is IrReturn || this is IrErrorExpression || this is IrThrow)
-            this
-        else {
-            generateReturnExpression(startOffset, endOffset, this)
-        }
-
-
     private fun generateReturnExpression(startOffset: Int, endOffset: Int, returnValue: IrExpression): IrReturnImpl {
         val returnTarget = (scopeOwner as? CallableDescriptor) ?: throw AssertionError("'return' in a non-callable: $scopeOwner")
         return IrReturnImpl(
@@ -131,7 +129,6 @@ class BodyGenerator(
             returnValue
         )
     }
-
 
     fun generateSecondaryConstructorBody(ktConstructor: KtSecondaryConstructor): IrBody {
         val irBlockBody = IrBlockBodyImpl(ktConstructor.startOffsetSkippingComments, ktConstructor.endOffset)
@@ -319,7 +316,7 @@ class BodyGenerator(
         }
 
         val enumDefaultConstructorCall = getResolvedCall(ktEnumEntry)
-                ?: throw AssertionError("No default constructor call for enum entry $enumClassDescriptor")
+            ?: throw AssertionError("No default constructor call for enum entry $enumClassDescriptor")
         return statementGenerator.generateEnumConstructorCall(enumDefaultConstructorCall, ktEnumEntry)
     }
 
