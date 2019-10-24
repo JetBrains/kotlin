@@ -31,7 +31,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-@SuppressWarnings("HardCodedStringLiteral")
 public class IndexInfrastructure {
   private static final String STUB_VERSIONS = ".versions";
   private static final String PERSISTENT_INDEX_DIRECTORY_NAME = ".persistent";
