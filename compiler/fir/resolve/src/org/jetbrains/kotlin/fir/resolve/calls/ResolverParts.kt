@@ -190,7 +190,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         val returnTypeRef = candidate.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(fir)
 
         val resultingType: ConeKotlinType = when (fir) {
-            is FirSimpleFunction -> createKFunctionType(fir, resultingReceiverType, returnTypeRef)
+            is FirFunction -> createKFunctionType(fir, resultingReceiverType, returnTypeRef)
             is FirProperty -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
             else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
         }.let(candidate.substitutor::substituteOrSelf)
@@ -242,7 +242,7 @@ private fun createKPropertyType(
 }
 
 private fun createKFunctionType(
-    function: FirSimpleFunction,
+    function: FirFunction<*>,
     receiverType: ConeKotlinType?,
     returnTypeRef: FirResolvedTypeRef
 ): ConeKotlinType {

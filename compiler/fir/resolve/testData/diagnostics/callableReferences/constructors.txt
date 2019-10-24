@@ -1,0 +1,16 @@
+FILE: constructors.kt
+    public final class Klass : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|): R|Klass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(a: R|kotlin/String|): R|Klass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun user(f: R|kotlin/Function1<kotlin/Int, Klass>|): R|kotlin/Unit| {
+    }
+    public final fun fn(): R|kotlin/Unit| {
+        R|/user|(::R|/Klass.Klass|)
+    }

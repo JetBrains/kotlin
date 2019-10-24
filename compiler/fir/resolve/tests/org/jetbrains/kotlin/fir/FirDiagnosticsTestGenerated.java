@@ -50,6 +50,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/companions.kt");
         }
 
+        @TestMetadata("constructors.kt")
+        public void testConstructors() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/constructors.kt");
+        }
+
         @TestMetadata("differentLevels.kt")
         public void testDifferentLevels() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/differentLevels.kt");
