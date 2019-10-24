@@ -3,7 +3,7 @@ import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 
 plugins {
     base
-    id("com.github.jk1.tcdeps") version "0.19"
+    id("com.github.jk1.tcdeps") version "1.1"
 }
 
 rootProject.apply {
@@ -13,10 +13,6 @@ rootProject.apply {
 repositories {
     teamcityServer {
         setUrl("https://buildserver.labs.intellij.net")
-        credentials {
-            username = "guest"
-            password = "guest"
-        }
     }
 }
 

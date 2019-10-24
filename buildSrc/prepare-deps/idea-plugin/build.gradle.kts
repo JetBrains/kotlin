@@ -1,9 +1,9 @@
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 
 plugins {
     base
-    id("com.github.jk1.tcdeps") version "0.19"
+    id("com.github.jk1.tcdeps") version "1.1"
 }
 
 rootProject.apply {
@@ -12,11 +12,7 @@ rootProject.apply {
 
 repositories {
     teamcityServer {
-        setUrl("https://teamcity.jetbrains.com")
-        credentials {
-            username = "guest"
-            password = "guest"
-        }
+        setUrl("https://buildserver.labs.intellij.net")
     }
 }
 

@@ -144,6 +144,8 @@ fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
         // standard CIDR plugins
         val cidrPlugins = fileTree(cidrIdeDir) {
             include("plugins/cidr-*/lib/*.jar")
+            include("plugins/clion-*/lib/*.jar")
+            include("plugins/appcode-*/lib/*.jar")
             include("plugins/gradle/lib/*.jar")
         }
         add("compile", cidrPlugins)
@@ -163,9 +165,9 @@ fun addCidrDeps(project: Project) = with(project) {
         val cidrUnscrambledJarDir: File? by rootProject.extra
         val nativeDebugPluginDir: File? by rootProject.extra
         if (nativeDebugPluginDir?.exists() == true) { // Idea Ultimate build
-            add("compile", fileTree(nativeDebugPluginDir) { include("**/*.jar") })
+            add("compile", fileTree(nativeDebugPluginDir!!) { include("**/*.jar") })
         } else if (cidrUnscrambledJarDir?.exists() == true) { // CIDR build
-            add("compile", fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
+            add("compile", fileTree(cidrUnscrambledJarDir!!) { include("**/*.jar") })
         }
     }
 }

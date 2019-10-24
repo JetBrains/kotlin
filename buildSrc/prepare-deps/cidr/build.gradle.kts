@@ -1,9 +1,9 @@
-import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 
 plugins {
     base
-    id("com.github.jk1.tcdeps") version "0.19"
+    id("com.github.jk1.tcdeps") version "1.1"
 }
 
 rootProject.apply {
@@ -13,10 +13,6 @@ rootProject.apply {
 repositories {
     teamcityServer {
         setUrl("https://buildserver.labs.intellij.net")
-        credentials {
-            username = "guest"
-            password = "guest"
-        }
     }
 }
 
@@ -42,6 +38,8 @@ val downloadCidrIde: Task by downloading(
             exclude("*/Contents/lib/appcode*.jar")
             exclude("*/Contents/lib/kotlin*.jar")
             include("*/Contents/plugins/cidr-*/lib/*.jar")
+            include("*/Contents/plugins/clion-*/lib/*.jar")
+            include("*/Contents/plugins/appcode-*/lib/*.jar")
             include("*/Contents/plugins/gradle/lib/*.jar")
         }
     }
@@ -52,6 +50,8 @@ val downloadCidrIde: Task by downloading(
             exclude("*/lib/appcode*.jar")
             exclude("*/lib/kotlin*.jar")
             include("*/plugins/cidr-*/lib/*.jar")
+            include("*/plugins/clion-*/lib/*.jar")
+            include("*/plugins/appcode-*/lib/*.jar")
             include("*/plugins/gradle/lib/*.jar")
         }
     }
