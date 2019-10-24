@@ -115,6 +115,7 @@
         <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider"/>
 
         <configurationType implementation="org.jetbrains.kotlin.idea.run.KotlinRunConfigurationType"/>
+        <configurationType implementation="org.jetbrains.kotlin.idea.run.KotlinJUnitConfigurationType"/>
         <configurationType implementation="org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationType"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinRunConfigurationProducer"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer"/>

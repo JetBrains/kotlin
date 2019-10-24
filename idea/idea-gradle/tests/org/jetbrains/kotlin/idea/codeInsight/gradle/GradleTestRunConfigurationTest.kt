@@ -5,17 +5,13 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
-import com.intellij.execution.PsiLocation
-import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.actions.ConfigurationFromContext
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
 import org.junit.Test
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.PlatformUtils
 import org.jetbrains.kotlin.idea.run.KotlinGradleRunConfiguration
 import org.jetbrains.kotlin.idea.run.KotlinJvmTestClassGradleConfigurationProducer
 import org.jetbrains.kotlin.idea.run.KotlinJvmTestMethodGradleConfigurationProducer
+import org.jetbrains.kotlin.idea.run.getConfiguration
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer
 import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer
@@ -36,32 +32,23 @@ class GradleTestRunConfigurationTest : GradleImportingTestCase() {
                 val javaFile = files.first { it.name == "MyTest.java" }
                 val kotlinFile = files.first { it.name == "MyKotlinTest.kt" }
 
-                val javaClassConfiguration = getConfiguration(javaFile, "MyTest")
+                val javaClassConfiguration = getConfiguration(javaFile, myProject, "MyTest")
                 javaClassConfiguration.isProducedBy(TestClassGradleConfigurationProducer::class.java)
                 assert(javaClassConfiguration.configuration !is KotlinGradleRunConfiguration)
 
-                val javaMethodConfiguration = getConfiguration(javaFile, "testA")
+                val javaMethodConfiguration = getConfiguration(javaFile, myProject, "testA")
                 javaMethodConfiguration.isProducedBy(TestMethodGradleConfigurationProducer::class.java)
                 assert(javaMethodConfiguration.configuration !is KotlinGradleRunConfiguration)
 
-                val kotlinClassConfiguration = getConfiguration(kotlinFile, "MyKotlinTest")
+                val kotlinClassConfiguration = getConfiguration(kotlinFile, myProject, "MyKotlinTest")
                 kotlinClassConfiguration.isProducedBy(KotlinJvmTestClassGradleConfigurationProducer::class.java)
                 assert(kotlinClassConfiguration.configuration is KotlinGradleRunConfiguration)
 
-                val kotlinFunctionConfiguration = getConfiguration(kotlinFile, "testA")
+                val kotlinFunctionConfiguration = getConfiguration(kotlinFile, myProject, "testA")
                 kotlinFunctionConfiguration.isProducedBy(KotlinJvmTestMethodGradleConfigurationProducer::class.java)
                 assert(kotlinFunctionConfiguration.configuration is KotlinGradleRunConfiguration)
             }
         }
-    }
-
-    private fun getConfiguration(file: VirtualFile, pattern: String): ConfigurationFromContext {
-        val psiFile = PsiManager.getInstance(myTestFixture.project).findFile(file) ?: error("PsiFile not found for $file")
-        val offset = psiFile.text.indexOf(pattern)
-        val psiElement = psiFile.findElementAt(offset)
-        val location = PsiLocation(psiElement)
-        val context = ConfigurationContext.createEmptyContextForLocation(location)
-        return context.configurationsFromContext.orEmpty().singleOrNull() ?: error("Configuration not found for pattern $pattern")
     }
 
     override fun testDataDirName(): String {

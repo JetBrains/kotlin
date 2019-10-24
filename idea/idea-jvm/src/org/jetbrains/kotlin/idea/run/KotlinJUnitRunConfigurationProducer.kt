@@ -12,6 +12,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.actions.RunConfigurationProducer
+import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.configurations.ModuleBasedConfiguration
 import com.intellij.execution.junit.*
 import com.intellij.execution.testframework.AbstractPatternBasedConfigurationProducer
@@ -32,8 +33,13 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
+    override fun getConfigurationFactory(): ConfigurationFactory {
+        return KotlinJUnitConfigurationType.instance.factory
+    }
+
     override fun shouldReplace(self: ConfigurationFromContext, other: ConfigurationFromContext): Boolean {
-        return other.isProducedBy(JUnitConfigurationProducer::class.java) || other.isProducedBy(AbstractPatternBasedConfigurationProducer::class.java)
+        return other.isProducedBy(JUnitConfigurationProducer::class.java)
+                || other.isProducedBy(AbstractPatternBasedConfigurationProducer::class.java)
     }
 
     private fun isAvailableInMpp(context: ConfigurationContext): Boolean {

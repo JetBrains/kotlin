@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.run
 
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.actions.ConfigurationFromContext
+import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.execution.junit.JUnitConfiguration
 import com.intellij.execution.junit.PatternConfigurationProducer
 import com.intellij.execution.junit.TestClassConfigurationProducer
@@ -28,6 +29,10 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 class KotlinPatternConfigurationProducer : PatternConfigurationProducer() {
+    override fun getConfigurationFactory(): ConfigurationFactory {
+        return KotlinJUnitConfigurationType.instance.factory
+    }
+
     override fun setupConfigurationFromContext(
             configuration: JUnitConfiguration,
             context: ConfigurationContext,
