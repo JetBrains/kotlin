@@ -269,6 +269,17 @@ project(':string-utils') {
     doTest()
   }
 
+  @Test
+  void testDuplicatingProjectLeafNames() {
+    createSettingsFile("""
+rootProject.name = 'rootProject'
+include 'p1', 'p2', 'p1:sub:sp1', 'p2:p2sub:sub:sp2'
+include 'p1:leaf', 'p2:leaf'
+""")
+
+    doTest()
+  }
+
   @Override
   protected ImportSpec createImportSpec() {
     ImportSpecBuilder importSpecBuilder = new ImportSpecBuilder(super.createImportSpec())

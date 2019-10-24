@@ -63,7 +63,10 @@ public class GradleProjectResolverUtil {
   public static DataNode<ModuleData> createMainModule(@NotNull ProjectResolverContext resolverCtx,
                                                       @NotNull IdeaModule gradleModule,
                                                       @NotNull DataNode<ProjectData> projectDataNode) {
-    final String moduleName = gradleModule.getName();
+    final String moduleName = resolverCtx.isUseQualifiedModuleNames()
+                              ? gradleModule.getGradleProject().getName()
+                              : gradleModule.getName();
+
     if (moduleName == null) {
       throw new IllegalStateException("Module with undefined name detected: " + gradleModule);
     }
