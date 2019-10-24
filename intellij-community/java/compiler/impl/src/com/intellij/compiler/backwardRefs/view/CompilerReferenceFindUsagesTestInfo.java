@@ -18,6 +18,7 @@ package com.intellij.compiler.backwardRefs.view;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.util.indexing.FileBasedIndex;
 import gnu.trove.TIntHashSet;
 import org.jetbrains.annotations.NotNull;
@@ -42,9 +43,9 @@ public class CompilerReferenceFindUsagesTestInfo {
   @NotNull
   VirtualFile[] getFilesWithKnownOccurrences() {
     if (myFileIds == null) throw new IllegalStateException();
-    final FileBasedIndex fileBasedIndex = FileBasedIndex.getInstance();
+    ManagingFS managingFS = ManagingFS.getInstance();
     return IntStream.of(myFileIds.toArray())
-      .mapToObj(id -> fileBasedIndex.findFileById(myProject, id))
+      .mapToObj(managingFS::findFileById)
       .filter(f -> !myDirtyScopeInfo.getDirtyScope().contains(f))
       .toArray(VirtualFile[]::new);
   }

@@ -26,6 +26,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileWithId;
+import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -37,7 +38,6 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.containers.ConcurrentFactoryMap;
-import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.StorageException;
 import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.THashSet;
@@ -537,12 +537,12 @@ public abstract class CompilerReferenceServiceBase<Reader extends CompilerRefere
   @TestOnly
   @Nullable
   public Set<VirtualFile> getReferentFiles(@NotNull PsiElement element) {
-    FileBasedIndex fileIndex = FileBasedIndex.getInstance();
+    ManagingFS managingFS = ManagingFS.getInstance();
     final TIntHashSet ids = getReferentFileIds(element);
     if (ids == null) return null;
     Set<VirtualFile> fileSet = new THashSet<>();
     ids.forEach(id -> {
-      final VirtualFile vFile = fileIndex.findFileById(myProject, id);
+      final VirtualFile vFile = managingFS.findFileById(id);
       assert vFile != null;
       fileSet.add(vFile);
       return true;
