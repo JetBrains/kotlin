@@ -80,7 +80,7 @@ fun SpringTestFixtureExtension.loadConfigByMainFilePath(testPath: String, fixtur
     val mainFileName = PathUtil.getFileName(testPath)
     val baseName = FileUtil.getNameWithoutExtension(mainFileName)
     val configFileName = if (baseName.endsWith("Xml")) "$baseName-config.xml" else mainFileName
-    configureFileSet(fixture, listOf(PathUtil.toSystemIndependentName("${PathUtil.getParentPath(testPath)}/$configFileName")))
+    configureFileSet(fixture, listOf(configFileName))
 }
 
 fun configureSpringFileSetByDirective(module: Module, directives: String, psiFiles: Collection<PsiFile>) {
