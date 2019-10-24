@@ -10786,6 +10786,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/regressions/kt3344.kt");
                 }
 
+                @TestMetadata("kt34029.kt")
+                public void testKt34029() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/regressions/kt34029.kt");
+                }
+
                 @TestMetadata("kt34282.kt")
                 public void testKt34282() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/regressions/kt34282.kt");
