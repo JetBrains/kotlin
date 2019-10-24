@@ -48,7 +48,6 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
     @Test
     fun testCrossModule_SimpleCompositionxxx(): Unit = ensureSetup {
-        val tvId = 29
 
         compose(
             "TestF", mapOf(
@@ -155,7 +154,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                 """
                 )
             )
-        ).then { activity ->
+        ).then {
             assert(true)
         }
     }
