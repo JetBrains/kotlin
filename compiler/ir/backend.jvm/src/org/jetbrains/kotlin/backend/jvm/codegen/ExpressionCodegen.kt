@@ -519,7 +519,7 @@ class ExpressionCodegen(
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         setVariable(expression.symbol, expression.value, data)
-        return defaultValue(expression.type)
+        return immaterialUnitValue
     }
 
     fun setVariable(symbol: IrValueSymbol, value: IrExpression, data: BlockInfo) {
@@ -751,7 +751,7 @@ class ExpressionCodegen(
         mv.nop()
         val tryAsmType = aTry.asmType
         val tryResult = aTry.tryResult.accept(this, data)
-        val isExpression = true //TODO: more wise check is required
+        val isExpression = !aTry.type.isUnit()
         var savedValue: Int? = null
         if (isExpression) {
             tryResult.coerce(tryAsmType, aTry.type).materialize()

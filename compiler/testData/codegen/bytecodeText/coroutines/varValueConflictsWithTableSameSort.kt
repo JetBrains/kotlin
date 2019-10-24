@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // WITH_COROUTINES
 
 import helpers.*
@@ -41,6 +42,9 @@ fun box(): String {
 // 1 LOCALVARIABLE i Ljava/lang/String; L.* 3
 // 1 LOCALVARIABLE s Ljava/lang/String; L.* 3
 // 1 PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1.L\$0 : Ljava/lang/Object;
-/* 1 load in try/finally */
+/* 1 load in the catch (e: Throwable) { throw e } block which is implicitly wrapped around try/finally */
+// 1 ALOAD 3\s+ATHROW
 /* 1 load in result = s */
+// 1 ALOAD 3\s+PUTFIELD kotlin/jvm/internal/Ref\$ObjectRef\.element
+/* But no further load when spilling 's' to the continuation */
 // 2 ALOAD 3
