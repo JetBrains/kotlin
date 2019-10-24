@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.search.scope;
 
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -32,50 +33,52 @@ public class EditorSelectionLocalSearchScope extends LocalSearchScope {
   private LocalSearchScope myLocalSearchScope;
 
   private void init() {
-    PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(myEditor.getDocument());
-    if (psiFile == null) {
-      myPsiElements = PsiElement.EMPTY_ARRAY;
-      return;
-    }
-
-    SelectionModel selectionModel = myEditor.getSelectionModel();
-    if (!selectionModel.hasSelection()) {
-      myPsiElements = PsiElement.EMPTY_ARRAY;
-      return;
-    }
-
-    int[] selectionStarts = selectionModel.getBlockSelectionStarts();
-    int[] selectionEnds = selectionModel.getBlockSelectionEnds();
-    final List<PsiElement> elements = new ArrayList<>();
-
-    for (int i = 0; i < selectionStarts.length; ++i) {
-      int start = selectionStarts[i];
-      final PsiElement startElement = psiFile.findElementAt(start);
-      if (startElement == null) {
-        continue;
-      }
-      int end = selectionEnds[i];
-      final PsiElement endElement = psiFile.findElementAt(end);
-      if (endElement == null) {
-        continue;
-      }
-      final PsiElement parent = PsiTreeUtil.findCommonParent(startElement, endElement);
-      if (parent == null) {
-        continue;
+    ReadAction.run(() -> {
+      PsiFile psiFile = PsiDocumentManager.getInstance(myProject).getPsiFile(myEditor.getDocument());
+      if (psiFile == null) {
+        myPsiElements = PsiElement.EMPTY_ARRAY;
+        return;
       }
 
-      final PsiElement[] children = parent.getChildren();
-      TextRange selection = new TextRange(start, end);
-      for (PsiElement child : children) {
-        if (!(child instanceof PsiWhiteSpace) &&
-            child.getContainingFile() != null &&
-            selection.contains(child.getTextOffset())) {
-          elements.add(child);
+      SelectionModel selectionModel = myEditor.getSelectionModel();
+      if (!selectionModel.hasSelection()) {
+        myPsiElements = PsiElement.EMPTY_ARRAY;
+        return;
+      }
+
+      int[] selectionStarts = selectionModel.getBlockSelectionStarts();
+      int[] selectionEnds = selectionModel.getBlockSelectionEnds();
+      final List<PsiElement> elements = new ArrayList<>();
+
+      for (int i = 0; i < selectionStarts.length; ++i) {
+        int start = selectionStarts[i];
+        final PsiElement startElement = psiFile.findElementAt(start);
+        if (startElement == null) {
+          continue;
+        }
+        int end = selectionEnds[i];
+        final PsiElement endElement = psiFile.findElementAt(end);
+        if (endElement == null) {
+          continue;
+        }
+        final PsiElement parent = PsiTreeUtil.findCommonParent(startElement, endElement);
+        if (parent == null) {
+          continue;
+        }
+
+        final PsiElement[] children = parent.getChildren();
+        TextRange selection = new TextRange(start, end);
+        for (PsiElement child : children) {
+          if (!(child instanceof PsiWhiteSpace) &&
+              child.getContainingFile() != null &&
+              selection.contains(child.getTextOffset())) {
+            elements.add(child);
+          }
         }
       }
-    }
 
-    myPsiElements = elements.toArray(PsiElement.EMPTY_ARRAY);
+      myPsiElements = elements.toArray(PsiElement.EMPTY_ARRAY);
+    });
   }
 
   private PsiElement[] getPsiElements() {
