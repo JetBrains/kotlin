@@ -22,7 +22,7 @@ fun y04() = Foo::class.<!UNRESOLVED_REFERENCE!>properties<!>
 
 fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.simpleName
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>qualifiedName<!>
+    k.qualifiedName
     k.<!NO_REFLECTION_IN_CLASS_PATH!>members<!>
     k.<!NO_REFLECTION_IN_CLASS_PATH!>constructors<!>
     k.<!NO_REFLECTION_IN_CLASS_PATH!>nestedClasses<!>

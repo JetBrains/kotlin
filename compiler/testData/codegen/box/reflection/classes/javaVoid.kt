@@ -14,6 +14,7 @@ fun box(): String {
     assertEquals(Void::class.java, Void.TYPE.kotlin.javaObjectType)
 
     assertEquals("Void", Void::class.simpleName)
+    assertEquals("java.lang.Void", Void::class.qualifiedName)
 
     return "OK"
 }

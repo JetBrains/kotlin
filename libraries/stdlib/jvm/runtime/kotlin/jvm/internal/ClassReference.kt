@@ -12,7 +12,7 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
         get() = getClassSimpleName(jClass)
 
     override val qualifiedName: String?
-        get() = error()
+        get() = getClassQualifiedName(jClass)
 
     override val members: Collection<KCallable<*>>
         get() = error()
@@ -137,6 +137,9 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
             primitiveFqNames.values.associateTo(this) { kotlinName ->
                 "kotlin.jvm.internal.${kotlinName.substringAfterLast('.')}CompanionObject" to "$kotlinName.Companion"
             }
+            for (arity in 0 until 23) {
+                put("kotlin.jvm.functions.Function$arity", "kotlin.Function$arity")
+            }
         }
 
         private val simpleNames = classFqNames.mapValues { (_, fqName) -> fqName.substringAfterLast('.') }
@@ -157,6 +160,19 @@ public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassB
                 } ?: "Array"
             }
             else -> simpleNames[jClass.name] ?: jClass.simpleName
+        }
+
+        public fun getClassQualifiedName(jClass: Class<*>): String? = when {
+            jClass.isAnonymousClass -> null
+            jClass.isLocalClass -> null
+            jClass.isArray -> {
+                val componentType = jClass.componentType
+                when {
+                    componentType.isPrimitive -> classFqNames[componentType.name]?.plus("Array")
+                    else -> null
+                } ?: "kotlin.Array"
+            }
+            else -> classFqNames[jClass.name] ?: jClass.canonicalName
         }
     }
 }

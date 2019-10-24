@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.AbstractReflectionApiCallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH
@@ -36,6 +37,9 @@ class JvmReflectionAPICallChecker(
     reflectionTypes: ReflectionTypes,
     storageManager: StorageManager
 ) : AbstractReflectionApiCallChecker(reflectionTypes, storageManager) {
+    override fun isAllowedKClassMember(name: Name): Boolean =
+        super.isAllowedKClassMember(name) || name.asString() == "qualifiedName"
+
     override val isWholeReflectionApiAvailable by storageManager.createLazyValue {
         module.findClassAcrossModuleDependencies(JvmAbi.REFLECTION_FACTORY_IMPL) != null
     }

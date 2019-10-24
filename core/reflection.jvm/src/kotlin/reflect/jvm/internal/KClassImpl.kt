@@ -56,16 +56,6 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
         val annotations: List<Annotation> by ReflectProperties.lazySoft { descriptor.computeAnnotations() }
 
-        val qualifiedName: String? by ReflectProperties.lazySoft {
-            if (jClass.isAnonymousClass) return@lazySoft null
-
-            val classId = classId
-            when {
-                classId.isLocal -> null
-                else -> classId.asSingleFqName().asString()
-            }
-        }
-
         @Suppress("UNCHECKED_CAST")
         val constructors: Collection<KFunction<T>> by ReflectProperties.lazySoft {
             constructorDescriptors.map { descriptor ->
@@ -163,6 +153,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
     private val classId: ClassId
         get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass).also { result ->
             if (!jClass.isAnonymousClass && !jClass.isLocalClass) {
+                assert(result.asSingleFqName().asString() == qualifiedName) {
+                    "Incorrect class name computed for class ${jClass.name}. Result: $result. Expected qualified name $qualifiedName"
+                }
                 assert(result.shortClassName.asString() == simpleName) {
                     "Incorrect class name computed for class ${jClass.name}. Result: $result. Expected simple name $simpleName"
                 }
@@ -217,7 +210,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
     override val simpleName: String? get() = ClassReference.getClassSimpleName(jClass)
 
-    override val qualifiedName: String? get() = data().qualifiedName
+    override val qualifiedName: String? get() = ClassReference.getClassQualifiedName(jClass)
 
     override val constructors: Collection<KFunction<T>> get() = data().constructors
 

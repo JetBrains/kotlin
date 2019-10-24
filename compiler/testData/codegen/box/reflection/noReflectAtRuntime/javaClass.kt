@@ -18,7 +18,6 @@ fun box(): String {
     assertEquals("Klass", kClass.simpleName)
     assertEquals(kjClass, jjClass)
 
-    try { kClass.qualifiedName; return "Fail qualifiedName" } catch (e: Error) {}
     try { kClass.members; return "Fail members" } catch (e: Error) {}
 
     val jlError = Error::class.java
