@@ -1,0 +1,5 @@
+package
+
+public fun case_1(/*0*/ value_1: kotlin.Int?): kotlin.String
+public fun case_2(/*0*/ value_1: kotlin.Any): kotlin.String
+public fun case_3(/*0*/ value_1: kotlin.Int): kotlin.String
