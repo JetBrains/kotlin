@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
-import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -26,11 +25,10 @@ abstract class FirAbstractSimpleImportingScope(
 
     override fun processClassifiersByName(
         name: Name,
-        position: FirPosition,
-        processor: (FirClassifierSymbol<*>) -> Boolean
-    ): Boolean {
-        val imports = simpleImports[name] ?: return true
-        if (imports.isEmpty()) return true
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+    ): ProcessorAction {
+        val imports = simpleImports[name] ?: return ProcessorAction.NONE
+        if (imports.isEmpty()) return ProcessorAction.NONE
         val provider = FirSymbolProvider.getInstance(session)
         for (import in imports) {
             val importedName = import.importedName ?: continue
@@ -39,10 +37,10 @@ abstract class FirAbstractSimpleImportingScope(
                     ?: ClassId.topLevel(import.packageFqName.child(importedName))
             val symbol = provider.getClassLikeSymbolByFqName(classId) ?: continue
             if (!processor(symbol)) {
-                return false
+                return ProcessorAction.STOP
             }
         }
-        return true
+        return ProcessorAction.NEXT
     }
 
     override fun <T : FirCallableSymbol<*>> processCallables(

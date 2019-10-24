@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.perf;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class PerformanceSmartCompletionHandlerTestGenerated extends AbstractPerformanceSmartCompletionHandlerTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doPerfTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
     }
 
     @TestMetadata("AfterAs.kt")
@@ -51,7 +50,7 @@ public class PerformanceSmartCompletionHandlerTestGenerated extends AbstractPerf
     }
 
     public void testAllFilesPresentInSmart() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("AnonymousObject1.kt")
@@ -734,7 +733,7 @@ public class PerformanceSmartCompletionHandlerTestGenerated extends AbstractPerf
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Lambda extends AbstractPerformanceSmartCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doPerfTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
         }
 
         @TestMetadata("1.kt")
@@ -763,7 +762,7 @@ public class PerformanceSmartCompletionHandlerTestGenerated extends AbstractPerf
         }
 
         public void testAllFilesPresentInLambda() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambda"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambda"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("InsertImport.kt")
@@ -787,11 +786,11 @@ public class PerformanceSmartCompletionHandlerTestGenerated extends AbstractPerf
     @RunWith(JUnit3RunnerWithInners.class)
     public static class LambdaSignature extends AbstractPerformanceSmartCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doPerfTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInLambdaSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambdaSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/lambdaSignature"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("NoAdditionalSpace.kt")

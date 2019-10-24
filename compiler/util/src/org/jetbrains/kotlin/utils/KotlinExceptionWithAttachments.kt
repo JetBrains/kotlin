@@ -13,12 +13,24 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
 
     constructor(message: String) : super(message)
 
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
+    constructor(message: String?, cause: Throwable?) : super(message, cause) {
+        if (cause is KotlinExceptionWithAttachments) {
+            attachments.addAll(cause.attachments)
+        }
+    }
 
     override fun getAttachments(): Array<Attachment> = attachments.toTypedArray()
 
     fun withAttachment(name: String, content: String?): KotlinExceptionWithAttachments {
         attachments.add(Attachment(name, content ?: "<null>"))
         return this
+    }
+}
+
+inline fun checkWithAttachment(value: Boolean, lazyMessage: () -> String, attachments: (KotlinExceptionWithAttachments) -> Unit = {}) {
+    if (!value) {
+        val e = KotlinExceptionWithAttachments(lazyMessage())
+        attachments(e)
+        throw e
     }
 }

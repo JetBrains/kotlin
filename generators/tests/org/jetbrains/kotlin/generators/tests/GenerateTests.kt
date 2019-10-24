@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
 import org.jetbrains.kotlin.generators.tests.generator.TestGroup
+import org.jetbrains.kotlin.generators.tests.generator.muteExtraSuffix
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS
 import org.jetbrains.kotlin.generators.util.KT_OR_KTS_WITHOUT_DOTS_IN_NAME
@@ -140,6 +141,7 @@ import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
+import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.nj2k.AbstractTextNewJavaToKotlinCopyPasteConversionTest
@@ -1085,6 +1087,9 @@ fun main(args: Array<String>) {
         testClass<AbstractTextNewJavaToKotlinCopyPasteConversionTest> {
             model("copyPastePlainText", pattern = """^([^\.]+)\.txt$""")
         }
+        testClass<AbstractNewJavaToKotlinConverterMultiFileTest> {
+            model("multiFile", extension = null, recursive = false)
+        }
     }
 
     testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
@@ -1169,7 +1174,7 @@ fun main(args: Array<String>) {
             model("incremental/js", extension = null, excludeParentDirs = true)
         }
 
-        testClass<AbstractIncrementalJsKlibCompilerRunnerTest> {
+        testClass<AbstractIncrementalJsKlibCompilerRunnerTest>(annotations = listOf(muteExtraSuffix(".jsklib"))) {
             model("incremental/pureKotlin", extension = null, recursive = false)
             model("incremental/classHierarchyAffected", extension = null, recursive = false)
             model("incremental/js", extension = null, excludeParentDirs = true)

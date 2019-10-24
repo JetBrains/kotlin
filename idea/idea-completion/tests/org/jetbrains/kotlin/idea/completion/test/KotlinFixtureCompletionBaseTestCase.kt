@@ -25,7 +25,8 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
     protected abstract fun defaultCompletionType(): CompletionType
     protected open fun defaultInvocationCount(): Int = 0
 
-    open fun doTest(testPath: String) {
+    open fun doTest(unused: String) {
+        val testPath = testPath()
         setUpFixture(testPath)
 
         val fileText = FileUtil.loadFile(File(testPath), true)
@@ -58,7 +59,7 @@ abstract class KotlinFixtureCompletionBaseTestCase : KotlinLightCodeInsightFixtu
         //TODO: this is a hacky workaround for js second completion tests failing with PsiInvalidElementAccessException
         LibraryModificationTracker.getInstance(project).incModificationCount()
 
-        myFixture.configureByFile(testPath)
+        myFixture.configureByFile(File(testPath).name)
     }
 
     protected open fun tearDownFixture() {

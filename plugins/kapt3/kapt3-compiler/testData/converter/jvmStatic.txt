@@ -20,6 +20,7 @@ public final class JvmStaticTest {
     @kotlin.Metadata()
     public static final class Companion {
 
+        @java.lang.Deprecated()
         public static void one$annotations() {
         }
 

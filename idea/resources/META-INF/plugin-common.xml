@@ -1480,6 +1480,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.MergeElseIfIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.AddMissingDestructuringIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -3456,6 +3461,15 @@
                      groupName="Style issues"
                      enabledByDefault="true"
                      level="INFORMATION"
+                     language="kotlin"
+    />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedUnaryOperatorInspection"
+                     displayName="Unused unary operator"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
                      language="kotlin"
     />
 

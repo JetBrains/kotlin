@@ -7,8 +7,6 @@ FILE: exception.kt
             ==(R|/box|(), String(OK)) ->  {
                 throw R|java/lang/Exception.Exception|(String(Hello))
             }
-            else ->  {
-            }
         }
 
     }

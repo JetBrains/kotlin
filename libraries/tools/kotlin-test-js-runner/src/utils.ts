@@ -1,29 +1,3 @@
-
-/**
- * from teamcity-service-messages
- * Copyright (c) 2013 Aaron Forsander
- *
- * Escape string for TeamCity output.
- * @see https://confluence.jetbrains.com/display/TCD65/Build+Script+Interaction+with+TeamCity#BuildScriptInteractionwithTeamCity-servMsgsServiceMessages
- */
-export function tcEscape(str: string): string {
-    if (!str) {
-        return '';
-    }
-
-    return str
-        .toString()
-        .replace(/\|/g, '||')
-        .replace(/\n/g, '|n')
-        .replace(/\r/g, '|r')
-        .replace(/\[/g, '|[')
-        .replace(/\]/g, '|]')
-        .replace(/\u0085/g, '|x') // next line
-        .replace(/\u2028/g, '|l') // line separator
-        .replace(/\u2029/g, '|p') // paragraph separator
-        .replace(/'/g, '|\'');
-}
-
 /**
  * From teamcity-service-messages.
  * Copyright 2013 Aaron Forsander

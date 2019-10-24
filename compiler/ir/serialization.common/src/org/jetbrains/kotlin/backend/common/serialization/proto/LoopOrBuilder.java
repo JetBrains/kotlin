@@ -26,13 +26,13 @@ public interface LoopOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getCondition();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 3;</code>
+   * <code>optional int32 label = 3;</code>
    */
   boolean hasLabel();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 3;</code>
+   * <code>optional int32 label = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getLabel();
+  int getLabel();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression body = 4;</code>

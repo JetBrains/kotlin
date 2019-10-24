@@ -8,110 +8,55 @@ public interface DescriptorReferenceOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+   * <code>repeated int32 package_fq_name = 1;</code>
    */
-  boolean hasPackageFqName();
+  java.util.List<java.lang.Integer> getPackageFqNameList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
+   * <code>repeated int32 package_fq_name = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.FqName getPackageFqName();
+  int getPackageFqNameCount();
+  /**
+   * <code>repeated int32 package_fq_name = 1;</code>
+   */
+  int getPackageFqName(int index);
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+   * <code>repeated int32 class_fq_name = 2;</code>
    */
-  boolean hasClassFqName();
+  java.util.List<java.lang.Integer> getClassFqNameList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
+   * <code>repeated int32 class_fq_name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.FqName getClassFqName();
+  int getClassFqNameCount();
+  /**
+   * <code>repeated int32 class_fq_name = 2;</code>
+   */
+  int getClassFqName(int index);
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
+   * <code>required int32 name = 3;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
+   * <code>required int32 name = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
+  int getName();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
+   * <code>required int32 flags = 4;</code>
    */
-  boolean hasUniqId();
+  boolean hasFlags();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId uniq_id = 4;</code>
+   * <code>required int32 flags = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.UniqId getUniqId();
+  int getFlags();
 
   /**
-   * <code>optional bool is_getter = 5 [default = false];</code>
+   * <code>optional int64 uniq_id_index = 5;</code>
    */
-  boolean hasIsGetter();
+  boolean hasUniqIdIndex();
   /**
-   * <code>optional bool is_getter = 5 [default = false];</code>
+   * <code>optional int64 uniq_id_index = 5;</code>
    */
-  boolean getIsGetter();
-
-  /**
-   * <code>optional bool is_setter = 6 [default = false];</code>
-   */
-  boolean hasIsSetter();
-  /**
-   * <code>optional bool is_setter = 6 [default = false];</code>
-   */
-  boolean getIsSetter();
-
-  /**
-   * <code>optional bool is_backing_field = 7 [default = false];</code>
-   */
-  boolean hasIsBackingField();
-  /**
-   * <code>optional bool is_backing_field = 7 [default = false];</code>
-   */
-  boolean getIsBackingField();
-
-  /**
-   * <code>optional bool is_fake_override = 8 [default = false];</code>
-   */
-  boolean hasIsFakeOverride();
-  /**
-   * <code>optional bool is_fake_override = 8 [default = false];</code>
-   */
-  boolean getIsFakeOverride();
-
-  /**
-   * <code>optional bool is_default_constructor = 9 [default = false];</code>
-   */
-  boolean hasIsDefaultConstructor();
-  /**
-   * <code>optional bool is_default_constructor = 9 [default = false];</code>
-   */
-  boolean getIsDefaultConstructor();
-
-  /**
-   * <code>optional bool is_enum_entry = 10 [default = false];</code>
-   */
-  boolean hasIsEnumEntry();
-  /**
-   * <code>optional bool is_enum_entry = 10 [default = false];</code>
-   */
-  boolean getIsEnumEntry();
-
-  /**
-   * <code>optional bool is_enum_special = 11 [default = false];</code>
-   */
-  boolean hasIsEnumSpecial();
-  /**
-   * <code>optional bool is_enum_special = 11 [default = false];</code>
-   */
-  boolean getIsEnumSpecial();
-
-  /**
-   * <code>optional bool is_type_parameter = 12 [default = false];</code>
-   */
-  boolean hasIsTypeParameter();
-  /**
-   * <code>optional bool is_type_parameter = 12 [default = false];</code>
-   */
-  boolean getIsTypeParameter();
+  long getUniqIdIndex();
 }

@@ -27,15 +27,13 @@ FILE: recursiveCallOnWhenWithSealedClass.kt
 
         }
 
-        public final fun unwrap(): <ERROR TYPE REF: > {
+        public final fun unwrap(): R|T| {
             ^unwrap when (this@R|/Maybe|) {
                 ($subj$ is R|Maybe.Nope|) ->  {
                     throw R|java/lang/Exception.Exception|(String())
                 }
                 ($subj$ is R|Maybe.Yeah|) ->  {
-                    <Unresolved name: meat>#
-                }
-                else ->  {
+                    this@R|/Maybe.Yeah|.R|/Maybe.Yeah.meat|
                 }
             }
 

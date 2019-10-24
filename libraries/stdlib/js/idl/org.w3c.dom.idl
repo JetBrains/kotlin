@@ -1,4 +1,4 @@
-namespace org.w3c.dom;
+package org.w3c.dom;
 
 
 // Downloaded from https://raw.githubusercontent.com/whatwg/html-mirror/master/source

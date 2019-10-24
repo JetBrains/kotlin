@@ -8,18 +8,17 @@ public interface IrFileOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+   * <code>repeated int64 declaration_id = 1;</code>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.UniqId> 
-      getDeclarationIdList();
+  java.util.List<java.lang.Long> getDeclarationIdList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.UniqId getDeclarationId(int index);
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.UniqId declaration_id = 1;</code>
+   * <code>repeated int64 declaration_id = 1;</code>
    */
   int getDeclarationIdCount();
+  /**
+   * <code>repeated int64 declaration_id = 1;</code>
+   */
+  long getDeclarationId(int index);
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry file_entry = 2;</code>
@@ -31,34 +30,42 @@ public interface IrFileOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3;</code>
    */
-  boolean hasFqName();
+  java.util.List<java.lang.Integer> getFqNameList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
+   * <code>repeated int32 fq_name = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqName();
+  int getFqNameCount();
+  /**
+   * <code>repeated int32 fq_name = 3;</code>
+   */
+  int getFqName(int index);
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
    */
-  boolean hasAnnotations();
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationList();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  int getAnnotationCount();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> 
-      getExplicitlyExportedToCompilerList();
+  java.util.List<java.lang.Integer> getExplicitlyExportedToCompilerList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getExplicitlyExportedToCompiler(int index);
-  /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
    */
   int getExplicitlyExportedToCompilerCount();
+  /**
+   * <code>repeated int32 explicitly_exported_to_compiler = 5;</code>
+   */
+  int getExplicitlyExportedToCompiler(int index);
 }

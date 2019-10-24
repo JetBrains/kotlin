@@ -95,6 +95,14 @@ class LineBreakpointExpressionVisitor private constructor(
         return ApplicabilityResult.UNKNOWN
     }
 
+    override fun visitPackageDirective(directive: KtPackageDirective, data: Unit?): ApplicabilityResult {
+        return ApplicabilityResult.UNKNOWN
+    }
+
+    override fun visitImportDirective(importDirective: KtImportDirective, data: Unit?): ApplicabilityResult {
+        return ApplicabilityResult.UNKNOWN
+    }
+
     override fun visitProperty(property: KtProperty, data: Unit?): ApplicabilityResult {
         if (property.hasModifier(KtTokens.CONST_KEYWORD)) {
             return ApplicabilityResult.UNKNOWN
@@ -175,6 +183,11 @@ class LineBreakpointExpressionVisitor private constructor(
         val endOffset = this.endOffset
 
         if (startOffset < 0 || endOffset < 0 || startOffset > endOffset) {
+            return Lines.EMPTY
+        }
+
+        val maxOffset = document.textLength
+        if (startOffset > maxOffset || endOffset > maxOffset) {
             return Lines.EMPTY
         }
 

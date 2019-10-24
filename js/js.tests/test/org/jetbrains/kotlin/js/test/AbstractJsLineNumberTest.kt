@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.utils.DFS
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
@@ -45,7 +46,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         val sourceCode = file.readText()
 
         TestFileFactoryImpl().use { testFactory ->
-            val inputFiles = KotlinTestUtils.createTestFiles(file.name, sourceCode, testFactory, true, "")
+            val inputFiles = TestFiles.createTestFiles(file.name, sourceCode, testFactory, true, "")
             val modules = inputFiles
                     .map { it.module }.distinct()
                     .associateBy { it.name }
@@ -134,7 +135,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
         return psiManager.findFile(fileSystem.findFileByPath(fileName)!!) as KtFile
     }
 
-    private inner class TestFileFactoryImpl : KotlinTestUtils.TestFileFactory<TestModule, TestFile>, Closeable {
+    private inner class TestFileFactoryImpl : TestFiles.TestFileFactory<TestModule, TestFile>, Closeable {
         private val tmpDir = KotlinTestUtils.tmpDir("js-tests")
         private val defaultModule = TestModule(BasicBoxTest.TEST_MODULE, emptyList())
 

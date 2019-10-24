@@ -204,16 +204,17 @@ open class BoundTypeCalculatorImpl(
                 BoundTypeImpl(
                     typeVariable?.let { TypeVariableLabel(it) } ?: GenericLabel(target.classReference),
                     arguments.mapIndexed { i, argument ->
-                        TypeParameter(
-                            argument.type.boundTypeUnenhanced(
+                        val argumentBoundType = when {
+                            argument.isStarProjection -> BoundType.STAR_PROJECTION
+                            else -> argument.type.boundTypeUnenhanced(
                                 typeVariable?.typeParameters?.getOrNull(i)?.boundType?.label?.safeAs<TypeVariableLabel>()?.typeVariable,
                                 contextBoundType,
                                 call,
                                 isImplicitReceiver,
                                 inferenceContext
-                            ) ?: return null,
-                            constructor.parameters[i].variance
-                        )
+                            ) ?: return null
+                        }
+                        TypeParameter(argumentBoundType, constructor.parameters[i].variance)
                     }
                 )
 

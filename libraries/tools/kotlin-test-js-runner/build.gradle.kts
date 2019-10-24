@@ -33,6 +33,10 @@ tasks {
         outputs.upToDateWhen {
             projectDir.resolve("node_modules").isDirectory
         }
+        // Without it several yarns can works incorrectly
+        (this as YarnTask).apply {
+            args = args + "--network-concurrency" + "1" + "--mutex" + "network"
+        }
     }
 
     register<YarnTask>("yarnBuild") {
@@ -47,6 +51,7 @@ tasks {
             "nodejs.ts",
             "karma.ts",
             "karma-kotlin-reporter.js",
+            "mocha-kotlin-reporter.js",
             "nodejs-source-map-support.js",
             "package.json",
             "rollup.config.js",

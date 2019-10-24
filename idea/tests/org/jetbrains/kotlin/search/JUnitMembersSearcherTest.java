@@ -12,20 +12,22 @@ import com.intellij.psi.search.searches.AnnotatedMembersSearch;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
+import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+@TestMetadata("idea/testData/search/junit/")
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
 public class JUnitMembersSearcherTest extends AbstractSearcherTest {
     private static final LightProjectDescriptor junitProjectDescriptor =
             new KotlinJdkAndLibraryProjectDescriptor(new File(PathManager.getHomePath().replace(File.separatorChar, '/') + "/lib/junit-4.12.jar"));
 
+    @TestMetadata("testJunit3.kt")
     public void testJunit3() throws IOException {
         doJUnit3test();
     }
@@ -54,11 +56,6 @@ public class JUnitMembersSearcherTest extends AbstractSearcherTest {
         String annotationClassName = directives.get(0);
         PsiClass psiClass = getPsiClass(annotationClassName);
         checkResult(getPathToFile(), AnnotatedMembersSearch.search(psiClass, getProjectScope()));
-    }
-
-    @Override
-    protected String getTestDataPath() {
-        return new File(PluginTestCaseBase.getTestDataPathBase(), "/search/junit").getPath() + File.separator;
     }
 
     @NotNull

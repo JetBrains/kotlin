@@ -71,17 +71,15 @@ class IncrementalKaptTest {
 
             incrementalCache = incrementalCacheDir
             compiledSources.add(classesOutput)
-            changedFiles.add(sourcesDir.resolve("User.java"))
+            changedFiles.add(sourcesDir.resolve("User.java").canonicalFile)
             flags.add(KaptFlag.INCREMENTAL_APT)
         }.build()
 
         KaptContext(optionsForSecondRun, true, logger).use {
-            val sourcesToReprocess =
-                it.cacheManager!!.invalidateAndGetDirtyFiles(optionsForSecondRun.changedFiles, emptyList())
             assertFalse(outputDir.resolve("test/UserGenerated.java").exists())
 
             it.doAnnotationProcessing(
-                optionsForSecondRun.collectJavaSourceFiles(sourcesToReprocess), listOf(SimpleProcessor().toIsolating())
+                optionsForSecondRun.collectJavaSourceFiles(it.sourcesToReprocess), listOf(SimpleProcessor().toIsolating())
             )
         }
 
@@ -90,10 +88,8 @@ class IncrementalKaptTest {
 
         sourcesDir.resolve("User.java").delete()
         KaptContext(optionsForSecondRun, true, logger).use {
-            val sourcesToReprocess = it.cacheManager!!.invalidateAndGetDirtyFiles(optionsForSecondRun.changedFiles, emptyList())
-
             it.doAnnotationProcessing(
-                optionsForSecondRun.collectJavaSourceFiles(sourcesToReprocess), listOf(SimpleProcessor().toIsolating())
+                optionsForSecondRun.collectJavaSourceFiles(it.sourcesToReprocess), listOf(SimpleProcessor().toIsolating())
             )
         }
 
@@ -145,17 +141,15 @@ class IncrementalKaptTest {
 
             incrementalCache = incrementalCacheDir
             compiledSources.add(classesOutput)
-            changedFiles.add(sourcesDir.resolve("User.java"))
+            changedFiles.add(sourcesDir.resolve("User.java").canonicalFile)
             flags.add(KaptFlag.INCREMENTAL_APT)
         }.build()
 
         KaptContext(optionsForSecondRun, true, logger).use {
-            val sourcesToReprocess =
-                it.cacheManager!!.invalidateAndGetDirtyFiles(optionsForSecondRun.changedFiles, emptyList())
             assertFalse(outputDir.resolve("test/UserGenerated.java").exists())
 
             it.doAnnotationProcessing(
-                optionsForSecondRun.collectJavaSourceFiles(sourcesToReprocess), listOf(SimpleGeneratingIfTypeDoesNotExist().toIsolating())
+                optionsForSecondRun.collectJavaSourceFiles(it.sourcesToReprocess), listOf(SimpleGeneratingIfTypeDoesNotExist().toIsolating())
             )
         }
 
@@ -209,15 +203,13 @@ class IncrementalKaptTest {
         }.build()
 
         KaptContext(optionsForSecondRun, true, logger).use {
-            val sourcesToReprocess =
-                it.cacheManager!!.invalidateAndGetDirtyFiles(optionsForSecondRun.changedFiles, emptyList())
-            assertEquals(SourcesToReprocess.FullRebuild, sourcesToReprocess)
+            assertEquals(SourcesToReprocess.FullRebuild, it.sourcesToReprocess)
 
             // check output dir is empty
             assertEquals(listOf(outputDir), outputDir.walkTopDown().toList())
 
             it.doAnnotationProcessing(
-                optionsForSecondRun.collectJavaSourceFiles(sourcesToReprocess),
+                optionsForSecondRun.collectJavaSourceFiles(it.sourcesToReprocess),
                 listOf(DynamicProcessor(RuntimeProcType.NON_INCREMENTAL).toDynamic())
             )
         }

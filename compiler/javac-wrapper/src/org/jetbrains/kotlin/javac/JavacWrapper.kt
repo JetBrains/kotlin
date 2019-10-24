@@ -33,10 +33,7 @@ import com.sun.tools.javac.main.JavaCompiler
 import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.model.JavacTypes
 import com.sun.tools.javac.tree.JCTree
-import com.sun.tools.javac.util.Context
-import com.sun.tools.javac.util.Log
-import com.sun.tools.javac.util.Names
-import com.sun.tools.javac.util.Options
+import com.sun.tools.javac.util.*
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.javac.resolve.ClassifierResolver
 import org.jetbrains.kotlin.javac.resolve.IdentifierResolver
@@ -46,6 +43,7 @@ import org.jetbrains.kotlin.javac.wrappers.symbols.*
 import org.jetbrains.kotlin.javac.wrappers.trees.*
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.Closeable
 import java.io.File
@@ -125,25 +123,28 @@ class JavacWrapper(
     private val symbolTable = Symtab.instance(context)
     private val elements = JavacElements.instance(context)
     private val types = JavacTypes.instance(context)
-    private val fileObjects = fileManager.getJavaFileObjectsFromFiles(javaFiles).toJavacList()
-    private val compilationUnits: JavacList<JCTree.JCCompilationUnit> = fileObjects.map(javac::parse).toJavacList()
+    private val fileObjects = javaFiles.mapTo(ListBuffer()) { fileManager.getRegularFile(it) }.toList()
+    private val compilationUnits: JavacList<JCTree.JCCompilationUnit> = fileObjects.mapTo(ListBuffer(), javac::parse).toList()
 
-    private val treeBasedJavaClasses = compilationUnits.flatMap { unit ->
-        unit.typeDecls.map { classDeclaration ->
-            val packageName = unit.packageName?.toString() ?: ""
-            val className = (classDeclaration as JCTree.JCClassDecl).simpleName.toString()
-            val classId = classId(packageName, className)
-            classId to TreeBasedClass(classDeclaration, unit, this, classId, null)
-        }
-    }.toMap()
+    private val treeBasedJavaClasses: Map<ClassId, TreeBasedClass>
+    private val treeBasedJavaPackages: Map<FqName, TreeBasedPackage>
 
-    private val treeBasedJavaPackages = compilationUnits
-        .mapTo(hashSetOf<TreeBasedPackage>()) { unit ->
-            unit.packageName?.toString()?.let { packageName ->
-                TreeBasedPackage(packageName, this, unit)
-            } ?: TreeBasedPackage("<root>", this, unit)
+    init {
+        val javaClasses = mutableMapOf<ClassId, TreeBasedClass>()
+        val javaPackages = mutableMapOf<FqName, TreeBasedPackage>()
+        for (unit in compilationUnits) {
+            val packageName = unit.packageName?.toString()
+            val javaPackage = TreeBasedPackage(packageName ?: "<root>", this, unit)
+            javaPackages[javaPackage.fqName] = javaPackage
+            for (classDeclaration in unit.typeDecls) {
+                val className = (classDeclaration as JCTree.JCClassDecl).simpleName.toString()
+                val classId = classId(packageName ?: "", className)
+                javaClasses[classId] = TreeBasedClass(classDeclaration, unit, this, classId, null)
+            }
         }
-        .associateBy(TreeBasedPackage::fqName)
+        treeBasedJavaClasses = javaClasses
+        treeBasedJavaPackages = javaPackages
+    }
 
     private val packageSourceAnnotations = compilationUnits
         .filter {
@@ -169,10 +170,10 @@ class JavacWrapper(
         setClassPathForCompilation(outDir)
         makeOutputDirectoryClassesVisible()
 
-        context.get(Log.outKey)?.println(
-            "Compiling $javaFilesNumber Java source files" +
-                    " to [${fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path}]"
-        )
+        val outputPath =
+            // Includes a hack with 'takeIf' for CLI test, to have stable string here (independent from random test directory)
+            fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path?.takeIf { "compilerProject_test" !in it } ?: "test directory"
+        context.get(Log.outKey)?.print("Compiling $javaFilesNumber Java source files to [$outputPath]")
         compile(fileObjects)
         errorCount() == 0
     }
@@ -293,8 +294,6 @@ class JavacWrapper(
     fun isDeprecatedInJavaDoc(tree: JCTree, compilationUnit: CompilationUnitTree) =
         (compilationUnit as JCTree.JCCompilationUnit).docComments?.getCommentTree(tree)?.comment?.isDeprecated == true
 
-    private inline fun <reified T> Iterable<T>.toJavacList() = JavacList.from(this)
-
     private fun findClassInSymbols(classId: ClassId): SymbolBasedClass? =
         elements.getTypeElement(classId.asSingleFqName().asString())?.let { symbol ->
             SymbolBasedClass(symbol, this, classId, symbol.classfile)
@@ -341,7 +340,7 @@ class JavacWrapper(
     private fun makeOutputDirectoryClassesVisible() {
         // TODO: below we have a hacky part with a purpose
         // to make already analyzed classes visible by Javac without reading them again.
-        // However, it does not work as it should (but some tests depend on this code fragment)
+        // This works (and necessary!) when javac has "-proc:none" argument, so works without APT
         val reader = ClassReader.instance(context)
         val names = Names.instance(context)
         val outDirName = fileManager.getLocation(CLASS_OUTPUT)?.firstOrNull()?.path ?: ""
@@ -369,6 +368,9 @@ class JavacWrapper(
     private fun setClassPathForCompilation(outDir: File?) = apply {
         (outDir ?: outputDirectory)?.let { outputDir ->
             if (outputDir.exists()) {
+                // This line is necessary for e.g. CliTestGenerated.jvm.javacKotlinJavaInterdependency to work
+                // In general, it makes compiled Kotlin classes from the module visible for javac
+                // It's necessary when javac work with APT (without -proc:none flag)
                 fileManager.setLocation(CLASS_PATH, fileManager.getLocation(CLASS_PATH) + outputDir)
             }
             outputDir.mkdirs()

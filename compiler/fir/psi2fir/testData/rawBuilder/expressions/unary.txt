@@ -29,8 +29,6 @@ FILE: unary.kt
             ==(x#, Int(0)).not#() ->  {
                 println#(String(000))
             }
-            else ->  {
-            }
         }
 
     }

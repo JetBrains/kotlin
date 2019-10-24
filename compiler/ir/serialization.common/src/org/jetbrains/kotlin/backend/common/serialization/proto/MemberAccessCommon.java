@@ -37,7 +37,7 @@ public final class MemberAccessCommon extends
         org.jetbrains.kotlin.protobuf.ByteString.newOutput();
     org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
         org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-            unknownFieldsOutput);
+            unknownFieldsOutput, 1);
     try {
       boolean done = false;
       while (!done) {
@@ -250,10 +250,6 @@ public final class MemberAccessCommon extends
         memoizedIsInitialized = 0;
         return false;
       }
-    }
-    if (!getTypeArguments().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
     }
     memoizedIsInitialized = 1;
     return true;
@@ -493,10 +489,6 @@ public final class MemberAccessCommon extends
           
           return false;
         }
-      }
-      if (!getTypeArguments().isInitialized()) {
-        
-        return false;
       }
       return true;
     }

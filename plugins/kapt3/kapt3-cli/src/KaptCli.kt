@@ -31,7 +31,6 @@ fun main(args: Array<String>) {
 
     if (messageCollector.hasErrors()) {
         exitProcess(ExitCode.COMPILATION_ERROR.code)
-        return
     }
 
     K2JVMCompiler.main(kaptTransformed.toTypedArray())

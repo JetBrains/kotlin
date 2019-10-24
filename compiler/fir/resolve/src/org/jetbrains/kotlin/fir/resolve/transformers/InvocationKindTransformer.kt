@@ -25,7 +25,7 @@ object InvocationKindTransformer : FirTransformer<InvocationKind?>() {
     override fun transformAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         data: InvocationKind?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): CompositeTransformResult<FirStatement> {
         if (data != null) {
             anonymousFunction.replaceInvocationKind(data)
         }

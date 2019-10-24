@@ -40,11 +40,15 @@ class ExecutionContext(val evaluationContext: EvaluationContextImpl, val framePr
     }
 
     @Throws(EvaluateException::class)
-    fun invokeMethod(obj: ObjectReference, method: Method, args: List<Value?>): Value? {
-        return debugProcess.invokeInstanceMethod(evaluationContext, obj, method, args, invokePolicy)
+    fun invokeMethod(obj: ObjectReference, method: Method, args: List<Value?>, invocationOptions: Int = 0): Value? {
+        return debugProcess.invokeInstanceMethod(evaluationContext, obj, method, args, invocationOptions)
     }
 
     fun invokeMethod(type: ClassType, method: Method, args: List<Value?>): Value? {
+        return debugProcess.invokeMethod(evaluationContext, type, method, args)
+    }
+
+    fun invokeMethod(type: InterfaceType, method: Method, args: List<Value?>): Value? {
         return debugProcess.invokeMethod(evaluationContext, type, method, args)
     }
 

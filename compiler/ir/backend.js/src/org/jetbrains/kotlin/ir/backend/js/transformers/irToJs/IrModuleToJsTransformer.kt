@@ -25,15 +25,17 @@ import org.jetbrains.kotlin.utils.DFS
 class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
     private val mainFunction: IrSimpleFunction?,
-    private val mainArguments: List<String>?
+    private val mainArguments: List<String>?,
+    private val generateScriptModule: Boolean = false,
+    var namer: NameTables = NameTables(emptyList())
 ) {
     val moduleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
 
     private fun generateModuleBody(module: IrModuleFragment, context: JsGenerationContext): List<JsStatement> {
-        val statements = mutableListOf(
-            JsStringLiteral("use strict").makeStmt()
-        )
+        val statements = mutableListOf<JsStatement>().also {
+            if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
+        }
 
         val preDeclarationBlock = JsBlock()
         val postDeclarationBlock = JsBlock()
@@ -71,7 +73,7 @@ class IrModuleToJsTransformer(
 
         module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
 
-        val namer = NameTables(module.files + additionalPackages)
+        namer.merge(module.files, additionalPackages)
 
         val program = JsProgram()
 
@@ -100,25 +102,33 @@ class IrModuleToJsTransformer(
         val exportStatements = ExportModelToJsStatements(internalModuleName, namer)
             .generateModuleExport(exportedModule)
 
-        with(rootFunction) {
-            parameters += JsParameter(internalModuleName)
-            parameters += importedJsModules.map { JsParameter(it.internalName) }
-            with(body) {
+        if (generateScriptModule) {
+            with(program.globalBlock) {
                 statements += importStatements
                 statements += moduleBody
                 statements += exportStatements
-                statements += generateCallToMain(rootContext)
-                statements += JsReturn(internalModuleName.makeRef())
             }
-        }
+        } else {
+            with(rootFunction) {
+                parameters += JsParameter(internalModuleName)
+                parameters += importedJsModules.map { JsParameter(it.internalName) }
+                with(body) {
+                    statements += importStatements
+                    statements += moduleBody
+                    statements += exportStatements
+                    statements += generateCallToMain(rootContext)
+                    statements += JsReturn(internalModuleName.makeRef())
+                }
+            }
 
-        program.globalBlock.statements += ModuleWrapperTranslation.wrap(
-            moduleName,
-            rootFunction,
-            importedJsModules,
-            program,
-            kind = moduleKind
-        )
+            program.globalBlock.statements += ModuleWrapperTranslation.wrap(
+                moduleName,
+                rootFunction,
+                importedJsModules,
+                program,
+                kind = moduleKind
+            )
+        }
 
         return CompilerResult(program.toString(), dts)
     }

@@ -5,37 +5,22 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
-import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirClassDeclaredMemberScopeProvider : FirSessionComponent {
-
-    val cache = mutableMapOf<FirRegularClass, FirClassDeclaredMemberScope>()
-    fun declaredMemberScope(klass: FirRegularClass): FirClassDeclaredMemberScope {
-        return cache.getOrPut(klass) {
-            FirClassDeclaredMemberScope(klass)
-        }
-    }
-}
-
-fun declaredMemberScope(klass: FirRegularClass): FirClassDeclaredMemberScope {
-    return klass
-        .session
-        .declaredMemberScopeProvider
-        .declaredMemberScope(klass)
-}
-
 class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {
+    private val nestedClassifierScope = nestedClassifierScope(klass)
+
     private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> = run {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
         for (declaration in klass.declarations) {
@@ -51,15 +36,6 @@ class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {
                         }
                     }
                 }
-            }
-        }
-        result
-    }
-    private val classIndex: Map<Name, FirClassSymbol> = run {
-        val result = mutableMapOf<Name, FirClassSymbol>()
-        for (declaration in klass.declarations) {
-            if (declaration is FirRegularClass) {
-                result[declaration.name] = declaration.symbol
             }
         }
         result
@@ -85,12 +61,8 @@ class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {
         return NEXT
     }
 
-    override fun processClassifiersByName(name: Name, position: FirPosition, processor: (FirClassifierSymbol<*>) -> Boolean): Boolean {
-        val matchedClass = classIndex[name]
-        if (matchedClass != null && !processor(matchedClass)) {
-            return false
-        }
-
-        return super.processClassifiersByName(name, position, processor)
-    }
+    override fun processClassifiersByName(
+        name: Name,
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+    ): ProcessorAction = nestedClassifierScope.processClassifiersByName(name, processor)
 }

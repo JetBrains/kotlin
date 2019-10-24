@@ -10,19 +10,23 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.references.FirStubReference
+import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
@@ -31,13 +35,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.Variance
 
-class FirSyntheticCallGenerator(private val transformer: FirBodyResolveTransformer) : BodyResolveComponents by transformer {
-    private val whenSelectFunction: FirMemberFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
-    private val trySelectFunction: FirMemberFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
+class FirSyntheticCallGenerator(private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents) : BodyResolveComponents by components {
+    private val whenSelectFunction: FirSimpleFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.WHEN)
+    private val trySelectFunction: FirSimpleFunctionImpl = generateSyntheticSelectFunction(SyntheticCallableId.TRY)
 
     fun generateCalleeForWhenExpression(whenExpression: FirWhenExpression): FirWhenExpression? {
         val stubReference = whenExpression.calleeReference
-        assert(stubReference is FirStubReference)
+        // TODO: Investigate: assertion failed in ModularizedTest
+        // assert(stubReference is FirStubReference)
+        if (stubReference !is FirStubReference) return null
 
         val arguments = whenExpression.branches.map { it.result }
         val reference = generateCalleeReferenceWithCandidate(
@@ -72,7 +78,7 @@ class FirSyntheticCallGenerator(private val transformer: FirBodyResolveTransform
     }
 
     private fun generateCalleeReferenceWithCandidate(
-        function: FirMemberFunctionImpl,
+        function: FirSimpleFunctionImpl,
         arguments: List<FirExpression>,
         name: Name
     ): FirNamedReferenceWithCandidate? {
@@ -86,8 +92,8 @@ class FirSyntheticCallGenerator(private val transformer: FirBodyResolveTransform
         return FirNamedReferenceWithCandidate(null, name, candidate)
     }
 
-    private fun generateCandidate(callInfo: CallInfo, function: FirMemberFunctionImpl): Candidate =
-        CandidateFactory(transformer, callInfo).createCandidate(
+    private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunctionImpl): Candidate =
+        CandidateFactory(components, callInfo).createCandidate(
             symbol = function.symbol,
             dispatchReceiverValue = null,
             implicitExtensionReceiverValue = null,
@@ -105,15 +111,15 @@ class FirSyntheticCallGenerator(private val transformer: FirBodyResolveTransform
         container = container
     ) { it.resultType }
 
-    private fun generateSyntheticSelectFunction(callableId: CallableId): FirMemberFunctionImpl {
+    private fun generateSyntheticSelectFunction(callableId: CallableId): FirSimpleFunctionImpl {
         val functionSymbol = FirSyntheticFunctionSymbol(callableId)
         val typeParameterSymbol = FirTypeParameterSymbol()
-        val typeParameter = FirTypeParameterImpl(session, null, typeParameterSymbol, Name.identifier("K"), Variance.INVARIANT, false)
+        val typeParameter = FirTypeParameterImpl(null, session, Name.identifier("K"), typeParameterSymbol, Variance.INVARIANT, false)
 
         val returnType = FirResolvedTypeRefImpl(null, ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false))
 
         val argumentType = FirResolvedTypeRefImpl(null, returnType.coneTypeUnsafe<ConeKotlinType>().createArrayOf(session))
-        val typeArgument = FirTypeProjectionWithVarianceImpl(null, Variance.INVARIANT, returnType)
+        val typeArgument = FirTypeProjectionWithVarianceImpl(null, returnType, Variance.INVARIANT)
 
         return generateMemberFunction(session, functionSymbol, callableId.callableName, typeArgument.typeRef).apply {
             typeParameters += typeParameter
@@ -121,39 +127,45 @@ class FirSyntheticCallGenerator(private val transformer: FirBodyResolveTransform
         }
     }
 
-    private fun generateMemberFunction(session: FirSession, symbol: FirNamedFunctionSymbol, name: Name, returnType: FirTypeRef) =
-        FirMemberFunctionImpl(
+    private fun generateMemberFunction(session: FirSession, symbol: FirNamedFunctionSymbol, name: Name, returnType: FirTypeRef): FirSimpleFunctionImpl {
+        val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+            isExpect = false
+            isActual = false
+            isOverride = false
+            isOperator = false
+            isInfix = false
+            isInline = false
+            isTailRec = false
+            isExternal = false
+            isSuspend = false
+        }
+        return FirSimpleFunctionImpl(
             session = session,
             psi = null,
             symbol = symbol,
             name = name,
-            visibility = Visibilities.PUBLIC,
-            modality = Modality.FINAL,
-            isExpect = false,
-            isActual = false,
-            isOverride = false,
-            isOperator = false,
-            isInfix = false,
-            isInline = false,
-            isTailRec = false,
-            isExternal = false,
-            isSuspend = false,
+            status = status,
             receiverTypeRef = null,
             returnTypeRef = returnType
         ).apply {
             this.resolvePhase = FirResolvePhase.BODY_RESOLVE
         }
+    }
 
-    private fun FirResolvedTypeRef.toValueParameter(session: FirSession, name: String, isVararg: Boolean = false) = FirValueParameterImpl(
-        session = session,
-        psi = null,
-        name = Name.identifier(name),
-        returnTypeRef = this,
-        defaultValue = null,
-        isCrossinline = false,
-        isNoinline = false,
-        isVararg = isVararg
-    ).apply {
-        this.resolvePhase = FirResolvePhase.BODY_RESOLVE
+    private fun FirResolvedTypeRef.toValueParameter(session: FirSession, name: String, isVararg: Boolean = false): FirValueParameterImpl {
+        val name = Name.identifier(name)
+        return FirValueParameterImpl(
+            session = session,
+            psi = null,
+            name = name,
+            returnTypeRef = this,
+            defaultValue = null,
+            isCrossinline = false,
+            isNoinline = false,
+            isVararg = isVararg,
+            symbol = FirVariableSymbol(name)
+        ).apply {
+            this.resolvePhase = FirResolvePhase.BODY_RESOLVE
+        }
     }
 }

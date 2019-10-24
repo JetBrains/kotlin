@@ -1,49 +1,62 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.BaseTransformedType
-import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.expressions.FirVariable
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirControlFlowGraphOwner
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.fir.visitors.*
 
-// May be should not inherit FirVariable
-@BaseTransformedType
-interface FirProperty :
-    @VisitedSupertype FirDeclaration, FirCallableMemberDeclaration<FirProperty>, FirVariable<FirProperty>, FirMemberDeclaration {
-    val isConst: Boolean get() = status.isConst
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    val isLateInit: Boolean get() = status.isLateInit
+abstract class FirProperty : FirPureAbstractElement(), FirVariable<FirProperty>, FirControlFlowGraphOwner, FirTypeParametersOwner, FirCallableMemberDeclaration<FirProperty> {
+    abstract override val psi: PsiElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val returnTypeRef: FirTypeRef
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val name: Name
+    abstract override val initializer: FirExpression?
+    abstract override val delegate: FirExpression?
+    abstract override val delegateFieldSymbol: FirDelegateFieldSymbol<FirProperty>?
+    abstract override val isVar: Boolean
+    abstract override val isVal: Boolean
+    abstract override val getter: FirPropertyAccessor?
+    abstract override val setter: FirPropertyAccessor?
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val containerSource: DeserializedContainerSource?
+    abstract override val symbol: FirPropertySymbol
+    abstract val backingFieldSymbol: FirBackingFieldSymbol
+    abstract val isLocal: Boolean
+    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val status: FirDeclarationStatus
 
-    override val isOverride: Boolean get() = status.isOverride
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitProperty(this, data)
 
-    // Should it be nullable or have some default?
-    override val getter: FirPropertyAccessor?
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirProperty
 
-    override val setter: FirPropertyAccessor?
+    abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirProperty
 
-    // TODO: it should be probably nullable
-    val backingFieldSymbol: FirBackingFieldSymbol
+    abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirProperty
 
-    val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitProperty(this, data)
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirCallableMemberDeclaration>.acceptChildren(visitor, data)
-        initializer?.accept(visitor, data)
-        delegate?.accept(visitor, data)
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
-    }
-
-    fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirProperty
+    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirProperty
 }

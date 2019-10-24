@@ -307,38 +307,27 @@ digraph jumps_kt {
                 104 [label="Access variable R|<local>/b|"];
                 105 [label="Exit when branch condition"];
               }
+              106 [label="Synthetic else branch"];
+              107 [label="Enter when branch result"];
               subgraph cluster_34 {
                 color=blue
-                106 [label="Enter when branch condition else"];
-                107 [label="Exit when branch condition"];
+                108 [label="Enter block"];
+                109 [label="Jump: continue@@@[R|<local>/b|] "];
+                110 [label="Stub" style="filled" fillcolor=gray];
+                111 [label="Exit block" style="filled" fillcolor=gray];
               }
-              108 [label="Enter when branch result"];
-              subgraph cluster_35 {
-                color=blue
-                109 [label="Enter block"];
-                110 [label="Exit block"];
-              }
-              111 [label="Exit when branch result"];
-              112 [label="Enter when branch result"];
-              subgraph cluster_36 {
-                color=blue
-                113 [label="Enter block"];
-                114 [label="Jump: continue@@@[R|<local>/b|] "];
-                115 [label="Stub" style="filled" fillcolor=gray];
-                116 [label="Exit block" style="filled" fillcolor=gray];
-              }
-              117 [label="Exit when branch result" style="filled" fillcolor=gray];
-              118 [label="Exit when"];
+              112 [label="Exit when branch result" style="filled" fillcolor=gray];
+              113 [label="Exit when"];
             }
-            119 [label="Exit block"];
+            114 [label="Exit block"];
           }
-          120 [label="Exit loop block"];
+          115 [label="Exit loop block"];
         }
-        121 [label="Exit whileloop"];
+        116 [label="Exit whileloop"];
       }
-      122 [label="Exit block"];
+      117 [label="Exit block"];
     }
-    123 [label="Exit function test_5" style="filled" fillcolor=red];
+    118 [label="Exit function test_5" style="filled" fillcolor=red];
   }
 
   94 -> {95};
@@ -346,86 +335,81 @@ digraph jumps_kt {
   96 -> {97};
   97 -> {98};
   98 -> {99};
-  99 -> {121 100};
+  99 -> {116 100};
   100 -> {101};
   101 -> {102};
   102 -> {103};
   103 -> {104};
   104 -> {105};
-  105 -> {112 106};
-  106 -> {107};
+  105 -> {107 106};
+  106 -> {113};
   107 -> {108};
   108 -> {109};
-  109 -> {110};
-  110 -> {111};
-  111 -> {118};
-  112 -> {113};
+  109 -> {96};
+  109 -> {110} [style=dotted];
+  110 -> {111} [style=dotted];
+  111 -> {112} [style=dotted];
+  112 -> {113} [style=dotted];
   113 -> {114};
-  114 -> {96};
-  114 -> {115} [style=dotted];
-  115 -> {116} [style=dotted];
-  116 -> {117} [style=dotted];
-  117 -> {118} [style=dotted];
-  118 -> {119};
+  114 -> {115};
+  115 -> {97};
+  116 -> {117};
+  117 -> {118};
+
+  subgraph cluster_35 {
+    color=red
+    119 [label="Enter function run" style="filled" fillcolor=red];
+    subgraph cluster_36 {
+      color=blue
+      120 [label="Enter block"];
+      121 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+      122 [label="Exit block"];
+    }
+    123 [label="Exit function run" style="filled" fillcolor=red];
+  }
+
   119 -> {120};
-  120 -> {97};
+  120 -> {121};
   121 -> {122};
   122 -> {123};
 
   subgraph cluster_37 {
     color=red
-    124 [label="Enter function run" style="filled" fillcolor=red];
+    124 [label="Enter function test_6" style="filled" fillcolor=red];
     subgraph cluster_38 {
       color=blue
       125 [label="Enter block"];
-      126 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
-      127 [label="Exit block"];
+      subgraph cluster_39 {
+        color=blue
+        126 [label="Enter function anonymousFunction"];
+        subgraph cluster_40 {
+          color=blue
+          127 [label="Enter block"];
+          128 [label="Jump: ^@run Unit"];
+          129 [label="Stub" style="filled" fillcolor=gray];
+          130 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        131 [label="Exit function anonymousFunction"];
+      }
+      132 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    ^@run Unit
+}
+)"];
+      133 [label="Exit block"];
     }
-    128 [label="Exit function run" style="filled" fillcolor=red];
+    134 [label="Exit function test_6" style="filled" fillcolor=red];
   }
 
   124 -> {125};
   125 -> {126};
   126 -> {127};
   127 -> {128};
-
-  subgraph cluster_39 {
-    color=red
-    129 [label="Enter function test_6" style="filled" fillcolor=red];
-    subgraph cluster_40 {
-      color=blue
-      130 [label="Enter block"];
-      subgraph cluster_41 {
-        color=blue
-        131 [label="Enter function anonymousFunction"];
-        subgraph cluster_42 {
-          color=blue
-          132 [label="Enter block"];
-          133 [label="Jump: ^@run Unit"];
-          134 [label="Stub" style="filled" fillcolor=gray];
-          135 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        136 [label="Exit function anonymousFunction"];
-      }
-      137 [label="Function call: R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-    ^@run Unit
-}
-)"];
-      138 [label="Exit block"];
-    }
-    139 [label="Exit function test_6" style="filled" fillcolor=red];
-  }
-
-  129 -> {130};
-  130 -> {131};
+  128 -> {131};
+  128 -> {129} [style=dotted];
+  129 -> {130} [style=dotted];
+  130 -> {131} [style=dotted];
   131 -> {132};
   132 -> {133};
-  133 -> {136};
-  133 -> {134} [style=dotted];
-  134 -> {135} [style=dotted];
-  135 -> {136} [style=dotted];
-  136 -> {137};
-  137 -> {138};
-  138 -> {139};
+  133 -> {134};
 
 }

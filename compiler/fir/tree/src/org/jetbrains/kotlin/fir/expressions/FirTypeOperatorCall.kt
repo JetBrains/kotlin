@@ -6,24 +6,24 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.expressions.impl.FirOperationBasedCall
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.*
 
-// is/!is/as/as?
-abstract class FirTypeOperatorCall(
-    psi: PsiElement?,
-    operation: FirOperation
-) : FirOperationBasedCall(psi, operation) {
-    val argument: FirExpression get() = arguments.first()
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
+abstract class FirTypeOperatorCall : FirPureAbstractElement(), FirExpression, FirCall {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val arguments: List<FirExpression>
+    abstract val operation: FirOperation
     abstract val conversionTypeRef: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitTypeOperatorCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeOperatorCall(this, data)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        conversionTypeRef.accept(visitor, data)
-        super.acceptChildren(visitor, data)
-    }
+    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall
 }

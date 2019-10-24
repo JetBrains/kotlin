@@ -27,9 +27,7 @@ import kotlin.script.experimental.host.BasicScriptingHost
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.KotlinJars
 import kotlin.script.experimental.jvm.util.classpathFromClass
@@ -37,10 +35,6 @@ import kotlin.script.experimental.jvmhost.*
 import kotlin.script.templates.standard.SimpleScriptTemplate
 
 class ScriptingHostTest : TestCase() {
-
-    companion object {
-        const val TEST_DATA_DIR = "libraries/scripting/jvm-host-test/testData"
-    }
 
     @Test
     fun testSimpleUsage() {
@@ -461,7 +455,7 @@ internal fun ScriptCompilationConfiguration.Builder.makeSimpleConfigurationWithT
     updateClasspath(classpathFromClass<ScriptingHostTest>()) // the lambda below should be in the classpath
     refineConfiguration {
         beforeCompiling { ctx ->
-            val importedScript = File(ScriptingHostTest.TEST_DATA_DIR, "importTest/helloWithVal.kts")
+            val importedScript = File(TEST_DATA_DIR, "importTest/helloWithVal.kts")
             if ((ctx.script as? FileBasedScriptSource)?.file?.canonicalFile == importedScript.canonicalFile) {
                 ctx.compilationConfiguration
             } else {

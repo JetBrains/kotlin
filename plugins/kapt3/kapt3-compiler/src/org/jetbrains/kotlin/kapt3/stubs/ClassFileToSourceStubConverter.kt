@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.needsExperimentalCoroutinesWrapper
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -49,11 +50,13 @@ import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -644,13 +647,26 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     private fun convertPropertyInitializer(field: FieldNode): JCExpression? {
         val value = field.value
 
+        val origin = kaptContext.origins[field]
+        val propertyInitializer = (origin?.element as? KtProperty)?.initializer
+
         if (value != null) {
-            val propertyInitializer = (kaptContext.origins[field]?.element as? KtProperty)?.initializer
             if (propertyInitializer != null) {
                 return convertConstantValueArguments(value, listOf(propertyInitializer))
             }
 
             return convertValueOfPrimitiveTypeOrString(value)
+        }
+
+        val propertyType = (origin?.descriptor as? PropertyDescriptor)?.returnType
+        if (propertyInitializer != null && propertyType != null) {
+            val moduleDescriptor = kaptContext.generationState.module
+            val evaluator = ConstantExpressionEvaluator(moduleDescriptor, LanguageVersionSettingsImpl.DEFAULT, kaptContext.project)
+            val trace = DelegatingBindingTrace(kaptContext.bindingContext, "Kapt")
+            val const = evaluator.evaluateExpression(propertyInitializer, trace, propertyType)
+            if (const != null && !const.isError && const.canBeUsedInAnnotations && !const.usesNonConstValAsConstant) {
+                return convertConstantValueArguments(const.getValue(propertyType), listOf(propertyInitializer))
+            }
         }
 
         if (isFinal(field.access)) {
@@ -938,6 +954,11 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         var annotations = visibleAnnotations?.fold(JavacList.nil<JCAnnotation>(), ::convertAndAdd) ?: JavacList.nil()
         annotations = invisibleAnnotations?.fold(annotations, ::convertAndAdd) ?: annotations
+
+        if (isDeprecated(access)) {
+            val type = treeMaker.Type(Type.getType(java.lang.Deprecated::class.java))
+            annotations = annotations.append(treeMaker.Annotation(type, JavacList.nil()))
+        }
 
         val flags = when (kind) {
             ElementKind.ENUM -> access and CLASS_MODIFIERS and Opcodes.ACC_ABSTRACT.inv().toLong()

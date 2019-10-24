@@ -64,7 +64,8 @@ class GenerationState private constructor(
     val outDirectory: File?,
     private val onIndependentPartCompilationEnd: GenerationStateEventCallback,
     wantsDiagnostics: Boolean,
-    val jvmBackendClassResolver: JvmBackendClassResolver
+    val jvmBackendClassResolver: JvmBackendClassResolver,
+    val isIrBackend: Boolean
 ) {
 
     class Builder(
@@ -111,12 +112,16 @@ class GenerationState private constructor(
         fun jvmBackendClassResolver(v: JvmBackendClassResolver) =
             apply { jvmBackendClassResolver = v }
 
+        var isIrBackend: Boolean = configuration.getBoolean(JVMConfigurationKeys.IR)
+        fun isIrBackend(v: Boolean) =
+            apply { isIrBackend = v }
+
         fun build() =
             GenerationState(
                 project, builderFactory, module, bindingContext, files, configuration,
                 generateDeclaredClassFilter, codegenFactory, targetId,
                 moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics,
-                jvmBackendClassResolver
+                jvmBackendClassResolver, isIrBackend
             )
     }
 
@@ -196,7 +201,6 @@ class GenerationState private constructor(
     )
     val bindingContext: BindingContext = bindingTrace.bindingContext
     val mainFunctionDetector = MainFunctionDetector(bindingContext, languageVersionSettings)
-    val isIrBackend = configuration.get(JVMConfigurationKeys.IR) ?: false
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
         this.bindingContext,
         classBuilderMode,

@@ -87,6 +87,7 @@ public final class Test {
      * prop2.
      */
     @Anno()
+    @java.lang.Deprecated()
     public static void prop2$annotations() {
     }
 

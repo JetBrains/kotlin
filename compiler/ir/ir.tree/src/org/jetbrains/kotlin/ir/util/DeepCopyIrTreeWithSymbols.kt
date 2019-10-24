@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrScriptSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -117,6 +119,18 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitDeclaration(declaration: IrDeclaration): IrStatement =
         throw IllegalArgumentException("Unsupported declaration type: $declaration")
 
+    override fun visitScript(declaration: IrScript): IrStatement {
+        return IrScriptImpl(
+            //TODO: something may go wrong, because expected using symbolRemapper
+            IrScriptSymbolImpl(declaration.descriptor as ScriptDescriptor),
+            declaration.name
+        ).also {
+            it.thisReceiver = declaration.thisReceiver.transform()
+            declaration.transformDeclarationsTo(it)
+            it.statements.addAll(declaration.statements.map { it.transform() })
+        }
+    }
+
     override fun visitClass(declaration: IrClass): IrClass =
         IrClassImpl(
             declaration.startOffset, declaration.endOffset,
@@ -130,7 +144,8 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.isInner,
             declaration.isData,
             declaration.isExternal,
-            declaration.isInline
+            declaration.isInline,
+            declaration.isExpect
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)
@@ -150,10 +165,11 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.visibility,
             declaration.modality,
             declaration.returnType,
-            declaration.isInline,
-            declaration.isExternal,
-            declaration.isTailrec,
-            declaration.isSuspend
+            isInline = declaration.isInline,
+            isExternal = declaration.isExternal,
+            isTailrec = declaration.isTailrec,
+            isSuspend = declaration.isSuspend,
+            isExpect = declaration.isExpect
         ).apply {
             declaration.overriddenSymbols.mapTo(overriddenSymbols) {
                 symbolRemapper.getReferencedFunction(it) as IrSimpleFunctionSymbol
@@ -169,9 +185,10 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.name,
             declaration.visibility,
             declaration.returnType,
-            declaration.isInline,
-            declaration.isExternal,
-            declaration.isPrimary
+            isInline = declaration.isInline,
+            isExternal = declaration.isExternal,
+            isPrimary = declaration.isPrimary,
+            isExpect = declaration.isExpect
         ).apply {
             transformFunctionChildren(declaration)
         }
@@ -201,11 +218,12 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.name,
             declaration.visibility,
             declaration.modality,
-            declaration.isVar,
-            declaration.isConst,
-            declaration.isLateinit,
-            declaration.isDelegated,
-            declaration.isExternal
+            isVar = declaration.isVar,
+            isConst = declaration.isConst,
+            isLateinit = declaration.isLateinit,
+            isDelegated = declaration.isDelegated,
+            isExpect = declaration.isExpect,
+            isExternal = declaration.isExternal
         ).apply {
             transformAnnotations(declaration)
             this.backingField = declaration.backingField?.transform()

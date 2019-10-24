@@ -12,44 +12,31 @@ import org.jetbrains.kotlin.nj2k.tree.*
 class InternalDeclarationConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKVisibilityOwner || element !is JKModalityOwner) return recurse(element)
+        if (element.visibility != Visibility.INTERNAL) return recurse(element)
+
         val containingClass = element.parentOfType<JKClass>()
+        val containingClassKind = containingClass?.classKind ?: element.psi<PsiMember>()?.containingClass?.classKind?.toJk()
 
-        if (element is JKClass && element.isLocalClass()) {
-            element.visibility = Visibility.PUBLIC
+        val containingClassVisibility = containingClass?.visibility
+            ?: element.psi<PsiMember>()
+                ?.containingClass
+                ?.visibility(context.converter.oldConverterServices.referenceSearcher, null)
+                ?.visibility
+
+        element.visibility = when {
+            containingClassKind == JKClass.ClassKind.INTERFACE || containingClassKind == JKClass.ClassKind.ANNOTATION ->
+                Visibility.PUBLIC
+            containingClassKind == JKClass.ClassKind.ENUM && element is JKKtPrimaryConstructor ->
+                Visibility.PRIVATE
+            element is JKClass && !element.isLocalClass() ->
+                Visibility.INTERNAL
+            element is JKConstructor && containingClassVisibility != Visibility.INTERNAL ->
+                Visibility.INTERNAL
+            element is JKField || element is JKMethod ->
+                Visibility.PUBLIC
+            else -> Visibility.INTERNAL
         }
 
-        val containingClassVisibility =
-            containingClass?.visibility
-                ?: element.psi<PsiMember>()
-                    ?.containingClass
-                    ?.visibility(context.converter.oldConverterServices.referenceSearcher, null)
-                    ?.visibility
-
-        val containingClassKind =
-            containingClass?.classKind
-                ?: element.psi<PsiMember>()
-                    ?.containingClass
-                    ?.classKind
-
-        if (containingClassVisibility == Visibility.INTERNAL
-            && element.visibility == Visibility.INTERNAL
-            && element.modality == Modality.FINAL
-            && (element is JKMethod || element is JKField)
-        ) {
-            element.visibility = Visibility.PUBLIC
-        }
-
-        if (containingClassKind == JKClass.ClassKind.INTERFACE
-            || containingClassKind == JKClass.ClassKind.ANNOTATION
-        ) {
-            element.visibility = Visibility.PUBLIC
-        }
-
-        if (containingClassKind == JKClass.ClassKind.ENUM
-            && element is JKKtPrimaryConstructor
-        ) {
-            element.visibility = Visibility.PRIVATE
-        }
         return recurse(element)
     }
 }

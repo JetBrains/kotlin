@@ -17,14 +17,11 @@
 package org.jetbrains.kotlin.idea.test
 
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleType
-import com.intellij.openapi.module.StdModuleTypes
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.vfs.VfsUtil
-
 import java.io.File
 
 open class KotlinJdkAndLibraryProjectDescriptor(private val libraryFiles: List<File>) : KotlinLightProjectDescriptor() {
@@ -36,8 +33,6 @@ open class KotlinJdkAndLibraryProjectDescriptor(private val libraryFiles: List<F
             assert(libraryFile.exists()) { "Library file doesn't exist: " + libraryFile.absolutePath }
         }
     }
-
-    override fun getModuleType(): ModuleType<*> = StdModuleTypes.JAVA
 
     override fun getSdk(): Sdk? = PluginTestCaseBase.mockJdk()
 

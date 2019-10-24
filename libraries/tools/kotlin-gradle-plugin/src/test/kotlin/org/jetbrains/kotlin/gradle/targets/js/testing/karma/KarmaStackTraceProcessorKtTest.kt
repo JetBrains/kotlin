@@ -13,24 +13,24 @@ class KarmaStackTraceProcessorKtTest {
     @Test
     fun processKarmaStackTrace() {
         val stackTrace = """AssertionError: Expected value to be true.
-    at AssertionError_init_0 (webpack:///kotlin/exceptions.kt:102:36 <- /Users/ilya.goncharov/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:33390:22)
-    at DefaultJsAsserter.failWithMessage_0 (webpack:///src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:80:18 <- /Users/ilya.goncharov/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:1569:13)
-    at DefaultJsAsserter.assertTrue_o10pc4${'$'} (webpack:///src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:60:12 <- /Users/ilya.goncharov/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:1536:12)
-    at DefaultJsAsserter.assertTrue_4mavae${'$'} (webpack:///src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:67:8 <- /Users/ilya.goncharov/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:1548:10)
-    at assertTrue_0 (webpack:///Assertions.kt:37:20 <- /Users/ilya.goncharov/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:1182:27)
-    at assertTrue (webpack:///Assertions.kt:32:70 <- /Users/ilya.goncharov/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:1177:5)
-    at MyTest../kotlin/check-kotlin-js-test-test.js.MyTest.foo (webpack:///src/test/kotlin/MyTest.kt:7:8 <- /Users/ilya.goncharov/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:53047:5)
-    at Context.<anonymous> (/Users/ilya.goncharov/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:53080:31)""".trimIndent()
+            at AssertionError_init_0 (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin/1.3.0-SNAPSHOT/kotlin/exceptions.kt:102:36 <- /Users/user/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:33390:22)
+            at DefaultJsAsserter.failWithMessage_0 (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin-test/1.3.0-SNAPSHOT/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:80:18 <- /Users/user/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:1569:13)
+            at DefaultJsAsserter.assertTrue_o10pc4${'$'} (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin-test/1.3.0-SNAPSHOT/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:60:12 <- /Users/user/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:1536:12)
+            at DefaultJsAsserter.assertTrue_4mavae${'$'} (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin-test/1.3.0-SNAPSHOT/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:67:8 <- /Users/user/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:1548:10)
+            at assertTrue_0 (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin-test/1.3.0-SNAPSHOT/Assertions.kt:37:20 <- /Users/user/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:1182:27)
+            at assertTrue (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin-test/1.3.0-SNAPSHOT/Assertions.kt:32:70 <- /Users/user/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:1177:5)
+            at MyTest../kotlin/check-kotlin-js-test-test.js.MyTest.foo (/Users/user/repos/check-kotlin-js-test/src/test/kotlin/MyTest.kt:7:8 <- /Users/user/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:53082:5)
+            at Context.<anonymous> (/Users/user/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:53115:31)""".trimIndent()
 
         val expected = """AssertionError: Expected value to be true.
-    at AssertionError_init_0 (/kotlin/exceptions.kt:102:36)
-    at DefaultJsAsserter.failWithMessage_0 (/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:80:18)
-    at DefaultJsAsserter.assertTrue_o10pc4${'$'} (/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:60:12)
-    at DefaultJsAsserter.assertTrue_4mavae${'$'} (/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:67:8)
-    at assertTrue_0 (/Assertions.kt:37:20)
-    at assertTrue (/Assertions.kt:32:70)
-    at MyTest.foo (/src/test/kotlin/MyTest.kt:7:8)
-    at Context.<anonymous> (/Users/ilya.goncharov/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:53080:31)""".trimIndent()
+            at AssertionError_init_0 (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin/1.3.0-SNAPSHOT/kotlin/exceptions.kt:102:36)
+            at DefaultJsAsserter.failWithMessage_0 (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin-test/1.3.0-SNAPSHOT/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:80:18)
+            at DefaultJsAsserter.assertTrue_o10pc4${'$'} (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin-test/1.3.0-SNAPSHOT/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:60:12)
+            at DefaultJsAsserter.assertTrue_4mavae${'$'} (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin-test/1.3.0-SNAPSHOT/src/main/kotlin/kotlin/test/DefaultJsAsserter.kt:67:8)
+            at assertTrue_0 (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin-test/1.3.0-SNAPSHOT/Assertions.kt:37:20)
+            at assertTrue (/Users/user/repos/check-kotlin-js-test/build/js/packages_imported/kotlin-test/1.3.0-SNAPSHOT/Assertions.kt:32:70)
+            at MyTest.foo (/Users/user/repos/check-kotlin-js-test/src/test/kotlin/MyTest.kt:7:8)
+            at Context.<anonymous> (/Users/user/repos/check-kotlin-js-test/build/js/packages/check-kotlin-js-test-test/adapter.js:53115:31)""".trimIndent()
 
         assertEquals(
             expected,

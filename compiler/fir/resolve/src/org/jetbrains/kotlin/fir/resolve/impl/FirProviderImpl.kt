@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.buildDefaultUseSiteScope
+import org.jetbrains.kotlin.fir.resolve.buildDefaultUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -85,25 +85,23 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
                 state.classifierContainerFileMap[classId] = file
             }
 
-            override fun <F : FirCallableMemberDeclaration<F>> visitCallableMemberDeclaration(
-                callableMemberDeclaration: FirCallableMemberDeclaration<F>
-            ) {
-                val symbol = callableMemberDeclaration.symbol
+            override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>) {
+                val symbol = callableDeclaration.symbol
                 val callableId = symbol.callableId
                 state.callableMap.merge(callableId, listOf(symbol)) { a, b -> a + b }
                 state.callableContainerMap[symbol] = file
             }
 
             override fun visitConstructor(constructor: FirConstructor) {
-                visitCallableMemberDeclaration(constructor)
+                visitCallableDeclaration(constructor)
             }
 
-            override fun visitNamedFunction(namedFunction: FirNamedFunction) {
-                visitCallableMemberDeclaration(namedFunction)
+            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+                visitCallableDeclaration(simpleFunction)
             }
 
             override fun visitProperty(property: FirProperty) {
-                visitCallableMemberDeclaration(property)
+                visitCallableDeclaration(property)
             }
         })
     }
@@ -218,7 +216,7 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
         scopeSession: ScopeSession
     ): FirScope? {
         return when (val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null) {
-            is FirClassSymbol -> symbol.fir.buildDefaultUseSiteScope(useSiteSession, scopeSession)
+            is FirClassSymbol -> symbol.fir.buildDefaultUseSiteMemberScope(useSiteSession, scopeSession)
             is FirTypeAliasSymbol -> {
                 val expandedTypeRef = symbol.fir.expandedTypeRef as FirResolvedTypeRef
                 val expandedType = expandedTypeRef.type as? ConeLookupTagBasedType ?: return null

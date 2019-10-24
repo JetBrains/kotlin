@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.annotation.plugin.ide.getAnnotationNames
 import org.jetbrains.kotlin.noarg.AbstractNoArgExpressionCodegenExtension
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
-class IdeNoArgExpressionCodegenExtension(project: Project) :
-    AbstractNoArgExpressionCodegenExtension(invokeInitializers = false) {
+class IdeNoArgExpressionCodegenExtension(project: Project) : AbstractNoArgExpressionCodegenExtension(invokeInitializers = false) {
 
     private val cachedAnnotationsNames = CachedAnnotationNames(project, NO_ARG_ANNOTATION_OPTION_PREFIX)
 

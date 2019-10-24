@@ -39,6 +39,7 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary>(
         noEndorsedLibs: Boolean
     ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs, noEndorsedLibs)
             .leaveDistinct()
+            .omitDuplicateNames()
             .resolveDependencies()
 
     /**
@@ -74,10 +75,24 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary>(
                 groupedByAbsolutePath.map { it.value.first() }
             }
 
+    /**
+     * Having two libraries with the same uniqName we only keep the first one.
+     * TODO: The old JS plugin passes libraries with the same uniqName twice,
+     * so make it a warning for now.
+     */
+    private fun List<KotlinLibrary>.omitDuplicateNames() =
+            this.groupBy { it.uniqueName }.let { groupedByUniqName ->
+                warnOnLibraryDuplicateNames(groupedByUniqName.filter { it.value.size > 1 }.keys)
+                groupedByUniqName.map { it.value.first() }
+            }
+
     private fun warnOnLibraryDuplicates(duplicatedPaths: Iterable<String>) {
         duplicatedPaths.forEach { logger.warning("library included more than once: $it") }
     }
 
+    private fun warnOnLibraryDuplicateNames(duplicatedPaths: Iterable<String>) {
+        duplicatedPaths.forEach { logger.warning("duplicate library name: $it") }
+    }
 
     /**
      * Given the list of root libraries does the following:

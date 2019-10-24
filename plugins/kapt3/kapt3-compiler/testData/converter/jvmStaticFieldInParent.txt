@@ -18,6 +18,7 @@ public final class Test {
     @kotlin.Metadata()
     public static final class A {
 
+        @java.lang.Deprecated()
         public static void test$annotations() {
         }
 

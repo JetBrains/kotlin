@@ -72,6 +72,7 @@ class KotlinDebuggerEvaluator(
         WATCH(WatchNodeImpl::class.java),
         WINDOW(EvaluatingExpressionRootNode::class.java),
         POPUP(XValueHint::class.java),
+        FROM_JAVA(null),
         UNKNOWN(null);
     }
 }

@@ -1,4 +1,4 @@
-namespace org.w3c.fetch;
+package org.w3c.fetch;
 
 
 // Downloaded from https://raw.githubusercontent.com/whatwg/fetch/master/Overview.src.html

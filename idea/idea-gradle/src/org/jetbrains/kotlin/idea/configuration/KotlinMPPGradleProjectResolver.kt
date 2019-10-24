@@ -79,9 +79,16 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
     }
 
     override fun populateModuleContentRoots(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
-        if (resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) == null) {
+        val mppModel = resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
+        if (mppModel == null) {
             return super.populateModuleContentRoots(gradleModule, ideModule)
+        } else {
+            if (!nativeDebugAdvertised && mppModel.kotlinNativeHome.isNotEmpty()) {
+                nativeDebugAdvertised = true
+                suggestNativeDebug(resolverCtx.projectPath)
+            }
         }
+
         populateContentRoots(gradleModule, ideModule, resolverCtx)
     }
 
@@ -216,6 +223,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             Key.create<MutableMap<String/* artifact path */, MutableList<String> /* module ids*/>>("gradleMPPArtifactsMap")
         val proxyObjectCloningCache = WeakHashMap<Any, Any>()
 
+        private var nativeDebugAdvertised = false
+
         fun initializeModuleData(
             gradleModule: IdeaModule,
             mainModuleNode: DataNode<ModuleData>,
@@ -340,7 +349,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
             val ignoreCommonSourceSets by lazy { externalProject.notImportedCommonSourceSets() }
             for (sourceSet in mppModel.sourceSets.values) {
-                if (sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) continue
+                if (sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) continue
                 if (sourceSet.actualPlatforms.supports(KotlinPlatform.COMMON) && ignoreCommonSourceSets) continue
                 val moduleId = getKotlinModuleId(gradleModule, sourceSet, resolverCtx)
                 val existingSourceSetDataNode = sourceSetMap[moduleId]?.first
@@ -438,7 +447,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 .toMap()
             if (resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java) == null) return
             processSourceSets(gradleModule, mppModel, ideModule, resolverCtx) { dataNode, sourceSet ->
-                if (dataNode == null || sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) return@processSourceSets
+                if (dataNode == null || sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) return@processSourceSets
                 createContentRootData(
                     sourceSet.sourceDirs,
                     sourceSet.sourceType,
@@ -548,7 +557,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             }
             val closedSourceSetGraph = Graphs.transitiveClosure(sourceSetGraph)
             for (sourceSet in closedSourceSetGraph.nodes()) {
-                val isAndroid = sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)
+                val isAndroid = sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID
                 val fromDataNode = if (isAndroid) {
                     ideModule
                 } else {
@@ -568,7 +577,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         sourceSetInfo.addSourceSets(dependeeSourceSets, selfName, gradleModule, resolverCtx)
                     }
                 }
-                if (sourceSet.actualPlatforms.supports(KotlinPlatform.ANDROID)) continue
+                if (sourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID) continue
                 for (dependeeSourceSet in dependeeSourceSets) {
                     val toDataNode = getSiblingKotlinModuleData(dependeeSourceSet, gradleModule, ideModule, resolverCtx) ?: continue
                     addDependency(fromDataNode, toDataNode, dependeeSourceSet.isTestModule)
@@ -947,14 +956,21 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
     }
 }
 
-fun ProjectResolverContext.getMppModel(gradleModule: IdeaModule): KotlinMPPGradleModel? =
-    this.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
-        ?.let { kotlinMppModel ->
-            KotlinMPPGradleProjectResolver.proxyObjectCloningCache[kotlinMppModel] as? KotlinMPPGradleModelImpl ?: KotlinMPPGradleModelImpl(
-                kotlinMppModel,
-                KotlinMPPGradleProjectResolver.proxyObjectCloningCache
-            ).also {
-                KotlinMPPGradleProjectResolver.proxyObjectCloningCache[kotlinMppModel] = it
+fun ProjectResolverContext.getMppModel(gradleModule: IdeaModule): KotlinMPPGradleModel? {
+    val mppModel = this.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
+    return if (mppModel is Proxy) {
+        this.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java)
+            ?.let { kotlinMppModel ->
+                KotlinMPPGradleProjectResolver.proxyObjectCloningCache[kotlinMppModel] as? KotlinMPPGradleModelImpl
+                    ?: KotlinMPPGradleModelImpl(
+                        kotlinMppModel,
+                        KotlinMPPGradleProjectResolver.proxyObjectCloningCache
+                    ).also {
+                        KotlinMPPGradleProjectResolver.proxyObjectCloningCache[kotlinMppModel] = it
+                    }
             }
-        }
+    } else {
+        mppModel
+    }
+}
 

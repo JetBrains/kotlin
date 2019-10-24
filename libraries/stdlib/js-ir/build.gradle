@@ -193,9 +193,7 @@ task runMocha(type: NodeTask) {
     args += [testOutputFile, kotlinTestTestOutputFile]
 
     execOverrides {
-        // Tests are currently failing. Ignore the exit value for now
-        // TODO: replace with rootProject.ignoreTestFailures when tests are fixed
-        it.ignoreExitValue = true
+        it.ignoreExitValue = rootProject.ignoreTestFailures
         it.workingDir = buildDir
     }
 }

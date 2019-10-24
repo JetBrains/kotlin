@@ -96,9 +96,10 @@ class JsDeclarationFactory : DeclarationFactory {
             oldConstructor.name,
             oldConstructor.visibility,
             oldConstructor.returnType,
-            oldConstructor.isInline,
-            oldConstructor.isExternal,
-            oldConstructor.isPrimary
+            isInline = oldConstructor.isInline,
+            isExternal = oldConstructor.isExternal,
+            isPrimary = oldConstructor.isPrimary,
+            isExpect = oldConstructor.isExpect
         ).also {
             descriptor.bind(it)
             it.parent = oldConstructor.parent

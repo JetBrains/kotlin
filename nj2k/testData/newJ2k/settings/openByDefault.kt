@@ -1,6 +1,6 @@
 // !openByDefault: true
 internal open class A {
-    internal open fun foo1() {}
+    open fun foo1() {}
     private fun foo2() {}
     fun foo3() {}
 }
@@ -10,7 +10,7 @@ internal class B {
 }
 
 internal abstract class C {
-    internal abstract fun foo()
+    abstract fun foo()
 }
 
 internal interface I {

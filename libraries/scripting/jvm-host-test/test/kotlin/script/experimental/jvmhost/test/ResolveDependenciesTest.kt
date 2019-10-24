@@ -6,7 +6,6 @@
 package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
-import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import kotlin.script.experimental.api.*
@@ -30,15 +29,16 @@ class ResolveDependenciesTest : TestCase() {
     private val classAccessScript = "${thisPackage}.ShouldBeVisibleFromScript().x".toScriptSource()
     private val classImportScript = "import ${thisPackage}.ShouldBeVisibleFromScript\nShouldBeVisibleFromScript().x".toScriptSource()
 
-    private val funAndValAccessScript =
-        "$thisPackage.funShouldBeVisibleFromScript($thisPackage.valShouldBeVisibleFromScript)".toScriptSource()
+    val funAndValAccessScriptText = "$thisPackage.funShouldBeVisibleFromScript($thisPackage.valShouldBeVisibleFromScript)"
+    private val funAndValAccessScript = funAndValAccessScriptText.toScriptSource()
 
-    private val funAndValImportScript =
+    private val funAndValImportScriptText =
         """
             import $thisPackage.funShouldBeVisibleFromScript
             import $thisPackage.valShouldBeVisibleFromScript
             funShouldBeVisibleFromScript(valShouldBeVisibleFromScript)
-        """.trimMargin().toScriptSource()
+        """.trimMargin()
+    private val funAndValImportScript = funAndValImportScriptText.toScriptSource()
 
     @Test
     fun testResolveClassFromClassloader() {
@@ -52,11 +52,24 @@ class ResolveDependenciesTest : TestCase() {
         runScriptAndCheckResult(classImportScript, configurationWithDependenciesFromClasspath, null, 42)
     }
 
-    @Ignore
     @Test
-    // This doesn't work since there is no way to resolve a top-level function/property via reflection now (see #KT-33892)
-    fun ignore_testResolveFunAndValFromClassloader() {
+    fun testResolveFunAndValFromClassloader() {
         runScriptAndCheckResult(funAndValAccessScript, configurationWithDependenciesFromClassloader, null, 42)
+        runScriptAndCheckResult(funAndValImportScript, configurationWithDependenciesFromClassloader, null, 42)
+    }
+
+    @Test
+    fun testReplResolveFunAndValFromClassloader() {
+        chechEvaluateInRepl(
+            configurationWithDependenciesFromClassloader, null,
+            sequenceOf(funAndValAccessScriptText, funAndValAccessScriptText),
+            sequenceOf(42, 42)
+        )
+        chechEvaluateInRepl(
+            configurationWithDependenciesFromClassloader, null,
+            funAndValImportScriptText.split('\n').asSequence(),
+            sequenceOf(null, null, 42)
+        )
         runScriptAndCheckResult(funAndValImportScript, configurationWithDependenciesFromClassloader, null, 42)
     }
 
@@ -106,7 +119,6 @@ class ResolveDependenciesTest : TestCase() {
             else -> throw Exception("Unexpected evaluation result: $res")
         }
     }
-
 }
 
 @Suppress("unused")

@@ -31,7 +31,11 @@ class KotlinRenameDispatcherHandler : RenameHandler {
     companion object {
         val EP_NAME = ExtensionPointName<RenameHandler>("org.jetbrains.kotlin.renameHandler")
 
-        private val handlers: Array<out RenameHandler> get() = Extensions.getExtensions(EP_NAME)
+        private val handlers: Array<out RenameHandler>
+            get() {
+                @Suppress("DEPRECATION")
+                return Extensions.getExtensions(EP_NAME)
+            }
     }
 
     internal fun getRenameHandler(dataContext: DataContext): RenameHandler? {

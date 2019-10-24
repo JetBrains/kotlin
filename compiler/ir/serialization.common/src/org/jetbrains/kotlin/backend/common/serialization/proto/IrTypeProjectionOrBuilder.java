@@ -17,11 +17,11 @@ public interface IrTypeProjectionOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance getVariance();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
+   * <code>required int32 type = 2;</code>
    */
   boolean hasType();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type = 2;</code>
+   * <code>required int32 type = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getType();
+  int getType();
 }

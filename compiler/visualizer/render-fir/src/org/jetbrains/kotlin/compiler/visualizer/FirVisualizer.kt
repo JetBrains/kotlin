@@ -9,16 +9,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirNamedReference
-import org.jetbrains.kotlin.fir.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractMemberDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -407,7 +405,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         visitArguments(functionCall.arguments, data)
                     } else {
                         data.append("fun ")
-                        val firFunction = callee.resolvedSymbol.fir as? FirAbstractMemberDeclaration
+                        val firFunction = callee.resolvedSymbol.fir as? FirTypeParametersOwner
                         firFunction?.let { renderListInTriangles(it.typeParameters, data, true) }
 
                         data.append(renderSymbol(callee.resolvedSymbol))

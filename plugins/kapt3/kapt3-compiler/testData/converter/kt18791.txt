@@ -130,12 +130,13 @@ public final class MyActivity {
     private final int f = 0;
     public final int propA = app.B.id.textView;
     private final int propB = app.B.id.textView;
-    private int propC;
+    private int propC = app.B.id.textView;
     public final int propD = app.B.id.textView;
-    public int propE;
+    public int propE = app.B.id.textView;
     private final int propF = 0;
 
     @Bind(id = lib.R.id.textView)
+    @java.lang.Deprecated()
     public static void a$annotations() {
     }
 
@@ -144,6 +145,7 @@ public final class MyActivity {
     }
 
     @Bind(id = lib.R.id.textView)
+    @java.lang.Deprecated()
     public static void b$annotations() {
     }
 
@@ -152,6 +154,7 @@ public final class MyActivity {
     }
 
     @Bind(id = app.R.layout.mainActivity)
+    @java.lang.Deprecated()
     public static void c$annotations() {
     }
 
@@ -160,6 +163,7 @@ public final class MyActivity {
     }
 
     @Bind(id = app.R.layout.mainActivity)
+    @java.lang.Deprecated()
     public static void d$annotations() {
     }
 
@@ -169,6 +173,7 @@ public final class MyActivity {
 
     @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
     @Bind(id = app.R2.layout.mainActivity)
+    @java.lang.Deprecated()
     public static void e$annotations() {
     }
 
@@ -177,6 +182,7 @@ public final class MyActivity {
     }
 
     @Bind(id = app.B.id.textView)
+    @java.lang.Deprecated()
     public static void f$annotations() {
     }
 

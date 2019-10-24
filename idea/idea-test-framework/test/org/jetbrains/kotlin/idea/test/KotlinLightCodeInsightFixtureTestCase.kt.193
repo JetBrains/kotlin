@@ -29,7 +29,6 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.ProjectScope
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
-import com.sun.tools.corba.se.idl.toJavaPortable.Util.fileName
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.CompilerSettings
@@ -63,9 +62,13 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected open val captureExceptions = true
 
-    protected fun testDataFile(): File = File(testDataPath, fileName())
+    protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
 
-    protected fun testPath(): String = testDataFile().toString()
+    protected fun testDataFile(): File = testDataFile(fileName())
+
+    protected fun testPath(fileName: String = fileName()): String = testDataFile(fileName).toString()
+
+    protected fun testPath(): String = testPath(fileName())
 
     protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 

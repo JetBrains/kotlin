@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.editor.Caret;
@@ -32,12 +31,9 @@ import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
 import kotlin.collections.SetsKt;
 import kotlin.jvm.functions.Function1;
-import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.CoroutineTestUtilKt;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -55,28 +51,15 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.diagnostics.Severity;
-import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo;
-import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
-import org.jetbrains.kotlin.util.slicedMap.SlicedMap;
-import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
@@ -113,196 +96,7 @@ public class KotlinTestUtils {
 
     private static final List<File> filesToDelete = new ArrayList<>();
 
-    /**
-     * Syntax:
-     *
-     * // MODULE: name(dependency1, dependency2, ...)
-     *
-     * // FILE: name
-     *
-     * Several files may follow one module
-     */
-    private static final String MODULE_DELIMITER = ",\\s*";
-
-    private static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile(
-            "(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*)?" +
-            "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
-    private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
-    private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
-
-    public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
-        @NotNull
-        @Override
-        public BindingContext getBindingContext() {
-            return new BindingContext() {
-
-                @NotNull
-                @Override
-                public Diagnostics getDiagnostics() {
-                    return Diagnostics.Companion.getEMPTY();
-                }
-
-                @Override
-                public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-                    return DUMMY_TRACE.get(slice, key);
-                }
-
-                @NotNull
-                @Override
-                public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-                    return DUMMY_TRACE.getKeys(slice);
-                }
-
-                @NotNull
-                @TestOnly
-                @Override
-                public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
-                    return ImmutableMap.of();
-                }
-
-                @Nullable
-                @Override
-                public KotlinType getType(@NotNull KtExpression expression) {
-                    return DUMMY_TRACE.getType(expression);
-                }
-
-                @Override
-                public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
-                    // do nothing
-                }
-            };
-        }
-
-        @Override
-        public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-        }
-
-        @Override
-        public <K> void record(WritableSlice<K, Boolean> slice, K key) {
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            if (slice == BindingContext.PROCESSED) return (V) Boolean.FALSE;
-            return SlicedMap.DO_NOTHING.get(slice, key);
-        }
-
-        @NotNull
-        @Override
-        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-            assert slice.isCollective();
-            return Collections.emptySet();
-        }
-
-        @Nullable
-        @Override
-        public KotlinType getType(@NotNull KtExpression expression) {
-            KotlinTypeInfo typeInfo = get(BindingContext.EXPRESSION_TYPE_INFO, expression);
-            return typeInfo != null ? typeInfo.getType() : null;
-        }
-
-        @Override
-        public void recordType(@NotNull KtExpression expression, @Nullable KotlinType type) {
-        }
-
-        @Override
-        public void report(@NotNull Diagnostic diagnostic) {
-            if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
-                throw new IllegalStateException("Unresolved: " + diagnostic.getPsiElement().getText());
-            }
-        }
-
-        @Override
-        public boolean wantsDiagnostics() {
-            return false;
-        }
-    };
-
-    public static BindingTrace DUMMY_EXCEPTION_ON_ERROR_TRACE = new BindingTrace() {
-        @NotNull
-        @Override
-        public BindingContext getBindingContext() {
-            return new BindingContext() {
-                @NotNull
-                @Override
-                public Diagnostics getDiagnostics() {
-                    throw new UnsupportedOperationException();
-                }
-
-                @Override
-                public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-                    return DUMMY_EXCEPTION_ON_ERROR_TRACE.get(slice, key);
-                }
-
-                @NotNull
-                @Override
-                public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-                    return DUMMY_EXCEPTION_ON_ERROR_TRACE.getKeys(slice);
-                }
-
-                @NotNull
-                @TestOnly
-                @Override
-                public <K, V> ImmutableMap<K, V> getSliceContents(@NotNull ReadOnlySlice<K, V> slice) {
-                    return ImmutableMap.of();
-                }
-
-                @Nullable
-                @Override
-                public KotlinType getType(@NotNull KtExpression expression) {
-                    return DUMMY_EXCEPTION_ON_ERROR_TRACE.getType(expression);
-                }
-
-                @Override
-                public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
-                    // do nothing
-                }
-            };
-        }
-
-        @Override
-        public <K, V> void record(WritableSlice<K, V> slice, K key, V value) {
-        }
-
-        @Override
-        public <K> void record(WritableSlice<K, Boolean> slice, K key) {
-        }
-
-        @Override
-        public <K, V> V get(ReadOnlySlice<K, V> slice, K key) {
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
-            assert slice.isCollective();
-            return Collections.emptySet();
-        }
-
-        @Nullable
-        @Override
-        public KotlinType getType(@NotNull KtExpression expression) {
-            return null;
-        }
-
-        @Override
-        public void recordType(@NotNull KtExpression expression, @Nullable KotlinType type) {
-        }
-
-        @Override
-        public void report(@NotNull Diagnostic diagnostic) {
-            if (diagnostic.getSeverity() == Severity.ERROR) {
-                throw new IllegalStateException(DefaultErrorMessages.render(diagnostic));
-            }
-        }
-
-        @Override
-        public boolean wantsDiagnostics() {
-            return true;
-        }
-    };
+    static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!([\\w_]+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
     private KotlinTestUtils() {
     }
@@ -728,141 +522,6 @@ public class KotlinTestUtils {
         ), javaErrorFile);
     }
 
-    public interface TestFileFactory<M, F> {
-        F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
-        M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends);
-    }
-
-    public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<Void, F> {
-        @Override
-        public final F createFile(
-                @Nullable Void module,
-                @NotNull String fileName,
-                @NotNull String text,
-                @NotNull Map<String, String> directives
-        ) {
-            return create(fileName, text, directives);
-        }
-
-        @NotNull
-        public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives);
-
-        @Override
-        public Void createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
-            return null;
-        }
-    }
-
-    @NotNull
-    public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
-        return createTestFiles(testFileName, expectedText, factory, false, "");
-    }
-
-    @NotNull
-    public static <M, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory, String coroutinesPackage) {
-        return createTestFiles(testFileName, expectedText, factory, false, coroutinesPackage);
-    }
-
-    @NotNull
-    public static <M, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M, F> factory,
-            boolean preserveLocations, String coroutinesPackage) {
-        Map<String, String> directives = parseDirectives(expectedText);
-
-        List<F> testFiles = Lists.newArrayList();
-        Matcher matcher = FILE_OR_MODULE_PATTERN.matcher(expectedText);
-        boolean hasModules = false;
-        if (!matcher.find()) {
-            assert testFileName != null : "testFileName should not be null if no FILE directive defined";
-            // One file
-            testFiles.add(factory.createFile(null, testFileName, expectedText, directives));
-        }
-        else {
-            int processedChars = 0;
-            M module = null;
-            // Many files
-            while (true) {
-                String moduleName = matcher.group(1);
-                String moduleDependencies = matcher.group(2);
-                String moduleFriends = matcher.group(3);
-                if (moduleName != null) {
-                    moduleName = moduleName.trim();
-                    hasModules = true;
-                    module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends));
-                }
-
-                String fileName = matcher.group(4);
-                int start = processedChars;
-
-                boolean nextFileExists = matcher.find();
-                int end;
-                if (nextFileExists) {
-                    end = matcher.start();
-                }
-                else {
-                    end = expectedText.length();
-                }
-                String fileText = preserveLocations ?
-                                  substringKeepingLocations(expectedText, start, end) :
-                                  expectedText.substring(start,end);
-                processedChars = end;
-
-                testFiles.add(factory.createFile(module, fileName, fileText, directives));
-
-                if (!nextFileExists) break;
-            }
-            assert processedChars == expectedText.length() : "Characters skipped from " +
-                                                             processedChars +
-                                                             " to " +
-                                                             (expectedText.length() - 1);
-        }
-
-        if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
-            M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList()) : null;
-
-            boolean isReleaseCoroutines =
-                    !coroutinesPackage.contains("experimental") &&
-                    !isDirectiveDefined(expectedText, "!LANGUAGE: -ReleaseCoroutines");
-
-            boolean checkStateMachine = isDirectiveDefined(expectedText, "CHECK_STATE_MACHINE");
-            boolean checkTailCallOptimization = isDirectiveDefined(expectedText, "CHECK_TAIL_CALL_OPTIMIZATION");
-
-            testFiles.add(
-                    factory.createFile(
-                            supportModule,
-                            "CoroutineUtil.kt",
-                            CoroutineTestUtilKt.createTextForHelpers(isReleaseCoroutines, checkStateMachine, checkTailCallOptimization),
-                            directives
-                    ));
-        }
-
-        return testFiles;
-    }
-
-    private static String substringKeepingLocations(String string, int start, int end) {
-        Matcher matcher = LINE_SEPARATOR_PATTERN.matcher(string);
-        StringBuilder prefix = new StringBuilder();
-        int lastLineOffset = 0;
-        while (matcher.find()) {
-            if (matcher.end() > start) {
-                break;
-            }
-
-            lastLineOffset = matcher.end();
-            prefix.append('\n');
-        }
-
-        while (lastLineOffset++ < start) {
-            prefix.append(' ');
-        }
-
-        return prefix + string.substring(start, end);
-    }
-
-    private static List<String> parseModuleList(@Nullable String dependencies) {
-        if (dependencies == null) return Collections.emptyList();
-        return StringsKt.split(dependencies, Pattern.compile(MODULE_DELIMITER), 0);
-    }
-
     @NotNull
     public static Map<String, String> parseDirectives(String expectedText) {
         Map<String, String> directives = new HashMap<>();
@@ -886,7 +545,7 @@ public class KotlinTestUtils {
             throw new RuntimeException(e);
         }
 
-        List<String> files = createTestFiles("", content, new TestFileFactoryNoModules<String>() {
+        List<String> files = TestFiles.createTestFiles("", content, new TestFiles.TestFileFactoryNoModules<String>() {
             @NotNull
             @Override
             public String create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {
@@ -1045,7 +704,11 @@ public class KotlinTestUtils {
     }
 
     public interface DoTest {
-        void invoke(String filePath) throws Exception;
+        void invoke(@NotNull String filePath) throws Exception;
+    }
+
+    public static void runTest(@NotNull DoTest test, @NotNull TestCase testCase, @TestDataFile String testDataFile) throws Exception {
+        runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFile);
     }
 
     // In this test runner version the `testDataFile` parameter is annotated by `TestDataFile`.
@@ -1055,7 +718,7 @@ public class KotlinTestUtils {
     }
 
     public static void runTestWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, @TestDataFile String testDataFile, String ignoreDirective) throws Exception {
-        runTest0WithCustomIgnoreDirective(test, targetBackend, testDataFile, ignoreDirective);
+        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, ignoreDirective), null, testDataFile);
     }
 
     // In this test runner version, NONE of the parameters are annotated by `TestDataFile`.
@@ -1067,127 +730,89 @@ public class KotlinTestUtils {
     // * sometimes, for too common/general names, it shows many variants to navigate
     // * it adds an additional step for navigation -- you must choose an exact file to navigate
     public static void runTest0(DoTest test, TargetBackend targetBackend, String testDataFilePath) throws Exception {
-        runTest0WithCustomIgnoreDirective(test, targetBackend, testDataFilePath, IGNORE_BACKEND_DIRECTIVE_PREFIX);
+        runTestImpl(testWithCustomIgnoreDirective(test, targetBackend, IGNORE_BACKEND_DIRECTIVE_PREFIX), null, testDataFilePath);
     }
 
-    private static void runTest0WithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String testDataFilePath, String ignoreDirective) throws Exception {
-        File testDataFile = new File(testDataFilePath);
+    private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
+        DoTest wrappedTest = testCase != null ?
+                             MuteWithFileKt.testWithMuteInFile(test, testCase) :
+                             MuteWithFileKt.testWithMuteInFile(test, "");
+        wrappedTest.invoke(testDataFilePath);
+    }
 
-        if (isMutedWithFile(testDataFile)) {
-            return;
+    private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {
+        if (targetBackend == TargetBackend.ANY && !AUTOMATICALLY_MUTE_FAILED_TESTS) {
+            return test;
         }
 
-        boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile, ignoreDirective);
+        return filePath -> {
+            File testDataFile = new File(filePath);
 
-        if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
-            // Only ignore if it is ignored for both backends
-            // Motivation: this backend works => all good, even if compatible backend fails
-            // This backend fails, compatible works => need to know
-            isIgnored &= isIgnoredTarget(targetBackend.getCompatibleWith(), testDataFile);
-        }
+            boolean isIgnored = isIgnoredTarget(targetBackend, testDataFile, ignoreDirective);
 
-        try {
-            test.invoke(testDataFilePath);
-        }
-        catch (Throwable e) {
-            if (checkFailFile(e, testDataFile)) {
+            if (DONT_IGNORE_TESTS_WORKING_ON_COMPATIBLE_BACKEND) {
+                // Only ignore if it is ignored for both backends
+                // Motivation: this backend works => all good, even if compatible backend fails
+                // This backend fails, compatible works => need to know
+                isIgnored &= isIgnoredTarget(targetBackend.getCompatibleWith(), testDataFile);
+            }
+
+            try {
+                test.invoke(filePath);
+            }
+            catch (Throwable e) {
+                if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
+                    String text = doLoadFile(testDataFile);
+                    String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name() + "\n";
+
+                    String newText;
+                    if (text.startsWith("// !")) {
+                        StringBuilder prefixBuilder = new StringBuilder();
+                        int l = 0;
+                        while (text.startsWith("// !", l)) {
+                            int r = text.indexOf("\n", l) + 1;
+                            if (r <= 0) r = text.length();
+                            prefixBuilder.append(text.substring(l, r));
+                            l = r;
+                        }
+                        prefixBuilder.append(directive);
+                        prefixBuilder.append(text.substring(l));
+
+                        newText = prefixBuilder.toString();
+                    } else {
+                        newText = directive + text;
+                    }
+
+                    if (!newText.equals(text)) {
+                        System.err.println("\"" + directive + "\" was added to \"" + testDataFile + "\"");
+                        FileUtil.writeToFile(testDataFile, newText);
+                    }
+                }
+
+                if (RUN_IGNORED_TESTS_AS_REGULAR || !isIgnored) {
+                    throw e;
+                }
+
+                if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
+                    e.printStackTrace();
+                }
                 return;
             }
 
-            if (!isIgnored && AUTOMATICALLY_MUTE_FAILED_TESTS) {
-                String text = doLoadFile(testDataFile);
-                String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name() + "\n";
-
-                String newText;
-                if (text.startsWith("// !")) {
-                    StringBuilder prefixBuilder = new StringBuilder();
-                    int l = 0;
-                    while (text.startsWith("// !", l)) {
-                        int r = text.indexOf("\n", l) + 1;
-                        if (r <= 0) r = text.length();
-                        prefixBuilder.append(text.substring(l, r));
-                        l = r;
+            if (isIgnored) {
+                if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
+                    String text = doLoadFile(testDataFile);
+                    String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name();
+                    String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
+                    if (!newText.equals(text)) {
+                        System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
+                        FileUtil.writeToFile(testDataFile, newText);
                     }
-                    prefixBuilder.append(directive);
-                    prefixBuilder.append(text.substring(l));
-
-                    newText = prefixBuilder.toString();
-                } else {
-                    newText = directive + text;
                 }
 
-                if (!newText.equals(text)) {
-                    System.err.println("\"" + directive + "\" was added to \"" + testDataFile + "\"");
-                    FileUtil.writeToFile(testDataFile, newText);
-                }
+                throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive.");
             }
-
-            if (RUN_IGNORED_TESTS_AS_REGULAR || !isIgnored) {
-                throw e;
-            }
-
-            if (PRINT_STACKTRACE_FOR_IGNORED_TESTS) {
-                e.printStackTrace();
-            }
-            return;
-        }
-
-        Assert.assertNull("Test is good but there is a fail file", failFile(testDataFile));
-
-        if (isIgnored) {
-            if (AUTOMATICALLY_UNMUTE_PASSED_TESTS) {
-                String text = doLoadFile(testDataFile);
-                String directive = InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX + targetBackend.name();
-                String newText = Pattern.compile("^" + directive + "\n", Pattern.MULTILINE).matcher(text).replaceAll("");
-                if (!newText.equals(text)) {
-                    System.err.println("\"" + directive + "\" was removed from \"" + testDataFile + "\"");
-                    FileUtil.writeToFile(testDataFile, newText);
-                }
-            }
-
-            throw new AssertionError("Looks like this test can be unmuted. Remove IGNORE_BACKEND directive.");
-        }
-    }
-
-    private static boolean isMutedWithFile(@NotNull File testDataFile) {
-        if (!testDataFile.isFile()) {
-            return false;
-        }
-
-        File muteFile = new File(testDataFile.getPath() + ".mute");
-        return muteFile.exists() && muteFile.isFile();
-    }
-
-
-    @Nullable
-    private static File failFile(@NotNull File testDataFile) {
-        if (!testDataFile.isFile()) {
-            return null;
-        }
-
-        File failFile = new File(testDataFile.getPath() + ".fail");
-        if (!failFile.exists() || !failFile.isFile()) {
-            return null;
-        }
-
-        return failFile;
-    }
-
-    private static boolean checkFailFile(@NotNull Throwable failure, @NotNull File testDataFile) {
-        File failFile = failFile(testDataFile);
-        if (failFile == null) {
-            return false;
-        }
-
-        String muteMessage = failure.getMessage();
-
-        Throwable cause = failure.getCause();
-        if (cause != null) {
-            muteMessage = muteMessage + "\n" + cause.toString();
-        }
-
-        assertEqualsToFile(failFile, muteMessage);
-        return true;
+        };
     }
 
     public static String getTestsRoot(@NotNull Class<?> testCaseClass) {
@@ -1208,6 +833,23 @@ public class KotlinTestUtils {
         catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void assertAllTestsPresentByMetadata(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            boolean recursive,
+            @NotNull String... excludeDirs
+    ) {
+        assertAllTestsPresentByMetadata(
+                testCaseClass,
+                testDataDir,
+                filenamePattern,
+                TargetBackend.ANY,
+                recursive,
+                excludeDirs
+        );
     }
 
     public static void assertAllTestsPresentByMetadata(
@@ -1236,6 +878,14 @@ public class KotlinTestUtils {
                 }
             }
         }
+    }
+
+    public static void assertAllTestsPresentInSingleGeneratedClass(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern
+    ) {
+        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, TargetBackend.ANY);
     }
 
     public static void assertAllTestsPresentInSingleGeneratedClass(

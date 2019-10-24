@@ -29,17 +29,17 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
     val fixture: JavaCodeInsightTestFixture
         get() = myFixture
 
-    protected fun doTest(path: String) {
-        val mainFile = File(path)
-        val afterFile = File(path + ".after")
+    protected fun doTest(unused: String) {
+        val mainFile = testDataFile()
+        val afterFile = File(testDataPath, "${fileName()}.after")
 
         val mainFileName = mainFile.name
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
         val extraFiles = mainFile.parentFile.listFiles { _, name ->
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         }
-        val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(path.replace(mainFileName, it.name)) }
-        val file = myFixture.configureByFile(path)
+        val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(it.name) }
+        val file = myFixture.configureByFile(fileName())
 
         val configured = configureCompilerOptions(file.text, project, module)
 
@@ -47,7 +47,10 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
             val afterFileExists = afterFile.exists()
 
             val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED)!!
+
+            @Suppress("DEPRECATION")
             val handler = Extensions.getExtensions(InlineActionHandler.EP_NAME).firstOrNull { it.canInlineElement(targetElement) }
+
             val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.file.text, "// ERROR: ")
             if (handler != null) {
                 try {

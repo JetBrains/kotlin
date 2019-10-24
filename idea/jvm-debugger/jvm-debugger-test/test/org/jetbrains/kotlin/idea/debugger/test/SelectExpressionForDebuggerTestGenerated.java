@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.debugger.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -24,11 +23,11 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SelectExpression extends AbstractSelectExpressionForDebuggerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSelectExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/selectExpression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/selectExpression"), Pattern.compile("^(.+)\\.kt$"), false);
         }
 
         @TestMetadata("annotation.kt")
@@ -227,11 +226,11 @@ public class SelectExpressionForDebuggerTestGenerated extends AbstractSelectExpr
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DisallowMethodCalls extends AbstractSelectExpressionForDebuggerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestWoMethodCalls, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTestWoMethodCalls, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInDisallowMethodCalls() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/selectExpression/disallowMethodCalls"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/selectExpression/disallowMethodCalls"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("binaryExpression.kt")

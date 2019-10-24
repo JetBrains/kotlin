@@ -1,4 +1,4 @@
-fun foo() {
+fun foo() { /// M
     require(true) { "foo" } /// *, L, λ
 
     require(true) { val a = 5 } /// *, L, λ

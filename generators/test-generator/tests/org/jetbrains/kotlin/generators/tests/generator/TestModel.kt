@@ -23,20 +23,34 @@ interface TestEntityModel {
     val dataString: String?
 }
 
-interface TestClassModel : TestEntityModel {
+interface ClassModel : TestEntityModel {
     val innerTestClasses: Collection<TestClassModel>
     val methods: Collection<MethodModel>
     val isEmpty: Boolean
     val dataPathRoot: String?
+    val annotations: Collection<AnnotationModel>
+    val imports: Set<Class<*>>
+}
+
+abstract class TestClassModel : ClassModel {
+    override val imports: Set<Class<*>>
+        get() {
+            return mutableSetOf<Class<*>>().also { allImports ->
+                annotations.mapTo(allImports) { it.annotation }
+                methods.flatMapTo(allImports) { it.imports() }
+                innerTestClasses.flatMapTo(allImports) { it.imports }
+            }
+        }
 }
 
 interface MethodModel : TestEntityModel {
     fun shouldBeGenerated(): Boolean = true
     fun generateSignature(p: Printer)
     fun generateBody(p: Printer)
+    fun imports(): Collection<Class<*>> = emptyList()
 }
 
-interface TestMethodModel : MethodModel {
+abstract class TestMethodModel : MethodModel {
     override fun generateSignature(p: Printer) {
         p.print("public void $name() throws Exception")
     }

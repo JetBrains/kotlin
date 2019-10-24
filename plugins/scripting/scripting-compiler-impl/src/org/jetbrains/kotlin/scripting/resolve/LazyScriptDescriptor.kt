@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.MISSING_IMPORTED_SCRIPT_FILE
 import org.jetbrains.kotlin.diagnostics.Errors.MISSING_IMPORTED_SCRIPT_PSI
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -46,9 +47,11 @@ import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.GetScriptingClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 
 class LazyScriptDescriptor(
@@ -118,8 +121,8 @@ class LazyScriptDescriptor(
     }
 
     private val scriptingHostConfiguration: () -> ScriptingHostConfiguration = resolveSession.storageManager.createLazyValue {
-        scriptCompilationConfiguration()[ScriptCompilationConfiguration.hostConfiguration]
-            ?: throw IllegalArgumentException("Expecting 'hostConfiguration' property in the script compilation configuration for the script ${scriptInfo.script.containingFile}")
+        // TODO: use platform-specific configuration by default instead
+        scriptCompilationConfiguration()[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
     }
 
     private val scriptingClassGetter: () -> GetScriptingClass = resolveSession.storageManager.createLazyValue {
@@ -156,42 +159,56 @@ class LazyScriptDescriptor(
     override fun getUnsubstitutedPrimaryConstructor() = super.getUnsubstitutedPrimaryConstructor()!!
 
     internal val baseClassDescriptor: () -> ClassDescriptor? = resolveSession.storageManager.createNullableLazyValue {
-        val baseClass = getScriptingClass(
-            scriptCompilationConfiguration()[ScriptCompilationConfiguration.baseClass]
-                ?: throw IllegalStateException("Base class is not configured for the script ${scriptInfo.script.containingFile}")
-        )
+        val scriptBaseType = scriptCompilationConfiguration()[ScriptCompilationConfiguration.baseClass]
+            ?: error("Base class is not configured for the script ${scriptInfo.script.containingFile}")
+        val typeName = scriptBaseType.run { fromClass?.toString()?.replace("class ", "") ?: typeName }
+        val fqnName = FqName(typeName)
+        val classId = ClassId.topLevel(fqnName)
+
         findTypeDescriptor(
-            baseClass,
-            if (baseClass.qualifiedName?.startsWith("kotlin.script.templates.standard") == true) Errors.MISSING_SCRIPT_STANDARD_TEMPLATE
+            classId,
+            typeName,
+            if (fqnName.parent().asString().startsWith("kotlin.script.templates.standard")) Errors.MISSING_SCRIPT_STANDARD_TEMPLATE
             else Errors.MISSING_SCRIPT_BASE_CLASS
         )
     }
 
     override fun computeSupertypes() = listOf(baseClassDescriptor()?.defaultType ?: builtIns.anyType)
 
-    // TODO: consider passing ScriptSource to avoid psi file fsearching
     private inner class ImportedScriptDescriptorsFinder {
 
-        val fileManager = VirtualFileManager.getInstance()
-        val localFS = fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL)
-        val psiManager = PsiManager.getInstance(scriptInfo.script.project)
+        val localFS by lazy {
+            val fileManager = VirtualFileManager.getInstance()
+            fileManager.getFileSystem(StandardFileSystems.FILE_PROTOCOL) 
+        }
+        val psiManager by lazy { PsiManager.getInstance(scriptInfo.script.project) }
 
-        operator fun invoke(importedScriptFile: File): ScriptDescriptor? {
+        operator fun invoke(importedScript: SourceCode): ScriptDescriptor? {
+            // Note: is not an error now - if import references other valid source file, it is simply compiled along with script
+            // TODO: check if this is the behavior we want to have - see #KT-28916
+            val ktScript = getKtFile(importedScript)?.declarations?.firstIsInstanceOrNull<KtScript>()
+                ?: return null
+            return resolveSession.getScriptDescriptor(ktScript) as ScriptDescriptor
+        }
 
-            fun errorDescriptor(errorDiagnostic: DiagnosticFactory1<PsiElement, String>?): ScriptDescriptor? {
-                reportErrorString1(errorDiagnostic, importedScriptFile.path)
+        private fun getKtFile(script: SourceCode): KtFile? {
+            if (script is KtFileScriptSource) return script.ktFile
+
+            // TODO: support any kind of ScriptSource.
+            if (script !is FileBasedScriptSource) return null
+
+            fun errorKtFile(errorDiagnostic: DiagnosticFactory1<PsiElement, String>?): KtFile? {
+                reportErrorString1(errorDiagnostic, script.file.path)
                 return null
             }
 
-            val vfile = localFS.findFileByPath(importedScriptFile.absolutePath)
-                ?: return errorDescriptor(MISSING_IMPORTED_SCRIPT_FILE)
-            val psiFile = psiManager.findFile(vfile)
-                ?: return errorDescriptor(MISSING_IMPORTED_SCRIPT_PSI)
-            // Note: is not an error now - if import references other valid source file, it is simply compiled along with script
-            // TODO: check if this is the behavior we want to have - see #KT-28916
-            val ktScript = (psiFile as? KtFile)?.declarations?.firstIsInstanceOrNull<KtScript>()
-                ?: return null
-            return resolveSession.getScriptDescriptor(ktScript) as ScriptDescriptor
+            val virtualFile = when (script) {
+                is VirtualFileScriptSource -> script.virtualFile
+                else -> localFS.findFileByPath(script.file.absolutePath) ?: return errorKtFile(MISSING_IMPORTED_SCRIPT_FILE)
+            }
+
+            val psiFile = psiManager.findFile(virtualFile) ?: return errorKtFile(MISSING_IMPORTED_SCRIPT_PSI)
+            return psiFile as? KtFile
         }
     }
 

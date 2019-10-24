@@ -194,7 +194,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIrJsTextTestCase> {
-            model("ir/irJsText")
+            model("ir/irJsText", pattern = "^(.+)\\.kt(s)?\$")
         }
 
         testClass<AbstractIrCfgTestCase> {

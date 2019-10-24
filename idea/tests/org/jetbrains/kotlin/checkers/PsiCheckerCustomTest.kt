@@ -15,6 +15,7 @@ import org.junit.runner.RunWith
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
 
+    @TestMetadata("noUnusedParameterWhenCustom.kt")
     fun testNoUnusedParameterWhenCustom() {
         val testAnnotation = "MyTestAnnotation"
         EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(testAnnotation)

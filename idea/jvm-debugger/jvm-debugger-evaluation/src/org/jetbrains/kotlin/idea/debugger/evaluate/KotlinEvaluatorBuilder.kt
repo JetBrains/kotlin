@@ -103,10 +103,12 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
             status.evaluationType(evaluationType)
         }
 
-        val language = when (codeFragment.language) {
-            KotlinLanguage.INSTANCE -> EvaluationContextLanguage.Kotlin
-            JavaLanguage.INSTANCE -> EvaluationContextLanguage.Java
-            else -> EvaluationContextLanguage.Other
+        val language = runReadAction {
+            when {
+                codeFragment.getCopyableUserData(KtCodeFragment.FAKE_CONTEXT_FOR_JAVA_FILE) != null -> EvaluationContextLanguage.Java
+                codeFragment.context?.language == KotlinLanguage.INSTANCE -> EvaluationContextLanguage.Kotlin
+                else -> EvaluationContextLanguage.Other
+            }
         }
 
         status.contextLanguage(language)
@@ -236,20 +238,30 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
     }
 
     private fun KtCodeFragment.wrapToStringIfNeeded(bindingContext: BindingContext): Boolean {
-        if (this !is KtExpressionCodeFragment) {
-            return false
-        }
+        val expression = runReadAction {
+            when (this) {
+                is KtExpressionCodeFragment -> getContentElement()
+                is KtBlockCodeFragment -> getContentElement().statements.lastOrNull()
+                else -> {
+                    LOG.error("Invalid code fragment type: ${this.javaClass}")
+                    null
+                }
+            }
+        } ?: return false
 
-        val contentElement = runReadAction { getContentElement() }
-        val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, contentElement]?.type
-        if (contentElement != null && expressionType?.isInlineClassType() == true) {
+        return wrapToStringIfNeeded(expression, bindingContext)
+    }
+
+    private fun wrapToStringIfNeeded(expression: KtExpression, bindingContext: BindingContext): Boolean {
+        val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, expression]?.type ?: return false
+        if (expressionType.isInlineClassType()) {
             val newExpression = runReadAction {
-                val expressionText = contentElement.text
-                KtPsiFactory(project).createExpression("($expressionText).toString()")
+                val expressionText = expression.text
+                KtPsiFactory(expression.project).createExpression("($expressionText).toString()")
             }
             runInEdtAndWait {
-                project.executeWriteCommand("Wrap with 'toString()'") {
-                    contentElement.replace(newExpression)
+                expression.project.executeWriteCommand("Wrap with 'toString()'") {
+                    expression.replace(newExpression)
                 }
             }
             return true
@@ -328,7 +340,19 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
             val thread = context.suspendContext.thread?.threadReference?.takeIf { it.isSuspended }
                 ?: error("Can not find a thread to run evaluation on")
 
-            val eval = JDIEval(vm, classLoader, thread, context.invokePolicy)
+            val eval = object : JDIEval(vm, classLoader, thread, context.invokePolicy) {
+                override fun jdiInvokeStaticMethod(type: ClassType, method: Method, args: List<Value?>, invokePolicy: Int): Value? {
+                    return context.invokeMethod(type, method, args)
+                }
+
+                override fun jdiInvokeStaticMethod(type: InterfaceType, method: Method, args: List<Value?>, invokePolicy: Int): Value? {
+                    return context.invokeMethod(type, method, args)
+                }
+
+                override fun jdiInvokeMethod(obj: ObjectReference, method: Method, args: List<Value?>, policy: Int): Value? {
+                    return context.invokeMethod(obj, method, args, ObjectReference.INVOKE_NONVIRTUAL)
+                }
+            }
             interpreterLoop(mainMethod, makeInitialFrame(mainMethod, args.map { it.asValue() }), eval)
         }
     }
@@ -345,22 +369,20 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
             .filter { !it.isMainClass }
             .forEach { context.findClass(it.className, classLoader) }
 
-        return context.vm.virtualMachine.executeWithBreakpointsDisabled {
-            for (parameterType in compiledData.mainMethodSignature.parameterTypes) {
-                context.findClass(parameterType, classLoader)
-            }
-
-            val variableFinder = VariableFinder(context)
-            val args = calculateMainMethodCallArguments(variableFinder, compiledData, status)
-
-            val result = block(args)
-
-            for (wrapper in variableFinder.refWrappers) {
-                updateLocalVariableValue(variableFinder.evaluatorValueConverter, wrapper)
-            }
-
-            return@executeWithBreakpointsDisabled result
+        for (parameterType in compiledData.mainMethodSignature.parameterTypes) {
+            context.findClass(parameterType, classLoader)
         }
+
+        val variableFinder = VariableFinder(context)
+        val args = calculateMainMethodCallArguments(variableFinder, compiledData, status)
+
+        val result = block(args)
+
+        for (wrapper in variableFinder.refWrappers) {
+            updateLocalVariableValue(variableFinder.evaluatorValueConverter, wrapper)
+        }
+
+        return result
     }
 
     private fun updateLocalVariableValue(converter: EvaluatorValueConverter, ref: VariableFinder.RefWrapper) {
@@ -460,17 +482,6 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
             val obj = value.obj(value.asmType) as? ObjectReference ?: return null
             return VariableFinder.Result(EvaluatorValueConverter(context).unref(obj))
         }
-    }
-}
-
-private fun <T> VirtualMachine.executeWithBreakpointsDisabled(block: () -> T): T {
-    val allRequests = eventRequestManager().breakpointRequests() + eventRequestManager().classPrepareRequests()
-
-    try {
-        allRequests.forEach { it.disable() }
-        return block()
-    } finally {
-        allRequests.forEach { it.enable() }
     }
 }
 

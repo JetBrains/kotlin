@@ -52,9 +52,7 @@ public class DeferredType extends WrappedType {
             @NotNull BindingTrace trace,
             @NotNull Function0<KotlinType> compute
     ) {
-        //noinspection unchecked
-        DeferredType deferredType =
-                new DeferredType(storageManager.createLazyValueWithPostCompute(compute, RECURSION_PREVENTER, t -> null));
+        DeferredType deferredType = new DeferredType(storageManager.createLazyValue(compute, RECURSION_PREVENTER));
         trace.record(DEFERRED_TYPE, new Box<>(deferredType));
         return deferredType;
     }

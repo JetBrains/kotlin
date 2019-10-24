@@ -1,20 +1,22 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.BaseTransformedType
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.visitors.*
 
-@BaseTransformedType
-interface FirStatement : FirElement, FirAnnotationContainer {
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitStatement(this, data)
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        acceptAnnotations(visitor, data)
-    }
+interface FirStatement : FirAnnotationContainer {
+    override val psi: PsiElement?
+    override val annotations: List<FirAnnotationCall>
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitStatement(this, data)
 }

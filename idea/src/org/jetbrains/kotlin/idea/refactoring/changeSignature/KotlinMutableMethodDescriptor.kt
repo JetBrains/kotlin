@@ -32,6 +32,10 @@ class KotlinMutableMethodDescriptor(override val original: KotlinMethodDescripto
     fun addParameter(parameter: KotlinParameterInfo) {
         parameters.add(parameter)
     }
+    
+    fun addParameter(index: Int, parameter: KotlinParameterInfo) {
+        parameters.add(index, parameter)
+    }
 
     fun removeParameter(index: Int) {
         val paramInfo = parameters.removeAt(index)

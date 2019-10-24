@@ -319,9 +319,14 @@ public class CodeInsightUtils {
     public static PsiElement getTopmostElementAtOffset(@NotNull PsiElement element, int offset) {
         do {
             PsiElement parent = element.getParent();
-            if (parent == null || (parent.getTextOffset() < offset) || parent instanceof KtBlockExpression) {
+            if (parent == null
+                || (parent.getTextOffset() < offset)
+                || parent instanceof KtBlockExpression
+                || parent instanceof PsiFile
+            ) {
                 break;
             }
+
             element = parent;
         }
         while(true);

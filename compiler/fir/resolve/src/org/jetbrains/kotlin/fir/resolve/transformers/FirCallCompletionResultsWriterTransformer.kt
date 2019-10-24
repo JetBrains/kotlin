@@ -9,12 +9,13 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substituteOrNull
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*
@@ -88,15 +89,15 @@ class FirCallCompletionResultsWriterTransformer(
                         val typeRef = argument.typeRef as FirResolvedTypeRef
                         FirTypeProjectionWithVarianceImpl(
                             argument.psi,
-                            argument.variance,
-                            typeRef.withReplacedConeType(type)
+                            typeRef.withReplacedConeType(type),
+                            argument.variance
                         )
                     }
                     else -> {
                         FirTypeProjectionWithVarianceImpl(
                             argument?.psi,
-                            Variance.INVARIANT,
-                            FirResolvedTypeRefImpl(null, type, emptyList())
+                            FirResolvedTypeRefImpl(null, type),
+                            Variance.INVARIANT
                         )
                     }
                 }
@@ -133,7 +134,7 @@ class FirCallCompletionResultsWriterTransformer(
     override fun transformAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         data: Nothing?
-    ): CompositeTransformResult<FirDeclaration> {
+    ): CompositeTransformResult<FirStatement> {
         val initialType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         if (initialType != null) {
             val finalType = finalSubstitutor.substituteOrNull(initialType)

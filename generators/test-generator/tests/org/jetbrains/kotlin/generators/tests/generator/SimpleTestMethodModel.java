@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
 
-public class SimpleTestMethodModel implements TestMethodModel {
+public class SimpleTestMethodModel extends TestMethodModel {
 
     @NotNull
     private final File rootDir;
@@ -97,10 +97,5 @@ public class SimpleTestMethodModel implements TestMethodModel {
 
         boolean ignored = skipIgnored && isIgnoredTarget(targetBackend, file);
         return (ignored ? "ignore" : "test") + StringsKt.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
-    }
-
-    @Override
-    public void generateSignature(@NotNull Printer p) {
-        TestMethodModel.DefaultImpls.generateSignature(this, p);
     }
 }

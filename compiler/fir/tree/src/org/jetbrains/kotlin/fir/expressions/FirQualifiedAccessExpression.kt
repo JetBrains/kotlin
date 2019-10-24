@@ -6,21 +6,33 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirQualifiedAccessExpression(
-    psi: PsiElement?
-) : FirQualifiedAccess, @VisitedSupertype FirUnknownTypeExpression(psi) {
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitQualifiedAccessExpression(this, data)
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        calleeReference.accept(visitor, data)
-        explicitReceiver?.accept(visitor, data)
-        dispatchReceiver.accept(visitor, data)
-        extensionReceiver.accept(visitor, data)
-        super<FirUnknownTypeExpression>.acceptChildren(visitor, data)
-    }
+abstract class FirQualifiedAccessExpression : FirPureAbstractElement(), FirExpression, FirQualifiedAccess {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val safe: Boolean
+    abstract override val explicitReceiver: FirExpression?
+    abstract override val dispatchReceiver: FirExpression
+    abstract override val extensionReceiver: FirExpression
+    abstract override val calleeReference: FirReference
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccessExpression(this, data)
+
+    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+
+    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+
+    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+
+    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 }

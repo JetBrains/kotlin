@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
-import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 
 data class PrimaryConstructor(
-    val firConstructor: FirConstructorImpl,
+    val firConstructor: FirConstructor,
     val valueParameters: List<ValueParameter>
 )

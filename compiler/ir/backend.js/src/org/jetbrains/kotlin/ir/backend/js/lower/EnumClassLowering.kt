@@ -192,9 +192,10 @@ class EnumClassConstructorTransformer(val context: CommonBackendContext, private
             enumConstructor.name,
             enumConstructor.visibility,
             enumConstructor.returnType,
-            enumConstructor.isInline,
-            enumConstructor.isExternal,
-            enumConstructor.isPrimary
+            isInline = enumConstructor.isInline,
+            isExternal = enumConstructor.isExternal,
+            isPrimary = enumConstructor.isPrimary,
+            isExpect = enumConstructor.isExpect
         ).apply {
             loweredConstructorDescriptor.bind(this)
             parent = enumClass

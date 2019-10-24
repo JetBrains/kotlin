@@ -68,7 +68,7 @@ class KotlinFormatterUsageCollector {
 
             if (isDefaultKotlinCommonSettings && isDefaultKotlinCustomSettings) {
                 return if (isDefaultOfficialCodeStyle) {
-                    paired(KotlinFormatterKind.IDEA_OFFICIAL_DEFAULT, isProject)
+                    paired(IDEA_OFFICIAL_DEFAULT, isProject)
                 } else {
                     paired(IDEA_DEFAULT, isProject)
                 }

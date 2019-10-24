@@ -11,46 +11,21 @@ import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.light.LightIdentifier
 import com.intellij.psi.meta.PsiMetaData
 import com.intellij.psi.util.TypeConversionUtil
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.isError
-import org.jetbrains.kotlin.types.typeUtil.TypeNullability
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlin.types.typeUtil.nullability
 
 class KtUltraLightNullabilityAnnotation(
     member: KtUltraLightElementWithNullabilityAnnotation<*, *>,
     parent: PsiElement
 ) : KtLightNullabilityAnnotation<KtUltraLightElementWithNullabilityAnnotation<*, *>>(member, parent) {
-    override fun getQualifiedName(): String? {
-        val kotlinType = member.kotlinTypeForNullabilityAnnotation?.takeUnless(KotlinType::isError) ?: return null
-        val psiType = member.psiTypeForNullabilityAnnotation ?: return null
-        if (psiType is PsiPrimitiveType) return null
-
-        if (kotlinType.isTypeParameter()) {
-            if (!TypeUtils.hasNullableSuperType(kotlinType)) return NotNull::class.java.name
-            if (!kotlinType.isMarkedNullable) return null
-        }
-
-        val nullability = kotlinType.nullability()
-        return when (nullability) {
-            TypeNullability.NOT_NULL -> NotNull::class.java.name
-            TypeNullability.NULLABLE -> Nullable::class.java.name
-            TypeNullability.FLEXIBLE -> null
-        }
-    }
+    override fun getQualifiedName(): String? = member.qualifiedNameForNullabilityAnnotation
 }
 
 fun AnnotationDescriptor.toLightAnnotation(ultraLightSupport: KtUltraLightSupport, parent: PsiElement) =

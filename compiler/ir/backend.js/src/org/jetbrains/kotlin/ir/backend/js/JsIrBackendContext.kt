@@ -44,8 +44,10 @@ class JsIrBackendContext(
     val symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarations: Set<FqName>,
-    override val configuration: CompilerConfiguration
+    override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
+    override val scriptMode: Boolean = false
 ) : CommonBackendContext {
+    override val transformedFunction = mutableMapOf<IrFunctionSymbol, IrSimpleFunctionSymbol>()
 
     override val builtIns = module.builtIns
 

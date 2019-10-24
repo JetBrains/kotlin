@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.checkers.javac;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -24,11 +23,11 @@ public class JavacFieldResolutionTestGenerated extends AbstractJavacFieldResolut
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Tests extends AbstractJavacFieldResolutionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInTests() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/fieldsResolution/tests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/fieldsResolution/tests"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("AsteriskStaticImportsAmbiguity.kt")
@@ -97,11 +96,11 @@ public class JavacFieldResolutionTestGenerated extends AbstractJavacFieldResolut
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TestsWithoutJavac extends AbstractJavacFieldResolutionTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestWithoutJavacWrapper, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTestWithoutJavacWrapper, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInTestsWithoutJavac() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/fieldsResolution/tests"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/javac/fieldsResolution/tests"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("AsteriskStaticImportsAmbiguity.kt")

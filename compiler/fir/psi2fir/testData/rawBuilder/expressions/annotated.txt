@@ -10,15 +10,11 @@ FILE: annotated.kt
             ==(@Ann() arg#, Int(0)) ->  {
                 @Ann() ^foo Int(1)
             }
-            else ->  {
-            }
         }
 
         @Ann() when () {
             ==(arg#, Int(1)) ->  {
                 ^foo @Ann() Int(1)
-            }
-            else ->  {
             }
         }
 

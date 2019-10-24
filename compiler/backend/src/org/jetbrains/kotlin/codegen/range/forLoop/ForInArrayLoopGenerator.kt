@@ -84,8 +84,8 @@ class ForInArrayLoopGenerator(
         v.load(arrayVar, OBJECT_TYPE)
         v.load(indexVar, Type.INT_TYPE)
         v.aload(arrayElParamType)
-        StackValue.onStack(arrayElParamType, elementType).put(asmElementType, elementType, codegen.v)
-        v.store(loopParameterVar, asmElementType)
+        StackValue.local(loopParameterVar, loopParameterType, loopParameterKotlinType)
+            .store(StackValue.onStack(arrayElParamType, elementType), v)
     }
 
     override fun checkPostConditionAndIncrement(loopExit: Label) {

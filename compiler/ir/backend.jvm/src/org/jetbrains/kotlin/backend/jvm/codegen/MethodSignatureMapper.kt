@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -30,8 +31,11 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.*
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.load.java.getJvmMethodNameIfSpecial
+import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.forceSingleValueParameterBoxing
 import org.jetbrains.kotlin.load.kotlin.getJvmModuleNameForDeserializedDescriptor
@@ -118,11 +122,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         (if (function is IrLazyFunctionBase)
             getJvmModuleNameForDeserializedDescriptor(function.descriptor)
         else null) ?: context.state.moduleName
-
-    private fun IrDeclaration.getJvmNameFromAnnotation(): String? {
-        val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*>
-        return const?.value as? String
-    }
 
     private fun IrFunction.isPublishedApi(): Boolean =
         propertyIfAccessor.annotations.hasAnnotation(KotlinBuiltIns.FQ_NAMES.publishedApi)
@@ -214,13 +213,6 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         val receiverParameter = function.extensionReceiverParameter
         if (receiverParameter != null) {
             writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function)
-        }
-
-        // This is needed because mapSignature is currently invoked in CallableReferenceLowering before InnerClassesLowering where
-        // this parameter is transformed to a normal value parameter.
-        // TODO: do not call mapSignature in CallableReferenceLowering
-        if (function is IrConstructor && function.dispatchReceiverParameter != null) {
-            writeParameter(sw, JvmMethodParameterKind.VALUE, function.dispatchReceiverParameter!!.type, function)
         }
 
         for (parameter in function.valueParameters) {

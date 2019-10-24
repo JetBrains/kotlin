@@ -8,7 +8,6 @@ package org.jetbrains.kotlinx.serialization;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializationPluginDiagnosticTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("DuplicateSerialName.kt")
@@ -52,6 +51,11 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     @TestMetadata("ParamIsNotProperty.kt")
     public void testParamIsNotProperty() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/ParamIsNotProperty.kt");
+    }
+
+    @TestMetadata("SerializableEnums.kt")
+    public void testSerializableEnums() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/SerializableEnums.kt");
     }
 
     @TestMetadata("SerializableIgnored.kt")

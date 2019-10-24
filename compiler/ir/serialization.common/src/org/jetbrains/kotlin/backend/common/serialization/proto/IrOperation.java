@@ -43,7 +43,7 @@ public final class IrOperation extends
         org.jetbrains.kotlin.protobuf.ByteString.newOutput();
     org.jetbrains.kotlin.protobuf.CodedOutputStream unknownFieldsCodedOutput =
         org.jetbrains.kotlin.protobuf.CodedOutputStream.newInstance(
-            unknownFieldsOutput);
+            unknownFieldsOutput, 1);
     try {
       boolean done = false;
       while (!done) {
@@ -1215,12 +1215,6 @@ public final class IrOperation extends
         return false;
       }
     }
-    if (hasConst()) {
-      if (!getConst().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
     if (hasContinue()) {
       if (!getContinue().isInitialized()) {
         memoizedIsInitialized = 0;
@@ -2032,12 +2026,6 @@ public final class IrOperation extends
       }
       if (hasComposite()) {
         if (!getComposite().isInitialized()) {
-          
-          return false;
-        }
-      }
-      if (hasConst()) {
-        if (!getConst().isInitialized()) {
           
           return false;
         }

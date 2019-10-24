@@ -1,4 +1,4 @@
 package to
 
 @Volatile
-internal var field = 1
+var field = 1

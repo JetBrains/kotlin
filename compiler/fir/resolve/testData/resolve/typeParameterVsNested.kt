@@ -15,3 +15,5 @@ abstract class My<T : Some> {
 
     class Some : T()
 }
+
+abstract class Your<T : Some> : T

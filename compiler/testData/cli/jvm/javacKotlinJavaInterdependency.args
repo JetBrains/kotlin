@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/javacKotlinJavaInterdependency/test/ClassWithTypeParameter.kt
+$TESTDATA_DIR$/javacKotlinJavaInterdependency/test/ClassWithTypeParameter.java
+-Xuse-javac
+-Xcompile-java
+-d
+$TEMP_DIR$

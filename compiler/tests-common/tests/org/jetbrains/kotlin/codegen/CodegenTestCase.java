@@ -13,7 +13,6 @@ import com.intellij.testFramework.TestDataFile;
 import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
-import kotlin.script.experimental.api.ErrorHandlingKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -130,6 +129,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         );
     }
 
+    protected void configureTestSpecific(@NotNull CompilerConfiguration configuration, @NotNull List<TestFile> testFiles) {}
+
     @NotNull
     protected CompilerConfiguration createConfiguration(
             @NotNull ConfigurationKind kind,
@@ -143,6 +144,8 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
         updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, coroutinesPackage);
         updateConfiguration(configuration);
         setCustomDefaultJvmTarget(configuration);
+
+        configureTestSpecific(configuration, testFilesWithConfigurationDirectives);
 
         return configuration;
     }
@@ -354,7 +357,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
         List<KtFile> ktFiles = new ArrayList<>(files.size());
         for (TestFile file : files) {
-            if (file.name.endsWith(".kt")) {
+            if (file.name.endsWith(".kt") || file.name.endsWith(".kts")) {
                 // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
                 String content = CheckerTestUtil.INSTANCE.parseDiagnosedRanges(file.content, new ArrayList<>(0), null);
                 ktFiles.add(KotlinTestUtils.createFile(file.name, content, project));
@@ -789,7 +792,7 @@ public abstract class CodegenTestCase extends KtUsefulTestCase {
 
     @NotNull
     private static List<TestFile> createTestFiles(File file, String expectedText, String coroutinesPackage) {
-        return KotlinTestUtils.createTestFiles(file.getName(), expectedText, new KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
+        return TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
             @NotNull
             @Override
             public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 
 abstract class AbstractCodeFragmentCompletionHandlerTest : AbstractCompletionHandlerTest(CompletionType.BASIC) {
     override fun setUpFixture(testPath: String) {
-        myFixture.configureByCodeFragment(testPath)
+        myFixture.configureByCodeFragment(testPath(testPath))
     }
 
     override fun doTest(testPath: String) {

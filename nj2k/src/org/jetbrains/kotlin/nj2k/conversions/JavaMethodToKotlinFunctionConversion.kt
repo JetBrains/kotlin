@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.nj2k.externalCodeProcessing.JKMethodData
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.psi
 import org.jetbrains.kotlin.nj2k.throwAnnotation
 import org.jetbrains.kotlin.nj2k.tree.JKMethodImpl
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
@@ -34,6 +37,11 @@ class JavaMethodToKotlinFunctionConversion(context: NewJ2kConverterContext) : Re
                     symbolProvider
                 )
         }
+
+        element.psi<PsiMethod>()?.let { psi ->
+            context.externalCodeProcessor.addMember(JKMethodData(psi))
+        }
+
         return recurse(element)
     }
 }

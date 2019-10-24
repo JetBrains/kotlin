@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":core:descriptors"))
     testCompile(project(":core:descriptors.jvm"))
     testCompile(project(":core:deserialization"))

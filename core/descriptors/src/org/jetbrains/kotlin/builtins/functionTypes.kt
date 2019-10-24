@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 private fun KotlinType.isTypeOrSubtypeOf(predicate: (KotlinType) -> Boolean): Boolean =
@@ -137,6 +138,14 @@ fun KotlinType.getValueParameterTypesFromFunctionType(): List<TypeProjection> {
     val last = arguments.size - 1
     assert(first <= last) { "Not an exact function type: $this" }
     return arguments.subList(first, last)
+}
+
+fun KotlinType.getAllParameterProjectionsFromCallableReflectionType(): List<TypeProjection> {
+    assert(ReflectionTypes.isKCallableType(this)) { "Not a callable reflection type: $this" }
+    val arguments = arguments
+    val last = arguments.size - 1
+    assert(last >= 0) { "Unexpected number of type arguments in type: $this" }
+    return arguments.subList(0, last)
 }
 
 fun KotlinType.extractParameterNameFromFunctionTypeArgument(): Name? {

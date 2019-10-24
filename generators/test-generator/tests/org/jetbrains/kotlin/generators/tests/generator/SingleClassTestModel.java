@@ -31,8 +31,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-public class SingleClassTestModel implements TestClassModel {
+public class SingleClassTestModel extends TestClassModel {
     @NotNull
     private final File rootFile;
     @NotNull
@@ -52,6 +53,9 @@ public class SingleClassTestModel implements TestClassModel {
     private final String testRunnerMethodName;
     private final List<String> additionalRunnerArguments;
 
+    @NotNull
+    private final List<AnnotationModel> annotations;
+
     public SingleClassTestModel(
             @NotNull File rootFile,
             @NotNull Pattern filenamePattern,
@@ -61,7 +65,8 @@ public class SingleClassTestModel implements TestClassModel {
             @NotNull TargetBackend targetBackend,
             boolean skipIgnored,
             String testRunnerMethodName,
-            List<String> additionalRunnerArguments
+            List<String> additionalRunnerArguments,
+            @NotNull List<AnnotationModel> annotations
     ) {
         this.rootFile = rootFile;
         this.filenamePattern = filenamePattern;
@@ -72,6 +77,7 @@ public class SingleClassTestModel implements TestClassModel {
         this.skipIgnored = skipIgnored;
         this.testRunnerMethodName = testRunnerMethodName;
         this.additionalRunnerArguments = additionalRunnerArguments;
+        this.annotations = annotations;
     }
 
     @NotNull
@@ -134,7 +140,13 @@ public class SingleClassTestModel implements TestClassModel {
         return testClassName;
     }
 
-    private class TestAllFilesPresentMethodModel implements TestMethodModel {
+    @NotNull
+    @Override
+    public Collection<AnnotationModel> getAnnotations() {
+        return annotations;
+    }
+
+    private class TestAllFilesPresentMethodModel extends TestMethodModel {
         @NotNull
         @Override
         public String getName() {
@@ -143,22 +155,26 @@ public class SingleClassTestModel implements TestClassModel {
 
         @Override
         public void generateBody(@NotNull Printer p) {
-            String assertTestsPresentStr = String.format(
-                    "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s.%s);",
-                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
-                    TargetBackend.class.getSimpleName(), targetBackend.toString()
-            );
+            String assertTestsPresentStr;
+
+            if (targetBackend != TargetBackend.ANY) {
+                assertTestsPresentStr = String.format(
+                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s.%s);",
+                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
+                        TargetBackend.class.getSimpleName(), targetBackend.toString()
+                );
+            } else {
+                assertTestsPresentStr = String.format(
+                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"));",
+                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern())
+                );
+            }
             p.println(assertTestsPresentStr);
         }
 
         @Override
         public String getDataString() {
             return null;
-        }
-
-        @Override
-        public void generateSignature(@NotNull Printer p) {
-            TestMethodModel.DefaultImpls.generateSignature(this, p);
         }
 
         @Override

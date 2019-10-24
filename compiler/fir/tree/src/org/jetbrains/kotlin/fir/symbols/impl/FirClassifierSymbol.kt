@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.symbols.impl
 
-import org.jetbrains.kotlin.fir.declarations.FirNamedDeclaration
+import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
-import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
-abstract class FirClassifierSymbol<E> :
-    AbstractFirBasedSymbol<E>(), TypeParameterMarker where E : FirNamedDeclaration, E : FirSymbolOwner<E> {
+abstract class FirClassifierSymbol<E> : AbstractFirBasedSymbol<E>(), TypeParameterMarker
+        where E : FirSymbolOwner<E>, E : FirDeclaration {
     abstract fun toLookupTag(): ConeClassifierLookupTag
 }

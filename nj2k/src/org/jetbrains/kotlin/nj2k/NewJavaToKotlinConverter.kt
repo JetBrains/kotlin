@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.nj2k
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -28,15 +26,17 @@ import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.nj2k.conversions.JKResolver
+import org.jetbrains.kotlin.nj2k.externalCodeProcessing.NewExternalCodeProcessing
 import org.jetbrains.kotlin.nj2k.printing.JKCodeBuilder
 import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportList
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.ImportPath
 
 class NewJavaToKotlinConverter(
@@ -65,36 +65,27 @@ class NewJavaToKotlinConverter(
                     elementsToKotlin(files, withProgressProcessor)
                 })
 
-            val texts = results.mapIndexed { i, result ->
-                try {
-                    val kotlinFile = ApplicationManager.getApplication().runReadAction(Computable {
-                        KtPsiFactory(project).createFileWithLightClassSupport("dummy.kt", result!!.text, files[i])
-                    })
-
-                    ApplicationManager.getApplication().invokeAndWait {
-                        CommandProcessor.getInstance().runUndoTransparentAction {
-                            runWriteAction {
-                                kotlinFile.addImports(result!!.importsToAdd)
-                            }
-                        }
+            val kotlinFiles = results.mapIndexed { i, result ->
+                runUndoTransparentActionInEdt(inWriteAction = true) {
+                    val javaFile = files[i]
+                    KtPsiFactory(project).createFileWithLightClassSupport(
+                        javaFile.name.replace(".java", ".kt"),
+                        result!!.text,
+                        files[i]
+                    ).apply {
+                        addImports(result.importsToAdd)
                     }
-                    AfterConversionPass(project, postProcessor).run(
-                        kotlinFile,
-                        context,
-                        range = null,
-                        onPhaseChanged = { phase, description ->
-                            withProgressProcessor.updateState(i, phase + 1, description)
-                        }
-                    )
-                    kotlinFile.text
-                } catch (e: ProcessCanceledException) {
-                    throw e
-                } catch (t: Throwable) {
-                    LOG.error(t)
-                    result!!.text
                 }
+
             }
-            FilesResult(texts, externalCodeProcessing)
+
+            postProcessor.doAdditionalProcessing(
+                JKMultipleFilesPostProcessingTarget(kotlinFiles),
+                context
+            ) { phase, description ->
+                withProgressProcessor.updateState(fileIndex = null, phase = phase + 1, description = description)
+            }
+            FilesResult(kotlinFiles.map { it.text }, externalCodeProcessing)
         }
     }
 
@@ -128,7 +119,8 @@ class NewJavaToKotlinConverter(
     override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
         val phaseDescription = "Converting Java code to Kotlin code"
         val contextElement = inputElements.firstOrNull() ?: return Result(emptyList(), null, null)
-        val symbolProvider = JKSymbolProvider(project, targetModule, contextElement)
+        val resolver = JKResolver(project, targetModule, contextElement)
+        val symbolProvider = JKSymbolProvider(resolver)
         val typeFactory = JKTypeFactory(symbolProvider)
         symbolProvider.typeFactory = typeFactory
         symbolProvider.preBuildTree(inputElements)
@@ -152,14 +144,24 @@ class NewJavaToKotlinConverter(
             processor.updateState(i, 1, phaseDescription)
             element to treeBuilder.buildTree(element, saveImports)
         }
+        val inConversionContext = { element: PsiElement ->
+            inputElements.any { inputElement ->
+                if (inputElement == element) return@any true
+                inputElement.isAncestor(element, true)
+            }
+        }
+
+        val externalCodeProcessing =
+            NewExternalCodeProcessing(oldConverterServices.referenceSearcher, inConversionContext)
 
         val context = NewJ2kConverterContext(
             symbolProvider,
             typeFactory,
             this,
-            { it.containingFile in inputElements },
+            inConversionContext,
             importStorage,
-            JKElementInfoStorage()
+            JKElementInfoStorage(),
+            externalCodeProcessing
         )
         ConversionsRunner.doApply(asts.withIndex().mapNotNull { (i, ast) ->
             processor.updateState(i, 1, phaseDescription)
@@ -182,7 +184,11 @@ class NewJavaToKotlinConverter(
             )
         }
 
-        return Result(results, null, context)
+        return Result(
+            results,
+            externalCodeProcessing.takeIf { it.isExternalProcessingNeeded() },
+            context
+        )
     }
 
     override fun elementsToKotlin(inputElements: List<PsiElement>): Result {
@@ -199,12 +205,13 @@ class NewJ2kWithProgressProcessor(
         val DEFAULT = NewJ2kWithProgressProcessor(null, null, 0)
     }
 
-    override fun updateState(fileIndex: Int, phase: Int, description: String) {
+    override fun updateState(fileIndex: Int?, phase: Int, description: String) {
         progress?.checkCanceled()
         progress?.fraction = phase / phasesCount.toDouble()
         progress?.text = "$description - phase $phase of $phasesCount"
-        if (files != null && files.isNotEmpty()) {
-            progress?.text2 = files[fileIndex].virtualFile.presentableUrl
+        progress?.text2 = when {
+            files != null && files.isNotEmpty() && fileIndex != null -> files[fileIndex].virtualFile.presentableUrl
+            else -> ""
         }
     }
 

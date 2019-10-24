@@ -1,4 +1,4 @@
-namespace org.w3c.dom.mediacapture;
+package org.w3c.dom.mediacapture;
 
 
 // Downloaded from https://w3c.github.io/mediacapture-main/

@@ -4,8 +4,6 @@ FILE: fib.kt
             <(R|<local>/n|, Int(2)) ->  {
                 ^fibIterative Int(1)
             }
-            else ->  {
-            }
         }
 
         lvar current: R|kotlin/Int| = Int(1)

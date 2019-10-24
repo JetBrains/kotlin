@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.idea.testFramework
 
-import com.intellij.ide.impl.ProjectUtil
-import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
@@ -22,19 +20,6 @@ import kotlin.test.assertNotNull
 
 fun refreshGradleProject(projectPath: String, project: Project) {
     _importProject(projectPath, project)
-
-//    val gradleArguments = System.getProperty("kotlin.test.gradle.import.arguments")
-//    ExternalSystemUtil.refreshProjects(
-//        ImportSpecBuilder(project, GradleConstants.SYSTEM_ID)
-//            .forceWhenUptodate()
-//            .useDefaultCallback()
-//            .use(ProgressExecutionMode.MODAL_SYNC)
-//            .also {
-//                gradleArguments?.run(it::withArguments)
-//            }
-//    )
-
-    //ProjectUtil.updateLastProjectLocation(projectPath)
 
     dispatchAllInvocationEvents()
 }

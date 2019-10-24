@@ -17,11 +17,11 @@ public interface IrAnonymousInitOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 2;</code>
+   * <code>required int32 body = 2;</code>
    */
   boolean hasBody();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 2;</code>
+   * <code>required int32 body = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getBody();
+  int getBody();
 }

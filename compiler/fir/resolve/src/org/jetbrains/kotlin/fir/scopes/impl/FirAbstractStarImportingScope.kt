@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.TowerScopeLevel
-import org.jetbrains.kotlin.fir.scopes.FirPosition
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -28,30 +27,29 @@ abstract class FirAbstractStarImportingScope(
 
     override fun processClassifiersByName(
         name: Name,
-        position: FirPosition,
-        processor: (FirClassifierSymbol<*>) -> Boolean
-    ): Boolean {
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+    ): ProcessorAction {
         if (starImports.isEmpty() || name in absentClassifierNames) {
-            return true
+            return ProcessorAction.NONE
         }
         var empty = true
         for (import in starImports) {
             val relativeClassName = import.relativeClassName
             val classId = when {
-                !name.isSpecial && name.identifier.isEmpty() -> return true
+                !name.isSpecial && name.identifier.isEmpty() -> return ProcessorAction.NEXT
                 relativeClassName == null -> ClassId(import.packageFqName, name)
                 else -> ClassId(import.packageFqName, relativeClassName.child(name), false)
             }
             val symbol = provider.getClassLikeSymbolByFqName(classId) ?: continue
             empty = false
             if (!processor(symbol)) {
-                return false
+                return ProcessorAction.STOP
             }
         }
         if (empty) {
             absentClassifierNames += name
         }
-        return true
+        return ProcessorAction.NEXT
     }
 
 

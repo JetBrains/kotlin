@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 
@@ -14,7 +14,7 @@ class FirNamedReferenceWithCandidate(
     psi: PsiElement?,
     name: Name,
     val candidate: Candidate
-) : FirSimpleNamedReference(psi, name) {
+) : FirSimpleNamedReference(psi, name, candidate.symbol) {
     override val candidateSymbol: AbstractFirBasedSymbol<*>
         get() = candidate.symbol
 }

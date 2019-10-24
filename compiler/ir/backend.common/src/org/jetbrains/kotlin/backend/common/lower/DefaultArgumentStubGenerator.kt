@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
@@ -84,6 +83,20 @@ open class DefaultArgumentStubGenerator(
                 variables[it] = newIrFunction.extensionReceiverParameter!!
             }
 
+            // In order to deal with forward references in default value lambdas,
+            // accesses to the parameter before it has been determined if there is
+            // a default value or not is redirected to the actual parameter of the
+            // $default function. This is to ensure that examples such as:
+            //
+            // fun f(f1: () -> String = { f2() },
+            //       f2: () -> String = { "OK" }) = f1()
+            //
+            // works correctly so that `f() { "OK" }` returns "OK" and
+            // `f()` throws a NullPointerException.
+            irFunction.valueParameters.associateWithTo(variables) {
+                newIrFunction.valueParameters[it.index]
+            }
+
             for (valueParameter in irFunction.valueParameters) {
                 val parameter = newIrFunction.valueParameters[valueParameter.index]
                 val remapped = if (valueParameter.defaultValue != null) {
@@ -95,7 +108,6 @@ open class DefaultArgumentStubGenerator(
 
                     val expressionBody = valueParameter.defaultValue!!
                     expressionBody.patchDeclarationParents(newIrFunction)
-
                     expressionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
                         override fun visitGetValue(expression: IrGetValue): IrExpression {
                             log { "GetValue: ${expression.symbol.owner}" }
@@ -104,13 +116,7 @@ open class DefaultArgumentStubGenerator(
                         }
                     })
 
-                    val argument = irIfThenElse(
-                        type = parameter.type,
-                        condition = condition,
-                        thenPart = expressionBody.expression,
-                        elsePart = irGet(parameter)
-                    )
-                    createTmpVariable(argument, nameHint = parameter.name.asString())
+                    selectArgumentOrDefault(condition, parameter, expressionBody.expression)
                 } else {
                     parameter
                 }
@@ -129,7 +135,6 @@ open class DefaultArgumentStubGenerator(
                     passTypeArgumentsFrom(newIrFunction.parentAsClass)
                     passTypeArgumentsFrom(newIrFunction)
                     dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
-
                     params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
                 }
                 is IrSimpleFunction -> +irReturn(dispatchToImplementation(irFunction, newIrFunction, params))
@@ -143,6 +148,15 @@ open class DefaultArgumentStubGenerator(
             }
         }
         return listOf(irFunction, newIrFunction)
+    }
+
+    protected open fun IrBlockBodyBuilder.selectArgumentOrDefault(
+        shouldUseDefault: IrExpression,
+        parameter: IrValueParameter,
+        default: IrExpression
+    ): IrValueDeclaration {
+        val value = irIfThenElse(parameter.type, shouldUseDefault, default, irGet(parameter))
+        return createTmpVariable(value, nameHint = parameter.name.asString())
     }
 
     private fun IrBlockBodyBuilder.dispatchToImplementation(
@@ -356,8 +370,9 @@ open class DefaultParameterInjector(
             )
         }
         if (expression.symbol is IrConstructorSymbol) {
+            val defaultArgumentMarker = context.ir.symbols.defaultConstructorMarker
             params += markerParameterDeclaration(realFunction) to
-                    IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
+                    IrConstImpl.constNull(startOffset, endOffset, defaultArgumentMarker.owner.defaultType.makeNullable())
         } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
             params += realFunction.valueParameters.last() to
                     IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
@@ -383,24 +398,17 @@ open class DefaultParameterInjector(
             nullConst(startOffset, endOffset, irParameter.type)
         }
 
-    protected open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression = when {
-        type.isFloat() -> IrConstImpl.float(startOffset, endOffset, type, 0.0F)
-        type.isDouble() -> IrConstImpl.double(startOffset, endOffset, type, 0.0)
-        type.isBoolean() -> IrConstImpl.boolean(startOffset, endOffset, type, false)
-        type.isByte() -> IrConstImpl.byte(startOffset, endOffset, type, 0)
-        type.isChar() -> IrConstImpl.char(startOffset, endOffset, type, 0.toChar())
-        type.isShort() -> IrConstImpl.short(startOffset, endOffset, type, 0)
-        type.isInt() -> IrConstImpl.int(startOffset, endOffset, type, 0)
-        type.isLong() -> IrConstImpl.long(startOffset, endOffset, type, 0)
-        else -> IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
-    }
+    protected open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression =
+        IrConstImpl.defaultValueForType(startOffset, endOffset, type)
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
 }
 
 class DefaultParameterCleaner constructor(val context: CommonBackendContext) : FunctionLoweringPass {
     override fun lower(irFunction: IrFunction) {
-        irFunction.valueParameters.forEach { it.defaultValue = null }
+        if (!context.scriptMode) {
+            irFunction.valueParameters.forEach { it.defaultValue = null }
+        }
     }
 }
 
@@ -487,9 +495,10 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
                 irFunction.name,
                 irFunction.visibility,
                 irFunction.returnType,
-                irFunction.isInline,
-                false,
-                false
+                isInline = irFunction.isInline,
+                isExternal = false,
+                isPrimary = false,
+                isExpect = false
             ).also {
                 descriptor.bind(it)
                 it.parent = irFunction.parent
@@ -510,10 +519,11 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
                 irFunction.visibility,
                 Modality.FINAL,
                 irFunction.returnType,
-                irFunction.isInline,
-                false,
-                false,
-                irFunction.isSuspend
+                isInline = irFunction.isInline,
+                isExternal = false,
+                isTailrec = false,
+                isSuspend = irFunction.isSuspend,
+                isExpect = irFunction.isExpect
             ).also {
                 descriptor.bind(it)
                 it.parent = irFunction.parent
@@ -545,8 +555,8 @@ private fun IrFunction.valueParameter(index: Int, name: Name, type: IrType): IrV
         index,
         type,
         null,
-        false,
-        false
+        isCrossinline = false,
+        isNoinline = false
     ).also {
         parameterDescriptor.bind(it)
         it.parent = this

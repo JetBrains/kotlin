@@ -1130,6 +1130,38 @@ class StringTest {
                         data.windowedSequence(window, step, partialWindows = true).iterator()) { iteratorBehavior() }
             }
         }
+
+        // index overflow tests
+        for (partialWindows in listOf(true, false)) {
+
+            val windowed1 = data.windowed(5, Int.MAX_VALUE, partialWindows)
+            assertEquals("abcde", windowed1.single())
+            val windowed2 = data.windowed(Int.MAX_VALUE, 5, partialWindows)
+            assertEquals(if (partialWindows) listOf(data.toString(), data.substring(5, 7)) else listOf(), windowed2)
+            val windowed3 = data.windowed(Int.MAX_VALUE, Int.MAX_VALUE, partialWindows)
+            assertEquals(if (partialWindows) listOf(data.toString()) else listOf(), windowed3)
+
+            val windowedTransform1 = data.windowed(5, Int.MAX_VALUE, partialWindows) { it }
+            assertEquals("abcde", windowedTransform1.single())
+            val windowedTransform2 = data.windowed(Int.MAX_VALUE, 5, partialWindows) { it }
+            assertEquals(if (partialWindows) listOf(data.toString(), data.substring(5, 7)) else listOf(), windowedTransform2)
+            val windowedTransform3 = data.windowed(Int.MAX_VALUE, Int.MAX_VALUE, partialWindows) { it }
+            assertEquals(if (partialWindows) listOf(data.toString()) else listOf(), windowedTransform3)
+
+            val windowedSequence1 = data.windowedSequence(5, Int.MAX_VALUE, partialWindows)
+            assertEquals("abcde", windowedSequence1.single())
+            val windowedSequence2 = data.windowedSequence(Int.MAX_VALUE, 5, partialWindows)
+            assertEquals(if (partialWindows) listOf(data.toString(), data.substring(5, 7)) else listOf(), windowedSequence2.toList())
+            val windowedSequence3 = data.windowedSequence(Int.MAX_VALUE, Int.MAX_VALUE, partialWindows)
+            assertEquals(if (partialWindows) listOf(data.toString()) else listOf(), windowedSequence3.toList())
+
+            val windowedSequenceTransform1 = data.windowedSequence(5, Int.MAX_VALUE, partialWindows) { it }
+            assertEquals("abcde", windowedSequenceTransform1.single())
+            val windowedSequenceTransform2 = data.windowedSequence(Int.MAX_VALUE, 5, partialWindows) { it }
+            assertEquals(if (partialWindows) listOf(data.toString(), data.substring(5, 7)) else listOf(), windowedSequenceTransform2.toList())
+            val windowedSequenceTransform3 = data.windowedSequence(Int.MAX_VALUE, Int.MAX_VALUE, partialWindows) { it }
+            assertEquals(if (partialWindows) listOf(data.toString()) else listOf(), windowedSequenceTransform3.toList())
+        }
     }
 
     @Test fun map() = withOneCharSequenceArg { arg1 ->

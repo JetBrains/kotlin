@@ -30,7 +30,8 @@ class CliNoArgExpressionCodegenExtension(private val annotations: List<String>, 
     override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> = annotations
 }
 
-abstract class AbstractNoArgExpressionCodegenExtension(val invokeInitializers: Boolean) : ExpressionCodegenExtension, AnnotationBasedExtension {
+abstract class AbstractNoArgExpressionCodegenExtension(val invokeInitializers: Boolean) : ExpressionCodegenExtension,
+    AnnotationBasedExtension {
 
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) = with(codegen) {
         if (shouldGenerateNoArgConstructor()) {
@@ -48,7 +49,7 @@ abstract class AbstractNoArgExpressionCodegenExtension(val invokeInitializers: B
         // If a parent sealed class has not a zero-parameter constructor, user must write @NoArg annotation for the parent class as well,
         // and then we generate <init>()V
         val isParentASealedClassWithDefaultConstructor =
-            superClass.modality == Modality.SEALED && superClass.constructors.any { it.isZeroParameterConstructor() }
+            superClass.modality == Modality.SEALED && superClass.constructors.any { isZeroParameterConstructor(it) }
 
         functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, constructorDescriptor, object : CodegenBased(state) {
             override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
@@ -72,15 +73,6 @@ abstract class AbstractNoArgExpressionCodegenExtension(val invokeInitializers: B
         })
     }
 
-    private fun createNoArgConstructorDescriptor(containingClass: ClassDescriptor): ConstructorDescriptor {
-        return ClassConstructorDescriptorImpl.createSynthesized(containingClass, Annotations.EMPTY, false, SourceElement.NO_SOURCE).apply {
-            initialize(
-                null, calculateDispatchReceiverParameter(), emptyList(), emptyList(),
-                containingClass.builtIns.unitType, Modality.OPEN, Visibilities.PUBLIC
-            )
-        }
-    }
-
     private fun ImplementationBodyCodegen.shouldGenerateNoArgConstructor(): Boolean {
         val origin = myClass as? KtClass ?: return false
 
@@ -88,14 +80,30 @@ abstract class AbstractNoArgExpressionCodegenExtension(val invokeInitializers: B
             return false
         }
 
-        return descriptor.constructors.none { it.isZeroParameterConstructor() }
-    }
-
-    private fun ClassConstructorDescriptor.isZeroParameterConstructor(): Boolean {
-        val parameters = this.valueParameters
-        return parameters.isEmpty() ||
-                (parameters.all { it.declaresDefaultValue() } && (isPrimary || findJvmOverloadsAnnotation() != null))
+        return descriptor.constructors.none { isZeroParameterConstructor(it) }
     }
 
     override val shouldGenerateClassSyntheticPartsInLightClassesMode = true
+
+    companion object {
+
+        fun isZeroParameterConstructor(constructor: ClassConstructorDescriptor): Boolean {
+            val parameters = constructor.valueParameters
+            return parameters.isEmpty() ||
+                    (parameters.all { it.declaresDefaultValue() } && (constructor.isPrimary || constructor.findJvmOverloadsAnnotation() != null))
+        }
+
+        fun createNoArgConstructorDescriptor(containingClass: ClassDescriptor): ConstructorDescriptor =
+            ClassConstructorDescriptorImpl.createSynthesized(containingClass, Annotations.EMPTY, false, SourceElement.NO_SOURCE).apply {
+                initialize(
+                    null,
+                    calculateDispatchReceiverParameter(),
+                    emptyList(),
+                    emptyList(),
+                    containingClass.builtIns.unitType,
+                    Modality.OPEN,
+                    Visibilities.PUBLIC
+                )
+            }
+    }
 }

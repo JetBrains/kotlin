@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -117,7 +120,7 @@ fun FirReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbo
 private fun AbstractFirBasedSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol? = when (this) {
     is FirClassSymbol -> toClassSymbol(declarationStorage)
     is FirFunctionSymbol<*> -> toFunctionSymbol(declarationStorage)
-    is FirPropertySymbol -> toPropertyOrFieldSymbol(declarationStorage)
+    is FirPropertySymbol -> if (fir.isLocal) toValueSymbol(declarationStorage) else toPropertyOrFieldSymbol(declarationStorage)
     is FirFieldSymbol -> toPropertyOrFieldSymbol(declarationStorage)
     is FirBackingFieldSymbol -> toBackingFieldSymbol(declarationStorage)
     is FirDelegateFieldSymbol<*> -> toBackingFieldSymbol(declarationStorage)

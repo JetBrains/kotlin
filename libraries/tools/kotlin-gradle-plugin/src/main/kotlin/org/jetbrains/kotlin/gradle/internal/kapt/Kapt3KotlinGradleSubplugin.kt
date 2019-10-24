@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
@@ -121,7 +120,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         fun Project.isUseWorkerApi(): Boolean {
-            return hasProperty(USE_WORKER_API) && property(USE_WORKER_API) == "true"
+            return !(hasProperty(USE_WORKER_API) && property(USE_WORKER_API) == "false")
         }
 
         fun Project.isIncrementalKapt(): Boolean {
@@ -324,12 +323,15 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 subluginOptionsFromProvidedApOptions
     }
 
-    private fun Kapt3SubpluginContext.buildAndAddOptionsTo(task: Task, container: CompilerPluginOptions, aptMode: String, javacOptions: Map<String, String>) {
+    private fun Kapt3SubpluginContext.registerSubpluginOptions(
+        task: Task,
+        container: CompilerPluginOptions,
+        options: List<SubpluginOption>
+    ) {
         val compilerPluginId = getCompilerPluginId()
-        val kaptSubpluginOptions = buildOptions(aptMode, javacOptions)
-        task.registerSubpluginOptionsAsInputs(compilerPluginId, kaptSubpluginOptions)
+        task.registerSubpluginOptionsAsInputs(compilerPluginId, options)
 
-        for (option in kaptSubpluginOptions) {
+        for (option in options) {
             container.addPluginArgument(compilerPluginId, option)
         }
 
@@ -441,7 +443,8 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                     SubpluginOption("incrementalCache", kaptTask.incAptCache!!.absolutePath))
             }
 
-            buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "apt", javacOptions = dslJavacOptions)
+            val subpluginOptions = buildOptions("apt", dslJavacOptions)
+            registerSubpluginOptions(kaptTask, kaptTask.pluginOptions, subpluginOptions)
         }
 
         if (kaptTask is KaptWithoutKotlincTask) {
@@ -449,9 +452,11 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
                 isVerbose = project.isKaptVerbose()
                 mapDiagnosticLocations = kaptExtension.mapDiagnosticLocations
                 annotationProcessorFqNames = kaptExtension.processors.split(',').filter { it.isNotEmpty() }
-                processorOptions = getAPOptions().map { it.key to it.value }.toMap()
                 javacOptions = dslJavacOptions
             }
+
+            val subpluginOptions = getAPOptions()
+            registerSubpluginOptions(kaptTask, kaptTask.processorOptions, subpluginOptions)
         }
 
         return kaptTask
@@ -496,7 +501,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         PropertiesProvider(project).mapKotlinTaskProperties(kaptTask)
 
         kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
-        buildAndAddOptionsTo(kaptTask, kaptTask.pluginOptions, aptMode = "stubs", javacOptions = kaptExtension.getJavacOptions())
+
+        val subpluginOptions = buildOptions("stubs", kaptExtension.getJavacOptions())
+        registerSubpluginOptions(kaptTask, kaptTask.pluginOptions, subpluginOptions)
 
         return kaptTask
     }

@@ -9,8 +9,9 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
 fun buildConfiguration(environment: KotlinCoreEnvironment, moduleName: String): CompilerConfiguration {
@@ -120,4 +122,16 @@ fun main(args: Array<String>) {
     )
 
     buildKLib(File(outputPath).absolutePath, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))
+}
+
+// Copied here from `K2JsIrCompiler` instead of reusing in order to avoid circular dependencies between Gradle tasks
+private fun messageCollectorLogger(collector: MessageCollector) = object : Logger {
+    override fun warning(message: String)= collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
+    override fun error(message: String) = collector.report(CompilerMessageSeverity.ERROR, message)
+    override fun log(message: String) = collector.report(CompilerMessageSeverity.LOGGING, message)
+    override fun fatal(message: String): Nothing {
+        collector.report(CompilerMessageSeverity.ERROR, message)
+        (collector as? GroupingMessageCollector)?.flush()
+        kotlin.error(message)
+    }
 }

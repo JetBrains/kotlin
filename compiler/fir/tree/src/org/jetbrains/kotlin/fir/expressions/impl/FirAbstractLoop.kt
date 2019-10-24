@@ -6,46 +6,30 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirAbstractLoop(
-    psi: PsiElement?,
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+interface FirAbstractLoop : FirLoop, FirAbstractAnnotatedElement {
+    override val psi: PsiElement?
+    override val annotations: MutableList<FirAnnotationCall>
+    override var block: FirBlock
     override var condition: FirExpression
-) : FirAnnotatedStatement(psi), FirLoop {
-    override lateinit var block: FirBlock
+    override var label: FirLabel?
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAbstractLoop
 
-    override var label: FirLabel? = null
+    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirAbstractLoop
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirAnnotatedStatement>.acceptChildren(visitor, data)
-        super<FirLoop>.acceptChildren(visitor, data)
-    }
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirAbstractLoop
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        return transformCondition(transformer, data)
-            .transformBlock(transformer, data)
-            .transformRestChildren(transformer, data)
-    }
-
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirAbstractLoop {
-        condition = condition.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirAbstractLoop {
-        block = block.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformRestChildren(transformer: FirTransformer<D>, data: D): FirAbstractLoop {
-        label = label?.transformSingle(transformer, data)
-        return super<FirAnnotatedStatement>.transformChildren(transformer, data) as FirAbstractLoop
-    }
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirAbstractLoop
 }

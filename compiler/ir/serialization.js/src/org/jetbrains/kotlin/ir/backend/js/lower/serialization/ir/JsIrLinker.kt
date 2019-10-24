@@ -29,7 +29,7 @@ class JsIrLinker(
         JsDescriptorReferenceDeserializer(currentModule, mangler, builtIns)
 
     override fun reader(moduleDescriptor: ModuleDescriptor, fileIndex: Int, uniqId: UniqId) =
-        moduleDescriptor.kotlinLibrary.irDeclaration(uniqId.index, uniqId.isLocal, fileIndex)
+        moduleDescriptor.kotlinLibrary.irDeclaration(uniqId.index, fileIndex)
 
     override fun readSymbol(moduleDescriptor: ModuleDescriptor, fileIndex: Int, symbolIndex: Int) =
         moduleDescriptor.kotlinLibrary.symbol(symbolIndex, fileIndex)

@@ -7,7 +7,7 @@ class C {
             myX = x
         }
 
-    internal fun foo() {
+    fun foo() {
         myX = "a"
     }
 }

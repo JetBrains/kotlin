@@ -14,6 +14,7 @@ import com.intellij.refactoring.PackageWrapper
 import com.intellij.refactoring.copy.CopyHandler
 import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDestination
 import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
+import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.refactoring.AbstractMultifileRefactoringTest
@@ -22,12 +23,20 @@ import org.jetbrains.kotlin.idea.refactoring.runRefactoringTest
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.utils.ifEmpty
 
-abstract class AbstractCopyTest : AbstractMultifileRefactoringTest() {
-    companion object : RefactoringAction {
-        fun runCopyRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, project: Project) {
-            runRefactoringTest(path, config, rootDir, project, this)
-        }
+private enum class CopyAction : AbstractMultifileRefactoringTest.RefactoringAction {
+    COPY_FILES {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
+            val project = mainFile.project
+            val elementsToCopy = config.getAsJsonArray("filesToMove").map {
+                val virtualFile = rootDir.findFileByRelativePath(it.asString)!!
+                if (virtualFile.isDirectory) virtualFile.toPsiDirectory(project)!! else virtualFile.toPsiFile(project)!!
+            }
 
+            DEFAULT.runRefactoring(rootDir, mainFile, elementsToCopy, config)
+        }
+    },
+
+    DEFAULT {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementsAtCaret: List<PsiElement>, config: JsonObject) {
             val project = mainFile.project
 
@@ -37,14 +46,24 @@ abstract class AbstractCopyTest : AbstractMultifileRefactoringTest() {
             val targetDirectory = config.getNullableString("targetDirectory")?.let {
                 rootDir.findFileByRelativePath(it)?.toPsiDirectory(project)
             }
-            ?: run {
-                val packageWrapper = PackageWrapper(mainFile.manager, config.getString("targetPackage"))
-                runWriteAction { MultipleRootsMoveDestination(packageWrapper).getTargetDirectory(mainFile) }
-            }
+                ?: run {
+                    val packageWrapper = PackageWrapper(mainFile.manager, config.getString("targetPackage"))
+                    runWriteAction { MultipleRootsMoveDestination(packageWrapper).getTargetDirectory(mainFile) }
+                }
 
             project.newName = config.getNullableString("newName")
 
             CopyHandler.doCopy(elementsToCopy, targetDirectory)
+        }
+    }
+}
+
+abstract class AbstractCopyTest : AbstractMultifileRefactoringTest() {
+
+    companion object {
+        fun runCopyRefactoring(path: String, config: JsonObject, rootDir: VirtualFile, project: Project) {
+            val action = config.getNullableString("type")?.let { CopyAction.valueOf(it) } ?: CopyAction.DEFAULT
+            runRefactoringTest(path, config, rootDir, project, action)
         }
     }
 

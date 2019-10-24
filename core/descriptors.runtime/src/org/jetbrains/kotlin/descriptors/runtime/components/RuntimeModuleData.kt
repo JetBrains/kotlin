@@ -106,14 +106,15 @@ fun makeLazyJavaPackageFragmentFromClassLoaderProvider(
     notFoundClasses: NotFoundClasses,
     reflectKotlinClassFinder: KotlinClassFinder,
     deserializedDescriptorResolver: DeserializedDescriptorResolver,
-    singleModuleClassResolver: ModuleClassResolver
+    singleModuleClassResolver: ModuleClassResolver,
+    packagePartProvider: PackagePartProvider = PackagePartProvider.Empty
 ): LazyJavaPackageFragmentProvider {
     val annotationTypeQualifierResolver = AnnotationTypeQualifierResolver(storageManager, Jsr305State.DISABLED)
     val javaResolverComponents = JavaResolverComponents(
         storageManager, ReflectJavaClassFinder(classLoader), reflectKotlinClassFinder, deserializedDescriptorResolver,
         SignaturePropagator.DO_NOTHING, RuntimeErrorReporter, JavaResolverCache.EMPTY,
         JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolver.Empty, RuntimeSourceElementFactory,
-        singleModuleClassResolver, PackagePartProvider.Empty, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
+        singleModuleClassResolver, packagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
         ReflectionTypes(module, notFoundClasses), annotationTypeQualifierResolver,
         SignatureEnhancement(annotationTypeQualifierResolver, Jsr305State.DISABLED),
         JavaClassesTracker.Default, JavaResolverSettings.Default, NewKotlinTypeChecker.Default

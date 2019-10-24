@@ -1545,6 +1545,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/maskAndArgumentElimination.kt");
         }
 
+        @TestMetadata("maskCheckSequence.kt")
+        public void testMaskCheckSequence() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/defaultArguments/maskCheckSequence.kt");
+        }
+
         @TestMetadata("methodHandlerElimination.kt")
         public void testMethodHandlerElimination() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/methodHandlerElimination.kt");
@@ -2446,6 +2451,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("checkOuterInlineFunctionCall.kt")
         public void testCheckOuterInlineFunctionCall() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/checkOuterInlineFunctionCall.kt");
+        }
+
+        @TestMetadata("constructorBridge.kt")
+        public void testConstructorBridge() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/constructorBridge.kt");
         }
 
         @TestMetadata("defaultParametersDontBox.kt")
@@ -3400,6 +3410,39 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("withNonNullMetadataParameter.kt")
         public void testWithNonNullMetadataParameter() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/optimizedDelegatedProperties/withNonNullMetadataParameter.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeText/parameterlessMain")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ParameterlessMain extends AbstractIrBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInParameterlessMain() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/parameterlessMain"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("dontGenerateOnJvmNameMain.kt")
+        public void testDontGenerateOnJvmNameMain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnJvmNameMain.kt");
+        }
+
+        @TestMetadata("dontGenerateOnMain.kt")
+        public void testDontGenerateOnMain() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnMain.kt");
+        }
+
+        @TestMetadata("dontGenerateOnMainExtension.kt")
+        public void testDontGenerateOnMainExtension() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnMainExtension.kt");
+        }
+
+        @TestMetadata("dontGenerateOnNullableArray.kt")
+        public void testDontGenerateOnNullableArray() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnNullableArray.kt");
         }
     }
 

@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoString
-import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -21,8 +19,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 open class DescriptorReferenceSerializer(
     val declarationTable: DeclarationTable,
-    val serializeString: (String) -> ProtoString,
-    val serializeFqName: (FqName) -> ProtoFqName
+    val serializeString: (String) -> Int,
+    val serializeFqName: (FqName) -> List<Int>
 ) {
 
     private fun isEnumSpecialMember(descriptor: DeclarationDescriptor): Boolean {
@@ -113,36 +111,22 @@ open class DescriptorReferenceSerializer(
         val uniqId = discoverableDescriptorsDeclaration?.let { declarationTable.uniqIdByDeclaration(it) }
 
         val proto = ProtoDescriptorReference.newBuilder()
-            .setPackageFqName(serializeFqName(packageFqName))
-            .setClassFqName(serializeFqName(classFqName))
+            .addAllPackageFqName(serializeFqName(packageFqName))
+            .addAllClassFqName(serializeFqName(classFqName))
             .setName(serializeString(nameString))
 
-        if (uniqId != null) proto.setUniqId(protoUniqId(uniqId))
+        val flags = DescriptorReferenceFlags.IS_FAKE_OVERRIDE.encode(isFakeOverride) or
+                DescriptorReferenceFlags.IS_BACKING_FIELD.encode(isBackingField) or
+                DescriptorReferenceFlags.IS_GETTER.encode(declaration.isGetter) or
+                DescriptorReferenceFlags.IS_SETTER.encode(declaration.isSetter) or
+                DescriptorReferenceFlags.IS_DEFAULT_CONSTRUCTOR.encode(isDefaultConstructor) or
+                DescriptorReferenceFlags.IS_ENUM_ENTRY.encode(isEnumEntry) or
+                DescriptorReferenceFlags.IS_ENUM_SPECIAL.encode(isEnumSpecial) or
+                DescriptorReferenceFlags.IS_TYPE_PARAMETER.encode(isTypeParameter)
 
-        if (isFakeOverride) {
-            proto.setIsFakeOverride(true)
-        }
+        proto.flags = flags
 
-        if (isBackingField) {
-            proto.setIsBackingField(true)
-        }
-
-        if (isAccessor) {
-            if (declaration.isGetter)
-                proto.setIsGetter(true)
-            else if (declaration.isSetter)
-                proto.setIsSetter(true)
-            else
-                error("A property accessor which is neither a getter, nor a setter: $descriptor")
-        } else if (isDefaultConstructor) {
-            proto.setIsDefaultConstructor(true)
-        } else if (isEnumEntry) {
-            proto.setIsEnumEntry(true)
-        } else if (isEnumSpecial) {
-            proto.setIsEnumSpecial(true)
-        } else if (isTypeParameter) {
-            proto.setIsTypeParameter(true)
-        }
+        if (uniqId != null) proto.uniqIdIndex = uniqId.index
 
         return proto.build()
     }

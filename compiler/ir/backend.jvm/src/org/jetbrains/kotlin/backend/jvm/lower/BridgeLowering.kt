@@ -205,7 +205,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                 IrSimpleFunctionSymbolImpl(newDescriptor),
                 newName,
                 visibility, modality, returnType,
-                isInline, isExternal, isTailrec, isSuspend
+                isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect
             ).apply {
                 newDescriptor.bind(this)
                 parent = this@copyRenamingTo.parent
@@ -238,7 +238,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             isInline = false,
             isExternal = false,
             isTailrec = false,
-            isSuspend = signatureFunction.isSuspend
+            isSuspend = signatureFunction.isSuspend,
+            isExpect = false
         ).apply {
             descriptor.bind(this)
             parent = irClass
@@ -313,7 +314,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
                     IrSimpleFunctionSymbolImpl(wrappedDescriptor),
                     Name.identifier(getJvmName()),
                     visibility, modality, returnType,
-                    isInline, isExternal, isTailrec, isSuspend
+                    isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect
                 ).apply {
                     wrappedDescriptor.bind(this)
                     parent = this@orphanedCopy.parent

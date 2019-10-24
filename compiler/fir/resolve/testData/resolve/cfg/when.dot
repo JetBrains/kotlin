@@ -161,32 +161,21 @@ digraph when_kt {
           }
           61 [label="Exit when branch condition"];
         }
+        62 [label="Synthetic else branch"];
+        63 [label="Enter when branch result"];
         subgraph cluster_16 {
           color=blue
-          62 [label="Enter when branch condition else"];
-          63 [label="Exit when branch condition"];
+          64 [label="Enter block"];
+          65 [label="Access variable R|<local>/x|"];
+          66 [label="Type operator: x is A"];
+          67 [label="Exit block"];
         }
-        64 [label="Enter when branch result"];
-        subgraph cluster_17 {
-          color=blue
-          65 [label="Enter block"];
-          66 [label="Exit block"];
-        }
-        67 [label="Exit when branch result"];
-        68 [label="Enter when branch result"];
-        subgraph cluster_18 {
-          color=blue
-          69 [label="Enter block"];
-          70 [label="Access variable R|<local>/x|"];
-          71 [label="Type operator: x is A"];
-          72 [label="Exit block"];
-        }
-        73 [label="Exit when branch result"];
-        74 [label="Exit when"];
+        68 [label="Exit when branch result"];
+        69 [label="Exit when"];
       }
-      75 [label="Exit block"];
+      70 [label="Exit block"];
     }
-    76 [label="Exit function test_2" style="filled" fillcolor=red];
+    71 [label="Exit function test_2" style="filled" fillcolor=red];
   }
 
   49 -> {50};
@@ -201,20 +190,15 @@ digraph when_kt {
   58 -> {59};
   59 -> {60};
   60 -> {61};
-  61 -> {68 62};
-  62 -> {63};
+  61 -> {63 62};
+  62 -> {69};
   63 -> {64};
   64 -> {65};
   65 -> {66};
   66 -> {67};
-  67 -> {74};
+  67 -> {68};
   68 -> {69};
   69 -> {70};
   70 -> {71};
-  71 -> {72};
-  72 -> {73};
-  73 -> {74};
-  74 -> {75};
-  75 -> {76};
 
 }

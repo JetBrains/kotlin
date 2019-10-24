@@ -113,7 +113,8 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 returnType = enumConstructor.returnType,
                 isInline = enumConstructor.isInline,
                 isExternal = enumConstructor.isExternal,
-                isPrimary = enumConstructor.isPrimary
+                isPrimary = enumConstructor.isPrimary,
+                isExpect = enumConstructor.isExpect
             ).apply {
                 val newConstructor = this
                 descriptor.bind(this)

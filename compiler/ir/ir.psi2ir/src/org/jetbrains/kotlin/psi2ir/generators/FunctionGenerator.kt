@@ -289,21 +289,21 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         }
 
         val bodyGenerator = createBodyGenerator(irFunction.symbol)
+
+        // Declare all the value parameters up first.
         functionDescriptor.valueParameters.mapTo(irFunction.valueParameters) { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
-            generateValueParameterDeclaration(valueParameterDescriptor, ktParameter, bodyGenerator, withDefaultValues, irFunction)
+            declareParameter(valueParameterDescriptor, ktParameter, irFunction)
         }
-    }
-
-    private fun generateValueParameterDeclaration(
-        valueParameterDescriptor: ValueParameterDescriptor,
-        ktParameter: KtParameter?,
-        bodyGenerator: BodyGenerator,
-        withDefaultValues: Boolean,
-        irOwnerElement: IrElement
-    ): IrValueParameter =
-        declareParameter(valueParameterDescriptor, ktParameter, irOwnerElement).also { irValueParameter ->
-            if (withDefaultValues) {
+        // Only after value parameters have been declared, generate default values. This ensures
+        // that forward references to other parameters works in default value lambdas. For example:
+        //
+        // fun f(f1: () -> String = { f2() },
+        //       f2: () -> String) = f1()
+        if (withDefaultValues) {
+            irFunction.valueParameters.forEachIndexed { index, irValueParameter ->
+                val valueParameterDescriptor = functionDescriptor.valueParameters[index]
+                val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
                 irValueParameter.defaultValue = ktParameter?.defaultValue?.let { defaultValue ->
                     val inAnnotation =
                         valueParameterDescriptor.containingDeclaration.safeAs<ConstructorDescriptor>()?.isAnnotationConstructor() ?: false
@@ -314,6 +314,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 }
             }
         }
+    }
 
     private fun generateReceiverParameterDeclaration(
         receiverParameterDescriptor: ReceiverParameterDescriptor,

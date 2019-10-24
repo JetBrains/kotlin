@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.EffectSystem
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -67,7 +68,8 @@ class PSICallResolver(
     private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
-    private val callableReferenceResolver: CallableReferenceResolver
+    private val callableReferenceResolver: CallableReferenceResolver,
+    private val candidateInterceptor: CandidateInterceptor
 ) {
     private val givenCandidatesName = Name.special("<given candidates>")
 
@@ -396,6 +398,15 @@ class PSICallResolver(
             return cache.getOrPut(implicitReceiver) {
                 context.transformToReceiverWithSmartCastInfo(implicitReceiver.value)
             }
+        }
+
+        override fun interceptCandidates(
+            resolutionScope: ResolutionScope,
+            name: Name,
+            initialResults: Collection<FunctionDescriptor>,
+            location: LookupLocation
+        ): Collection<FunctionDescriptor> {
+            return candidateInterceptor.interceptCandidates(initialResults, this, context, resolutionScope, null, name, location)
         }
     }
 

@@ -1,4 +1,4 @@
-class Foo1 {
+class Foo1 { /// M
     val x: String /// F, L
         get() = "foo" /// M
 }

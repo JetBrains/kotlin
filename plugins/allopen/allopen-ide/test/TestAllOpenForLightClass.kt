@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.noarg
+package org.jetbrains.kotlin.allopen
 
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.allopen.AbstractAllOpenDeclarationAttributeAltererExtension
 import org.jetbrains.kotlin.allopen.ide.ALL_OPEN_ANNOTATION_OPTION_PREFIX
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
@@ -17,11 +16,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 
-
-
-
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class TestNoArgForLightClass : KotlinLightCodeInsightFixtureTestCase() {
+class TestAllOpenForLightClass : KotlinLightCodeInsightFixtureTestCase() {
 
     companion object {
         val allOpenAnnotationName = AbstractAllOpenDeclarationAttributeAltererExtension.ANNOTATIONS_FOR_TESTS.first()

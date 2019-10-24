@@ -30,10 +30,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 internal class JsBlockBuilder {
@@ -126,31 +125,78 @@ internal fun SerializerJsTranslator.serializerTower(property: SerializableProper
                 property.type,
                 property.descriptor.findPsi()
             ) else null
-    return serializerInstance(serializer, property.module, property.type, property.genericIndex)
+    return serializerInstance(context, serializer, property.module, property.type, property.genericIndex)
         ?.let { expr -> if (property.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr }
 }
 
-internal fun SerializerJsTranslator.serializerInstance(
+internal fun AbstractSerialGenerator.serializerInstance(
+    context: TranslationContext,
     serializerClass: ClassDescriptor?,
     module: ModuleDescriptor,
     kType: KotlinType,
-    genericIndex: Int? = null
+    genericIndex: Int? = null,
+    genericGetter: (Int, KotlinType) -> JsExpression = { it, _ ->
+        JsNameRef(
+            context.scope().declareName("${SerialEntityNames.typeArgPrefix}$it"),
+            JsThisRef()
+        )
+    }
 ): JsExpression? {
     val nullableSerClass =
         context.translateQualifiedReference(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
     if (serializerClass == null) {
         if (genericIndex == null) return null
-        return JsNameRef(context.scope().declareName("${SerialEntityNames.typeArgPrefix}$genericIndex"), JsThisRef())
+        return genericGetter(genericIndex, kType)
     }
     if (serializerClass.kind == ClassKind.OBJECT) {
         return context.serializerObjectGetter(serializerClass)
     } else {
-        var args = if (serializerClass.isSerializerWhichRequiersKClass())
-            listOf(ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!))
-        else kType.arguments.map {
-            val argSer = findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
-            val expr = serializerInstance(argSer, module, it.type, it.type.genericIndex) ?: return null
-            if (it.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
+        fun instantiate(serializer: ClassDescriptor?, type: KotlinType): JsExpression? {
+            val expr = serializerInstance(context, serializer, module, type, type.genericIndex, genericGetter) ?: return null
+            return if (type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
+        }
+        var args = when {
+            serializerClass.classId == contextSerializerId || serializerClass.classId == polymorphicSerializerId -> listOf(
+                ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!)
+            )
+            serializerClass.classId == enumSerializerId -> listOf(
+                ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!),
+                JsStringLiteral(kType.serialName())
+            )
+            serializerClass.classId == objectSerializerId -> listOf(
+                JsStringLiteral(kType.serialName()),
+                context.serializerObjectGetter(kType.toClassDescriptor!!)
+            )
+            serializerClass.classId == sealedSerializerId -> mutableListOf<JsExpression>().apply {
+                add(JsStringLiteral(kType.serialName()))
+                add(ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!))
+                val (subclasses, subSerializers) = allSealedSerializableSubclassesFor(
+                    kType.toClassDescriptor!!,
+                    module
+                )
+                add(JsArrayLiteral(subclasses.map {
+                    ExpressionVisitor.getObjectKClass(
+                        context,
+                        it.toClassDescriptor!!
+                    )
+                }))
+                add(JsArrayLiteral(subSerializers.mapIndexed { i, serializer ->
+                    val type = subclasses[i]
+                    val expr = serializerInstance(context, serializer, module, type, type.genericIndex) { _, genericType ->
+                        serializerInstance(
+                            context,
+                            module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer),
+                            module,
+                            (genericType.constructor.declarationDescriptor as TypeParameterDescriptor).representativeUpperBound
+                        )!!
+                    }!!
+                    if (type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
+                }))
+            }
+            else -> kType.arguments.map {
+                val argSer = findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
+                instantiate(argSer, it.type) ?: return null
+            }
         }
         if (serializerClass.classId == referenceArraySerializerId)
             args = listOf(ExpressionVisitor.getObjectKClass(context, kType.arguments[0].type.toClassDescriptor!!)) + args

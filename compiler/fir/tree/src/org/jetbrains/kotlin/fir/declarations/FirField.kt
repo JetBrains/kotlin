@@ -5,19 +5,50 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.BaseTransformedType
-import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.expressions.FirVariable
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.fir.visitors.*
 
-@BaseTransformedType
-interface FirField : @VisitedSupertype FirDeclaration, FirCallableMemberDeclaration<FirField>, FirVariable<FirField> {
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitField(this, data)
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirCallableMemberDeclaration>.acceptChildren(visitor, data)
-        initializer?.accept(visitor, data)
-        delegate?.accept(visitor, data)
-    }
+abstract class FirField : FirPureAbstractElement(), FirVariable<FirField>, FirCallableMemberDeclaration<FirField> {
+    abstract override val psi: PsiElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val returnTypeRef: FirTypeRef
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val name: Name
+    abstract override val symbol: FirVariableSymbol<FirField>
+    abstract override val initializer: FirExpression?
+    abstract override val delegate: FirExpression?
+    abstract override val delegateFieldSymbol: FirDelegateFieldSymbol<FirField>?
+    abstract override val isVar: Boolean
+    abstract override val isVal: Boolean
+    abstract override val getter: FirPropertyAccessor?
+    abstract override val setter: FirPropertyAccessor?
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val typeParameters: List<FirTypeParameter>
+    abstract override val status: FirDeclarationStatus
+    abstract override val containerSource: DeserializedContainerSource?
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitField(this, data)
+
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirField
+
+    abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirField
+
+    abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirField
+
+    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField
 }

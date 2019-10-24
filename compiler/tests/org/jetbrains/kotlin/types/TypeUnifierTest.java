@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.DummyTraces;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 
 import java.util.HashMap;
@@ -208,7 +208,7 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
 
         KtTypeReference typeReference = projection.getTypeReference();
         assert typeReference != null;
-        KotlinType type = typeResolver.resolveType(withX, typeReference, KotlinTestUtils.DUMMY_TRACE, true);
+        KotlinType type = typeResolver.resolveType(withX, typeReference, DummyTraces.DUMMY_TRACE, true);
 
         return new TypeProjectionImpl(getProjectionKind(typeStr, projection), type);
     }

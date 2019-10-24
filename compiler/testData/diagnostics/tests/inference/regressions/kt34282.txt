@@ -1,0 +1,6 @@
+package
+
+public fun bar(/*0*/ y: (kotlin.Int) -> kotlin.Int): kotlin.Int
+public fun foo(/*0*/ x: kotlin.Float): kotlin.Float
+public fun foo(/*0*/ x: kotlin.String): kotlin.String
+public fun main(): kotlin.Unit

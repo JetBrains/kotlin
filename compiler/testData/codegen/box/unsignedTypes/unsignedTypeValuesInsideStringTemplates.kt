@@ -1,6 +1,5 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 
 const val MAX_BYTE: UByte = 0xFFu
 const val HUNDRED: UByte = 100u

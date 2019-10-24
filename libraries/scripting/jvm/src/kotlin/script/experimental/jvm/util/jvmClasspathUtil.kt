@@ -39,7 +39,7 @@ internal const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER_NAME.jar"
 private val JAR_COLLECTIONS_CLASSES_PATHS = arrayOf("BOOT-INF/classes", "WEB-INF/classes")
 private val JAR_COLLECTIONS_LIB_PATHS = arrayOf("BOOT-INF/lib", "WEB-INF/lib")
 private val JAR_COLLECTIONS_KEY_PATHS = JAR_COLLECTIONS_CLASSES_PATHS + JAR_COLLECTIONS_LIB_PATHS
-private const val JAR_MANIFEST_RESOURCE_NAME = "META-INF/MANIFEST.MF"
+internal const val JAR_MANIFEST_RESOURCE_NAME = "META-INF/MANIFEST.MF"
 
 internal const val KOTLIN_SCRIPT_CLASSPATH_PROPERTY = "kotlin.script.classpath"
 internal const val KOTLIN_COMPILER_CLASSPATH_PROPERTY = "kotlin.compiler.classpath"
@@ -108,20 +108,28 @@ private fun ClassLoader.classPathFromGetUrlsMethodOrNull(): Sequence<File>? {
     }
 }
 
+internal class ClassLoaderResourceRootFIlePathCalculator(private val keyResourcePath: String) {
+    private var keyResourcePathDepth = -1
+
+    operator fun invoke(resourceFile: File): File {
+        if (keyResourcePathDepth < 0) {
+            keyResourcePathDepth = if (keyResourcePath.isBlank()) 0 else (keyResourcePath.trim('/').count { it == '/' } + 1)
+        }
+        var root = resourceFile
+        for (i in 0 until keyResourcePathDepth) {
+            root = root.parentFile
+        }
+        return root
+    }
+}
+
 internal fun ClassLoader.rawClassPathFromKeyResourcePath(keyResourcePath: String): Sequence<File> {
-    var keyResourcePathDepth = -1
+    val resourceRootCalc = ClassLoaderResourceRootFIlePathCalculator(keyResourcePath)
     return getResources(keyResourcePath).asSequence().mapNotNull { url ->
         if (url.protocol == "jar") {
             (url.openConnection() as? JarURLConnection)?.jarFileURL?.toFileOrNull()
-        } else url.toFileOrNull()?.let { file ->
-            if (keyResourcePathDepth < 0) {
-                keyResourcePathDepth = if (keyResourcePath.isBlank()) 0 else (keyResourcePath.trim('/').count { it == '/' } + 1)
-            }
-            var root = file
-            for (i in 0 until keyResourcePathDepth) {
-                root = root.parentFile
-            }
-            root
+        } else {
+            url.toFileOrNull()?.let { resourceRootCalc(it) }
         }
     }
 }

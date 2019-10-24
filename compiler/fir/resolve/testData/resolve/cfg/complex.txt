@@ -47,8 +47,6 @@ FILE: complex.kt
                 (R|<local>/element| is R|T|) ->  {
                     ^firstIsInstanceOrNull R|<local>/element|
                 }
-                else ->  {
-                }
             }
 
         }

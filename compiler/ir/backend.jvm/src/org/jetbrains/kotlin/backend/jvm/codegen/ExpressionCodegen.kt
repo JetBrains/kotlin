@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -100,7 +101,7 @@ class ExpressionCodegen(
     override val frameMap: IrFrameMap,
     val mv: InstructionAdapter,
     val classCodegen: ClassCodegen,
-    val isInlineLambda: Boolean = false
+    val inlinedInto: ExpressionCodegen?
 ) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
 
     var finallyDepth = 0
@@ -116,7 +117,7 @@ class ExpressionCodegen(
     override val visitor: InstructionAdapter
         get() = mv
 
-    override val inlineNameGenerator: NameGenerator = NameGenerator("${classCodegen.type.internalName}\$todo") // TODO
+    override val inlineNameGenerator: NameGenerator = classCodegen.getRegeneratedObjectNameGenerator(irFunction)
 
     override val typeSystem: TypeSystemCommonBackendContext
         get() = typeMapper.typeSystem
@@ -131,7 +132,7 @@ class ExpressionCodegen(
     val IrExpression.asmType: Type
         get() = type.asmType
 
-    val IrVariable.asmType: Type
+    val IrValueDeclaration.asmType: Type
         get() = type.asmType
 
     // Assume this expression's result has already been materialized on the stack
@@ -149,7 +150,11 @@ class ExpressionCodegen(
         if (fileEntry != null) {
             val lineNumber = fileEntry.getLineNumber(offset) + 1
             assert(lineNumber > 0)
-            if (lastLineNumber != lineNumber) {
+            // State-machine builder splits the sequence of instructions into states inside state-machine, adding additional LINENUMBERs
+            // between them for debugger to stop on suspension. Thus, it requires as much LINENUMBER information as possible to be present,
+            // otherwise, any exception will have incorrect line number. See elvisLineNumber.kt test.
+            // TODO: Remove unneeded LINENUMBERs after building the state-machine.
+            if (lastLineNumber != lineNumber || irFunction.isSuspend || irFunction.isInvokeSuspendOfLambda(context)) {
                 lastLineNumber = lineNumber
                 mv.visitLineNumber(lineNumber, markNewLabel())
             }
@@ -165,6 +170,12 @@ class ExpressionCodegen(
         }
         return StackValue.onStack(type, irType.toKotlinType())
     }
+
+    internal fun genOrGetLocal(expression: IrExpression, data: BlockInfo): StackValue =
+        if (expression is IrGetValue)
+            StackValue.local(findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol), expression.type.toKotlinType())
+        else
+            gen(expression, typeMapper.mapType(expression.type), expression.type, data)
 
     fun generate() {
         mv.visitCode()
@@ -196,7 +207,12 @@ class ExpressionCodegen(
         if (state.isParamAssertionsDisabled)
             return
 
-        val isSyntheticOrBridge = irFunction.origin.isSynthetic ||
+        val notCallableFromJava = inlinedInto != null ||
+                Visibilities.isPrivate(irFunction.visibility) ||
+                irFunction.origin.isSynthetic ||
+                // TODO: refine this condition to not generate nullability assertions on parameters
+                //       corresponding to captured variables and anonymous object super constructor arguments
+                (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
                 // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
                 irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
                 // Although these are accessible from Java, the functions they bridge to already have the assertions.
@@ -204,7 +220,7 @@ class ExpressionCodegen(
                 irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
                 irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
                 irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
-        if (!isInlineLambda && !isSyntheticOrBridge && !Visibilities.isPrivate(irFunction.visibility)) {
+        if (!notCallableFromJava) {
             irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
             irFunction.valueParameters.forEach(::generateNonNullAssertion)
         }
@@ -303,7 +319,7 @@ class ExpressionCodegen(
         visitStatementContainer(expression, data).coerce(expression.type)
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
-        return visitFunctionAccess(expression.createSuspendFunctionCallViewIfNeeded(context, irFunction, isInlineLambda), data)
+        return visitFunctionAccess(expression.createSuspendFunctionCallViewIfNeeded(context, irFunction, inlinedInto != null), data)
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: BlockInfo): PromisedValue {
@@ -342,7 +358,7 @@ class ExpressionCodegen(
             }
             expression.descriptor is ConstructorDescriptor ->
                 throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
-            callee.isSuspend && !irFunction.isInvokeSuspendOfContinuation(classCodegen.context) ->
+            callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers(classCodegen.context) ->
                 addInlineMarker(mv, isStartNotEnd = true)
         }
 
@@ -368,13 +384,13 @@ class ExpressionCodegen(
         expression.markLineNumber(true)
 
         // Do not generate redundant markers in continuation class.
-        if (callee.isSuspend && !irFunction.isInvokeSuspendOfContinuation(classCodegen.context)) {
+        if (callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers(classCodegen.context)) {
             addSuspendMarker(mv, isStartNotEnd = true)
         }
 
         callGenerator.genCall(callable, this, expression)
 
-        if (callee.isSuspend && !irFunction.isInvokeSuspendOfContinuation(classCodegen.context)) {
+        if (callee.isSuspend && !irFunction.shouldNotContainSuspendMarkers(classCodegen.context)) {
             addSuspendMarker(mv, isStartNotEnd = false)
             addInlineMarker(mv, isStartNotEnd = false)
         }
@@ -497,10 +513,14 @@ class ExpressionCodegen(
 
     override fun visitSetVariable(expression: IrSetVariable, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
-        expression.value.markLineNumber(startOffset = true)
-        expression.value.accept(this, data).coerce(expression.symbol.owner.type).materialize()
-        mv.store(findLocalIndex(expression.symbol), expression.symbol.owner.asmType)
+        setVariable(expression.symbol, expression.value, data)
         return defaultValue(expression.type)
+    }
+
+    fun setVariable(symbol: IrValueSymbol, value: IrExpression, data: BlockInfo) {
+        value.markLineNumber(startOffset = true)
+        value.accept(this, data).coerce(symbol.owner.type).materialize()
+        mv.store(findLocalIndex(symbol), symbol.owner.asmType)
     }
 
     override fun <T> visitConst(expression: IrConst<T>, data: BlockInfo): PromisedValue {
@@ -531,7 +551,7 @@ class ExpressionCodegen(
         )
 
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
-        classCodegen.generateLocalClass(declaration, irFunction.isInline).also {
+        classCodegen.generateLocalClass(declaration, generateSequence(this) { it.inlinedInto }.any { it.irFunction.isInline }).also {
             closureReifiedMarkers[declaration] = it
         }
         return immaterialUnitValue
@@ -574,6 +594,7 @@ class ExpressionCodegen(
         SwitchGenerator(expression, data, this).generate()?.let { return it }
 
         val endLabel = Label()
+        val exhaustive = expression.branches.any { it.condition.isTrueConst() }
         for (branch in expression.branches) {
             val elseLabel = Label()
             if (branch.condition.isFalseConst() || branch.condition.isTrueConst()) {
@@ -589,7 +610,9 @@ class ExpressionCodegen(
                 branch.condition.accept(this, data).coerceToBoolean().jumpIfFalse(elseLabel)
             }
             val result = branch.result.accept(this, data).coerce(expression.type).materialized
-            if (branch.condition.isTrueConst()) {
+            if (!exhaustive) {
+                result.discard()
+            } else if (branch.condition.isTrueConst()) {
                 // The rest of the expression is dead code.
                 mv.mark(endLabel)
                 return result
@@ -597,11 +620,16 @@ class ExpressionCodegen(
             mv.goTo(endLabel)
             mv.mark(elseLabel)
         }
-        // Produce the default value for the type. Doesn't really matter right now, as non-exhaustive
-        // conditionals cannot be used as expressions.
-        val result = defaultValue(expression.type).materialized
         mv.mark(endLabel)
-        return result
+        // NOTE: using a non-exhaustive if/when as an expression is invalid, so it should theoretically
+        //       always return Unit. However, with the current frontend this is not always the case.
+        //       Most notably, 1. when all branches return/break/continue, the type is Nothing;
+        //       2. the frontend may sometimes infer Any instead of Unit, probably due to a bug
+        //       (see compiler/testData/codegen/box/controlStructures/ifIncompatibleBranches.kt).
+        //       It should still be safe to produce a soon-to-be-discarded Unit. (What is not ok is
+        //       inserting *any* code here, though, as its line number will be that of the last line
+        //       of the last branch.)
+        return immaterialUnitValue
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): PromisedValue {
@@ -655,54 +683,6 @@ class ExpressionCodegen(
                     this.markLineNumber(false)
             }
         }
-    }
-
-    override fun visitStringConcatenation(expression: IrStringConcatenation, data: BlockInfo): PromisedValue {
-        expression.markLineNumber(startOffset = true)
-        val arity = expression.arguments.size
-        when {
-            arity == 0 -> mv.aconst("")
-            arity == 1 -> {
-                // Convert single arg to string.
-                val arg = expression.arguments[0]
-                val result = arg.accept(this, data).boxInlineClasses(arg.type).materialized
-                if (!arg.type.isString()) {
-                    result.genToString(mv)
-                }
-            }
-            arity == 2 && expression.arguments[0].type.isStringClassType() -> {
-                // Call the stringPlus intrinsic
-                for ((index, argument) in expression.arguments.withIndex()) {
-                    val result = argument.accept(this, data).boxInlineClasses(argument.type).materialized
-                    if (result.type.sort != Type.OBJECT) {
-                        result.genToString(mv)
-                    } else if (index == 0) {
-                        result.coerce(context.irBuiltIns.stringType).materialize()
-                    }
-                }
-                mv.invokestatic(
-                    IrIntrinsicMethods.INTRINSICS_CLASS_NAME,
-                    "stringPlus",
-                    "(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/String;",
-                    false
-                )
-            }
-            else -> {
-                // Use StringBuilder to concatenate.
-                genStringBuilderConstructor(mv)
-                for (argument in expression.arguments) {
-                    genInvokeAppendMethod(mv, argument.accept(this, data).boxInlineClasses(argument.type).materialized.type, null)
-                }
-                mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
-            }
-        }
-        return expression.onStack
-    }
-
-    private fun MaterialValue.genToString(v: InstructionAdapter) {
-        val asmType =
-            if (irType.getClass()?.isInline == true) OBJECT_TYPE else stringValueOfType(type)
-        v.invokestatic("java/lang/String", "valueOf", Type.getMethodDescriptor(AsmTypes.JAVA_STRING_TYPE, asmType), false)
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): PromisedValue {
@@ -984,7 +964,7 @@ class ExpressionCodegen(
 
         val original = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: irFunction
         val methodOwner = callee.parent.safeAs<IrClass>()?.let(typeMapper::mapClass) ?: MethodSignatureMapper.FAKE_OWNER_TYPE
-        val sourceCompiler = IrSourceCompilerForInline(state, element, this, data)
+        val sourceCompiler = IrSourceCompilerForInline(state, element, original, this, data)
 
         val reifiedTypeInliner = ReifiedTypeInliner(mappings, object : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
             override fun putClassInstance(v: InstructionAdapter, type: IrType) {
@@ -1001,7 +981,26 @@ class ExpressionCodegen(
 
     override fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
         require(typeParameter is IrTypeParameterSymbol)
-        if (typeParameter.owner.parent != irFunction) {
+        // This is a hack to work around the problem in LocalDeclarationsLowering. Specifically, suppose an inline
+        // lambda uses a reified type parameter declared by a function:
+        //
+        //     object {
+        //         inline fun <reified T : Any> f() = run { T::class.java.getName() }
+        //     }
+        //
+        // LocalDeclarationsLowering would extract that lambda into a method of the enclosing type, but will not create
+        // a reified type parameter in it (in fact, the lambda method isn't even marked as inline):
+        //
+        //     object {
+        //         /* static */ private fun `f$lambda-0`() = T::class.java.getName()
+        //         inline fun <reified T : Any> f() = run(::`f$lambda-0`)
+        //     }
+        //
+        // The parent of the type parameter then is not `irFunction` (i.e. the lambda itself), but the function
+        // it is inlined into.
+        //
+        // TODO make LocalDeclarationsLowering handle captured type parameters and only compare with `irFunction`.
+        if (generateSequence(this) { it.inlinedInto }.none { it.irFunction == typeParameter.owner.parent }) {
             classCodegen.reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
         }
     }
@@ -1028,7 +1027,7 @@ class ExpressionCodegen(
     }
 
     fun isFinallyMarkerRequired(): Boolean {
-        return irFunction.isInline || isInlineLambda
+        return irFunction.isInline || inlinedInto != null
     }
 
     private val IrType.isReifiedTypeParameter: Boolean

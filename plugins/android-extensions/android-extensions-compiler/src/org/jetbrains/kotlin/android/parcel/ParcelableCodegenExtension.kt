@@ -1,24 +1,12 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.android.parcel
-/*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 import kotlinx.android.parcel.TypeParceler
 import org.jetbrains.kotlin.android.parcel.ParcelableResolveExtension.Companion.createMethod
-import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.*
 import org.jetbrains.kotlin.android.parcel.serializers.*
 import org.jetbrains.kotlin.android.parcel.ParcelableSyntheticComponent.ComponentKind.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -55,13 +43,10 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import java.io.FileDescriptor
 
-open class ParcelableCodegenExtension : ExpressionCodegenExtension {
+open class ParcelableCodegenExtension : ParcelableExtensionBase, ExpressionCodegenExtension {
 
-    private companion object {
+    companion object {
         private val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
-        private val CREATOR_NAME = Name.identifier("CREATOR")
-
-        private val ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
     }
 
     @Deprecated(
@@ -75,10 +60,10 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         get() = true
 
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {
-        val parcelableClass = codegen.descriptor
-        if (!parcelableClass.isParcelize) return
 
-        if (parcelableClass.kind !in ALLOWED_CLASS_KINDS) return
+        val parcelableClass = codegen.descriptor
+
+        if (!parcelableClass.isParcelableClassDescriptor) return
 
         val propertiesToSerialize = getPropertiesToSerialize(codegen, parcelableClass)
 
@@ -106,32 +91,6 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
 
             writeCreatorClass(codegen, parcelableClass, parcelClassType, PARCEL_TYPE, parcelerObject, propertiesToSerialize)
         }
-    }
-
-    private fun ClassDescriptor.hasCreatorField(): Boolean {
-        val companionObject = companionObjectDescriptor ?: return false
-
-        if (companionObject.name == CREATOR_NAME) {
-            return true
-        }
-
-        return companionObject.unsubstitutedMemberScope
-                .getContributedVariables(CREATOR_NAME, NoLookupLocation.FROM_BACKEND)
-                .isNotEmpty()
-    }
-
-    private fun ClassDescriptor.hasSyntheticDescribeContents() = hasParcelizeSyntheticMethod(ComponentKind.DESCRIBE_CONTENTS)
-
-    private fun ClassDescriptor.hasSyntheticWriteToParcel() = hasParcelizeSyntheticMethod(ComponentKind.WRITE_TO_PARCEL)
-
-    private fun ClassDescriptor.hasParcelizeSyntheticMethod(componentKind: ParcelableSyntheticComponent.ComponentKind): Boolean {
-        val methodName = Name.identifier(componentKind.methodName)
-
-        val writeToParcelMethods = unsubstitutedMemberScope
-                .getContributedFunctions(methodName, NoLookupLocation.FROM_BACKEND)
-                .filter { it is ParcelableSyntheticComponent && it.componentKind == componentKind }
-
-        return writeToParcelMethods.size == 1
     }
 
     private fun getCompanionClassType(containerAsmType: Type, parcelerObject: ClassDescriptor): Pair<Type, String> {
@@ -419,12 +378,6 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
                 e.code()
             }
         })
-    }
-
-    private fun ClassDescriptor.findFunction(componentKind: ParcelableSyntheticComponent.ComponentKind): SimpleFunctionDescriptor? {
-        return unsubstitutedMemberScope
-                .getContributedFunctions(Name.identifier(componentKind.methodName), WHEN_GET_ALL_DESCRIPTORS)
-                .firstOrNull { (it as? ParcelableSyntheticComponent)?.componentKind == componentKind }
     }
 }
 

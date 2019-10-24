@@ -38,7 +38,8 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         JvmAnnotationsTargetNonExistentAccessorChecker(),
         BadInheritedJavaSignaturesChecker,
         JvmMultifileClassStateChecker,
-        SynchronizedOnInlineMethodChecker
+        SynchronizedOnInlineMethodChecker,
+        DefaultCheckerInTailrec
     ),
 
     additionalCallCheckers = listOf(

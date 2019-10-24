@@ -20,8 +20,6 @@ FILE: booleanOperators.kt
                 R|<local>/x|.R|/B.bar|()
                 R|<local>/x|.R|/C.baz|()
             }
-            else ->  {
-            }
         }
 
     }
@@ -32,8 +30,6 @@ FILE: booleanOperators.kt
                 R|<local>/x|.<Unresolved name: bar>#()
                 R|<local>/x|.<Unresolved name: baz>#()
             }
-            else ->  {
-            }
         }
 
     }
@@ -42,8 +38,6 @@ FILE: booleanOperators.kt
             (R|<local>/x| !is R|A|).R|kotlin/Boolean.not|() ->  {
                 R|<local>/x|.R|/A.foo|()
             }
-            else ->  {
-            }
         }
 
     }
@@ -51,8 +45,6 @@ FILE: booleanOperators.kt
         when () {
             (R|<local>/x| !is R|kotlin/String|) || ==(R|<local>/x|.R|kotlin/String.length|, Int(0)) ->  {
                 R|<local>/x|.<Unresolved name: length>#
-            }
-            else ->  {
             }
         }
 
@@ -63,8 +55,6 @@ FILE: booleanOperators.kt
             !=(R|<local>/x|, Null(null)) || Boolean(false) ->  {
                 R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
             }
-            else ->  {
-            }
         }
 
     }
@@ -73,8 +63,6 @@ FILE: booleanOperators.kt
             Boolean(false) || !=(R|<local>/x|, Null(null)) ->  {
                 R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
             }
-            else ->  {
-            }
         }
 
     }
@@ -82,8 +70,6 @@ FILE: booleanOperators.kt
         when () {
             (R|<local>/x| is R|A|) && R|<local>/x|.R|/A.bool|() ->  {
                 R|<local>/x|.R|/A.foo|()
-            }
-            else ->  {
             }
         }
 

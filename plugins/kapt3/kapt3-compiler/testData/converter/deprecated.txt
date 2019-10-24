@@ -1,0 +1,49 @@
+package deprecated;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.Deprecated()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package deprecated;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@Anno()
+@java.lang.Deprecated()
+public final class Foo {
+    @java.lang.Deprecated()
+    private final int prop = 0;
+
+    @java.lang.Deprecated()
+    public final void foo(int a) {
+    }
+
+    @java.lang.Deprecated()
+    public static void prop$annotations() {
+    }
+
+    @java.lang.Deprecated()
+    public final int getProp() {
+        return 0;
+    }
+
+    @java.lang.Deprecated()
+    public final int getFoo() {
+        return 0;
+    }
+
+    @java.lang.Deprecated()
+    public final void setFoo(int value) {
+    }
+
+    public Foo() {
+        super();
+    }
+}

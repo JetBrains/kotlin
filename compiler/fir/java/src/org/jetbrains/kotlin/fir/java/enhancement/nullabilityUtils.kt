@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.resolvedFqName
+import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
@@ -40,25 +41,25 @@ fun FirAnnotationCall.extractNullability(
 }
 
 private fun FirAnnotationCall.extractNullabilityFromKnownAnnotations(jsr305State: Jsr305State): NullabilityQualifierWithMigrationStatus? {
-    val annotationFqName = resolvedFqName ?: return null
+    val annotationClassId = classId ?: return null
 
     return when {
-        annotationFqName in NULLABLE_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
-        annotationFqName in NOT_NULL_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
-        annotationFqName == JAVAX_NONNULL_ANNOTATION -> extractNullabilityTypeFromArgument()
+        annotationClassId in NULLABLE_ANNOTATION_IDS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
+        annotationClassId in NOT_NULL_ANNOTATION_IDS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+        annotationClassId == JAVAX_NONNULL_ANNOTATION_ID -> extractNullabilityTypeFromArgument()
 
-        annotationFqName == COMPATQUAL_NULLABLE_ANNOTATION && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
+        annotationClassId == COMPATQUAL_NULLABLE_ANNOTATION_ID && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
             NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
 
-        annotationFqName == COMPATQUAL_NONNULL_ANNOTATION && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
+        annotationClassId == COMPATQUAL_NONNULL_ANNOTATION_ID && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
             NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
 
-        annotationFqName == ANDROIDX_RECENTLY_NON_NULL_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
+        annotationClassId == ANDROIDX_RECENTLY_NON_NULL_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(
             NullabilityQualifier.NOT_NULL,
             isForWarningOnly = true
         )
 
-        annotationFqName == ANDROIDX_RECENTLY_NULLABLE_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
+        annotationClassId == ANDROIDX_RECENTLY_NULLABLE_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(
             NullabilityQualifier.NULLABLE,
             isForWarningOnly = true
         )
@@ -78,3 +79,11 @@ private fun FirAnnotationCall.extractNullabilityTypeFromArgument(): NullabilityQ
         else -> null
     }
 }
+
+private val NULLABLE_ANNOTATION_IDS = NULLABLE_ANNOTATIONS.map { ClassId.topLevel(it) }
+private val NOT_NULL_ANNOTATION_IDS = NOT_NULL_ANNOTATIONS.map { ClassId.topLevel(it) }
+private val JAVAX_NONNULL_ANNOTATION_ID = ClassId.topLevel(JAVAX_NONNULL_ANNOTATION)
+private val COMPATQUAL_NULLABLE_ANNOTATION_ID = ClassId.topLevel(COMPATQUAL_NULLABLE_ANNOTATION)
+private val COMPATQUAL_NONNULL_ANNOTATION_ID = ClassId.topLevel(COMPATQUAL_NONNULL_ANNOTATION)
+private val ANDROIDX_RECENTLY_NON_NULL_ANNOTATION_ID = ClassId.topLevel(ANDROIDX_RECENTLY_NON_NULL_ANNOTATION)
+private val ANDROIDX_RECENTLY_NULLABLE_ANNOTATION_ID = ClassId.topLevel(ANDROIDX_RECENTLY_NULLABLE_ANNOTATION)

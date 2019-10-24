@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
@@ -38,6 +39,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MI
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_CTOR_MARKER_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESCRIPTOR_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESCRIPTOR_FOR_ENUM
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_LOADER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_SAVER_CLASS
@@ -53,6 +55,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 // todo: extract packages constants too?
 internal val descType = Type.getObjectType("kotlinx/serialization/$SERIAL_DESCRIPTOR_CLASS")
 internal val descImplType = Type.getObjectType("kotlinx/serialization/internal/$SERIAL_DESCRIPTOR_CLASS_IMPL")
+internal val descriptorForEnumsType = Type.getObjectType("kotlinx/serialization/internal/$SERIAL_DESCRIPTOR_FOR_ENUM")
 internal val generatedSerializerType = Type.getObjectType("kotlinx/serialization/internal/${SerialEntityNames.GENERATED_SERIALIZER_CLASS}")
 internal val kOutputType = Type.getObjectType("kotlinx/serialization/$STRUCTURE_ENCODER_CLASS")
 internal val encoderType = Type.getObjectType("kotlinx/serialization/$ENCODER_CLASS")
@@ -156,6 +159,8 @@ internal fun ImplementationBodyCodegen.generateMethod(
 internal val enumSerializerId = ClassId(internalPackageFqName, Name.identifier(SpecialBuiltins.enumSerializer))
 internal val polymorphicSerializerId = ClassId(packageFqName, Name.identifier(SpecialBuiltins.polymorphicSerializer))
 internal val referenceArraySerializerId = ClassId(internalPackageFqName, Name.identifier(SpecialBuiltins.referenceArraySerializer))
+internal val objectSerializerId = ClassId(internalPackageFqName, Name.identifier(SpecialBuiltins.objectSerializer))
+internal val sealedSerializerId = ClassId(packageFqName, Name.identifier(SpecialBuiltins.sealedSerializer))
 internal val contextSerializerId = ClassId(packageFqName, Name.identifier(SpecialBuiltins.contextSerializer))
 
 
@@ -173,7 +178,7 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromClass(
         serializer,
         this,
         sti.property.genericIndex
-    ) { idx ->
+    ) { idx, _ ->
         load(varIndexStart + idx, kSerializerType)
     }
 }
@@ -197,7 +202,7 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializerWithou
         serializer,
         this,
         property.genericIndex
-    ) { idx ->
+    ) { idx, _ ->
         load(0, kSerializerType)
         getfield(codegen.typeMapper.mapClass(codegen.descriptor).internalName, "$typeArgPrefix$idx", kSerializerType.descriptor)
     }.also { if (it && property.type.isMarkedNullable) wrapStackValueIntoNullableSerializer() }
@@ -207,7 +212,7 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializer(codeg
     return serializerCodegen.stackValueSerializerInstance(
         codegen, sti.property.module, sti.property.type,
         sti.serializer, this, sti.property.genericIndex
-    ) { idx ->
+    ) { idx, _ ->
         load(0, kSerializerType)
         getfield(codegen.typeMapper.mapClass(codegen.descriptor).internalName, "$typeArgPrefix$idx", kSerializerType.descriptor)
     }
@@ -216,10 +221,13 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializer(codeg
 // returns false is cannot not use serializer
 // use iv == null to check only (do not emit serializer onto stack)
 internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: ClassBodyCodegen, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
-                                          iv: InstructionAdapter?, genericIndex: Int? = null, genericSerializerFieldGetter: (InstructionAdapter.(Int) -> Unit)? = null): Boolean {
+                                                                  iv: InstructionAdapter?,
+                                                                  genericIndex: Int? = null,
+                                                                  genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null
+): Boolean {
     if (maybeSerializer == null && genericIndex != null) {
         // get field from serializer object
-        iv?.run { genericSerializerFieldGetter?.invoke(this, genericIndex) }
+        iv?.run { genericSerializerFieldGetter?.invoke(this, genericIndex, kType) }
         return true
     }
     val serializer = maybeSerializer ?: return false
@@ -260,7 +268,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
         // instantiate all arg serializers on stack
         val signature = StringBuilder("(")
 
-        fun instantiate(typeArgument: Pair<KotlinType, ClassDescriptor?>) {
+        fun instantiate(typeArgument: Pair<KotlinType, ClassDescriptor?>, writeSignature: Boolean = true) {
             val (argType, argSerializer) = typeArgument
             assert(
                 stackValueSerializerInstance(
@@ -275,9 +283,10 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
             )
             // wrap into nullable serializer if argType is nullable
             if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
-            signature.append(kSerializerType.descriptor)
+            if (writeSignature) signature.append(kSerializerType.descriptor)
         }
 
+        val serialName = kType.serialName()
         when (serializer.classId) {
             enumSerializerId, contextSerializerId, polymorphicSerializerId -> {
                 // a special way to instantiate enum -- need a enum KClass reference
@@ -294,8 +303,55 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
                 // Reference array serializer still needs serializer for its argument type
                 instantiate(argSerializers[0])
             }
+            sealedSerializerId -> {
+                aconst(serialName)
+                signature.append("Ljava/lang/String;")
+                aconst(codegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
+                AsmUtil.wrapJavaClassIntoKClass(this)
+                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
+                val (subClasses, subSerializers) = allSealedSerializableSubclassesFor(kType.toClassDescriptor!!, module)
+                // KClasses vararg
+                fillArray(AsmTypes.K_CLASS_TYPE, subClasses) { _, type ->
+                    aconst(codegen.typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT))
+                    AsmUtil.wrapJavaClassIntoKClass(this)
+                }
+                signature.append(AsmTypes.K_CLASS_ARRAY_TYPE.descriptor)
+                // Serializers vararg
+                fillArray(kSerializerType, subSerializers) { i, serializer ->
+                    val (argType, argSerializer) = subClasses[i] to serializer
+                    assert(
+                        stackValueSerializerInstance(
+                            codegen,
+                            module,
+                            argType,
+                            argSerializer,
+                            this,
+                            argType.genericIndex
+                        ) { _, genericType ->
+                            // if we encountered generic type parameter in one of subclasses of sealed class, use polymorphism from upper bound
+                            assert(
+                                stackValueSerializerInstance(
+                                    codegen,
+                                    module,
+                                    (genericType.constructor.declarationDescriptor as TypeParameterDescriptor).representativeUpperBound,
+                                    module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer),
+                                    this
+                                )
+                            )
+                        }
+                    )
+                    if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
+                }
+                signature.append(kSerializerArrayType.descriptor)
+            }
+            objectSerializerId -> {
+                aconst(serialName)
+                signature.append("Ljava/lang/String;")
+                StackValue.singleton(kType.toClassDescriptor!!, codegen.typeMapper).put(Type.getType("Ljava/lang/Object;"), iv)
+                signature.append("Ljava/lang/Object;")
+            }
             // all serializers get arguments with serializers of their generic types
-            else -> argSerializers.forEach(::instantiate)
+            else -> argSerializers.forEach { instantiate(it) }
         }
         signature.append(")V")
         // invoke constructor
@@ -309,6 +365,17 @@ fun InstructionAdapter.wrapStackValueIntoNullableSerializer() =
         "kotlinx/serialization/internal/NullableSerializerKt", "makeNullable",
         "(" + kSerializerType.descriptor + ")" + kSerializerType.descriptor, false
     )
+
+fun <T> InstructionAdapter.fillArray(type: Type, args: List<T>, onEach: (Int, T) -> Unit) {
+    iconst(args.size)
+    newarray(type)
+    args.forEachIndexed { i, serializer ->
+        dup()
+        iconst(i)
+        onEach(i, serializer)
+        astore(type)
+    }
+}
 
 //
 // ======= Serializers Resolving =======

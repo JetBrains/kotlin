@@ -5,30 +5,26 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.BaseTransformedType
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.visitors.*
 
-@BaseTransformedType
-interface FirWhenBranch : FirElement {
-    // NB: we can represent subject, if it's inside, as a special kind of expression
-    // when (mySubject) {
-    //     $subj == 42$ -> doSmth()
-    // }
-    val condition: FirExpression
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    val result: FirBlock
+abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
+    abstract override val psi: PsiElement?
+    abstract val condition: FirExpression
+    abstract val result: FirBlock
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitWhenBranch(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenBranch(this, data)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        condition.accept(visitor, data)
-        result.accept(visitor, data)
-    }
+    abstract fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch
 
-    fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch
+    abstract fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranch
 
-    fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranch
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirWhenBranch
 }

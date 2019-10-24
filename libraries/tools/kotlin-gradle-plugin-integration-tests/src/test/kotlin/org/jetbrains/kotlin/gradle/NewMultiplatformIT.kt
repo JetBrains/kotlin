@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetConsistencyChecks
+import org.jetbrains.kotlin.gradle.plugin.sources.UnsatisfiedSourceSetVisibilityException
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assert
+import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Test
 import java.util.jar.JarFile
@@ -2102,6 +2104,14 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             // Native:
             assertFileExists("build/classes/kotlin/$nativeHostTargetName/integrationTest/integrationTest.klib")
+        }
+
+        gradleBuildScript().appendText(
+            "\nkotlin.sourceSets { getByName(\"commonTest\").requiresVisibilityOf(getByName(\"commonIntegrationTest\")) }"
+        )
+        build {
+            assertFailed()
+            assertContains(UnsatisfiedSourceSetVisibilityException::class.java.simpleName)
         }
     }
 

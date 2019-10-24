@@ -1,39 +1,54 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.BaseTransformedType
-import org.jetbrains.kotlin.fir.VisitedSupertype
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirVariable
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.visitors.*
 
-@BaseTransformedType
-interface FirValueParameter : @VisitedSupertype FirDeclaration, FirTypedDeclaration, FirNamedDeclaration, FirVariable<FirValueParameter> {
-    val isCrossinline: Boolean
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    val isNoinline: Boolean
+abstract class FirValueParameter : FirPureAbstractElement(), FirVariable<FirValueParameter> {
+    abstract override val psi: PsiElement?
+    abstract override val session: FirSession
+    abstract override val resolvePhase: FirResolvePhase
+    abstract override val returnTypeRef: FirTypeRef
+    abstract override val receiverTypeRef: FirTypeRef?
+    abstract override val name: Name
+    abstract override val symbol: FirVariableSymbol<FirValueParameter>
+    abstract override val initializer: FirExpression?
+    abstract override val delegate: FirExpression?
+    abstract override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>?
+    abstract override val isVar: Boolean
+    abstract override val isVal: Boolean
+    abstract override val getter: FirPropertyAccessor?
+    abstract override val setter: FirPropertyAccessor?
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract val defaultValue: FirExpression?
+    abstract val isCrossinline: Boolean
+    abstract val isNoinline: Boolean
+    abstract val isVararg: Boolean
 
-    val isVararg: Boolean
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitValueParameter(this, data)
 
-    val defaultValue: FirExpression?
+    abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirValueParameter
 
-    override val symbol: FirVariableSymbol<FirValueParameter>
+    abstract override fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirValueParameter
 
-    override fun <D> transformChildrenWithoutAccessors(transformer: FirTransformer<D>, data: D) {
-        transformChildren(transformer, data)
-    }
+    abstract override fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirValueParameter
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitValueParameter(this, data)
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirVariable>.acceptChildren(visitor, data)
-        defaultValue?.accept(visitor, data)
-    }
+    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirValueParameter
 }

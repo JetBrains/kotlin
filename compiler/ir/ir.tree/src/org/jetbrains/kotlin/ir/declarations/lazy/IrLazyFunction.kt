@@ -33,10 +33,11 @@ class IrLazyFunction(
     isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean,
+    isExpect: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator
 ) :
-    IrLazyFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, stubGenerator, typeTranslator),
+    IrLazyFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, isExpect, stubGenerator, typeTranslator),
     IrSimpleFunction {
 
     constructor(
@@ -51,12 +52,13 @@ class IrLazyFunction(
         symbol.descriptor.name,
         symbol.descriptor.visibility,
         symbol.descriptor.modality,
-        symbol.descriptor.isInline,
-        symbol.descriptor.isExternal,
-        symbol.descriptor.isTailrec,
-        symbol.descriptor.isSuspend,
-        stubGenerator,
-        TypeTranslator
+        isInline = symbol.descriptor.isInline,
+        isExternal = symbol.descriptor.isExternal,
+        isTailrec = symbol.descriptor.isTailrec,
+        isSuspend = symbol.descriptor.isSuspend,
+        isExpect = symbol.descriptor.isExpect,
+        stubGenerator = stubGenerator,
+        typeTranslator = TypeTranslator
     )
 
     override val descriptor: FunctionDescriptor = symbol.descriptor
@@ -65,13 +67,13 @@ class IrLazyFunction(
         typeTranslator.buildWithScope(this) {
             stubGenerator.symbolTable.withScope(descriptor) {
                 val propertyIfAccessor = descriptor.propertyIfAccessor
-                propertyIfAccessor.typeParameters.mapTo(arrayListOf()) {
+                propertyIfAccessor.typeParameters.mapTo(arrayListOf()) { typeParameterDescriptor ->
                     if (descriptor != propertyIfAccessor) {
-                        stubGenerator.generateOrGetScopedTypeParameterStub(it).also {
-                            it.parent = this@IrLazyFunction
+                        stubGenerator.generateOrGetScopedTypeParameterStub(typeParameterDescriptor).also { irTypeParameter ->
+                            irTypeParameter.parent = this@IrLazyFunction
                         }
                     } else {
-                        stubGenerator.generateOrGetTypeParameterStub(it)
+                        stubGenerator.generateOrGetTypeParameterStub(typeParameterDescriptor)
                     }
                 }
             }

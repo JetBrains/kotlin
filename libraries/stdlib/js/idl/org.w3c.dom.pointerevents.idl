@@ -1,4 +1,4 @@
-namespace org.w3c.dom.pointerevents;
+package org.w3c.dom.pointerevents;
 
 
 // Downloaded from http://www.w3.org/TR/pointerevents/

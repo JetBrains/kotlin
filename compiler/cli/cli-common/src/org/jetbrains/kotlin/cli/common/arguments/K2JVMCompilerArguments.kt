@@ -22,7 +22,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var classpath: String? by NullableStringFreezableVar(null)
 
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
-    @Argument(value = "-include-runtime", description = "Include Kotlin runtime in to resulting .jar")
+    @Argument(value = "-include-runtime", description = "Include Kotlin runtime into the resulting .jar")
     var includeRuntime: Boolean by FreezableVar(false)
 
     @GradleOption(DefaultValues.StringNullDefault::class)
@@ -44,9 +44,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-no-reflect", description = "Don't include kotlin-reflect.jar into classpath")
     var noReflect: Boolean by FreezableVar(false)
-
-    @Argument(value = "-script", description = "Evaluate the script file")
-    var script: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-script-templates",
@@ -72,6 +69,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-Xuse-ir", description = "Use the IR backend")
     var useIR: Boolean by FreezableVar(false)
 
@@ -253,9 +251,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 "                              in the 'DefaultImpls' class in addition to the interface method"
     )
     var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
-
-    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
-    var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xdisable-standard-script", description = "Disable standard kotlin script support")
     var disableStandardScript: Boolean by FreezableVar(false)

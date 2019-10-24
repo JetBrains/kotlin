@@ -17,13 +17,13 @@ public interface IrTypeOpOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOperator getOperator();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex operand = 2;</code>
+   * <code>required int32 operand = 2;</code>
    */
   boolean hasOperand();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex operand = 2;</code>
+   * <code>required int32 operand = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getOperand();
+  int getOperand();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression argument = 3;</code>

@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirTryExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -35,7 +37,8 @@ fun FirFunctionCall.copy(
     typeArguments: List<FirTypeProjection> = this.typeArguments,
     resultType: FirTypeRef = this.typeRef
 ): FirFunctionCall {
-    return FirFunctionCallImpl(psi, safe).apply {
+    return FirFunctionCallImpl(psi).apply {
+        this.safe = safe
         this.annotations.addAll(annotations)
         this.arguments.addAll(arguments)
         this.calleeReference = calleeReference
@@ -60,7 +63,7 @@ fun FirAnonymousFunction.copy(
     controlFlowGraphReference: FirControlFlowGraphReference = this.controlFlowGraphReference,
     invocationKind: InvocationKind? = this.invocationKind
 ): FirAnonymousFunction {
-    return FirAnonymousFunctionImpl(session, psi, returnTypeRef, receiverTypeRef, symbol).apply {
+    return FirAnonymousFunctionImpl(psi, session, returnTypeRef, receiverTypeRef, symbol).apply {
         this.valueParameters.addAll(valueParameters)
         this.body = body
         this.annotations.addAll(annotations)
@@ -75,7 +78,9 @@ fun FirAnonymousFunction.copy(
 fun FirTypeRef.resolvedTypeFromPrototype(
     type: ConeKotlinType
 ): FirResolvedTypeRef {
-    return FirResolvedTypeRefImpl(psi, type, annotations)
+    return FirResolvedTypeRefImpl(psi, type).apply {
+        annotations += this@resolvedTypeFromPrototype.annotations
+    }
 }
 
 fun FirTypeParameter.copy(
@@ -83,7 +88,7 @@ fun FirTypeParameter.copy(
     annotations: List<FirAnnotationCall> = this.annotations
 ): FirTypeParameterImpl {
     return FirTypeParameterImpl(
-        session, psi, symbol, name, variance, isReified
+        psi, session, name, symbol, variance, isReified
     ).apply {
         this.bounds += bounds
         this.annotations += annotations
@@ -93,7 +98,8 @@ fun FirTypeParameter.copy(
 fun FirWhenExpression.copy(
     resultType: FirTypeRef = this.typeRef,
     calleeReference: FirReference = this.calleeReference
-): FirWhenExpressionImpl = FirWhenExpressionImpl(psi, subject, subjectVariable, calleeReference).apply {
+): FirWhenExpressionImpl = FirWhenExpressionImpl(psi, subject, subjectVariable).apply {
+    this.calleeReference = calleeReference
     this@apply.branches.addAll(this@copy.branches)
     this.typeRef = resultType
     this.calleeReference = calleeReference
@@ -102,7 +108,8 @@ fun FirWhenExpression.copy(
 fun FirTryExpression.copy(
     resultType: FirTypeRef = this.typeRef,
     calleeReference: FirReference = this.calleeReference
-): FirTryExpressionImpl = FirTryExpressionImpl(psi, tryBlock, finallyBlock, calleeReference).apply {
+): FirTryExpressionImpl = FirTryExpressionImpl(psi, tryBlock, finallyBlock).apply {
+    this.calleeReference = calleeReference
     this@apply.catches.addAll(this@copy.catches)
     this.typeRef = resultType
 }

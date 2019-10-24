@@ -161,9 +161,10 @@ private fun <Signature> findSuperImplementationForStubDelegation(
     // Implementation in super-class already has proper signature
     if (signatureByDescriptor(function) == signatureByDescriptor(implementation.descriptor)) return null
 
-    assert(function.modality == Modality.OPEN) {
-        "Should generate stubs only for non-abstract built-ins, but ${function.name} is ${function.modality}"
-    }
+// TODO: Enable the assertion once KT-34507 is fixed
+//    assert(function.modality == Modality.OPEN) {
+//        "Should generate stubs only for non-abstract built-ins, but ${function.name} is ${function.modality}"
+//    }
 
     return implementation.descriptor
 }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.hierarchy;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -24,11 +23,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Type extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTypeClassHierarchyTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTypeClassHierarchyTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/type"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/type"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("CaretAtAnnotation")
@@ -182,11 +181,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Super extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doSuperClassHierarchyTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doSuperClassHierarchyTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSuper() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/super"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/super"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("JetList")
@@ -215,11 +214,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Sub extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doSubClassHierarchyTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doSubClassHierarchyTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSub() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/sub"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/class/sub"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("AllFromClass")
@@ -298,11 +297,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Callers extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doCallerHierarchyTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doCallerHierarchyTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCallers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callers"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callers"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("callInsideAnonymousFun")
@@ -416,11 +415,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallersJava extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doCallerJavaHierarchyTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doCallerJavaHierarchyTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCallersJava() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callersJava"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callersJava"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("javaMethod")
@@ -434,11 +433,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Callees extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doCalleeHierarchyTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doCalleeHierarchyTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCallees() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callees"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callees"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("kotlinAnonymousObject")
@@ -512,11 +511,11 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Overrides extends AbstractHierarchyTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doOverrideHierarchyTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doOverrideHierarchyTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInOverrides() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/overrides"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/overrides"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
         @TestMetadata("kotlinBuiltInMemberFunction")

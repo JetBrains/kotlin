@@ -63,7 +63,9 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
     private fun doStep(
         suspendContext: SuspendContextImpl,
         stepThread: ThreadReferenceProxyImpl,
-        size: Int, depth: Int, hint: RequestHint
+        size: Int,
+        @Suppress("SameParameterValue") depth: Int,
+        hint: RequestHint
     ) {
         val doStepMethod = DebugProcessImpl::class.java.getDeclaredMethod(
             "doStep",
@@ -80,7 +82,7 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
         return getFromField(DebugProcessImpl::class.java.declaredFields.single { it.type == fieldType })
     }
 
-    private fun <T> getFromField(fieldName: String): T {
+    private fun <T> getFromField(@Suppress("SameParameterValue") fieldName: String): T {
         return getFromField(DebugProcessImpl::class.java.getDeclaredField(fieldName))
     }
 
@@ -104,7 +106,7 @@ class KotlinStepActionFactory(private val debuggerProcess: DebugProcessImpl) {
                 // there could be explicit resume as a result of call to voteSuspend()
                 // e.g. when breakpoint was considered invalid, in that case the filter will be applied _after_
                 // resuming and all breakpoints in other threads will be ignored.
-                // As resume() implicitly cleares the filter, the filter must be always applied _before_ any resume() action happens
+                // As resume() implicitly clears the filter, the filter must be always applied _before_ any resume() action happens
                 val breakpointManager = DebuggerManagerEx.getInstanceEx(project).breakpointManager
                 breakpointManager.applyThreadFilter(debuggerProcess, thread.threadReference)
             }

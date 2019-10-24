@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -69,7 +68,7 @@ private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLo
     // of the classes in which they are used. This field tracks which container is the innermost one.
     private var state: EnumMappingState? = null
 
-    private class EnumMappingState {
+    private inner class EnumMappingState {
         val mappings = mutableMapOf<IrClass /* enum */, Pair<MutableMap<IrEnumEntry, Int>, IrField>>()
         val mappingsClass by lazy {
             buildClass {
@@ -79,26 +78,28 @@ private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLo
                 createImplicitParameterDeclarationWithWrappedDescriptor()
             }
         }
+
+        fun getMappingForClass(enumClass: IrClass): Pair<MutableMap<IrEnumEntry, Int>, IrField> =
+            mappings.getOrPut(enumClass) {
+                mutableMapOf<IrEnumEntry, Int>() to mappingsClass.addField {
+                    name = Name.identifier("\$EnumSwitchMapping\$${mappings.size}")
+                    type = intArray.owner.defaultType
+                    origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_WHEN
+                    isFinal = true
+                    isStatic = true
+                }
+            }
     }
 
     override fun mapConstEnumEntry(entry: IrEnumEntry): Int {
-        val (mapping, _) = state!!.mappings.getOrPut(entry.parentAsClass) {
-            mutableMapOf<IrEnumEntry, Int>() to state!!.mappingsClass.addField {
-                name = Name.identifier("\$EnumSwitchMapping\$${state!!.mappings.size}")
-                type = intArray.owner.defaultType
-                origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_WHEN
-                isFinal = true
-                isStatic = true
-            }
-        }
+        val (mapping) = state!!.getMappingForClass(entry.parentAsClass)
         // Index 0 (default value for integers) is reserved for unknown ordinals.
         return mapping.getOrPut(entry) { mapping.size + 1 }
     }
 
     override fun mapRuntimeEnumEntry(builder: IrBuilderWithScope, subject: IrExpression): IrExpression =
         builder.irCall(intArrayGet).apply {
-            val (_, field) = state!!.mappings[subject.type.getClass()!!]
-                ?: throw AssertionError("no values mapped for enum class ${subject.type}")
+            val (_, field) = state!!.getMappingForClass(subject.type.getClass()!!)
             dispatchReceiver = builder.irGetField(null, field)
             putValueArgument(0, super.mapRuntimeEnumEntry(builder, subject))
         }

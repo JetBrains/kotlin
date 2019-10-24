@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
-import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -52,7 +51,7 @@ class Fir2IrDeclarationStorage(
 
     private val typeParameterCache = mutableMapOf<FirTypeParameter, IrTypeParameter>()
 
-    private val functionCache = mutableMapOf<FirNamedFunction, IrSimpleFunction>()
+    private val functionCache = mutableMapOf<FirSimpleFunction, IrSimpleFunction>()
 
     private val constructorCache = mutableMapOf<FirConstructor, IrConstructor>()
 
@@ -134,11 +133,20 @@ class Fir2IrDeclarationStorage(
             return regularClass.convertWithOffsets { startOffset, endOffset ->
                 irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality) { symbol ->
                     IrClassImpl(
-                        startOffset, endOffset, origin, symbol,
-                        regularClass.name, regularClass.classKind,
-                        regularClass.visibility, modality,
-                        regularClass.isCompanion, regularClass.isInner,
-                        regularClass.isData, false, regularClass.isInline
+                        startOffset,
+                        endOffset,
+                        origin,
+                        symbol,
+                        regularClass.name,
+                        regularClass.classKind,
+                        regularClass.visibility,
+                        modality,
+                        isCompanion = regularClass.isCompanion,
+                        isInner = regularClass.isInner,
+                        isData = regularClass.isData,
+                        isExternal = regularClass.isExternal,
+                        isInline = regularClass.isInline,
+                        isExpect = regularClass.isExpect
                     ).apply {
                         descriptor.bind(this)
                         if (setParent) {
@@ -184,7 +192,7 @@ class Fir2IrDeclarationStorage(
                     startOffset, endOffset, origin, symbol,
                     Name.special("<no name provided>"), anonymousObject.classKind,
                     Visibilities.LOCAL, modality,
-                    isCompanion = false, isInner = false, isData = false, isExternal = false, isInline = false
+                    isCompanion = false, isInner = false, isData = false, isExternal = false, isInline = false, isExpect = false
                 ).apply {
                     descriptor.bind(this)
                     declareThisReceiver()
@@ -273,7 +281,7 @@ class Fir2IrDeclarationStorage(
         }
         if (function !is FirConstructor) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
-            if (function is FirNamedFunction) {
+            if (function is FirSimpleFunction) {
                 val receiverTypeRef = function.receiverTypeRef
                 if (receiverTypeRef != null) {
                     extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
@@ -337,7 +345,7 @@ class Fir2IrDeclarationStorage(
     }
 
     fun getIrFunction(
-        function: FirNamedFunction,
+        function: FirSimpleFunction,
         irParent: IrDeclarationParent? = null,
         shouldLeaveScope: Boolean = false,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
@@ -351,8 +359,11 @@ class Fir2IrDeclarationStorage(
                         startOffset, endOffset, origin, symbol,
                         function.name, function.visibility, function.modality!!,
                         function.returnTypeRef.toIrType(session, this),
-                        function.isInline, function.isExternal,
-                        function.isTailRec, function.isSuspend
+                        isInline = function.isInline,
+                        isExternal = function.isExternal,
+                        isTailrec = function.isTailRec,
+                        isSuspend = function.isSuspend,
+                        isExpect = function.isExpect
                     )
                 }
             }.bindAndDeclareParameters(function, descriptor, irParent, isStatic = function.isStatic, shouldLeaveScope = shouldLeaveScope)
@@ -389,7 +400,8 @@ class Fir2IrDeclarationStorage(
                     function.returnTypeRef.toIrType(session, this),
                     isInline = false, isExternal = false, isTailrec = false,
                     // TODO: suspend lambda
-                    isSuspend = false
+                    isSuspend = false,
+                    isExpect = false
                 )
             }.bindAndDeclareParameters(
                 function, descriptor, irParent = null, isStatic = false, shouldLeaveScope = false
@@ -412,7 +424,7 @@ class Fir2IrDeclarationStorage(
                         startOffset, endOffset, origin, symbol,
                         constructor.name, constructor.visibility,
                         constructor.returnTypeRef.toIrType(session, this),
-                        isInline = false, isExternal = false, isPrimary = isPrimary
+                        isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
                     ).bindAndDeclareParameters(constructor, descriptor, irParent, isStatic = true, shouldLeaveScope = shouldLeaveScope)
                 }
             }
@@ -443,7 +455,7 @@ class Fir2IrDeclarationStorage(
                 Name.special("<$prefix-${correspondingProperty.name}>"),
                 propertyAccessor?.visibility ?: correspondingProperty.visibility,
                 correspondingProperty.modality, accessorReturnType,
-                isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+                isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false
             ).apply {
                 if (propertyAccessor == null && isSetter) {
                     declareDefaultSetterParameter(propertyType)
@@ -475,10 +487,13 @@ class Fir2IrDeclarationStorage(
                     IrPropertyImpl(
                         startOffset, endOffset, origin, symbol,
                         property.name, property.visibility, property.modality!!,
-                        property.isVar, property.isConst, property.isLateInit,
-                        property.delegate != null,
+                        isVar = property.isVar,
+                        isConst = property.isConst,
+                        isLateinit = property.isLateInit,
+                        isDelegated = property.delegate != null,
                         // TODO
-                        isExternal = false
+                        isExternal = false,
+                        isExpect = property.isExpect
                     ).apply {
                         descriptor.bind(this)
                         val type = property.returnTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
@@ -611,7 +626,7 @@ class Fir2IrDeclarationStorage(
         val firDeclaration = firFunctionSymbol.fir
         val irParent = (firDeclaration as? FirCallableMemberDeclaration<*>)?.let { findIrParent(it) }
         return when (firDeclaration) {
-            is FirNamedFunction -> {
+            is FirSimpleFunction -> {
                 val irDeclaration = getIrFunction(firDeclaration, irParent, shouldLeaveScope = true).apply {
                     setAndModifyParent(irParent)
                 }

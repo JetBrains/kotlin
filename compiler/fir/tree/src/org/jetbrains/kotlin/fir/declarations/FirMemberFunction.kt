@@ -5,25 +5,43 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.VisitedSupertype
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirMemberFunction<F : FirMemberFunction<F>> :
-    @VisitedSupertype FirFunction<F>, FirCallableMemberDeclaration<F> {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
+interface FirMemberFunction<F : FirMemberFunction<F>> : FirFunction<F>, FirCallableMemberDeclaration<F> {
+    override val psi: PsiElement?
+    override val session: FirSession
+    override val resolvePhase: FirResolvePhase
+    override val returnTypeRef: FirTypeRef
+    override val receiverTypeRef: FirTypeRef?
+    override val controlFlowGraphReference: FirControlFlowGraphReference
+    override val typeParameters: List<FirTypeParameter>
+    override val valueParameters: List<FirValueParameter>
+    override val body: FirBlock?
+    override val name: Name
+    override val status: FirDeclarationStatus
+    override val containerSource: DeserializedContainerSource?
     override val symbol: FirFunctionSymbol<F>
+    override val annotations: List<FirAnnotationCall>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
-        return visitor.visitMemberFunction(this, data)
-    }
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberFunction(this, data)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirCallableMemberDeclaration>.acceptChildren(visitor, data)
-        for (parameter in valueParameters) {
-            parameter.accept(visitor, data)
-        }
-        body?.accept(visitor, data)
-        controlFlowGraphReference?.accept(visitor, data)
-    }
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirMemberFunction<F>
+
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirMemberFunction<F>
+
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirMemberFunction<F>
 }

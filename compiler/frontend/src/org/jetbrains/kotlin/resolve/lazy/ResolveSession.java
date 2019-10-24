@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.lazy;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.annotations.jvm.ReadOnly;
@@ -325,7 +326,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                     + "\n. Change the caller accordingly"
             );
         }
-        if (!KtPsiUtil.isLocal(declaration)) {
+        final boolean isLocal = ReadAction.compute(() -> KtPsiUtil.isLocal(declaration));
+        if (!isLocal){
             return lazyDeclarationResolver.resolveToDescriptor(declaration);
         }
         return localDescriptorResolver.resolveLocalDeclaration(declaration);

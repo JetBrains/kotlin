@@ -25,7 +25,6 @@ class TestGenerator(
     testClassModels: Collection<TestClassModel>,
     useJunit4: Boolean
 ) {
-
     private val baseTestClassPackage: String
     private val suiteClassPackage: String
     private val suiteClassName: String
@@ -69,10 +68,15 @@ class TestGenerator(
             p.println("import ", RUNNER.canonicalName, ";")
         }
         p.println("import " + KotlinTestUtils::class.java.canonicalName + ";")
-        p.println("import " + TargetBackend::class.java.canonicalName + ";")
+
+        for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
+            p.println("import ${clazz.name};")
+        }
+
         if (suiteClassPackage != baseTestClassPackage) {
             p.println("import $baseTestClassPackage.$baseTestClassName;")
         }
+
         p.println("import " + TestMetadata::class.java.canonicalName + ";")
         p.println("import " + RunWith::class.java.canonicalName + ";")
         if (useJunit4) {
@@ -94,7 +98,7 @@ class TestGenerator(
                     get() = suiteClassName
             }
         } else {
-            model = object : TestClassModel {
+            model = object : TestClassModel() {
                 override val innerTestClasses: Collection<TestClassModel>
                     get() = testClassModels
 
@@ -112,6 +116,12 @@ class TestGenerator(
 
                 override val dataPathRoot: String?
                     get() = null
+
+                override val annotations: Collection<AnnotationModel>
+                    get() = emptyList()
+
+                override val imports: Set<Class<*>>
+                    get() = super.imports
             }
         }
 
@@ -126,6 +136,8 @@ class TestGenerator(
 
         generateMetadata(p, testClassModel)
         generateTestDataPath(p, testClassModel)
+        generateParameterAnnotations(p, testClassModel)
+
         p.println("@RunWith(", if (useJunit4) JUNIT4_RUNNER.simpleName else RUNNER.simpleName, ".class)")
 
         p.println("public " + staticModifier + "class ", testClassModel.name, " extends ", baseTestClassName, " {")
@@ -198,6 +210,13 @@ class TestGenerator(
             val dataPathRoot = testClassModel.dataPathRoot
             if (dataPathRoot != null) {
                 p.println("@TestDataPath(\"", dataPathRoot, "\")")
+            }
+        }
+
+        private fun generateParameterAnnotations(p: Printer, testClassModel: TestClassModel) {
+            for (annotationModel in testClassModel.annotations) {
+                annotationModel.generate(p);
+                p.println()
             }
         }
 

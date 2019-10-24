@@ -20,13 +20,14 @@ import org.jetbrains.kotlin.j2k.CodeBuilder
 
 abstract class Parameter(val identifier: Identifier, val type: Type?) : Element()
 
-class FunctionParameter(identifier: Identifier,
-                        type: Type?,
-                        val varVal: FunctionParameter.VarValModifier,
-                        val annotations: Annotations,
-                        val modifiers: Modifiers,
-                        val defaultValue: DeferredElement<Expression>? = null
-): Parameter(identifier, type) {
+class FunctionParameter(
+    identifier: Identifier,
+    type: Type?,
+    val varVal: VarValModifier,
+    val annotations: Annotations,
+    val modifiers: Modifiers,
+    val defaultValue: DeferredElement<Expression>? = null
+) : Parameter(identifier, type) {
     enum class VarValModifier {
         None,
         Val,
@@ -43,7 +44,8 @@ class FunctionParameter(identifier: Identifier,
         when (varVal) {
             VarValModifier.Var -> builder.append("var ")
             VarValModifier.Val -> builder.append("val ")
-            VarValModifier.None -> {}
+            VarValModifier.None -> {
+            }
         }
 
         builder.append(identifier)

@@ -102,8 +102,7 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
     private val support: KtUltraLightSupport
 ) : KtLightModifierList<T>(owner) {
 
-    override val clsDelegate: PsiModifierList
-        get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
+    override val clsDelegate: PsiModifierList get() = invalidAccess()
 
     private fun throwInvalidOperation(): Nothing = throw IncorrectOperationException()
 

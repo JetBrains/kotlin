@@ -279,9 +279,9 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         assertTrue(srcDir.mkdir());
         assertTrue(compiledDir.mkdir());
 
-        List<File> srcFiles = KotlinTestUtils.createTestFiles(
+        List<File> srcFiles = TestFiles.createTestFiles(
                 new File(javaFileName).getName(), FileUtil.loadFile(new File(javaFileName), true),
-                new TestFileFactoryNoModules<File>() {
+                new TestFiles.TestFileFactoryNoModules<File>() {
                     @NotNull
                     @Override
                     public File create(@NotNull String fileName, @NotNull String text, @NotNull Map<String, String> directives) {

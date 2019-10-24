@@ -5,12 +5,33 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirModifiableClass : FirClass {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+interface FirModifiableClass : FirClass, FirAbstractAnnotatedElement {
+    override val psi: PsiElement?
+    override val session: FirSession
+    override var resolvePhase: FirResolvePhase
+    override val classKind: ClassKind
     override val superTypeRefs: MutableList<FirTypeRef>
-
     override val declarations: MutableList<FirDeclaration>
+    override val annotations: MutableList<FirAnnotationCall>
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableClass
+
+    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
+
+    override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 }

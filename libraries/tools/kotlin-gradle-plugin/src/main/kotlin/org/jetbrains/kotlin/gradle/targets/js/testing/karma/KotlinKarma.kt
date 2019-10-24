@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Devtool
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.slf4j.Logger
 import java.io.File
@@ -63,7 +62,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     }
 
     private fun useKotlinReporter() {
-        requiredDependencies.add(versions.karmaTeamcityReporter)
         config.reporters.add("karma-kotlin-reporter")
 
         confJsWriters.add {
@@ -142,7 +140,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
     private fun useWebpack() {
         createAdapterJs()
-        requiredDependencies.add(versions.browserProcessHrtime)
 
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(versions.webpack)
@@ -150,7 +147,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         val webpackConfigWriter = KotlinWebpackConfig(
             configDirectory = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory },
             sourceMaps = true,
-            devtool = Devtool.INLINE_SOURCE_MAP,
+            devtool = null,
             export = false,
             progressReporter = true,
             progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
@@ -164,6 +161,18 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             it.appendln("function createWebpackConfig() {")
 
             webpackConfigWriter.appendTo(it)
+            //language=ES6
+            it.appendln(
+                """
+                // noinspection JSUnnecessarySemicolon
+                ;(function(config) {
+                    const webpack = require('webpack');
+                    config.plugins.push(new webpack.SourceMapDevToolPlugin({
+                        moduleFilenameTemplate: "[absolute-resource-path]"
+                    }))
+                })(config);
+            """.trimIndent()
+            )
 
             it.appendln("   return config;")
             it.appendln("}")
@@ -235,16 +244,16 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     private fun createAdapterJs() {
         configurators.add {
             val npmProject = compilation.npmProject
-            val files = it.nodeModulesToLoad.map { npmProject.require(it) }
+            val file = it.nodeModulesToLoad
+                .map { npmProject.require(it) }
+                .single()
 
-            val adapterJs = npmProject.dir.resolve("adapter.js")
+            val adapterJs = npmProject.dir.resolve("adapter-browser.js")
             adapterJs.printWriter().use { writer ->
                 val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
                 writer.println("require(${karmaRunner.jsQuoted()})")
 
-                files.forEach { file ->
-                    writer.println("require(${file.jsQuoted()})")
-                }
+                writer.println("module.exports = require(${file.jsQuoted()})")
             }
 
             config.files.add(adapterJs.canonicalPath)
@@ -316,22 +325,15 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         return object : JSServiceMessagesTestExecutionSpec(
             forkOptions,
             args,
-            false,
+            true,
             clientSettings
         ) {
             lateinit var progressLogger: ProgressLogger
-
-            var isLaunchFailed: Boolean = false
 
             override fun wrapExecute(body: () -> Unit) {
                 project.operation("Running and building tests with karma and webpack") {
                     progressLogger = this
                     body()
-
-                    if (isLaunchFailed) {
-                        showSuppressedOutput()
-                        throw IllegalStateException("Launch of some browsers was failed")
-                    }
                 }
             }
 
@@ -349,7 +351,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
                         val value = text.trimEnd()
                         progressLogger.progress(value)
 
-                        parseConsole(value)
+                        super.printNonTestOutput(text)
                     }
 
                     override fun processStackTrace(stackTrace: String): String =
@@ -380,16 +382,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
                         return rawSuiteNameOnly.replace(" ", ".") // sample.a.DeepPackageTest.Inner
                     }
-
-                    private fun parseConsole(text: String) {
-                        if (KARMA_PROBLEM.matches(text)) {
-                            log.error(text)
-                            isLaunchFailed = true
-                            return
-                        }
-
-                        super.printNonTestOutput(text)
-                    }
                 }
         }
     }
@@ -409,7 +401,5 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     companion object {
         const val CHROME_BIN = "CHROME_BIN"
         const val CHROME_CANARY_BIN = "CHROME_CANARY_BIN"
-
-        val KARMA_PROBLEM = "(?m)^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3}:(ERROR|WARN) \\[.*]: (.*)\$".toRegex()
     }
 }

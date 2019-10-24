@@ -238,10 +238,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     }
 
     private fun createTestFiles(file: File, expectedText: String): List<TestFile> =
-        KotlinTestUtils.createTestFiles(
+        TestFiles.createTestFiles(
             file.name,
             expectedText,
-            object : KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
+            object : TestFiles.TestFileFactoryNoModules<TestFile>() {
                 override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
                     return TestFile(fileName, text)
                 }

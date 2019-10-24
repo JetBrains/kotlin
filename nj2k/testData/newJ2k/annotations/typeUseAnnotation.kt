@@ -11,7 +11,7 @@ class TEST1 {
     }
 
     @Anon5(4)
-    internal var bar: @TypeUseAnon1 String? = null
+    var bar: @TypeUseAnon1 String? = null
 }
 
 class TEST2 {
@@ -22,7 +22,7 @@ class TEST2 {
     }
 
     @Anon5(4)
-    internal var bar: @TypeUseAnon2 String? = null
+    var bar: @TypeUseAnon2 String? = null
 }
 
 class TEST3 {
@@ -33,5 +33,5 @@ class TEST3 {
     }
 
     @Anon5(4)
-    internal var bar: @TypeUseAnon3 String? = null
+    var bar: @TypeUseAnon3 String? = null
 }

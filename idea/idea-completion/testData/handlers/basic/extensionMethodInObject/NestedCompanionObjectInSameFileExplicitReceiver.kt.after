@@ -1,0 +1,18 @@
+import A.B.Companion.foo
+
+class T
+
+class A {
+    class B {
+        companion object {
+            fun T.foo() {}
+        }
+    }
+}
+
+fun usage(t: T) {
+    t.foo()<caret>
+}
+
+// INVOCATION_COUNT: 2
+// ELEMENT: foo

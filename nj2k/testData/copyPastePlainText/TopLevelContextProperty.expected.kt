@@ -1,4 +1,4 @@
 val str: String = TODO()
-internal fun f() {
+fun f() {
     str.length
 }

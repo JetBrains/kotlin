@@ -17,13 +17,13 @@ public interface IrPropertyOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+   * <code>required int32 name = 2;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+   * <code>required int32 name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
+  int getName();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
@@ -114,4 +114,13 @@ public interface IrPropertyOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction setter = 12;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction getSetter();
+
+  /**
+   * <code>required bool is_expect = 13;</code>
+   */
+  boolean hasIsExpect();
+  /**
+   * <code>required bool is_expect = 13;</code>
+   */
+  boolean getIsExpect();
 }

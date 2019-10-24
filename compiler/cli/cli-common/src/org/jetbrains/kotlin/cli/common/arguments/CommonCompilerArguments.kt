@@ -76,6 +76,9 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var progressiveMode by FreezableVar(false)
 
+    @Argument(value = "-script", description = "Evaluate the script file")
+    var script: Boolean by FreezableVar(false)
+
     @Argument(value = "-P", valueDescription = PLUGIN_OPTION_FORMAT, description = "Pass an option to a plugin")
     var pluginOptions: Array<String>? by FreezableVar(null)
 
@@ -304,11 +307,13 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var useFir: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
+    var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
             put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
-            put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.experimental, experimental?.toList().orEmpty())
             put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty())
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)

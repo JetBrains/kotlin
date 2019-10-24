@@ -18,6 +18,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
@@ -29,16 +30,16 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-class SerializerCodegenImpl(
-    private val codegen: ImplementationBodyCodegen,
+open class SerializerCodegenImpl(
+    protected val codegen: ImplementationBodyCodegen,
     serializableClass: ClassDescriptor
 ) : SerializerCodegen(codegen.descriptor, codegen.bindingContext) {
 
 
     private val serialDescField = "\$\$serialDesc"
 
-    private val serializerAsmType = codegen.typeMapper.mapClass(codegen.descriptor)
-    private val serializableAsmType = codegen.typeMapper.mapClass(serializableClass)
+    protected val serializerAsmType = codegen.typeMapper.mapClass(codegen.descriptor)
+    protected val serializableAsmType = codegen.typeMapper.mapClass(serializableClass)
 
     // if we have type parameters, descriptor initializing must be performed in constructor
     private val staticDescriptor = serializableDescriptor.declaredTypeParameters.isEmpty()
@@ -46,7 +47,12 @@ class SerializerCodegenImpl(
     companion object {
         fun generateSerializerExtensions(codegen: ImplementationBodyCodegen) {
             val serializableClass = getSerializableClassDescriptorBySerializer(codegen.descriptor) ?: return
-            SerializerCodegenImpl(codegen, serializableClass).generate()
+            val serializerCodegen = if (serializableClass.isSerializableEnum()) {
+                SerializerForEnumsCodegen(codegen, serializableClass)
+            } else {
+                SerializerCodegenImpl(codegen, serializableClass)
+            }
+            serializerCodegen.generate()
         }
     }
 
@@ -74,6 +80,23 @@ class SerializerCodegenImpl(
     }
 
     private fun ExpressionCodegen.generateSerialDescriptor(descriptorVar: Int, isStatic: Boolean) = with(v) {
+        instantiateNewDescriptor(isStatic)
+        store(descriptorVar, descImplType)
+        // add contents
+        addElementsContentToDescriptor(descriptorVar)
+        // add annotations on class itself
+        addSyntheticAnnotationsToDescriptor(descriptorVar, serializableDescriptor, CallingConventions.addClassAnnotation)
+        if (isStatic) {
+            load(descriptorVar, descImplType)
+            putstatic(serializerAsmType.internalName, serialDescField, descType.descriptor)
+        } else {
+            load(0, serializerAsmType)
+            load(descriptorVar, descImplType)
+            putfield(serializerAsmType.internalName, serialDescField, descType.descriptor)
+        }
+    }
+
+    protected open fun ExpressionCodegen.instantiateNewDescriptor(isStatic: Boolean) = with(v) {
         anew(descImplType)
         dup()
         aconst(serialName)
@@ -88,7 +111,9 @@ class SerializerCodegenImpl(
             load(0, serializerAsmType)
         }
         invokespecial(descImplType.internalName, "<init>", "(Ljava/lang/String;${generatedSerializerType.descriptor})V", false)
-        store(descriptorVar, descImplType)
+    }
+
+    protected open fun ExpressionCodegen.addElementsContentToDescriptor(descriptorVar: Int) = with(v) {
         for (property in serializableProperties) {
             if (property.transient) continue
             load(descriptorVar, descImplType)
@@ -96,39 +121,24 @@ class SerializerCodegenImpl(
             iconst(if (property.optional) 1 else 0)
             invokevirtual(descImplType.internalName, CallingConventions.addElement, "(Ljava/lang/String;Z)V", false)
             // pushing annotations
-            for ((annotationClass, args, consParams) in property.annotationsWithArguments) {
+            addSyntheticAnnotationsToDescriptor(descriptorVar, property.descriptor, CallingConventions.addAnnotation)
+        }
+    }
+
+    protected fun ExpressionCodegen.addSyntheticAnnotationsToDescriptor(descriptorVar: Int, annotated: Annotated, functionToCall: String) =
+        with(v) {
+            for ((annotationClass, args, consParams) in annotated.annotationsWithArguments()) {
                 if (args.size != consParams.size) throw IllegalArgumentException("Can't use arguments with defaults for serializable annotations yet")
                 load(descriptorVar, descImplType)
                 generateSyntheticAnnotationOnStack(annotationClass, args, consParams)
                 invokevirtual(
                     descImplType.internalName,
-                    CallingConventions.addAnnotation,
+                    functionToCall,
                     "(Ljava/lang/annotation/Annotation;)V",
                     false
                 )
             }
         }
-        // add annotations on class itself
-        for ((annotationClass, args, consParams) in serializableDescriptor.annotationsWithArguments()) {
-            if (args.size != consParams.size) throw IllegalArgumentException("Can't use arguments with defaults for serializable annotations yet")
-            load(descriptorVar, descImplType)
-            generateSyntheticAnnotationOnStack(annotationClass, args, consParams)
-            invokevirtual(
-                descImplType.internalName,
-                CallingConventions.addClassAnnotation,
-                "(Ljava/lang/annotation/Annotation;)V",
-                false
-            )
-        }
-        if (isStatic) {
-            load(descriptorVar, descImplType)
-            putstatic(serializerAsmType.internalName, serialDescField, descType.descriptor)
-        } else {
-            load(0, serializerAsmType)
-            load(descriptorVar, descImplType)
-            putfield(serializerAsmType.internalName, serialDescField, descType.descriptor)
-        }
-    }
 
     override fun generateSerialDesc() {
         var flags = ACC_PRIVATE or ACC_FINAL or ACC_SYNTHETIC
@@ -168,7 +178,7 @@ class SerializerCodegenImpl(
     }
 
     // use null to put value on stack, use number to store it to var
-    private fun InstructionAdapter.stackSerialClassDesc(classDescVar: Int?) {
+    protected fun InstructionAdapter.stackSerialClassDesc(classDescVar: Int?) {
         if (staticDescriptor)
             getstatic(serializerAsmType.internalName, serialDescField, descType.descriptor)
         else {

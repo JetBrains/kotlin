@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.calls;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class EnhancedSignaturesResolvedCallsTestGenerated extends AbstractEnhancedSignaturesResolvedCallsTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInEnhancedSignatures() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("compiler/testData/resolvedCalls/enhancedSignatures/collection")
@@ -34,11 +33,11 @@ public class EnhancedSignaturesResolvedCallsTestGenerated extends AbstractEnhanc
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Collection extends AbstractEnhancedSignaturesResolvedCallsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCollection() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/collection"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/collection"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("collectionRemoveIf.kt")
@@ -62,11 +61,11 @@ public class EnhancedSignaturesResolvedCallsTestGenerated extends AbstractEnhanc
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Iterable extends AbstractEnhancedSignaturesResolvedCallsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInIterable() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/iterable"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/iterable"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("iterableSpliterator.kt")
@@ -80,11 +79,11 @@ public class EnhancedSignaturesResolvedCallsTestGenerated extends AbstractEnhanc
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Iterator extends AbstractEnhancedSignaturesResolvedCallsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInIterator() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/iterator"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/iterator"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("iteratorForEachRemaining.kt")
@@ -98,11 +97,11 @@ public class EnhancedSignaturesResolvedCallsTestGenerated extends AbstractEnhanc
     @RunWith(JUnit3RunnerWithInners.class)
     public static class List extends AbstractEnhancedSignaturesResolvedCallsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInList() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/list"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/list"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("listReplaceAll.kt")
@@ -121,11 +120,11 @@ public class EnhancedSignaturesResolvedCallsTestGenerated extends AbstractEnhanc
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Map extends AbstractEnhancedSignaturesResolvedCallsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInMap() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/map"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/map"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("mapCompute.kt")
@@ -169,11 +168,11 @@ public class EnhancedSignaturesResolvedCallsTestGenerated extends AbstractEnhanc
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Optional extends AbstractEnhancedSignaturesResolvedCallsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInOptional() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/optional"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/optional"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("optionalEmpty.kt")
@@ -202,11 +201,11 @@ public class EnhancedSignaturesResolvedCallsTestGenerated extends AbstractEnhanc
     @RunWith(JUnit3RunnerWithInners.class)
     public static class References extends AbstractEnhancedSignaturesResolvedCallsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInReferences() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/references"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/resolvedCalls/enhancedSignatures/references"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("softReference.kt")

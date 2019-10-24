@@ -51,7 +51,7 @@ class BuiltInDecompilerForWrongAbiVersionTest : AbstractBuiltInDecompilerTest() 
     override fun getTestDataPath() = PluginTestCaseBase.TEST_DATA_DIR + "/decompiler/builtins/"
 
     override fun configureAndBuildFileStub(packageFqName: String): PsiFileStub<*> {
-        myFixture.configureByFile(testDataPath + BuiltInSerializerProtocol.getBuiltInsFilePath(FqName(packageFqName)))
+        myFixture.configureByFile(BuiltInSerializerProtocol.getBuiltInsFilePath(FqName(packageFqName)))
         return KotlinBuiltInDecompiler().stubBuilder.buildFileStub(FileContentImpl.createByFile(myFixture.file.virtualFile))!!
     }
 

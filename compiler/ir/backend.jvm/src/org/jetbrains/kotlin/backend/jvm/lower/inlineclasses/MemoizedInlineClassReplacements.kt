@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.constructedClass
@@ -56,11 +55,6 @@ class MemoizedInlineClassReplacements {
                 else -> null
             }
         }
-
-    private val IrFunction.hasMangledParameters: Boolean
-        get() = dispatchReceiverParameter?.type?.getClass()?.isInline == true ||
-                fullValueParameterList.any { it.type.requiresMangling } ||
-                (this is IrConstructor && constructedClass.isInline)
 
     private val IrFunction.hasStaticReplacement: Boolean
         get() = origin != IrDeclarationOrigin.FAKE_OVERRIDE &&

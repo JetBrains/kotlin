@@ -81,7 +81,7 @@ class KotlinBasicStepMethodFilter(
         }
 
         val declaration = declarationPtr?.element
-                ?: return true // Element is lost. But we know that name is matches, so stop.
+            ?: return true // Element is lost. But we know that name is matches, so stop.
 
         if (currentDeclaration.isEquivalentTo(declaration)) {
             return true

@@ -77,7 +77,10 @@ internal class FunctionsHighlightingVisitor(holder: AnnotationHolder, bindingCon
     private fun highlightCall(callee: PsiElement, resolvedCall: ResolvedCall<out CallableDescriptor>) {
         val calleeDescriptor = resolvedCall.resultingDescriptor
 
-        val key = Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullResult { extension ->
+        @Suppress("DEPRECATION")
+        val extensions = Extensions.getExtensions(HighlighterExtension.EP_NAME)
+        
+        val key = extensions.firstNotNullResult { extension ->
             extension.highlightCall(callee, resolvedCall)
         } ?: when {
             calleeDescriptor.fqNameOrNull() == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME -> KEYWORD

@@ -62,6 +62,7 @@ sealed class CreateExpectedFix<D : KtNamedDeclaration>(
             if (otherDeclaration === originalDeclaration) continue
             if (!otherDeclaration.hasActualModifier()) continue
             val expectedDeclaration = otherDeclaration.liftToExpected() ?: continue
+            if (expectedDeclaration.module != module) continue
             return expectedDeclaration.containingKtFile
         }
         return null

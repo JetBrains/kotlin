@@ -1,23 +1,31 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirResolvedImport : FirImport {
-    val packageFqName: FqName
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    val relativeClassName: FqName?
-    val resolvedClassId: ClassId? get() = relativeClassName?.let { ClassId(packageFqName, it, false) }
+abstract class FirResolvedImport : FirImport() {
+    abstract override val psi: PsiElement?
+    abstract override val importedFqName: FqName?
+    abstract override val isAllUnder: Boolean
+    abstract override val aliasName: Name?
+    abstract val delegate: FirImport
+    abstract val packageFqName: FqName
+    abstract val relativeClassName: FqName?
+    abstract val resolvedClassId: ClassId?
+    abstract val importedName: Name?
 
-    val importedName: Name? get() = importedFqName?.shortName()
-
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitResolvedImport(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedImport(this, data)
 }

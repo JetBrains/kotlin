@@ -251,6 +251,7 @@ interface DescriptorRendererOptions {
     var parameterNamesInFunctionalTypes: Boolean
     var renderFunctionContracts: Boolean
     var presentableUnresolvedTypes: Boolean
+    var informativeErrorType: Boolean
 }
 
 object ExcludedTypeAnnotations {

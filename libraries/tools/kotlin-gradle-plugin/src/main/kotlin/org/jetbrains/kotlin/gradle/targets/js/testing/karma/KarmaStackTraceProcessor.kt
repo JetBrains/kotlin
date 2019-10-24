@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
-private const val WEBPACK_PROTOCOL = "webpack://"
 private const val KARMA_SOURCE_MAP_DELIMITER = " <-"
 
 private const val STACK_TRACE_DELIMITER = "at "
@@ -21,7 +20,6 @@ fun processKarmaStackTrace(stackTrace: String): String {
             else
                 line
                     .removeRange(index, line.length - 1)
-                    .replace(WEBPACK_PROTOCOL, "")
         }
 }
 

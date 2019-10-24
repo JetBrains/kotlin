@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
-import com.intellij.lang.jvm.JvmModifier
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -19,12 +17,15 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.hasNotReceiver
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.utils.findFirstClassifierWithDeprecationStatus
 
@@ -41,6 +42,13 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
                     parent as KtExpression
                 else
                     expressionForAnalyze
+
+                val parentEnumEntry = expressionForAnalyze.getStrictParentOfType<KtEnumEntry>()
+                if (parentEnumEntry != null) {
+                    val companionObject = (expressionForAnalyze.receiverExpression.mainReference?.resolve() as? KtObjectDeclaration)
+                        ?.takeIf { it.isCompanion() }
+                    if (companionObject?.containingClass() == parentEnumEntry.getStrictParentOfType<KtClass>()) return
+                }
 
                 val context = originalExpression.analyze()
 
@@ -70,14 +78,10 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
         }
 }
 
-private tailrec fun KtDotQualifiedExpression.firstExpressionWithoutReceiver(): KtDotQualifiedExpression? {
-    val element = getQualifiedElementSelector()?.mainReference?.resolve() ?: return null
-    return if (element is KtClassOrObject ||
-        element is KtCallableDeclaration && element.receiverTypeReference == null ||
-        element is PsiMember && element.hasModifier(JvmModifier.STATIC) ||
-        element is PsiMethod && element.isConstructor
-    ) this else (receiverExpression as? KtDotQualifiedExpression)?.firstExpressionWithoutReceiver()
-}
+private tailrec fun KtDotQualifiedExpression.firstExpressionWithoutReceiver(): KtDotQualifiedExpression? = if (hasNotReceiver())
+    this
+else
+    (receiverExpression as? KtDotQualifiedExpression)?.firstExpressionWithoutReceiver()
 
 private tailrec fun <T : KtElement> T.firstApplicableExpression(validator: T.() -> T?, generator: T.() -> T?): T? =
     validator() ?: generator()?.firstApplicableExpression(validator, generator)
@@ -100,7 +104,7 @@ private fun KtDotQualifiedExpression.applicableExpression(
         ?.firstOrNull() ?: return null
 
     return takeIf {
-        originalDescriptor.importableFqName == newDescriptor.importableFqName &&
+        originalDescriptor.fqNameSafe == newDescriptor.fqNameSafe &&
                 if (newDescriptor is ImportedFromObjectCallableDescriptor<*>)
                     compareDescriptors(project, newDescriptor.callableFromObject, originalDescriptor)
                 else
@@ -125,6 +129,11 @@ private fun KtUserType.applicableExpression(context: BindingContext): KtUserType
     if (firstChild !is KtUserType) return null
     val referenceExpression = referenceExpression as? KtNameReferenceExpression ?: return null
     val originalDescriptor = referenceExpression.mainReference.resolveToDescriptors(context).firstOrNull() ?: return null
+
+    if (originalDescriptor is ClassDescriptor
+        && originalDescriptor.isInner
+        && (originalDescriptor.containingDeclaration as? ClassDescriptor)?.typeConstructor != null
+    ) return null
 
     val shortName = originalDescriptor.importableFqName?.shortName() ?: return null
     val scope = referenceExpression.getResolutionScope(context) ?: return null

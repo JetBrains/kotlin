@@ -339,8 +339,19 @@ class BasicCompletionSession(
                     }
                 }
 
-                if (configuration.staticMembers && callTypeAndReceiver is CallTypeAndReceiver.DEFAULT && prefix.isNotEmpty()) {
-                    staticMembersCompletion.completeFromIndices(indicesHelper(false), collector)
+                if (configuration.staticMembers && prefix.isNotEmpty()) {
+                    if (!receiverTypes.isNullOrEmpty()) {
+                        staticMembersCompletion.completeObjectMemberExtensionsFromIndices(
+                            indicesHelper(false),
+                            receiverTypes.map { it.type },
+                            callTypeAndReceiver.callType,
+                            collector
+                        )
+                    }
+
+                    if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
+                        staticMembersCompletion.completeFromIndices(indicesHelper(false), collector)
+                    }
                 }
             }
         }

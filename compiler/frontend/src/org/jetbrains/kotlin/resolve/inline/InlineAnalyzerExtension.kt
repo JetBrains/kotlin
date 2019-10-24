@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
+import org.jetbrains.kotlin.resolve.isEffectivelyFinal
 
 class InlineAnalyzerExtension(
     private val reasonableInlineRules: Iterable<ReasonableInlineRule>,
@@ -159,7 +160,8 @@ class InlineAnalyzerExtension(
             }
         }
 
-        if (callableDescriptor.isEffectivelyFinal()) {
+        //TODO: actually it should be isEffectivelyFinal(false), but looks like it requires committee decision: KT-34372)
+        if (callableDescriptor.isEffectivelyFinal(true)) {
             if (overridesAnything) {
                 trace.report(Errors.OVERRIDE_BY_INLINE.on(functionOrProperty))
             }
@@ -167,12 +169,6 @@ class InlineAnalyzerExtension(
         }
         trace.report(Errors.DECLARATION_CANT_BE_INLINED.on(functionOrProperty))
     }
-
-    private fun CallableMemberDescriptor.isEffectivelyFinal(): Boolean =
-        modality == Modality.FINAL ||
-                containingDeclaration.let { containingDeclaration ->
-                    containingDeclaration is ClassDescriptor && containingDeclaration.modality == Modality.FINAL
-                }
 
     private fun checkHasInlinableAndNullability(functionDescriptor: FunctionDescriptor, function: KtFunction, trace: BindingTrace) {
         var hasInlineArgs = false

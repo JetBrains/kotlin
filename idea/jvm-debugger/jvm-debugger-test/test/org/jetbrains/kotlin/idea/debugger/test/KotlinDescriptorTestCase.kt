@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
@@ -124,10 +125,10 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     }
 
     private fun createTestFiles(wholeFile: File, wholeFileContents: String): TestFiles {
-        val testFiles = KotlinTestUtils.createTestFiles<Void, TestFile>(
+        val testFiles = org.jetbrains.kotlin.test.TestFiles.createTestFiles<Void, TestFile>(
             wholeFile.name,
             wholeFileContents,
-            object : KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
+            object : org.jetbrains.kotlin.test.TestFiles.TestFileFactoryNoModules<TestFile>() {
                 override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
                     return TestFile(fileName, text)
                 }
@@ -150,6 +151,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     }
 
     override fun setUpProject() {
+        LocalFileSystem.getInstance().refreshAndFindFileByIoFile(File(appDataPath))
         super.setUpProject()
         File(appOutputPath).mkdirs()
     }

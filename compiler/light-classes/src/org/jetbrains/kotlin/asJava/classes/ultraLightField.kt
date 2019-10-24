@@ -82,10 +82,10 @@ internal open class KtUltraLightFieldImpl protected constructor(
 
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
-    private val propertyDescriptor: PropertyDescriptor? by lazyPub { declaration.resolve() as? PropertyDescriptor }
+    private val propertyDescriptor: PropertyDescriptor? get() = declaration.resolve() as? PropertyDescriptor
 
-    private val kotlinType: KotlinType? by lazyPub {
-        when {
+    private val kotlinType: KotlinType?
+        get() = when {
             declaration is KtProperty && declaration.hasDelegate() ->
                 propertyDescriptor?.let {
                     val context = LightClassGenerationSupport.getInstance(project).analyze(declaration)
@@ -100,11 +100,13 @@ internal open class KtUltraLightFieldImpl protected constructor(
                 declaration.getKotlinType()
             }
         }
-    }
 
-    override val kotlinTypeForNullabilityAnnotation: KotlinType?
-        // We don't generate nullability annotations for non-backing fields in backend
-        get() = kotlinType?.takeUnless { declaration is KtEnumEntry || declaration is KtObjectDeclaration }
+    override val qualifiedNameForNullabilityAnnotation: String?
+        get() {
+            // We don't generate nullability annotations for non-backing fields in backend
+            val typeForAnnotation = kotlinType?.takeUnless { declaration is KtEnumEntry || declaration is KtObjectDeclaration }
+            return computeQualifiedNameForNullabilityAnnotation(typeForAnnotation)
+        }
 
     override val psiTypeForNullabilityAnnotation: PsiType?
         get() = type
@@ -144,8 +146,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
 
     override val kotlinOrigin = declaration
 
-    override val clsDelegate: PsiField
-        get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
+    override val clsDelegate: PsiField get() = invalidAccess()
 
     override val lightMemberOrigin = LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER)
 

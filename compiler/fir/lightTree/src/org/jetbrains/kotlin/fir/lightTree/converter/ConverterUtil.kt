@@ -10,20 +10,25 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.generateResolvedAccessExpression
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterContainer
+import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirVariableImpl
-import org.jetbrains.kotlin.fir.declarations.impl.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirComponentCallImpl
 import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
 import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
+import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -72,7 +77,7 @@ fun LighterASTNode.isExpression(): Boolean {
     }
 }
 
-fun FirTypeParameterContainer.joinTypeParameters(typeConstraints: List<TypeConstraint>) {
+fun FirTypeParametersOwner.joinTypeParameters(typeConstraints: List<TypeConstraint>) {
     typeConstraints.forEach { typeConstraint ->
         this.typeParameters.forEach { typeParameter ->
             if (typeConstraint.identifier == typeParameter.name.identifier) {
@@ -125,11 +130,18 @@ fun generateDestructuringBlock(
         }
         val isVar = multiDeclaration.isVar
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
-            statements += FirVariableImpl(
-                session, null, entry.name,
-                entry.returnTypeRef, isVar,
-                FirComponentCallImpl(null, index + 1, generateResolvedAccessExpression(null, container)),
-                FirVariableSymbol(entry.name) // TODO?
+            statements += FirPropertyImpl(
+                null,
+                session,
+                entry.returnTypeRef,
+                null,
+                entry.name,
+                FirComponentCallImpl(null, generateResolvedAccessExpression(null, container), index + 1),
+                null,
+                isVar,
+                FirPropertySymbol(CallableId(entry.name)), // TODO?
+                true,
+                FirDeclarationStatusImpl(Visibilities.LOCAL,  Modality.FINAL)
             ).apply {
                 annotations += entry.annotations
                 symbol.bind(this)

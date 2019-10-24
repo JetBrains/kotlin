@@ -22,7 +22,7 @@ import java.io.File
 fun descriptorByFileDirective(testDataFile: File, isAllFilesPresentInTest: Boolean) =
     object : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
         private fun projectDescriptorByFileDirective(): LightProjectDescriptor {
-            if (isAllFilesPresentInTest) return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+            if (isAllFilesPresentInTest) return INSTANCE
             val fileText = FileUtil.loadFile(testDataFile, true)
             return if (InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_FULL_JDK"))
                 INSTANCE_FULL_JDK

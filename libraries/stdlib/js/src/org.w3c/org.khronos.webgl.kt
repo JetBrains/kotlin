@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
-// See libraries/tools/idl2k for details
+// See github.com/kotlin/dukat for details
 
-@file:Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 package org.khronos.webgl
 
 import kotlin.js.*
@@ -57,7 +56,6 @@ public external interface WebGLContextAttributes {
 @kotlin.internal.InlineOnly
 public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean? = true, stencil: Boolean? = false, antialias: Boolean? = true, premultipliedAlpha: Boolean? = true, preserveDrawingBuffer: Boolean? = false, preferLowPowerToHighPerformance: Boolean? = false, failIfMajorPerformanceCaveat: Boolean? = false): WebGLContextAttributes {
     val o = js("({})")
-
     o["alpha"] = alpha
     o["depth"] = depth
     o["stencil"] = stencil
@@ -66,54 +64,45 @@ public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean?
     o["preserveDrawingBuffer"] = preserveDrawingBuffer
     o["preferLowPowerToHighPerformance"] = preferLowPowerToHighPerformance
     o["failIfMajorPerformanceCaveat"] = failIfMajorPerformanceCaveat
-
     return o
 }
 
-public external abstract class WebGLObject {
-}
+public external abstract class WebGLObject
 
 /**
  * Exposes the JavaScript [WebGLBuffer](https://developer.mozilla.org/en/docs/Web/API/WebGLBuffer) to Kotlin
  */
-public external abstract class WebGLBuffer : WebGLObject {
-}
+public external abstract class WebGLBuffer : WebGLObject
 
 /**
  * Exposes the JavaScript [WebGLFramebuffer](https://developer.mozilla.org/en/docs/Web/API/WebGLFramebuffer) to Kotlin
  */
-public external abstract class WebGLFramebuffer : WebGLObject {
-}
+public external abstract class WebGLFramebuffer : WebGLObject
 
 /**
  * Exposes the JavaScript [WebGLProgram](https://developer.mozilla.org/en/docs/Web/API/WebGLProgram) to Kotlin
  */
-public external abstract class WebGLProgram : WebGLObject {
-}
+public external abstract class WebGLProgram : WebGLObject
 
 /**
  * Exposes the JavaScript [WebGLRenderbuffer](https://developer.mozilla.org/en/docs/Web/API/WebGLRenderbuffer) to Kotlin
  */
-public external abstract class WebGLRenderbuffer : WebGLObject {
-}
+public external abstract class WebGLRenderbuffer : WebGLObject
 
 /**
  * Exposes the JavaScript [WebGLShader](https://developer.mozilla.org/en/docs/Web/API/WebGLShader) to Kotlin
  */
-public external abstract class WebGLShader : WebGLObject {
-}
+public external abstract class WebGLShader : WebGLObject
 
 /**
  * Exposes the JavaScript [WebGLTexture](https://developer.mozilla.org/en/docs/Web/API/WebGLTexture) to Kotlin
  */
-public external abstract class WebGLTexture : WebGLObject {
-}
+public external abstract class WebGLTexture : WebGLObject
 
 /**
  * Exposes the JavaScript [WebGLUniformLocation](https://developer.mozilla.org/en/docs/Web/API/WebGLUniformLocation) to Kotlin
  */
-public external abstract class WebGLUniformLocation {
-}
+public external abstract class WebGLUniformLocation
 
 /**
  * Exposes the JavaScript [WebGLActiveInfo](https://developer.mozilla.org/en/docs/Web/API/WebGLActiveInfo) to Kotlin
@@ -133,6 +122,7 @@ public external abstract class WebGLShaderPrecisionFormat {
     open val precision: Int
 }
 
+@Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface WebGLRenderingContextBase {
     val canvas: HTMLCanvasElement
     val drawingBufferWidth: Int
@@ -141,61 +131,61 @@ public external interface WebGLRenderingContextBase {
     fun isContextLost(): Boolean
     fun getSupportedExtensions(): Array<String>?
     fun getExtension(name: String): dynamic
-    fun activeTexture(texture: Int): Unit
-    fun attachShader(program: WebGLProgram?, shader: WebGLShader?): Unit
-    fun bindAttribLocation(program: WebGLProgram?, index: Int, name: String): Unit
-    fun bindBuffer(target: Int, buffer: WebGLBuffer?): Unit
-    fun bindFramebuffer(target: Int, framebuffer: WebGLFramebuffer?): Unit
-    fun bindRenderbuffer(target: Int, renderbuffer: WebGLRenderbuffer?): Unit
-    fun bindTexture(target: Int, texture: WebGLTexture?): Unit
-    fun blendColor(red: Float, green: Float, blue: Float, alpha: Float): Unit
-    fun blendEquation(mode: Int): Unit
-    fun blendEquationSeparate(modeRGB: Int, modeAlpha: Int): Unit
-    fun blendFunc(sfactor: Int, dfactor: Int): Unit
-    fun blendFuncSeparate(srcRGB: Int, dstRGB: Int, srcAlpha: Int, dstAlpha: Int): Unit
-    fun bufferData(target: Int, size: Int, usage: Int): Unit
-    fun bufferData(target: Int, data: BufferDataSource?, usage: Int): Unit
-    fun bufferSubData(target: Int, offset: Int, data: BufferDataSource?): Unit
+    fun activeTexture(texture: Int)
+    fun attachShader(program: WebGLProgram?, shader: WebGLShader?)
+    fun bindAttribLocation(program: WebGLProgram?, index: Int, name: String)
+    fun bindBuffer(target: Int, buffer: WebGLBuffer?)
+    fun bindFramebuffer(target: Int, framebuffer: WebGLFramebuffer?)
+    fun bindRenderbuffer(target: Int, renderbuffer: WebGLRenderbuffer?)
+    fun bindTexture(target: Int, texture: WebGLTexture?)
+    fun blendColor(red: Float, green: Float, blue: Float, alpha: Float)
+    fun blendEquation(mode: Int)
+    fun blendEquationSeparate(modeRGB: Int, modeAlpha: Int)
+    fun blendFunc(sfactor: Int, dfactor: Int)
+    fun blendFuncSeparate(srcRGB: Int, dstRGB: Int, srcAlpha: Int, dstAlpha: Int)
+    fun bufferData(target: Int, size: Int, usage: Int)
+    fun bufferData(target: Int, data: BufferDataSource?, usage: Int)
+    fun bufferSubData(target: Int, offset: Int, data: BufferDataSource?)
     fun checkFramebufferStatus(target: Int): Int
-    fun clear(mask: Int): Unit
-    fun clearColor(red: Float, green: Float, blue: Float, alpha: Float): Unit
-    fun clearDepth(depth: Float): Unit
-    fun clearStencil(s: Int): Unit
-    fun colorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean): Unit
-    fun compileShader(shader: WebGLShader?): Unit
-    fun compressedTexImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, data: ArrayBufferView): Unit
-    fun compressedTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, data: ArrayBufferView): Unit
-    fun copyTexImage2D(target: Int, level: Int, internalformat: Int, x: Int, y: Int, width: Int, height: Int, border: Int): Unit
-    fun copyTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, x: Int, y: Int, width: Int, height: Int): Unit
+    fun clear(mask: Int)
+    fun clearColor(red: Float, green: Float, blue: Float, alpha: Float)
+    fun clearDepth(depth: Float)
+    fun clearStencil(s: Int)
+    fun colorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean)
+    fun compileShader(shader: WebGLShader?)
+    fun compressedTexImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, data: ArrayBufferView)
+    fun compressedTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, data: ArrayBufferView)
+    fun copyTexImage2D(target: Int, level: Int, internalformat: Int, x: Int, y: Int, width: Int, height: Int, border: Int)
+    fun copyTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, x: Int, y: Int, width: Int, height: Int)
     fun createBuffer(): WebGLBuffer?
     fun createFramebuffer(): WebGLFramebuffer?
     fun createProgram(): WebGLProgram?
     fun createRenderbuffer(): WebGLRenderbuffer?
     fun createShader(type: Int): WebGLShader?
     fun createTexture(): WebGLTexture?
-    fun cullFace(mode: Int): Unit
-    fun deleteBuffer(buffer: WebGLBuffer?): Unit
-    fun deleteFramebuffer(framebuffer: WebGLFramebuffer?): Unit
-    fun deleteProgram(program: WebGLProgram?): Unit
-    fun deleteRenderbuffer(renderbuffer: WebGLRenderbuffer?): Unit
-    fun deleteShader(shader: WebGLShader?): Unit
-    fun deleteTexture(texture: WebGLTexture?): Unit
-    fun depthFunc(func: Int): Unit
-    fun depthMask(flag: Boolean): Unit
-    fun depthRange(zNear: Float, zFar: Float): Unit
-    fun detachShader(program: WebGLProgram?, shader: WebGLShader?): Unit
-    fun disable(cap: Int): Unit
-    fun disableVertexAttribArray(index: Int): Unit
-    fun drawArrays(mode: Int, first: Int, count: Int): Unit
-    fun drawElements(mode: Int, count: Int, type: Int, offset: Int): Unit
-    fun enable(cap: Int): Unit
-    fun enableVertexAttribArray(index: Int): Unit
-    fun finish(): Unit
-    fun flush(): Unit
-    fun framebufferRenderbuffer(target: Int, attachment: Int, renderbuffertarget: Int, renderbuffer: WebGLRenderbuffer?): Unit
-    fun framebufferTexture2D(target: Int, attachment: Int, textarget: Int, texture: WebGLTexture?, level: Int): Unit
-    fun frontFace(mode: Int): Unit
-    fun generateMipmap(target: Int): Unit
+    fun cullFace(mode: Int)
+    fun deleteBuffer(buffer: WebGLBuffer?)
+    fun deleteFramebuffer(framebuffer: WebGLFramebuffer?)
+    fun deleteProgram(program: WebGLProgram?)
+    fun deleteRenderbuffer(renderbuffer: WebGLRenderbuffer?)
+    fun deleteShader(shader: WebGLShader?)
+    fun deleteTexture(texture: WebGLTexture?)
+    fun depthFunc(func: Int)
+    fun depthMask(flag: Boolean)
+    fun depthRange(zNear: Float, zFar: Float)
+    fun detachShader(program: WebGLProgram?, shader: WebGLShader?)
+    fun disable(cap: Int)
+    fun disableVertexAttribArray(index: Int)
+    fun drawArrays(mode: Int, first: Int, count: Int)
+    fun drawElements(mode: Int, count: Int, type: Int, offset: Int)
+    fun enable(cap: Int)
+    fun enableVertexAttribArray(index: Int)
+    fun finish()
+    fun flush()
+    fun framebufferRenderbuffer(target: Int, attachment: Int, renderbuffertarget: Int, renderbuffer: WebGLRenderbuffer?)
+    fun framebufferTexture2D(target: Int, attachment: Int, textarget: Int, texture: WebGLTexture?, level: Int)
+    fun frontFace(mode: Int)
+    fun generateMipmap(target: Int)
     fun getActiveAttrib(program: WebGLProgram?, index: Int): WebGLActiveInfo?
     fun getActiveUniform(program: WebGLProgram?, index: Int): WebGLActiveInfo?
     fun getAttachedShaders(program: WebGLProgram?): Array<WebGLShader>?
@@ -216,7 +206,7 @@ public external interface WebGLRenderingContextBase {
     fun getUniformLocation(program: WebGLProgram?, name: String): WebGLUniformLocation?
     fun getVertexAttrib(index: Int, pname: Int): Any?
     fun getVertexAttribOffset(index: Int, pname: Int): Int
-    fun hint(target: Int, mode: Int): Unit
+    fun hint(target: Int, mode: Int)
     fun isBuffer(buffer: WebGLBuffer?): Boolean
     fun isEnabled(cap: Int): Boolean
     fun isFramebuffer(framebuffer: WebGLFramebuffer?): Boolean
@@ -224,69 +214,69 @@ public external interface WebGLRenderingContextBase {
     fun isRenderbuffer(renderbuffer: WebGLRenderbuffer?): Boolean
     fun isShader(shader: WebGLShader?): Boolean
     fun isTexture(texture: WebGLTexture?): Boolean
-    fun lineWidth(width: Float): Unit
-    fun linkProgram(program: WebGLProgram?): Unit
-    fun pixelStorei(pname: Int, param: Int): Unit
-    fun polygonOffset(factor: Float, units: Float): Unit
-    fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: ArrayBufferView?): Unit
-    fun renderbufferStorage(target: Int, internalformat: Int, width: Int, height: Int): Unit
-    fun sampleCoverage(value: Float, invert: Boolean): Unit
-    fun scissor(x: Int, y: Int, width: Int, height: Int): Unit
-    fun shaderSource(shader: WebGLShader?, source: String): Unit
-    fun stencilFunc(func: Int, ref: Int, mask: Int): Unit
-    fun stencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int): Unit
-    fun stencilMask(mask: Int): Unit
-    fun stencilMaskSeparate(face: Int, mask: Int): Unit
-    fun stencilOp(fail: Int, zfail: Int, zpass: Int): Unit
-    fun stencilOpSeparate(face: Int, fail: Int, zfail: Int, zpass: Int): Unit
-    fun texImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: ArrayBufferView?): Unit
-    fun texImage2D(target: Int, level: Int, internalformat: Int, format: Int, type: Int, source: TexImageSource?): Unit
-    fun texParameterf(target: Int, pname: Int, param: Float): Unit
-    fun texParameteri(target: Int, pname: Int, param: Int): Unit
-    fun texSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, type: Int, pixels: ArrayBufferView?): Unit
-    fun texSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, format: Int, type: Int, source: TexImageSource?): Unit
-    fun uniform1f(location: WebGLUniformLocation?, x: Float): Unit
-    fun uniform1fv(location: WebGLUniformLocation?, v: Float32Array): Unit
-    fun uniform1fv(location: WebGLUniformLocation?, v: Array<Float>): Unit
-    fun uniform1i(location: WebGLUniformLocation?, x: Int): Unit
-    fun uniform1iv(location: WebGLUniformLocation?, v: Int32Array): Unit
-    fun uniform1iv(location: WebGLUniformLocation?, v: Array<Int>): Unit
-    fun uniform2f(location: WebGLUniformLocation?, x: Float, y: Float): Unit
-    fun uniform2fv(location: WebGLUniformLocation?, v: Float32Array): Unit
-    fun uniform2fv(location: WebGLUniformLocation?, v: Array<Float>): Unit
-    fun uniform2i(location: WebGLUniformLocation?, x: Int, y: Int): Unit
-    fun uniform2iv(location: WebGLUniformLocation?, v: Int32Array): Unit
-    fun uniform2iv(location: WebGLUniformLocation?, v: Array<Int>): Unit
-    fun uniform3f(location: WebGLUniformLocation?, x: Float, y: Float, z: Float): Unit
-    fun uniform3fv(location: WebGLUniformLocation?, v: Float32Array): Unit
-    fun uniform3fv(location: WebGLUniformLocation?, v: Array<Float>): Unit
-    fun uniform3i(location: WebGLUniformLocation?, x: Int, y: Int, z: Int): Unit
-    fun uniform3iv(location: WebGLUniformLocation?, v: Int32Array): Unit
-    fun uniform3iv(location: WebGLUniformLocation?, v: Array<Int>): Unit
-    fun uniform4f(location: WebGLUniformLocation?, x: Float, y: Float, z: Float, w: Float): Unit
-    fun uniform4fv(location: WebGLUniformLocation?, v: Float32Array): Unit
-    fun uniform4fv(location: WebGLUniformLocation?, v: Array<Float>): Unit
-    fun uniform4i(location: WebGLUniformLocation?, x: Int, y: Int, z: Int, w: Int): Unit
-    fun uniform4iv(location: WebGLUniformLocation?, v: Int32Array): Unit
-    fun uniform4iv(location: WebGLUniformLocation?, v: Array<Int>): Unit
-    fun uniformMatrix2fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array): Unit
-    fun uniformMatrix2fv(location: WebGLUniformLocation?, transpose: Boolean, value: Array<Float>): Unit
-    fun uniformMatrix3fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array): Unit
-    fun uniformMatrix3fv(location: WebGLUniformLocation?, transpose: Boolean, value: Array<Float>): Unit
-    fun uniformMatrix4fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array): Unit
-    fun uniformMatrix4fv(location: WebGLUniformLocation?, transpose: Boolean, value: Array<Float>): Unit
-    fun useProgram(program: WebGLProgram?): Unit
-    fun validateProgram(program: WebGLProgram?): Unit
-    fun vertexAttrib1f(index: Int, x: Float): Unit
-    fun vertexAttrib1fv(index: Int, values: dynamic): Unit
-    fun vertexAttrib2f(index: Int, x: Float, y: Float): Unit
-    fun vertexAttrib2fv(index: Int, values: dynamic): Unit
-    fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float): Unit
-    fun vertexAttrib3fv(index: Int, values: dynamic): Unit
-    fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float): Unit
-    fun vertexAttrib4fv(index: Int, values: dynamic): Unit
-    fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int): Unit
-    fun viewport(x: Int, y: Int, width: Int, height: Int): Unit
+    fun lineWidth(width: Float)
+    fun linkProgram(program: WebGLProgram?)
+    fun pixelStorei(pname: Int, param: Int)
+    fun polygonOffset(factor: Float, units: Float)
+    fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: ArrayBufferView?)
+    fun renderbufferStorage(target: Int, internalformat: Int, width: Int, height: Int)
+    fun sampleCoverage(value: Float, invert: Boolean)
+    fun scissor(x: Int, y: Int, width: Int, height: Int)
+    fun shaderSource(shader: WebGLShader?, source: String)
+    fun stencilFunc(func: Int, ref: Int, mask: Int)
+    fun stencilFuncSeparate(face: Int, func: Int, ref: Int, mask: Int)
+    fun stencilMask(mask: Int)
+    fun stencilMaskSeparate(face: Int, mask: Int)
+    fun stencilOp(fail: Int, zfail: Int, zpass: Int)
+    fun stencilOpSeparate(face: Int, fail: Int, zfail: Int, zpass: Int)
+    fun texImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: ArrayBufferView?)
+    fun texImage2D(target: Int, level: Int, internalformat: Int, format: Int, type: Int, source: TexImageSource?)
+    fun texParameterf(target: Int, pname: Int, param: Float)
+    fun texParameteri(target: Int, pname: Int, param: Int)
+    fun texSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, type: Int, pixels: ArrayBufferView?)
+    fun texSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, format: Int, type: Int, source: TexImageSource?)
+    fun uniform1f(location: WebGLUniformLocation?, x: Float)
+    fun uniform1fv(location: WebGLUniformLocation?, v: Float32Array)
+    fun uniform1fv(location: WebGLUniformLocation?, v: Array<Float>)
+    fun uniform1i(location: WebGLUniformLocation?, x: Int)
+    fun uniform1iv(location: WebGLUniformLocation?, v: Int32Array)
+    fun uniform1iv(location: WebGLUniformLocation?, v: Array<Int>)
+    fun uniform2f(location: WebGLUniformLocation?, x: Float, y: Float)
+    fun uniform2fv(location: WebGLUniformLocation?, v: Float32Array)
+    fun uniform2fv(location: WebGLUniformLocation?, v: Array<Float>)
+    fun uniform2i(location: WebGLUniformLocation?, x: Int, y: Int)
+    fun uniform2iv(location: WebGLUniformLocation?, v: Int32Array)
+    fun uniform2iv(location: WebGLUniformLocation?, v: Array<Int>)
+    fun uniform3f(location: WebGLUniformLocation?, x: Float, y: Float, z: Float)
+    fun uniform3fv(location: WebGLUniformLocation?, v: Float32Array)
+    fun uniform3fv(location: WebGLUniformLocation?, v: Array<Float>)
+    fun uniform3i(location: WebGLUniformLocation?, x: Int, y: Int, z: Int)
+    fun uniform3iv(location: WebGLUniformLocation?, v: Int32Array)
+    fun uniform3iv(location: WebGLUniformLocation?, v: Array<Int>)
+    fun uniform4f(location: WebGLUniformLocation?, x: Float, y: Float, z: Float, w: Float)
+    fun uniform4fv(location: WebGLUniformLocation?, v: Float32Array)
+    fun uniform4fv(location: WebGLUniformLocation?, v: Array<Float>)
+    fun uniform4i(location: WebGLUniformLocation?, x: Int, y: Int, z: Int, w: Int)
+    fun uniform4iv(location: WebGLUniformLocation?, v: Int32Array)
+    fun uniform4iv(location: WebGLUniformLocation?, v: Array<Int>)
+    fun uniformMatrix2fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array)
+    fun uniformMatrix2fv(location: WebGLUniformLocation?, transpose: Boolean, value: Array<Float>)
+    fun uniformMatrix3fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array)
+    fun uniformMatrix3fv(location: WebGLUniformLocation?, transpose: Boolean, value: Array<Float>)
+    fun uniformMatrix4fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array)
+    fun uniformMatrix4fv(location: WebGLUniformLocation?, transpose: Boolean, value: Array<Float>)
+    fun useProgram(program: WebGLProgram?)
+    fun validateProgram(program: WebGLProgram?)
+    fun vertexAttrib1f(index: Int, x: Float)
+    fun vertexAttrib1fv(index: Int, values: dynamic)
+    fun vertexAttrib2f(index: Int, x: Float, y: Float)
+    fun vertexAttrib2fv(index: Int, values: dynamic)
+    fun vertexAttrib3f(index: Int, x: Float, y: Float, z: Float)
+    fun vertexAttrib3fv(index: Int, values: dynamic)
+    fun vertexAttrib4f(index: Int, x: Float, y: Float, z: Float, w: Float)
+    fun vertexAttrib4fv(index: Int, values: dynamic)
+    fun vertexAttribPointer(index: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int)
+    fun viewport(x: Int, y: Int, width: Int, height: Int)
 
     companion object {
         val DEPTH_BUFFER_BIT: Int
@@ -593,7 +583,6 @@ public external interface WebGLRenderingContextBase {
  * Exposes the JavaScript [WebGLRenderingContext](https://developer.mozilla.org/en/docs/Web/API/WebGLRenderingContext) to Kotlin
  */
 public external abstract class WebGLRenderingContext : WebGLRenderingContextBase, RenderingContext {
-
     companion object {
         val DEPTH_BUFFER_BIT: Int
         val STENCIL_BUFFER_BIT: Int
@@ -900,6 +889,13 @@ public external abstract class WebGLRenderingContext : WebGLRenderingContextBase
  */
 public external open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = definedExternally) : Event {
     open val statusMessage: String
+
+    companion object {
+        val NONE: Short
+        val CAPTURING_PHASE: Short
+        val AT_TARGET: Short
+        val BUBBLING_PHASE: Short
+    }
 }
 
 public external interface WebGLContextEventInit : EventInit {
@@ -911,12 +907,10 @@ public external interface WebGLContextEventInit : EventInit {
 @kotlin.internal.InlineOnly
 public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): WebGLContextEventInit {
     val o = js("({})")
-
     o["statusMessage"] = statusMessage
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
-
     return o
 }
 
@@ -953,16 +947,20 @@ public external open class Int8Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    fun set(array: Int8Array, offset: Int = definedExternally): Unit
-    fun set(array: Array<Byte>, offset: Int = definedExternally): Unit
+    fun set(array: Int8Array, offset: Int = definedExternally)
+    fun set(array: Array<Byte>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Int8Array
 
     companion object {
         val BYTES_PER_ELEMENT: Int
     }
 }
-@kotlin.internal.InlineOnly inline operator fun Int8Array.get(index: Int): Byte = asDynamic()[index]
-@kotlin.internal.InlineOnly inline operator fun Int8Array.set(index: Int, value: Byte): Unit { asDynamic()[index] = value; }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Int8Array.get(index: Int): Byte = asDynamic()[index]
+
+@kotlin.internal.InlineOnly
+public inline operator fun Int8Array.set(index: Int, value: Byte) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Uint8Array](https://developer.mozilla.org/en/docs/Web/API/Uint8Array) to Kotlin
@@ -976,16 +974,20 @@ public external open class Uint8Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    fun set(array: Uint8Array, offset: Int = definedExternally): Unit
-    fun set(array: Array<Byte>, offset: Int = definedExternally): Unit
+    fun set(array: Uint8Array, offset: Int = definedExternally)
+    fun set(array: Array<Byte>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Uint8Array
 
     companion object {
         val BYTES_PER_ELEMENT: Int
     }
 }
-@kotlin.internal.InlineOnly inline operator fun Uint8Array.get(index: Int): Byte = asDynamic()[index]
-@kotlin.internal.InlineOnly inline operator fun Uint8Array.set(index: Int, value: Byte): Unit { asDynamic()[index] = value; }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Uint8Array.get(index: Int): Byte = asDynamic()[index]
+
+@kotlin.internal.InlineOnly
+public inline operator fun Uint8Array.set(index: Int, value: Byte) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Uint8ClampedArray](https://developer.mozilla.org/en/docs/Web/API/Uint8ClampedArray) to Kotlin
@@ -999,16 +1001,20 @@ public external open class Uint8ClampedArray : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    fun set(array: Uint8ClampedArray, offset: Int = definedExternally): Unit
-    fun set(array: Array<Byte>, offset: Int = definedExternally): Unit
+    fun set(array: Uint8ClampedArray, offset: Int = definedExternally)
+    fun set(array: Array<Byte>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Uint8ClampedArray
 
     companion object {
         val BYTES_PER_ELEMENT: Int
     }
 }
-@kotlin.internal.InlineOnly inline operator fun Uint8ClampedArray.get(index: Int): Byte = asDynamic()[index]
-@kotlin.internal.InlineOnly inline operator fun Uint8ClampedArray.set(index: Int, value: Byte): Unit { asDynamic()[index] = value; }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Uint8ClampedArray.get(index: Int): Byte = asDynamic()[index]
+
+@kotlin.internal.InlineOnly
+public inline operator fun Uint8ClampedArray.set(index: Int, value: Byte) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Int16Array](https://developer.mozilla.org/en/docs/Web/API/Int16Array) to Kotlin
@@ -1022,16 +1028,20 @@ public external open class Int16Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    fun set(array: Int16Array, offset: Int = definedExternally): Unit
-    fun set(array: Array<Short>, offset: Int = definedExternally): Unit
+    fun set(array: Int16Array, offset: Int = definedExternally)
+    fun set(array: Array<Short>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Int16Array
 
     companion object {
         val BYTES_PER_ELEMENT: Int
     }
 }
-@kotlin.internal.InlineOnly inline operator fun Int16Array.get(index: Int): Short = asDynamic()[index]
-@kotlin.internal.InlineOnly inline operator fun Int16Array.set(index: Int, value: Short): Unit { asDynamic()[index] = value; }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Int16Array.get(index: Int): Short = asDynamic()[index]
+
+@kotlin.internal.InlineOnly
+public inline operator fun Int16Array.set(index: Int, value: Short) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Uint16Array](https://developer.mozilla.org/en/docs/Web/API/Uint16Array) to Kotlin
@@ -1045,16 +1055,20 @@ public external open class Uint16Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    fun set(array: Uint16Array, offset: Int = definedExternally): Unit
-    fun set(array: Array<Short>, offset: Int = definedExternally): Unit
+    fun set(array: Uint16Array, offset: Int = definedExternally)
+    fun set(array: Array<Short>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Uint16Array
 
     companion object {
         val BYTES_PER_ELEMENT: Int
     }
 }
-@kotlin.internal.InlineOnly inline operator fun Uint16Array.get(index: Int): Short = asDynamic()[index]
-@kotlin.internal.InlineOnly inline operator fun Uint16Array.set(index: Int, value: Short): Unit { asDynamic()[index] = value; }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Uint16Array.get(index: Int): Short = asDynamic()[index]
+
+@kotlin.internal.InlineOnly
+public inline operator fun Uint16Array.set(index: Int, value: Short) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Int32Array](https://developer.mozilla.org/en/docs/Web/API/Int32Array) to Kotlin
@@ -1068,16 +1082,20 @@ public external open class Int32Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    fun set(array: Int32Array, offset: Int = definedExternally): Unit
-    fun set(array: Array<Int>, offset: Int = definedExternally): Unit
+    fun set(array: Int32Array, offset: Int = definedExternally)
+    fun set(array: Array<Int>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Int32Array
 
     companion object {
         val BYTES_PER_ELEMENT: Int
     }
 }
-@kotlin.internal.InlineOnly inline operator fun Int32Array.get(index: Int): Int = asDynamic()[index]
-@kotlin.internal.InlineOnly inline operator fun Int32Array.set(index: Int, value: Int): Unit { asDynamic()[index] = value; }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Int32Array.get(index: Int): Int = asDynamic()[index]
+
+@kotlin.internal.InlineOnly
+public inline operator fun Int32Array.set(index: Int, value: Int) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Uint32Array](https://developer.mozilla.org/en/docs/Web/API/Uint32Array) to Kotlin
@@ -1091,16 +1109,20 @@ public external open class Uint32Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    fun set(array: Uint32Array, offset: Int = definedExternally): Unit
-    fun set(array: Array<Int>, offset: Int = definedExternally): Unit
+    fun set(array: Uint32Array, offset: Int = definedExternally)
+    fun set(array: Array<Int>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Uint32Array
 
     companion object {
         val BYTES_PER_ELEMENT: Int
     }
 }
-@kotlin.internal.InlineOnly inline operator fun Uint32Array.get(index: Int): Int = asDynamic()[index]
-@kotlin.internal.InlineOnly inline operator fun Uint32Array.set(index: Int, value: Int): Unit { asDynamic()[index] = value; }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Uint32Array.get(index: Int): Int = asDynamic()[index]
+
+@kotlin.internal.InlineOnly
+public inline operator fun Uint32Array.set(index: Int, value: Int) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Float32Array](https://developer.mozilla.org/en/docs/Web/API/Float32Array) to Kotlin
@@ -1114,16 +1136,20 @@ public external open class Float32Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    fun set(array: Float32Array, offset: Int = definedExternally): Unit
-    fun set(array: Array<Float>, offset: Int = definedExternally): Unit
+    fun set(array: Float32Array, offset: Int = definedExternally)
+    fun set(array: Array<Float>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Float32Array
 
     companion object {
         val BYTES_PER_ELEMENT: Int
     }
 }
-@kotlin.internal.InlineOnly inline operator fun Float32Array.get(index: Int): Float = asDynamic()[index]
-@kotlin.internal.InlineOnly inline operator fun Float32Array.set(index: Int, value: Float): Unit { asDynamic()[index] = value; }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Float32Array.get(index: Int): Float = asDynamic()[index]
+
+@kotlin.internal.InlineOnly
+public inline operator fun Float32Array.set(index: Int, value: Float) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [Float64Array](https://developer.mozilla.org/en/docs/Web/API/Float64Array) to Kotlin
@@ -1137,16 +1163,20 @@ public external open class Float64Array : ArrayBufferView {
     override val buffer: ArrayBuffer
     override val byteOffset: Int
     override val byteLength: Int
-    fun set(array: Float64Array, offset: Int = definedExternally): Unit
-    fun set(array: Array<Double>, offset: Int = definedExternally): Unit
+    fun set(array: Float64Array, offset: Int = definedExternally)
+    fun set(array: Array<Double>, offset: Int = definedExternally)
     fun subarray(start: Int, end: Int): Float64Array
 
     companion object {
         val BYTES_PER_ELEMENT: Int
     }
 }
-@kotlin.internal.InlineOnly inline operator fun Float64Array.get(index: Int): Double = asDynamic()[index]
-@kotlin.internal.InlineOnly inline operator fun Float64Array.set(index: Int, value: Double): Unit { asDynamic()[index] = value; }
+
+@kotlin.internal.InlineOnly
+public inline operator fun Float64Array.get(index: Int): Double = asDynamic()[index]
+
+@kotlin.internal.InlineOnly
+public inline operator fun Float64Array.set(index: Int, value: Double) { asDynamic()[index] = value }
 
 /**
  * Exposes the JavaScript [DataView](https://developer.mozilla.org/en/docs/Web/API/DataView) to Kotlin
@@ -1163,19 +1193,16 @@ public external open class DataView(buffer: ArrayBuffer, byteOffset: Int = defin
     fun getUint32(byteOffset: Int, littleEndian: Boolean = definedExternally): Int
     fun getFloat32(byteOffset: Int, littleEndian: Boolean = definedExternally): Float
     fun getFloat64(byteOffset: Int, littleEndian: Boolean = definedExternally): Double
-    fun setInt8(byteOffset: Int, value: Byte): Unit
-    fun setUint8(byteOffset: Int, value: Byte): Unit
-    fun setInt16(byteOffset: Int, value: Short, littleEndian: Boolean = definedExternally): Unit
-    fun setUint16(byteOffset: Int, value: Short, littleEndian: Boolean = definedExternally): Unit
-    fun setInt32(byteOffset: Int, value: Int, littleEndian: Boolean = definedExternally): Unit
-    fun setUint32(byteOffset: Int, value: Int, littleEndian: Boolean = definedExternally): Unit
-    fun setFloat32(byteOffset: Int, value: Float, littleEndian: Boolean = definedExternally): Unit
-    fun setFloat64(byteOffset: Int, value: Double, littleEndian: Boolean = definedExternally): Unit
+    fun setInt8(byteOffset: Int, value: Byte)
+    fun setUint8(byteOffset: Int, value: Byte)
+    fun setInt16(byteOffset: Int, value: Short, littleEndian: Boolean = definedExternally)
+    fun setUint16(byteOffset: Int, value: Short, littleEndian: Boolean = definedExternally)
+    fun setInt32(byteOffset: Int, value: Int, littleEndian: Boolean = definedExternally)
+    fun setUint32(byteOffset: Int, value: Int, littleEndian: Boolean = definedExternally)
+    fun setFloat32(byteOffset: Int, value: Float, littleEndian: Boolean = definedExternally)
+    fun setFloat64(byteOffset: Int, value: Double, littleEndian: Boolean = definedExternally)
 }
 
-public external @marker interface BufferDataSource {
-}
+public external interface BufferDataSource
 
-public external @marker interface TexImageSource {
-}
-
+public external interface TexImageSource

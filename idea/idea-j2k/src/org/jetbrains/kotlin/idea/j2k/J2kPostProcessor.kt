@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.j2k.ConverterContext
-import org.jetbrains.kotlin.j2k.PostProcessor
+import org.jetbrains.kotlin.j2k.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -61,11 +60,15 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
     }
 
     override fun doAdditionalProcessing(
-        file: KtFile,
+        target: JKPostProcessingTarget,
         converterContext: ConverterContext?,
-        rangeMarker: RangeMarker?,
         onPhaseChanged: ((Int, String) -> Unit)?
-    ) =
+    ) {
+        val (file, rangeMarker) = when (target) {
+            is JKPieceOfCodePostProcessingTarget -> target.file to target.rangeMarker
+            is JKMultipleFilesPostProcessingTarget -> target.files.single() to null
+        }
+
         runBlocking(EDT.ModalityStateElement(ModalityState.defaultModalityState())) {
             do {
                 var modificationStamp: Long? = file.modificationStamp
@@ -109,7 +112,7 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                 }
             }
         }
-
+    }
 
     private data class ActionData(val element: KtElement, val action: () -> Unit, val priority: Int, val writeActionNeeded: Boolean)
 

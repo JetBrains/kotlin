@@ -45,14 +45,14 @@ import java.util.List;
 
 
 public class DebuggerSteppingHelper {
-    private static Logger LOG = Logger.getInstance(DebuggerSteppingHelper.class);
+    private static final Logger LOG = Logger.getInstance(DebuggerSteppingHelper.class);
 
     public static DebugProcessImpl.ResumeCommand createStepOverCommand(
-            final SuspendContextImpl suspendContext,
-            final boolean ignoreBreakpoints,
-            final KotlinSteppingCommandProvider.KotlinSourcePosition kotlinSourcePosition
+            SuspendContextImpl suspendContext,
+            boolean ignoreBreakpoints,
+            KotlinSteppingCommandProvider.KotlinSourcePosition kotlinSourcePosition
     ) {
-        final DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
+        DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
 
         return debugProcess.new ResumeCommand(suspendContext) {
             @Override
@@ -88,12 +88,12 @@ public class DebuggerSteppingHelper {
     }
 
     public static DebugProcessImpl.ResumeCommand createStepOutCommand(
-            final SuspendContextImpl suspendContext,
-            final boolean ignoreBreakpoints,
-            final List<KtNamedFunction> inlineFunctions,
-            final KtFunctionLiteral inlineArgument
+            SuspendContextImpl suspendContext,
+            boolean ignoreBreakpoints,
+            List<KtNamedFunction> inlineFunctions,
+            KtFunctionLiteral inlineArgument
     ) {
-        final DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
+        DebugProcessImpl debugProcess = suspendContext.getDebugProcess();
         return debugProcess.new ResumeCommand(suspendContext) {
             @Override
             public void contextAction() {
@@ -129,7 +129,8 @@ public class DebuggerSteppingHelper {
             @NotNull SuspendContextImpl suspendContext,
             @Nullable ThreadReferenceProxyImpl stepThread,
             @NotNull EventRequestManager requestManager,
-            int size, int depth
+            @SuppressWarnings("SameParameterValue") int size,
+            @SuppressWarnings("SameParameterValue") int depth
     ) {
         if (stepThread == null) {
             return;
@@ -170,7 +171,7 @@ public class DebuggerSteppingHelper {
     // copied from DebugProcessImpl.getActiveFilters
     @NotNull
     private static List<ClassFilter> getActiveFilters() {
-        List<ClassFilter> activeFilters = new ArrayList<ClassFilter>();
+        List<ClassFilter> activeFilters = new ArrayList<>();
         DebuggerSettings settings = DebuggerSettings.getInstance();
         if (settings.TRACING_FILTERS_ENABLED) {
             for (ClassFilter filter : settings.getSteppingFilters()) {
@@ -179,6 +180,7 @@ public class DebuggerSteppingHelper {
                 }
             }
         }
+        //noinspection deprecation
         for (DebuggerClassFilterProvider provider : Extensions.getExtensions(DebuggerClassFilterProvider.EP_NAME)) {
             for (ClassFilter filter : provider.getFilters()) {
                 if (filter.isEnabled()) {

@@ -10,14 +10,12 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.constants.evaluate.evaluateBinary
@@ -161,6 +159,7 @@ class FoldConstantLowering(private val context: JvmBackendContext) : IrElementTr
         return buildIrConstant(call, evaluated)
     }
 
+    @ExperimentalUnsignedTypes
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
@@ -175,6 +174,19 @@ class FoldConstantLowering(private val context: JvmBackendContext) : IrElementTr
                 }
             }
 
+            // Unsigned constants are represented through signed constants with a different IrType.
+            private fun constToString(const: IrConst<*>): String {
+                if (const.type.isUnsigned()) {
+                    when (val kind = const.kind) {
+                        is IrConstKind.Byte -> return kind.valueOf(const).toUByte().toString()
+                        is IrConstKind.Short -> return kind.valueOf(const).toUShort().toString()
+                        is IrConstKind.Int -> return kind.valueOf(const).toUInt().toString()
+                        is IrConstKind.Long -> return kind.valueOf(const).toULong().toString()
+                    }
+                }
+                return const.value.toString()
+            }
+
             override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
                 expression.transformChildrenVoid(this)
                 val folded = mutableListOf<IrExpression>()
@@ -183,11 +195,11 @@ class FoldConstantLowering(private val context: JvmBackendContext) : IrElementTr
                     when {
                         next !is IrConst<*> -> folded += next
                         last !is IrConst<*> -> folded += IrConstImpl.string(
-                            next.startOffset, next.endOffset, context.irBuiltIns.stringType, next.value.toString()
+                            next.startOffset, next.endOffset, context.irBuiltIns.stringType, constToString(next)
                         )
                         else -> folded[folded.size - 1] = IrConstImpl.string(
                             last.startOffset, next.endOffset, context.irBuiltIns.stringType,
-                            last.value.toString() + next.value.toString()
+                            constToString(last) + constToString(next)
                         )
                     }
                 }

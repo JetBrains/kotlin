@@ -5,33 +5,37 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.FirReference
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirExpressionWithSmartcast(
-    open val originalExpression: FirQualifiedAccessExpression,
-    val typesFromSmartcast: Collection<ConeKotlinType>
-) : FirQualifiedAccessExpression(originalExpression.psi) {
-    val originalType: FirTypeRef get() = originalExpression.typeRef
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
-    final override val safe: Boolean
-        get() = originalExpression.safe
+abstract class FirExpressionWithSmartcast : FirQualifiedAccessExpression() {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val safe: Boolean
+    abstract override val explicitReceiver: FirExpression?
+    abstract override val dispatchReceiver: FirExpression
+    abstract override val extensionReceiver: FirExpression
+    abstract override val calleeReference: FirReference
+    abstract val originalExpression: FirQualifiedAccessExpression
+    abstract val typesFromSmartcast: Collection<ConeKotlinType>
+    abstract val originalType: FirTypeRef
 
-    final override val explicitReceiver: FirExpression?
-        get() = originalExpression.explicitReceiver
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpressionWithSmartcast(this, data)
 
-    final override val dispatchReceiver: FirExpression
-        get() = originalExpression.dispatchReceiver
+    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast
 
-    final override val extensionReceiver: FirExpression
-        get() = originalExpression.extensionReceiver
+    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast
 
-    final override val calleeReference: FirReference
-        get() = originalExpression.calleeReference
+    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        originalExpression.acceptChildren(visitor, data)
-    }
+    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcast
 }

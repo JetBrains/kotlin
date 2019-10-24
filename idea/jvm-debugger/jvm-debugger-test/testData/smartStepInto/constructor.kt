@@ -41,4 +41,4 @@ class L {
     }
 }
 
-// EXISTS: println(Any?), constructor B(), constructor C(Int), constructor D(), constructor E(Int), constructor F(), constructor G(Int), constructor J(), constructor K(Int), constructor L()
+// EXISTS: constructor B(), constructor C(Int), constructor D(), constructor E(Int), constructor F(), constructor G(Int), constructor J(), constructor K(Int), constructor L()

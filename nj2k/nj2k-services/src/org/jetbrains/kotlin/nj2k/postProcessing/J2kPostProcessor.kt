@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isTrivialSta
 import org.jetbrains.kotlin.idea.quickfix.*
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.j2k.ConverterContext
+import org.jetbrains.kotlin.j2k.JKPostProcessingTarget
 import org.jetbrains.kotlin.j2k.PostProcessor
+import org.jetbrains.kotlin.j2k.files
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
@@ -42,23 +44,23 @@ class NewJ2kPostProcessor : PostProcessor {
 
     override val phasesCount = processings.size
 
+
     override fun doAdditionalProcessing(
-        file: KtFile,
+        target: JKPostProcessingTarget,
         converterContext: ConverterContext?,
-        rangeMarker: RangeMarker?,
         onPhaseChanged: ((Int, String) -> Unit)?
     ) {
         for ((i, group) in processings.withIndex()) {
             onPhaseChanged?.invoke(i + 1, group.description)
             for (processing in group.processings) {
                 try {
-                    processing.runProcessing(file, rangeMarker, converterContext as NewJ2kConverterContext)
+                    processing.runProcessing(target, converterContext as NewJ2kConverterContext)
                 } catch (e: ProcessCanceledException) {
                     throw e
                 } catch (t: Throwable) {
                     LOG.error(t)
                 } finally {
-                    commitFile(file)
+                    target.files().forEach(::commitFile)
                 }
             }
         }
@@ -124,6 +126,16 @@ private val errorsFixingDiagnosticBasedPostProcessingGroup =
         diagnosticBasedProcessing(
             RemoveModifierFix.createRemoveModifierFactory(),
             Errors.WRONG_MODIFIER_TARGET
+        ),
+        diagnosticBasedProcessing(
+            ChangeVisibilityOnExposureFactory,
+            Errors.EXPOSED_FUNCTION_RETURN_TYPE,
+            Errors.EXPOSED_PARAMETER_TYPE,
+            Errors.EXPOSED_PROPERTY_TYPE,
+            Errors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR,
+            Errors.EXPOSED_RECEIVER_TYPE,
+            Errors.EXPOSED_SUPER_CLASS,
+            Errors.EXPOSED_SUPER_INTERFACE
         ),
         fixValToVarDiagnosticBasedProcessing,
         fixTypeMismatchDiagnosticBasedProcessing

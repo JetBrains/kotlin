@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.symbols
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.util.IrSymbolVisitor
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -94,6 +95,13 @@ interface IrClassSymbol :
 
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitClassSymbol(this, data)
+}
+
+interface IrScriptSymbol :
+    IrSymbol, IrBindableSymbol<ScriptDescriptor, IrScript> {
+
+    override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
+        visitor.visitSymbol(this, data)
 }
 
 interface IrTypeParameterSymbol :

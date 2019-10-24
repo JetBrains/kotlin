@@ -6,10 +6,22 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirStringConcatenationCall(psi: PsiElement?) : FirCallWithArgumentList(psi) {
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitStringConcatenationCall(this, data)
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+abstract class FirStringConcatenationCall : FirPureAbstractElement(), FirCall, FirExpression {
+    abstract override val psi: PsiElement?
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val arguments: List<FirExpression>
+    abstract override val typeRef: FirTypeRef
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitStringConcatenationCall(this, data)
+
+    abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirStringConcatenationCall
 }

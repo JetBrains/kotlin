@@ -1,6 +1,6 @@
 internal class A {
     class Nested {
-        internal fun foo() {
+        fun foo() {
             privateStatic1()
         }
     }

@@ -231,12 +231,6 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         //through generation captured parameters will be added to invocationParamBuilder
         putClosureParametersOnStack()
 
-        val shouldSpillStack = !canSkipStackSpillingOnInline(node)
-
-        if (shouldSpillStack) {
-            addInlineMarker(codegen.v, true)
-        }
-
         val parameters = invocationParamBuilder.buildParameters()
 
         val info = RootInliningContext(
@@ -271,15 +265,20 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             removeFinallyMarkers(adapter)
         }
 
-        adapter.accept(MethodBodyVisitor(codegen.v))
+        // In case `codegen.v` is `<clinit>`, initializer for the `$assertionsDisabled` field
+        // needs to be inserted before the code that actually uses it.
+        generateAssertFieldIfNeeded(info)
 
+        val shouldSpillStack = !canSkipStackSpillingOnInline(node)
+        if (shouldSpillStack) {
+            addInlineMarker(codegen.v, true)
+        }
+        adapter.accept(MethodBodyVisitor(codegen.v))
         if (shouldSpillStack) {
             addInlineMarker(codegen.v, false)
         }
 
         defaultSourceMapper.callSiteMarker = null
-
-        generateAssertFieldIfNeeded(info)
 
         return result
     }

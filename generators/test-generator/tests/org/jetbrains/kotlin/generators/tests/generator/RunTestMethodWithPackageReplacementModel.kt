@@ -29,6 +29,10 @@ class RunTestMethodWithPackageReplacementModel(
         p.println("KotlinTestUtils.$testRunnerMethodName(filePath -> $testMethodName(filePath, packageName), $className.$targetBackend, testDataFilePath$additionalArguments);")
     }
 
+    override fun imports(): Collection<Class<*>> {
+        return super.imports() + setOf(TargetBackend::class.java)
+    }
+
     companion object {
         const val METHOD_NAME = "runTestWithPackageReplacement"
     }

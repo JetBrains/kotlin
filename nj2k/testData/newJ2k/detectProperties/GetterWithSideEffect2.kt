@@ -9,7 +9,7 @@ class C {
         this.x = x
     }
 
-    internal fun foo() {
+    fun foo() {
         println("x = $x")
     }
 }

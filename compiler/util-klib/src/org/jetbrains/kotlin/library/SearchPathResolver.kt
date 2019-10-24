@@ -7,35 +7,28 @@ import org.jetbrains.kotlin.util.*
 
 const val KOTLIN_STDLIB_NAME = "stdlib"
 
-interface SearchPathResolver<out L: KotlinLibrary> : WithLogger {
+interface SearchPathResolver<L: KotlinLibrary> : WithLogger {
     val searchRoots: List<File>
     fun resolutionSequence(givenPath: String): Sequence<File>
     fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean = false): L
     fun resolve(givenPath: String): L
     fun defaultLinks(noStdLib: Boolean, noDefaultLibs: Boolean, noEndorsedLibs: Boolean): List<L>
+    fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean
 }
 
-interface SearchPathResolverWithAttributes<out L: KotlinLibrary>: SearchPathResolver<L> {
+interface SearchPathResolverWithAttributes<L: KotlinLibrary>: SearchPathResolver<L> {
     val knownAbiVersions: List<KotlinAbiVersion>?
     val knownCompilerVersions: List<KonanVersion>?
 }
 
-fun resolverByName(
-        repositories: List<String>,
-        directLibs: List<String> = emptyList(),
-        distributionKlib: String? = null,
-        localKotlinDir: String? = null,
-        skipCurrentDir: Boolean = false,
-        logger: Logger = DummyLogger
-): SearchPathResolver<KotlinLibrary> = KotlinLibrarySearchPathResolver(repositories, directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger)
-
-open class KotlinLibrarySearchPathResolver<out L: KotlinLibrary>(
+// This is a simple library resolver that only cares for file names.
+abstract class KotlinLibrarySearchPathResolver<L: KotlinLibrary>(
         repositories: List<String>,
         directLibs: List<String>,
         val distributionKlib: String?,
         val localKotlinDir: String?,
         val skipCurrentDir: Boolean,
-        override val logger: Logger = DummyLogger
+        override val logger: Logger
 ) : SearchPathResolver<L> {
 
     val localHead: File?
@@ -51,8 +44,10 @@ open class KotlinLibrarySearchPathResolver<out L: KotlinLibrary>(
 
     private val repoRoots: List<File> by lazy { repositories.map { File(it) } }
 
+    abstract fun libraryBuilder(file: File, isDefault: Boolean): L
+
     private val directLibraries: List<KotlinLibrary> by lazy {
-        directLibs.mapNotNull { found(File(it)) }.map { createKotlinLibrary(it) }
+        directLibs.mapNotNull { found(File(it)) }.map { libraryBuilder(it, false) }
     }
 
     // This is the place where we specify the order of library search.
@@ -102,15 +97,19 @@ open class KotlinLibrarySearchPathResolver<out L: KotlinLibrary>(
 
     override fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L {
         val givenPath = unresolved.path
-        return resolutionSequence(givenPath).firstOrNull() ?. let {
-            createKotlinLibrary(it, isDefaultLink) as L
-        } ?: run {
+        val fileSequence = resolutionSequence(givenPath)
+        val matching = fileSequence.map { libraryBuilder(it, isDefaultLink) }
+            .map { it.takeIf { libraryMatch(it, unresolved) } }
+            .filterNotNull()
+
+        return matching.firstOrNull() ?: run {
             logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
         }
     }
 
-    override fun resolve(givenPath: String) = resolve(UnresolvedLibrary(givenPath, null), false)
+    override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary) = true
 
+    override fun resolve(givenPath: String) = resolve(UnresolvedLibrary(givenPath, null), false)
 
     private val File.klib
         get() = File(this, "klib")
@@ -158,3 +157,58 @@ fun KonanVersion.compatible(other: KonanVersion) =
         this.major == other.major
         && this.minor == other.minor
         && this.maintenance == other.maintenance
+
+
+// This is a library resolver aware of attributes shared between platforms,
+// such as abi version.
+// JS and Native resolvers are inherited from this one.
+abstract class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
+    repositories: List<String>,
+    directLibs: List<String>,
+    override val knownAbiVersions: List<KotlinAbiVersion>?,
+    override val knownCompilerVersions: List<KonanVersion>?,
+    distributionKlib: String?,
+    localKotlinDir: String?,
+    skipCurrentDir: Boolean,
+    override val logger: Logger
+) : KotlinLibrarySearchPathResolver<L>(repositories, directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger),
+    SearchPathResolverWithAttributes<L>
+{
+    override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean {
+        val candidatePath = candidate.libraryFile.absolutePath
+
+        val candidateCompilerVersion = candidate.versions.compilerVersion
+        val candidateAbiVersion = candidate.versions.abiVersion
+        val candidateLibraryVersion = candidate.versions.libraryVersion
+
+        val abiVersionMatch = candidateAbiVersion != null &&
+                knownAbiVersions != null &&
+                knownAbiVersions!!.contains(candidateAbiVersion)
+
+        val compilerVersionMatch = candidateCompilerVersion != null &&
+                knownCompilerVersions != null &&
+                knownCompilerVersions!!.any { it.compatible(candidateCompilerVersion) }
+
+        if (!abiVersionMatch && !compilerVersionMatch) {
+            logger.warning("skipping $candidatePath. The abi versions don't match. Expected '${knownAbiVersions}', found '${candidateAbiVersion}'")
+
+            if (knownCompilerVersions != null) {
+                val expected = knownCompilerVersions?.map { it.toString(false, false) }
+                val found = candidateCompilerVersion?.toString(true, true)
+                logger.warning("The compiler versions don't match either. Expected '${expected}', found '${found}'")
+            }
+
+            return false
+        }
+
+        if (candidateLibraryVersion != unresolved.libraryVersion &&
+            candidateLibraryVersion != null &&
+            unresolved.libraryVersion != null
+        ) {
+            logger.warning("skipping $candidatePath. The library versions don't match. Expected '${unresolved.libraryVersion}', found '${candidateLibraryVersion}'")
+            return false
+        }
+
+        return true
+    }
+}

@@ -11,8 +11,9 @@ public abstract class AbstractReferenceToJavaWithWrongFileStructureTest extends 
     @Override
     protected void doTest(@NotNull String path) {
         //this line intentionally creates wrong file structure for java file
-        myFixture.configureByFile(path.replace(".kt", ".java"));
-        myFixture.configureByFile(path);
+        String fileName = fileName();
+        myFixture.configureByFile(fileName.replace(".kt", ".java"));
+        myFixture.configureByFile(fileName);
         performChecks();
     }
 }

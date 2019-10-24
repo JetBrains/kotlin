@@ -6,10 +6,7 @@
 package org.jetbrains.kotlinx.serialization.compiler.diagnostic
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportFromPlugin
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -37,14 +34,23 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     final override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor) return
 
-        if (!canBeSerializedInternally(descriptor, context.trace)) return
+        if (!canBeSerializedInternally(descriptor, declaration, context.trace)) return
         if (declaration !is KtPureClassOrObject) return
         val props = buildSerializableProperties(descriptor, context.trace) ?: return
         checkTransients(declaration, context.trace)
         analyzePropertiesSerializers(context.trace, descriptor, props.serializableProperties)
     }
 
-    private fun canBeSerializedInternally(descriptor: ClassDescriptor, trace: BindingTrace): Boolean {
+    private fun canBeSerializedInternally(descriptor: ClassDescriptor, declaration: KtDeclaration, trace: BindingTrace): Boolean {
+        if (descriptor.isSerializableEnumWithMissingSerializer()) {
+            val declarationToReport = declaration.modifierList ?: declaration
+            trace.reportFromPlugin(
+                SerializationErrors.EXPLICIT_SERIALIZABLE_IS_REQUIRED.on(declarationToReport),
+                SerializationPluginErrorsRendering
+            )
+            return false
+        }
+
         if (!descriptor.annotations.hasAnnotation(SerializationAnnotations.serializableAnnotationFqName)) return false
 
         if (!serializationPluginEnabledOn(descriptor)) {
@@ -58,18 +64,27 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
         if (!descriptor.hasSerializableAnnotationWithoutArgs) return false
 
-        if (!descriptor.isInternalSerializable && !descriptor.hasCompanionObjectAsSerializer) {
+        if (descriptor.serializableAnnotationIsUseless) {
             trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.SERIALIZABLE_ANNOTATION_IGNORED)
             return false
         }
 
         // check that we can instantiate supertype
-        val superClass = descriptor.getSuperClassOrAny()
-        if (!superClass.isInternalSerializable && superClass.constructors.singleOrNull { it.valueParameters.size == 0 } == null) {
-            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR)
-            return false
+        if (!descriptor.isSerializableEnum()) { // enums are inherited from java.lang.Enum and can't be inherited from other classes
+            val superClass = descriptor.getSuperClassOrAny()
+            if (!superClass.isInternalSerializable && superClass.constructors.singleOrNull { it.valueParameters.size == 0 } == null) {
+                trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.NON_SERIALIZABLE_PARENT_MUST_HAVE_NOARG_CTOR)
+                return false
+            }
         }
         return true
+    }
+
+    private fun ClassDescriptor.isSerializableEnumWithMissingSerializer(): Boolean {
+        if (kind != ClassKind.ENUM_CLASS) return false
+        if (hasSerializableAnnotationWithoutArgs) return false
+        if (annotations.hasAnySerialAnnotation) return true
+        return enumEntries().any { (it.annotations.hasAnySerialAnnotation) }
     }
 
     open fun serializationPluginEnabledOn(descriptor: ClassDescriptor): Boolean {
@@ -232,3 +247,6 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
     }
 }
+
+internal val ClassDescriptor.serializableAnnotationIsUseless: Boolean
+    get() = hasSerializableAnnotationWithoutArgs && !isInternalSerializable && !hasCompanionObjectAsSerializer && !isSerializableEnum()

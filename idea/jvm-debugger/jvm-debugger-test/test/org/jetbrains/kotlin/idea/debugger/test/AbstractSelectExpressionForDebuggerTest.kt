@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.idea.debugger.test
 
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
-abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractSelectExpressionForDebuggerTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
         invalidateLibraryCache(project)
@@ -27,8 +26,8 @@ abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsightFixture
         doTest(path, false)
     }
 
-    fun doTest(path: String, allowMethodCalls: Boolean) {
-        myFixture.configureByFile(path)
+    fun doTest(unused: String, allowMethodCalls: Boolean) {
+        myFixture.configureByFile(fileName())
 
         val elementAt = myFixture.file?.findElementAt(myFixture.caretOffset)!!
         val selectedExpression = KotlinEditorTextProvider.findExpressionInner(elementAt, allowMethodCalls)
@@ -44,7 +43,5 @@ abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsightFixture
         Assert.assertEquals("Another expression should be selected", expected, actualResult)
     }
 
-    override fun getProjectDescriptor(): KotlinLightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
-
-    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/debugger/selectExpression"
+    override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 }

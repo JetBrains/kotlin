@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtens
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.DummyTraces
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -32,7 +33,7 @@ abstract class AbstractAndroidSyntheticPropertyDescriptorTest : KtUsefulTestCase
         val fragmentProvider =
             ext.getPackageFragmentProvider(
                 project, analysisResult.moduleDescriptor, LockBasedStorageManager.NO_LOCKS,
-                KotlinTestUtils.DUMMY_EXCEPTION_ON_ERROR_TRACE, null, LookupTracker.DO_NOTHING
+                DummyTraces.DUMMY_EXCEPTION_ON_ERROR_TRACE, null, LookupTracker.DO_NOTHING
             ) as AndroidSyntheticPackageFragmentProvider
 
         val renderer = DescriptorRenderer.COMPACT_WITH_MODIFIERS

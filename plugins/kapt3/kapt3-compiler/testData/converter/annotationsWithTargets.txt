@@ -18,6 +18,7 @@ public final class Bar {
 
     @Anno()
     @PropertyAnno()
+    @java.lang.Deprecated()
     public static void a$annotations() {
     }
 
@@ -43,6 +44,7 @@ public final class Baz {
     public final java.lang.String a = "";
 
     @Anno()
+    @java.lang.Deprecated()
     public static void a$annotations() {
     }
 
@@ -75,6 +77,7 @@ public final class Foo {
     private final java.lang.String a = null;
 
     @PropertyAnno()
+    @java.lang.Deprecated()
     public static void a$annotations() {
     }
 

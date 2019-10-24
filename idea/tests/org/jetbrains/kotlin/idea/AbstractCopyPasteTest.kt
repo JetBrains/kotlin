@@ -10,7 +10,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
-import java.io.File
 
 abstract class AbstractCopyPasteTest : KotlinLightCodeInsightFixtureTestCase() {
     private var savedImportsOnPasteSetting: Int = 0
@@ -28,23 +27,21 @@ abstract class AbstractCopyPasteTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     protected fun configureByDependencyIfExists(dependencyFileName: String): PsiFile? {
-        val file = File(testDataPath + File.separator + dependencyFileName)
+        val file = testDataFile(dependencyFileName)
         if (!file.exists()) return null
         return if (dependencyFileName.endsWith(".java")) {
             //allow test framework to put it under right directory
             myFixture.addClass(FileUtil.loadFile(file, true)).containingFile
-        }
-        else {
+        } else {
             myFixture.configureByFile(dependencyFileName)
         }
     }
 
-    protected  fun configureTargetFile(fileName: String): KtFile {
-        if (File(testDataPath + File.separator + fileName).exists()) {
-            return myFixture.configureByFile(fileName) as KtFile
-        }
-        else {
-            return myFixture.configureByText(fileName, DEFAULT_TO_FILE_TEXT) as KtFile
+    protected fun configureTargetFile(fileName: String): KtFile {
+        return if (testDataFile(fileName).exists()) {
+            myFixture.configureByFile(fileName) as KtFile
+        } else {
+            myFixture.configureByText(fileName, DEFAULT_TO_FILE_TEXT) as KtFile
         }
     }
 }

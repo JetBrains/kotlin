@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.io.File
 import java.util.*
@@ -65,11 +66,17 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
 
     private fun enableInspectionTools(klass: Class<*>) {
         val eps = ContainerUtil.newArrayList<InspectionEP>()
-        ContainerUtil.addAll(eps, *Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION))
-        ContainerUtil.addAll(eps, *Extensions.getExtensions(InspectionEP.GLOBAL_INSPECTION))
+        ContainerUtil.addAll<InspectionEP, LocalInspectionEP, List<InspectionEP>>(
+            eps,
+            *(@Suppress("DEPRECATION") Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION))
+        )
+        ContainerUtil.addAll<InspectionEP, InspectionEP, List<InspectionEP>>(
+            eps,
+            *(@Suppress("DEPRECATION") Extensions.getExtensions(InspectionEP.GLOBAL_INSPECTION))
+        )
 
         val tool = eps.firstOrNull { it.implementationClass == klass.name }?.instantiateTool()
-                   ?: error("Could not find inspection tool for class: $klass")
+            ?: error("Could not find inspection tool for class: $klass")
 
         myFixture.enableInspections(tool)
     }
@@ -112,17 +119,18 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
     private fun doMultiFileTest(beforeFileName: String) {
         val multifileText = FileUtil.loadFile(File(beforeFileName), true)
 
-        val subFiles = KotlinTestUtils.createTestFiles(
-                "single.kt",
-                multifileText,
-                object : KotlinTestUtils.TestFileFactoryNoModules<TestFile>() {
-                    override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
-                        val linesWithoutDirectives = text.lines().filter {
-                            !it.startsWith("// LANGUAGE_VERSION") && !it.startsWith("// FILE")
-                        }
-                        return TestFile(fileName, linesWithoutDirectives.joinToString(separator = "\n"))
+        val subFiles = TestFiles.createTestFiles(
+            "single.kt",
+            multifileText,
+            object : TestFiles.TestFileFactoryNoModules<TestFile>() {
+                override fun create(fileName: String, text: String, directives: Map<String, String>): TestFile {
+                    val linesWithoutDirectives = text.lines().filter {
+                        !it.startsWith("// LANGUAGE_VERSION") && !it.startsWith("// FILE")
                     }
-                }, "")
+                    return TestFile(fileName, linesWithoutDirectives.joinToString(separator = "\n"))
+                }
+            }, ""
+        )
 
         val afterFile = subFiles.firstOrNull { file -> file.path.contains(".after") }
         val beforeFile = subFiles.firstOrNull { file -> file.path.contains(".before") }!!

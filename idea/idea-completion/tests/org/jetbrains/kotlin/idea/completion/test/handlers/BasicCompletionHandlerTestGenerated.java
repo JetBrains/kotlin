@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.completion.test.handlers;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,7 +21,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletionHandlerTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     @TestMetadata("AddLabelToReturn.kt")
@@ -31,7 +30,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     }
 
     public void testAllFilesPresentInBasic() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic"), Pattern.compile("^([^.]+)\\.kt$"), true);
     }
 
     @TestMetadata("ClassKeywordBeforeName.kt")
@@ -239,11 +238,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Annotation extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInAnnotation() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/annotation"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/annotation"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("AnnotationInBrackets.kt")
@@ -272,11 +271,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CallableReference extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInCallableReference() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/callableReference"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/callableReference"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("ClassConstructor.kt")
@@ -310,7 +309,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ExclChar extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("1.kt")
@@ -339,7 +338,60 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
 
         public void testAllFilesPresentInExclChar() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/exclChar"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/exclChar"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        }
+    }
+
+    @TestMetadata("idea/idea-completion/testData/handlers/basic/extensionMethodInObject")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ExtensionMethodInObject extends AbstractBasicCompletionHandlerTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInExtensionMethodInObject() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/extensionMethodInObject"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("CompanionObjectInSameFileExplicitReceiver.kt")
+        public void testCompanionObjectInSameFileExplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/CompanionObjectInSameFileExplicitReceiver.kt");
+        }
+
+        @TestMetadata("CompanionObjectInSameFileImplicitReceiver.kt")
+        public void testCompanionObjectInSameFileImplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/CompanionObjectInSameFileImplicitReceiver.kt");
+        }
+
+        @TestMetadata("NestedCompanionObjectInSameFileExplicitReceiver.kt")
+        public void testNestedCompanionObjectInSameFileExplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/NestedCompanionObjectInSameFileExplicitReceiver.kt");
+        }
+
+        @TestMetadata("NestedCompanionObjectInSameFileImplicitReceiver.kt")
+        public void testNestedCompanionObjectInSameFileImplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/NestedCompanionObjectInSameFileImplicitReceiver.kt");
+        }
+
+        @TestMetadata("NestedObjectInSameFileExplicitReceiver.kt")
+        public void testNestedObjectInSameFileExplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/NestedObjectInSameFileExplicitReceiver.kt");
+        }
+
+        @TestMetadata("NestedObjectInSameFileImplicitReceiver.kt")
+        public void testNestedObjectInSameFileImplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/NestedObjectInSameFileImplicitReceiver.kt");
+        }
+
+        @TestMetadata("ObjectInSameFileExplicitReceiver.kt")
+        public void testObjectInSameFileExplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/ObjectInSameFileExplicitReceiver.kt");
+        }
+
+        @TestMetadata("ObjectInSameFileImplicitReceiver.kt")
+        public void testObjectInSameFileImplicitReceiver() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/extensionMethodInObject/ObjectInSameFileImplicitReceiver.kt");
         }
     }
 
@@ -348,11 +400,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class HighOrderFunctions extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInHighOrderFunctions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/highOrderFunctions"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/highOrderFunctions"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("ContextVariable.kt")
@@ -471,11 +523,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ImportAliases extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInImportAliases() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/importAliases"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/importAliases"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("CompanionObject.kt")
@@ -519,7 +571,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Override extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("AfterFunKeyword.kt")
@@ -543,7 +595,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
 
         public void testAllFilesPresentInOverride() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/override"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/override"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("ExpectClassValOverride.kt")
@@ -637,11 +689,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ParameterNameAndType extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInParameterNameAndType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/parameterNameAndType"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/parameterNameAndType"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("CodeStyleSettings.kt")
@@ -715,11 +767,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StaticMemberOfNotImported extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInStaticMemberOfNotImported() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/staticMemberOfNotImported"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/staticMemberOfNotImported"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("AmbigiousExtension.kt")
@@ -753,11 +805,11 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StaticMembers extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInStaticMembers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/staticMembers"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/staticMembers"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("classObjectMethod.kt")
@@ -786,7 +838,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class StringTemplate extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("1.kt")
@@ -835,7 +887,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
 
         public void testAllFilesPresentInStringTemplate() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/stringTemplate"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/stringTemplate"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("GlobalVal.kt")
@@ -874,7 +926,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @RunWith(JUnit3RunnerWithInners.class)
     public static class TypeArgsForCall extends AbstractBasicCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         @TestMetadata("AfterElse.kt")
@@ -888,7 +940,7 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         }
 
         public void testAllFilesPresentInTypeArgsForCall() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/typeArgsForCall"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/basic/typeArgsForCall"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
         @TestMetadata("ExpectedTypeDoesNotHelp.kt")

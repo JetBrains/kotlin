@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.ByteArrayOutputStream
 import java.io.File
 
@@ -130,12 +131,15 @@ open class FatFrameworkTask: DefaultTask() {
      */
     fun from(frameworks: Iterable<Framework>) {
         frameworks.forEach {
-            val konanTarget = it.konanTarget
-            val arch = konanTarget.architecture
-            require(konanTarget.family == Family.IOS) {
-                "Cannot add a framework with target '${konanTarget.visibleName}' to the fat framework: " +
-                        "fat frameworks are available only for iOS binaries."
+            val arch = it.konanTarget.architecture
+            val family = it.konanTarget.family
+            val fatFrameworkFamily = getFatFrameworkFamily()
+            require(fatFrameworkFamily == null || family == fatFrameworkFamily) {
+                "Cannot add a binary with platform family '${family.visibleName}' to the fat framework:\n" +
+                        "A fat framework must include binaries with the same platform family " +
+                        "while this framework already includes binaries with family '${fatFrameworkFamily!!.visibleName}'"
             }
+
             require(!archToFramework.containsKey(arch)) {
                 val alreadyAdded = archToFramework.getValue(arch)
                 "This fat framework already has a binary for architecture `${arch.name.toLowerCase()}` " +
@@ -143,21 +147,19 @@ open class FatFrameworkTask: DefaultTask() {
             }
             archToFramework[arch] = it
             dependsOn(it.linkTask)
-            // Framework generating task may stop with NO-SOURCE result. We should track it.
+
         }
     }
     // endregion.
 
-    private val Architecture.lipoArg: String
-        get() = when(this) {
-            Architecture.X64 -> "x86_64"
-            Architecture.ARM32 -> "armv7"
-            Architecture.ARM64 -> "arm64"
-            else -> error("Fat frameworks are not supported for architecture `$name`")
-        }
+    private fun getFatFrameworkFamily(): Family? {
+        assert(archToFramework.values.distinctBy { it.konanTarget.family }.size <= 1)
+        return archToFramework.values.firstOrNull()?.konanTarget?.family
+    }
 
     private val Architecture.clangMacro: String
         get() = when(this) {
+            Architecture.X86 -> "__i386__"
             Architecture.X64 -> "__x86_64__"
             Architecture.ARM32 -> "__arm__"
             Architecture.ARM64 -> "__aarch64__"
@@ -166,13 +168,10 @@ open class FatFrameworkTask: DefaultTask() {
 
     private val Framework.plistPlatform: String
         get() = when(konanTarget) {
-            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> "iPhoneOS"
-            KonanTarget.IOS_X64 -> "iPhoneSimulator"
-            KonanTarget.TVOS_ARM64 -> "appletvos"
-            KonanTarget.TVOS_X64 -> "appletvsimulator"
-            KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64 -> "watchos"
-            KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64 -> "watchsimulator"
-            else -> error("Fat frameworks are not supported for target `${konanTarget.visibleName}`")
+            IOS_ARM32, IOS_ARM64, IOS_X64 -> "iPhoneOS"
+            TVOS_ARM64, TVOS_X64 -> "AppleTVOS"
+            WATCHOS_ARM32, WATCHOS_ARM64, WATCHOS_X86, WATCHOS_X64 -> "WatchOS"
+            else -> error("Fat frameworks are not supported for platform `${konanTarget.visibleName}`")
         }
 
     // Runs the PlistBuddy utility with the given commands to configure the given plist file.
@@ -205,19 +204,18 @@ open class FatFrameworkTask: DefaultTask() {
         fun delete(entry: String) = commands.add("Delete \"$entry\"")
     }
 
-    private fun runLipo(inputFiles: Map<Architecture, File>, outputFile: File) =
-        project.exec {
-            it.executable = "/usr/bin/lipo"
-            it.args = mutableListOf("-create").apply {
-                inputFiles.forEach { (arch, binary) ->
-                    addAll(listOf("-arch", arch.lipoArg, binary.absolutePath))
-                }
-                addArg("-output", outputFile.absolutePath)
-            }
+    private fun runLipo(inputFiles: Collection<File>, outputFile: File) =
+        project.exec { exec ->
+            exec.executable = "/usr/bin/lipo"
+            exec.args = listOf(
+                "-create",
+                *inputFiles.map { it.absolutePath }.toTypedArray(),
+                "-output", outputFile.absolutePath
+            )
         }
 
     private fun mergeBinaries(outputFile: File) =
-        runLipo(archToFramework.mapValues { (_, framework) -> framework.files.binary }, outputFile)
+        runLipo(archToFramework.values.map { it.files.binary }, outputFile)
 
     private fun mergeHeaders(outputFile: File) = outputFile.writer().use { writer ->
 
@@ -313,7 +311,7 @@ open class FatFrameworkTask: DefaultTask() {
         fatDsym.mkdirs()
 
         // Merge dSYM binary.
-        runLipo(dsymInputs.mapValues { (_, dsym) -> dsym.binary }, fatDsym.binary)
+        runLipo(dsymInputs.values.map { it.binary }, fatDsym.binary)
 
         // Copy dSYM's Info.plist.
         // It doesn't contain target-specific info or framework names except the bundle id so there is no need to edit it.

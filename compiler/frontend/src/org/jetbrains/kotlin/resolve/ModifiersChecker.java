@@ -88,7 +88,7 @@ public class ModifiersChecker {
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, modifierListOwner);
             for (DeclarationAttributeAltererExtension extension : extensions) {
                 Modality newModality = extension.refineDeclarationModality(
-                        modifierListOwner, descriptor, containingDescriptor, modality, bindingContext, false);
+                        modifierListOwner, descriptor, containingDescriptor, modality, false);
 
                 if (newModality != null) {
                     modality = newModality;

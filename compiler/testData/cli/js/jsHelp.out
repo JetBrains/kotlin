@@ -28,6 +28,7 @@ where possible options include:
                              instead of going through a graceful migration cycle.
                              Code written in the progressive mode is backward compatible; however, code written in
                              non-progressive mode may cause compilation errors in the progressive mode.
+  -script                    Evaluate the script file
   -nowarn                    Generate no warnings
   -verbose                   Enable verbose logging output
   -version                   Display compiler version

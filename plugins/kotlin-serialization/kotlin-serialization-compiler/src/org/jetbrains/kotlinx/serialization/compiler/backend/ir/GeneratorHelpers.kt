@@ -27,22 +27,16 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.allSealedSerializableSubclassesFor
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.serialName
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 val BackendContext.externalSymbols: ReferenceSymbolTable get() = ir.symbols.externalSymbolTable
@@ -400,11 +394,15 @@ interface IrBuilderExtension {
         }
     }
 
+    fun kClassTypeFor(projection: TypeProjection): SimpleType {
+        val kClass = compilerContext.builtIns.kClass
+        return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, listOf(projection))
+    }
+
     fun createClassReference(classType: KotlinType, startOffset: Int, endOffset: Int): IrClassReference {
         val clazz = classType.toClassDescriptor!!
-        val kClass = clazz.module.findClassAcrossModuleDependencies(ClassId(FqName("kotlin.reflect"), Name.identifier("KClass")))!!
         val returnType =
-            KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClass, listOf(TypeProjectionImpl(Variance.INVARIANT, classType)))
+            kClassTypeFor(TypeProjectionImpl(Variance.INVARIANT, classType))
         return IrClassReferenceImpl(
             startOffset,
             endOffset,
@@ -468,7 +466,6 @@ interface IrBuilderExtension {
         return serializerInstance(
             generator,
             dispatchReceiverParameter,
-            generator.serializableDescriptor,
             serializer,
             property.module,
             property.type,
@@ -495,12 +492,12 @@ interface IrBuilderExtension {
     }
 
 
-    fun wrapIrTypeIntoKSerializerIrType(module: ModuleDescriptor, type: IrType): IrType {
+    fun wrapIrTypeIntoKSerializerIrType(module: ModuleDescriptor, type: IrType, variance: Variance = Variance.INVARIANT): IrType {
         val kSerClass =
             compilerContext.externalSymbols.referenceClass(module.getClassFromSerializationPackage(SerialEntityNames.KSERIALIZER_CLASS))
         return IrSimpleTypeImpl(
             kSerClass, hasQuestionMark = false, arguments = listOf(
-                makeTypeProjection(type, Variance.INVARIANT)
+                makeTypeProjection(type, variance)
             ), annotations = emptyList()
         )
     }
@@ -508,36 +505,110 @@ interface IrBuilderExtension {
     fun IrBuilderWithScope.serializerInstance(
         enclosingGenerator: SerializerIrGenerator,
         dispatchReceiverParameter: IrValueParameter,
-        serializableDescriptor: ClassDescriptor,
         serializerClassOriginal: ClassDescriptor?,
         module: ModuleDescriptor,
         kType: KotlinType,
         genericIndex: Int? = null
+    ): IrExpression? = serializerInstance(
+        enclosingGenerator,
+        serializerClassOriginal,
+        module,
+        kType,
+        genericIndex
+    ) { it, _ ->
+        val prop = enclosingGenerator.localSerializersFieldsDescriptors[it]
+        irGetField(irGet(dispatchReceiverParameter), compilerContext.localSymbolTable.referenceField(prop).owner)
+    }
+
+    fun IrBuilderWithScope.serializerInstance(
+        enclosingGenerator: AbstractSerialGenerator,
+        serializerClassOriginal: ClassDescriptor?,
+        module: ModuleDescriptor,
+        kType: KotlinType,
+        genericIndex: Int? = null,
+        genericGetter: ((Int, KotlinType) -> IrExpression)? = null
     ): IrExpression? {
         val nullableSerClass =
             compilerContext.externalSymbols.referenceClass(module.getClassFromInternalSerializationPackage(SpecialBuiltins.nullableSerializer))
         if (serializerClassOriginal == null) {
             if (genericIndex == null) return null
-
-            val prop = enclosingGenerator.localSerializersFieldsDescriptors[genericIndex]
-            return irGetField(irGet(dispatchReceiverParameter), compilerContext.localSymbolTable.referenceField(prop).owner)
+            return genericGetter?.invoke(genericIndex, kType)
         }
         if (serializerClassOriginal.kind == ClassKind.OBJECT) {
             return irGetObject(serializerClassOriginal)
         } else {
+            fun instantiate(serializer: ClassDescriptor?, type: KotlinType): IrExpression? {
+                val expr = serializerInstance(
+                    enclosingGenerator,
+                    serializer,
+                    module,
+                    type,
+                    type.genericIndex,
+                    genericGetter
+                ) ?: return null
+                return wrapWithNullableSerializerIfNeeded(module, type, expr, nullableSerClass)
+            }
             var serializerClass = serializerClassOriginal
             var args: List<IrExpression>
             var typeArgs: List<IrType?>
+            val thisIrType = kType.toIrType()
             when (serializerClassOriginal.classId) {
                 contextSerializerId, polymorphicSerializerId -> {
                     args = listOf(classReference(kType))
-                    typeArgs = listOf(kType.toIrType())
+                    typeArgs = listOf(thisIrType)
+                }
+                objectSerializerId -> {
+                    args = listOf(irString(kType.serialName()), irGetObject(kType.toClassDescriptor!!))
+                    typeArgs = listOf(thisIrType)
+                }
+                sealedSerializerId -> {
+                    args = mutableListOf<IrExpression>().apply {
+                        add(irString(kType.serialName()))
+                        add(classReference(kType))
+                        val (subclasses, subSerializers) = enclosingGenerator.allSealedSerializableSubclassesFor(
+                            kType.toClassDescriptor!!,
+                            module
+                        )
+                        val projectedOutCurrentKClass = kClassTypeFor(TypeProjectionImpl(Variance.OUT_VARIANCE, kType))
+                        add(
+                            createArrayOfExpression(
+                                projectedOutCurrentKClass.toIrType(),
+                                subclasses.map { classReference(it) }
+                            )
+                        )
+                        add(
+                            createArrayOfExpression(
+                                wrapIrTypeIntoKSerializerIrType(module, thisIrType, variance = Variance.OUT_VARIANCE),
+                                subSerializers.mapIndexed { i, serializer ->
+                                    val type = subclasses[i]
+                                    val expr = serializerInstance(
+                                        enclosingGenerator,
+                                        serializer,
+                                        module,
+                                        type,
+                                        type.genericIndex
+                                    ) { _, genericType ->
+                                        serializerInstance(
+                                            enclosingGenerator,
+                                            module.getClassFromSerializationPackage(
+                                                SpecialBuiltins.polymorphicSerializer
+                                            ),
+                                            module,
+                                            genericType
+                                        )!!
+                                    }!!
+                                    wrapWithNullableSerializerIfNeeded(module, type, expr, nullableSerClass)
+                                }
+                            )
+                        )
+                    }
+                    typeArgs = listOf(thisIrType)
                 }
                 enumSerializerId -> {
-                    serializerClass = serializableDescriptor.getClassFromInternalSerializationPackage("CommonEnumSerializer")
+                    serializerClass = module.getClassFromInternalSerializationPackage("CommonEnumSerializer")
                     args = kType.toClassDescriptor!!.let { enumDesc ->
                         listOf(
-                            irString(enumDesc.name.toString()),
+                            irString(enumDesc.serialName()),
                             irCall(findEnumValuesMethod(enumDesc)),
                             createArrayOfExpression(
                                 compilerContext.irBuiltIns.stringType,
@@ -545,7 +616,7 @@ interface IrBuilderExtension {
                             )
                         )
                     }
-                    typeArgs = listOf(kType.toIrType())
+                    typeArgs = listOf(thisIrType)
                 }
                 else -> {
                     args = kType.arguments.map {
@@ -554,17 +625,7 @@ interface IrBuilderExtension {
                             it.type,
                             sourceElement = serializerClassOriginal.findPsi()
                         )
-                        val expr = serializerInstance(
-                            enclosingGenerator,
-                            dispatchReceiverParameter,
-                            serializableDescriptor,
-                            argSer,
-                            module,
-                            it.type,
-                            it.type.genericIndex
-                        )
-                            ?: return null
-                        wrapWithNullableSerializerIfNeeded(module, it.type, expr, nullableSerClass)
+                        instantiate(argSer, it.type) ?: return null
                     }
                     typeArgs = kType.arguments.map { it.type.toIrType() }
                 }
@@ -585,8 +646,7 @@ interface IrBuilderExtension {
             } else {
                 compilerContext.externalSymbols.referenceConstructor(serializerClass.unsubstitutedPrimaryConstructor!!)
             }
-            val propertyTypeHint = kType.toIrType()
-            val returnType = wrapIrTypeIntoKSerializerIrType(module, propertyTypeHint)
+            val returnType = wrapIrTypeIntoKSerializerIrType(module, thisIrType)
             return irInvoke(null, ctor, typeArguments = typeArgs, valueArguments = args, returnTypeHint = returnType)
         }
     }

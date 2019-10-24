@@ -6,8 +6,25 @@
 import {CliArgValues} from "./CliArgsParser";
 import {KotlinTestRunner} from "./KotlinTestRunner";
 import {configureFiltering} from "./CliFiltertingConfiguration";
+import {runWithTeamCityConsoleAdapter} from "./KotlinTestTeamCityConsoleAdapter";
+import {TeamCityMessagesFlow} from "./TeamCityMessagesFlow";
 
-export function getFilteringAdapter(
+export function runWithFilteringAndConsoleAdapters(
+    initialAdapter: KotlinTestRunner,
+    cliArgsValue: CliArgValues
+): KotlinTestRunner {
+    const realConsoleLog = console.log;
+    const teamCity = new TeamCityMessagesFlow(null, (payload) => realConsoleLog(payload));
+    return runWithTeamCityConsoleAdapter(
+        runWithFilteringAdapter(
+            initialAdapter,
+            cliArgsValue
+        ),
+        teamCity
+    )
+}
+
+export function runWithFilteringAdapter(
     initialAdapter: KotlinTestRunner,
     cliArgsValue: CliArgValues
 ): KotlinTestRunner {

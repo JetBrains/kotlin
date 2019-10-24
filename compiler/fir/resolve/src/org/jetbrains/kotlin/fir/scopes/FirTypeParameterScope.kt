@@ -14,11 +14,13 @@ abstract class FirTypeParameterScope : FirScope() {
 
     override fun processClassifiersByName(
         name: Name,
-        position: FirPosition,
-        processor: (FirClassifierSymbol<*>) -> Boolean
-    ): Boolean {
-        val matchedTypeParameters = typeParameters[name] ?: return true
+        processor: (FirClassifierSymbol<*>) -> ProcessorAction
+    ): ProcessorAction {
+        val matchedTypeParameters = typeParameters[name] ?: return ProcessorAction.NEXT
 
-        return matchedTypeParameters.all { processor(it.symbol) }
+        return when {
+            matchedTypeParameters.all { processor(it.symbol) == ProcessorAction.NEXT } -> ProcessorAction.NEXT
+            else -> ProcessorAction.STOP
+        }
     }
 }

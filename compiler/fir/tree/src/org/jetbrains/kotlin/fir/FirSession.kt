@@ -41,15 +41,15 @@ abstract class FirSession(val sessionProvider: FirSessionProvider?) {
 }
 
 class BuiltinTypes {
-    val unitType: FirTypeRef = FirImplicitUnitTypeRef(null)
-    val anyType: FirTypeRef = FirImplicitAnyTypeRef(null)
-    val nullableAnyType: FirTypeRef = FirImplicitNullableAnyTypeRef(null)
-    val enumType: FirTypeRef = FirImplicitEnumTypeRef(null)
-    val annotationType: FirTypeRef = FirImplicitAnnotationTypeRef(null)
-    val booleanType: FirTypeRef = FirImplicitBooleanTypeRef(null)
-    val nothingType: FirTypeRef = FirImplicitNothingTypeRef(null)
-    val nullableNothingType: FirTypeRef = FirImplicitNullableNothingTypeRef(null)
-    val stringType: FirTypeRef = FirImplicitStringTypeRef(null)
+    val unitType: FirImplicitBuiltinTypeRef = FirImplicitUnitTypeRef(null)
+    val anyType: FirImplicitBuiltinTypeRef = FirImplicitAnyTypeRef(null)
+    val nullableAnyType: FirImplicitBuiltinTypeRef = FirImplicitNullableAnyTypeRef(null)
+    val enumType: FirImplicitBuiltinTypeRef = FirImplicitEnumTypeRef(null)
+    val annotationType: FirImplicitBuiltinTypeRef = FirImplicitAnnotationTypeRef(null)
+    val booleanType: FirImplicitBuiltinTypeRef = FirImplicitBooleanTypeRef(null)
+    val nothingType: FirImplicitBuiltinTypeRef = FirImplicitNothingTypeRef(null)
+    val nullableNothingType: FirImplicitBuiltinTypeRef = FirImplicitNullableNothingTypeRef(null)
+    val stringType: FirImplicitBuiltinTypeRef = FirImplicitStringTypeRef(null)
 }
 
 interface FirSessionProvider {

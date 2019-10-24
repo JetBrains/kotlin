@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.MemoizedInlineClassReplacements
 import org.jetbrains.kotlin.codegen.ClassBuilder
+import org.jetbrains.kotlin.codegen.inline.NameGenerator
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -32,9 +33,11 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
@@ -47,6 +50,10 @@ class JvmBackendContext(
     val phaseConfig: PhaseConfig,
     private val firMode: Boolean
 ) : CommonBackendContext {
+    override val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
+        get() = TODO("not implemented")
+    override val scriptMode: Boolean = false
+
     override val builtIns = state.module.builtIns
     val typeMapper = IrTypeMapper(this)
     val methodSignatureMapper = MethodSignatureMapper(this)
@@ -70,6 +77,13 @@ class JvmBackendContext(
     internal fun putLocalClassInfo(container: IrAttributeContainer, value: LocalClassInfo) {
         localClassInfo[container.attributeOwnerId] = value
     }
+
+    // TODO cache these at ClassCodegen level. Currently, sharing this map between classes in a module is required
+    //      because IrSourceCompilerForInline constructs a new (Fake)ClassCodegen for every call to
+    //      an inline function in the same module. Thus, if two inline functions happen to have the same name
+    //      and call a third inline function that has an anonymous object, the one which is called last
+    //      will overwrite the other's regenerated copy. (Or don't recompile the inline function for every call.)
+    internal val regeneratedObjectNameGenerators = mutableMapOf<Pair<IrClass, Name>, NameGenerator>()
 
     internal val localDelegatedProperties = mutableMapOf<IrClass, List<IrLocalDelegatedPropertySymbol>>()
 

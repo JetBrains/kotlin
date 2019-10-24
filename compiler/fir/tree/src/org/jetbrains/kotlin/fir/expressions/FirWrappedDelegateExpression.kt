@@ -7,20 +7,19 @@ package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirWrappedDelegateExpression(psi: PsiElement?) : FirWrappedExpression(psi) {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+abstract class FirWrappedDelegateExpression : FirWrappedExpression() {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val expression: FirExpression
     abstract val delegateProvider: FirExpression
 
-    override val typeRef: FirTypeRef
-        get() = expression.typeRef
-
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
-        return visitor.visitWrappedDelegateExpression(this, data)
-    }
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        delegateProvider.accept(visitor, data)
-        super.acceptChildren(visitor, data)
-    }
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedDelegateExpression(this, data)
 }

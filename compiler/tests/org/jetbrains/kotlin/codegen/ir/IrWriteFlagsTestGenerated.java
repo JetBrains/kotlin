@@ -481,6 +481,11 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
             public void testTopLevelObject() throws Exception {
                 runTest("compiler/testData/writeFlags/function/constructors/topLevelObject.kt");
             }
+
+            @TestMetadata("withMangledArguments.kt")
+            public void testWithMangledArguments() throws Exception {
+                runTest("compiler/testData/writeFlags/function/constructors/withMangledArguments.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/writeFlags/function/deprecatedFlag")
@@ -756,6 +761,11 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
                 runTest("compiler/testData/writeFlags/jvm8/defaults/defaultProperty.kt");
             }
 
+            @TestMetadata("onlyJvmDefaultsOnInterface.kt")
+            public void testOnlyJvmDefaultsOnInterface() throws Exception {
+                runTest("compiler/testData/writeFlags/jvm8/defaults/onlyJvmDefaultsOnInterface.kt");
+            }
+
             @TestMetadata("propertyAnnotation.kt")
             public void testPropertyAnnotation() throws Exception {
                 runTest("compiler/testData/writeFlags/jvm8/defaults/propertyAnnotation.kt");
@@ -771,6 +781,11 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
 
                 public void testAllFilesPresentInCompatibility() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/jvm8/defaults/compatibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+                }
+
+                @TestMetadata("defaultImplementations.kt")
+                public void testDefaultImplementations() throws Exception {
+                    runTest("compiler/testData/writeFlags/jvm8/defaults/compatibility/defaultImplementations.kt");
                 }
 
                 @TestMetadata("propertyAccessors.kt")

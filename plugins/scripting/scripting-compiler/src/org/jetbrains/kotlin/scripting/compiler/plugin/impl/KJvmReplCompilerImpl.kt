@@ -103,6 +103,13 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
                 messageCollector
             )
 
+            if (history.isEmpty()) {
+                val updatedConfiguration = ScriptDependenciesProvider.getInstance(context.environment.project)
+                    ?.getScriptConfiguration(snippetKtFile)?.configuration
+                    ?: context.baseScriptCompilationConfiguration
+                registerPackageFragmetProvidersIfNeeded(updatedConfiguration, context.environment)
+            }
+
             val analysisResult =
                 compilationState.analyzerEngine.analyzeReplLineWithImportedScripts(snippetKtFile, sourceFiles.drop(1), codeLine)
             AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)

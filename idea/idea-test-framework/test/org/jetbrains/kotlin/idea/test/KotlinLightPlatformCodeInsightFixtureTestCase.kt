@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import java.io.File
 import kotlin.reflect.full.findAnnotation
 
 abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatformCodeInsightFixtureTestCase() {
@@ -37,6 +38,16 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatformCodeI
 
         super.tearDown()
     }
+
+    protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
+
+    protected fun testDataFile(): File = testDataFile(fileName())
+
+    protected fun testPath(fileName: String = fileName()): String = testDataFile(fileName).toString()
+
+    protected fun testPath(): String = testPath(fileName())
+
+    protected open fun fileName(): String = KotlinTestUtils.getTestDataFileName(this::class.java, this.name) ?: (getTestName(false) + ".kt")
 
     override fun getTestDataPath(): String = this::class.findAnnotation<TestMetadata>()?.value ?: super.getTestDataPath()
 }

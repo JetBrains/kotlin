@@ -1635,7 +1635,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (baseExpression == null) {
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
-        return facade.getTypeInfo(baseExpression, context, isStatement);
+        if (components.typeResolutionInterceptor.isEmpty()) return facade.getTypeInfo(baseExpression, context, isStatement);
+
+        KotlinType newExpectedType = components.typeResolutionInterceptor.interceptType(baseExpression, context, context.expectedType);
+        KotlinTypeInfo resultTypeInfo = facade.getTypeInfo(baseExpression, newExpectedType == context.expectedType ? context : context.replaceExpectedType(newExpectedType), isStatement);
+        KotlinType newResultType = components.typeResolutionInterceptor.interceptType(baseExpression, context, resultTypeInfo.getType());
+        components.dataFlowAnalyzer.checkType(newResultType, expression, context);
+        return resultTypeInfo.getType() == newResultType ? resultTypeInfo : resultTypeInfo.replaceType(newResultType);
     }
 
     protected void resolveAnnotationsOnExpression(KtAnnotatedExpression expression, ExpressionTypingContext context) {

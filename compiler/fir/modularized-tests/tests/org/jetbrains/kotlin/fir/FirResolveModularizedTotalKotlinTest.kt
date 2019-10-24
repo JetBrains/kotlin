@@ -26,17 +26,15 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 private const val FAIL_FAST = true
-private const val DUMP_FIR = true
 
 private const val FIR_DUMP_PATH = "tmp/firDump"
 private const val FIR_HTML_DUMP_PATH = "tmp/firDump-html"
-private const val FIR_LOGS_PATH = "tmp/fir-logs"
+const val FIR_LOGS_PATH = "tmp/fir-logs"
 
+private val DUMP_FIR = System.getProperty("fir.bench.dump", "true") == "true"
 internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
 internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false") == "true"
 
@@ -149,24 +147,6 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val bestStatistics = bestStatistics ?: return
         printStatistics(bestStatistics, "Best pass: $bestPass")
         printErrors(bestStatistics)
-    }
-
-    private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
-    private lateinit var startDate: Date
-
-    override fun setUp() {
-        startDate = Date()
-        super.setUp()
-    }
-
-    private fun reportDir() = File(FIR_LOGS_PATH, folderDateFormat.format(startDate))
-        .also {
-            it.mkdirs()
-        }
-
-    private val reportDateStr by lazy {
-        val reportDateFormat = SimpleDateFormat("yyyy-MM-dd__HH-mm")
-        reportDateFormat.format(startDate)
     }
 
     private fun saveReport(pass: Int, statistics: FirResolveBench.TotalStatistics) {

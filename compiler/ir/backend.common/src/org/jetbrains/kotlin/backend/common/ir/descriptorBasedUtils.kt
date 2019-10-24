@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.backend.common.ir
 
-import org.jetbrains.kotlin.descriptors.MemberDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 
-val IrDeclaration.isExpect get() = descriptor.let { it is MemberDescriptor && it.isExpect }
+val IrDeclaration.isExpect
+    get() = this is IrClass && isExpect ||
+            this is IrFunction && isExpect ||
+            this is IrProperty && isExpect

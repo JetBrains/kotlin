@@ -6,30 +6,28 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirBinaryLogicExpression(psi: PsiElement?) : FirUnknownTypeExpression(psi) {
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+abstract class FirBinaryLogicExpression : FirPureAbstractElement(), FirExpression {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
     abstract val leftOperand: FirExpression
     abstract val rightOperand: FirExpression
-    abstract val kind: OperationKind
+    abstract val kind: LogicOperationKind
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
-        return visitor.visitBinaryLogicExpression(this, data)
-    }
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super.acceptChildren(visitor, data)
-        leftOperand.accept(visitor, data)
-        rightOperand.accept(visitor, data)
-    }
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBinaryLogicExpression(this, data)
 
     abstract fun <D> transformLeftOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
-    abstract fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
-    abstract fun <D> transformRestChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
 
-    enum class OperationKind(val token: String) {
-        AND("&&"), OR("||")
-    }
+    abstract fun <D> transformRightOperand(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
+
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirBinaryLogicExpression
 }

@@ -21,14 +21,20 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 
-fun elvisOrEmpty(notNullNeeded: Boolean): String = if (notNullNeeded) "?:" else ""
+fun KtExpression.elvisOrEmpty(notNullNeeded: Boolean): String {
+    if (!notNullNeeded) return ""
+    val binaryExpression = getStrictParentOfType<KtBinaryExpression>()
+    return if (binaryExpression?.left == this && binaryExpression.operationToken == KtTokens.ELVIS) "" else "?:"
+}
 
 fun KtExpression.shouldHaveNotNullType(): Boolean {
     val parent = parent

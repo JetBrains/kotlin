@@ -1,23 +1,10 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.diagnostic.debug
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
@@ -40,14 +27,12 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension
-import org.jetbrains.kotlin.extensions.LightClassApplicabilityType
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassContexts
 import org.jetbrains.kotlin.idea.caches.lightClasses.LazyLightClassDataHolder
-import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -69,39 +54,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         override val isReleasedCoroutine
             get() = module?.languageVersionSettings?.supportsFeature(LanguageFeature.ReleaseCoroutines) ?: true
 
-        private fun KtDeclaration.mayBeModifiedByCompilerPlugins(): Boolean {
+        private val resolutionFacade get() = element.getResolutionFacade()
 
-            module?.let {
-                val facet = KotlinFacet.get(it)
-                val pluginClasspaths = facet?.configuration?.settings?.compilerArguments?.pluginClasspaths
-                if (pluginClasspaths.isNullOrEmpty()) return false
-            }
-
-            val resolvedDescriptor = lazy(LazyThreadSafetyMode.NONE) {
-                resolveToDescriptorIfAny(
-                    getResolutionFacade(),
-                    bodyResolveMode = BodyResolveMode.PARTIAL
-                )
-            }
-
-            return LightClassApplicabilityCheckExtension.getInstances(project).any {
-                it.checkApplicabilityType(this, resolvedDescriptor) == LightClassApplicabilityType.LightClass
-            }
-        }
-
-        override fun isTooComplexForUltraLightGeneration(element: KtDeclaration): Boolean {
-
-            val codegenExtensionsEnabled = element.mayBeModifiedByCompilerPlugins()
-            if (codegenExtensionsEnabled) {
-                LOG.debug { "Using heavy light classes because of compiler plugins" }
-                return true
-            }
-            return false
-        }
-
-        override val moduleDescriptor by lazyPub {
-            element.getResolutionFacade().moduleDescriptor
-        }
+        override val moduleDescriptor get() = resolutionFacade.moduleDescriptor
 
         override val moduleName: String by lazyPub {
             JvmCodegenUtil.getModuleName(moduleDescriptor)
@@ -136,9 +91,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             return null
         }
 
-        override val deprecationResolver: DeprecationResolver by lazyPub {
-            element.getResolutionFacade().getFrontendService(DeprecationResolver::class.java)
-        }
+        override val deprecationResolver: DeprecationResolver get() = resolutionFacade.getFrontendService(DeprecationResolver::class.java)
+
 
         override val typeMapper: KotlinTypeMapper by lazyPub {
             KotlinTypeMapper(
@@ -174,25 +128,27 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
-        if (element.shouldNotBeVisibleAsLightClass() ||
-            element is KtEnumEntry ||
-            element.containingKtFile.isScript()
-        ) {
-            return null
-        }
+        return runReadAction {
+            if (element.shouldNotBeVisibleAsLightClass() ||
+                element is KtEnumEntry ||
+                element.containingKtFile.isScript()
+            ) {
+                return@runReadAction null
+            }
 
-        return KtUltraLightSupportImpl(element).let { support ->
-            when {
-                element is KtObjectDeclaration && element.isObjectLiteral() ->
-                    KtUltraLightClassForAnonymousDeclaration(element, support)
+            KtUltraLightSupportImpl(element).let { support ->
+                when {
+                    element is KtObjectDeclaration && element.isObjectLiteral() ->
+                        KtUltraLightClassForAnonymousDeclaration(element, support)
 
-                element.isLocal ->
-                    KtUltraLightClassForLocalDeclaration(element, support)
+                    element.isLocal ->
+                        KtUltraLightClassForLocalDeclaration(element, support)
 
-                (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
-                    KtUltraLightInlineClass(element, support)
+                    (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
+                        KtUltraLightInlineClass(element, support)
 
-                else -> KtUltraLightClass(element, support)
+                    else -> KtUltraLightClass(element, support)
+                }
             }
         }
     }

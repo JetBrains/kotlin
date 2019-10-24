@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.toConeProjection
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
-import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeProjection
@@ -31,7 +31,8 @@ import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_NULL_FQ_NAME
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME
 import org.jetbrains.kotlin.load.java.descriptors.AnnotationDefaultValue
 import org.jetbrains.kotlin.load.java.descriptors.NullDefaultValue
 import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
@@ -85,13 +86,16 @@ private fun JavaType?.enhancePossiblyFlexible(
 
             FirResolvedTypeRefImpl(
                 psi = null,
-                type = coneFlexibleOrSimpleType(session, lowerResult, upperResult),
-                annotations = annotations
-            )
+                type = coneFlexibleOrSimpleType(session, lowerResult, upperResult)
+            ).apply {
+                this.annotations += annotations
+            }
         }
         else -> {
             val enhanced = type.toNotNullConeKotlinType(session, javaTypeParameterStack)
-            FirResolvedTypeRefImpl(psi = null, type = enhanced, annotations = annotations)
+            FirResolvedTypeRefImpl(psi = null, type = enhanced).apply {
+                this.annotations += annotations
+            }
         }
     }
 }
@@ -249,7 +253,7 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
 
         return if (firEnumEntry != null) FirQualifiedAccessExpressionImpl(null).apply {
             calleeReference = FirSimpleNamedReference(
-                null, name // TODO: , firEnumEntry.symbol
+                null, name, null // TODO: , firEnumEntry.symbol
             )
         } else if (firElement is FirJavaClass) {
             val firStaticProperty = firElement.declarations.filterIsInstance<FirJavaField>().find {
@@ -285,15 +289,18 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
 }
 
 internal fun FirValueParameter.getDefaultValueFromAnnotation(): AnnotationDefaultValue? {
-    annotations.find { it.resolvedFqName == JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME }
+    annotations.find { it.classId == DEFAULT_VALUE_ID }
         ?.arguments?.firstOrNull()
         ?.safeAs<FirConstExpression<*>>()?.value?.safeAs<String>()
         ?.let { return StringDefaultValue(it) }
 
-    if (annotations.any { it.resolvedFqName == JvmAnnotationNames.DEFAULT_NULL_FQ_NAME }) {
+    if (annotations.any { it.classId == DEFAULT_NULL_ID }) {
         return NullDefaultValue
     }
 
     return null
 }
+
+private val DEFAULT_VALUE_ID = ClassId.topLevel(DEFAULT_VALUE_FQ_NAME)
+private val DEFAULT_NULL_ID = ClassId.topLevel(DEFAULT_NULL_FQ_NAME)
 

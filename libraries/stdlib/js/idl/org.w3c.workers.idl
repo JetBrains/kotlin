@@ -1,4 +1,4 @@
-namespace org.w3c.workers;
+package org.w3c.workers;
 
 
 // Downloaded from https://w3c.github.io/ServiceWorker/

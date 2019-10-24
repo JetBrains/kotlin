@@ -10,35 +10,43 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.*
+import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.MapArguments
+import org.jetbrains.kotlin.fir.resolve.transformers.StoreType
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.returnExpressions
-import org.jetbrains.kotlin.fir.transformSingle
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 class FirCallCompleter(
-    private val transformer: FirBodyResolveTransformer
-) : BodyResolveComponents by transformer {
-    private val completer = ConstraintSystemCompleter(inferenceComponents)
+    private val transformer: FirBodyResolveTransformer,
+    components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents
+) : BodyResolveComponents by components {
+    private val completer = ConstraintSystemCompleter(components.inferenceComponents)
 
-    fun <T : FirResolvable> completeCall(call: T, expectedTypeRef: FirTypeRef?): T {
+    fun <T> completeCall(call: T, expectedTypeRef: FirTypeRef?): T
+            where T : FirResolvable, T : FirStatement {
         val typeRef = typeFromCallee(call)
         if (typeRef.type is ConeKotlinErrorType) {
             if (call is FirExpression) {
@@ -95,17 +103,20 @@ class FirCallCompleter(
         ): Pair<List<FirExpression>, InferenceSession> {
 
             val itParam = when {
-                lambdaArgument.valueParameters.isEmpty() && parameters.size == 1 ->
+                lambdaArgument.valueParameters.isEmpty() && parameters.size == 1 -> {
+                    val name = Name.identifier("it")
                     FirValueParameterImpl(
-                        session,
                         null,
-                        Name.identifier("it"),
-                        FirResolvedTypeRefImpl(null, parameters.single(), emptyList()),
+                        session,
+                        FirResolvedTypeRefImpl(null, parameters.single()),
+                        name,
+                        FirVariableSymbol(name),
                         defaultValue = null,
                         isCrossinline = false,
                         isNoinline = false,
                         isVararg = false
                     )
+                }
                 else -> null
             }
 
@@ -121,7 +132,7 @@ class FirCallCompleter(
             )
 
             replacements[lambdaArgument] =
-                newLambdaExpression.transformSingle(transformer, FirBodyResolveTransformer.LambdaResolution(expectedReturnTypeRef))
+                newLambdaExpression.transformSingle(transformer, FirDeclarationsResolveTransformer.LambdaResolution(expectedReturnTypeRef))
 
             return (newLambdaExpression.body?.returnExpressions() ?: emptyList()) to InferenceSession.default
         }

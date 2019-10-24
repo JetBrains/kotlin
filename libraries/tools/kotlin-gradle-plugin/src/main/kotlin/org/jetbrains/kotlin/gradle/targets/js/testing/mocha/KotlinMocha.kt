@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinGradleNpmPackage
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
+import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 
 class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestFramework {
     private val project: Project = compilation.target.project
@@ -29,9 +31,11 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = listOf(
             KotlinGradleNpmPackage("test-js-runner"),
-            versions.mocha,
-            versions.mochaTeamCityReporter
+            versions.mocha
         )
+
+    // https://mochajs.org/#-timeout-ms-t-ms
+    var timeout: String = DEFAULT_TIMEOUT
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -46,20 +50,28 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             ignoreOutOfRootNodes = true
         )
 
-        val nodeModules = listOf(
-            "mocha/bin/mocha",
-            task.nodeModulesToLoad.single()
+        val npmProject = compilation.npmProject
+
+        val cliArgs = KotlinTestRunnerCliArgs(
+            include = task.includePatterns,
+            exclude = task.excludePatterns
         )
 
-        val npmProject = compilation.npmProject
+        createAdapterJs(task)
+
+        val nodeModules = listOf(
+            "mocha/bin/mocha",
+            "./$ADAPTER_NODEJS"
+        )
 
         val args = nodeJsArgs +
                 nodeModules.map {
                     npmProject.require(it)
-                } +
-                listOf(
-                    "-r", "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js",
-                    "--reporter", "mocha-teamcity-reporter"
+                } + cliArgs.toList() +
+                cliArg("--reporter", "kotlin-test-js-runner/mocha-kotlin-reporter.js") +
+                cliArg("--timeout", timeout) +
+                cliArg(
+                    "-r", "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js"
                 )
 
         return TCServiceMessagesTestExecutionSpec(
@@ -68,5 +80,30 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             false,
             clientSettings
         )
+    }
+
+    private fun cliArg(cli: String, value: String?): List<String> {
+        return value?.let { listOf(cli, it) } ?: emptyList()
+    }
+
+    private fun createAdapterJs(task: KotlinJsTest) {
+        val npmProject = compilation.npmProject
+        val file = task.nodeModulesToLoad
+            .map { npmProject.require(it) }
+            .single()
+
+        val adapterJs = npmProject.dir.resolve(ADAPTER_NODEJS)
+        adapterJs.printWriter().use { writer ->
+            val adapter = npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-runner.js")
+            writer.println("require(${adapter.jsQuoted()})")
+
+            writer.println("module.exports = require(${file.jsQuoted()})")
+        }
+    }
+
+    companion object {
+        const val ADAPTER_NODEJS = "adapter-nodejs.js"
+
+        private const val DEFAULT_TIMEOUT = "2s"
     }
 }

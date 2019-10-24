@@ -1,11 +1,11 @@
 FILE fqName:<root> fileName:/expectedEnumClass.kt
-  CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public superTypes:[kotlin.Enum]
+  CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public [expect] superTypes:[kotlin.Enum]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum
     CONSTRUCTOR visibility:private <> () returnType:<root>.MyEnum [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <none>
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public superTypes:[kotlin.Enum]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:MyEnum modality:FINAL visibility:public [expect] superTypes:[kotlin.Enum]'
     CLASS ENUM_ENTRY name:FOO modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum.FOO
       CONSTRUCTOR visibility:public <> () returnType:<root>.MyEnum.FOO [primary]

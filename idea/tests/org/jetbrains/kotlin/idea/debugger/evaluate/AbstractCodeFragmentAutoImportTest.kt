@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.idea.debugger.evaluate
 import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
 import kotlin.test.assertNull
 
 abstract class AbstractCodeFragmentAutoImportTest : AbstractPsiCheckerTest() {
@@ -21,15 +19,14 @@ abstract class AbstractCodeFragmentAutoImportTest : AbstractPsiCheckerTest() {
             ?: error("No import fix available")
         importFix.invoke(project, editor, file)
 
-        myFixture.checkResultByFile("$filePath.after")
+        myFixture.checkResultByFile("${fileName()}.after")
 
         val fragment = myFixture.file as KtCodeFragment
-        fragment.checkImports(testDataPath + File.separator + filePath)
+        fragment.checkImports(testPath())
 
         val fixAfter = myFixture.availableIntentions.firstOrNull { it.familyName == "Import" }
         assertNull(fixAfter, "No import fix should be available after")
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
-    override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
 }

@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
@@ -36,7 +33,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import java.io.StringWriter
@@ -67,9 +66,10 @@ fun IrClass.addSimpleDelegatingConstructor(
         superConstructor.name,
         superConstructor.visibility,
         defaultType,
-        false,
-        false,
-        isPrimary
+        isInline = false,
+        isExternal = false,
+        isPrimary = isPrimary,
+        isExpect = false
     ).also { constructor ->
         descriptor.bind(constructor)
         constructor.parent = this
@@ -231,7 +231,8 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter) {
 fun IrFunction.copyValueParametersToStatic(
     source: IrFunction,
     origin: IrDeclarationOrigin,
-    dispatchReceiverType: IrType? = source.dispatchReceiverParameter?.type
+    dispatchReceiverType: IrType? = source.dispatchReceiverParameter?.type,
+    numValueParametersToCopy: Int = source.valueParameters.size
 ) {
     val target = this
     assert(target.valueParameters.isEmpty())
@@ -266,6 +267,7 @@ fun IrFunction.copyValueParametersToStatic(
     }
 
     for (oldValueParameter in source.valueParameters) {
+        if (oldValueParameter.index >= numValueParametersToCopy) break
         target.valueParameters.add(
             oldValueParameter.copyTo(
                 target,
@@ -479,10 +481,11 @@ fun IrClass.addFakeOverrides() {
                 Visibilities.INHERITED,
                 irFunction.modality,
                 irFunction.returnType,
-                irFunction.isInline,
-                irFunction.isExternal,
-                irFunction.isTailrec,
-                irFunction.isSuspend
+                isInline = irFunction.isInline,
+                isExternal = irFunction.isExternal,
+                isTailrec = irFunction.isTailrec,
+                isSuspend = irFunction.isSuspend,
+                isExpect = irFunction.isExpect
             ).apply {
                 descriptor.bind(this)
                 parent = this@addFakeOverrides
@@ -505,7 +508,8 @@ fun createStaticFunctionWithReceivers(
     oldFunction: IrFunction,
     dispatchReceiverType: IrType? = oldFunction.dispatchReceiverParameter?.type,
     origin: IrDeclarationOrigin = oldFunction.origin,
-    modality: Modality = Modality.FINAL
+    modality: Modality = Modality.FINAL,
+    copyMetadata: Boolean = true
 ): IrSimpleFunction {
     val descriptor = (oldFunction.descriptor as? DescriptorWithContainerSource)?.let {
         WrappedFunctionDescriptorWithContainerSource(it.containerSource)
@@ -519,7 +523,10 @@ fun createStaticFunctionWithReceivers(
         modality,
         oldFunction.returnType,
         isInline = oldFunction.isInline,
-        isExternal = false, isTailrec = false, isSuspend = oldFunction.isSuspend
+        isExternal = false,
+        isTailrec = false,
+        isSuspend = oldFunction.isSuspend,
+        isExpect = oldFunction.isExpect
     ).apply {
         descriptor.bind(this)
         parent = irParent
@@ -544,7 +551,7 @@ fun createStaticFunctionWithReceivers(
                                        oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }
         )
 
-        metadata = oldFunction.metadata
+        if (copyMetadata) metadata = oldFunction.metadata
     }
 }
 
@@ -553,6 +560,28 @@ fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
         (listOfNotNull(oldFunction.dispatchReceiverParameter, oldFunction.extensionReceiverParameter) + oldFunction.valueParameters)
             .zip(staticFunction.valueParameters).toMap()
     staticFunction.body = oldFunction.body
-            ?.transform(VariableRemapper(mapping), null)
-            ?.patchDeclarationParents(staticFunction)
+        ?.transform(
+            object: IrElementTransformerVoid() {
+                // Remap return targets to the static method so they do not appear to be
+                // non-local returns.
+                override fun visitReturn(expression: IrReturn): IrExpression {
+                    expression.transformChildrenVoid(this);
+                    return if (expression.returnTargetSymbol == oldFunction.symbol) {
+                        IrReturnImpl(
+                            expression.startOffset,
+                            expression.endOffset,
+                            expression.type,
+                            staticFunction.symbol,
+                            expression.value)
+                    } else expression
+                }
+
+                // Remap argument values.
+                override fun visitGetValue(expression: IrGetValue): IrExpression =
+                    mapping[expression.symbol.owner]?.let {
+                        IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
+                    } ?: expression
+
+            }, null)
+        ?.patchDeclarationParents(staticFunction)
 }

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 
 data class ModuleData(
@@ -37,9 +39,23 @@ private fun NodeList.toList(): List<Node> {
 private val Node.childNodesList get() = childNodes.toList()
 
 abstract class AbstractModularizedTest : KtUsefulTestCase() {
+    private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
+    private lateinit var startDate: Date
+
+    protected fun reportDir() = File(FIR_LOGS_PATH, folderDateFormat.format(startDate))
+        .also {
+            it.mkdirs()
+        }
+
+    protected val reportDateStr by lazy {
+        val reportDateFormat = SimpleDateFormat("yyyy-MM-dd__HH-mm")
+        reportDateFormat.format(startDate)
+    }
+
     override fun setUp() {
         super.setUp()
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = false
+        startDate = Date()
     }
 
     override fun tearDown() {

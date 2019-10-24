@@ -175,7 +175,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
         internal var savedBindings: Map<String, KaptJavaFileObject>? = null
 
         override fun loadProcessors() = LoadedProcessors(
-            processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL) },
+            processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL, logger) },
             Kapt3ExtensionForTests::class.java.classLoader)
 
         override fun saveStubs(kaptContext: KaptContext, stubs: List<KaptStub>) {

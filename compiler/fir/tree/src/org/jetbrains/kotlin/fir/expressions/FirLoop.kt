@@ -5,26 +5,29 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.FirLabeledElement
-import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirTargetElement
+import org.jetbrains.kotlin.fir.visitors.*
 
-interface FirLoop : @VisitedSupertype FirStatement, FirLabeledElement, FirAnnotationContainer {
-    val condition: FirExpression
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
 
+interface FirLoop : FirStatement, FirTargetElement, FirAnnotationContainer {
+    override val psi: PsiElement?
+    override val annotations: List<FirAnnotationCall>
     val block: FirBlock
+    val condition: FirExpression
+    val label: FirLabel?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitLoop(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLoop(this, data)
 
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        condition.accept(visitor, data)
-        block.accept(visitor, data)
-        super<FirLabeledElement>.acceptChildren(visitor, data)
-    }
+    fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirLoop
 
     fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirLoop
-    fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirLoop
-    fun <D> transformRestChildren(transformer: FirTransformer<D>, data: D): FirLoop
+
+    fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirLoop
 }

@@ -13,7 +13,11 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
-open class KotlinMultiplatformExtension : KotlinProjectExtension(), KotlinTargetContainerWithPresetFunctions {
+open class KotlinMultiplatformExtension :
+    KotlinProjectExtension(),
+    KotlinTargetContainerWithPresetFunctions,
+    KotlinTargetContainerWithNativeShortcuts
+{
     override lateinit var presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
         internal set
 

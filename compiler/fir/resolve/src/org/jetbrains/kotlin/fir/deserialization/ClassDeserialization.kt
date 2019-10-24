@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirSealedClassImpl
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -35,17 +39,39 @@ fun deserializeClassToSymbol(
 ) {
     val flags = classProto.flags
     val kind = Flags.CLASS_KIND.get(flags)
-    FirClassImpl(
-        session, null, symbol, classId.shortClassName,
+    val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
+    val status = FirDeclarationStatusImpl(
         ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
-        ProtoEnumFlags.modality(Flags.MODALITY.get(flags)),
-        Flags.IS_EXPECT_CLASS.get(flags), false,
-        ProtoEnumFlags.classKind(kind),
-        Flags.IS_INNER.get(flags),
-        kind == ProtoBuf.Class.Kind.COMPANION_OBJECT,
-        Flags.IS_DATA.get(classProto.flags),
-        Flags.IS_INLINE_CLASS.get(classProto.flags)
+        modality
     ).apply {
+        isExpect = Flags.IS_EXPECT_CLASS.get(flags)
+        isActual = false
+        isCompanion = kind == ProtoBuf.Class.Kind.COMPANION_OBJECT
+        isInner = Flags.IS_INNER.get(flags)
+        isData = Flags.IS_DATA.get(classProto.flags)
+        isInline = Flags.IS_INLINE_CLASS.get(classProto.flags)
+    }
+    val isSealed = modality == Modality.SEALED
+    val firClass = if (isSealed) {
+        FirSealedClassImpl(
+            null,
+            session,
+            classId.shortClassName,
+            status,
+            ProtoEnumFlags.classKind(kind),
+            symbol
+        )
+    } else {
+        FirClassImpl(
+            null,
+            session,
+            classId.shortClassName,
+            status,
+            ProtoEnumFlags.classKind(kind),
+            symbol
+        )
+    }
+    firClass.apply {
         resolvePhase = FirResolvePhase.DECLARATIONS
         val context =
             parentContext?.childContext(
@@ -94,12 +120,11 @@ fun deserializeClassToSymbol(
                 val enumEntryId = classId.createNestedClassId(enumEntryName)
 
                 val symbol = FirClassSymbol(enumEntryId)
-                FirEnumEntryImpl(session, null, symbol, enumEntryId.shortClassName).apply {
+                FirEnumEntryImpl(null, session, enumEntryId.shortClassName, symbol).apply {
                     resolvePhase = FirResolvePhase.DECLARATIONS
                     superTypeRefs += FirResolvedTypeRefImpl(
                         null,
-                        ConeClassTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false),
-                        emptyList()
+                        ConeClassTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)
                     )
                 }
 
@@ -107,6 +132,11 @@ fun deserializeClassToSymbol(
                 symbol.fir
             }
         )
+
+        if (isSealed) {
+            classProto.sealedSubclassFqNameList.mapTo((firClass as FirSealedClassImpl).inheritors) {
+                ClassId.fromString(nameResolver.getQualifiedClassName(it))
+            }
+        }
     }
 }
-

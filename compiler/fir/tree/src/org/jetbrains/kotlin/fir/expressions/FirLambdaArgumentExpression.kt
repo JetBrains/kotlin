@@ -6,9 +6,20 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.*
 
-abstract class FirLambdaArgumentExpression(psi: PsiElement?) : FirWrappedArgumentExpression(psi) {
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitLambdaArgumentExpression(this, data)
+/*
+ * This file was generated automatically
+ * DO NOT MODIFY IT MANUALLY
+ */
+
+abstract class FirLambdaArgumentExpression : FirWrappedArgumentExpression() {
+    abstract override val psi: PsiElement?
+    abstract override val typeRef: FirTypeRef
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract override val expression: FirExpression
+    abstract override val isSpread: Boolean
+
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLambdaArgumentExpression(this, data)
 }

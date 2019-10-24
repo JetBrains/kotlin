@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.dfa.*
-import org.jetbrains.kotlin.fir.resolve.transformers.resultType
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.types.isNothing
 
 class ControlFlowGraphBuilder {
@@ -56,8 +55,8 @@ class ControlFlowGraphBuilder {
      */
     fun enterFunction(function: FirFunction<*>): Pair<FunctionEnterNode, CFGNode<*>?> {
         val name = when (function) {
-            is FirNamedFunction -> function.name.asString()
-            is FirAbstractPropertyAccessor -> if (function.isGetter) "<getter>" else "<setter>"
+            is FirSimpleFunction -> function.name.asString()
+            is FirPropertyAccessor -> if (function.isGetter) "<getter>" else "<setter>"
             is FirAnonymousFunction -> "<anonymous>" // TODO: add check to lambda or fun
             is FirConstructor -> function.name.asString()
             else -> throw IllegalArgumentException("Unknown function: ${function.render()}")
@@ -221,15 +220,21 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    fun exitWhenExpression(whenExpression: FirWhenExpression): WhenExitNode {
-        levelCounter--
+    fun exitWhenExpression(whenExpression: FirWhenExpression): Pair<WhenExitNode, WhenSyntheticElseBranchNode?> {
+        val whenExitNode = whenExitNodes.pop()
         // exit from last condition node still on stack
         // we should remove it
-        require(lastNodes.pop() is WhenBranchConditionExitNode)
-        val whenExitNode = whenExitNodes.pop()
+        val lastWhenConditionExit = lastNodes.pop()
+        val syntheticElseBranchNode = if (!whenExpression.isExhaustive) {
+            createWhenSyntheticElseBranchNode(whenExpression).apply {
+                addEdge(lastWhenConditionExit, this)
+                addEdge(this, whenExitNode)
+            }
+        } else null
         whenExitNode.markAsDeadIfNecessary()
         lastNodes.push(whenExitNode)
-        return whenExitNode
+        levelCounter--
+        return whenExitNode to syntheticElseBranchNode
     }
 
     // ----------------------------------- While Loop -----------------------------------
@@ -323,13 +328,13 @@ class ControlFlowGraphBuilder {
     // ----------------------------------- Boolean operators -----------------------------------
 
     fun enterBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression): BinaryAndEnterNode {
-        assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.AND)
+        assert(binaryLogicExpression.kind == LogicOperationKind.AND)
         binaryAndExitNodes.push(createBinaryAndExitNode(binaryLogicExpression))
         return createBinaryAndEnterNode(binaryLogicExpression).also { addNewSimpleNode(it) }.also { levelCounter++ }
     }
 
     fun exitLeftBinaryAndArgument(binaryLogicExpression: FirBinaryLogicExpression): Pair<BinaryAndExitLeftOperandNode, BinaryAndEnterRightOperandNode> {
-        assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.AND)
+        assert(binaryLogicExpression.kind == LogicOperationKind.AND)
         val lastNode = lastNodes.pop()
         val leftBooleanConstValue = lastNode.booleanConstValue
 
@@ -347,7 +352,7 @@ class ControlFlowGraphBuilder {
 
     fun exitBinaryAnd(binaryLogicExpression: FirBinaryLogicExpression): BinaryAndExitNode {
         levelCounter--
-        assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.AND)
+        assert(binaryLogicExpression.kind == LogicOperationKind.AND)
         return binaryAndExitNodes.pop().also {
             val rightNode = lastNodes.pop()
             addEdge(rightNode, it, propagateDeadness = false, isDead = it.leftOperandNode.booleanConstValue == false)
@@ -357,7 +362,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun enterBinaryOr(binaryLogicExpression: FirBinaryLogicExpression): BinaryOrEnterNode {
-        assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.OR)
+        assert(binaryLogicExpression.kind == LogicOperationKind.OR)
         binaryOrExitNodes.push(createBinaryOrExitNode(binaryLogicExpression))
         return createBinaryOrEnterNode(binaryLogicExpression).also {
             addNewSimpleNode(it)
@@ -366,7 +371,7 @@ class ControlFlowGraphBuilder {
 
     fun exitLeftBinaryOrArgument(binaryLogicExpression: FirBinaryLogicExpression): Pair<BinaryOrExitLeftOperandNode, BinaryOrEnterRightOperandNode> {
         levelCounter--
-        assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.OR)
+        assert(binaryLogicExpression.kind == LogicOperationKind.OR)
         val previousNode = lastNodes.pop()
         val leftBooleanValue = previousNode.booleanConstValue
 
@@ -384,7 +389,7 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitBinaryOr(binaryLogicExpression: FirBinaryLogicExpression): BinaryOrExitNode {
-        assert(binaryLogicExpression.kind == FirBinaryLogicExpression.OperationKind.OR)
+        assert(binaryLogicExpression.kind == LogicOperationKind.OR)
         levelCounter--
         return binaryOrExitNodes.pop().also {
             val rightNode = lastNodes.pop()
@@ -497,7 +502,7 @@ class ControlFlowGraphBuilder {
         return createConstExpressionNode(constExpression).also { addNewSimpleNode(it) }
     }
 
-    fun exitVariableDeclaration(variable: FirVariable<*>): VariableDeclarationNode {
+    fun exitVariableDeclaration(variable: FirProperty): VariableDeclarationNode {
         return createVariableDeclarationNode(variable).also { addNewSimpleNode(it) }
     }
 

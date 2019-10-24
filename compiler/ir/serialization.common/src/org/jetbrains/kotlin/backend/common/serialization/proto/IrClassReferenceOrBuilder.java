@@ -8,20 +8,20 @@ public interface IrClassReferenceOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_symbol = 1;</code>
+   * <code>required int32 class_symbol = 1;</code>
    */
   boolean hasClassSymbol();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_symbol = 1;</code>
+   * <code>required int32 class_symbol = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getClassSymbol();
+  int getClassSymbol();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_type = 2;</code>
+   * <code>required int32 class_type = 2;</code>
    */
   boolean hasClassType();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex class_type = 2;</code>
+   * <code>required int32 class_type = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getClassType();
+  int getClassType();
 }

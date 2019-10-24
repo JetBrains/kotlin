@@ -42,6 +42,7 @@ internal class PropertiesHighlightingVisitor(holder: AnnotationHolder, bindingCo
         val resolvedCall = expression.getResolvedCall(bindingContext)
 
         val attributesKey = resolvedCall?.let { call ->
+            @Suppress("DEPRECATION")
             Extensions.getExtensions(HighlighterExtension.EP_NAME).firstNotNullResult { extension ->
                 extension.highlightCall(expression, call)
             }

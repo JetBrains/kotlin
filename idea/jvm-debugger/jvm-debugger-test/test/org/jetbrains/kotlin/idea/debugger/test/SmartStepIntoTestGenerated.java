@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.debugger.test;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class SmartStepIntoTestGenerated extends AbstractSmartStepIntoTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInSmartStepInto() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/smartStepInto"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/jvm-debugger/jvm-debugger-test/testData/smartStepInto"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("annotation.kt")
@@ -102,6 +101,11 @@ public class SmartStepIntoTestGenerated extends AbstractSmartStepIntoTest {
     @TestMetadata("infixCall.kt")
     public void testInfixCall() throws Exception {
         runTest("idea/jvm-debugger/jvm-debugger-test/testData/smartStepInto/infixCall.kt");
+    }
+
+    @TestMetadata("inlineOnly.kt")
+    public void testInlineOnly() throws Exception {
+        runTest("idea/jvm-debugger/jvm-debugger-test/testData/smartStepInto/inlineOnly.kt");
     }
 
     @TestMetadata("inlinedFunLiteral.kt")

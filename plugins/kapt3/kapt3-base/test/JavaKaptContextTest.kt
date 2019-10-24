@@ -26,6 +26,7 @@ import javax.lang.model.element.TypeElement
 class JavaKaptContextTest : TestCase() {
     companion object {
         private val TEST_DATA_DIR = File("plugins/kapt3/kapt3-base/testData/runner")
+        val logger = WriterBackedKaptLogger(isVerbose = true)
 
         fun simpleProcessor() = IncrementalProcessor(
             object : AbstractProcessor() {
@@ -52,7 +53,7 @@ class JavaKaptContextTest : TestCase() {
                 }
 
                 override fun getSupportedAnnotationTypes() = setOf("test.MyAnnotation")
-            }, DeclaredProcType.NON_INCREMENTAL
+            }, DeclaredProcType.NON_INCREMENTAL, logger
         )
     }
 
@@ -69,7 +70,6 @@ class JavaKaptContextTest : TestCase() {
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
         }.build()
 
-        val logger = WriterBackedKaptLogger(isVerbose = true)
         KaptContext(options, true, logger).doAnnotationProcessing(listOf(javaSourceFile), listOf(processor))
     }
 
@@ -99,7 +99,7 @@ class JavaKaptContextTest : TestCase() {
         }
 
         try {
-            doAnnotationProcessing(File(TEST_DATA_DIR, "Simple.java"), IncrementalProcessor(processor, DeclaredProcType.NON_INCREMENTAL), TEST_DATA_DIR)
+            doAnnotationProcessing(File(TEST_DATA_DIR, "Simple.java"), IncrementalProcessor(processor, DeclaredProcType.NON_INCREMENTAL, logger), TEST_DATA_DIR)
         } catch (e: KaptBaseError) {
             assertEquals(KaptBaseError.Kind.EXCEPTION, e.kind)
             assertEquals("Here we are!", e.cause!!.message)

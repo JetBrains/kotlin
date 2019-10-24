@@ -1,4 +1,4 @@
-namespace org.w3c.dom.css;
+package org.w3c.dom.css;
 
 /* written by CSS3 spec */
 partial interface CSSStyleDeclaration {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.scratch.compile
 
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
@@ -36,7 +37,7 @@ class KtScratchExecutionSession(
     private val executor: KtCompilingExecutor
 ) {
     companion object {
-        private val TIMEOUT_MS = 30000
+        private const val TIMEOUT_MS = 30000
     }
 
     private var backgroundProcessIndicator: ProgressIndicator? = null
@@ -47,8 +48,7 @@ class KtScratchExecutionSession(
         val expressions = file.getExpressions()
         if (!executor.checkForErrors(psiFile, expressions)) return
 
-        val result = runReadAction { KtScratchSourceFileProcessor().process(expressions) }
-        when (result) {
+        when (val result = runReadAction { KtScratchSourceFileProcessor().process(expressions) }) {
             is KtScratchSourceFileProcessor.Result.Error -> return executor.errorOccurs(result.message, isFatal = true)
             is KtScratchSourceFileProcessor.Result.OK -> {
                 LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
@@ -91,6 +91,8 @@ class KtScratchExecutionSession(
                                 callback()
                             }
                         } catch (e: Throwable) {
+                            if (e is ControlFlowException) throw e
+
                             LOG.printDebugMessage(result.code)
                             executor.errorOccurs(e.message ?: "Couldn't compile ${psiFile.name}", e, isFatal = true)
                         }

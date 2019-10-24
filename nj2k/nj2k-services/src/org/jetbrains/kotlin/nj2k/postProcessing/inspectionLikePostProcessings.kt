@@ -18,15 +18,13 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.mapToIndex
 import java.util.*
-import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
 
 
 class InspectionLikeProcessingGroup(
     private val runSingleTime: Boolean = false,
     private val acceptNonKtElements: Boolean = false,
     private val processings: List<InspectionLikeProcessing>
-) : ProcessingGroup {
+) : FileBasedPostProcessing() {
     constructor(vararg processings: InspectionLikeProcessing) : this(
         runSingleTime = false,
         acceptNonKtElements = false,
@@ -35,8 +33,7 @@ class InspectionLikeProcessingGroup(
 
     private val processingsToPriorityMap = processings.mapToIndex()
     fun priority(processing: InspectionLikeProcessing): Int = processingsToPriorityMap.getValue(processing)
-
-    override fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
+    override fun runProcessing(file: KtFile, allFiles: List<KtFile>, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
         do {
             var modificationStamp: Long? = file.modificationStamp
             val elementToActions = runReadAction {

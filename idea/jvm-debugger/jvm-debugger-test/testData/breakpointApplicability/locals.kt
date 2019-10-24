@@ -1,4 +1,4 @@
-fun foo1() {
+fun foo1() { /// M
     // We don't support function breakpoints for local functions yet
     fun local() { /// L
         println() /// L

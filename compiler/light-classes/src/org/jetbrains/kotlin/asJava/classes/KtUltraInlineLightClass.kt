@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.intellij.psi.HierarchicalMethodSignature
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -71,7 +70,7 @@ class KtUltraLightInlineClass(
 
     override fun getOwnFields(): List<KtLightField> = emptyList()
 
-    override fun getOwnMethods() = if (tooComplex) super.getOwnMethods() else _ownMethods
+    override fun getOwnMethods() = _ownMethods
 
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
 

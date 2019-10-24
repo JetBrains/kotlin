@@ -13,10 +13,10 @@ FILE: typeParameterVsNested.kt
 
         }
 
-        public abstract val x: R|T|
-            public get(): R|T|
+        public abstract val x: R|test/My.T|
+            public get(): R|test/My.T|
 
-        public abstract fun foo(arg: R|T|): R|kotlin/Unit|
+        public abstract fun foo(arg: R|test/My.T|): R|kotlin/Unit|
 
         public abstract val y: R|test/My.T|
             public get(): R|test/My.T|
@@ -26,9 +26,15 @@ FILE: typeParameterVsNested.kt
 
         public final class Some : R|test/My.T| {
             public constructor(): R|test/My.Some| {
-                super<R|T|>()
+                super<R|test/My.T|>()
             }
 
+        }
+
+    }
+    public abstract class Your<T : R|test/Some|> : R|class error: Type parameter cannot be a super-type: T| {
+        public constructor<T : R|test/Some|>(): R|test/Your<T>| {
+            super<R|kotlin/Any|>()
         }
 
     }

@@ -169,7 +169,7 @@ extra["versions.trove4j"] = "1.0.20181211"
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.3.60-dev-12485"
+    extra["versions.kotlin-native"] = "1.3.60-eap-12915"
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
@@ -251,9 +251,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib-js",
-    // Local builds are disabled at the request of the lib team
-    // TODO: Enable when tests are fixed
-    ":kotlin-stdlib-js-ir".takeIf { isTeamcityBuild },
+    ":kotlin-stdlib-js-ir",
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-test:kotlin-test-common",
@@ -534,9 +532,11 @@ tasks {
         dependsOn(":kotlin-script-util:test")
         dependsOn(":kotlin-scripting-compiler:test")
         dependsOn(":kotlin-scripting-common:test")
+        dependsOn(":kotlin-scripting-jvm:test")
         dependsOn(":kotlin-scripting-jvm-host-test:test")
         dependsOn(":kotlin-scripting-jsr223-test:test")
-        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
+        // see comments on the task in kotlin-scripting-jvm-host-test
+//        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
     }

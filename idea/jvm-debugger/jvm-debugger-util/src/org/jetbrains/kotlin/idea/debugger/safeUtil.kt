@@ -62,13 +62,7 @@ fun StackFrameProxy.safeLocation(): Location? {
 }
 
 fun Location.safeSourceName(): String? {
-    return try {
-        sourceName()
-    } catch (e: AbsentInformationException) {
-        null
-    } catch (e: InternalError) {
-        null
-    }
+    return DebuggerUtilsEx.getSourceName(this) { null }
 }
 
 fun Location.safeLineNumber(): Int {

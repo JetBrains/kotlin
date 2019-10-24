@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.highlighter;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class UsageHighlightingTestGenerated extends AbstractUsageHighlightingTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInUsageHighlighter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/usageHighlighter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/usageHighlighter"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("implicitIt.kt")
@@ -47,6 +46,26 @@ public class UsageHighlightingTestGenerated extends AbstractUsageHighlightingTes
     @TestMetadata("importAlias.kt")
     public void testImportAlias() throws Exception {
         runTest("idea/testData/usageHighlighter/importAlias.kt");
+    }
+
+    @TestMetadata("importAliasFromStdLibClass.kt")
+    public void testImportAliasFromStdLibClass() throws Exception {
+        runTest("idea/testData/usageHighlighter/importAliasFromStdLibClass.kt");
+    }
+
+    @TestMetadata("importAliasFromStdLibFunction.kt")
+    public void testImportAliasFromStdLibFunction() throws Exception {
+        runTest("idea/testData/usageHighlighter/importAliasFromStdLibFunction.kt");
+    }
+
+    @TestMetadata("importAliasFromStdLibFunctionFromObject.kt")
+    public void testImportAliasFromStdLibFunctionFromObject() throws Exception {
+        runTest("idea/testData/usageHighlighter/importAliasFromStdLibFunctionFromObject.kt");
+    }
+
+    @TestMetadata("importAliasFromStdLibPropertyFromObject.kt")
+    public void testImportAliasFromStdLibPropertyFromObject() throws Exception {
+        runTest("idea/testData/usageHighlighter/importAliasFromStdLibPropertyFromObject.kt");
     }
 
     @TestMetadata("labeledAnonymousFun.kt")

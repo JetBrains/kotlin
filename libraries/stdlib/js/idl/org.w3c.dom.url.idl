@@ -1,4 +1,4 @@
-namespace org.w3c.dom.url;
+package org.w3c.dom.url;
 
 
 // Downloaded from https://raw.githubusercontent.com/whatwg/url/master/url.html

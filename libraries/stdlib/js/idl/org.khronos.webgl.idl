@@ -1,4 +1,4 @@
-namespace org.khronos.webgl;
+package org.khronos.webgl;
 
 
 // Downloaded from https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl

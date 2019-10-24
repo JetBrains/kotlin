@@ -31,13 +31,7 @@ import java.lang.reflect.Field
 internal class RequestHintWithMethodFilter(
     stepThread: ThreadReferenceProxyImpl,
     suspendContext: SuspendContextImpl,
-    @MagicConstant(
-        intValues = longArrayOf(
-            StepRequest.STEP_INTO.toLong(),
-            StepRequest.STEP_OVER.toLong(),
-            StepRequest.STEP_OUT.toLong()
-        )
-    ) depth: Int,
+    @MagicConstant(intValues = [StepRequest.STEP_INTO.toLong(), StepRequest.STEP_OVER.toLong(), StepRequest.STEP_OUT.toLong()]) depth: Int,
     methodFilter: MethodFilter
 ) : RequestHint(stepThread, suspendContext, methodFilter) {
     private var targetMethodMatched = false
@@ -49,7 +43,7 @@ internal class RequestHintWithMethodFilter(
         }
     }
 
-    private fun findFieldWithValue(value: Int, type: Class<*>): Field? {
+    private fun findFieldWithValue(@Suppress("SameParameterValue") value: Int, @Suppress("SameParameterValue") type: Class<*>): Field? {
         return RequestHint::class.java.declaredFields.firstOrNull { field ->
             if (field.type == type) {
                 field.isAccessible = true

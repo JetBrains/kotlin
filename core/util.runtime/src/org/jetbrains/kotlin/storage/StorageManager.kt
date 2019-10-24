@@ -40,6 +40,8 @@ interface StorageManager {
 
     fun <T : Any> createLazyValue(computable: () -> T): NotNullLazyValue<T>
 
+    fun <T : Any> createLazyValue(computable: () -> T, onRecursiveCall: (Boolean) -> T): NotNullLazyValue<T>
+
     fun <T : Any> createRecursionTolerantLazyValue(computable: () -> T, onRecursiveCall: T): NotNullLazyValue<T>
 
     /**

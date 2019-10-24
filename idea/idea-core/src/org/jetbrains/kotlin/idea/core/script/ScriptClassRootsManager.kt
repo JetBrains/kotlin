@@ -38,7 +38,7 @@ internal class ScriptClassRootsManager(val project: Project) {
     }
 
     private fun checkInTransaction() {
-        check(concurrentTransactions.get() > 0)
+        check(concurrentTransactions.get() > 0) { "Transaction is not started" }
     }
 
     inline fun transaction(body: () -> Unit) {

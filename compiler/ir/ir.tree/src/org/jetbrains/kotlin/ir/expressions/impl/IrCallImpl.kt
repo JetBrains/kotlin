@@ -79,8 +79,8 @@ class IrCallImpl(
         descriptor.valueParameters.size, origin, superQualifierSymbol
     )
 
-    constructor(startOffset: Int, endOffset: Int, type: IrType, symbol: IrFunctionSymbol) :
-            this(startOffset, endOffset, type, symbol, symbol.descriptor)
+    constructor(startOffset: Int, endOffset: Int, type: IrType, symbol: IrFunctionSymbol, superQualifierSymbol : IrClassSymbol? = null) :
+            this(startOffset, endOffset, type, symbol, symbol.descriptor, superQualifierSymbol = superQualifierSymbol)
 
 
     override val superQualifier: ClassDescriptor? = superQualifierSymbol?.descriptor

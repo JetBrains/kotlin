@@ -4,23 +4,19 @@
  */
 
 import {CliArgsParser, getDefaultCliDescription} from "./src/CliArgsParser";
-import {getFilteringAdapter} from "./src/Adapter";
+import {runWithFilteringAndConsoleAdapters} from "./src/Adapter";
 
 const kotlin_test = require('kotlin-test');
 
-process.hrtime = require('browser-process-hrtime');
 process.exit = (exitCode) => {
     throw new Error(`Exit with ${exitCode}`)
 };
 
-const processArgs = window.__karma__.config.args;
-const cliDescription = getDefaultCliDescription();
-cliDescription.freeArgsTitle = null;
-const parser = new CliArgsParser(cliDescription);
-const untypedArgs = parser.parse(processArgs);
+const parser = new CliArgsParser(getDefaultCliDescription());
+const untypedArgs = parser.parse(window.__karma__.config.args);
 
 const initialAdapter = kotlin_test.kotlin.test.detectAdapter_8be2vx$();
-kotlin_test.setAdapter(getFilteringAdapter(initialAdapter, untypedArgs));
+kotlin_test.setAdapter(runWithFilteringAndConsoleAdapters(initialAdapter, untypedArgs));
 
 const resultFun = window.__karma__.result;
 window.__karma__.result = function (result) {

@@ -328,7 +328,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        return newCopyBuilder(originalSubstitutor).setOriginal(getOriginal()).setJustForTypeSubstitution(true).build();
+
+        return newCopyBuilder(originalSubstitutor)
+                .setOriginal(getOriginal())
+                .setPreserveSourceElement()
+                .setJustForTypeSubstitution(true)
+                .build();
     }
 
     @Nullable

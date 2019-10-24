@@ -36,7 +36,6 @@ interface DeclarationAttributeAltererExtension {
         declaration: DeclarationDescriptor?,
         containingDeclaration: DeclarationDescriptor?,
         currentModality: Modality,
-        bindingContext: BindingContext,
         isImplicitModality: Boolean
     ): Modality? = null
 
@@ -48,10 +47,9 @@ interface DeclarationAttributeAltererExtension {
         modifierListOwner: KtModifierListOwner,
         declaration: DeclarationDescriptor?,
         containingDeclaration: DeclarationDescriptor?,
-        currentModality: Modality,
-        bindingContext: BindingContext
+        currentModality: Modality
     ): Modality? {
-        return refineDeclarationModality(modifierListOwner, declaration, containingDeclaration, currentModality, bindingContext, false)
+        return refineDeclarationModality(modifierListOwner, declaration, containingDeclaration, currentModality, false)
     }
 
     fun shouldConvertFirstSAMParameterToReceiver(function: FunctionDescriptor): Boolean = false

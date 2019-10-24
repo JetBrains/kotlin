@@ -89,14 +89,8 @@ abstract class DescriptorReferenceDeserializer(
         packageFqName: FqName,
         classFqName: FqName,
         name: String,
-        index: Long?,
-        isEnumEntry: Boolean = false,
-        isEnumSpecial: Boolean = false,
-        isDefaultConstructor: Boolean = false,
-        isFakeOverride: Boolean = false,
-        isGetter: Boolean = false,
-        isSetter: Boolean = false,
-        isTypeParameter: Boolean = false
+        flags: Int,
+        index: Long?
     ): DeclarationDescriptor {
 
         val protoIndex = index
@@ -109,8 +103,8 @@ abstract class DescriptorReferenceDeserializer(
         }
 
         // TODO: This is still native specific. Eliminate.
-        val rootSegment = packageFqName.pathSegments().firstOrNull()?.identifier ?: ""
-        if (rootSegment == "cnames" || rootSegment == "objcnames") {
+        val fqnString = packageFqName.asString()
+        if (fqnString.startsWith("cnames.") || fqnString.startsWith("objcnames.")) {
             val descriptor =
                 currentModule.findClassAcrossModuleDependencies(ClassId(packageFqName, FqName(name), false))!!
             if (!descriptor.fqNameUnsafe.asString().startsWith("cnames") && !descriptor.fqNameUnsafe.asString().startsWith(
@@ -118,9 +112,9 @@ abstract class DescriptorReferenceDeserializer(
                 )
             ) {
                 if (descriptor is DeserializedClassDescriptor) {
-                    val uniqId = UniqId(descriptor.getUniqId()!!, false)
+                    val uniqId = UniqId(descriptor.getUniqId()!!)
                     val newKey = uniqId
-                    val oldKey = UniqId(protoIndex!!, false)
+                    val oldKey = UniqId(protoIndex!!)
 
                     resolvedForwardDeclarations.put(oldKey, newKey)
                 } else {
@@ -130,17 +124,17 @@ abstract class DescriptorReferenceDeserializer(
             return descriptor
         }
 
-        if (isEnumEntry) {
+        if (DescriptorReferenceFlags.IS_ENUM_ENTRY.decode(flags)) {
             val memberScope = (clazz as DeserializedClassDescriptor).getUnsubstitutedMemberScope()
             return memberScope.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND)!!
         }
 
-        if (isEnumSpecial) {
+        if (DescriptorReferenceFlags.IS_ENUM_SPECIAL.decode(flags)) {
             return clazz!!.getStaticScope()
                 .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).single()
         }
 
-        if (isTypeParameter) {
+        if (DescriptorReferenceFlags.IS_TYPE_PARAMETER.decode(flags)) {
 
             for (m in (listOfNotNull(clazz) + members)) {
                 val typeParameters = when (m) {
@@ -162,14 +156,14 @@ abstract class DescriptorReferenceDeserializer(
         val membersWithIndices = getMembers(members)
 
         return when {
-            isDefaultConstructor -> membersWithIndices.defaultConstructor
+            DescriptorReferenceFlags.IS_DEFAULT_CONSTRUCTOR.decode(flags) -> membersWithIndices.defaultConstructor
 
             else -> {
-                val map = if (isFakeOverride) membersWithIndices.realMembers else membersWithIndices.members
+                val map = if (DescriptorReferenceFlags.IS_FAKE_OVERRIDE.decode(flags)) membersWithIndices.realMembers else membersWithIndices.members
                 map[protoIndex]?.let { member ->
                     when {
-                        member is PropertyDescriptor && isSetter -> member.setter!!
-                        member is PropertyDescriptor && isGetter -> member.getter!!
+                        member is PropertyDescriptor && DescriptorReferenceFlags.IS_SETTER.decode(flags) -> member.setter!!
+                        member is PropertyDescriptor && DescriptorReferenceFlags.IS_GETTER.decode(flags) -> member.getter!!
                         else -> member
                     }
                 }

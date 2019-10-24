@@ -45,8 +45,6 @@ FILE: jumps.kt
                 R|<local>/b| ->  {
                     continue@@@[R|<local>/b|]
                 }
-                else ->  {
-                }
             }
 
         }

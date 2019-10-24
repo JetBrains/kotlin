@@ -17,13 +17,13 @@ public interface IrTypeAliasOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+   * <code>required int32 name = 2;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
+   * <code>required int32 name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
+  int getName();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
@@ -44,13 +44,13 @@ public interface IrTypeAliasOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterContainer getTypeParameters();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex expanded_type = 5;</code>
+   * <code>required int32 expanded_type = 5;</code>
    */
   boolean hasExpandedType();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex expanded_type = 5;</code>
+   * <code>required int32 expanded_type = 5;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getExpandedType();
+  int getExpandedType();
 
   /**
    * <code>required bool is_actual = 6;</code>

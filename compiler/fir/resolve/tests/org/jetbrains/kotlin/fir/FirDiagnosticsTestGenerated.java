@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -22,11 +21,11 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
     @TestMetadata("compiler/fir/resolve/testData/diagnostics/j+k")
@@ -34,11 +33,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class J_k extends AbstractFirDiagnosticsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInJ_k() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/j+k"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/j+k"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("complexFlexibleInference.kt")
@@ -86,6 +85,21 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/KotlinClassParameterGeneric.kt");
         }
 
+        @TestMetadata("MyException.kt")
+        public void testMyException() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/MyException.kt");
+        }
+
+        @TestMetadata("MyIterable.kt")
+        public void testMyIterable() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/MyIterable.kt");
+        }
+
+        @TestMetadata("MyMap.kt")
+        public void testMyMap() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/MyMap.kt");
+        }
+
         @TestMetadata("outerInnerClasses.kt")
         public void testOuterInnerClasses() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/outerInnerClasses.kt");
@@ -97,11 +111,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SamConstructors extends AbstractFirDiagnosticsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSamConstructors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/samConstructors"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/samConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("genericSam.kt")
@@ -140,11 +154,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SamConversions extends AbstractFirDiagnosticsTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSamConversions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/samConversions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/samConversions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("genericSam.kt")

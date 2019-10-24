@@ -69,12 +69,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 ) to IsArrayOf,
                 Key(
                     KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
-                    KotlinBuiltIns.FQ_NAMES.any.toSafe(),
-                    "toString",
-                    emptyList()
-                ) to ToString,
-                Key(
-                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
                     null,
                     "arrayOfNulls",
                     listOf(KotlinBuiltIns.FQ_NAMES._int.toSafe())
@@ -96,7 +90,9 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.checkNotNullSymbol.toKey()!! to IrCheckNotNull,
                 irBuiltIns.andandSymbol.toKey()!! to AndAnd,
                 irBuiltIns.ororSymbol.toKey()!! to OrOr,
-                symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce
+                symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce,
+                symbols.signatureStringIntrinsic.toKey()!! to SignatureString,
+                symbols.reassignParameterIntrinsic.toKey()!! to ReassignParameter
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +
@@ -107,7 +103,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     unaryFunForPrimitives("inc", INC) +
                     unaryFunForPrimitives("dec", DEC) +
                     unaryFunForPrimitives("hashCode", HashCode) +
-                    unaryFunForPrimitives("toString", ToString) +
                     binaryFunForPrimitives("equals", EQUALS, irBuiltIns.anyClass) +
                     binaryFunForPrimitivesAcrossPrimitives("rangeTo", RangeTo) +
                     binaryOp("plus", IADD) +

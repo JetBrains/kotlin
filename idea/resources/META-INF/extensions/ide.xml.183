@@ -21,8 +21,8 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.highlighterExtension"
                         interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"/>
 
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.lightClassApplicabilityCheckExtension"
-                        interface="org.jetbrains.kotlin.extensions.LightClassApplicabilityCheckExtension"
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.ultraLightClassModifierExtension"
+                        interface="org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension"
                         area="IDEA_PROJECT"/>
 
         <extensionPoint name="scratchFileLanguageProvider" beanClass="com.intellij.lang.LanguageExtensionPoint">

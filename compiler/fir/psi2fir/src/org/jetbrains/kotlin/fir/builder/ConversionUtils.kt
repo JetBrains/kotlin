@@ -7,21 +7,23 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirWhenSubject
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableAccessorsOwner
-import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirVariableImpl
+import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
-import org.jetbrains.kotlin.fir.references.FirDelegateFieldReferenceImpl
-import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
-import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.references.impl.FirDelegateFieldReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
+import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -165,9 +167,9 @@ fun FirExpression.generateLazyLogicalOperation(
     other: FirExpression, isAnd: Boolean, basePsi: KtElement?
 ): FirBinaryLogicExpression {
     val kind = if (isAnd)
-        FirBinaryLogicExpression.OperationKind.AND
+        LogicOperationKind.AND
     else
-        FirBinaryLogicExpression.OperationKind.OR
+        LogicOperationKind.OR
     return FirBinaryLogicExpressionImpl(basePsi, this, other, kind)
 }
 
@@ -231,20 +233,20 @@ fun FirExpression.generateContainsOperation(
     operationReference: KtOperationReferenceExpression?
 ): FirFunctionCall {
     val containsCall = FirFunctionCallImpl(base).apply {
-        calleeReference = FirSimpleNamedReference(operationReference, OperatorNameConventions.CONTAINS)
+        calleeReference = FirSimpleNamedReference(operationReference, OperatorNameConventions.CONTAINS, null)
         explicitReceiver = this@generateContainsOperation
         arguments += argument
     }
     if (!inverted) return containsCall
     return FirFunctionCallImpl(base).apply {
-        calleeReference = FirSimpleNamedReference(operationReference, OperatorNameConventions.NOT)
+        calleeReference = FirSimpleNamedReference(operationReference, OperatorNameConventions.NOT, null)
         explicitReceiver = containsCall
     }
 }
 
 fun generateAccessExpression(psi: PsiElement?, name: Name): FirQualifiedAccessExpression =
     FirQualifiedAccessExpressionImpl(psi).apply {
-        calleeReference = FirSimpleNamedReference(psi, name)
+        calleeReference = FirSimpleNamedReference(psi, name, null)
     }
 
 fun generateResolvedAccessExpression(psi: PsiElement?, variable: FirVariable<*>): FirQualifiedAccessExpression =
@@ -266,11 +268,18 @@ internal fun generateDestructuringBlock(
         }
         val isVar = multiDeclaration.isVar
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
-            statements += FirVariableImpl(
-                session, entry, entry.nameAsSafeName,
-                entry.typeReference.toFirOrImplicitTypeRef(), isVar,
-                FirComponentCallImpl(entry, index + 1, generateResolvedAccessExpression(entry, container)),
-                FirVariableSymbol(entry.nameAsSafeName) // TODO?
+            statements += FirPropertyImpl(
+                entry,
+                session,
+                entry.typeReference.toFirOrImplicitTypeRef(),
+                null,
+                entry.nameAsSafeName,
+                FirComponentCallImpl(entry, generateResolvedAccessExpression(entry, container), index + 1),
+                null,
+                isVar,
+                FirPropertySymbol(CallableId(entry.nameAsSafeName)), // TODO?
+                true,
+                FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
             ).apply {
                 entry.extractAnnotationsTo(this)
                 symbol.bind(this)
@@ -282,7 +291,19 @@ internal fun generateDestructuringBlock(
 fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, name: Name, initializer: FirExpression
 ): FirVariable<*> =
-    FirVariableImpl(session, psi, name, FirImplicitTypeRefImpl(psi), false, initializer, FirVariableSymbol(name)).apply {
+    FirPropertyImpl(
+        psi,
+        session,
+        FirImplicitTypeRefImpl(psi),
+        null,
+        name,
+        initializer,
+        null,
+        false,
+        FirPropertySymbol(CallableId(name)),
+        true,
+        FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+    ).apply {
         symbol.bind(this)
     }
 
@@ -290,15 +311,15 @@ fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, specialName: String, initializer: FirExpression
 ): FirVariable<*> = generateTemporaryVariable(session, psi, Name.special("<$specialName>"), initializer)
 
-fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession, member: Boolean, stubMode: Boolean) {
+fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, member: Boolean, stubMode: Boolean) {
     val variable = this as FirVariable<*>
     val delegateFieldSymbol = delegateFieldSymbol ?: return
     val delegate = delegate as? FirWrappedDelegateExpressionImpl ?: return
     fun delegateAccess() = FirQualifiedAccessExpressionImpl(null).apply {
-        calleeReference = FirDelegateFieldReferenceImpl(null, delegateFieldSymbol)
+        calleeReference = FirDelegateFieldReferenceImpl(null, null, delegateFieldSymbol)
     }
 
-    fun thisRef() =
+    fun thisRef(): FirExpression =
         if (member) FirQualifiedAccessExpressionImpl(null).apply {
             calleeReference = FirExplicitThisReference(null, null)
         }
@@ -311,19 +332,26 @@ fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession,
 
     delegate.delegateProvider = if (stubMode) FirExpressionStub(null) else FirFunctionCallImpl(null).apply {
         explicitReceiver = delegate.expression
-        calleeReference = FirSimpleNamedReference(null, PROVIDE_DELEGATE)
+        calleeReference = FirSimpleNamedReference(null, PROVIDE_DELEGATE, null)
         arguments += thisRef()
         arguments += propertyRef()
     }
     if (stubMode) return
-    getter = (getter as? FirPropertyAccessorImpl)
-        ?: FirPropertyAccessorImpl(session, null, true, Visibilities.UNKNOWN, FirImplicitTypeRefImpl(null), FirPropertyAccessorSymbol()).apply Accessor@{
+    if (getter == null || getter is FirDefaultPropertyAccessor) {
+        getter = FirPropertyAccessorImpl(
+            null,
+            session,
+            FirImplicitTypeRefImpl(null),
+            FirPropertyAccessorSymbol(),
+            true,
+            FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
+        ).apply Accessor@{
             body = FirSingleExpressionBlock(
                 FirReturnExpressionImpl(
                     null,
                     FirFunctionCallImpl(null).apply {
                         explicitReceiver = delegateAccess()
-                        calleeReference = FirSimpleNamedReference(null, GET_VALUE)
+                        calleeReference = FirSimpleNamedReference(null, GET_VALUE, null)
                         arguments += thisRef()
                         arguments += propertyRef()
                     }
@@ -333,11 +361,19 @@ fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession,
                 }
             )
         }
-    setter = (setter as? FirPropertyAccessorImpl)
-        ?: FirPropertyAccessorImpl(session, null, false, Visibilities.UNKNOWN, session.builtinTypes.unitType, FirPropertyAccessorSymbol()).apply {
+    }
+    if (setter == null || setter is FirDefaultPropertyAccessor) {
+        setter = FirPropertyAccessorImpl(
+            null,
+            session,
+            session.builtinTypes.unitType,
+            FirPropertyAccessorSymbol(),
+            false,
+            FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
+        ).apply {
             val parameter = FirValueParameterImpl(
-                session, null, DELEGATED_SETTER_PARAM,
-                FirImplicitTypeRefImpl(null),
+                null, session, FirImplicitTypeRefImpl(null),
+                DELEGATED_SETTER_PARAM, FirVariableSymbol(name),
                 defaultValue = null, isCrossinline = false,
                 isNoinline = false, isVararg = false
             )
@@ -345,7 +381,7 @@ fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession,
             body = FirSingleExpressionBlock(
                 FirFunctionCallImpl(null).apply {
                     explicitReceiver = delegateAccess()
-                    calleeReference = FirSimpleNamedReference(null, SET_VALUE)
+                    calleeReference = FirSimpleNamedReference(null, SET_VALUE, null)
                     arguments += thisRef()
                     arguments += propertyRef()
                     arguments += FirQualifiedAccessExpressionImpl(null).apply {
@@ -354,6 +390,7 @@ fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession,
                 }
             )
         }
+    }
 }
 
 private val GET_VALUE = Name.identifier("getValue")

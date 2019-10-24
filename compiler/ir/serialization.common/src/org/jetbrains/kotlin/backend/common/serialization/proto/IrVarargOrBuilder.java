@@ -8,13 +8,13 @@ public interface IrVarargOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex element_type = 1;</code>
+   * <code>required int32 element_type = 1;</code>
    */
   boolean hasElementType();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex element_type = 1;</code>
+   * <code>required int32 element_type = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getElementType();
+  int getElementType();
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement element = 2;</code>

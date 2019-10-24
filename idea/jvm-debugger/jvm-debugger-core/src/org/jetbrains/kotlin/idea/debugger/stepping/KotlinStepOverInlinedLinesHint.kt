@@ -30,8 +30,9 @@ class KotlinStepOverInlinedLinesHint(
     suspendContext: SuspendContextImpl,
     methodFilter: KotlinMethodFilter
 ) : RequestHint(stepThread, suspendContext, methodFilter) {
-
-    private val LOG = Logger.getInstance(KotlinStepOverInlinedLinesHint::class.java)
+    private companion object {
+        private val LOG = Logger.getInstance(KotlinStepOverInlinedLinesHint::class.java)
+    }
 
     private val filter = methodFilter
 

@@ -76,7 +76,7 @@ class IrTableWriter(private val data: List<Pair<Long, ByteArray>>) : IrFileWrite
     override fun writeData(dataOutput: DataOutput) {
         dataOutput.writeInt(data.size)
 
-        var dataOffset = 4 + data.size * (8 + 4 + 4)
+        var dataOffset = Int.SIZE_BYTES + data.size * (Long.SIZE_BYTES + 2 * Int.SIZE_BYTES)
 
         data.forEach {
             dataOutput.writeLong(it.first)
@@ -91,8 +91,8 @@ class IrTableWriter(private val data: List<Pair<Long, ByteArray>>) : IrFileWrite
 
 class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>) : IrFileWriter() {
 
-    private val SINGLE_INDEX_RECORD_SIZE = 20  // sizeof(Long) + 3 * sizeof(Int).
-    private val INDEX_HEADER_SIZE = 4  // sizeof(Int).
+    private val SINGLE_INDEX_RECORD_SIZE = Long.SIZE_BYTES + 2 * Int.SIZE_BYTES
+    private val INDEX_HEADER_SIZE = Int.SIZE_BYTES
 
     override fun writeData(dataOutput: DataOutput) {
         dataOutput.writeInt(declarations.size)
@@ -101,7 +101,6 @@ class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>)
 
         for (d in declarations) {
             dataOutput.writeLong(d.id)
-            dataOutput.writeInt(d.local)
             dataOutput.writeInt(dataOffset)
             dataOutput.writeInt(d.size)
             dataOffset += d.size
@@ -116,8 +115,8 @@ class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>)
 
 class IrMemoryDeclarationWriter(private val declarations: List<SerializedDeclaration>) : IrMemoryWriter() {
 
-    private val SINGLE_INDEX_RECORD_SIZE = 20  // sizeof(Long) + 3 * sizeof(Int).
-    private val INDEX_HEADER_SIZE = 4  // sizeof(Int).
+    private val SINGLE_INDEX_RECORD_SIZE = Long.SIZE_BYTES + 2 * Int.SIZE_BYTES
+    private val INDEX_HEADER_SIZE = Int.SIZE_BYTES
 
     override fun writeData(dataOutput: DataOutput) {
         dataOutput.writeInt(declarations.size)
@@ -126,7 +125,6 @@ class IrMemoryDeclarationWriter(private val declarations: List<SerializedDeclara
 
         for (d in declarations) {
             dataOutput.writeLong(d.id)
-            dataOutput.writeInt(d.local)
             dataOutput.writeInt(dataOffset)
             dataOutput.writeInt(d.size)
             dataOffset += d.size
