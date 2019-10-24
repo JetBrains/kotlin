@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR
+// IGNORE_BACKEND: JS, JS_IR, NATIVE
 
 fun f(
     f1: () -> String = { f2() },
