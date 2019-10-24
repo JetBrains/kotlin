@@ -1,6 +1,7 @@
 package
 
 public fun </*0*/ T : kotlin.Any> kclass(/*0*/ k: kotlin.reflect.KClass<*>, /*1*/ kt: kotlin.reflect.KClass<T>): kotlin.Unit
+public fun ktype(/*0*/ t: kotlin.reflect.KType, /*1*/ t2: kotlin.reflect.KType): kotlin.Unit
 public fun n01(): kotlin.reflect.KProperty1<Foo, kotlin.Any>
 public fun n02(): kotlin.reflect.KFunction1<Foo, kotlin.Unit>
 public fun n03(): kotlin.reflect.KClass<Foo>

@@ -21,15 +21,24 @@ import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 private val ANY_MEMBER_NAMES = setOf("equals", "hashCode", "toString")
+
+private val ALLOWED_CLASSES = setOf(
+    FqName("kotlin.reflect.KType"),
+    FqName("kotlin.reflect.KTypeProjection"),
+    FqName("kotlin.reflect.KTypeProjection.Companion"),
+    FqName("kotlin.reflect.KVariance")
+)
 
 /**
  * Checks that there are no usages of reflection API which will fail at runtime.
@@ -71,7 +80,8 @@ abstract class AbstractReflectionApiCallChecker(
                 name == OperatorNameConventions.INVOKE ||
                 name.asString() == "name" ||
                 DescriptorUtils.isSubclass(containingClass, kClass) && isAllowedKClassMember(descriptor.name) ||
-                (name.asString() == "get" || name.asString() == "set") && containingClass.isKPropertyClass()
+                (name.asString() == "get" || name.asString() == "set") && containingClass.isKPropertyClass() ||
+                containingClass.fqNameSafe in ALLOWED_CLASSES
     }
 
     private fun ClassDescriptor.isKPropertyClass() = kPropertyClasses.any { kProperty -> DescriptorUtils.isSubclass(this, kProperty) }

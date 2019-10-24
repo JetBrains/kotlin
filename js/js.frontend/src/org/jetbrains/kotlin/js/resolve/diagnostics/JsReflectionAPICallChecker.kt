@@ -18,21 +18,10 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.checkers.AbstractReflectionApiCallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
-
-private val ALLOWED_CLASSES = setOf(
-    FqName("kotlin.reflect.KType"),
-    FqName("kotlin.reflect.KTypeProjection"),
-    FqName("kotlin.reflect.KTypeProjection.Companion"),
-    FqName("kotlin.reflect.KVariance")
-)
 
 class JsReflectionAPICallChecker(
     reflectionTypes: ReflectionTypes,
@@ -44,7 +33,4 @@ class JsReflectionAPICallChecker(
     override fun report(element: PsiElement, context: CallCheckerContext) {
         context.trace.report(UNSUPPORTED.on(element, "This reflection API is not supported yet in JavaScript"))
     }
-
-    override fun isAllowedReflectionApi(descriptor: CallableDescriptor, containingClass: ClassDescriptor): Boolean =
-        super.isAllowedReflectionApi(descriptor, containingClass) || containingClass.fqNameSafe in ALLOWED_CLASSES
 }

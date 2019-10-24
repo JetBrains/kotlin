@@ -45,3 +45,18 @@ fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.hashCode()
     k.toString()
 }
+
+fun ktype(t: KType, t2: KType) {
+    t.classifier
+    t.arguments
+    t.isMarkedNullable
+    t.annotations
+
+    t == t2
+    t.hashCode()
+    t.toString()
+
+    KTypeProjection.Companion.covariant(t)
+    KTypeProjection.STAR
+    KTypeProjection(KVariance.IN, t)
+}
