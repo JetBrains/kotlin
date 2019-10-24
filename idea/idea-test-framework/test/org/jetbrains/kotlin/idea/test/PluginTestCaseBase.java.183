@@ -68,19 +68,19 @@ public class PluginTestCaseBase {
 
     @NotNull
     public static Sdk mockJdk6() {
-        return getSdk("compiler/testData/mockJDK/jre", "java version \"1.6.0_43\"");
+        return getSdk("compiler/testData/mockJDK/jre", "1.6");
     }
 
     @NotNull
     public static Sdk mockJdk8() {
         // Using JDK 6, but with version 1.8
-        return getSdk("compiler/testData/mockJDK/jre", "java version \"1.8.0_181\"");
+        return getSdk("compiler/testData/mockJDK/jre", "1.8");
     }
 
     @TestOnly
     @NotNull
     public static Sdk mockJdk9() {
-        return getSdk("compiler/testData/mockJDK9/jre", "java version \"9.0.4\"");
+        return getSdk("compiler/testData/mockJDK9/jre", "9");
     }
 
     @NotNull
