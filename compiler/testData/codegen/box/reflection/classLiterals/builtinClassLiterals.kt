@@ -1,8 +1,5 @@
-// IGNORE_BACKEND: JS_IR
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
-
-// WITH_REFLECT
+// TARGET_BACKEND: JVM
+// WITH_RUNTIME
 
 import kotlin.test.assertEquals
 
@@ -16,6 +13,10 @@ fun box(): String {
 
     assertEquals("Array", Array<Any>::class.simpleName)
     assertEquals("Array", Array<IntArray>::class.simpleName)
+    assertEquals("Array", Array<Array<String>>::class.simpleName)
+
+    assertEquals("IntArray", IntArray::class.simpleName)
+    assertEquals("DoubleArray", DoubleArray::class.simpleName)
 
     assertEquals("Companion", Int.Companion::class.simpleName)
     assertEquals("Companion", Double.Companion::class.simpleName)
@@ -24,9 +25,16 @@ fun box(): String {
     assertEquals("IntRange", IntRange::class.simpleName)
 
     assertEquals("List", List::class.simpleName)
+    assertEquals("Entry", Map.Entry::class.simpleName)
 
-    // TODO: this is wrong but should be fixed
+    // TODO: KT-11754
     assertEquals("List", MutableList::class.simpleName)
+    assertEquals("Entry", MutableMap.MutableEntry::class.simpleName)
+
+    assertEquals("Function0", Function0::class.simpleName)
+    assertEquals("Function1", Function1::class.simpleName)
+    assertEquals("Function5", Function5::class.simpleName)
+    assertEquals("FunctionN", Function42::class.simpleName)
 
     return "OK"
 }

@@ -19164,11 +19164,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/reflection/classLiterals/annotationClassLiteral.kt");
             }
 
-            @TestMetadata("builtinClassLiterals.kt")
-            public void testBuiltinClassLiterals() throws Exception {
-                runTest("compiler/testData/codegen/box/reflection/classLiterals/builtinClassLiterals.kt");
-            }
-
             @TestMetadata("genericClass.kt")
             public void testGenericClass() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/classLiterals/genericClass.kt");

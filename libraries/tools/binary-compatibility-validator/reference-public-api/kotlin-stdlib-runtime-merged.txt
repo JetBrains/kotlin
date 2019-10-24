@@ -3269,6 +3269,7 @@ public abstract interface class kotlin/jvm/internal/ClassBasedDeclarationContain
 }
 
 public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/ClassBasedDeclarationContainer, kotlin/reflect/KClass {
+	public static final field Companion Lkotlin/jvm/internal/ClassReference$Companion;
 	public fun <init> (Ljava/lang/Class;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAnnotations ()Ljava/util/List;
@@ -3293,6 +3294,10 @@ public final class kotlin/jvm/internal/ClassReference : kotlin/jvm/internal/Clas
 	public fun isOpen ()Z
 	public fun isSealed ()Z
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/jvm/internal/ClassReference$Companion {
+	public final fun getClassSimpleName (Ljava/lang/Class;)Ljava/lang/String;
 }
 
 public final class kotlin/jvm/internal/CollectionToArray {

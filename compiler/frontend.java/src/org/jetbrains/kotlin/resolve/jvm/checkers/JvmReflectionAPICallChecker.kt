@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.calls.checkers.AbstractReflectionApiCallChecker
@@ -32,10 +32,10 @@ import org.jetbrains.kotlin.storage.getValue
  * of reflection API which will fail at runtime.
  */
 class JvmReflectionAPICallChecker(
-        private val module: ModuleDescriptor,
-        notFoundClasses: NotFoundClasses,
-        storageManager: StorageManager
-) : AbstractReflectionApiCallChecker(module, notFoundClasses, storageManager) {
+    private val module: ModuleDescriptor,
+    reflectionTypes: ReflectionTypes,
+    storageManager: StorageManager
+) : AbstractReflectionApiCallChecker(reflectionTypes, storageManager) {
     override val isWholeReflectionApiAvailable by storageManager.createLazyValue {
         module.findClassAcrossModuleDependencies(JvmAbi.REFLECTION_FACTORY_IMPL) != null
     }

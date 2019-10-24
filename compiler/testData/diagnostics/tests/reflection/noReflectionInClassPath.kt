@@ -17,11 +17,11 @@ fun n11() = (Foo::func)(Foo(""))
 
 fun y01() = Foo::prop.<!NO_REFLECTION_IN_CLASS_PATH!>getter<!>
 fun y02() = Foo::class.<!NO_REFLECTION_IN_CLASS_PATH!>members<!>
-fun y03() = Foo::class.<!NO_REFLECTION_IN_CLASS_PATH!>simpleName<!>
+fun y03() = Foo::class.simpleName
 fun y04() = Foo::class.<!UNRESOLVED_REFERENCE!>properties<!>
 
 fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
-    k.<!NO_REFLECTION_IN_CLASS_PATH!>simpleName<!>
+    k.simpleName
     k.<!NO_REFLECTION_IN_CLASS_PATH!>qualifiedName<!>
     k.<!NO_REFLECTION_IN_CLASS_PATH!>members<!>
     k.<!NO_REFLECTION_IN_CLASS_PATH!>constructors<!>

@@ -13,5 +13,7 @@ fun box(): String {
     assertEquals(Void.TYPE, Void.TYPE.kotlin.javaPrimitiveType)
     assertEquals(Void::class.java, Void.TYPE.kotlin.javaObjectType)
 
+    assertEquals("Void", Void::class.simpleName)
+
     return "OK"
 }

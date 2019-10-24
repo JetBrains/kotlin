@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.NotFoundClasses
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -36,17 +35,20 @@ private val ANY_MEMBER_NAMES = setOf("equals", "hashCode", "toString")
  * Checks that there are no usages of reflection API which will fail at runtime.
  */
 abstract class AbstractReflectionApiCallChecker(
-    private val module: ModuleDescriptor,
-    private val notFoundClasses: NotFoundClasses,
+    private val reflectionTypes: ReflectionTypes,
     storageManager: StorageManager
 ) : CallChecker {
     protected abstract val isWholeReflectionApiAvailable: Boolean
     protected abstract fun report(element: PsiElement, context: CallCheckerContext)
 
     private val kPropertyClasses by storageManager.createLazyValue {
-        val reflectionTypes = ReflectionTypes(module, notFoundClasses)
         setOf(reflectionTypes.kProperty0, reflectionTypes.kProperty1, reflectionTypes.kProperty2)
     }
+
+    private val kClass by storageManager.createLazyValue { reflectionTypes.kClass }
+
+    protected open fun isAllowedKClassMember(name: Name): Boolean =
+        name.asString() == "simpleName"
 
     final override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (isWholeReflectionApiAvailable) return
@@ -68,6 +70,7 @@ abstract class AbstractReflectionApiCallChecker(
         return name.asString() in ANY_MEMBER_NAMES ||
                 name == OperatorNameConventions.INVOKE ||
                 name.asString() == "name" ||
+                DescriptorUtils.isSubclass(containingClass, kClass) && isAllowedKClassMember(descriptor.name) ||
                 (name.asString() == "get" || name.asString() == "set") && containingClass.isKPropertyClass()
     }
 
@@ -79,4 +82,3 @@ abstract class AbstractReflectionApiCallChecker(
         return fqName == KOTLIN_REFLECT_FQ_NAME.toUnsafe() || fqName.asString().startsWith(KOTLIN_REFLECT_FQ_NAME.asString() + ".")
     }
 }
-
