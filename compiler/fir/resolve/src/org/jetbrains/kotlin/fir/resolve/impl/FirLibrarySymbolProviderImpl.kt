@@ -72,15 +72,15 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
             ).memberDeserializer
         }
 
-        val lookup = mutableMapOf<ClassId, FirClassSymbol>()
+        val lookup = mutableMapOf<ClassId, FirRegularClassSymbol>()
 
-        fun getClassLikeSymbolByFqName(classId: ClassId): FirClassSymbol? =
+        fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? =
             findAndDeserializeClass(classId)
 
         private fun findAndDeserializeClass(
             classId: ClassId,
             parentContext: FirDeserializationContext? = null
-        ): FirClassSymbol? {
+        ): FirRegularClassSymbol? {
             val classIdExists = classId in classDataFinder.allClassIds
             val shouldBeEnumEntry = !classIdExists && classId.outerClassId in classDataFinder.allClassIds
             if (!classIdExists && !shouldBeEnumEntry) return null
@@ -91,7 +91,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                     return null
                 }
             }
-            return lookup.getOrPut(classId, { FirClassSymbol(classId) }) { symbol ->
+            return lookup.getOrPut(classId, { FirRegularClassSymbol(classId) }) { symbol ->
                 if (shouldBeEnumEntry) {
                     FirEnumEntryImpl(null, session, classId.shortClassName, symbol).apply {
                         resolvePhase = FirResolvePhase.DECLARATIONS
@@ -152,9 +152,9 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
 
     private val allPackageFragments = loadBuiltIns().groupBy { it.fqName }
 
-    private val fictitiousFunctionSymbols = mutableMapOf<Int, FirClassSymbol>()
+    private val fictitiousFunctionSymbols = mutableMapOf<Int, FirRegularClassSymbol>()
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassSymbol? {
+    override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? {
         return allPackageFragments[classId.packageFqName]?.firstNotNullResult {
             it.getClassLikeSymbolByFqName(classId)
         } ?: with(classId) {
@@ -171,7 +171,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                     isData = false
                     isInline = false
                 }
-                FirClassSymbol(this).apply {
+                FirRegularClassSymbol(this).apply {
                     FirClassImpl(
                         null,
                         session,

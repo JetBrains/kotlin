@@ -133,7 +133,7 @@ private fun AbstractFirBasedSymbol<*>.toSymbol(declarationStorage: Fir2IrDeclara
     else -> null
 }
 
-fun FirClassSymbol.toClassSymbol(declarationStorage: Fir2IrDeclarationStorage): IrClassSymbol {
+fun FirClassSymbol<*>.toClassSymbol(declarationStorage: Fir2IrDeclarationStorage): IrClassSymbol {
     return declarationStorage.getIrClassSymbol(this)
 }
 

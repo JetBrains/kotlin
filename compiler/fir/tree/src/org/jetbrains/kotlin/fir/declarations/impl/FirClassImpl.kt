@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.SupertypesComputationStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
@@ -33,7 +33,7 @@ class FirClassImpl(
     override val name: Name,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
-    override val symbol: FirClassSymbol
+    override val symbol: FirRegularClassSymbol
 ) : FirPureAbstractElement(), FirRegularClass, FirModifiableRegularClass, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()

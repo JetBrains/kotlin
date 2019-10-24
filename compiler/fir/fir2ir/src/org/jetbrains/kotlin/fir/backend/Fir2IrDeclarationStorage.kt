@@ -114,7 +114,7 @@ class Fir2IrDeclarationStorage(
         leaveScope(descriptor)
     }
 
-    private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass): IrClass {
+    private fun IrClass.declareSupertypesAndTypeParameters(klass: FirClass<*>): IrClass {
         for (superTypeRef in klass.superTypeRefs) {
             superTypes += superTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
         }
@@ -128,31 +128,33 @@ class Fir2IrDeclarationStorage(
         return this
     }
 
-    fun getIrClass(regularClass: FirRegularClass, setParent: Boolean = true): IrClass {
+    fun getIrClass(klass: FirClass<*>, setParent: Boolean = true): IrClass {
+        val regularClass = klass as? FirRegularClass
+
         fun create(): IrClass {
             val descriptor = WrappedClassDescriptor()
             val origin = IrDeclarationOrigin.DEFINED
-            val modality = regularClass.modality!!
-            return regularClass.convertWithOffsets { startOffset, endOffset ->
+            val modality = regularClass?.modality ?: Modality.FINAL
+            return klass.convertWithOffsets { startOffset, endOffset ->
                 irSymbolTable.declareClass(startOffset, endOffset, origin, descriptor, modality) { symbol ->
                     IrClassImpl(
                         startOffset,
                         endOffset,
                         origin,
                         symbol,
-                        regularClass.name,
-                        regularClass.classKind,
-                        regularClass.visibility,
+                        regularClass?.name ?: Name.special("<anonymous>"),
+                        klass.classKind,
+                        regularClass?.visibility ?: Visibilities.LOCAL,
                         modality,
-                        isCompanion = regularClass.isCompanion,
-                        isInner = regularClass.isInner,
-                        isData = regularClass.isData,
-                        isExternal = regularClass.isExternal,
-                        isInline = regularClass.isInline,
-                        isExpect = regularClass.isExpect
+                        isCompanion = regularClass?.isCompanion == true,
+                        isInner = regularClass?.isInner == true,
+                        isData = regularClass?.isData == true,
+                        isExternal = regularClass?.isExternal == true,
+                        isInline = regularClass?.isInline == true,
+                        isExpect = regularClass?.isExpect == true
                     ).apply {
                         descriptor.bind(this)
-                        if (setParent) {
+                        if (setParent && regularClass != null) {
                             val classId = regularClass.classId
                             val parentId = classId.outerClassId
                             if (parentId != null) {
@@ -172,16 +174,17 @@ class Fir2IrDeclarationStorage(
             }
         }
 
-        if (regularClass.visibility == Visibilities.LOCAL) {
-            val cached = localStorage.getLocalClass(regularClass)
+        if (regularClass?.visibility == Visibilities.LOCAL || klass is FirAnonymousObject) {
+            val cached = localStorage.getLocalClass(klass)
             if (cached != null) return cached
             val created = create()
-            localStorage.putLocalClass(regularClass, created)
-            created.declareSupertypesAndTypeParameters(regularClass)
+            localStorage.putLocalClass(klass, created)
+            created.declareSupertypesAndTypeParameters(klass)
             return created
         }
-        return classCache.getOrPut(regularClass, { create() }) {
-            it.declareSupertypesAndTypeParameters(regularClass)
+        // NB: klass can be either FirRegularClass or FirAnonymousObject
+        return classCache.getOrPut(klass as FirRegularClass, { create() }) {
+            it.declareSupertypesAndTypeParameters(klass)
         }
     }
 
@@ -617,7 +620,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    fun getIrClassSymbol(firClassSymbol: FirClassSymbol): IrClassSymbol {
+    fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
         val irClass = getIrClass(firClassSymbol.fir)
         return irSymbolTable.referenceClass(irClass.descriptor)
     }

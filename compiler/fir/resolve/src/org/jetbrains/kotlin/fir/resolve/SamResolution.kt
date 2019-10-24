@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -217,7 +214,7 @@ private fun FirRegularClass.computeSamCandidateNames(session: FirSession): Set<N
     val classes =
         lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = session)
             .mapNotNullTo(mutableListOf(this)) {
-                (session.firSymbolProvider.getSymbolByLookupTag(it.lookupTag) as? FirClassSymbol)?.fir
+                (session.firSymbolProvider.getSymbolByLookupTag(it.lookupTag) as? FirRegularClassSymbol)?.fir
             }
 
     val samCandidateNames = mutableSetOf<Name>()

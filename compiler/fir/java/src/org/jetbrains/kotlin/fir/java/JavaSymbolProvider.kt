@@ -11,11 +11,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.declarations.visibility
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
@@ -48,7 +45,7 @@ class JavaSymbolProvider(
     val session: FirSession,
     val project: Project,
     private val searchScope: GlobalSearchScope
-) : AbstractFirSymbolProvider() {
+) : AbstractFirSymbolProvider<FirRegularClassSymbol>() {
 
     private val facade: KotlinJavaPsiFacade get() = KotlinJavaPsiFacade.getInstance(project)
 
@@ -61,7 +58,7 @@ class JavaSymbolProvider(
         emptyList()
 
     override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
-        val classSymbol = getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
+        val classSymbol = getClassLikeSymbolByFqName(classId) ?: return null
         return declaredMemberScope(classSymbol.fir)
     }
 
@@ -70,18 +67,21 @@ class JavaSymbolProvider(
         useSiteSession: FirSession,
         scopeSession: ScopeSession
     ): FirScope? {
-        val symbol = this.getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
+        val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
         return buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, mutableSetOf())
     }
 
     private fun buildJavaEnhancementScope(
         useSiteSession: FirSession,
-        symbol: FirClassSymbol,
+        symbol: FirRegularClassSymbol,
         scopeSession: ScopeSession,
         visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
     ): JavaClassEnhancementScope {
         return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
-            JavaClassEnhancementScope(useSiteSession, buildJavaUseSiteMemberScope(symbol.fir, useSiteSession, scopeSession, visitedSymbols))
+            JavaClassEnhancementScope(
+                useSiteSession,
+                buildJavaUseSiteMemberScope(symbol.fir, useSiteSession, scopeSession, visitedSymbols)
+            )
         }
     }
 
@@ -98,7 +98,7 @@ class JavaSymbolProvider(
                     .mapNotNull { useSiteSuperType ->
                         if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
                         val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                        if (symbol is FirClassSymbol && visitedSymbols.add(symbol)) {
+                        if (symbol is FirRegularClassSymbol && visitedSymbols.add(symbol)) {
                             // We need JavaClassEnhancementScope here to have already enhanced signatures from supertypes
                             val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, visitedSymbols)
                             visitedSymbols.remove(symbol)
@@ -151,16 +151,16 @@ class JavaSymbolProvider(
             }
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? = getFirJavaClass(classId)
+    override fun getClassLikeSymbolByFqName(classId: ClassId): FirRegularClassSymbol? = getFirJavaClass(classId)
 
-    fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): FirClassLikeSymbol<*>? {
+    fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): FirRegularClassSymbol? {
         if (!hasTopLevelClassOf(classId)) return null
         return classCache.lookupCacheOrCalculateWithPostCompute(classId, {
             val foundClass = findClass(classId, content)
             if (foundClass == null || foundClass.annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }) {
                 null to null
             } else {
-                FirClassSymbol(classId) to foundClass
+                FirRegularClassSymbol(classId) to foundClass
             }
         }) { firSymbol, foundClass ->
             foundClass?.let { javaClass ->
@@ -169,7 +169,7 @@ class JavaSymbolProvider(
                 val isTopLevel = parentFqName.isRoot
                 if (!isTopLevel) {
                     val parentId = ClassId(classId.packageFqName, parentFqName, false)
-                    val parentClassSymbol = getClassLikeSymbolByFqName(parentId) as? FirClassSymbol
+                    val parentClassSymbol = getClassLikeSymbolByFqName(parentId)
                     val parentClass = parentClassSymbol?.fir
                     if (parentClass is FirJavaClass) {
                         javaTypeParameterStack.addStack(parentClass.javaTypeParameterStack)
@@ -177,7 +177,7 @@ class JavaSymbolProvider(
                 }
                 FirJavaClass(
                     (javaClass as? JavaElementImpl<*>)?.psi?.toFirSourceElement(), session,
-                    firSymbol as FirClassSymbol, javaClass.name,
+                    firSymbol, javaClass.name,
                     javaClass.visibility, javaClass.modality,
                     javaClass.classKind, isTopLevel = isTopLevel,
                     isStatic = javaClass.isStatic,
@@ -291,7 +291,7 @@ class JavaSymbolProvider(
 
     fun getJavaTopLevelClasses(): List<FirRegularClass> {
         return classCache.values
-            .filterIsInstance<FirClassSymbol>()
+            .filterIsInstance<FirRegularClassSymbol>()
             .filter { it.classId.relativeClassName.parent().isRoot }
             .map { it.fir }
     }

@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -178,9 +178,9 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitField(field: FirField, data: D): R  = visitElement(field, data)
 
-    open fun visitClass(klass: FirClass, data: D): R  = visitElement(klass, data)
-
     open fun <F : FirClassLikeDeclaration<F>> visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<F>, data: D): R  = visitElement(classLikeDeclaration, data)
+
+    open fun <F : FirClass<F>> visitClass(klass: FirClass<F>, data: D): R  = visitElement(klass, data)
 
     open fun visitRegularClass(regularClass: FirRegularClass, data: D): R  = visitElement(regularClass, data)
 

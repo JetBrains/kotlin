@@ -192,11 +192,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         //require(this is ConeSymbol)
         return when (this) {
             is FirTypeParameterSymbol,
+            is FirAnonymousObjectSymbol,
             is ConeCapturedTypeConstructor,
             is ErrorTypeConstructor,
             is ConeTypeVariableTypeConstructor,
             is ConeIntersectionType -> 0
-            is FirClassSymbol -> fir.typeParameters.size
+            is FirRegularClassSymbol -> fir.typeParameters.size
             is FirTypeAliasSymbol -> fir.typeParameters.size
             else -> error("?!:10")
         }
@@ -206,7 +207,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         //require(this is ConeSymbol)
         return when (this) {
             is FirTypeParameterSymbol -> error("?!:11")
-            is FirClassSymbol -> fir.typeParameters[index].symbol
+            is FirRegularClassSymbol -> fir.typeParameters[index].symbol
             is FirTypeAliasSymbol -> fir.typeParameters[index].symbol
             else -> error("?!:12")
         }
@@ -218,7 +219,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeTypeVariableTypeConstructor -> emptyList()
             is FirTypeParameterSymbol -> fir.bounds.map { it.coneTypeUnsafe() }
-            is FirClassSymbol -> fir.superConeTypes
+            is FirClassSymbol<*> -> fir.superConeTypes
             is FirTypeAliasSymbol -> listOfNotNull(fir.expandedConeType)
             is ConeCapturedTypeConstructor -> supertypes!!
             is ConeIntersectionType -> intersectedTypes
@@ -232,7 +233,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeConstructorMarker.isClassTypeConstructor(): Boolean {
         //assert(this is ConeSymbol)
-        return this is FirClassSymbol
+        return this is FirClassSymbol<*>
     }
 
     override fun TypeParameterMarker.getVariance(): TypeVariance {
@@ -275,7 +276,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.isCommonFinalClassConstructor(): Boolean {
-        val classSymbol = this as? FirClassSymbol ?: return false
+        if (this is FirAnonymousObjectSymbol) return true
+        val classSymbol = this as? FirRegularClassSymbol ?: return false
         val fir = classSymbol.fir
         return fir.modality == Modality.FINAL &&
                 fir.classKind != ClassKind.ENUM_ENTRY &&
@@ -352,7 +354,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (this is ConeIntersectionType) return false
         require(this is ConeLookupTagBasedType)
         val typeConstructor = this.typeConstructor()
-        return typeConstructor is FirClassSymbol ||
+        return typeConstructor is FirClassSymbol<*> ||
                 typeConstructor is FirTypeParameterSymbol
     }
 

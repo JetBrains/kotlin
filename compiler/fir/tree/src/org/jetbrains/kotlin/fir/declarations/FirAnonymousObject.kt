@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -19,15 +20,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnonymousObject : FirPureAbstractElement(), FirClass, FirExpression {
+abstract class FirAnonymousObject : FirPureAbstractElement(), FirClass<FirAnonymousObject>, FirExpression {
     abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override val resolvePhase: FirResolvePhase
+    abstract override val supertypesComputationStatus: SupertypesComputationStatus
     abstract override val classKind: ClassKind
     abstract override val superTypeRefs: List<FirTypeRef>
     abstract override val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeRef: FirTypeRef
+    abstract override val symbol: FirAnonymousObjectSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousObject(this, data)
 }

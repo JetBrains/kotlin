@@ -211,7 +211,7 @@ private fun ConeClassLikeType.toFirClass(session: FirSession): FirRegularClass? 
     return when (this) {
         is ConeAbbreviatedType -> this.directExpansionType(session)?.toFirClass(session)
         else -> (this.lookupTag.toSymbol(session) as? FirClassSymbol)?.fir
-    }
+    } as? FirRegularClass
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////

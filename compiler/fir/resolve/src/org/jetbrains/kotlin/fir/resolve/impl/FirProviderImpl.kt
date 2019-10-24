@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
@@ -219,7 +216,8 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
         scopeSession: ScopeSession
     ): FirScope? {
         return when (val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null) {
-            is FirClassSymbol -> symbol.fir.buildDefaultUseSiteMemberScope(useSiteSession, scopeSession)
+            is FirRegularClassSymbol -> symbol.fir.buildDefaultUseSiteMemberScope(useSiteSession, scopeSession)
+            is FirAnonymousObjectSymbol -> symbol.fir.buildDefaultUseSiteMemberScope(useSiteSession, scopeSession)
             is FirTypeAliasSymbol -> {
                 val expandedTypeRef = symbol.fir.expandedTypeRef as FirResolvedTypeRef
                 val expandedType = expandedTypeRef.type as? ConeLookupTagBasedType ?: return null

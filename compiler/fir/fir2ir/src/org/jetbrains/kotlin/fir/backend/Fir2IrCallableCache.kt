@@ -17,7 +17,7 @@ class Fir2IrCallableCache {
 
     private val variableCache = mutableMapOf<FirVariable<*>, IrVariable>()
 
-    private val localClassCache = mutableMapOf<FirClass, IrClass>()
+    private val localClassCache = mutableMapOf<FirClass<*>, IrClass>()
 
     private val localFunctionCache = mutableMapOf<FirFunction<*>, IrSimpleFunction>()
 
@@ -33,9 +33,9 @@ class Fir2IrCallableCache {
         variableCache[firVariable] = irVariable
     }
 
-    fun getLocalClass(localClass: FirClass): IrClass? = localClassCache[localClass]
+    fun getLocalClass(localClass: FirClass<*>): IrClass? = localClassCache[localClass]
 
-    fun putLocalClass(localClass: FirClass, irClass: IrClass) {
+    fun putLocalClass(localClass: FirClass<*>, irClass: IrClass) {
         require(localClass !is FirRegularClass || localClass.visibility == Visibilities.LOCAL)
         localClassCache[localClass] = irClass
     }

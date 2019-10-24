@@ -16,7 +16,7 @@ class FirLocalScope : FirScope() {
 
     val properties = mutableMapOf<Name, FirVariableSymbol<*>>()
     val functions = mutableMapOf<Name, FirFunctionSymbol<*>>()
-    val classes = mutableMapOf<Name, FirClassSymbol>()
+    val classes = mutableMapOf<Name, FirRegularClassSymbol>()
 
     fun storeDeclaration(declaration: FirNamedDeclaration) {
         when (declaration) {

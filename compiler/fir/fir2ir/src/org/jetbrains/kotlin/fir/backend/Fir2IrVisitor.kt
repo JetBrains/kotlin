@@ -167,7 +167,7 @@ class Fir2IrVisitor(
             if (superType is ConeClassLikeType) {
                 when (val superSymbol = superType.lookupTag.toSymbol(this@Fir2IrVisitor.session)) {
                     is FirClassSymbol -> {
-                        val superClass = superSymbol.fir
+                        val superClass = superSymbol.fir as FirClass<*>
                         for (declaration in superClass.declarations) {
                             if (declaration is FirMemberDeclaration && (declaration is FirSimpleFunction || declaration is FirProperty)) {
                                 result += declaration.name
@@ -185,17 +185,17 @@ class Fir2IrVisitor(
         return result
     }
 
-    private fun FirClass.collectCallableNamesFromSupertypes(result: MutableList<Name> = mutableListOf()): List<Name> {
+    private fun FirClass<*>.collectCallableNamesFromSupertypes(result: MutableList<Name> = mutableListOf()): List<Name> {
         for (superTypeRef in superTypeRefs) {
             superTypeRef.collectCallableNamesFromThisAndSupertypes(result)
         }
         return result
     }
 
-    private fun FirClass.getPrimaryConstructorIfAny(): FirConstructor? =
+    private fun FirClass<*>.getPrimaryConstructorIfAny(): FirConstructor? =
         declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }
 
-    private fun IrClass.addFakeOverrides(klass: FirClass, processedCallableNames: MutableList<Name>) {
+    private fun IrClass.addFakeOverrides(klass: FirClass<*>, processedCallableNames: MutableList<Name>) {
         if (fakeOverrideMode == FakeOverrideMode.NONE) return
         val superTypesCallableNames = klass.collectCallableNamesFromSupertypes()
         val useSiteMemberScope = (klass as? FirRegularClass)?.buildUseSiteMemberScope(session, ScopeSession()) ?: return
@@ -262,7 +262,7 @@ class Fir2IrVisitor(
         }
     }
 
-    private fun IrClass.setClassContent(klass: FirClass) {
+    private fun IrClass.setClassContent(klass: FirClass<*>) {
         declarationStorage.enterScope(descriptor)
         val primaryConstructor = klass.getPrimaryConstructorIfAny()
         val irPrimaryConstructor = primaryConstructor?.accept(this@Fir2IrVisitor, null) as IrConstructor?
@@ -341,7 +341,7 @@ class Fir2IrVisitor(
                     if (classLikeSymbol !is FirClassSymbol) {
                         lastClass
                     } else {
-                        val firClass = classLikeSymbol.fir
+                        val firClass = classLikeSymbol.fir as FirClass<*>
                         declarationStorage.getIrClass(firClass, setParent = false)
                     }
                 }
@@ -421,7 +421,7 @@ class Fir2IrVisitor(
     private fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrDelegatingConstructorCall? {
         val constructedClassSymbol = with(typeContext) {
             (constructedTypeRef as FirResolvedTypeRef).type.typeConstructor()
-        } as? FirClassSymbol ?: return null
+        } as? FirClassSymbol<*> ?: return null
         val constructedIrType = constructedTypeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
         // TODO: find delegated constructor correctly
         val classId = constructedClassSymbol.classId
@@ -709,7 +709,8 @@ class Fir2IrVisitor(
             when (symbol) {
                 is IrClassSymbol -> {
                     val irClass = symbol.owner
-                    val irConstructor = firSymbol?.fir?.getPrimaryConstructorIfAny()?.let { firConstructor ->
+                    val fir = firSymbol?.fir as? FirClass<*>
+                    val irConstructor = fir?.getPrimaryConstructorIfAny()?.let { firConstructor ->
                         declarationStorage.getIrConstructor(firConstructor, irParent = irClass, shouldLeaveScope = true)
                     }?.apply {
                         this.parent = irClass

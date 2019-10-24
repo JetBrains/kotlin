@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.SupertypesComputationStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
@@ -24,14 +26,20 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 class FirAnonymousObjectImpl(
     override val source: FirSourceElement?,
-    override val session: FirSession
-) : FirAnonymousObject(), FirModifiableClass, FirAbstractAnnotatedElement {
+    override val session: FirSession,
+    override val symbol: FirAnonymousObjectSymbol
+) : FirAnonymousObject(), FirModifiableClass<FirAnonymousObject>, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override var supertypesComputationStatus: SupertypesComputationStatus = SupertypesComputationStatus.NOT_COMPUTED
     override val classKind: ClassKind get() = ClassKind.OBJECT
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
     override val declarations: MutableList<FirDeclaration> = mutableListOf()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+
+    init {
+        symbol.bind(this)
+    }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         superTypeRefs.forEach { it.accept(visitor, data) }
@@ -50,6 +58,10 @@ class FirAnonymousObjectImpl(
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
+    }
+
+    override fun replaceSupertypesComputationStatus(newSupertypesComputationStatus: SupertypesComputationStatus) {
+        supertypesComputationStatus = newSupertypesComputationStatus
     }
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {

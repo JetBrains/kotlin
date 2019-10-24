@@ -67,7 +67,7 @@ abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel
             is FirNamedFunctionSymbol -> fir.dispatchReceiverValue(session)
             is FirPropertySymbol -> fir.dispatchReceiverValue(session)
             is FirFieldSymbol -> fir.dispatchReceiverValue(session)
-            is FirClassSymbol -> ClassDispatchReceiverValue(fir.symbol)
+            is FirClassSymbol -> ClassDispatchReceiverValue(this)
             else -> null
         }
     }
@@ -263,9 +263,8 @@ fun FirCallableDeclaration<*>.dispatchReceiverValue(session: FirSession): ClassD
     if (this is FirConstructor) return null
     val id = this.symbol.callableId.classId ?: return null
     val symbol = session.firSymbolProvider.getClassLikeSymbolByFqName(id) as? FirClassSymbol ?: return null
-    val regularClass = symbol.fir
 
-    return ClassDispatchReceiverValue(regularClass.symbol)
+    return ClassDispatchReceiverValue(symbol)
 }
 
 private fun FirCallableSymbol<*>.hasExtensionReceiver(): Boolean = this.fir.receiverTypeRef != null
@@ -333,7 +332,7 @@ private fun processSyntheticConstructors(
     bodyResolveComponents: BodyResolveComponents
 ): ProcessorAction {
     if (matchedSymbol == null) return ProcessorAction.NEXT
-    if (matchedSymbol !is FirClassSymbol) return ProcessorAction.NEXT
+    if (matchedSymbol !is FirRegularClassSymbol) return ProcessorAction.NEXT
 
     val function = bodyResolveComponents.samResolver.getSamConstructor(matchedSymbol.fir) ?: return ProcessorAction.NEXT
 
@@ -351,7 +350,7 @@ private fun processConstructors(
         if (matchedSymbol != null) {
             val scope = when (matchedSymbol) {
                 is FirTypeAliasSymbol -> matchedSymbol.fir.buildUseSiteMemberScope(session, scopeSession)
-                is FirClassSymbol -> matchedSymbol.fir.buildUseSiteMemberScope(session, scopeSession)
+                is FirClassSymbol -> matchedSymbol.buildUseSiteMemberScope(session, scopeSession)
             }
 
 

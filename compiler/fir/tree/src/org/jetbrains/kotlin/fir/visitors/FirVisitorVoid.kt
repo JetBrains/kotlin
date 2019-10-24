@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -232,12 +232,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(field)
     }
 
-    open fun visitClass(klass: FirClass) {
-        visitElement(klass)
-    }
-
     open fun <F : FirClassLikeDeclaration<F>> visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<F>) {
         visitElement(classLikeDeclaration)
+    }
+
+    open fun <F : FirClass<F>> visitClass(klass: FirClass<F>) {
+        visitElement(klass)
     }
 
     open fun visitRegularClass(regularClass: FirRegularClass) {
@@ -672,12 +672,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitField(field)
     }
 
-    final override fun visitClass(klass: FirClass, data: Nothing?) {
-        visitClass(klass)
-    }
-
     final override fun <F : FirClassLikeDeclaration<F>> visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<F>, data: Nothing?) {
         visitClassLikeDeclaration(classLikeDeclaration)
+    }
+
+    final override fun <F : FirClass<F>> visitClass(klass: FirClass<F>, data: Nothing?) {
+        visitClass(klass)
     }
 
     final override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {

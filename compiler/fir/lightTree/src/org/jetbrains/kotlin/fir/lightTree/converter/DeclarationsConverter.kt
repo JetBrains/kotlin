@@ -379,7 +379,7 @@ class DeclarationsConverter(
                     className,
                     status,
                     classKind,
-                    FirClassSymbol(context.currentClassId)
+                    FirRegularClassSymbol(context.currentClassId)
                 )
             } else {
                 FirClassImpl(
@@ -388,7 +388,7 @@ class DeclarationsConverter(
                     className,
                     status,
                     classKind,
-                    FirClassSymbol(context.currentClassId)
+                    FirRegularClassSymbol(context.currentClassId)
                 )
             }
             firClass.annotations += modifiers.annotations
@@ -464,7 +464,7 @@ class DeclarationsConverter(
         superTypeRefs.ifEmpty { superTypeRefs += implicitAnyType }
         val delegatedType = delegatedSuperTypeRef ?: implicitAnyType
 
-        return FirAnonymousObjectImpl(null, session).apply {
+        return FirAnonymousObjectImpl(null, session, FirAnonymousObjectSymbol()).apply {
             annotations += modifiers.annotations
             this.superTypeRefs += superTypeRefs
             this.typeRef = superTypeRefs.first()
@@ -514,7 +514,7 @@ class DeclarationsConverter(
                 null,
                 session,
                 enumEntryName,
-                FirClassSymbol(context.currentClassId)
+                FirRegularClassSymbol(context.currentClassId)
             )
             firEnumEntry.annotations += modifiers.annotations
 

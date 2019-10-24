@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.declarations.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.resolve.toTypeProjection
@@ -109,7 +110,8 @@ class FirTypeDeserializer(
         get() = typeParameterDescriptors.values.toList()
 
 
-    fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> = fir.typeParameters.map { it.symbol }
+    fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
+        (fir as? FirTypeParametersOwner)?.typeParameters?.map { it.symbol }.orEmpty()
 
     fun simpleType(proto: ProtoBuf.Type): ConeLookupTagBasedType? {
 

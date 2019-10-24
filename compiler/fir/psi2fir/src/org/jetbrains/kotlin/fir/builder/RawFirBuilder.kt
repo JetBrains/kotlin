@@ -317,7 +317,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         }
 
         private fun KtClassOrObject.extractSuperTypeListEntriesTo(
-            container: FirModifiableClass, delegatedSelfTypeRef: FirTypeRef?
+            container: FirModifiableClass<*>, delegatedSelfTypeRef: FirTypeRef?
         ): FirTypeRef? {
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
             var delegatedSuperTypeRef: FirTypeRef? = null
@@ -439,7 +439,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     enumEntry.toFirSourceElement(),
                     session,
                     enumEntry.nameAsSafeName,
-                    FirClassSymbol(context.currentClassId)
+                    FirRegularClassSymbol(context.currentClassId)
                 )
                 enumEntry.extractAnnotationsTo(firEnumEntry)
                 val delegatedSelfType = enumEntry.toDelegatedSelfType(firEnumEntry)
@@ -486,7 +486,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                         classOrObject.nameAsSafeName,
                         status,
                         classKind,
-                        FirClassSymbol(context.currentClassId)
+                        FirRegularClassSymbol(context.currentClassId)
                     )
                 } else {
                     FirClassImpl(
@@ -495,7 +495,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                         classOrObject.nameAsSafeName,
                         status,
                         classKind,
-                        FirClassSymbol(context.currentClassId)
+                        FirRegularClassSymbol(context.currentClassId)
                     )
                 }
                 classOrObject.extractAnnotationsTo(firClass)
@@ -538,7 +538,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression, data: Unit): FirElement {
             val objectDeclaration = expression.objectDeclaration
-            return FirAnonymousObjectImpl(expression.toFirSourceElement(), session).apply {
+            return FirAnonymousObjectImpl(expression.toFirSourceElement(), session, FirAnonymousObjectSymbol()).apply {
                 objectDeclaration.extractAnnotationsTo(this)
                 objectDeclaration.extractSuperTypeListEntriesTo(this, null)
                 this.typeRef = superTypeRefs.first() // TODO

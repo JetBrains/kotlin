@@ -236,7 +236,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         visitDeclaration(namedDeclaration)
         if (namedDeclaration !is FirCallableDeclaration<*>) { // Handled by visitCallableDeclaration
             print(" " + namedDeclaration.name)
-            if (namedDeclaration is FirClassLikeDeclaration<*>) {
+            if (namedDeclaration is FirTypeParametersOwner) {
                 namedDeclaration.typeParameters.renderTypeParameters()
             }
         } else if (namedDeclaration is FirMemberDeclaration) {

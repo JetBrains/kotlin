@@ -57,8 +57,8 @@ class KotlinDeserializedJvmSymbolsProvider(
     private val javaSymbolProvider: JavaSymbolProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaClassFinder: JavaClassFinder
-) : AbstractFirSymbolProvider() {
-    private val classesCache = HashMap<ClassId, FirClassSymbol>()
+) : AbstractFirSymbolProvider<FirClassLikeSymbol<*>>() {
+    private val classesCache = HashMap<ClassId, FirRegularClassSymbol>()
     private val typeAliasCache = HashMap<ClassId, FirTypeAliasSymbol?>()
     private val packagePartsCache = HashMap<FqName, Collection<PackagePartsCacheData>>()
 
@@ -142,7 +142,7 @@ class KotlinDeserializedJvmSymbolsProvider(
     ): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) as? FirClassSymbol ?: return null
 
-        return symbol.fir.buildDefaultUseSiteMemberScope(session, scopeSession)
+        return (symbol.fir as FirClass<*>).buildDefaultUseSiteMemberScope(session, scopeSession)
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
@@ -304,7 +304,7 @@ class KotlinDeserializedJvmSymbolsProvider(
     private fun findAndDeserializeClass(
         classId: ClassId,
         parentContext: FirDeserializationContext? = null
-    ): FirClassSymbol? {
+    ): FirRegularClassSymbol? {
         if (!hasTopLevelClassOf(classId)) return null
         if (classesCache.containsKey(classId)) return classesCache[classId]
 
@@ -314,7 +314,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             is KotlinClassFinder.Result.KotlinClass -> result.kotlinJvmBinaryClass
             is KotlinClassFinder.Result.ClassFileContent -> {
                 handledByJava.add(classId)
-                return javaSymbolProvider.getFirJavaClass(classId, result) as FirClassSymbol?
+                return javaSymbolProvider.getFirJavaClass(classId, result)
             }
             null -> null
         }
@@ -325,7 +325,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             if (kotlinJvmBinaryClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
             val (nameResolver, classProto) = kotlinJvmBinaryClass.readClassDataFrom() ?: return null
 
-            val symbol = FirClassSymbol(classId)
+            val symbol = FirRegularClassSymbol(classId)
             deserializeClassToSymbol(
                 classId, classProto, symbol, nameResolver, session,
                 JvmBinaryAnnotationDeserializer(session),

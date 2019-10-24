@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirCallResolver
+import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
@@ -346,7 +347,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     val symbol = symbolProvider.getClassLikeSymbolByFqName(classId)
                     // TODO: Unify logic?
                     symbol?.constructType(
-                        Array(symbol.phasedFir.typeParameters.size) {
+                        Array((symbol.phasedFir as? FirTypeParametersOwner)?.typeParameters?.size ?: 0) {
                             ConeStarProjection
                         },
                         isNullable = false

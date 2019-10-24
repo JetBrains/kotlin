@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.SupertypesComputationStatus
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
+interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass<FirRegularClass>, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
     override val source: FirSourceElement?
     override val session: FirSession
     override var resolvePhase: FirResolvePhase
@@ -37,7 +37,7 @@ interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass, FirMo
     override var supertypesComputationStatus: SupertypesComputationStatus
     override val classKind: ClassKind
     override val declarations: MutableList<FirDeclaration>
-    override val symbol: FirClassSymbol
+    override val symbol: FirRegularClassSymbol
     override var companionObject: FirRegularClass?
     override val superTypeRefs: MutableList<FirTypeRef>
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableRegularClass

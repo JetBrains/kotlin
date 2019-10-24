@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.memberScopeProvider
 import org.jetbrains.kotlin.name.ClassId
@@ -14,17 +15,17 @@ import org.jetbrains.kotlin.name.FqName
 
 class FirMemberScopeProvider : FirSessionComponent {
 
-    private val declaredMemberCache = mutableMapOf<FirRegularClass, FirClassDeclaredMemberScope>()
-    private val nestedClassifierCache = mutableMapOf<FirRegularClass, FirNestedClassifierScope>()
+    private val declaredMemberCache = mutableMapOf<FirClass<*>, FirClassDeclaredMemberScope>()
+    private val nestedClassifierCache = mutableMapOf<FirClass<*>, FirNestedClassifierScope>()
     private val selfImportingCache = mutableMapOf<FqName, FirSelfImportingScope>()
 
-    fun declaredMemberScope(klass: FirRegularClass): FirClassDeclaredMemberScope {
+    fun declaredMemberScope(klass: FirClass<*>): FirClassDeclaredMemberScope {
         return declaredMemberCache.getOrPut(klass) {
             FirClassDeclaredMemberScope(klass)
         }
     }
 
-    fun nestedClassifierScope(klass: FirRegularClass): FirNestedClassifierScope {
+    fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope {
         return nestedClassifierCache.getOrPut(klass) {
             FirNestedClassifierScope(klass)
         }
@@ -38,14 +39,14 @@ class FirMemberScopeProvider : FirSessionComponent {
     }
 }
 
-fun declaredMemberScope(klass: FirRegularClass): FirClassDeclaredMemberScope {
+fun declaredMemberScope(klass: FirClass<*>): FirClassDeclaredMemberScope {
     return klass
         .session
         .memberScopeProvider
         .declaredMemberScope(klass)
 }
 
-fun nestedClassifierScope(klass: FirRegularClass): FirNestedClassifierScope {
+fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope {
     return klass
         .session
         .memberScopeProvider

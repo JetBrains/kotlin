@@ -431,7 +431,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 val fir = symbolProvider.getClassLikeSymbolByFqName(it)?.fir
                 if (fir is FirClass) {
                     data.append(fir.classKind.name.toLowerCase()).append(" ")
-                    data.append(fir.name)
+                    data.append((fir as? FirRegularClass)?.name ?: Name.special("<anonymous>"))
                     if (fir.superTypeRefs.any { it.render() != "kotlin/Any" }) {
                         data.append(": ")
                         fir.superTypeRefs.joinTo(data, separator = ", ") { typeRef -> typeRef.render() }

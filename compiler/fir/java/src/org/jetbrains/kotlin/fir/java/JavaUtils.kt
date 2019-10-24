@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toFirSourceElement
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -178,7 +178,7 @@ internal fun JavaAnnotation.toFirAnnotationCall(
         source = null, useSiteTarget = null,
         annotationTypeRef = FirResolvedTypeRefImpl(
             source = null,
-            type = ConeClassTypeImpl(FirClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false)
+            type = ConeClassTypeImpl(FirRegularClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false)
         )
     ).apply {
         for (argument in this@toFirAnnotationCall.arguments) {

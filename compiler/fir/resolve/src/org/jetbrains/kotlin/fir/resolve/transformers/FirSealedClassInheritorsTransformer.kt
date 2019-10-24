@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -81,7 +82,7 @@ class FirSealedClassInheritorsTransformer : FirTransformer<Nothing?>() {
             val lookupTag = ((typeRef as FirResolvedTypeRef).type as? ConeLookupTagBasedType)?.lookupTag ?: return null
             val classLikeSymbol: FirClassifierSymbol<*> = symbolProvider.getSymbolByLookupTag(lookupTag) ?: return null
             return when (classLikeSymbol) {
-                is FirClassSymbol -> classLikeSymbol.fir
+                is FirRegularClassSymbol -> classLikeSymbol.fir
                 is FirTypeAliasSymbol -> extractClassFromTypeRef(symbolProvider, classLikeSymbol.fir.expandedTypeRef)
                 else -> null
             }

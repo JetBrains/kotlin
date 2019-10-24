@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 class FirJavaClass internal constructor(
     override val source: FirSourceElement?,
     override val session: FirSession,
-    override val symbol: FirClassSymbol,
+    override val symbol: FirRegularClassSymbol,
     override val name: Name,
     visibility: Visibility,
     modality: Modality?,
@@ -35,7 +35,7 @@ class FirJavaClass internal constructor(
     isTopLevel: Boolean,
     isStatic: Boolean,
     internal val javaTypeParameterStack: JavaTypeParameterStack
-) : FirPureAbstractElement(), FirRegularClass, FirModifiableClass {
+) : FirPureAbstractElement(), FirRegularClass, FirModifiableClass<FirRegularClass> {
     override var status: FirDeclarationStatusImpl = FirDeclarationStatusImpl(visibility, modality)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
@@ -80,7 +80,7 @@ class FirJavaClass internal constructor(
         superTypeRefs.forEach { it.accept(visitor, data) }
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableClass {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaClass {
         declarations.transformInplace(transformer, data)
         annotations.transformInplace(transformer, data)
         typeParameters.transformInplace(transformer, data)

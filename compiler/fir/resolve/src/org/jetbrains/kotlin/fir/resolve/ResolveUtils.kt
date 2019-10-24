@@ -47,6 +47,9 @@ val FirSession.correspondingSupertypesCache: FirCorrespondingSupertypesCache by 
 val FirSession.memberScopeProvider: FirMemberScopeProvider by componentArrayAccessor()
 
 fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSymbol<*>? {
+    if (this is ConeClassLookupTagWithFixedSymbol) {
+        return this.symbol
+    }
     val firSymbolProvider = useSiteSession.firSymbolProvider
     return firSymbolProvider.getSymbolByLookupTag(this)
 }
@@ -96,7 +99,7 @@ fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): FirClassifierS
 
 fun ConeTypeParameterLookupTag.toSymbol(): FirTypeParameterSymbol = this.symbol as FirTypeParameterSymbol
 
-fun ConeClassLikeLookupTag.constructClassType(typeArguments: Array<ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
+fun ConeClassLikeLookupTag.constructClassType(typeArguments: Array<out ConeKotlinTypeProjection>, isNullable: Boolean): ConeLookupTagBasedType {
     return ConeClassTypeImpl(this, typeArguments, isNullable)
 }
 

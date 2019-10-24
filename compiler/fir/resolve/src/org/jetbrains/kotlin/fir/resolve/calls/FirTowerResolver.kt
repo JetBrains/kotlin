@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.TowerDataKind.EMPTY
@@ -110,7 +111,7 @@ class FirTowerResolver(
                 if (blockDispatchReceivers) {
                     continue
                 }
-                if (!implicitDispatchReceiverValue.boundSymbol.fir.isInner) {
+                if ((implicitDispatchReceiverValue.boundSymbol.fir as? FirRegularClass)?.isInner == false) {
                     blockDispatchReceivers = true
                 }
             }
@@ -192,7 +193,7 @@ class FirTowerResolver(
                     // }
                     towerDataConsumer.consume(TOWER_LEVEL, ScopeTowerLevel(session, components, implicitCompanionScope), group++)
                 }
-                if (!implicitReceiverValue.boundSymbol.fir.isInner) {
+                if ((implicitReceiverValue.boundSymbol.fir as? FirRegularClass)?.isInner == false) {
                     blockDispatchReceivers = true
                 }
             }

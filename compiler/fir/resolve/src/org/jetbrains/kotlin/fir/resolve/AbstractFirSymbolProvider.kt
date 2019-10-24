@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-abstract class AbstractFirSymbolProvider : FirSymbolProvider() {
-    protected val classCache = HashMap<ClassId, FirClassLikeSymbol<*>?>()
+abstract class AbstractFirSymbolProvider<C : FirClassLikeSymbol<*>> : FirSymbolProvider() {
+    protected val classCache = HashMap<ClassId, C?>()
     protected val topLevelCallableCache = HashMap<CallableId, List<FirCallableSymbol<*>>>()
     protected val packageCache = HashMap<FqName, FqName?>()
 
@@ -29,15 +26,15 @@ abstract class AbstractFirSymbolProvider : FirSymbolProvider() {
         }
     }
 
-    protected inline fun <K, V : Any?, T> MutableMap<K, V>.lookupCacheOrCalculateWithPostCompute(
-        key: K, crossinline l: (K) -> Pair<V, T>, postCompute: (V, T) -> Unit
+    protected inline fun <K, V : Any, T> MutableMap<K, V?>.lookupCacheOrCalculateWithPostCompute(
+        key: K, crossinline l: (K) -> Pair<V?, T>, postCompute: (V, T) -> Unit
     ): V? {
         return if (containsKey(key)) {
             this[key]
         } else {
             val calculated = l(key)
             this[key] = calculated.first
-            postCompute(calculated.first, calculated.second)
+            calculated.first?.let { first -> postCompute(first, calculated.second) }
             calculated.first
         }
     }

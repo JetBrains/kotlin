@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.expressions.*

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
 import org.jetbrains.kotlin.load.java.lazy.NullabilityQualifierWithApplicability
@@ -51,7 +51,7 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
     }
 
     private val FirAnnotationCall.resolvedClass: FirRegularClass?
-        get() = (coneClassLikeType?.lookupTag?.toSymbol(this@FirAnnotationTypeQualifierResolver.session) as? FirClassSymbol)?.fir
+        get() = (coneClassLikeType?.lookupTag?.toSymbol(this@FirAnnotationTypeQualifierResolver.session) as? FirRegularClassSymbol)?.fir
 
     fun resolveTypeQualifierAnnotation(annotationCall: FirAnnotationCall): FirAnnotationCall? {
         if (jsr305State.disabled) {

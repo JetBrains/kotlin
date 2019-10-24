@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
@@ -70,7 +71,7 @@ abstract class AbstractAnnotationDeserializer(
         val classId = nameResolver.getClassId(proto.id)
         val lookupTag = ConeClassLikeLookupTagImpl(classId)
         val symbol = lookupTag.toSymbol(session)
-        val firAnnotationClass = (symbol as? FirClassSymbol)?.fir
+        val firAnnotationClass = (symbol as? FirRegularClassSymbol)?.fir
 
         var arguments = emptyList<FirExpression>()
         if (proto.argumentCount != 0 && firAnnotationClass?.classKind == ClassKind.ANNOTATION_CLASS) {

@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -234,12 +234,12 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(field, data)
     }
 
-    open fun transformClass(klass: FirClass, data: D): CompositeTransformResult<FirStatement> {
-        return transformElement(klass, data)
+    open fun <F : FirClassLikeDeclaration<F>> transformClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<F>, data: D): CompositeTransformResult<FirStatement> {
+        return transformElement(classLikeDeclaration, data)
     }
 
-    open fun <F : FirClassLikeDeclaration<F>> transformClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<F>, data: D): CompositeTransformResult<FirDeclaration> {
-        return transformElement(classLikeDeclaration, data)
+    open fun <F : FirClass<F>> transformClass(klass: FirClass<F>, data: D): CompositeTransformResult<FirStatement> {
+        return transformElement(klass, data)
     }
 
     open fun transformRegularClass(regularClass: FirRegularClass, data: D): CompositeTransformResult<FirStatement> {
@@ -674,12 +674,12 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformField(field, data)
     }
 
-    final override fun visitClass(klass: FirClass, data: D): CompositeTransformResult<FirStatement> {
-        return transformClass(klass, data)
+    final override fun <F : FirClassLikeDeclaration<F>> visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<F>, data: D): CompositeTransformResult<FirStatement> {
+        return transformClassLikeDeclaration(classLikeDeclaration, data)
     }
 
-    final override fun <F : FirClassLikeDeclaration<F>> visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<F>, data: D): CompositeTransformResult<FirDeclaration> {
-        return transformClassLikeDeclaration(classLikeDeclaration, data)
+    final override fun <F : FirClass<F>> visitClass(klass: FirClass<F>, data: D): CompositeTransformResult<FirStatement> {
+        return transformClass(klass, data)
     }
 
     final override fun visitRegularClass(regularClass: FirRegularClass, data: D): CompositeTransformResult<FirStatement> {

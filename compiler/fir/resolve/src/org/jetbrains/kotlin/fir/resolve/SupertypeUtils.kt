@@ -13,14 +13,11 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 
 fun lookupSuperTypes(
-    klass: FirRegularClass,
+    klass: FirClass<*>,
     lookupInterfaces: Boolean,
     deep: Boolean,
     useSiteSession: FirSession
@@ -51,6 +48,13 @@ val USE_SITE = scopeSessionKey<FirScope>()
 
 data class SubstitutionScopeKey(val type: ConeClassLikeType) : ScopeSessionKey<FirClassSubstitutionScope>() {}
 
+fun FirClassSymbol<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
+    when (this) {
+        is FirAnonymousObjectSymbol -> return fir.buildDefaultUseSiteMemberScope(useSiteSession, builder)
+        is FirRegularClassSymbol -> return fir.buildUseSiteMemberScope(useSiteSession, builder)
+    }
+}
+
 fun FirRegularClass.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
     if (classId.isLocal) {
         // It's not possible to find local class by symbol
@@ -67,7 +71,7 @@ fun FirTypeAlias.buildUseSiteMemberScope(useSiteSession: FirSession, builder: Sc
     }
 }
 
-fun FirRegularClass.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
+fun FirClass<*>.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope {
     return builder.getOrBuild(symbol, USE_SITE) {
 
         val declaredScope = declaredMemberScope(this)
@@ -75,7 +79,7 @@ fun FirRegularClass.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, b
             .mapNotNull { useSiteSuperType ->
                 if (useSiteSuperType is ConeClassErrorType) return@mapNotNull null
                 val symbol = useSiteSuperType.lookupTag.toSymbol(useSiteSession)
-                if (symbol is FirClassSymbol) {
+                if (symbol is FirRegularClassSymbol) {
                     val useSiteMemberScope = symbol.fir.buildUseSiteMemberScope(useSiteSession, builder)!!
                     useSiteSuperType.wrapSubstitutionScopeIfNeed(useSiteSession, useSiteMemberScope, symbol.fir, builder)
                 } else {
@@ -94,8 +98,9 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
 ): FirScope {
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
+        val typeParameters = (declaration as? FirTypeParametersOwner)?.typeParameters.orEmpty()
         @Suppress("UNCHECKED_CAST")
-        val substitution = declaration.typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
+        val substitution = typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
             typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
         }.filter { (_, type) -> type != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
 
@@ -121,7 +126,7 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
     when (this) {
         is FirClassSymbol -> {
             val superClassTypes =
-                fir.superConeTypes.mapNotNull {
+                superConeTypes.mapNotNull {
                     it.computePartialExpansion(useSiteSession)
                         .takeIf { type -> lookupInterfaces || type.isClassBasedType(useSiteSession) }
                 }
@@ -149,5 +154,11 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
 
 private fun ConeClassLikeType?.isClassBasedType(
     useSiteSession: FirSession
-) = this !is ConeClassErrorType &&
-        (this?.lookupTag?.toSymbol(useSiteSession) as? FirClassSymbol)?.fir?.classKind == ClassKind.CLASS
+): Boolean {
+    if (this is ConeClassErrorType) return false
+    val symbol = this?.lookupTag?.toSymbol(useSiteSession) as? FirClassSymbol ?: return false
+    return when (symbol) {
+        is FirAnonymousObjectSymbol -> true
+        is FirRegularClassSymbol -> symbol.fir.classKind == ClassKind.CLASS
+    }
+}

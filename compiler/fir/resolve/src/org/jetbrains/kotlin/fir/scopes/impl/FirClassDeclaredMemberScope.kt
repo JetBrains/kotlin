@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -18,15 +19,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirClassDeclaredMemberScope(klass: FirRegularClass) : FirScope() {
+class FirClassDeclaredMemberScope(klass: FirClass<*>) : FirScope() {
     private val nestedClassifierScope = nestedClassifierScope(klass)
 
     private val callablesIndex: Map<Name, List<FirCallableSymbol<*>>> = run {
         val result = mutableMapOf<Name, MutableList<FirCallableSymbol<*>>>()
-        for (declaration in klass.declarations) {
+        loop@ for (declaration in klass.declarations) {
             when (declaration) {
                 is FirCallableMemberDeclaration<*> -> {
-                    val name = if (declaration is FirConstructor) klass.name else declaration.name
+                    val name = when (declaration) {
+                        is FirConstructor -> if (klass is FirRegularClass) klass.name else continue@loop
+                        else -> declaration.name
+                    }
                     result.getOrPut(name) { mutableListOf() } += declaration.symbol
                 }
                 is FirRegularClass -> {

@@ -33,8 +33,8 @@ class FirTypeAliasImpl(
     override var expandedTypeRef: FirTypeRef
 ) : FirTypeAlias(), FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override var supertypesComputationStatus: SupertypesComputationStatus = SupertypesComputationStatus.NOT_COMPUTED
+    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     init {
