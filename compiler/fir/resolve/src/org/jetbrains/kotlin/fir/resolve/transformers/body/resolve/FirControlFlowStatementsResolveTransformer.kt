@@ -69,6 +69,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
                     whenExpression = whenExpression.transformBranches(transformer, null)
 
                     whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression) ?: run {
+                        whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
                         dataFlowAnalyzer.exitWhenExpression(whenExpression)
                         whenExpression.resultType = FirErrorTypeRefImpl(null, "")
                         return@with whenExpression.compose()
