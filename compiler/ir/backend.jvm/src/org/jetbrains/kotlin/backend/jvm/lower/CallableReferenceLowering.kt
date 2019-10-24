@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
@@ -15,15 +14,10 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
-import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.irArray
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
-import org.jetbrains.kotlin.backend.jvm.ir.isLambda
+import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -33,12 +27,10 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -49,52 +41,12 @@ internal val callableReferencePhase = makeIrFilePhase(
     description = "Handle callable references"
 )
 
-internal class InlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitorVoidWithContext() {
-    val inlineReferences = mutableSetOf<IrFunctionReference>()
 
-    // For crossinline lambdas, the call site is null as it's probably in a separate class somewhere.
-    // All other lambdas are guaranteed to be inlined into the scope they are declared in.
-    val lambdaToCallSite = mutableMapOf<IrFunction, IrDeclaration?>()
-
-    override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
-
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
-        val function = expression.symbol.owner
-        if (function.isInlineFunctionCall(context)) {
-            for (parameter in function.valueParameters) {
-                if (!parameter.isInlineParameter())
-                    continue
-
-                val valueArgument = expression.getValueArgument(parameter.index) ?: continue
-                if (!isInlineIrExpression(valueArgument))
-                    continue
-
-                val reference = when (valueArgument) {
-                    is IrFunctionReference -> valueArgument
-                    is IrBlock -> valueArgument.statements.filterIsInstance<IrFunctionReference>().singleOrNull()
-                    else -> null
-                } ?: continue
-
-                inlineReferences.add(reference)
-                if (valueArgument is IrBlock && valueArgument.origin.isLambda) {
-                    lambdaToCallSite[reference.symbol.owner] =
-                        if (parameter.isCrossinline) null else currentScope!!.irElement as IrDeclaration
-                }
-            }
-        }
-        return super.visitFunctionAccess(expression)
-    }
-
-    companion object {
-        fun scan(context: JvmBackendContext, element: IrElement) =
-            InlineReferenceLocator(context).apply { element.accept(this, null) }
-    }
-}
 
 // Originally copied from K/Native
 internal class CallableReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     // This pass ignores suspend function references and function references used in inline arguments to inline functions.
-    private val ignoredFunctionReferences = mutableSetOf<IrFunctionReference>()
+    private val ignoredFunctionReferences = mutableSetOf<IrCallableReference>()
 
     private val IrFunctionReference.isIgnored: Boolean
         get() = (!type.isFunctionOrKFunction() || ignoredFunctionReferences.contains(this)) && !isSuspendCallableReference()
@@ -103,7 +55,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
     private fun IrFunctionReference.isSuspendCallableReference(): Boolean = isSuspend && origin == null
 
     override fun lower(irFile: IrFile) {
-        ignoredFunctionReferences.addAll(InlineReferenceLocator.scan(context, irFile).inlineReferences)
+        ignoredFunctionReferences.addAll(IrInlineReferenceLocator.scan(context, irFile).inlineReferences)
         irFile.transformChildrenVoid(this)
     }
 

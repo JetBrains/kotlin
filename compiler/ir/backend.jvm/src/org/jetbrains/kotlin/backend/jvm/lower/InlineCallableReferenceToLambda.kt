@@ -7,18 +7,16 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ScopeWithIr
-import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.copyValueParametersToStatic
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
-import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
+import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.irArray
+import org.jetbrains.kotlin.backend.jvm.ir.isLambda
 import org.jetbrains.kotlin.codegen.AsmUtil.BOUND_REFERENCE_RECEIVER
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.*
@@ -28,9 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isSubtypeOf
-import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -49,187 +45,139 @@ internal val inlineCallableReferenceToLambdaPhase = makeIrFilePhase(
 //
 //      foo(::smth) -> foo { a -> smth(a) }
 //
-internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendContext) : FileLoweringPass {
-    private val inlinableCR = mutableSetOf<IrCallableReference>()
+internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendContext) : FileLoweringPass,
+    IrElementTransformerVoidWithContext() {
+
+    private var inlinableReferences = mutableSetOf<IrCallableReference>()
 
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
-
-            override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-                val callee = expression.symbol.owner
-                if (callee.isInlineFunctionCall(context)) {
-                    for (valueParameter in callee.valueParameters) {
-                        if (valueParameter.isInlineParameter()) {
-                            expression.getValueArgument(valueParameter.index)?.let { argument ->
-                                if (argument is IrCallableReference && isInlineIrExpression(argument)) {
-                                    inlinableCR.add(argument)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                return super.visitFunctionAccess(expression)
-            }
-
-
-            override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
-                if (expression !in inlinableCR) {
-                    return super.visitPropertyReference(expression)
-                }
-
-                //Use getter if field is absent...
-                val field =
-                    expression.field?.owner ?: return functionReferenceToLambda(currentScope!!, expression, expression.getter!!.owner)
-
-                //..else use field itself
-                val irBuilder =
-                    context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
-                val boundReceiver = expression.dispatchReceiver ?: expression.extensionReceiver
-                return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
-                    lateinit var variableForBoundReceiver: IrVariable
-                    if (boundReceiver != null) {
-                        variableForBoundReceiver = createTmpVariable(boundReceiver, BOUND_REFERENCE_RECEIVER)
-                    }
-
-                    val newLambda = buildFun {
-                        setSourceRange(expression)
-                        origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
-                        name = Name.identifier("stub_for_inline")
-                        visibility = Visibilities.LOCAL
-                        returnType = field.type
-                        isSuspend = false
-                    }.apply {
-
-                        val receiver =
-                            when {
-                                field.isStatic -> null
-                                boundReceiver != null -> variableForBoundReceiver
-                                else -> addValueParameter("receiver", field.parentAsClass.defaultType)
-                            }
-
-                        val lambdaBodyBuilder = this@InlineCallableReferenceToLambdaPhase.context.createIrBuilder(this.symbol)
-                        body = lambdaBodyBuilder.irBlockBody(startOffset, endOffset) {
-                            +irReturn(irGetField(if (receiver != null) irGet(receiver) else null, field))
-                        }
-                    }
-                    +newLambda
-
-                    +IrFunctionReferenceImpl(
-                        expression.startOffset, expression.endOffset, field.type,
-                        newLambda.symbol, newLambda.symbol.descriptor, 0,
-                        IrStatementOrigin.LAMBDA
-                    ).apply {
-                        copyAttributes(expression)
-                    }
-                }
-            }
-
-            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-                if (inlinableCR.contains(expression)) {
-                    val referencedFunction = expression.symbol.owner
-                    return functionReferenceToLambda(currentScope!!, expression, referencedFunction)
-                }
-
-                return super.visitFunctionReference(expression)
-            }
-        })
+        IrInlineReferenceLocator.scan(context, irFile).let {
+            inlinableReferences.addAll(it.inlineReferences)
+        }
+        irFile.transformChildrenVoid(this)
     }
 
-    private fun functionReferenceToLambda(
-        scope: ScopeWithIr,
-        expression: IrCallableReference,
-        referencedFunction: IrFunction
-    ): IrExpression {
-        val irBuilder =
-            context.createIrBuilder(scope.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+    override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        if (expression !in inlinableReferences || expression.origin.isLambda) return expression
 
+        return expandInlineFunctionReferenceToLambda(expression, expression.symbol.owner)
+    }
 
-        val boundReceiver = expression.dispatchReceiver ?: expression.extensionReceiver
+    override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
+        if (expression !in inlinableReferences) return expression
 
-        val expectedType = expression.type
-        var expectedNumValueParameters: Int
-        if (expectedType.isFunctionOrKFunction() || expectedType.isSuspendFunction() || expectedType.isKSuspendFunction()) { // TODO: handle subtypes
-            expectedNumValueParameters = (expectedType as IrSimpleType).arguments.size - 1  // In ...Function classes, the last argument is return type
-            referencedFunction.dispatchReceiverParameter?.let { expectedNumValueParameters-- }
-            referencedFunction.extensionReceiverParameter?.let { expectedNumValueParameters-- }
-            boundReceiver?.let { expectedNumValueParameters++ }
-            assert(referencedFunction.valueParameters.subList(expectedNumValueParameters, referencedFunction.valueParameters.size).all {
-                it.defaultValue != null
-            })
+        return if (expression.field?.owner == null) {
+            // Use getter if field is absent ...
+            expandInlineFunctionReferenceToLambda(expression, expression.getter!!.owner)
         } else {
-            assert(expectedType.classOrNull?.isSubtypeOfClass(context.irBuiltIns.kPropertyClass) == true)
-            expectedNumValueParameters = 0
+            // ... else use field itself
+            expandInlineFieldReferenceToLambda(expression, expression.field!!.owner)
         }
+    }
 
+    private fun expandInlineFieldReferenceToLambda(expression: IrPropertyReference, field: IrField): IrExpression {
+        val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
-            lateinit var variableForBoundReceiver: IrVariable
-            if (boundReceiver != null) {
-                variableForBoundReceiver = createTmpVariable(boundReceiver, BOUND_REFERENCE_RECEIVER)
-            }
-
-            val newLambda = buildFun {
+            val function = buildFun {
                 setSourceRange(expression)
                 origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
                 name = Name.identifier("stub_for_inline")
                 visibility = Visibilities.LOCAL
+                returnType = field.type
+                isSuspend = false
+            }.apply {
+                val boundReceiver = expression.dispatchReceiver ?: expression.extensionReceiver
+
+                val receiver =
+                    when {
+                        field.isStatic -> null
+                        boundReceiver != null -> irGet(irTemporary(boundReceiver, BOUND_REFERENCE_RECEIVER))
+                        else -> irGet(addValueParameter("receiver", field.parentAsClass.defaultType))
+                    }
+
+                body = this@InlineCallableReferenceToLambdaPhase.context.createIrBuilder(symbol).run {
+                    irExprBody(irGetField(receiver, field))
+                }
+            }
+
+            +function
+            +IrFunctionReferenceImpl(
+                expression.startOffset,
+                expression.endOffset,
+                field.type,
+                function.symbol,
+                function.symbol.descriptor,
+                typeArgumentsCount = 0,
+                origin = IrStatementOrigin.LAMBDA
+            ).apply {
+                copyAttributes(expression)
+            }
+        }
+    }
+
+    private fun expandInlineFunctionReferenceToLambda(expression: IrCallableReference, referencedFunction: IrFunction): IrExpression {
+        val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+        return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
+
+            val parameterTypes = (expression.type as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
+            val argumentTypes = parameterTypes.dropLast(1)
+
+            val boundReceiver: Pair<IrValueParameter, IrExpression>? = expression.getArgumentsWithIr().singleOrNull()
+
+            val function = buildFun {
+                setSourceRange(expression)
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                name = Name.identifier("stub_for_inlining")
+                visibility = Visibilities.LOCAL
                 returnType = referencedFunction.returnType
                 isSuspend = false
             }.apply {
-                if (referencedFunction is IrConstructor) {
-                    copyTypeParametersFrom(referencedFunction.parentAsClass)
-                }
-                copyTypeParametersFrom(referencedFunction)
-                if (boundReceiver == null) {
-                    copyValueParametersToStatic(referencedFunction, origin, numValueParametersToCopy = expectedNumValueParameters)
-                } else {
-                    for (oldValueParameter in referencedFunction.valueParameters) {
-                        if (oldValueParameter.index >= expectedNumValueParameters) break
-                        valueParameters.add(
-                            oldValueParameter.copyTo(
-                                this,
-                                origin = origin,
-                                index = oldValueParameter.index
-                            )
-                        )
+                for ((index, argumentType) in argumentTypes.withIndex()) {
+                    addValueParameter {
+                        name = Name.identifier("p$index")
+                        type = argumentType
                     }
                 }
-                val lambdaBodyBuilder = this@InlineCallableReferenceToLambdaPhase.context.createIrBuilder(this.symbol)
-                body = lambdaBodyBuilder.irBlockBody(startOffset, endOffset) {
-                    var shift = 0
-                    val irCall =
-                        if (expression is IrPropertyReference)
-                            irGet(referencedFunction.returnType, null, referencedFunction.symbol)
-                        else irCall(referencedFunction.symbol)
 
-                    +irReturn(
-                        irCall.also { call ->
-                            for (it in this@apply.typeParameters) {
-                                call.putTypeArgument(it.index, expression.getTypeArgument(it.index))
-                            }
-
-                            referencedFunction.dispatchReceiverParameter?.let {
-                                call.dispatchReceiver =
-                                    irGet(if (expression.dispatchReceiver != null) variableForBoundReceiver else valueParameters[shift++])
-                            }
-                            referencedFunction.extensionReceiverParameter?.let {
-                                call.extensionReceiver =
-                                    irGet(if (expression.extensionReceiver != null) variableForBoundReceiver else valueParameters[shift++])
-                            }
-
-                            for (it in referencedFunction.valueParameters.indices) {
-                                if (it >= expectedNumValueParameters) break
-                                call.putValueArgument(it, irGet(valueParameters[shift++]))
-                            }
+                body = this@InlineCallableReferenceToLambdaPhase.context.createJvmIrBuilder(
+                    this.symbol,
+                    expression.startOffset,
+                    expression.endOffset
+                ).run {
+                    irExprBody(irCall(referencedFunction).apply {
+                        this@apply.descriptor.typeParameters.forEach {
+                            putTypeArgument(it.index, expression.getTypeArgument(it.index))
                         }
-                    )
+
+                        var unboundIndex = 0
+                        for (parameter in referencedFunction.explicitParameters) {
+                            when {
+                                boundReceiver?.first == parameter ->
+                                    irGet(irTemporary(boundReceiver.second))
+                                parameter.isVararg && unboundIndex < argumentTypes.size && parameter.type == valueParameters[unboundIndex].type ->
+                                    irGet(valueParameters[unboundIndex++])
+                                parameter.isVararg && (unboundIndex < argumentTypes.size || !parameter.hasDefaultValue()) ->
+                                    irArray(parameter.type) {
+                                        (unboundIndex until argumentTypes.size).forEach { +irGet(valueParameters[unboundIndex++]) }
+                                    }
+                                unboundIndex >= argumentTypes.size ->
+                                    null
+                                else ->
+                                    irGet(valueParameters[unboundIndex++])
+                            }?.let { putArgument(referencedFunction, parameter, it) }
+                        }
+                    })
                 }
             }
-            +newLambda
 
+            +function
             +IrFunctionReferenceImpl(
-                expression.startOffset, expression.endOffset, referencedFunction.returnType,
-                newLambda.symbol, newLambda.symbol.descriptor, referencedFunction.typeParameters.size,
+                expression.startOffset,
+                expression.endOffset,
+                referencedFunction.returnType,
+                function.symbol,
+                function.symbol.descriptor,
+                referencedFunction.typeParameters.size,
                 IrStatementOrigin.LAMBDA
             ).apply {
                 copyAttributes(expression)
