@@ -2078,7 +2078,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
             runnable.run();
           }
         })
-        .coalesceBy(ProjectViewImpl.this)
+        .coalesceBy(EditorSelectInContext.class, ProjectViewImpl.this)
         .expireWhen(editor::isDisposed)
         .submit(AppExecutorUtil.getAppExecutorService());
     }
