@@ -344,8 +344,7 @@ open class KonanDriverTest : KonanStandaloneTest() {
     }
 
     private fun konan() {
-        val dist = project.rootProject.file(project.findProperty("org.jetbrains.kotlin.native.home") ?:
-        project.findProperty("konan.home") ?: "dist")
+        val dist = project.kotlinNativeDist
         val konancDriver = if (HostManager.hostIsMingw) "konanc.bat" else "konanc"
         val konanc = File("${dist.canonicalPath}/bin/$konancDriver").absolutePath
 

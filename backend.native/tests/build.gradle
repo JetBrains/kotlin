@@ -98,6 +98,21 @@ project.convention.plugins.executor = ExecutorServiceKt.create(project)
 // Do not generate run tasks for konan built artifacts
 ext.konanNoRun = true
 
+final CacheTesting cacheTesting = CacheTestingKt.configureCacheTesting(project)
+if (cacheTesting != null) {
+    // Note: can't do this in [CacheTesting.configure] since task classes aren't accessible there.
+
+    tasks.withType(KonanCompileNativeBinary.class) {
+        dependsOn cacheTesting.buildCacheTask
+        extraOpts cacheTesting.compilerArgs
+    }
+
+    tasks.withType(RunExternalTestGroup.class) {
+        dependsOn cacheTesting.buildCacheTask
+        flags = (flags ?: []) + cacheTesting.compilerArgs
+    }
+}
+
 // Enable two-stage test compilation if the test_two_stage property is set.
 ext.twoStageEnabled = project.hasProperty("test_two_stage")
 
@@ -2427,18 +2442,21 @@ standaloneTest("args0") {
 }
 
 standaloneTest("devirtualization_lateinitInterface") {
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "42\n"
     flags = ["-opt"]
     source = "codegen/devirtualization/lateinitInterface.kt"
 }
 
 standaloneTest("devirtualization_getter_looking_as_box_function") {
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "box\n"
     flags = ["-opt"]
     source = "codegen/devirtualization/getter_looking_as_box_function.kt"
 }
 
 standaloneTest("devirtualization_anonymousObject") {
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "zzz\n"
     flags = ["-opt"]
     source = "codegen/devirtualization/anonymousObject.kt"
@@ -3207,6 +3225,7 @@ task driver0(type: KonanDriverTest) {
 }
 
 task driver_opt(type: KonanDriverTest) {
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     goldValue = "Hello, world!\n"
     source = "runtime/basic/driver0.kt"
     flags = ["-opt"]
@@ -3743,7 +3762,7 @@ if (isAppleTarget(project)) {
         final String frameworkName = 'Stdlib'
         testName = frameworkName
         frameworkNames = [frameworkName]
-        fullBitcode = true
+        if (cacheTesting == null) fullBitcode = true
         konanArtifacts {
             framework(frameworkName, targets: [ targetName ]) {
                 srcDir 'framework/stdlib'
@@ -3760,7 +3779,9 @@ if (isAppleTarget(project)) {
         swiftSources = ['framework/stdlib/stdlib.swift']
     }
 
-    task testMultipleFrameworks(type: FrameworkTest) {
+    if (cacheTesting != null && cacheTesting.isDynamic) {
+        // testMultipleFrameworks disabled until https://youtrack.jetbrains.com/issue/KT-34262 is fixed.
+    } else task testMultipleFrameworks(type: FrameworkTest) {
         testName = "MultipleFrameworks"
         final String firstFrameworkName = 'First'
         final String secondFrameworkName = 'Second'
