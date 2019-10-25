@@ -609,7 +609,9 @@ class Fir2IrDeclarationStorage(
             base.startOffset, base.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
             Name.identifier(getNameForTemporary(nameHint)), base.type,
             isVar = false, isConst = false, isLateinit = false
-        )
+        ).apply {
+            initializer = base
+        }
     }
 
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol): IrClassSymbol {

@@ -24,6 +24,7 @@ FILE fqName:<root> fileName:/when.kt
       RETURN type=kotlin.Nothing from='public final fun testWithSubject (x: kotlin.Any?): kotlin.String declared in <root>'
         BLOCK type=kotlin.String origin=WHEN
           VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Any? [val]
+            GET_VAR 'x: kotlin.Any? declared in <root>.testWithSubject' type=kotlin.Any? origin=null
           WHEN type=kotlin.String origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -88,6 +89,7 @@ FILE fqName:<root> fileName:/when.kt
       RETURN type=kotlin.Nothing from='public final fun testComma (x: kotlin.Int): kotlin.String declared in <root>'
         BLOCK type=kotlin.String origin=WHEN
           VAR IR_TEMPORARY_VARIABLE name:tmp1_subject type:kotlin.Int [val]
+            GET_VAR 'x: kotlin.Int declared in <root>.testComma' type=kotlin.Int origin=null
           WHEN type=kotlin.String origin=WHEN
             BRANCH
               if: WHEN type=kotlin.Boolean origin=OROR
