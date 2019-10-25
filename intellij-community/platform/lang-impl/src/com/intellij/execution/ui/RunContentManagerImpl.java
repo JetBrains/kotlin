@@ -208,13 +208,6 @@ public final class RunContentManagerImpl implements RunContentManager, Disposabl
 
   @Override
   @Nullable
-  public RunContentDescriptor getSelectedContent(final Executor executor) {
-    final Content selectedContent = getContentManagerForRunner(executor, null).getSelectedContent();
-    return selectedContent != null ? getRunContentDescriptorByContent(selectedContent) : null;
-  }
-
-  @Override
-  @Nullable
   public RunContentDescriptor getSelectedContent() {
     for (String activeWindow : myToolwindowIdZBuffer) {
       final ContentManager contentManager = myToolwindowIdToContentManagerMap.get(activeWindow);
