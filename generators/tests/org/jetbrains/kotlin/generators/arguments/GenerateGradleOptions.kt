@@ -49,7 +49,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                           commonOptions + additionalOptions)
     }
 
-    println("### Attributes common for 'kotlin', 'kotlin2js' and 'kotlin2jsDce\n")
+    println("### Attributes Common for JVM, JS, and JS DCE\n")
     generateMarkdown(commonOptions + additionalOptions)
 
     val commonCompilerInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions")
@@ -60,7 +60,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                           parentType = commonInterfaceFqName)
     }
 
-    println("\n### Attributes common for 'kotlin' and 'kotlin2js'\n")
+    println("\n### Attributes Common for JVM and JS\n")
     generateMarkdown(commonCompilerOptions)
 
     // generate jvm interface
@@ -82,7 +82,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                      commonOptions + commonCompilerOptions + jvmOptions)
     }
 
-    println("\n### Attributes specific for 'kotlin'\n")
+    println("\n### Attributes Specific for JVM\n")
     generateMarkdown(jvmOptions)
 
     // generate js interface
@@ -103,7 +103,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
                      commonOptions + commonCompilerOptions + jsOptions)
     }
 
-    println("\n### Attributes specific for 'kotlin2js'\n")
+    println("\n### Attributes Specific for JS\n")
     generateMarkdown(jsOptions)
 
     // generate JS DCE interface and implementation
