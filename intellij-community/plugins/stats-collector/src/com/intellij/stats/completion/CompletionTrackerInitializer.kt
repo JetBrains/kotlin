@@ -2,11 +2,9 @@
 package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupManager
-import com.intellij.completion.ngram.NgramFileConfigurator
 import com.intellij.ide.ApplicationInitializedListener
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ProjectManagerListener
@@ -32,7 +30,6 @@ class CompletionTrackerInitializer : ApplicationInitializedListener {
       override fun projectOpened(project: Project) {
         LookupManager.getInstance(project).addPropertyChangeListener(CompletionQualityTracker(), project)
         LookupManager.getInstance(project).addPropertyChangeListener(CompletionFactorsInitializer(), project)
-        project.messageBus.connect().subscribe(FileEditorManagerListener.Before.FILE_EDITOR_MANAGER, NgramFileConfigurator(project))
       }
     })
   }

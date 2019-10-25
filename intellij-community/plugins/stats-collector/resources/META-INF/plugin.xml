@@ -89,7 +89,7 @@
 
     <completion.ml.contextFeatures language="" implementationClass="com.intellij.completion.ml.common.CommonLocationFeatures"/>
 
-    <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ngram.NgramFeatureProvider"/>
+    <completion.ml.elementFeatures language="" implementationClass="com.intellij.completion.ngram.NGramFeatureProvider"/>
 
   </extensions>
 </idea-plugin>

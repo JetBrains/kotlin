@@ -6,10 +6,8 @@ import com.intellij.codeInsight.completion.ml.ContextFeatures
 import com.intellij.codeInsight.completion.ml.ElementFeatureProvider
 import com.intellij.codeInsight.completion.ml.MLFeatureValue
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.completion.ngram.Ngram.Companion.NGRAM_PREFIX_KEY
-import com.intellij.completion.ngram.NgramFileConfigurator.Companion.getModelRunner
 
-class NgramFeatureProvider : ElementFeatureProvider {
+class NGramFeatureProvider : ElementFeatureProvider {
 
   override fun getName(): String {
     return "ngram"
@@ -18,10 +16,8 @@ class NgramFeatureProvider : ElementFeatureProvider {
   override fun calculateFeatures(element: LookupElement,
                                  location: CompletionLocation,
                                  contextFeatures: ContextFeatures): Map<String, MLFeatureValue> {
-    val modelRunner = getModelRunner(location.completionParameters.originalFile) ?: return emptyMap()
-    val ngramPrefix = contextFeatures.getUserData(NGRAM_PREFIX_KEY) ?: return emptyMap()
-    val ngram = Ngram(listOf(*ngramPrefix, element.lookupString), ngramPrefix.size + 1)
-    return mapOf("file" to MLFeatureValue.float(modelRunner.getNgramProbability(ngram)))
+    val scoringFunction = contextFeatures.getUserData(NGram.NGRAM_SCORER_KEY) ?: return emptyMap()
+    return mapOf("file" to MLFeatureValue.float(scoringFunction.score(element.lookupString)))
   }
 
 }
