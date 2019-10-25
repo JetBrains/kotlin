@@ -3,7 +3,6 @@ package com.intellij.internal.retype
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.CodeInsightWorkspaceSettings
-import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.lookup.LookupManager
@@ -304,7 +303,7 @@ class RetypeSession(
     if (lookup != null && !skipLookupSuggestion) {
       val currentLookupElement = lookup.currentItem
       if (currentLookupElement?.shouldAccept(lookup.lookupStart) == true) {
-        lookup.focusDegree = Lookup.FocusDegree.FOCUSED
+        lookup.focusDegree = LookupImpl.FocusDegree.FOCUSED
         scriptBuilder?.append("${ActionCommand.PREFIX} ${IdeActions.ACTION_CHOOSE_LOOKUP_ITEM}\n")
         typedRightBefore = false
         textBeforeLookupSelection = document.text

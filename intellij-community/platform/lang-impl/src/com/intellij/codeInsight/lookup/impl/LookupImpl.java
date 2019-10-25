@@ -1290,4 +1290,5 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     return myFontPreferences;
   }
 
+  public enum FocusDegree { FOCUSED, SEMI_FOCUSED, UNFOCUSED }
 }
