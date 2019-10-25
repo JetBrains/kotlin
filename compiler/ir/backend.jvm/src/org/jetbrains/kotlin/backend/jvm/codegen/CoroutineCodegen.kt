@@ -125,11 +125,9 @@ internal fun IrFunction.shouldNotContainSuspendMarkers(context: JvmBackendContex
 // Transform `suspend fun foo(params): RetType` into `fun foo(params, $completion: Continuation<RetType>): Any?`
 // the result is called 'view', just to be consistent with old backend.
 internal fun IrFunction.getOrCreateSuspendFunctionViewIfNeeded(context: JvmBackendContext): IrFunction {
-    if (!isSuspend || origin == SUSPEND_FUNCTION_VIEW) return this
+    if (!isSuspend || origin == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW) return this
     return if (isSuspend) context.suspendFunctionViews.getOrElse(this) { suspendFunctionView(context) } else this
 }
-
-private object SUSPEND_FUNCTION_VIEW : IrDeclarationOriginImpl("SUSPEND_FUNCTION_VIEW")
 
 private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFunction {
     require(this.isSuspend && this is IrSimpleFunction)
@@ -146,7 +144,7 @@ private fun IrFunction.suspendFunctionView(context: JvmBackendContext): IrFuncti
         else
             WrappedSimpleFunctionDescriptor(sourceElement = originalDescriptor.source)
     return IrFunctionImpl(
-        startOffset, endOffset, SUSPEND_FUNCTION_VIEW, IrSimpleFunctionSymbolImpl(descriptor),
+        startOffset, endOffset, JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW, IrSimpleFunctionSymbolImpl(descriptor),
         name, visibility, modality, context.irBuiltIns.anyNType,
         isInline = isInline, isExternal = isExternal, isTailrec = isTailrec, isSuspend = isSuspend, isExpect = isExpect
     ).also {
