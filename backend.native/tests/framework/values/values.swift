@@ -386,6 +386,12 @@ func testLambda() throws {
     }
     try assertTrue(uncoercedUnitBlock() == Void())
     try assertEquals(actual: blockRuns, expected: 5)
+
+    let blockMustBeFunction0: @convention(block) () -> AnyObject? = { return nil }
+    try assertTrue(ValuesKt.isFunction(obj: blockMustBeFunction0))
+    try assertTrue(ValuesKt.isFunction0(obj: blockMustBeFunction0))
+    try assertFalse(ValuesKt.isFunction(obj: NSObject()))
+    try assertFalse(ValuesKt.isFunction0(obj: NSObject()))
 }
 
 // -------- Tests for classes and interfaces -------

@@ -432,6 +432,9 @@ object UnitBlockCoercionImpl : UnitBlockCoercion<() -> Unit> {
     override fun uncoerce(block: () -> Unit): () -> Unit = block
 }
 
+fun isFunction(obj: Any?): Boolean = obj is Function<*>
+fun isFunction0(obj: Any?): Boolean = obj is Function0<*>
+
 abstract class MyAbstractList : List<Any?>
 
 fun takeForwardDeclaredClass(obj: objcnames.classes.ForwardDeclaredClass) {}

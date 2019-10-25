@@ -451,7 +451,7 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
         val superClass = context.ir.symbols.any.owner
 
         assert(superClass.implementedInterfaces.isEmpty())
-        val interfaces = listOf(irClass.typeInfoPtr)
+        val interfaces = (listOf(irClass) + irClass.implementedInterfaces).map { it.typeInfoPtr }
         val interfacesPtr = staticData.placeGlobalConstArray("",
                 pointerType(runtime.typeInfoType), interfaces)
 

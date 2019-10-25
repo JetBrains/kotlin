@@ -1055,6 +1055,8 @@ __attribute__((swift_name("ValuesKt")))
 + (void (^)(void))asNothingBlockBlock:(id _Nullable (^)(void))block __attribute__((swift_name("asNothingBlock(block:)")));
 + (void (^ _Nullable)(void))getNullBlock __attribute__((swift_name("getNullBlock()")));
 + (BOOL)isBlockNullBlock:(void (^ _Nullable)(void))block __attribute__((swift_name("isBlockNull(block:)")));
++ (BOOL)isFunctionObj:(id _Nullable)obj __attribute__((swift_name("isFunction(obj:)")));
++ (BOOL)isFunction0Obj:(id _Nullable)obj __attribute__((swift_name("isFunction0(obj:)")));
 + (void)takeForwardDeclaredClassObj:(ForwardDeclaredClass *)obj __attribute__((swift_name("takeForwardDeclaredClass(obj:)")));
 + (void)takeForwardDeclaredProtocolObj:(id<ForwardDeclared>)obj __attribute__((swift_name("takeForwardDeclaredProtocol(obj:)")));
 + (void)error __attribute__((swift_name("error()"))) __attribute__((unavailable("error")));
