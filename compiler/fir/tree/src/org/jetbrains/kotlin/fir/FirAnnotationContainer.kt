@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirAnnotationContainer : FirElement {
-    override val psi: PsiElement?
+    override val source: FirSourceElement?
     val annotations: List<FirAnnotationCall>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationContainer(this, data)

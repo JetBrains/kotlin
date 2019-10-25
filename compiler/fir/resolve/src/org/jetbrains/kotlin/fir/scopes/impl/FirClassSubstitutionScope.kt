@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorWithJump
@@ -116,7 +118,7 @@ class FirClassSubstitutionScope(
                 // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
                 // As second alternative, we can invent some light-weight kind of FirRegularClass
                 FirSimpleFunctionImpl(
-                    psi,
+                    source,
                     session,
                     baseFunction.returnTypeRef.withReplacedConeType(newReturnType),
                     baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType),
@@ -130,7 +132,7 @@ class FirClassSubstitutionScope(
                     ) { valueParameter, newType ->
                         with(valueParameter) {
                             FirValueParameterImpl(
-                                psi,
+                                source,
                                 session,
                                 this.returnTypeRef.withReplacedConeType(newType),
                                 name,
@@ -157,7 +159,7 @@ class FirClassSubstitutionScope(
             val symbol = FirPropertySymbol(baseSymbol.callableId, true, baseSymbol)
             with(baseProperty) {
                 FirPropertyImpl(
-                    psi,
+                    source,
                     session,
                     baseProperty.returnTypeRef.withReplacedConeType(newReturnType),
                     baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType),
@@ -182,7 +184,7 @@ fun FirTypeRef.withReplacedConeType(newType: ConeKotlinType?): FirResolvedTypeRe
     require(this is FirResolvedTypeRef)
     if (newType == null) return this
 
-    return FirResolvedTypeRefImpl(psi, newType).apply {
+    return FirResolvedTypeRefImpl(source, newType).apply {
         annotations += this@withReplacedConeType.annotations
     }
 

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.contracts
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirContractDescription : FirPureAbstractElement(), FirElement {
-    abstract override val psi: PsiElement?
+    abstract override val source: FirSourceElement?
     abstract val effects: List<ConeEffectDeclaration>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContractDescription(this, data)

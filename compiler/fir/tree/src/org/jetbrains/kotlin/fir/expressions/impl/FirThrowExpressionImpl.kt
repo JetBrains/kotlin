@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirThrowExpressionImpl(
-    override val psi: PsiElement?,
+    override val source: FirSourceElement?,
     override var exception: FirExpression
 ) : FirThrowExpression(), FirAbstractAnnotatedElement {
-    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(psi)
+    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
 import org.jetbrains.kotlin.fir.visitors.*
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirModifiableTypeParametersOwner : FirTypeParametersOwner {
-    override val psi: PsiElement?
+    override val source: FirSourceElement?
     override val typeParameters: MutableList<FirTypeParameter>
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableTypeParametersOwner
 }

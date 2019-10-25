@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.toFirSourceElement
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -94,7 +95,7 @@ internal fun JavaClassifierType.toFirResolvedTypeRef(
 ): FirResolvedTypeRef {
     val coneType = this.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false)
     return FirResolvedTypeRefImpl(
-        psi = null, type = coneType
+        source = null, type = coneType
     ).apply {
         annotations += this@toFirResolvedTypeRef.annotations.map { it.toFirAnnotationCall(session, javaTypeParameterStack) }
     }
@@ -174,9 +175,9 @@ internal fun JavaAnnotation.toFirAnnotationCall(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
 ): FirAnnotationCall {
     return FirAnnotationCallImpl(
-        psi = null, useSiteTarget = null,
+        source = null, useSiteTarget = null,
         annotationTypeRef = FirResolvedTypeRefImpl(
-            psi = null,
+            source = null,
             type = ConeClassTypeImpl(FirClassSymbol(classId!!).toLookupTag(), emptyArray(), isNullable = false)
         )
     ).apply {
@@ -198,7 +199,7 @@ internal fun JavaValueParameter.toFirValueParameters(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
 ): FirValueParameter {
     return FirJavaValueParameter(
-        session, (this as? JavaElementImpl<*>)?.psi, name ?: Name.special("<anonymous Java parameter>"),
+        session, (this as? JavaElementImpl<*>)?.psi?.toFirSourceElement(), name ?: Name.special("<anonymous Java parameter>"),
         returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack),
         isVararg = isVararg
     ).apply {
@@ -312,7 +313,7 @@ private fun JavaType.toFirResolvedTypeRef(
 ): FirResolvedTypeRef {
     if (this is JavaClassifierType) return toFirResolvedTypeRef(session, javaTypeParameterStack)
     return FirResolvedTypeRefImpl(
-        psi = null, type = ConeClassErrorType("Unexpected JavaType: $this")
+        source = null, type = ConeClassErrorType("Unexpected JavaType: $this")
     )
 }
 

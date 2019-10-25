@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirModifiableFunction<F : FirFunction<F>>  : FirFunction<F>, FirAbstractAnnotatedElement {
-    override val psi: PsiElement?
+    override val source: FirSourceElement?
     override val session: FirSession
     override var resolvePhase: FirResolvePhase
     override val annotations: MutableList<FirAnnotationCall>

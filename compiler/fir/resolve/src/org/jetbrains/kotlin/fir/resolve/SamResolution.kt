@@ -114,7 +114,7 @@ class FirSamResolverImpl(
 
         val newTypeParameters = firRegularClass.typeParameters.map { typeParameter ->
             FirTypeParameterImpl(
-                typeParameter.psi,
+                typeParameter.source,
                 firSession,
                 typeParameter.name,
                 FirTypeParameterSymbol(),
@@ -137,7 +137,7 @@ class FirSamResolverImpl(
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
             newTypeParameter.bounds += oldTypeParameter.bounds.mapNotNull { typeRef ->
-                FirResolvedTypeRefImpl(typeRef.psi, substitutor.substituteOrSelf(typeRef.coneTypeSafe() ?: return@mapNotNull null))
+                FirResolvedTypeRefImpl(typeRef.source, substitutor.substituteOrSelf(typeRef.coneTypeSafe() ?: return@mapNotNull null))
             }
         }
 
@@ -170,9 +170,9 @@ class FirSamResolverImpl(
         ).apply {
             valueParameters += listOf(
                 FirValueParameterImpl(
-                    psi,
+                    source,
                     session,
-                    FirResolvedTypeRefImpl(firRegularClass.psi, substitutedFunctionType),
+                    FirResolvedTypeRefImpl(firRegularClass.source, substitutedFunctionType),
                     SAM_PARAMETER_NAME,
                     FirVariableSymbol(SAM_PARAMETER_NAME),
                     defaultValue = null,

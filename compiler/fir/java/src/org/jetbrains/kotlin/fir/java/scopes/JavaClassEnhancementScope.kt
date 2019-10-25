@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.load.java.descriptors.NullDefaultValue
@@ -84,7 +85,7 @@ class JavaClassEnhancementScope(
                 val symbol = FirFieldSymbol(original.callableId)
                 with(firElement) {
                     FirJavaField(
-                        firElement.psi,
+                        firElement.source,
                         this@JavaClassEnhancementScope.session,
                         symbol,
                         name,
@@ -172,7 +173,7 @@ class JavaClassEnhancementScope(
             val (newTypeRef, newDefaultValue) = newInfo
             with(valueParameter) {
                 FirValueParameterImpl(
-                    psi, this@JavaClassEnhancementScope.session,
+                    source, this@JavaClassEnhancementScope.session,
                     newTypeRef, this.name,
                     FirVariableSymbol(this.name),
                     defaultValue ?: newDefaultValue, isCrossinline, isNoinline, isVararg
@@ -192,7 +193,7 @@ class JavaClassEnhancementScope(
                 }
                 if (firMethod.isPrimary) {
                     FirPrimaryConstructorImpl(
-                        firMethod.psi,
+                        firMethod.source,
                         this@JavaClassEnhancementScope.session,
                         newReturnTypeRef,
                         null,
@@ -201,7 +202,7 @@ class JavaClassEnhancementScope(
                     )
                 } else {
                     FirConstructorImpl(
-                        firMethod.psi,
+                        firMethod.source,
                         this@JavaClassEnhancementScope.session,
                         newReturnTypeRef,
                         newReceiverTypeRef,
@@ -215,7 +216,7 @@ class JavaClassEnhancementScope(
                 }
             }
             else -> FirSimpleFunctionImpl(
-                firMethod.psi,
+                firMethod.source,
                 this@JavaClassEnhancementScope.session,
                 newReturnTypeRef,
                 newReceiverTypeRef,

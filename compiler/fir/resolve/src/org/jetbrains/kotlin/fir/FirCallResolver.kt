@@ -203,7 +203,7 @@ class FirCallResolver(
         }
         if (referencedSymbol is FirClassLikeSymbol<*>) {
             val classId = referencedSymbol.classId
-            return FirResolvedQualifierImpl(nameReference.psi, classId.packageFqName, classId.relativeClassName).apply {
+            return FirResolvedQualifierImpl(nameReference.source, classId.packageFqName, classId.relativeClassName).apply {
                 resultType = typeForQualifier(this)
             }
         }
@@ -292,7 +292,7 @@ class FirCallResolver(
                 expectedType,
                 outerConstraintSystemBuilder,
                 lhs,
-                FirExpressionStub(callableReferenceAccess.psi).apply { replaceTypeRef(FirResolvedTypeRefImpl(null, lhs.type)) },
+                FirExpressionStub(callableReferenceAccess.source).apply { replaceTypeRef(FirResolvedTypeRefImpl(null, lhs.type)) },
                 callableReferenceAccess.explicitReceiver
             )
         }
@@ -353,14 +353,14 @@ class FirCallResolver(
         applicability: CandidateApplicability
     ): FirNamedReference {
         val name = namedReference.name
-        val psi = namedReference.psi
+        val source = namedReference.source
         return when {
             candidates.isEmpty() -> FirErrorNamedReferenceImpl(
-                psi, "Unresolved name: $name"
+                source, "Unresolved name: $name"
             )
             applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
                 FirErrorNamedReferenceImpl(
-                    psi,
+                    source,
                     "Inapplicable($applicability): ${candidates.map { describeSymbol(it.symbol) }}"
                 )
             }
@@ -368,17 +368,17 @@ class FirCallResolver(
                 val candidate = candidates.single()
                 val coneSymbol = candidate.symbol
                 when {
-                    coneSymbol is FirBackingFieldSymbol -> FirBackingFieldReferenceImpl(psi, null, coneSymbol)
+                    coneSymbol is FirBackingFieldSymbol -> FirBackingFieldReferenceImpl(source, null, coneSymbol)
                     coneSymbol is FirVariableSymbol && (
                             coneSymbol !is FirPropertySymbol ||
                                     (coneSymbol.phasedFir(session) as FirMemberDeclaration).typeParameters.isEmpty()
                             ) ->
-                        FirResolvedNamedReferenceImpl(psi, name, coneSymbol)
-                    else -> FirNamedReferenceWithCandidate(psi, name, candidate)
+                        FirResolvedNamedReferenceImpl(source, name, coneSymbol)
+                    else -> FirNamedReferenceWithCandidate(source, name, candidate)
                 }
             }
             else -> FirErrorNamedReferenceImpl(
-                psi, "Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}"
+                source, "Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}"
             )
         }
     }

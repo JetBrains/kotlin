@@ -29,7 +29,7 @@ class FirSpecificTypeResolverTransformer(
         val typeResolver = FirTypeResolver.getInstance(session)
         functionTypeRef.transformChildren(this, data)
         return FirResolvedFunctionTypeRefImpl(
-            functionTypeRef.psi,
+            functionTypeRef.source,
             typeResolver.resolveType(functionTypeRef, towerScope),
             functionTypeRef.isMarkedNullable,
             functionTypeRef.receiverTypeRef,
@@ -42,7 +42,7 @@ class FirSpecificTypeResolverTransformer(
 
     private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType): CompositeTransformResult<FirTypeRef> {
         return FirResolvedTypeRefImpl(
-            typeRef.psi,
+            typeRef.source,
             resolvedType
         ).apply {
             annotations += typeRef.annotations

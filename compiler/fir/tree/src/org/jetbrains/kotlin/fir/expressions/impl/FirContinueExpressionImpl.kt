@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirContinueExpressionImpl(
-    override val psi: PsiElement?
+    override val source: FirSourceElement?
 ) : FirContinueExpression(), FirAbstractLoopJump, FirAbstractAnnotatedElement {
-    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(psi)
+    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var target: FirTarget<FirLoop>
 

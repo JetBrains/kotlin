@@ -53,7 +53,7 @@ class FirCallCompletionResultsWriterTransformer(
         return qualifiedAccessExpression.transformCalleeReference(
             StoreCalleeReference,
             FirResolvedNamedReferenceImpl(
-                calleeReference.psi,
+                calleeReference.source,
                 calleeReference.name,
                 calleeReference.candidateSymbol
             )
@@ -79,7 +79,7 @@ class FirCallCompletionResultsWriterTransformer(
         return callableReferenceAccess.transformCalleeReference(
             StoreCalleeReference,
             FirResolvedCallableReferenceImpl(
-                calleeReference.psi,
+                calleeReference.source,
                 calleeReference.name,
                 calleeReference.candidateSymbol
             ).apply {
@@ -97,7 +97,7 @@ class FirCallCompletionResultsWriterTransformer(
         return variableAssignment.transformCalleeReference(
             StoreCalleeReference,
             FirResolvedNamedReferenceImpl(
-                calleeReference.psi,
+                calleeReference.source,
                 calleeReference.name,
                 calleeReference.candidateSymbol
             )
@@ -116,14 +116,14 @@ class FirCallCompletionResultsWriterTransformer(
                     is FirTypeProjectionWithVariance -> {
                         val typeRef = argument.typeRef as FirResolvedTypeRef
                         FirTypeProjectionWithVarianceImpl(
-                            argument.psi,
+                            argument.source,
                             typeRef.withReplacedConeType(type),
                             argument.variance
                         )
                     }
                     else -> {
                         FirTypeProjectionWithVarianceImpl(
-                            argument?.psi,
+                            argument?.source,
                             FirResolvedTypeRefImpl(null, type),
                             Variance.INVARIANT
                         )
@@ -149,7 +149,7 @@ class FirCallCompletionResultsWriterTransformer(
             resultType = resultType,
             typeArguments = typeArguments,
             calleeReference = FirResolvedNamedReferenceImpl(
-                calleeReference.psi,
+                calleeReference.source,
                 calleeReference.name,
                 calleeReference.candidateSymbol
             ),
@@ -215,7 +215,7 @@ class FirCallCompletionResultsWriterTransformer(
         return whenExpression.copy(
             resultType = resultType,
             calleeReference = FirResolvedNamedReferenceImpl(
-                calleeReference.psi,
+                calleeReference.source,
                 calleeReference.name,
                 calleeReference.candidateSymbol
             )
@@ -241,7 +241,7 @@ class FirCallCompletionResultsWriterTransformer(
         return tryExpression.copy(
             resultType = resultType,
             calleeReference = FirResolvedNamedReferenceImpl(
-                calleeReference.psi,
+                calleeReference.source,
                 calleeReference.name,
                 calleeReference.candidateSymbol
             )

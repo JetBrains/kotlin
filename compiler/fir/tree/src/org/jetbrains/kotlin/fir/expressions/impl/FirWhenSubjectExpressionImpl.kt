@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirWhenSubjectExpressionImpl(
-    override val psi: PsiElement?,
+    override val source: FirSourceElement?,
     override val whenSubject: FirWhenSubject
 ) : FirWhenSubjectExpression(), FirAbstractAnnotatedElement {
     override val typeRef: FirTypeRef get() = whenSubject.whenExpression.subject!!.typeRef

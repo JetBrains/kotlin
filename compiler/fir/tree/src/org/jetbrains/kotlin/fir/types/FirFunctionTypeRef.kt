@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.visitors.*
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirFunctionTypeRef : FirTypeRefWithNullability {
-    override val psi: PsiElement?
+    override val source: FirSourceElement?
     override val annotations: List<FirAnnotationCall>
     override val isMarkedNullable: Boolean
     val receiverTypeRef: FirTypeRef?

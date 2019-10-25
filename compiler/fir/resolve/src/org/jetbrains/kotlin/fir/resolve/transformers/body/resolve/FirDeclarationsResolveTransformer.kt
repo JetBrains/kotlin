@@ -326,7 +326,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 val bodyExpectedType = returnTypeRefFromResolvedAtom ?: data
                 af = transformFunction(af, bodyExpectedType).single as FirAnonymousFunction
                 af = af.copy(
-                    returnTypeRef = af.body?.resultType ?: FirErrorTypeRefImpl(af.psi, "No result type for lambda")
+                    returnTypeRef = af.body?.resultType ?: FirErrorTypeRefImpl(af.source, "No result type for lambda")
                 )
                 af.replaceTypeRef(af.constructFunctionalTypeRef(session))
                 af.compose()

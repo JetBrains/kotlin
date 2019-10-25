@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.types.FirDelegatedTypeRef
@@ -21,7 +21,7 @@ class FirDelegatedTypeRefImpl(
     override var delegate: FirExpression?,
     override var typeRef: FirTypeRef
 ) : FirDelegatedTypeRef() {
-    override val psi: PsiElement? get() = typeRef.psi
+    override val source: FirSourceElement? get() = typeRef.source
     override val annotations: List<FirAnnotationCall> get() = typeRef.annotations
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

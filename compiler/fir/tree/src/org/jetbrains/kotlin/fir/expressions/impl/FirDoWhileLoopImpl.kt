@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirDoWhileLoopImpl(
-    override val psi: PsiElement?,
+    override val source: FirSourceElement?,
     override var condition: FirExpression
 ) : FirDoWhileLoop(), FirAbstractLoop, FirAbstractAnnotatedElement {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()

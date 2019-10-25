@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirLoop
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirAbstractLoopJump : FirLoopJump, FirAbstractAnnotatedElement {
-    override val psi: PsiElement?
+    override val source: FirSourceElement?
     override var typeRef: FirTypeRef
     override val annotations: MutableList<FirAnnotationCall>
     override var target: FirTarget<FirLoop>

@@ -150,8 +150,8 @@ abstract class AbstractFirTreeImplementationConfigurator {
             }
         }
 
-        fun noPsi() {
-            defaultNull("psi")
+        fun noSource() {
+            defaultNull("source")
         }
 
         fun defaultEmptyList(field: String) {

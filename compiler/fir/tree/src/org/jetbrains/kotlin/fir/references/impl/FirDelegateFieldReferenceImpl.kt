@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.references.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirDelegateFieldReferenceImpl(
-    override val psi: PsiElement?,
+    override val source: FirSourceElement?,
     override val candidateSymbol: AbstractFirBasedSymbol<*>?,
     override val resolvedSymbol: FirDelegateFieldSymbol<*>
 ) : FirDelegateFieldReference() {

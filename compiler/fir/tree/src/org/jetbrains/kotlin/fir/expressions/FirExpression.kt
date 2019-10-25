@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirExpression : FirStatement {
-    override val psi: PsiElement?
+    override val source: FirSourceElement?
     val typeRef: FirTypeRef
     override val annotations: List<FirAnnotationCall>
 

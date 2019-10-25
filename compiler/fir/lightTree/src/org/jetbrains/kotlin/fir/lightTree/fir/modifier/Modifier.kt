@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.CLASS_MODIFIER
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class Modifier(
-    override val psi: PsiElement? = null,
+    override val source: FirSourceElement? = null,
     private val classModifiers: MutableList<ClassModifier> = mutableListOf(),
     private val memberModifiers: MutableList<MemberModifier> = mutableListOf(),
     private val visibilityModifiers: MutableList<VisibilityModifier> = mutableListOf(),

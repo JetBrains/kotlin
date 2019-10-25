@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.toFirSourceElement
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
@@ -175,7 +176,7 @@ class JavaSymbolProvider(
                     }
                 }
                 FirJavaClass(
-                    (javaClass as? JavaElementImpl<*>)?.psi, session,
+                    (javaClass as? JavaElementImpl<*>)?.psi?.toFirSourceElement(), session,
                     firSymbol as FirClassSymbol, javaClass.name,
                     javaClass.visibility, javaClass.modality,
                     javaClass.classKind, isTopLevel = isTopLevel,
@@ -195,7 +196,7 @@ class JavaSymbolProvider(
                         val fieldSymbol = FirFieldSymbol(fieldId)
                         val returnType = javaField.type
                         val firJavaField = FirJavaField(
-                            (javaField as? JavaElementImpl<*>)?.psi, this@JavaSymbolProvider.session,
+                            (javaField as? JavaElementImpl<*>)?.psi?.toFirSourceElement(), this@JavaSymbolProvider.session,
                             fieldSymbol, fieldName,
                             javaField.visibility, javaField.modality,
                             returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack),
@@ -212,7 +213,7 @@ class JavaSymbolProvider(
                         val methodSymbol = FirNamedFunctionSymbol(methodId)
                         val returnType = javaMethod.returnType
                         val firJavaMethod = FirJavaMethod(
-                            this@JavaSymbolProvider.session, (javaMethod as? JavaElementImpl<*>)?.psi,
+                            this@JavaSymbolProvider.session, (javaMethod as? JavaElementImpl<*>)?.psi?.toFirSourceElement(),
                             methodSymbol, methodName,
                             javaMethod.visibility, javaMethod.modality,
                             returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack),
@@ -239,7 +240,7 @@ class JavaSymbolProvider(
                         val constructorSymbol = FirConstructorSymbol(constructorId)
                         val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                         val firJavaConstructor = FirJavaConstructor(
-                            psi,
+                            psi?.toFirSourceElement(),
                             this@JavaSymbolProvider.session,
                             constructorSymbol,
                             visibility,

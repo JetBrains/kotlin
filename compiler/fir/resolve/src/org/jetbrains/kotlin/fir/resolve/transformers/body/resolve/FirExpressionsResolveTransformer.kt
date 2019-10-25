@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.BuiltinTypes
+import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
@@ -53,7 +54,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformExpression(expression: FirExpression, data: Any?): CompositeTransformResult<FirStatement> {
         if (expression.resultType is FirImplicitTypeRef && expression !is FirWrappedExpression) {
-            val type = FirErrorTypeRefImpl(expression.psi, "Type calculating for ${expression::class} is not supported")
+            val type = FirErrorTypeRefImpl(expression.source, "Type calculating for ${expression::class} is not supported")
             expression.resultType = type
         }
         return (expression.transformChildren(transformer, data) as FirStatement).compose()
@@ -81,7 +82,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 } else {
                     val superTypeRef = implicitReceiverStack.lastDispatchReceiver()
                         ?.boundSymbol?.phasedFir?.superTypeRefs?.firstOrNull()
-                        ?: FirErrorTypeRefImpl(qualifiedAccessExpression.psi, "No super type")
+                        ?: FirErrorTypeRefImpl(qualifiedAccessExpression.source, "No super type")
                     qualifiedAccessExpression.resultType = superTypeRef
                     callee.replaceSuperTypeRef(superTypeRef)
                 }
@@ -123,7 +124,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         }
         val intersectedType = ConeTypeIntersector.intersectTypes(inferenceComponents.ctx as ConeInferenceContext, allTypes)
         // TODO: add check that intersectedType is not equal to original type
-        val intersectedTypeRef = FirResolvedTypeRefImpl(qualifiedAccessExpression.resultType.psi, intersectedType).apply {
+        val intersectedTypeRef = FirResolvedTypeRefImpl(qualifiedAccessExpression.resultType.source, intersectedType).apply {
             annotations += qualifiedAccessExpression.resultType.annotations
         }
         return FirExpressionWithSmartcastImpl(qualifiedAccessExpression, intersectedTypeRef, typesFromSmartCast)
@@ -167,7 +168,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             else -> null
         }
         block.resultType = if (resultExpression == null) {
-            FirImplicitUnitTypeRef(block.psi)
+            FirImplicitUnitTypeRef(block.source)
         } else {
             (resultExpression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(null, "No type for block")
         }
@@ -197,11 +198,11 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             val operatorCall = operatorCall.transformArguments(this, noExpectedType)
             val (leftArgument, rightArgument) = operatorCall.arguments
 
-            fun createFunctionCall(name: Name) = FirFunctionCallImpl(operatorCall.psi).apply {
+            fun createFunctionCall(name: Name) = FirFunctionCallImpl(operatorCall.source).apply {
                 explicitReceiver = leftArgument
                 arguments += rightArgument
                 calleeReference = FirSimpleNamedReference(
-                    operatorCall.psi,
+                    operatorCall.source,
                     name,
                     candidateSymbol = null
                 )
@@ -224,14 +225,14 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 operatorCallReference == null || property?.isVal == true -> resolvedAssignCall.compose()
                 assignCallReference == null -> {
                     val assignment =
-                        FirVariableAssignmentImpl(operatorCall.psi, false, resolvedOperatorCall, FirOperation.ASSIGN).apply {
+                        FirVariableAssignmentImpl(operatorCall.source, false, resolvedOperatorCall, FirOperation.ASSIGN).apply {
                             lValue = (leftArgument as? FirQualifiedAccess)?.calleeReference
                                 ?: FirErrorNamedReferenceImpl(null, "Unresolved reference")
                         }
                     assignment.transform(transformer, noExpectedType)
                 }
                 else -> FirErrorExpressionImpl(
-                    operatorCall.psi,
+                    operatorCall.source,
                     "Operator overload ambiguity. $assignmentOperatorName and $simpleOperatorName are compatible"
                 ).compose()
             }

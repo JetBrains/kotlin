@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirLoop : FirStatement, FirTargetElement, FirAnnotationContainer {
-    override val psi: PsiElement?
+    override val source: FirSourceElement?
     override val annotations: List<FirAnnotationCall>
     val block: FirBlock
     val condition: FirExpression

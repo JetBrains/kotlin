@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.compiler.visualizer
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 
 class Psi2FirMapper(val map: MutableMap<PsiElement, MutableList<FirElement>>) : FirVisitorVoid() {

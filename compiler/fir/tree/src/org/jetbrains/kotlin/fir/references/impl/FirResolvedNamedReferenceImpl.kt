@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.references.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.name.Name
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirResolvedNamedReferenceImpl(
-    override val psi: PsiElement?,
+    override val source: FirSourceElement?,
     override val name: Name,
     override val resolvedSymbol: AbstractFirBasedSymbol<*>
 ) : FirResolvedNamedReference() {

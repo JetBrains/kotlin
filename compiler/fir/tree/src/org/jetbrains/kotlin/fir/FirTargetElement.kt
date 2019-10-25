@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -14,7 +13,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirTargetElement : FirElement {
-    override val psi: PsiElement?
+    override val source: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTargetElement(this, data)
 }

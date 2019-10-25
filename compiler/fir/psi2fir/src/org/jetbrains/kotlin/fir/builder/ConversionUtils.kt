@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.fir.builder
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFunctionTarget
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirWhenSubject
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -136,41 +133,41 @@ fun IElementType.toFirOperation(): FirOperation =
     }
 
 fun FirExpression.generateNotNullOrOther(
-    session: FirSession, other: FirExpression, caseId: String, basePsi: KtElement?
+    session: FirSession, other: FirExpression, caseId: String, baseSource: FirSourceElement?
 ): FirWhenExpression {
     val subjectName = Name.special("<$caseId>")
-    val subjectVariable = generateTemporaryVariable(session, basePsi, subjectName, this)
+    val subjectVariable = generateTemporaryVariable(session, baseSource, subjectName, this)
     val subject = FirWhenSubject()
-    val subjectExpression = FirWhenSubjectExpressionImpl(basePsi, subject)
+    val subjectExpression = FirWhenSubjectExpressionImpl(baseSource, subject)
     return FirWhenExpressionImpl(
-        basePsi, this, subjectVariable
+        baseSource, this, subjectVariable
     ).apply {
         subject.bind(this)
         branches += FirWhenBranchImpl(
-            basePsi,
-            FirOperatorCallImpl(basePsi, FirOperation.EQ).apply {
+            baseSource,
+            FirOperatorCallImpl(baseSource, FirOperation.EQ).apply {
                 arguments += subjectExpression
-                arguments += FirConstExpressionImpl(basePsi, IrConstKind.Null, null)
+                arguments += FirConstExpressionImpl(baseSource, IrConstKind.Null, null)
             },
             FirSingleExpressionBlock(other)
         )
         branches += FirWhenBranchImpl(
-            other.psi, FirElseIfTrueCondition(basePsi),
+            other.source, FirElseIfTrueCondition(baseSource),
             FirSingleExpressionBlock(
-                generateResolvedAccessExpression(basePsi, subjectVariable)
+                generateResolvedAccessExpression(baseSource, subjectVariable)
             )
         )
     }
 }
 
 fun FirExpression.generateLazyLogicalOperation(
-    other: FirExpression, isAnd: Boolean, basePsi: KtElement?
+    other: FirExpression, isAnd: Boolean, baseSource: FirSourceElement?
 ): FirBinaryLogicExpression {
     val kind = if (isAnd)
         LogicOperationKind.AND
     else
         LogicOperationKind.OR
-    return FirBinaryLogicExpressionImpl(basePsi, this, other, kind)
+    return FirBinaryLogicExpressionImpl(baseSource, this, other, kind)
 }
 
 internal fun KtWhenCondition.toFirWhenCondition(
@@ -178,11 +175,11 @@ internal fun KtWhenCondition.toFirWhenCondition(
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
 ): FirExpression {
-    val firSubjectExpression = FirWhenSubjectExpressionImpl(this, subject)
+    val firSubjectExpression = FirWhenSubjectExpressionImpl(this.toFirSourceElement(), subject)
     return when (this) {
         is KtWhenConditionWithExpression -> {
             FirOperatorCallImpl(
-                expression,
+                expression?.toFirSourceElement(),
                 FirOperation.EQ
             ).apply {
                 arguments += firSubjectExpression
@@ -195,20 +192,21 @@ internal fun KtWhenCondition.toFirWhenCondition(
         }
         is KtWhenConditionIsPattern -> {
             FirTypeOperatorCallImpl(
-                typeReference, if (isNegated) FirOperation.NOT_IS else FirOperation.IS,
+                typeReference?.toFirSourceElement(),
+                if (isNegated) FirOperation.NOT_IS else FirOperation.IS,
                 typeReference.toFirOrErrorTypeRef()
             ).apply {
                 arguments += firSubjectExpression
             }
         }
         else -> {
-            FirErrorExpressionImpl(this, "Unsupported when condition: ${this.javaClass}")
+            FirErrorExpressionImpl(this.toFirSourceElement(), "Unsupported when condition: ${this.javaClass}")
         }
     }
 }
 
 internal fun Array<KtWhenCondition>.toFirWhenCondition(
-    basePsi: KtElement,
+    baseSource: FirSourceElement?,
     subject: FirWhenSubject,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
@@ -219,7 +217,7 @@ internal fun Array<KtWhenCondition>.toFirWhenCondition(
         firCondition = when (firCondition) {
             null -> firConditionElement
             else -> firCondition.generateLazyLogicalOperation(
-                firConditionElement, false, basePsi
+                firConditionElement, false, baseSource
             )
         }
     }
@@ -232,26 +230,28 @@ fun FirExpression.generateContainsOperation(
     base: KtExpression?,
     operationReference: KtOperationReferenceExpression?
 ): FirFunctionCall {
-    val containsCall = FirFunctionCallImpl(base).apply {
-        calleeReference = FirSimpleNamedReference(operationReference, OperatorNameConventions.CONTAINS, null)
+    val baseSource = base?.toFirSourceElement()
+    val operationReferenceSource = operationReference?.toFirSourceElement()
+    val containsCall = FirFunctionCallImpl(baseSource).apply {
+        calleeReference = FirSimpleNamedReference(operationReferenceSource, OperatorNameConventions.CONTAINS, null)
         explicitReceiver = this@generateContainsOperation
         arguments += argument
     }
     if (!inverted) return containsCall
-    return FirFunctionCallImpl(base).apply {
-        calleeReference = FirSimpleNamedReference(operationReference, OperatorNameConventions.NOT, null)
+    return FirFunctionCallImpl(baseSource).apply {
+        calleeReference = FirSimpleNamedReference(operationReferenceSource, OperatorNameConventions.NOT, null)
         explicitReceiver = containsCall
     }
 }
 
-fun generateAccessExpression(psi: PsiElement?, name: Name): FirQualifiedAccessExpression =
-    FirQualifiedAccessExpressionImpl(psi).apply {
-        calleeReference = FirSimpleNamedReference(psi, name, null)
+fun generateAccessExpression(source: FirSourceElement?, name: Name): FirQualifiedAccessExpression =
+    FirQualifiedAccessExpressionImpl(source).apply {
+        calleeReference = FirSimpleNamedReference(source, name, null)
     }
 
-fun generateResolvedAccessExpression(psi: PsiElement?, variable: FirVariable<*>): FirQualifiedAccessExpression =
-    FirQualifiedAccessExpressionImpl(psi).apply {
-        calleeReference = FirResolvedNamedReferenceImpl(psi, variable.name, variable.symbol)
+fun generateResolvedAccessExpression(source: FirSourceElement?, variable: FirVariable<*>): FirQualifiedAccessExpression =
+    FirQualifiedAccessExpressionImpl(source).apply {
+        calleeReference = FirResolvedNamedReferenceImpl(source, variable.name, variable.symbol)
     }
 
 internal fun generateDestructuringBlock(
@@ -262,19 +262,20 @@ internal fun generateDestructuringBlock(
     extractAnnotationsTo: KtAnnotated.(FirAbstractAnnotatedElement) -> Unit,
     toFirOrImplicitTypeRef: KtTypeReference?.() -> FirTypeRef
 ): FirExpression {
-    return FirBlockImpl(multiDeclaration).apply {
+    return FirBlockImpl(multiDeclaration.toFirSourceElement()).apply {
         if (tmpVariable) {
             statements += container
         }
         val isVar = multiDeclaration.isVar
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
+            val entrySource = entry.toFirSourceElement()
             statements += FirPropertyImpl(
-                entry,
+                entrySource,
                 session,
                 entry.typeReference.toFirOrImplicitTypeRef(),
                 null,
                 entry.nameAsSafeName,
-                FirComponentCallImpl(entry, generateResolvedAccessExpression(entry, container), index + 1),
+                FirComponentCallImpl(entrySource, generateResolvedAccessExpression(entrySource, container), index + 1),
                 null,
                 isVar,
                 FirPropertySymbol(CallableId(entry.nameAsSafeName)), // TODO?
@@ -289,12 +290,12 @@ internal fun generateDestructuringBlock(
 }
 
 fun generateTemporaryVariable(
-    session: FirSession, psi: PsiElement?, name: Name, initializer: FirExpression
+    session: FirSession, source: FirSourceElement?, name: Name, initializer: FirExpression
 ): FirVariable<*> =
     FirPropertyImpl(
-        psi,
+        source,
         session,
-        FirImplicitTypeRefImpl(psi),
+        FirImplicitTypeRefImpl(source),
         null,
         name,
         initializer,
@@ -308,8 +309,8 @@ fun generateTemporaryVariable(
     }
 
 fun generateTemporaryVariable(
-    session: FirSession, psi: PsiElement?, specialName: String, initializer: FirExpression
-): FirVariable<*> = generateTemporaryVariable(session, psi, Name.special("<$specialName>"), initializer)
+    session: FirSession, source: FirSourceElement?, specialName: String, initializer: FirExpression
+): FirVariable<*> = generateTemporaryVariable(session, source, Name.special("<$specialName>"), initializer)
 
 fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, member: Boolean, stubMode: Boolean) {
     val variable = this as FirVariable<*>
@@ -385,7 +386,7 @@ fun FirModifiableVariable<*>.generateAccessorsByDelegate(session: FirSession, me
                     arguments += thisRef()
                     arguments += propertyRef()
                     arguments += FirQualifiedAccessExpressionImpl(null).apply {
-                        calleeReference = FirResolvedNamedReferenceImpl(psi, DELEGATED_SETTER_PARAM, parameter.symbol)
+                        calleeReference = FirResolvedNamedReferenceImpl(source, DELEGATED_SETTER_PARAM, parameter.symbol)
                     }
                 }
             )

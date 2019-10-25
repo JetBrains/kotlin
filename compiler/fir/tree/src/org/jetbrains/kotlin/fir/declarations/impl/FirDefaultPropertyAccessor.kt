@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirDefaultPropertyAccessor(
-    psi: PsiElement?,
+    source: FirSourceElement?,
     session: FirSession,
     propertyTypeRef: FirTypeRef,
     isGetter: Boolean,
     visibility: Visibility,
     symbol: FirPropertyAccessorSymbol
-) : FirPropertyAccessorImpl(psi, session, propertyTypeRef, symbol, isGetter, FirDeclarationStatusImpl(visibility, Modality.FINAL)) {
+) : FirPropertyAccessorImpl(source, session, propertyTypeRef, symbol, isGetter, FirDeclarationStatusImpl(visibility, Modality.FINAL)) {
     override var resolvePhase = FirResolvePhase.BODY_RESOLVE
 
     final override var body: FirBlock?
@@ -36,25 +36,25 @@ abstract class FirDefaultPropertyAccessor(
 }
 
 class FirDefaultPropertyGetter(
-    psi: PsiElement?,
+    source: FirSourceElement?,
     session: FirSession,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
-) : FirDefaultPropertyAccessor(psi, session, propertyTypeRef, isGetter = true, visibility = visibility, symbol = symbol) {
+) : FirDefaultPropertyAccessor(source, session, propertyTypeRef, isGetter = true, visibility = visibility, symbol = symbol) {
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
 }
 
 class FirDefaultPropertySetter(
-    psi: PsiElement?,
+    source: FirSourceElement?,
     session: FirSession,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
-) : FirDefaultPropertyAccessor(psi, session, FirImplicitUnitTypeRef(psi), isGetter = false, visibility = visibility, symbol = symbol) {
+) : FirDefaultPropertyAccessor(source, session, FirImplicitUnitTypeRef(source), isGetter = false, visibility = visibility, symbol = symbol) {
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf(
         FirDefaultSetterValueParameter(
-            psi,
+            source,
             session,
             propertyTypeRef,
             FirVariableSymbol(

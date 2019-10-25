@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -167,7 +167,7 @@ class AnnotationExitNode(owner: ControlFlowGraph, override val fir: FirAnnotatio
 // ----------------------------------- Stub -----------------------------------
 
 object FirStub : FirElement {
-    override val psi: PsiElement? get() = null
+    override val source: FirSourceElement? get() = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 

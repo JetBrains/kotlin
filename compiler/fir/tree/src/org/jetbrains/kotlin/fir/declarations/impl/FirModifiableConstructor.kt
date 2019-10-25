@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirModifiableConstructor : FirPureAbstractElement(), FirConstructor, FirModifiableTypeParametersOwner, FirAbstractAnnotatedElement {
-    abstract override val psi: PsiElement?
+    abstract override val source: FirSourceElement?
     abstract override val session: FirSession
     abstract override var resolvePhase: FirResolvePhase
     abstract override var returnTypeRef: FirTypeRef

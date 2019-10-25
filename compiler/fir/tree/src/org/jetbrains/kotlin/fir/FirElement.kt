@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 interface FirElement {
-    val psi: PsiElement?
+    val source: FirSourceElement?
 
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElement(this, data)
 

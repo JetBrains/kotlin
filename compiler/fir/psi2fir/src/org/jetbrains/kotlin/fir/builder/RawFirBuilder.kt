@@ -98,27 +98,27 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             this.accept(this@Visitor, Unit) as R
 
         private fun KtTypeReference?.toFirOrImplicitType(): FirTypeRef =
-            convertSafe() ?: FirImplicitTypeRefImpl(this)
+            convertSafe() ?: FirImplicitTypeRefImpl(this?.toFirSourceElement())
 
         private fun KtTypeReference?.toFirOrUnitType(): FirTypeRef =
             convertSafe() ?: implicitUnitType
 
         private fun KtTypeReference?.toFirOrErrorType(): FirTypeRef =
-            convertSafe() ?: FirErrorTypeRefImpl(this, if (this == null) "Incomplete code" else "Conversion failed")
+            convertSafe() ?: FirErrorTypeRefImpl(this?.toFirSourceElement(), if (this == null) "Incomplete code" else "Conversion failed")
 
         // Here we accept lambda as receiver to prevent expression calculation in stub mode
         private fun (() -> KtExpression?).toFirExpression(errorReason: String): FirExpression =
             if (stubMode) FirExpressionStub(null)
             else with(this()) {
-                convertSafe<FirExpression>() ?: FirErrorExpressionImpl(this, errorReason)
+                convertSafe<FirExpression>() ?: FirErrorExpressionImpl(this?.toFirSourceElement(), errorReason)
             }
 
         private fun KtExpression?.toFirExpression(errorReason: String): FirExpression =
             if (stubMode) FirExpressionStub(null)
-            else convertSafe<FirExpression>() ?: FirErrorExpressionImpl(this, errorReason)
+            else convertSafe<FirExpression>() ?: FirErrorExpressionImpl(this?.toFirSourceElement(), errorReason)
 
         private fun KtExpression.toFirStatement(errorReason: String): FirStatement =
-            convertSafe() ?: FirErrorExpressionImpl(this, errorReason)
+            convertSafe() ?: FirErrorExpressionImpl(this.toFirSourceElement(), errorReason)
 
         private fun KtExpression.toFirStatement(): FirStatement =
             convert()
@@ -129,7 +129,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             return when (this) {
                 is KtSecondaryConstructor -> toFirConstructor(
                     delegatedSuperType,
-                    delegatedSelfType ?: FirErrorTypeRefImpl(this, "Constructor in object"),
+                    delegatedSelfType ?: FirErrorTypeRefImpl(this.toFirSourceElement(), "Constructor in object"),
                     owner,
                     hasPrimaryConstructor
                 )
@@ -154,17 +154,17 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 hasBlockBody() -> if (!stubMode) {
                     bodyBlockExpression?.accept(this@Visitor, Unit) as? FirBlock
                 } else {
-                    FirSingleExpressionBlock(FirExpressionStub(this).toReturn())
+                    FirSingleExpressionBlock(FirExpressionStub(this.toFirSourceElement()).toReturn())
                 }
                 else -> {
                     val result = { bodyExpression }.toFirExpression("Function has no body (but should)")
                     // basePsi is null, because 'return' is synthetic & should not be bound to some PSI
-                    FirSingleExpressionBlock(result.toReturn(basePsi = null))
+                    FirSingleExpressionBlock(result.toReturn(baseSource = null))
                 }
             }
 
         private fun ValueArgument?.toFirExpression(): FirExpression {
-            this ?: return FirErrorExpressionImpl(this as? KtElement, "No argument given")
+            this ?: return FirErrorExpressionImpl((this as? KtElement)?.toFirSourceElement(), "No argument given")
             val name = this.getArgumentName()?.asName
             val expression = this.getArgumentExpression()
             val firExpression = when (expression) {
@@ -178,8 +178,8 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             }
             val isSpread = getSpreadElement() != null
             return when {
-                name != null -> FirNamedArgumentExpressionImpl(expression, firExpression, isSpread, name)
-                isSpread -> FirSpreadArgumentExpressionImpl(expression, firExpression)
+                name != null -> FirNamedArgumentExpressionImpl(expression?.toFirSourceElement(), firExpression, isSpread, name)
+                isSpread -> FirSpreadArgumentExpressionImpl(expression?.toFirSourceElement(), firExpression)
                 else -> firExpression
             }
         }
@@ -190,14 +190,16 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             isGetter: Boolean
         ): FirPropertyAccessor {
             if (this == null) {
+                val propertySource = property.toFirSourceElement()
                 return if (isGetter) {
-                    FirDefaultPropertyGetter(property, session, propertyTypeRef, property.visibility)
+                    FirDefaultPropertyGetter(propertySource, session, propertyTypeRef, property.visibility)
                 } else {
-                    FirDefaultPropertySetter(property, session, propertyTypeRef, property.visibility)
+                    FirDefaultPropertySetter(propertySource, session, propertyTypeRef, property.visibility)
                 }
             }
+            val source = this.toFirSourceElement()
             val firAccessor = FirPropertyAccessorImpl(
-                this,
+                source,
                 session,
                 if (isGetter) {
                     returnTypeReference?.convertSafe() ?: propertyTypeRef
@@ -213,7 +215,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             extractValueParametersTo(firAccessor, propertyTypeRef)
             if (!isGetter && firAccessor.valueParameters.isEmpty()) {
                 firAccessor.valueParameters += FirDefaultSetterValueParameter(
-                    this,
+                    source,
                     session,
                     propertyTypeRef,
                     FirVariableSymbol(NAME_FOR_DEFAULT_VALUE_PARAMETER)
@@ -227,7 +229,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         private fun KtParameter.toFirValueParameter(defaultTypeRef: FirTypeRef? = null): FirValueParameter {
             val name = nameAsSafeName
             val firValueParameter = FirValueParameterImpl(
-                this,
+                this.toFirSourceElement(),
                 session,
                 when {
                     typeReference != null -> typeReference.toFirOrErrorType()
@@ -257,15 +259,17 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 isConst = false
                 isLateInit = false
             }
+            val parameterSource = this.toFirSourceElement()
+            val propertySource = this@toFirProperty.toFirSourceElement()
             val firProperty = FirPropertyImpl(
-                this,
+                parameterSource,
                 session,
                 type,
                 null,
                 nameAsSafeName,
-                FirQualifiedAccessExpressionImpl(this).apply {
+                FirQualifiedAccessExpressionImpl(parameterSource).apply {
                     calleeReference = FirPropertyFromParameterResolvedNamedReference(
-                        this@toFirProperty, nameAsSafeName, firParameter.symbol
+                        propertySource, nameAsSafeName, firParameter.symbol
                     )
                 },
                 null,
@@ -274,8 +278,8 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 false,
                 status
             ).apply {
-                getter = FirDefaultPropertyGetter(this@toFirProperty, this@RawFirBuilder.session, type, visibility)
-                setter = if (isMutable) FirDefaultPropertySetter(this@toFirProperty, this@RawFirBuilder.session, type, visibility) else null
+                getter = FirDefaultPropertyGetter(propertySource, this@RawFirBuilder.session, type, visibility)
+                setter = if (isMutable) FirDefaultPropertySetter(propertySource, this@RawFirBuilder.session, type, visibility) else null
             }
             extractAnnotationsTo(firProperty)
             return firProperty
@@ -306,7 +310,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             for (argument in this.valueArguments) {
                 val argumentExpression = argument.toFirExpression()
                 container.arguments += when (argument) {
-                    is KtLambdaArgument -> FirLambdaArgumentExpressionImpl(argument, argumentExpression)
+                    is KtLambdaArgument -> FirLambdaArgumentExpressionImpl(argument.toFirSourceElement(), argumentExpression)
                     else -> argumentExpression
                 }
             }
@@ -369,9 +373,10 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             delegatedSelfTypeRef: FirTypeRef,
             owner: KtClassOrObject
         ): FirConstructor {
-            val constructorCallee = superTypeCallEntry?.calleeExpression
+            val constructorCallee = superTypeCallEntry?.calleeExpression?.toFirSourceElement()
+            val constructorSource = (this ?: owner).toFirSourceElement()
             val firDelegatedCall = FirDelegatedConstructorCallImpl(
-                constructorCallee ?: (this ?: owner),
+                constructorCallee ?: constructorSource,
                 delegatedSuperTypeRef,
                 isThis = false
             ).apply {
@@ -393,7 +398,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 isInner = owner.hasModifier(INNER_KEYWORD)
             }
             val firConstructor = FirPrimaryConstructorImpl(
-                this ?: owner,
+                constructorSource,
                 session,
                 delegatedSelfTypeRef,
                 null,
@@ -410,13 +415,13 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitKtFile(file: KtFile, data: Unit): FirElement {
             context.packageFqName = file.packageFqName
-            val firFile = FirFileImpl(file, session, file.name, context.packageFqName)
+            val firFile = FirFileImpl(file.toFirSourceElement(), session, file.name, context.packageFqName)
             for (annotationEntry in file.annotationEntries) {
                 firFile.annotations += annotationEntry.convert<FirAnnotationCall>()
             }
             for (importDirective in file.importDirectives) {
                 firFile.imports += FirImportImpl(
-                    importDirective,
+                    importDirective.toFirSourceElement(),
                     importDirective.importedFqName,
                     importDirective.isAllUnder,
                     importDirective.aliasName?.let { Name.identifier(it) }
@@ -431,7 +436,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit): FirElement {
             return withChildClassName(enumEntry.nameAsSafeName) {
                 val firEnumEntry = FirEnumEntryImpl(
-                    enumEntry,
+                    enumEntry.toFirSourceElement(),
                     session,
                     enumEntry.nameAsSafeName,
                     FirClassSymbol(context.currentClassId)
@@ -476,7 +481,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 }
                 val firClass = if (status.modality == Modality.SEALED) {
                     FirSealedClassImpl(
-                        classOrObject,
+                        classOrObject.toFirSourceElement(),
                         session,
                         classOrObject.nameAsSafeName,
                         status,
@@ -485,7 +490,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     )
                 } else {
                     FirClassImpl(
-                        classOrObject,
+                        classOrObject.toFirSourceElement(),
                         session,
                         classOrObject.nameAsSafeName,
                         status,
@@ -533,7 +538,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression, data: Unit): FirElement {
             val objectDeclaration = expression.objectDeclaration
-            return FirAnonymousObjectImpl(expression, session).apply {
+            return FirAnonymousObjectImpl(expression.toFirSourceElement(), session).apply {
                 objectDeclaration.extractAnnotationsTo(this)
                 objectDeclaration.extractSuperTypeListEntriesTo(this, null)
                 this.typeRef = superTypeRefs.first() // TODO
@@ -554,7 +559,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             }
             return withChildClassName(typeAlias.nameAsSafeName) {
                 val firTypeAlias = FirTypeAliasImpl(
-                    typeAlias,
+                    typeAlias.toFirSourceElement(),
                     session,
                     typeAlias.nameAsSafeName,
                     status,
@@ -576,7 +581,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             }
             val receiverType = function.receiverTypeReference.convertSafe<FirTypeRef>()
             val firFunction = if (function.name == null) {
-                FirAnonymousFunctionImpl(function, session, returnType, receiverType, FirAnonymousFunctionSymbol())
+                FirAnonymousFunctionImpl(function.toFirSourceElement(), session, returnType, receiverType, FirAnonymousFunctionSymbol())
             } else {
                 val status = FirDeclarationStatusImpl(
                     if (function.isLocal) Visibilities.LOCAL else function.visibility,
@@ -593,7 +598,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     isSuspend = function.hasModifier(SUSPEND_KEYWORD)
                 }
                 FirSimpleFunctionImpl(
-                    function,
+                    function.toFirSourceElement(),
                     session,
                     returnType,
                     receiverType,
@@ -617,9 +622,10 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitLambdaExpression(expression: KtLambdaExpression, data: Unit): FirElement {
             val literal = expression.functionLiteral
-            val returnType = FirImplicitTypeRefImpl(literal)
-            val receiverType = FirImplicitTypeRefImpl(literal)
-            return FirAnonymousFunctionImpl(literal, session, returnType, receiverType, FirAnonymousFunctionSymbol()).apply {
+            val literalSource = literal.toFirSourceElement()
+            val returnType = FirImplicitTypeRefImpl(literalSource)
+            val receiverType = FirImplicitTypeRefImpl(literalSource)
+            return FirAnonymousFunctionImpl(literalSource, session, returnType, receiverType, FirAnonymousFunctionSymbol()).apply {
                 context.firFunctions += this
                 var destructuringBlock: FirExpression? = null
                 for (valueParameter in literal.valueParameters) {
@@ -627,9 +633,9 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     valueParameters += if (multiDeclaration != null) {
                         val name = Name.special("<destruct>")
                         val multiParameter = FirValueParameterImpl(
-                            valueParameter,
+                            valueParameter.toFirSourceElement(),
                             this@RawFirBuilder.session,
-                            FirImplicitTypeRefImpl(multiDeclaration),
+                            FirImplicitTypeRefImpl(multiDeclaration.toFirSourceElement()),
                             name,
                             FirVariableSymbol(name),
                             defaultValue = null,
@@ -646,16 +652,17 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                         ) { toFirOrImplicitType() }
                         multiParameter
                     } else {
-                        valueParameter.toFirValueParameter(FirImplicitTypeRefImpl(psi))
+                        valueParameter.toFirValueParameter(FirImplicitTypeRefImpl(source))
                     }
                 }
+                val expressionSource = expression.toFirSourceElement()
                 label = context.firLabels.pop() ?: context.firFunctionCalls.lastOrNull()?.calleeReference?.name?.let {
-                    FirLabelImpl(expression, it.asString())
+                    FirLabelImpl(expressionSource, it.asString())
                 }
                 val bodyExpression = literal.bodyExpression.toFirExpression("Lambda has no body")
                 body = if (bodyExpression is FirBlockImpl) {
                     if (bodyExpression.statements.isEmpty()) {
-                        bodyExpression.statements.add(FirUnitExpression(expression))
+                        bodyExpression.statements.add(FirUnitExpression(expressionSource))
                     }
                     if (destructuringBlock is FirBlock) {
                         for ((index, statement) in destructuringBlock.statements.withIndex()) {
@@ -683,7 +690,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 isInner = owner.hasModifier(INNER_KEYWORD)
             }
             val firConstructor = FirConstructorImpl(
-                this,
+                this.toFirSourceElement(),
                 session,
                 delegatedSelfTypeRef,
                 null,
@@ -707,12 +714,13 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             hasPrimaryConstructor: Boolean
         ): FirDelegatedConstructorCall {
             val isThis = isCallToThis || (isImplicit && hasPrimaryConstructor)
+            val source = this.toFirSourceElement()
             val delegatedType = when {
                 isThis -> delegatedSelfTypeRef
-                else -> delegatedSuperTypeRef ?: FirErrorTypeRefImpl(this, "No super type")
+                else -> delegatedSuperTypeRef ?: FirErrorTypeRefImpl(source, "No super type")
             }
             return FirDelegatedConstructorCallImpl(
-                this,
+                source,
                 delegatedType,
                 isThis
             ).apply {
@@ -724,7 +732,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: Unit): FirElement {
             return FirAnonymousInitializerImpl(
-                initializer,
+                initializer.toFirSourceElement(),
                 session,
                 if (stubMode) FirEmptyExpressionBlock() else initializer.body.toFirBlock()
             )
@@ -738,9 +746,10 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 { property.initializer }.toFirExpression("Should have initializer")
             } else null
             val delegateExpression by lazy { property.delegate?.expression }
+            val propertySource = property.toFirSourceElement()
             val firProperty = if (property.isLocal) {
                 FirPropertyImpl(
-                    property,
+                    propertySource,
                     session,
                     propertyType,
                     null,
@@ -748,7 +757,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     initializer,
                     delegateExpression?.let {
                         FirWrappedDelegateExpressionImpl(
-                            it,
+                            it.toFirSourceElement(),
                             it.toFirExpression("Incorrect delegate expression")
                         )
                     },
@@ -768,7 +777,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     isLateInit = property.hasModifier(LATEINIT_KEYWORD)
                 }
                 FirPropertyImpl(
-                    property,
+                    propertySource,
                     session,
                     propertyType,
                     property.receiverTypeReference.convertSafe(),
@@ -776,7 +785,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     initializer,
                     if (property.hasDelegate()) {
                         FirWrappedDelegateExpressionImpl(
-                            if (stubMode) null else delegateExpression,
+                            if (stubMode) null else delegateExpression?.toFirSourceElement(),
                             { delegateExpression }.toFirExpression("Should have delegate")
                         )
                     } else null,
@@ -797,18 +806,19 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitTypeReference(typeReference: KtTypeReference, data: Unit): FirElement {
             val typeElement = typeReference.typeElement
+            val source = typeReference.toFirSourceElement()
             val isNullable = typeElement is KtNullableType
 
             fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
                 if (this is KtNullableType) this.innerType.unwrapNullable() else this
 
             val firType = when (val unwrappedElement = typeElement.unwrapNullable()) {
-                is KtDynamicType -> FirDynamicTypeRefImpl(typeReference, isNullable)
+                is KtDynamicType -> FirDynamicTypeRefImpl(source, isNullable)
                 is KtUserType -> {
                     var referenceExpression = unwrappedElement.referenceExpression
                     if (referenceExpression != null) {
                         val userType = FirUserTypeRefImpl(
-                            typeReference, isNullable
+                            source, isNullable
                         )
                         var qualifier: KtUserType? = unwrappedElement
                         do {
@@ -826,12 +836,12 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
                         userType
                     } else {
-                        FirErrorTypeRefImpl(typeReference, "Incomplete user type")
+                        FirErrorTypeRefImpl(source, "Incomplete user type")
                     }
                 }
                 is KtFunctionType -> {
                     val functionType = FirFunctionTypeRefImpl(
-                        typeReference,
+                        source,
                         isNullable,
                         unwrappedElement.receiverTypeReference.convertSafe(),
                         // TODO: probably implicit type should not be here
@@ -842,7 +852,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     }
                     functionType
                 }
-                null -> FirErrorTypeRefImpl(typeReference, "Unwrapped type is null")
+                null -> FirErrorTypeRefImpl(source, "Unwrapped type is null")
                 else -> throw AssertionError("Unexpected type element: ${unwrappedElement.text}")
             }
 
@@ -854,7 +864,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry, data: Unit): FirElement {
             val firAnnotationCall = FirAnnotationCallImpl(
-                annotationEntry,
+                annotationEntry.toFirSourceElement(),
                 annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget(),
                 annotationEntry.typeReference.toFirOrErrorType()
             )
@@ -865,7 +875,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         override fun visitTypeParameter(parameter: KtTypeParameter, data: Unit): FirElement {
             val parameterName = parameter.nameAsSafeName
             val firTypeParameter = FirTypeParameterImpl(
-                parameter,
+                parameter.toFirSourceElement(),
                 session,
                 parameterName,
                 FirTypeParameterSymbol(),
@@ -890,8 +900,9 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitTypeProjection(typeProjection: KtTypeProjection, data: Unit): FirElement {
             val projectionKind = typeProjection.projectionKind
+            val source = typeProjection.toFirSourceElement()
             if (projectionKind == KtProjectionKind.STAR) {
-                return FirStarProjectionImpl(typeProjection)
+                return FirStarProjectionImpl(source)
             }
             if (projectionKind == KtProjectionKind.NONE && typeProjection.text == "_") {
                 return FirTypePlaceholderProjection
@@ -899,7 +910,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             val typeReference = typeProjection.typeReference
             val firType = typeReference.toFirOrErrorType()
             return FirTypeProjectionWithVarianceImpl(
-                typeProjection,
+                source,
                 firType,
                 when (projectionKind) {
                     KtProjectionKind.IN -> Variance.IN_VARIANCE
@@ -914,7 +925,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             parameter.toFirValueParameter()
 
         override fun visitBlockExpression(expression: KtBlockExpression, data: Unit): FirElement {
-            return FirBlockImpl(expression).apply {
+            return FirBlockImpl(expression.toFirSourceElement()).apply {
                 for (statement in expression.statements) {
                     val firStatement = statement.toFirStatement("Statement expected: ${statement.text}")
                     if (firStatement !is FirBlock || firStatement.annotations.isNotEmpty()) {
@@ -927,7 +938,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         }
 
         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression, data: Unit): FirElement {
-            return generateAccessExpression(expression, expression.getReferencedNameAsName())
+            return generateAccessExpression(expression.toFirSourceElement(), expression.getReferencedNameAsName())
         }
 
         override fun visitConstantExpression(expression: KtConstantExpression, data: Unit): FirElement =
@@ -940,29 +951,30 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         }
 
         override fun visitReturnExpression(expression: KtReturnExpression, data: Unit): FirElement {
+            val source = expression.toFirSourceElement()
             val result = expression.returnedExpression?.toFirExpression("Incorrect return expression")
-                ?: FirUnitExpression(expression)
-            return result.toReturn(expression, expression.getTargetLabel()?.getReferencedName())
+                ?: FirUnitExpression(source)
+            return result.toReturn(source, expression.getTargetLabel()?.getReferencedName())
         }
 
         override fun visitTryExpression(expression: KtTryExpression, data: Unit): FirElement {
             val tryBlock = expression.tryBlock.toFirBlock()
             val finallyBlock = expression.finallyBlock?.finalExpression?.toFirBlock()
-            return FirTryExpressionImpl(expression, tryBlock, finallyBlock).apply {
+            return FirTryExpressionImpl(expression.toFirSourceElement(), tryBlock, finallyBlock).apply {
                 for (clause in expression.catchClauses) {
                     val parameter = clause.catchParameter?.toFirValueParameter() ?: continue
                     val block = clause.catchBody.toFirBlock()
-                    catches += FirCatchImpl(clause, parameter, block)
+                    catches += FirCatchImpl(clause.toFirSourceElement(), parameter, block)
                 }
             }
         }
 
         override fun visitIfExpression(expression: KtIfExpression, data: Unit): FirElement {
-            return FirWhenExpressionImpl(expression, null, null).apply {
+            return FirWhenExpressionImpl(expression.toFirSourceElement(), null, null).apply {
                 val condition = expression.condition
                 val firCondition = condition.toFirExpression("If statement should have condition")
                 val trueBranch = expression.then.toFirBlock()
-                branches += FirWhenBranchImpl(condition, firCondition, trueBranch)
+                branches += FirWhenBranchImpl(condition?.toFirSourceElement(), firCondition, trueBranch)
                 expression.`else`?.let {
                     branches += FirWhenBranchImpl(
                         null, FirElseIfTrueCondition(null), it.toFirBlock()
@@ -981,7 +993,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 is KtVariableDeclaration -> {
                     val name = ktSubjectExpression.nameAsSafeName
                     FirPropertyImpl(
-                        ktSubjectExpression,
+                        ktSubjectExpression?.toFirSourceElement(),
                         session,
                         ktSubjectExpression.typeReference.toFirOrImplicitType(),
                         null,
@@ -999,7 +1011,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             val hasSubject = subjectExpression != null
             val subject = FirWhenSubject()
             return FirWhenExpressionImpl(
-                expression,
+                expression?.toFirSourceElement(),
                 subjectExpression,
                 subjectVariable
             ).apply {
@@ -1008,24 +1020,25 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 }
                 var thereIsElseBranch = false
                 for (entry in expression.entries) {
+                    val entrySource = entry.toFirSourceElement()
                     val branch = entry.expression.toFirBlock()
                     branches += if (!entry.isElse) {
                         if (hasSubject) {
                             val firCondition = entry.conditions.toFirWhenCondition(
-                                entry,
+                                entrySource,
                                 subject,
                                 { toFirExpression(it) },
                                 { toFirOrErrorType() }
                             )
-                            FirWhenBranchImpl(entry, firCondition, branch)
+                            FirWhenBranchImpl(entrySource, firCondition, branch)
                         } else {
                             val condition = entry.conditions.first() as? KtWhenConditionWithExpression
                             val firCondition = condition?.expression.toFirExpression("No expression in condition with expression")
-                            FirWhenBranchImpl(entry, firCondition, branch)
+                            FirWhenBranchImpl(entrySource, firCondition, branch)
                         }
                     } else {
                         thereIsElseBranch = true
-                        FirWhenBranchImpl(entry, FirElseIfTrueCondition(null), branch)
+                        FirWhenBranchImpl(entrySource, FirElseIfTrueCondition(null), branch)
                     }
                 }
 //                if (!thereIsElseBranch) {
@@ -1036,52 +1049,54 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitDoWhileExpression(expression: KtDoWhileExpression, data: Unit): FirElement {
             return FirDoWhileLoopImpl(
-                expression, expression.condition.toFirExpression("No condition in do-while loop")
+                expression.toFirSourceElement(), expression.condition.toFirExpression("No condition in do-while loop")
             ).configure { expression.body.toFirBlock() }
         }
 
         override fun visitWhileExpression(expression: KtWhileExpression, data: Unit): FirElement {
             return FirWhileLoopImpl(
-                expression, expression.condition.toFirExpression("No condition in while loop")
+                expression.toFirSourceElement(), expression.condition.toFirExpression("No condition in while loop")
             ).configure { expression.body.toFirBlock() }
         }
 
         override fun visitForExpression(expression: KtForExpression, data: Unit?): FirElement {
             val rangeExpression = expression.loopRange.toFirExpression("No range in for loop")
             val parameter = expression.loopParameter
-            return FirBlockImpl(expression).apply {
+            val loopSource = expression.toFirSourceElement()
+            return FirBlockImpl(loopSource).apply {
+                val rangeSource = expression.loopRange?.toFirSourceElement()
                 val rangeVal =
-                    generateTemporaryVariable(this@RawFirBuilder.session, expression.loopRange, Name.special("<range>"), rangeExpression)
+                    generateTemporaryVariable(this@RawFirBuilder.session, rangeSource, Name.special("<range>"), rangeExpression)
                 statements += rangeVal
                 val iteratorVal = generateTemporaryVariable(
-                    this@RawFirBuilder.session, expression.loopRange, Name.special("<iterator>"),
-                    FirFunctionCallImpl(expression).apply {
-                        calleeReference = FirSimpleNamedReference(expression, Name.identifier("iterator"), null)
-                        explicitReceiver = generateResolvedAccessExpression(expression.loopRange, rangeVal)
+                    this@RawFirBuilder.session, rangeSource, Name.special("<iterator>"),
+                    FirFunctionCallImpl(loopSource).apply {
+                        calleeReference = FirSimpleNamedReference(loopSource, Name.identifier("iterator"), null)
+                        explicitReceiver = generateResolvedAccessExpression(rangeSource, rangeVal)
                     }
                 )
                 statements += iteratorVal
                 statements += FirWhileLoopImpl(
-                    expression,
-                    FirFunctionCallImpl(expression).apply {
-                        calleeReference = FirSimpleNamedReference(expression, Name.identifier("hasNext"), null)
-                        explicitReceiver = generateResolvedAccessExpression(expression, iteratorVal)
+                    loopSource,
+                    FirFunctionCallImpl(loopSource).apply {
+                        calleeReference = FirSimpleNamedReference(loopSource, Name.identifier("hasNext"), null)
+                        explicitReceiver = generateResolvedAccessExpression(loopSource, iteratorVal)
                     }
                 ).configure {
                     // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
                     val block = when (val body = expression.body) {
                         is KtBlockExpression -> body.accept(this@Visitor, Unit) as FirBlockImpl
-                        null -> FirBlockImpl(body)
-                        else -> FirBlockImpl(body).apply { statements += body.toFirStatement() }
+                        null -> FirBlockImpl(null)
+                        else -> FirBlockImpl(body.toFirSourceElement()).apply { statements += body.toFirStatement() }
                     }
                     if (parameter != null) {
                         val multiDeclaration = parameter.destructuringDeclaration
                         val firLoopParameter = generateTemporaryVariable(
-                            this@RawFirBuilder.session, expression.loopParameter,
+                            this@RawFirBuilder.session, expression.loopParameter?.toFirSourceElement(),
                             if (multiDeclaration != null) Name.special("<destruct>") else parameter.nameAsSafeName,
-                            FirFunctionCallImpl(expression).apply {
-                                calleeReference = FirSimpleNamedReference(expression, Name.identifier("next"), null)
-                                explicitReceiver = generateResolvedAccessExpression(expression, iteratorVal)
+                            FirFunctionCallImpl(loopSource).apply {
+                                calleeReference = FirSimpleNamedReference(loopSource, Name.identifier("next"), null)
+                                explicitReceiver = generateResolvedAccessExpression(loopSource, iteratorVal)
                             }
                         )
                         if (multiDeclaration != null) {
@@ -1107,22 +1122,23 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         }
 
         override fun visitBreakExpression(expression: KtBreakExpression, data: Unit): FirElement {
-            return FirBreakExpressionImpl(expression).bindLabel(expression)
+            return FirBreakExpressionImpl(expression.toFirSourceElement()).bindLabel(expression)
         }
 
         override fun visitContinueExpression(expression: KtContinueExpression, data: Unit): FirElement {
-            return FirContinueExpressionImpl(expression).bindLabel(expression)
+            return FirContinueExpressionImpl(expression.toFirSourceElement()).bindLabel(expression)
         }
 
         override fun visitBinaryExpression(expression: KtBinaryExpression, data: Unit): FirElement {
             val operationToken = expression.operationToken
             val leftArgument = expression.left.toFirExpression("No left operand")
             val rightArgument = expression.right.toFirExpression("No right operand")
+            val source = expression.toFirSourceElement()
             when (operationToken) {
                 ELVIS ->
-                    return leftArgument.generateNotNullOrOther(session, rightArgument, "elvis", expression)
+                    return leftArgument.generateNotNullOrOther(session, rightArgument, "elvis", source)
                 ANDAND, OROR ->
-                    return leftArgument.generateLazyLogicalOperation(rightArgument, operationToken == ANDAND, expression)
+                    return leftArgument.generateLazyLogicalOperation(rightArgument, operationToken == ANDAND, source)
                 in OperatorConventions.IN_OPERATIONS ->
                     return rightArgument.generateContainsOperation(
                         leftArgument, operationToken == NOT_IN, expression, expression.operationReference
@@ -1130,9 +1146,9 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             }
             val conventionCallName = operationToken.toBinaryName()
             return if (conventionCallName != null || operationToken == IDENTIFIER) {
-                FirFunctionCallImpl(expression).apply {
+                FirFunctionCallImpl(source).apply {
                     calleeReference = FirSimpleNamedReference(
-                        expression.operationReference,
+                        expression.operationReference.toFirSourceElement(),
                         conventionCallName ?: expression.operationReference.getReferencedNameAsName(),
                         null
                     )
@@ -1142,11 +1158,11 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             } else {
                 val firOperation = operationToken.toFirOperation()
                 if (firOperation in FirOperation.ASSIGNMENTS) {
-                    return expression.left.generateAssignment(expression, rightArgument, firOperation) {
+                    return expression.left.generateAssignment(source, rightArgument, firOperation) {
                         (this as KtExpression).toFirExpression("Incorrect expression in assignment: ${expression.text}")
                     }
                 } else {
-                    FirOperatorCallImpl(expression, firOperation).apply {
+                    FirOperatorCallImpl(source, firOperation).apply {
                         arguments += leftArgument
                         arguments += rightArgument
                     }
@@ -1157,7 +1173,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS, data: Unit): FirElement {
             val operation = expression.operationReference.getReferencedNameElementType().toFirOperation()
             return FirTypeOperatorCallImpl(
-                expression, operation, expression.right.toFirOrErrorType()
+                expression.toFirSourceElement(), operation, expression.right.toFirOrErrorType()
             ).apply {
                 arguments += expression.left.toFirExpression("No left operand")
             }
@@ -1165,7 +1181,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitIsExpression(expression: KtIsExpression, data: Unit): FirElement {
             return FirTypeOperatorCallImpl(
-                expression, if (expression.isNegated) FirOperation.NOT_IS else FirOperation.IS,
+                expression.toFirSourceElement(), if (expression.isNegated) FirOperation.NOT_IS else FirOperation.IS,
                 expression.typeReference.toFirOrErrorType()
             ).apply {
                 arguments += expression.leftHandSide.toFirExpression("No left operand")
@@ -1187,15 +1203,15 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                         prefix = expression is KtPrefixExpression
                     ) { (this as KtExpression).toFirExpression("Incorrect expression inside inc/dec") }
                 }
-                FirFunctionCallImpl(expression).apply {
+                FirFunctionCallImpl(expression.toFirSourceElement()).apply {
                     calleeReference = FirSimpleNamedReference(
-                        expression.operationReference, conventionCallName, null
+                        expression.operationReference.toFirSourceElement(), conventionCallName, null
                     )
                     explicitReceiver = argument.toFirExpression("No operand")
                 }
             } else {
                 val firOperation = operationToken.toFirOperation()
-                FirOperatorCallImpl(expression, firOperation).apply {
+                FirOperatorCallImpl(expression.toFirSourceElement(), firOperation).apply {
                     arguments += argument.toFirExpression("No operand")
                 }
             }
@@ -1203,18 +1219,19 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitCallExpression(expression: KtCallExpression, data: Unit): FirElement {
             val calleeExpression = expression.calleeExpression
-            return FirFunctionCallImpl(expression).apply {
+            val source = expression.toFirSourceElement()
+            return FirFunctionCallImpl(source).apply {
                 val calleeReference = when (calleeExpression) {
                     is KtSimpleNameExpression -> FirSimpleNamedReference(
-                        calleeExpression, calleeExpression.getReferencedNameAsName(), null
+                        calleeExpression.toFirSourceElement(), calleeExpression.getReferencedNameAsName(), null
                     )
                     null -> FirErrorNamedReferenceImpl(
-                        calleeExpression, "Call has no callee"
+                        null, "Call has no callee"
                     )
                     else -> {
                         arguments += calleeExpression.toFirExpression("Incorrect invoke receiver")
                         FirSimpleNamedReference(
-                            expression, OperatorNameConventions.INVOKE, null
+                            source, OperatorNameConventions.INVOKE, null
                         )
                     }
                 }
@@ -1230,8 +1247,9 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitArrayAccessExpression(expression: KtArrayAccessExpression, data: Unit): FirElement {
             val arrayExpression = expression.arrayExpression
-            return FirFunctionCallImpl(expression).apply {
-                calleeReference = FirSimpleNamedReference(expression, OperatorNameConventions.GET, null)
+            val source = expression.toFirSourceElement()
+            return FirFunctionCallImpl(source).apply {
+                calleeReference = FirSimpleNamedReference(source, OperatorNameConventions.GET, null)
                 explicitReceiver = arrayExpression.toFirExpression("No array expression")
                 for (indexExpression in expression.indexExpressions) {
                     arguments += indexExpression.toFirExpression("Incorrect index expression")
@@ -1241,7 +1259,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitQualifiedExpression(expression: KtQualifiedExpression, data: Unit): FirElement {
             val selector = expression.selectorExpression
-                ?: return FirErrorExpressionImpl(expression, "Qualified expression without selector")
+                ?: return FirErrorExpressionImpl(expression.toFirSourceElement(), "Qualified expression without selector")
             val firSelector = selector.toFirExpression("Incorrect selector expression")
             if (firSelector is FirModifiableQualifiedAccess) {
                 firSelector.safe = expression is KtSafeQualifiedExpression
@@ -1252,27 +1270,30 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitThisExpression(expression: KtThisExpression, data: Unit): FirElement {
             val labelName = expression.getLabelName()
-            return FirThisReceiverExpressionImpl(expression, FirExplicitThisReference(expression, labelName))
+            val source = expression.toFirSourceElement()
+            return FirThisReceiverExpressionImpl(source, FirExplicitThisReference(source, labelName))
         }
 
         override fun visitSuperExpression(expression: KtSuperExpression, data: Unit): FirElement {
             val superType = expression.superTypeQualifier
-            return FirQualifiedAccessExpressionImpl(expression).apply {
-                calleeReference = FirExplicitSuperReference(expression, superType.toFirOrImplicitType())
+            val source = expression.toFirSourceElement()
+            return FirQualifiedAccessExpressionImpl(source).apply {
+                calleeReference = FirExplicitSuperReference(source, superType.toFirOrImplicitType())
             }
         }
 
         override fun visitParenthesizedExpression(expression: KtParenthesizedExpression, data: Unit): FirElement {
-            return expression.expression?.accept(this, data) ?: FirErrorExpressionImpl(expression, "Empty parentheses")
+            return expression.expression?.accept(this, data) ?: FirErrorExpressionImpl(expression.toFirSourceElement(), "Empty parentheses")
         }
 
         override fun visitLabeledExpression(expression: KtLabeledExpression, data: Unit): FirElement {
+            val source = expression.toFirSourceElement()
             val labelName = expression.getLabelName()
             val size = context.firLabels.size
             if (labelName != null) {
-                context.firLabels += FirLabelImpl(expression, labelName)
+                context.firLabels += FirLabelImpl(source, labelName)
             }
-            val result = expression.baseExpression?.accept(this, data) ?: FirErrorExpressionImpl(expression, "Empty label")
+            val result = expression.baseExpression?.accept(this, data) ?: FirErrorExpressionImpl(source, "Empty label")
             if (size != context.firLabels.size) {
                 context.firLabels.removeLast()
                 println("Unused label: ${expression.text}")
@@ -1283,18 +1304,18 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         override fun visitAnnotatedExpression(expression: KtAnnotatedExpression, data: Unit): FirElement {
             val rawResult = expression.baseExpression?.accept(this, data)
             val result = rawResult as? FirAbstractAnnotatedElement
-                ?: FirErrorExpressionImpl(expression, "Strange annotated expression: ${rawResult?.render()}")
+                ?: FirErrorExpressionImpl(expression.toFirSourceElement(), "Strange annotated expression: ${rawResult?.render()}")
             expression.extractAnnotationsTo(result)
             return result
         }
 
         override fun visitThrowExpression(expression: KtThrowExpression, data: Unit): FirElement {
-            return FirThrowExpressionImpl(expression, expression.thrownExpression.toFirExpression("Nothing to throw"))
+            return FirThrowExpressionImpl(expression.toFirSourceElement(), expression.thrownExpression.toFirExpression("Nothing to throw"))
         }
 
         override fun visitDestructuringDeclaration(multiDeclaration: KtDestructuringDeclaration, data: Unit): FirElement {
             val baseVariable = generateTemporaryVariable(
-                session, multiDeclaration, "destruct",
+                session, multiDeclaration.toFirSourceElement(), "destruct",
                 multiDeclaration.initializer.toFirExpression("Destructuring declaration without initializer")
             )
             return generateDestructuringBlock(
@@ -1309,22 +1330,22 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         }
 
         override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, data: Unit): FirElement {
-            return FirGetClassCallImpl(expression).apply {
+            return FirGetClassCallImpl(expression.toFirSourceElement()).apply {
                 arguments += expression.receiverExpression.toFirExpression("No receiver in class literal")
             }
         }
 
         override fun visitCallableReferenceExpression(expression: KtCallableReferenceExpression, data: Unit): FirElement {
-            return FirCallableReferenceAccessImpl(expression).apply {
+            return FirCallableReferenceAccessImpl(expression.toFirSourceElement()).apply {
                 calleeReference = FirSimpleNamedReference(
-                    expression.callableReference, expression.callableReference.getReferencedNameAsName(), null
+                    expression.callableReference.toFirSourceElement(), expression.callableReference.getReferencedNameAsName(), null
                 )
                 explicitReceiver = expression.receiverExpression?.toFirExpression("Incorrect receiver expression")
             }
         }
 
         override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression, data: Unit): FirElement {
-            return FirArrayOfCallImpl(expression).apply {
+            return FirArrayOfCallImpl(expression.toFirSourceElement()).apply {
                 for (innerExpression in expression.getInnerExpressions()) {
                     arguments += innerExpression.toFirExpression("Incorrect collection literal argument")
                 }
@@ -1332,7 +1353,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         }
 
         override fun visitExpression(expression: KtExpression, data: Unit): FirElement {
-            return FirExpressionStub(expression)
+            return FirExpressionStub(expression.toFirSourceElement())
         }
     }
 }

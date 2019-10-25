@@ -83,10 +83,10 @@ class PostponedArgumentsAnalyzer(
         val namedReference = when {
             candidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
                 FirErrorNamedReferenceImpl(
-                    callableReferenceAccess.psi,
+                    callableReferenceAccess.source,
                     "Unresolved reference: ${callableReferenceAccess.calleeReference.name}"
                 )
-            else -> FirNamedReferenceWithCandidate(callableReferenceAccess.psi, callableReferenceAccess.calleeReference.name, candidate)
+            else -> FirNamedReferenceWithCandidate(callableReferenceAccess.source, callableReferenceAccess.calleeReference.name, candidate)
         }
 
         val transformedCalleeReference = callableReferenceAccess.transformCalleeReference(

@@ -164,7 +164,7 @@ class FirSyntheticCallGenerator(
         }
         return FirSimpleFunctionImpl(
             session = session,
-            psi = null,
+            source = null,
             symbol = symbol,
             name = name,
             status = status,
@@ -179,7 +179,7 @@ class FirSyntheticCallGenerator(
         val name = Name.identifier(name)
         return FirValueParameterImpl(
             session = session,
-            psi = null,
+            source = null,
             name = name,
             returnTypeRef = this,
             defaultValue = null,

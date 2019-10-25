@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 object NodeConfigurator : AbstractFieldConfigurator() {
     fun configureFields() = with(FirTreeBuilder) {
         AbstractFirTreeBuilder.baseFirElement.configure {
-            +field("psi", psiElementType, nullable = true)
+            +field("source", sourceElementType, nullable = true)
         }
 
         annotationContainer.configure {

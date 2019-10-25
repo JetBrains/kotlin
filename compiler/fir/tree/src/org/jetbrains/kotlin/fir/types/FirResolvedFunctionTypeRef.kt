@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.visitors.*
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirResolvedFunctionTypeRef : FirResolvedTypeRef(), FirFunctionTypeRef {
-    abstract override val psi: PsiElement?
+    abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val type: ConeKotlinType
     abstract override val isMarkedNullable: Boolean

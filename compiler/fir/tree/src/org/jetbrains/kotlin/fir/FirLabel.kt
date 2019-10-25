@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -14,7 +13,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirLabel : FirPureAbstractElement(), FirElement {
-    abstract override val psi: PsiElement?
+    abstract override val source: FirSourceElement?
     abstract val name: String
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitLabel(this, data)

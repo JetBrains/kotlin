@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirStarProjection : FirTypeProjection() {
-    abstract override val psi: PsiElement?
+    abstract override val source: FirSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitStarProjection(this, data)
 }

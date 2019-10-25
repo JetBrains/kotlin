@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 class FirDelegatedConstructorCallImpl(
-    override val psi: PsiElement?,
+    override val source: FirSourceElement?,
     override var constructedTypeRef: FirTypeRef,
     override val isThis: Boolean
 ) : FirDelegatedConstructorCall(), FirCallWithArgumentList, FirAbstractAnnotatedElement {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val arguments: MutableList<FirExpression> = mutableListOf()
     override val isSuper: Boolean get() = !isThis
-    override var calleeReference: FirReference = if (isThis) FirExplicitThisReference(psi, null) else FirExplicitSuperReference(psi, constructedTypeRef)
+    override var calleeReference: FirReference = if (isThis) FirExplicitThisReference(source, null) else FirExplicitSuperReference(source, constructedTypeRef)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.name.ClassId
@@ -23,7 +23,7 @@ class FirResolvedImportImpl(
     override val packageFqName: FqName,
     override val relativeClassName: FqName?
 ) : FirResolvedImport() {
-    override val psi: PsiElement? get() = delegate.psi
+    override val source: FirSourceElement? get() = delegate.source
     override val importedFqName: FqName? get() = delegate.importedFqName
     override val isAllUnder: Boolean get() = delegate.isAllUnder
     override val aliasName: Name? get() = delegate.aliasName
