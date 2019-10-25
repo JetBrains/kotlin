@@ -260,12 +260,6 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
         }
       }
     }
-    else {
-      if (locationProperty.isModified()) {
-        val message = ExternalSystemBundle.message("external.system.mavenized.structure.wizard.directory.not.exist.warning")
-        return ValidationInfo(message).asWarning().withOKEnabled()
-      }
-    }
     return null
   }
 
