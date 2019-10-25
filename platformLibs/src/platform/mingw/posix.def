@@ -1,5 +1,5 @@
 package = platform.posix
-headers = assert.h complex.h dirent.h errno.h fcntl.h \
+headers = assert.h complex.h ctype.h dirent.h errno.h fcntl.h \
     fenv.h float.h ftw.h getopt.h inttypes.h libgen.h limits.h \
     locale.h math.h memory.h pthread.h sched.h search.h semaphore.h \
     setjmp.h signal.h stdint.h stdio.h stdlib.h string.h \

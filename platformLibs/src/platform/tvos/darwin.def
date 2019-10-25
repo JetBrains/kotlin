@@ -6,7 +6,7 @@ headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityIntern
     TargetConditionals.h __cxxabi_config.h _locale.h _types.h _wctype.h \
     aio.h asl.h bitstring.h bzlib.h \
     cache.h cache_callbacks.h checkint.h compression.h copyfile.h \
-    cpio.h ctype.h cxxabi.h db.h \
+    cpio.h cxxabi.h db.h \
     dns.h dns_sd.h dns_util.h execinfo.h \
     fmtmsg.h fstab.h \
     gethostuuid.h glob.h ifaddrs.h inttypes.h iso646.h \

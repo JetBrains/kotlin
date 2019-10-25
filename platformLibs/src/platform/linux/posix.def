@@ -1,5 +1,5 @@
 package = platform.posix
-headers = alloca.h ar.h assert.h complex.h dirent.h dlfcn.h err.h errno.h fcntl.h \
+headers = alloca.h ar.h assert.h complex.h ctype.h dirent.h dlfcn.h err.h errno.h fcntl.h \
     fenv.h fnmatch.h fts.h ftw.h getopt.h grp.h inttypes.h libgen.h limits.h \
     locale.h math.h memory.h netdb.h paths.h poll.h \
     pthread.h pwd.h regex.h resolv.h sched.h search.h semaphore.h setjmp.h sgtty.h signal.h \

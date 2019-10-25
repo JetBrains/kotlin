@@ -1,6 +1,6 @@
 package = platform.linux
 headers = aio.h aliases.h a.out.h argp.h argz.h byteswap.h cpio.h crypt.h \
-	ctype.h elf.h endian.h envz.h error.h execinfo.h features.h fmtmsg.h \
+	elf.h endian.h envz.h error.h execinfo.h features.h fmtmsg.h \
 	fpu_control.h \
 	fstab.h _G_config.h gconv.h glob.h gnu-versions.h \
 	gshadow.h ieee754.h ifaddrs.h langinfo.h lastlog.h \
