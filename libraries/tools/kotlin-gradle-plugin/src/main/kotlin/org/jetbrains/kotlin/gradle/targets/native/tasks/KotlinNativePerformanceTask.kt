@@ -58,7 +58,11 @@ open class NativePerformanceReport : DefaultTask() {
         val allExecutedTasks = listOf(binary.linkTask) + compileTasks
         val upToDateTasks = allExecutedTasks.filter { it.state.upToDate }.map { it.name }.joinToString("\n", "- ")
         if (upToDateTasks.isEmpty()) {
-            error("Next compile tasks which are needed for time measurement are upToDate and weren't executed:\n${upToDateTasks}")
+            if (reportDirectory.exists()) {
+                project.delete(reportDirectory.absolutePath)
+            }
+            project.logger.warn("Next compile tasks which are needed for time measurement are upToDate and weren't executed:\n${upToDateTasks}")
+            return
         }
         val successStatus = allExecutedTasks.map { it.state.failure == null }.reduce { acc, it -> acc && it }
         // Get code size metric.
