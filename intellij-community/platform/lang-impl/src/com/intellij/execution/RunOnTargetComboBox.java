@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution;
 
-import com.intellij.execution.remote.*;
+import com.intellij.execution.target.*;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.wizard.AbstractWizardStepEx;
 import com.intellij.openapi.diagnostic.Logger;
@@ -157,7 +157,7 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
           ((Type)anObject).createStepsForNewWizard(myProject, myDefaultRuntimeType);
         if (wizardData != null) {
           RemoteTargetConfiguration newTarget = wizardData.first;
-          RemoteTargetWizard wizard = new RemoteTargetWizard(myProject, "New Target", newTarget, wizardData.second);
+          TargetEnvironmentWizard wizard = new TargetEnvironmentWizard(myProject, "New Target", newTarget, wizardData.second);
           if (wizard.showAndGet()) {
             RemoteTargetsManager.getInstance().addTarget(newTarget);
             addTarget(newTarget, 2);

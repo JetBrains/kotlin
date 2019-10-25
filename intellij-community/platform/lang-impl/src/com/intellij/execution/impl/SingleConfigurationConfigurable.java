@@ -4,12 +4,12 @@ package com.intellij.execution.impl;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.Executor;
 import com.intellij.execution.RunnerAndConfigurationSettings;
-import com.intellij.execution.configuration.RemoteTargetAwareRunProfile;
+import com.intellij.execution.configuration.TargetAwareRunProfile;
 import com.intellij.execution.configurations.*;
-import com.intellij.execution.remote.LanguageRuntimeType;
-import com.intellij.execution.remote.RemoteTargetsListConfigurable;
-import com.intellij.execution.remote.RemoteTargetsManager;
 import com.intellij.execution.runners.ProgramRunner;
+import com.intellij.execution.target.LanguageRuntimeType;
+import com.intellij.execution.target.RemoteTargetsListConfigurable;
+import com.intellij.execution.target.RemoteTargetsManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataKey;
@@ -122,8 +122,8 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     snapshot.setName(getNameText());
     RunConfiguration runConfiguration = snapshot.getConfiguration();
     runConfiguration.setAllowRunningInParallel(myIsAllowRunningInParallel);
-    if (runConfiguration instanceof RemoteTargetAwareRunProfile) {
-      ((RemoteTargetAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
+    if (runConfiguration instanceof TargetAwareRunProfile) {
+      ((TargetAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
     }
     snapshot.setFolderName(myFolderName);
   }
@@ -140,8 +140,8 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     RunConfiguration runConfiguration = settings.getConfiguration();
     settings.setName(getNameText());
     runConfiguration.setAllowRunningInParallel(myIsAllowRunningInParallel);
-    if (runConfiguration instanceof RemoteTargetAwareRunProfile) {
-      ((RemoteTargetAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
+    if (runConfiguration instanceof TargetAwareRunProfile) {
+      ((TargetAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
     }
     settings.setFolderName(myFolderName);
     settings.setShared(myStoreProjectConfiguration);
@@ -322,8 +322,8 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
     RunnerAndConfigurationSettings snapshot = getEditor().getSnapshot();
     RunConfiguration runConfiguration = snapshot.getConfiguration();
     runConfiguration.setAllowRunningInParallel(myIsAllowRunningInParallel);
-    if (runConfiguration instanceof RemoteTargetAwareRunProfile) {
-      ((RemoteTargetAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
+    if (runConfiguration instanceof TargetAwareRunProfile) {
+      ((TargetAwareRunProfile)runConfiguration).setDefaultTargetName(myDefaultTargetName);
     }
     if (cloneBeforeRunTasks) {
       RunManagerImplKt.cloneBeforeRunTasks(runConfiguration);
@@ -492,11 +492,11 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       myCbStoreProjectConfiguration.setVisible(!settings.isTemplate());
       myCbStoreProjectConfigurationValidator.revalidate();
 
-      boolean targetAware = configuration instanceof RemoteTargetAwareRunProfile;
+      boolean targetAware = configuration instanceof TargetAwareRunProfile;
       myRunOnPanel.setVisible(targetAware);
       if (targetAware) {
-        String defaultTargetName = ((RemoteTargetAwareRunProfile)configuration).getDefaultTargetName();
-        LanguageRuntimeType<?> defaultRuntime = ((RemoteTargetAwareRunProfile)configuration).getDefaultLanguageRuntimeType();
+        String defaultTargetName = ((TargetAwareRunProfile)configuration).getDefaultTargetName();
+        LanguageRuntimeType<?> defaultRuntime = ((TargetAwareRunProfile)configuration).getDefaultLanguageRuntimeType();
         ((RunOnTargetComboBox)myRunOnComboBox).setDefaultLanguageRuntimeTime(defaultRuntime);
         resetRunOnComboBox(defaultTargetName);
         myDefaultTargetName = defaultTargetName;

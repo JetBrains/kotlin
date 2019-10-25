@@ -2,12 +2,12 @@
 package com.intellij.execution.configuration;
 
 import com.intellij.execution.configurations.RunProfile;
-import com.intellij.execution.remote.LanguageRuntimeType;
-import com.intellij.execution.remote.RemoteTargetConfiguration;
+import com.intellij.execution.target.LanguageRuntimeType;
+import com.intellij.execution.target.RemoteTargetConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface RemoteTargetAwareRunProfile extends RunProfile {
+public interface TargetAwareRunProfile extends RunProfile {
   boolean canRunOn(@NotNull RemoteTargetConfiguration target);
 
   @Nullable
