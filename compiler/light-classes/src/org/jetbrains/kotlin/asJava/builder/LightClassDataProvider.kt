@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
+import org.jetbrains.kotlin.asJava.classes.safeIsLocal
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.MemberCodegen
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -59,7 +60,7 @@ class LightClassDataProviderForClassOrObject(
         val trackerService = KotlinModificationTrackerService.getInstance(classOrObject.project)
         return CachedValueProvider.Result.create(
             computeLightClassData(),
-            if (classOrObject.isLocal) trackerService.modificationTracker else trackerService.outOfBlockModificationTracker
+            if (classOrObject.safeIsLocal()) trackerService.modificationTracker else trackerService.outOfBlockModificationTracker
         )
     }
 
@@ -188,7 +189,7 @@ private class ClassFilterForClassOrObject(private val classOrObject: KtClassOrOb
         // TODO: current method will process local classes in irrelevant declarations, it should be fixed.
         // We generate all enclosing classes
 
-        if (classOrObject.isLocal && processingClassOrObject.isLocal) {
+        if (classOrObject.safeIsLocal() && processingClassOrObject.safeIsLocal()) {
             val commonParent = PsiTreeUtil.findCommonParent(classOrObject, processingClassOrObject)
             return commonParent != null && commonParent !is PsiFile
         }
