@@ -5,7 +5,7 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions {
 
     /**
-     * Include Kotlin runtime into the resulting .jar
+     * Include Kotlin runtime into the resulting JAR
      * Default value: false
      */
      var includeRuntime: kotlin.Boolean
@@ -17,7 +17,7 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var javaParameters: kotlin.Boolean
 
     /**
-     * Path to JDK home directory to include into classpath, if differs from default JAVA_HOME
+     * Include a custom JDK from the specified location into the classpath instead of the default JAVA_HOME
      * Default value: null
      */
      var jdkHome: kotlin.String?
@@ -30,19 +30,19 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var jvmTarget: kotlin.String
 
     /**
-     * Don't include Java runtime into classpath
+     * Don't automatically include the Java runtime into the classpath
      * Default value: false
      */
      var noJdk: kotlin.Boolean
 
     /**
-     * Don't include kotlin-reflect.jar into classpath
+     * Don't automatically include Kotlin reflection into the classpath
      * Default value: true
      */
      var noReflect: kotlin.Boolean
 
     /**
-     * Don't include kotlin-stdlib.jar or kotlin-reflect.jar into classpath
+     * Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath
      * Default value: true
      */
      var noStdlib: kotlin.Boolean
