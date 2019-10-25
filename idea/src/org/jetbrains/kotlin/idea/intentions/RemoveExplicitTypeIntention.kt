@@ -22,6 +22,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.getQualifiedTypeArgumentList
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -68,7 +69,7 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
 
             val initializer = (element as? KtDeclarationWithInitializer)?.initializer
 
-            if (!redundantTypeSpecification(element, initializer)) return null
+            if (!redundantTypeSpecification(element.typeReference, initializer)) return null
 
             return when {
                 initializer != null -> TextRange(element.startOffset, initializer.startOffset - 1)
@@ -78,18 +79,27 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
             }
         }
 
-        fun redundantTypeSpecification(element: KtCallableDeclaration, initializer: KtExpression?): Boolean {
-            if (initializer == null) return true
+        tailrec fun redundantTypeSpecification(typeReference: KtTypeReference?, initializer: KtExpression?): Boolean {
+            if (initializer == null || typeReference == null) return true
             if (initializer !is KtLambdaExpression && initializer !is KtNamedFunction) return true
-            val functionType = element.typeReference?.typeElement as? KtFunctionType ?: return true
-            if (functionType.receiver != null) return false
-            if (functionType.parameters.isEmpty()) return true
-            val valueParameters = when (initializer) {
-                is KtLambdaExpression -> initializer.valueParameters
-                is KtNamedFunction -> initializer.valueParameters
-                else -> emptyList()
+            val typeElement = typeReference.typeElement ?: return true
+            return when (typeElement) {
+                is KtFunctionType -> {
+                    if (typeElement.receiver != null) return false
+                    if (typeElement.parameters.isEmpty()) return true
+                    val valueParameters = when (initializer) {
+                        is KtLambdaExpression -> initializer.valueParameters
+                        is KtNamedFunction -> initializer.valueParameters
+                        else -> emptyList()
+                    }
+                    valueParameters.isNotEmpty() && valueParameters.none { it.typeReference == null }
+                }
+                is KtUserType -> {
+                    val typeAlias = typeElement.referenceExpression?.mainReference?.resolve() as? KtTypeAlias ?: return true
+                    return redundantTypeSpecification(typeAlias.getTypeReference(), initializer)
+                }
+                else -> true
             }
-            return valueParameters.isNotEmpty() && valueParameters.none { it.typeReference == null }
         }
     }
 }

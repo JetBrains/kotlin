@@ -68,7 +68,7 @@ open class RemovePsiElementSimpleFix(element: PsiElement, private val text: Stri
     object RemoveVariableFactory : KotlinSingleIntentionActionFactory() {
         public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<PsiElement>? {
             val expression = diagnostic.psiElement.getNonStrictParentOfType<KtProperty>() ?: return null
-            if (!RemoveExplicitTypeIntention.redundantTypeSpecification(expression, expression.initializer)) return null
+            if (!RemoveExplicitTypeIntention.redundantTypeSpecification(expression.typeReference, expression.initializer)) return null
             return object : RemovePsiElementSimpleFix(expression, "Remove variable '${expression.name}'") {
                 override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                     val initializer = expression.initializer

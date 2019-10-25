@@ -13367,6 +13367,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/removeExplicitType/lambdaInitializer5.kt");
         }
 
+        @TestMetadata("lambdaInitializerWithAlias.kt")
+        public void testLambdaInitializerWithAlias() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/lambdaInitializerWithAlias.kt");
+        }
+
+        @TestMetadata("lambdaInitializerWithAlias2.kt")
+        public void testLambdaInitializerWithAlias2() throws Exception {
+            runTest("idea/testData/intentions/removeExplicitType/lambdaInitializerWithAlias2.kt");
+        }
+
         @TestMetadata("needTypeArgument.kt")
         public void testNeedTypeArgument() throws Exception {
             runTest("idea/testData/intentions/removeExplicitType/needTypeArgument.kt");
