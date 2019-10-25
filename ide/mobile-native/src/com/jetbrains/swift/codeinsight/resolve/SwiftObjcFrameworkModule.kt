@@ -20,13 +20,15 @@ class SwiftObjcFrameworkModule(
     private val symbol: SwiftModuleSymbol? = file?.let {
         SwiftLibraryModule.createLibraryModuleSymbol(framework.name, project, configuration, file)
     }
+
+    @get:JvmName("files")
     private val files: List<VirtualFile> by lazy {
         val result = mutableListOf<VirtualFile>()
 
         val service = ModuleMapResolveService.getInstance(project)
         service.processModules(
             framework.name,
-            configuration,
+            ModuleMapResolveService.ProcessingState(configuration),
             visitExportedModules = false,
             processor = Processor { module: ModuleMapModuleSymbol ->
                 result += service.getIncludeHeaders(module, configuration)
@@ -36,22 +38,19 @@ class SwiftObjcFrameworkModule(
         return@lazy result
     }
 
-    override fun getLibraryFiles(): List<VirtualFile> = files
-
     override fun getSymbol(): SwiftModuleSymbol? = symbol
 
     override fun getName(): String = framework.name
 
     override fun isSourceModule(): Boolean = false
 
-    override fun getAllFiles(): List<VirtualFile> = libraryFiles
+    override fun getFiles(): List<VirtualFile> = files
 
     override fun getDependencies(): List<SwiftModule> = Collections.emptyList()
 
     override fun getConfiguration(): OCResolveConfiguration = configuration
 
-    override fun buildModuleCache(): SwiftGlobalSymbols =
-        MobileSwiftBridgingUtil.buildBridgedSymbols(allFiles, configuration, name, project)
+    override fun buildModuleCache(): SwiftGlobalSymbols = MobileSwiftBridgingUtil.buildBridgedSymbols(this)
 
     override fun getBridgeFile(name: String): VirtualFile? = null
 

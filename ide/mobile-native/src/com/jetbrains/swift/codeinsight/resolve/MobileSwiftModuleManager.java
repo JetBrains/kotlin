@@ -38,12 +38,8 @@ import java.util.stream.Collectors;
 public class MobileSwiftModuleManager extends SwiftModuleManagerBase {
     private static final Key<CachedValue<SdkInfo>> SDK_INFO_KEY = Key.create("SDK_INFO_KEY");
 
-    @NotNull
-    private final ModificationTracker mySourceModuleTracker;
-
-    public MobileSwiftModuleManager(Project project, CachedValuesManager cachedValuesManager) {
-        super(project, cachedValuesManager);
-        mySourceModuleTracker = OCWorkspace.getInstance(project).getModificationTrackers().getSourceFilesTracker();
+    public MobileSwiftModuleManager(Project project) {
+        super(project);
     }
 
     @Override
@@ -51,7 +47,7 @@ public class MobileSwiftModuleManager extends SwiftModuleManagerBase {
     protected SwiftModule readLibraryModule(@NotNull OCResolveConfiguration configuration, @NotNull String moduleName) {
         SwiftLibraryModule module = SwiftModuleReader.getInstance().readModule(configuration, moduleName);
 
-        if (!module.getAllFiles().isEmpty()) {
+        if (!module.getFiles().isEmpty()) {
             return module;
         }
 
@@ -159,8 +155,7 @@ public class MobileSwiftModuleManager extends SwiftModuleManagerBase {
         if (sdk == null) {
             return null;
         }
-        Version swiftVersion = SwiftCompilerSettings.getSwiftVersion(configuration);
-        File toolchainLibPath = SourceKitServiceManager.Companion.getInstance().getToolchainLibPath(swiftVersion);
+        File toolchainLibPath = SourceKitServiceManager.Companion.getInstance().getToolchainLibPath();
         File modulesPath = new File(toolchainLibPath, "swift/" + sdk.getPlatform().getType().getPlatformName());
 
         if (Xcode.getVersion().lessThan(11)) {
@@ -224,8 +219,7 @@ public class MobileSwiftModuleManager extends SwiftModuleManagerBase {
         String platform = platformName(sdk.getPlatform());
 
         Version version = SwiftCompilerSettings.getSwiftVersion(configuration);
-        Version validatedVersion = SourceKitServiceManager.Companion.getInstance().validateVersion(version);
-        return new SdkInfo(sdk.getName(), platform, architecture.toString(), sdk.getHomePath(), validatedVersion);
+        return new SdkInfo(sdk.getName(), platform, architecture.toString(), version, null);
     }
 
     @Nullable
@@ -245,9 +239,4 @@ public class MobileSwiftModuleManager extends SwiftModuleManagerBase {
         return platform.getName();
     }
 
-    @NotNull
-    @Override
-    protected ModificationTracker getSourceModuleModificationTracker() {
-        return mySourceModuleTracker;
-    }
 }

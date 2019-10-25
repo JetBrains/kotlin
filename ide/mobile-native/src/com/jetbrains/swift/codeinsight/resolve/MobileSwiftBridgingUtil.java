@@ -9,66 +9,61 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.util.containers.ContainerUtil;
-import com.jetbrains.cidr.lang.CLanguageKind;
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext;
 import com.jetbrains.cidr.lang.psi.OCFile;
+import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable;
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration;
 import com.jetbrains.cidr.xcode.Xcode;
-import com.jetbrains.swift.codeinsight.resolve.processor.SwiftModuleDependenciesImportUtils;
-import com.jetbrains.swift.symbols.SwiftObjcSymbolsConverter;
-import com.jetbrains.swift.symbols.swiftoc.SwiftObjcSymbolsConverterImpl;
+import com.jetbrains.swift.languageKind.SwiftLanguageKind;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 class MobileSwiftBridgingUtil {
     @NotNull
-    static SwiftGlobalSymbols buildBridgedSymbols(
-            @NotNull List<VirtualFile> headers,
-            @NotNull OCResolveConfiguration configuration,
-            @NotNull String moduleName,
-            @NotNull Project project
-    ) {
-        SwiftMultiGlobalSymbols result = new SwiftMultiGlobalSymbols();
+    static SwiftGlobalSymbols buildBridgedSymbols(@NotNull SwiftModule module) {
+        List<VirtualFile> headers = module.getBridgedHeaders();
+        if (headers.isEmpty()) return SwiftGlobalSymbols.EMPTY;
+
+        OCResolveConfiguration configuration = module.getConfiguration();
+        Project project = configuration.getProject();
+        PsiManager psiManager = PsiManager.getInstance(project);
+
         SwiftGlobalSymbolsImpl bridgedSymbols = new SwiftGlobalSymbolsImpl(SwiftGlobalSymbols.SymbolsOrigin.OBJC);
 
         SwiftGlobalSymbolsImpl.SymbolProcessor processor = new SwiftGlobalSymbolsImpl.SymbolProcessor(bridgedSymbols, false);
-        PsiManager psiManager = PsiManager.getInstance(project);
 
         for (VirtualFile header : headers) {
             if (!header.isValid()) continue;
             PsiFile file = psiManager.findFile(header);
             if (!(file instanceof OCFile)) continue;
 
-            OCInclusionContext context = OCInclusionContext.beforePCHFileContext(configuration, CLanguageKind.OBJ_C, file);
-            SwiftObjcSymbolsConverter converter =
-                    new SwiftObjcSymbolsConverterImpl(project, context, file, configuration,
-                                                      virtualFile -> !shouldSkipBuildingBridgedSymbols(virtualFile, project));
-            converter.processSymbols(processor);
+            OCInclusionContext context = OCInclusionContext.beforePCHFileContext(configuration, SwiftLanguageKind.SWIFT, file);
+            FileSymbolTable table = FileSymbolTable.forFile(header, context);
+            if (table == null) continue;
+
+            FileSymbolTable.ProcessingState state = new FileSymbolTable.ProcessingState(context, false) {
+                @Override
+                public boolean startProcessing(@NotNull FileSymbolTable table) {
+                    if (shouldSkipBuildingBridgedSymbols(table.getContainingFile(), project)) {
+                        return false;
+                    }
+                    return super.startProcessing(table);
+                }
+            };
+            table.processSymbols(processor, null, state, null, null, null);
         }
 
         if (!processor.isAnyProcessed()) return SwiftGlobalSymbols.EMPTY;
-        result.addProvider(bridgedSymbols);
-
-        SwiftResolveService resolveService = SwiftResolveService.getInstance(project);
-        Set<String> visited = ContainerUtil.newHashSet(moduleName);
-        bridgedSymbols.processAllImports(importName -> SwiftModuleDependenciesImportUtils
-                .processModuleAndDependencies(importName, configuration, curModuleName -> {
-                    if (visited.add(curModuleName)) {
-                        result.addProvider(resolveService.getGlobalSymbolsForModule(configuration, curModuleName));
-                    }
-                    return true;
-                }), new SwiftGlobalSymbols.ProcessingContext()
-        );
-
-        return result;
+        bridgedSymbols.compact();
+        return bridgedSymbols;
     }
 
+    @Contract("null, _ -> true")
     private static boolean shouldSkipBuildingBridgedSymbols(@Nullable VirtualFile file, @NotNull Project project) {
-        if (file == null) return false;
+        if (file == null) return true;
 
         VirtualFile xcodeRoot = CachedValuesManager.getManager(project).getCachedValue(project, () -> CachedValueProvider.Result.create(
                 LocalFileSystem.getInstance().findFileByPath(Xcode.getBasePath()),

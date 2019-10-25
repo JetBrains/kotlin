@@ -18,7 +18,7 @@ import com.jetbrains.swift.languageKind.SwiftLanguageKind
 import java.util.*
 import kotlin.collections.HashSet
 
-class MobileSwiftModuleReader(ioCache: SwiftModuleIOCache) : SwiftModuleReaderImpl<OCResolveConfiguration>(ioCache) {
+class MobileSwiftModuleReader : SwiftModuleReaderImpl<OCResolveConfiguration>() {
     override fun doReadModule(
         configuration: OCResolveConfiguration,
         moduleName: String,

@@ -1,14 +1,20 @@
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.openapi.vfs.local.CoreLocalVirtualFile
+import com.jetbrains.cidr.xcode.CoreXcodeApplicationEnvironment
+import com.jetbrains.cidr.xcode.CoreXcodeProjectEnvironment
 import com.jetbrains.cidr.xcode.XcodeBase
 import com.jetbrains.cidr.xcode.XcodeInstallation
 import com.jetbrains.cidr.xcode.frameworks.ApplePlatform
 import com.jetbrains.cidr.xcode.frameworks.AppleProductType
 import com.jetbrains.cidr.xcode.frameworks.AppleSdkManager
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames
-import com.jetbrains.cidr.xcode.model.*
+import com.jetbrains.cidr.xcode.model.PBXBuildPhase
+import com.jetbrains.cidr.xcode.model.PBXCopyFilesBuildPhase
+import com.jetbrains.cidr.xcode.model.PBXDictionary
+import com.jetbrains.cidr.xcode.model.PBXProjectFileManipulator
 import com.jetbrains.cidr.xcode.plist.Plist
 import com.jetbrains.cidr.xcode.plist.XMLPlistDriver
 import org.gradle.api.*
@@ -37,6 +43,7 @@ private class DefaultAppleSourceSet(@Suppress("ACCIDENTAL_OVERRIDE") override va
 }
 
 private open class AppleBuildTask @Inject constructor(
+        private val applePlugin: ApplePlugin,
         private val target: AppleTarget,
         private val execActionFactory: ExecActionFactory
 ) : DefaultTask() {
@@ -97,7 +104,7 @@ private open class AppleBuildTask @Inject constructor(
         val frameworkSearchPaths = frameworkDirs.map { it.toRelativeString(baseDir) }
 
         val pbxProjectFile = PBXProjectFileManipulator.createNewProject(
-                XcodeWorkspace.project,
+                applePlugin.intellijProject,
                 vBaseDir,
                 vProjectFile,
                 null,
@@ -246,16 +253,22 @@ private open class AppleProjectExtensionImpl(project: Project) : AppleProjectExt
             targets.maybeCreate(name).apply { configure() }
 }
 
-open class ApplePlugin @Inject constructor(private val execActionFactory: ExecActionFactory) : Plugin<Project> {
+open class ApplePlugin @Inject constructor(private val execActionFactory: ExecActionFactory) : Plugin<Project>, Disposable {
+    lateinit var intellijProject: com.intellij.openapi.project.Project
+        private set
+
     override fun apply(project: Project) {
         val xcodePath = project.properties["xcode.base"]?.toString() ?: detectXcodeInstallation()
         println("Using Xcode: $xcodePath")
 
-        XcodeBase.setBaseInstallation(XcodeInstallation(File(xcodePath)))
-        CoreXcodeWorkspace.setInstance(XcodeWorkspace.project, XcodeWorkspace)
+        val applicationEnvironment = CoreXcodeApplicationEnvironment(this, false)
+        XcodeBase.getInstance().setInstallation(XcodeInstallation(File(xcodePath)))
+        intellijProject = CoreXcodeProjectEnvironment(this, applicationEnvironment).project
 
         project.extensions.create(AppleProjectExtension::class.java, "apple", AppleProjectExtensionImpl::class.java, project)
     }
+
+    override fun dispose() = Unit
 
     private fun detectXcodeInstallation(): String {
         val xcodeSelectOut = ByteArrayOutputStream()

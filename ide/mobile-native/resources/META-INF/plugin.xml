@@ -22,10 +22,6 @@
       <interface-class>com.jetbrains.swift.codeinsight.resolve.module.SwiftModuleIOCache</interface-class>
       <implementation-class>com.jetbrains.swift.codeinsight.resolve.module.MobileSwiftModuleIOCache</implementation-class>
     </component>
-    <component>
-      <interface-class>com.jetbrains.swift.codeinsight.resolve.module.SwiftApinotesCache</interface-class>
-      <implementation-class>com.jetbrains.swift.codeinsight.resolve.module.MobileSwiftApinotesCache</implementation-class>
-    </component>
   </application-components>
 
   <extensions defaultExtensionNs="com.intellij">

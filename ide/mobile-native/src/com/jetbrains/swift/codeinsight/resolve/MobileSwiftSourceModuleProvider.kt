@@ -1,7 +1,6 @@
 package com.jetbrains.swift.codeinsight.resolve
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.AtomicNotNullLazyValue
 import com.intellij.openapi.util.UserDataHolderBase
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -10,12 +9,10 @@ import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
 import com.jetbrains.cidr.apple.gradle.GradleAppleWorkspace
 import com.jetbrains.cidr.lang.OCLog
-import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.swift.codeinsight.resolve.module.SwiftSourceModuleFile
-import com.jetbrains.swift.languageKind.SwiftLanguageKind
 import com.jetbrains.swift.psi.SwiftFile
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
 import com.jetbrains.swift.symbols.SwiftModuleSymbol
@@ -35,12 +32,7 @@ class MobileSwiftSourceModuleProvider : SwiftSourceModuleProvider {
         private val cachedBridgedSymbols: CachedValue<SwiftGlobalSymbols> = CachedValuesManager.getManager(project).createCachedValue(
             {
                 val tracker = FileSymbolTablesCache.getInstance(project).ocOutOfBlockModificationTracker
-                val lazySymbols = SwiftLazyBridgedSymbols(object : AtomicNotNullLazyValue<SwiftGlobalSymbols>() {
-                    override fun compute(): SwiftGlobalSymbols =
-                        bridgedHeaders.takeIf { it.isNotEmpty() }?.let {
-                            MobileSwiftBridgingUtil.buildBridgedSymbols(it, configuration, name, project)
-                        } ?: SwiftGlobalSymbols.EMPTY
-                })
+                val lazySymbols = SwiftLazyBridgedSymbols(this) { MobileSwiftBridgingUtil.buildBridgedSymbols(this) }
                 Result.create<SwiftGlobalSymbols>(lazySymbols, tracker)
             }, false
         )
@@ -59,31 +51,29 @@ class MobileSwiftSourceModuleProvider : SwiftSourceModuleProvider {
         override fun getConfiguration(): OCResolveConfiguration = configuration
 
         override fun buildModuleCache(): SwiftGlobalSymbols {
-            val swiftSymbols = SwiftGlobalSymbolsImpl()
+            val swiftSymbols = SwiftGlobalSymbolsImpl(this)
             val processor = SwiftGlobalSymbolsImpl.SymbolProcessor(swiftSymbols)
 
-            for (file in allFiles) {
+            for (file in files) {
                 val psiFile = PsiManager.getInstance(project).findFile(file)
                 if (psiFile !is SwiftFile) continue
 
-                val context = OCInclusionContext.sourceParsingContext(configuration, SwiftLanguageKind.SWIFT, psiFile)
+                val context = SwiftResolveUtil.getInclusionContext(psiFile, configuration)
                 FileSymbolTable.forFile(psiFile, context)?.processFile(processor) ?: OCLog.LOG.error("No table for file: " + file.path)
             }
+            swiftSymbols.compact()
 
             val bridgedSymbols = cachedBridgedSymbols.value
             if (bridgedSymbols === SwiftGlobalSymbols.EMPTY) return swiftSymbols
 
-            val pair = SwiftMultiGlobalSymbols()
-            pair.addProvider(swiftSymbols)
-            pair.addProvider(bridgedSymbols)
-            return pair
+            return SwiftAndBridgedSymbols(swiftSymbols, bridgedSymbols, this)
         }
-
-        override fun getLibraryFiles(): List<VirtualFile> = Collections.emptyList()
 
         override fun getDependencies(): List<SwiftModule> = Collections.emptyList()
 
-        override fun getAllFiles(): Collection<VirtualFile> = configuration.sources
+        override fun getFiles(): List<VirtualFile> = configuration.sources.let { sources: Collection<VirtualFile> ->
+            sources as? List<VirtualFile> ?: sources.toList()
+        }
 
         override fun getBridgedHeaders(): List<VirtualFile> =
             listOfNotNull(GradleAppleWorkspace.getInstance(project).getBridgingHeader(configuration))
