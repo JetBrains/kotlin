@@ -50,6 +50,9 @@ bool Kotlin_hasRuntime();
 // Appends given node to an initializer list.
 void AppendToInitializersTail(struct InitNode*);
 
+// Zero out all Kotlin thread local globals.
+void Kotlin_zeroOutTLSGlobals();
+
 #ifdef __cplusplus
 }
 #endif
