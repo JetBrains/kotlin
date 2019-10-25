@@ -11591,6 +11591,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/functions/functionExpression/functionLiteralExpression.kt");
             }
 
+            @TestMetadata("insideGenericLambda.kt")
+            public void testInsideGenericLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/functionExpression/insideGenericLambda.kt");
+            }
+
             @TestMetadata("underscoreParameters.kt")
             public void testUnderscoreParameters() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/functionExpression/underscoreParameters.kt");
