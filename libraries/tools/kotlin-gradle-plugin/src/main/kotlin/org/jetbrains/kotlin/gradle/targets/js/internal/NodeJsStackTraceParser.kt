@@ -130,7 +130,7 @@ fun parseNodeJsStackTrace(stackTrace: String): NodeJsStackTrace {
 }
 
 fun filterClassName(className: String): String =
-    className.replace('$', '.')
+    className.substringAfterLast('$')
 
 private fun filterMethodName(name: String): String =
     if ("_" in name) {
