@@ -50,7 +50,7 @@ internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(collector: (FqN
     val packageFragmentProvider = this.packageFragmentProvider
 
     fun recurse(packageFqName: FqName) {
-        if (packageFqName.isUnderKotlinNativeSyntheticPackages)
+        if (packageFqName.isUnderStandardKotlinPackages || packageFqName.isUnderKotlinNativeSyntheticPackages)
             return
 
         val ownPackageFragments = packageFragmentProvider.getPackageFragments(packageFqName)
