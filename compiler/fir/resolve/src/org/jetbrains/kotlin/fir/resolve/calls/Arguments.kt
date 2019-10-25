@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.returnExpressions
@@ -46,8 +47,19 @@ fun Candidate.resolveArgumentExpression(
             isSafeCall,
             typeProvider
         )
-        // TODO:!
-        is FirCallableReferenceAccess -> preprocessCallableReference(argument, expectedType)
+        is FirCallableReferenceAccess ->
+            if (argument.calleeReference is FirResolvedNamedReference)
+                resolvePlainExpressionArgument(
+                    csBuilder,
+                    argument,
+                    expectedType,
+                    sink,
+                    isReceiver,
+                    isSafeCall,
+                    typeProvider
+                )
+            else
+                preprocessCallableReference(argument, expectedType)
         // NB: FirCallableReferenceAccess should be checked earlier
         is FirQualifiedAccessExpression -> resolvePlainExpressionArgument(
             csBuilder,
