@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.extensions.internal.CallResolutionInterceptorExtension
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -112,10 +113,10 @@ open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptor
         // to do any work at all, since it will never be anything we intercept
         if (!needToLookupComposer) return candidates
 
-        val temporaryTraceForKtxCall =
+        val temporaryTraceForComposeableCall =
             TemporaryTraceAndCache.create(
                 resolutionContext,
-                "trace to resolve ktx call", element
+                "trace to resolve composable call", element
             )
 
         val composableAnnotationChecker =
@@ -125,7 +126,7 @@ open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptor
         // TODO(lmr): there ought to be a better way to do this
         var walker: PsiElement? = call.callElement
         var isComposableContext = false
-//        var composableDescriptor: SimpleFunctionDescriptor? = null
+        var composableDescriptor: SimpleFunctionDescriptor? = null
         while (walker != null) {
             val descriptor = try {
                 resolutionContext.trace[BindingContext.FUNCTION, walker]
@@ -134,12 +135,12 @@ open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptor
             }
             if (descriptor != null) {
                 val composability = composableAnnotationChecker.analyze(
-                    temporaryTraceForKtxCall.trace,
+                    temporaryTraceForComposeableCall.trace,
                     descriptor
                 )
                 isComposableContext =
                     composability != ComposableAnnotationChecker.Composability.NOT_COMPOSABLE
-//                if (isComposableContext) composableDescriptor = descriptor
+                if (isComposableContext) composableDescriptor = descriptor
 
                 // If the descriptor is for an inlined lambda, infer composability from the
                 // outer scope
@@ -197,6 +198,42 @@ open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptor
             return nonComposablesNonConstructors + constructors
         }
 
+        val context = ExpressionTypingContext.newContext(
+            resolutionContext.trace,
+            resolutionContext.scope,
+            resolutionContext.dataFlowInfo,
+            resolutionContext.expectedType,
+            resolutionContext.languageVersionSettings,
+            resolutionContext.dataFlowValueFactory
+        )
+
+        val temporaryForComposableCall = context.replaceTraceAndCache(
+            temporaryTraceForComposeableCall
+        )
+
+        // Once we know we have a valid composer record the composer on the function descriptor
+        // for the restart transform
+        val trace = temporaryTraceForComposeableCall.trace
+        if (composableDescriptor != null && trace.get(
+                ComposeWritableSlices.RESTART_COMPOSER_NEEDED,
+                composableDescriptor
+            ) != false) {
+            val recordingContext = TemporaryTraceAndCache.create(
+                context,
+                "trace to resolve composable restart group methods",
+                element
+            )
+            val recordingTrace = recordingContext.trace
+            recordingTrace.record(
+                ComposeWritableSlices.RESTART_COMPOSER_NEEDED,
+                composableDescriptor,
+                false
+            )
+            recordingTrace.record(
+                ComposeWritableSlices.RESTART_COMPOSER, composableDescriptor, composerCall)
+            recordingTrace.commit()
+        }
+
         // If there are no constructors, then all of the candidates are either composables or
         // non-composable functions, and we follow normal resolution rules.
         if (constructors.isEmpty()) {
@@ -227,62 +264,13 @@ open class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptor
             composerMetadata
         )
 
-        val context = ExpressionTypingContext.newContext(
-            resolutionContext.trace,
-            resolutionContext.scope,
-            resolutionContext.dataFlowInfo,
-            resolutionContext.expectedType,
-            resolutionContext.languageVersionSettings,
-            resolutionContext.dataFlowValueFactory
-        )
-
-        val temporaryForKtxCall = context.replaceTraceAndCache(temporaryTraceForKtxCall)
-
         val emitCandidates = emitResolver.resolveCandidates(
             call,
             emittables,
             composerCall,
             name,
-            temporaryForKtxCall
+            temporaryForComposableCall
         )
-
-        // TODO(lmr): deal with the RESTART_CALLS_NEEDED stuff for restartGroups
-        // Once we know we have a valid binding to a composable function call see if the scope need
-        // the startRestartGroup and endRestartGroup information
-//        val trace = temporaryTraceForKtxCall.trace
-//        if (trace.get(
-//                ComposeWritableSlices.RESTART_CALLS_NEEDED,
-//                composableDescriptor!!
-//            ) != false) {
-//            val recordingContext = TemporaryTraceAndCache.create(
-//                context,
-//                "trace to resolve ktx call", element
-//            )
-//            val recordingTrace = recordingContext.trace
-//            recordingTrace.record(
-//                ComposeWritableSlices.RESTART_CALLS_NEEDED,
-//                composableDescriptor,
-//                false
-//            )
-//
-//            val startRestartGroup = ktxCallResolver.resolveStartRestartGroup(
-//                call,
-//                temporaryForKtxCall
-//            )
-//            val endRestartGroup = ktxCallResolver.resolveEndRestartGroup(call, temporaryForKtxCall)
-//            val composerCall = ktxCallResolver.resolveComposerCall()
-//            if (startRestartGroup != null && endRestartGroup != null && composerCall != null) {
-//                recordingTrace.record(
-//                    ComposeWritableSlices.RESTART_CALLS, composableDescriptor,
-//                    ResolvedRestartCalls(
-//                        startRestartGroup = startRestartGroup,
-//                        endRestartGroup = endRestartGroup,
-//                        composer = composerCall
-//                    )
-//                )
-//            }
-//            recordingTrace.commit()
-//        }
 
         return nonComposablesNonConstructors +
                 composables.map {

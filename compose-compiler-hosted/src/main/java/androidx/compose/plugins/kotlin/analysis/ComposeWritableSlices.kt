@@ -2,15 +2,12 @@ package androidx.compose.plugins.kotlin.analysis
 
 import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
 import androidx.compose.plugins.kotlin.ComposerMetadata
-import androidx.compose.plugins.kotlin.ResolvedRestartCalls
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtReferenceExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice
 import org.jetbrains.kotlin.util.slicedMap.RewritePolicy
@@ -28,9 +25,9 @@ object ComposeWritableSlices {
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val STABLE_TYPE: WritableSlice<KotlinType, Boolean?> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
-    val RESTART_CALLS_NEEDED: WritableSlice<SimpleFunctionDescriptor, Boolean> =
+    val RESTART_COMPOSER_NEEDED: WritableSlice<SimpleFunctionDescriptor, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
-    val RESTART_CALLS: WritableSlice<SimpleFunctionDescriptor, ResolvedRestartCalls> =
+    val RESTART_COMPOSER: WritableSlice<SimpleFunctionDescriptor, ResolvedCall<*>> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val COMPOSER_METADATA: WritableSlice<VariableDescriptor, ComposerMetadata> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
