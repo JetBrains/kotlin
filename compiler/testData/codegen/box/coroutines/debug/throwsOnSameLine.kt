@@ -3,7 +3,6 @@
 // WITH_COROUTINES
 // FULL_JDK
 
-
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -12,30 +11,28 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-suspend fun returnsNull() = null
-
-fun withLineBreak() = builder {
-    returnsNull()
-        ?: throw RuntimeException()
+suspend fun mightReturnNull(b: Boolean): String? {
+    return if (b) null else "asdf"
 }
 
-fun withoutLineBreak() = builder {
-    returnsNull() ?: throw RuntimeException()
+fun throwOnSameLine(b: Boolean) = builder {
+    if (mightReturnNull(b) == null) throw RuntimeException() else throw RuntimeException()
+    throw RuntimeException()
 }
 
 fun box(): String {
     try {
-        withLineBreak()
+        throwOnSameLine(true)
         return "FAIL 0"
     } catch (e: RuntimeException) {
         if (e.stackTrace[0].lineNumber != 19) return "FAIL 1 ${e.stackTrace[0].lineNumber}"
     }
 
     try {
-        withoutLineBreak()
+        throwOnSameLine(false)
         return "FAIL 2"
     } catch (e: RuntimeException) {
-        if (e.stackTrace[0].lineNumber != 23) return "FAIL 3 ${e.stackTrace[0].lineNumber}"
+        if (e.stackTrace[0].lineNumber != 19) return "FAIL 3 ${e.stackTrace[0].lineNumber}"
     }
 
     return "OK"
