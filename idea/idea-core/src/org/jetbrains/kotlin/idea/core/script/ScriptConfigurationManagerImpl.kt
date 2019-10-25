@@ -291,6 +291,10 @@ class ScriptConfigurationManagerImpl internal constructor(private val project: P
             GlobalScope.launch(EDT(project)) {
                 if (project.isDisposed) return@launch
 
+                PsiManager.getInstance(project).findFile(file)?.let { psiFile ->
+                    DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
+                }
+
                 EditorNotifications.getInstance(project).updateAllNotifications()
             }
         }
