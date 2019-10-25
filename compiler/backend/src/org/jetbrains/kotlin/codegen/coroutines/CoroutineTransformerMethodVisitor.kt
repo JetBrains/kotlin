@@ -146,7 +146,8 @@ class CoroutineTransformerMethodVisitor(
         val suspensionPointLineNumbers = suspensionPoints.map { findSuspensionPointLineNumber(it) }
 
         val continuationLabels = suspensionPoints.withIndex().map {
-            transformCallAndReturnContinuationLabel(it.index + 1, it.value, methodNode, suspendMarkerVarIndex)
+            transformCallAndReturnContinuationLabel(
+                it.index + 1, it.value, methodNode, suspendMarkerVarIndex, suspensionPointLineNumbers[it.index])
         }
 
         methodNode.instructions.apply {
@@ -702,11 +703,12 @@ class CoroutineTransformerMethodVisitor(
         id: Int,
         suspension: SuspensionPoint,
         methodNode: MethodNode,
-        suspendMarkerVarIndex: Int
+        suspendMarkerVarIndex: Int,
+        suspendPointLineNumber: LineNumberNode?
     ): LabelNode {
         val continuationLabel = LabelNode()
         val continuationLabelAfterLoadedResult = LabelNode()
-        val suspendElementLineNumber = lineNumber
+        val suspendElementLineNumber = suspendPointLineNumber?.line ?: lineNumber
         var nextLineNumberNode = suspension.suspensionCallEnd.findNextOrNull { it is LineNumberNode } as? LineNumberNode
         with(methodNode.instructions) {
             // Save state
