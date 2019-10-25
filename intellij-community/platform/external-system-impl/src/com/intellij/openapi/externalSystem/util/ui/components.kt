@@ -29,7 +29,6 @@ fun <T> ComboBox<T>.bind(property: UiProperty<T>, validate: () -> ValidationInfo
     if (it.stateChange == ItemEvent.SELECTED) {
       @Suppress("UNCHECKED_CAST")
       property.set(it.item as T)
-      property.validate()
     }
   }
 }
@@ -44,7 +43,6 @@ fun JTextField.bind(property: UiProperty<String>, validate: () -> ValidationInfo
   document.addDocumentListener(object : DocumentAdapter() {
     override fun textChanged(e: DocumentEvent) {
       property.set(text)
-      property.validate()
     }
   })
 }

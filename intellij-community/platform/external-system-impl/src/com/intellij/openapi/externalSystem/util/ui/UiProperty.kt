@@ -14,7 +14,7 @@ class UiProperty<T>(initial: () -> T) : IdeProperty<T>(initial) {
     validator = ComponentValidator(parentDisposable)
       .withValidator { -> validate()?.forComponent(component) }
       .installOn(component)
-    addListener { validate() }
+    addListener { this.validate() }
   }
 
   fun validate(): ValidationInfo? {
