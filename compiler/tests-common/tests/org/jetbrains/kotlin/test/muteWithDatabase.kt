@@ -32,16 +32,20 @@ private class MutedSet(muted: List<MutedTest>) {
     fun mutedTest(testCase: TestCase): MutedTest? {
         val mutedTests = cache[testCase.name]?.get(testCase.javaClass.simpleName) ?: return null
 
-        return mutedTests.singleOrNull { mutedTest ->
+        return mutedTests.firstOrNull { mutedTest ->
             testCase.javaClass.canonicalName.endsWith(mutedTest.classNameKey)
         }
     }
 }
 
-private fun loadMutedSet(file: File): MutedSet {
+private fun loadMutedSet(files: List<File>): MutedSet {
+    return MutedSet(files.flatMap { file -> loadMutedTests(file) })
+}
+
+private fun loadMutedTests(file: File): List<MutedTest> {
     if (!file.exists()) {
         System.err.println("Can't find mute file: ${file.absolutePath}")
-        return MutedSet(listOf())
+        return listOf()
     }
 
     try {
@@ -51,9 +55,7 @@ private fun loadMutedSet(file: File): MutedSet {
             .filter { it.isNotEmpty() }
             .toList()
 
-        val mutedTests = testLines.drop(1).map { parseMutedTest(it) }
-
-        return MutedSet(mutedTests)
+        return testLines.drop(1).map { parseMutedTest(it) }
     } catch (ex: Throwable) {
         throw ParseError("Couldn't parse file with muted tests: $file", cause = ex)
     }
@@ -77,7 +79,13 @@ private fun parseMutedTest(str: String): MutedTest {
 
 private class ParseError(message: String, override val cause: Throwable? = null) : IllegalArgumentException(message)
 
-private val mutedSet by lazy { loadMutedSet(File("tests/mute.csv")) }
+private val mutedSet by lazy {
+    loadMutedSet(
+        listOf(
+            File("tests/mute.csv")
+        )
+    )
+}
 
 internal fun isMutedInDatabase(testCase: TestCase): Boolean {
     val mutedTest = mutedSet.mutedTest(testCase)
