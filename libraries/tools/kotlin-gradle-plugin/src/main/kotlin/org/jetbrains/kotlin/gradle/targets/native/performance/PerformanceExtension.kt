@@ -12,18 +12,21 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 
 enum class TrackableMetric { COMPILE_TIME, CODE_SIZE }
 open class PerformanceExtension(private val project: Project) {
-    @get:Input
     val version: String
         get() = project.version.toString()
 
     @Optional
-    @Input
     var metrics = listOf(TrackableMetric.COMPILE_TIME, TrackableMetric.CODE_SIZE)
 
-    @Input
-    var trackedBinaries: List<NativeBinary> = emptyList()
+    val trackedBinaries = mutableListOf<NativeBinary>()
 
-    @Optional
-    @Input
-    var binaryNamesForReport = mapOf<NativeBinary, String>()
+    val binaryNamesForReport = mutableMapOf<NativeBinary, String>()
+
+    var includeAssociatedTasks = true
+
+    @JvmOverloads
+    fun binary(binary: NativeBinary, nameForReport: String = binary.name) {
+        trackedBinaries.add(binary)
+        binaryNamesForReport[binary] = nameForReport
+    }
 }

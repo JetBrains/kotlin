@@ -9,30 +9,44 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.execution.TaskExecutionListener
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.TaskState
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.addExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.targets.native.tasks.NativePerformanceReport
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
-class TaskTimerListener : TaskExecutionListener {
-    companion object {
-        val tasksTimes = mutableMapOf<String, Double>()
-        fun getTime(taskName: String) = tasksTimes[taskName] ?: 0.0
-    }
-
-    private var startTime = System.nanoTime()
+class TaskTimerListener(project: Project) : TaskExecutionListener {
+    val tasksTimes = getOrRegisterStorage<String, Double>(project, "tasksTimes")
+    val tasksStartedTime = getOrRegisterStorage<String, Long>(project, "tasksStartedTime")
+    fun getTime(taskName: String) = tasksTimes[taskName] ?: 0.0
 
     override fun beforeExecute(task: Task) {
-        startTime = System.nanoTime()
+        tasksStartedTime[task.path] = System.nanoTime()
     }
 
     override fun afterExecute(task: Task, taskState: TaskState) {
-        tasksTimes[task.name] = (System.nanoTime() - startTime) / 1000.0
+        tasksTimes[task.path] = (System.nanoTime() - tasksStartedTime[task.path]!!) / 1000.0
     }
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        private fun <K, V> getOrRegisterStorage(project: Project, propertyName: String): ConcurrentHashMap<K, V> =
+            project.rootProject.extensions.getByType(ExtraPropertiesExtension::class.java).run {
+                if (!has(propertyName)) {
+                    set(propertyName, ConcurrentHashMap<K, V>())
+                }
+                get(propertyName)
+            } as ConcurrentHashMap<K, V>
+    }
+
 }
 
 open class KotlinPerformancePlugin : Plugin<Project> {
+    private lateinit var reportDirectory: File
     private fun checkSettings(project: Project, performanceExtension: PerformanceExtension): Boolean {
         var result = true
         if (performanceExtension.metrics.isEmpty()) {
@@ -47,67 +61,20 @@ open class KotlinPerformancePlugin : Plugin<Project> {
         return result
     }
 
-    private fun getCompilationResults(tasksNames: Iterable<String>, success: Boolean): String {
-        var time = 0.0
-        var status = true
-        tasksNames.forEach {
-            time += TaskTimerListener.getTime(it)
-            status = tasksNames.map { TaskTimerListener.tasksTimes.containsKey(it) }.reduce { a, b -> a && b }
-            status = status && success
-        }
-        return "${if (status) "PASSED" else "FAILED"}\nCOMPILE_TIME $time"
-    }
-
-
-    // Get compile task and associated with it other compile tasks.
-    private fun getAllExecutedTasks(compilation: KotlinCompilation<*>): List<Task> {
-        val tasks = mutableListOf(compilation.compileKotlinTask as Task)
-        compilation.associateWith.forEach {
-            tasks += getAllExecutedTasks(it)
-        }
-        return tasks
-    }
-
     private fun configureTasks(project: Project, performanceExtension: PerformanceExtension) {
         // Add time listener.
-        project.gradle.addListener(TaskTimerListener())
+        val timeListener = TaskTimerListener(project)
+        project.gradle.addListener(timeListener)
         performanceExtension.trackedBinaries.forEach { binary ->
             project.tasks.create(
-                "perf${binary.buildType.toString().toLowerCase().capitalize()}" +
-                        "Report${binary.konanTarget.name.capitalize()}"
+                binary.target.disambiguateName(lowerCamelCaseName("perfReport", binary.name)),
+                NativePerformanceReport::class.java
             ) {
+                it.binary = binary
+                it.settings = performanceExtension
+                it.timeListener = timeListener
                 it.group = TASK_GROUP
-                it.description = "Report results of performance measurement for Kotlin/Native targets."
-                it.doLast {
-                    val compileTasks = getAllExecutedTasks(binary.linkTask.compilation)
-                    val successStatus = compileTasks.map { it.state.failure == null }.reduce { acc, it -> acc && it }
-                    // Get code size metric.
-                    var codeSize: String? = null
-                    if (TrackableMetric.CODE_SIZE in performanceExtension.metrics) {
-                        codeSize = binary.outputFile.let {
-                            if (it.exists()) "CODE_SIZE ${it.length()}" else null
-                        }
-                    }
-                    // Get compile time.
-                    var compileTime: String? = null
-                    if (TrackableMetric.COMPILE_TIME in performanceExtension.metrics) {
-                        compileTime = getCompilationResults(
-                            listOf(binary.linkTaskName) + compileTasks.map { it.name },
-                            successStatus
-                        )
-                    }
-
-                    // Create report.
-                    val reportFile = File(project.buildDir, "${it.name}.txt")
-                    val name = performanceExtension.binaryNamesForReport.getOrDefault(binary, binary.name)
-                    reportFile.writeText(name)
-                    if (compileTime != null) {
-                        reportFile.appendText("\n$compileTime")
-                    }
-                    if (codeSize != null) {
-                        reportFile.appendText("\n$codeSize")
-                    }
-                }
+                it.description = "Report results of performance measurement for binaries produced by Kotlin/Native compiler."
                 binary.linkTask.finalizedBy(it)
             }
         }
@@ -117,6 +84,7 @@ open class KotlinPerformancePlugin : Plugin<Project> {
         pluginManager.withPlugin("kotlin-multiplatform") {
             val kotlinExtension = project.multiplatformExtension
             val performanceExtension = PerformanceExtension(this)
+            reportDirectory = File(project.buildDir, "perfReports")
 
             kotlinExtension.addExtension(EXTENSION_NAME, performanceExtension)
             afterEvaluate {
