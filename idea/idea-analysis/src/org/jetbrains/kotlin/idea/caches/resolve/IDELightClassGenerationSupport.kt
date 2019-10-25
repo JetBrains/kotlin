@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.caches.lightClasses.LazyLightClassDataHolder
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
-import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -128,27 +127,25 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
-        return runReadAction {
-            if (element.shouldNotBeVisibleAsLightClass() ||
-                element is KtEnumEntry ||
-                element.containingKtFile.isScript()
-            ) {
-                return@runReadAction null
-            }
+        if (element.shouldNotBeVisibleAsLightClass() ||
+            element is KtEnumEntry ||
+            element.containingKtFile.isScript()
+        ) {
+            return null
+        }
 
-            KtUltraLightSupportImpl(element).let { support ->
-                when {
-                    element is KtObjectDeclaration && element.isObjectLiteral() ->
-                        KtUltraLightClassForAnonymousDeclaration(element, support)
+        return KtUltraLightSupportImpl(element).let { support ->
+            when {
+                element is KtObjectDeclaration && element.isObjectLiteral() ->
+                    KtUltraLightClassForAnonymousDeclaration(element, support)
 
-                    element.isLocal ->
-                        KtUltraLightClassForLocalDeclaration(element, support)
+                element.isLocal ->
+                    KtUltraLightClassForLocalDeclaration(element, support)
 
-                    (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
-                        KtUltraLightInlineClass(element, support)
+                (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
+                    KtUltraLightInlineClass(element, support)
 
-                    else -> KtUltraLightClass(element, support)
-                }
+                else -> KtUltraLightClass(element, support)
             }
         }
     }
