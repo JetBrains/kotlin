@@ -116,23 +116,22 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
       override fun after(events: List<VFileEvent>) {
         val sourceFoldersToChange = HashMap<Module, ArrayList<Pair<VirtualFile, SourceFolderModel>>>()
         val virtualFileManager = VirtualFileManager.getInstance()
-        synchronized(mutex) {
-          for (event in events) {
-            if (event !is VFileCreateEvent) {
-              continue
-            }
 
-            for (sourceFolder in sourceFolders.getAllDescendantValues(VfsUtilCore.pathToUrl(event.path))) {
-              val sourceFolderFile = virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
-              if (sourceFolderFile != null && sourceFolderFile.isValid) {
-                sourceFoldersToChange.computeIfAbsent(sourceFolder.module) { ArrayList() }.add(Pair(event.file!!, sourceFolder))
-                unsafeRemoveSourceFolder(sourceFolder.url)
-              }
+        for (event in events) {
+          if (event !is VFileCreateEvent) {
+            continue
+          }
+          val allDescendantValues = synchronized(mutex) { sourceFolders.getAllDescendantValues(VfsUtilCore.pathToUrl(event.path)) }
+          for (sourceFolder in allDescendantValues) {
+            val sourceFolderFile = virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
+            if (sourceFolderFile != null && sourceFolderFile.isValid) {
+              sourceFoldersToChange.computeIfAbsent(sourceFolder.module) { ArrayList() }.add(Pair(event.file!!, sourceFolder))
+              synchronized(mutex) { unsafeRemoveSourceFolder(sourceFolder.url) }
             }
           }
-
-          updateSourceFolders(sourceFoldersToChange)
         }
+
+        updateSourceFolders(sourceFoldersToChange)
       }
     })
 
@@ -151,13 +150,13 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
   fun rescanAndUpdateSourceFolders() {
     val sourceFoldersToChange = HashMap<Module, ArrayList<Pair<VirtualFile, SourceFolderModel>>>()
     val virtualFileManager = VirtualFileManager.getInstance()
-    synchronized(mutex) {
-      for (sourceFolder in sourceFolders.values) {
-        val sourceFolderFile = virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
-        if (sourceFolderFile != null && sourceFolderFile.isValid) {
-          sourceFoldersToChange.computeIfAbsent(sourceFolder.module) { ArrayList() }.add(Pair(sourceFolderFile, sourceFolder))
-          unsafeRemoveSourceFolder(sourceFolder.url)
-        }
+
+    val values = synchronized(mutex) { sourceFolders.values }
+    for (sourceFolder in values) {
+      val sourceFolderFile = virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
+      if (sourceFolderFile != null && sourceFolderFile.isValid) {
+        sourceFoldersToChange.computeIfAbsent(sourceFolder.module) { ArrayList() }.add(Pair(sourceFolderFile, sourceFolder))
+        synchronized(mutex) { unsafeRemoveSourceFolder(sourceFolder.url) }
       }
 
       updateSourceFolders(sourceFoldersToChange)
