@@ -135,6 +135,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/simpleNoReceiver.kt");
         }
 
+        @TestMetadata("varProperties.kt")
+        public void testVarProperties() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/varProperties.kt");
+        }
+
         @TestMetadata("compiler/fir/resolve/testData/diagnostics/callableReferences/fromBasicDiagnosticTests")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -237,7 +237,7 @@ private fun createKPropertyType(
 ): ConeKotlinType {
     val propertyType = returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for of $property")
     return createKPropertyType(
-        receiverType, propertyType
+        receiverType, propertyType, isMutable = property.isVar
     )
 }
 

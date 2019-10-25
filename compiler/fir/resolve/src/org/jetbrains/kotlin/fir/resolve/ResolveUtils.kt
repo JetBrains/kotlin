@@ -228,10 +228,11 @@ fun createFunctionalType(
 
 fun createKPropertyType(
     receiverType: ConeKotlinType?,
-    rawReturnType: ConeKotlinType
+    rawReturnType: ConeKotlinType,
+    isMutable: Boolean
 ): ConeLookupTagBasedType {
     val arguments = if (receiverType != null) listOf(receiverType, rawReturnType) else listOf(rawReturnType)
-    val classId = StandardClassIds.reflectByName("KProperty${arguments.size - 1}")
+    val classId = StandardClassIds.reflectByName("K${if (isMutable) "Mutable" else ""}Property${arguments.size - 1}")
     return ConeClassTypeImpl(ConeClassLikeLookupTagImpl(classId), arguments.toTypedArray(), isNullable = false)
 }
 
