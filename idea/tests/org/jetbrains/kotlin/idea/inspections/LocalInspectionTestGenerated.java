@@ -2436,6 +2436,16 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testTypeChecks() throws Exception {
             runTest("idea/testData/inspectionsLocal/complexRedundantLet/typeChecks.kt");
         }
+
+        @TestMetadata("withInnerFunction.kt")
+        public void testWithInnerFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/complexRedundantLet/withInnerFunction.kt");
+        }
+
+        @TestMetadata("withInnerLambda.kt")
+        public void testWithInnerLambda() throws Exception {
+            runTest("idea/testData/inspectionsLocal/complexRedundantLet/withInnerLambda.kt");
+        }
     }
 
     @TestMetadata("idea/testData/inspectionsLocal/constantConditionIf")

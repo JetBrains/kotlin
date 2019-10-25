@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.idea.intentions.*
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
 import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -88,9 +85,11 @@ class ComplexRedundantLetInspection : RedundantLetInspection() {
             if (element.parent is KtSafeQualifiedExpression) {
                 false
             } else {
-                val count = lambdaExpression.functionLiteral.valueParameterReferences(bodyExpression).count()
+                val references = lambdaExpression.functionLiteral.valueParameterReferences(bodyExpression)
                 val destructuringDeclaration = lambdaExpression.functionLiteral.valueParameters.firstOrNull()?.destructuringDeclaration
-                count == 0 || (count == 1 && destructuringDeclaration == null)
+                references.isEmpty() || (references.singleOrNull()?.takeIf { expression ->
+                    expression.parents.takeWhile { it != lambdaExpression.functionLiteral }.find { it is KtFunction } == null
+                } != null && destructuringDeclaration == null)
             }
         else ->
             false
@@ -229,7 +228,7 @@ private fun isSingleLine(element: KtCallExpression): Boolean {
     var count = 1
     while (true) {
         if (count > 2) return false
-        receiver = (receiver  as? KtQualifiedExpression)?.receiverExpression ?: break
+        receiver = (receiver as? KtQualifiedExpression)?.receiverExpression ?: break
         count++
     }
     return true
