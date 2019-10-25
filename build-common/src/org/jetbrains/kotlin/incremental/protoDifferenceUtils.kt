@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import java.util.*
 
 data class Difference(
-        val isClassAffected: Boolean = false,
-        val areSubclassesAffected: Boolean = false,
-        val changedMembersNames: Set<String> = emptySet()
+    val isClassAffected: Boolean = false,
+    val areSubclassesAffected: Boolean = false,
+    val changedMembersNames: Set<String> = emptySet()
 )
 
 sealed class ProtoData
@@ -49,14 +49,17 @@ fun ProtoMapValue.toProtoData(packageFqName: FqName): ProtoData =
     }
 
 internal val MessageLite.isPrivate: Boolean
-    get() = Visibilities.isPrivate(ProtoEnumFlags.visibility(
+    get() = Visibilities.isPrivate(
+        ProtoEnumFlags.visibility(
             when (this) {
                 is ProtoBuf.Constructor -> Flags.VISIBILITY.get(flags)
                 is ProtoBuf.Function -> Flags.VISIBILITY.get(flags)
                 is ProtoBuf.Property -> Flags.VISIBILITY.get(flags)
                 is ProtoBuf.TypeAlias -> Flags.VISIBILITY.get(flags)
                 else -> error("Unknown message: $this")
-            }))
+            }
+        )
+    )
 
 private fun MessageLite.name(nameResolver: NameResolver): String {
     return when (this) {
@@ -79,9 +82,9 @@ abstract class DifferenceCalculator {
         val result = hashSetOf<String>()
 
         val oldMap =
-                oldList.groupBy { it.getHashCode({ compareObject.oldGetIndexOfString(it) }, { compareObject.oldGetIndexOfClassId(it) }) }
+            oldList.groupBy { it.getHashCode({ compareObject.oldGetIndexOfString(it) }, { compareObject.oldGetIndexOfClassId(it) }) }
         val newMap =
-                newList.groupBy { it.getHashCode({ compareObject.newGetIndexOfString(it) }, { compareObject.newGetIndexOfClassId(it) }) }
+            newList.groupBy { it.getHashCode({ compareObject.newGetIndexOfString(it) }, { compareObject.newGetIndexOfClassId(it) }) }
 
         val hashes = oldMap.keys + newMap.keys
         for (hash in hashes) {
@@ -100,8 +103,8 @@ abstract class DifferenceCalculator {
     }
 
     private fun calcDifferenceForEqualHashes(
-            oldList: List<MessageLite>,
-            newList: List<MessageLite>
+        oldList: List<MessageLite>,
+        newList: List<MessageLite>
     ): Collection<String> {
         val result = hashSetOf<String>()
         val newSet = HashSet(newList)
@@ -110,8 +113,7 @@ abstract class DifferenceCalculator {
             val newMember = newSet.firstOrNull { compareObject.checkEquals(oldMember, it) }
             if (newMember != null) {
                 newSet.remove(newMember)
-            }
-            else {
+            } else {
                 result.add(oldMember.name(compareObject.oldNameResolver))
             }
         }
@@ -124,8 +126,8 @@ abstract class DifferenceCalculator {
     }
 
     protected fun calcDifferenceForNames(
-            oldList: List<Int>,
-            newList: List<Int>
+        oldList: List<Int>,
+        newList: List<Int>
     ): Collection<String> {
         val oldNames = oldList.map { compareObject.oldNameResolver.getString(it) }.toSet()
         val newNames = newList.map { compareObject.newNameResolver.getString(it) }.toSet()
@@ -154,8 +156,8 @@ abstract class DifferenceCalculator {
 }
 
 class DifferenceCalculatorForClass(
-        private val oldData: ClassProtoData,
-        private val newData: ClassProtoData
+    private val oldData: ClassProtoData,
+    private val newData: ClassProtoData
 ) : DifferenceCalculator() {
     override val compareObject = ProtoCompareGenerated(oldData.nameResolver, newData.nameResolver)
 
@@ -223,8 +225,8 @@ class DifferenceCalculatorForClass(
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
                 }
-                ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT_LIST,
-                ProtoCompareGenerated.ProtoBufClassKind.VERSION_REQUIREMENT_TABLE -> {
+                ProtoBufClassKind.VERSION_REQUIREMENT_LIST,
+                ProtoBufClassKind.VERSION_REQUIREMENT_TABLE -> {
                     // TODO
                 }
                 ProtoBufClassKind.FLAGS,
@@ -238,7 +240,7 @@ class DifferenceCalculatorForClass(
                 }
                 ProtoBufClassKind.JVM_EXT_CLASS_MODULE_NAME,
                 ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID -> {
-                   // TODO
+                    // TODO
                 }
                 ProtoBufClassKind.JVM_EXT_CLASS_LOCAL_VARIABLE_LIST -> {
                     // Not affected, local variables are not accessible outside of a file
@@ -250,8 +252,15 @@ class DifferenceCalculatorForClass(
                 ProtoBufClassKind.BUILT_INS_EXT_CLASS_ANNOTATION_LIST -> {
                     isClassAffected = true
                 }
-                ProtoCompareGenerated.ProtoBufClassKind.JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME -> {
+                ProtoBufClassKind.JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME -> {
                     // Not affected, this extension is not used in the compiler
+                }
+                ProtoBufClassKind.KLIB_EXT_CLASS_ANNOTATION_LIST -> {
+                    isClassAffected = true
+                }
+                ProtoBufClassKind.KLIB_EXT_CLASS_FILE,
+                ProtoBufClassKind.KLIB_EXT_CLASS_UNIQ_ID -> {
+                    // Not affected (probably?)
                 }
             }
         }
@@ -261,8 +270,8 @@ class DifferenceCalculatorForClass(
 }
 
 class DifferenceCalculatorForPackageFacade(
-        private val oldData: PackagePartProtoData,
-        private val newData: PackagePartProtoData
+    private val oldData: PackagePartProtoData,
+    private val newData: PackagePartProtoData
 ) : DifferenceCalculator() {
     override val compareObject = ProtoCompareGenerated(oldData.nameResolver, newData.nameResolver)
 
@@ -292,13 +301,16 @@ class DifferenceCalculatorForPackageFacade(
                 ProtoBufPackageKind.TYPE_TABLE,
                 ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE,
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME,
-                ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME-> {
+                ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME -> {
                     // TODO
                 }
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST -> {
                     // Not affected, local variables are not accessible outside of a file
                 }
                 ProtoBufPackageKind.BUILT_INS_EXT_PACKAGE_FQ_NAME -> {
+                    // Not affected
+                }
+                ProtoBufPackageKind.KLIB_EXT_PACKAGE_FQ_NAME -> {
                     // Not affected
                 }
             }

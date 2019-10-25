@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.generators.protobuf
 
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import org.jetbrains.kotlin.library.metadata.DebugKlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf
 import org.jetbrains.kotlin.metadata.DebugProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.DebugBuiltInsProtoBuf
@@ -43,13 +44,13 @@ class GenerateProtoBufCompare {
     }
 
     private val JAVA_TYPES_WITH_INLINED_EQUALS: EnumSet<Descriptors.FieldDescriptor.JavaType> = EnumSet.of(
-            Descriptors.FieldDescriptor.JavaType.INT,
-            Descriptors.FieldDescriptor.JavaType.LONG,
-            Descriptors.FieldDescriptor.JavaType.FLOAT,
-            Descriptors.FieldDescriptor.JavaType.DOUBLE,
-            Descriptors.FieldDescriptor.JavaType.BOOLEAN,
-            Descriptors.FieldDescriptor.JavaType.STRING,
-            Descriptors.FieldDescriptor.JavaType.ENUM
+        Descriptors.FieldDescriptor.JavaType.INT,
+        Descriptors.FieldDescriptor.JavaType.LONG,
+        Descriptors.FieldDescriptor.JavaType.FLOAT,
+        Descriptors.FieldDescriptor.JavaType.DOUBLE,
+        Descriptors.FieldDescriptor.JavaType.BOOLEAN,
+        Descriptors.FieldDescriptor.JavaType.STRING,
+        Descriptors.FieldDescriptor.JavaType.ENUM
 
     )
 
@@ -63,11 +64,34 @@ class GenerateProtoBufCompare {
     private val CHECK_CLASS_ID_EQUALS_NAME = "checkClassIdEquals"
     private val HASH_CODE_NAME = "hashCode"
 
-    private val jvmExtensions = DebugJvmProtoBuf.getDescriptor().extensions
-    private val jsExtensions = DebugJsProtoBuf.getDescriptor().extensions
-    private val javaExtensions = DebugJavaClassProtoBuf.getDescriptor().extensions
-    private val builtInsExtensions = DebugBuiltInsProtoBuf.getDescriptor().extensions
-    private val extensionsMap = (jvmExtensions + jsExtensions + javaExtensions + builtInsExtensions).groupBy { it.containingType }
+    private val extensions = object {
+        val jvm = DebugJvmProtoBuf.getDescriptor().extensions
+        val js = DebugJsProtoBuf.getDescriptor().extensions
+        val java = DebugJavaClassProtoBuf.getDescriptor().extensions
+        val builtIns = DebugBuiltInsProtoBuf.getDescriptor().extensions
+        val klib = DebugKlibMetadataProtoBuf.getDescriptor().extensions
+
+        private val extensionsMap = (jvm + js + java + builtIns + klib).groupBy { it.containingType }
+
+        operator fun get(desc: Descriptors.Descriptor): List<Descriptors.FieldDescriptor>? = extensionsMap[desc]
+
+        fun getEnumName(fieldDescriptor: Descriptors.FieldDescriptor): String {
+            var extensionPrefix = ""
+            if (fieldDescriptor.isExtension) {
+                extensionPrefix = when {
+                    fieldDescriptor in jvm -> "jvmExt_"
+                    fieldDescriptor in js -> "jsExt_"
+                    fieldDescriptor in java -> "javaExt_"
+                    fieldDescriptor in builtIns -> "builtInsExt_"
+                    fieldDescriptor in klib -> "klibExt_"
+                    else -> error("Unknown extension")
+                }
+            }
+            return (extensionPrefix + fieldDescriptor.name.javaName + (if (fieldDescriptor.isRepeated) "List" else ""))
+                .replace("[A-Z]".toRegex()) { "_" + it.value }
+                .toUpperCase()
+        }
+    }
 
     private val allMessages: MutableSet<Descriptors.Descriptor> = linkedSetOf()
     private val messagesToProcess: Queue<Descriptors.Descriptor> = LinkedList()
@@ -80,6 +104,7 @@ class GenerateProtoBufCompare {
         p.println("package org.jetbrains.kotlin.incremental")
         p.println()
 
+        p.println("import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf")
         p.println("import org.jetbrains.kotlin.metadata.ProtoBuf")
         p.println("import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf")
         p.println("import org.jetbrains.kotlin.metadata.deserialization.NameResolver")
@@ -178,7 +203,7 @@ class GenerateProtoBufCompare {
         val typeName = descriptor.typeName
 
         val fields = descriptor.fields.filter { !it.isSkip }
-        val extFields = extensionsMap[descriptor]?.filter { !it.isSkip } ?: emptyList()
+        val extFields = extensions[descriptor]?.filter { !it.isSkip } ?: emptyList()
 
         p.println()
         p.println("fun $typeName.$HASH_CODE_NAME(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {")
@@ -211,11 +236,9 @@ class GenerateProtoBufCompare {
             p.println("    $HASH_CODE_NAME = 31 * $HASH_CODE_NAME + ${fieldToHashCode(field, repeatedFieldValue)}")
             p.println("}")
 
-        }
-        else if (field.isRequired) {
+        } else if (field.isRequired) {
             p.println("$HASH_CODE_NAME = 31 * $HASH_CODE_NAME + ${fieldToHashCode(field, fieldValue)}")
-        }
-        else if (field.isOptional) {
+        } else if (field.isOptional) {
             p.println("if ($hasMethod) {")
             p.println("    $HASH_CODE_NAME = 31 * $HASH_CODE_NAME + ${fieldToHashCode(field, fieldValue)}")
             p.println("}")
@@ -226,7 +249,7 @@ class GenerateProtoBufCompare {
         val typeName = descriptor.typeName
 
         val fields = descriptor.fields.filter { !it.isSkip }
-        val extFields = extensionsMap[descriptor]?.filter { !it.isSkip } ?: emptyList()
+        val extFields = extensions[descriptor]?.filter { !it.isSkip } ?: emptyList()
 
         p.println("open fun $CHECK_EQUALS_NAME(old: $typeName, new: $typeName): Boolean {")
         p.pushIndent()
@@ -245,11 +268,11 @@ class GenerateProtoBufCompare {
         val className = typeName.replace(".", "")
 
         val fields = descriptor.fields.filter { !it.isSkip }
-        val extFields = extensionsMap[descriptor]?.filter { !it.isSkip } ?: emptyList()
+        val extFields = extensions[descriptor]?.filter { !it.isSkip } ?: emptyList()
         val allFields = fields + extFields
 
         p.println("enum class ${className}Kind {")
-        p.println(allFields.joinToString(",\n    ") { "    " + it.enumName })
+        p.println(allFields.joinToString(",\n    ") { "    " + extensions.getEnumName(it) })
         p.println("}")
 
         p.println()
@@ -299,11 +322,9 @@ class GenerateProtoBufCompare {
         fun generate() {
             if (field.isRepeated) {
                 printRepeatedField()
-            }
-            else if (field.isRequired) {
+            } else if (field.isRequired) {
                 printRequiredField()
-            }
-            else if (field.isOptional) {
+            } else if (field.isOptional) {
                 printOptionalField()
             }
 
@@ -348,7 +369,8 @@ class GenerateProtoBufCompare {
         val fullFieldName = "$outerClassName.$fieldName"
 
         override fun printRepeatedField() {
-            p.printlnMultiline("""
+            p.printlnMultiline(
+                """
                 if (old.getExtensionCount($fullFieldName) != new.getExtensionCount($fullFieldName)) {
                     $statement
                 }
@@ -357,7 +379,8 @@ class GenerateProtoBufCompare {
                         ${ifWithComparison(field, "getExtension($fullFieldName, i)", statement)}
                     }
                 }
-            """)
+            """
+            )
         }
 
         override fun printRequiredField() {
@@ -379,11 +402,11 @@ class GenerateProtoBufCompare {
     }
 
     inner class ExtFieldGeneratorForDiff(field: Descriptors.FieldDescriptor, p: Printer) : ExtFieldGeneratorImpl(field, p) {
-        override fun Descriptors.FieldDescriptor.getStatement(): String =  statementForDiff
+        override fun Descriptors.FieldDescriptor.getStatement(): String = statementForDiff
     }
 
     private val Descriptors.FieldDescriptor.statementForDiff: String
-        get() = "$RESULT_NAME.add(${containingType.typeName.replace(".", "")}Kind.$enumName)"
+        get() = "$RESULT_NAME.add(${containingType.typeName.replace(".", "")}Kind.${extensions.getEnumName(this)})"
 
     private val Descriptors.FieldDescriptor.isSkip: Boolean
         get() = options.getExtension(DebugExtOptionsProtoBuf.skipInComparison)
@@ -402,17 +425,17 @@ class GenerateProtoBufCompare {
     }
 
     private fun ifWithComparison(field: Descriptors.FieldDescriptor, expr: String, statement: String) =
-            when {
-                field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ||
-                field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
-                    "if (!$CHECK_STRING_EQUALS_NAME(old.$expr, new.$expr)) $statement"
-                field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
-                    "if (!$CHECK_CLASS_ID_EQUALS_NAME(old.$expr, new.$expr)) $statement"
-                field.javaType in JAVA_TYPES_WITH_INLINED_EQUALS ->
-                    "if (old.$expr != new.$expr) $statement"
-                else ->
-                    "if (!$CHECK_EQUALS_NAME(old.$expr, new.$expr)) $statement"
-            }
+        when {
+            field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ||
+                    field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
+                "if (!$CHECK_STRING_EQUALS_NAME(old.$expr, new.$expr)) $statement"
+            field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
+                "if (!$CHECK_CLASS_ID_EQUALS_NAME(old.$expr, new.$expr)) $statement"
+            field.javaType in JAVA_TYPES_WITH_INLINED_EQUALS ->
+                "if (old.$expr != new.$expr) $statement"
+            else ->
+                "if (!$CHECK_EQUALS_NAME(old.$expr, new.$expr)) $statement"
+        }
 
     private fun Printer.printlnIfWithComparison(field: Descriptors.FieldDescriptor, expr: String, statement: String = "return false") {
         this.println(ifWithComparison(field, expr, statement))
@@ -427,7 +450,7 @@ class GenerateProtoBufCompare {
     private fun fieldToHashCode(field: Descriptors.FieldDescriptor, expr: String): String =
         when {
             field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ||
-            field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
+                    field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
                 "stringIndexes($expr)"
             field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
                 "fqNameIndexes($expr)"
@@ -445,26 +468,6 @@ class GenerateProtoBufCompare {
             val packageHeader = file.`package`
             return outerClassName + fullName.removePrefix(packageHeader)
         }
-
-    private val Descriptors.FieldDescriptor.enumName: String
-            get() {
-                var extensionPrefix = ""
-                if (isExtension) {
-                    if (this in jvmExtensions) {
-                        extensionPrefix = "jvmExt_"
-                    }
-                    if (this in jsExtensions) {
-                        extensionPrefix = "jsExt_"
-                    }
-                    if (this in javaExtensions) {
-                        extensionPrefix = "javaExt_"
-                    }
-                    if (this in builtInsExtensions) {
-                        extensionPrefix = "builtInsExt_"
-                    }
-                }
-                return (extensionPrefix + name.javaName + (if (isRepeated) "List" else "")).replace("[A-Z]".toRegex()) { "_" + it.value }.toUpperCase()
-            }
 
     private fun Descriptors.FieldDescriptor.helperMethodName(): String {
         val packageHeader = this.file.`package`

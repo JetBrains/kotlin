@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -79,6 +80,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (old.getExtension(BuiltInsProtoBuf.packageFqName) != new.getExtension(BuiltInsProtoBuf.packageFqName)) return false
         }
 
+        if (old.hasExtension(KlibMetadataProtoBuf.packageFqName) != new.hasExtension(KlibMetadataProtoBuf.packageFqName)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.packageFqName)) {
+            if (old.getExtension(KlibMetadataProtoBuf.packageFqName) != new.getExtension(KlibMetadataProtoBuf.packageFqName)) return false
+        }
+
         return true
     }
     enum class ProtoBufPackageKind {
@@ -90,7 +96,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         JVM_EXT_PACKAGE_MODULE_NAME,
         JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST,
         JS_EXT_PACKAGE_FQ_NAME,
-        BUILT_INS_EXT_PACKAGE_FQ_NAME
+        BUILT_INS_EXT_PACKAGE_FQ_NAME,
+        KLIB_EXT_PACKAGE_FQ_NAME
     }
 
     fun difference(old: ProtoBuf.Package, new: ProtoBuf.Package): EnumSet<ProtoBufPackageKind> {
@@ -134,6 +141,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasExtension(BuiltInsProtoBuf.packageFqName) != new.hasExtension(BuiltInsProtoBuf.packageFqName)) result.add(ProtoBufPackageKind.BUILT_INS_EXT_PACKAGE_FQ_NAME)
         if (old.hasExtension(BuiltInsProtoBuf.packageFqName)) {
             if (old.getExtension(BuiltInsProtoBuf.packageFqName) != new.getExtension(BuiltInsProtoBuf.packageFqName)) result.add(ProtoBufPackageKind.BUILT_INS_EXT_PACKAGE_FQ_NAME)
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.packageFqName) != new.hasExtension(KlibMetadataProtoBuf.packageFqName)) result.add(ProtoBufPackageKind.KLIB_EXT_PACKAGE_FQ_NAME)
+        if (old.hasExtension(KlibMetadataProtoBuf.packageFqName)) {
+            if (old.getExtension(KlibMetadataProtoBuf.packageFqName) != new.getExtension(KlibMetadataProtoBuf.packageFqName)) result.add(ProtoBufPackageKind.KLIB_EXT_PACKAGE_FQ_NAME)
         }
 
         return result
@@ -231,6 +243,25 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             }
         }
 
+        if (old.getExtensionCount(KlibMetadataProtoBuf.classAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.classAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.classAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.classAnnotation, i), new.getExtension(KlibMetadataProtoBuf.classAnnotation, i))) return false
+            }
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.classFile) != new.hasExtension(KlibMetadataProtoBuf.classFile)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.classFile)) {
+            if (old.getExtension(KlibMetadataProtoBuf.classFile) != new.getExtension(KlibMetadataProtoBuf.classFile)) return false
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.classUniqId) != new.hasExtension(KlibMetadataProtoBuf.classUniqId)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.classUniqId)) {
+            if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.classUniqId), new.getExtension(KlibMetadataProtoBuf.classUniqId))) return false
+        }
+
         return true
     }
     enum class ProtoBufClassKind {
@@ -256,7 +287,10 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         JS_EXT_CLASS_ANNOTATION_LIST,
         JS_EXT_CLASS_CONTAINING_FILE_ID,
         JAVA_EXT_IS_PACKAGE_PRIVATE_CLASS,
-        BUILT_INS_EXT_CLASS_ANNOTATION_LIST
+        BUILT_INS_EXT_CLASS_ANNOTATION_LIST,
+        KLIB_EXT_CLASS_ANNOTATION_LIST,
+        KLIB_EXT_CLASS_FILE,
+        KLIB_EXT_CLASS_UNIQ_ID
     }
 
     fun difference(old: ProtoBuf.Class, new: ProtoBuf.Class): EnumSet<ProtoBufClassKind> {
@@ -353,6 +387,25 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             }
         }
 
+        if (old.getExtensionCount(KlibMetadataProtoBuf.classAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.classAnnotation)) {
+            result.add(ProtoBufClassKind.KLIB_EXT_CLASS_ANNOTATION_LIST)
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.classAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.classAnnotation, i), new.getExtension(KlibMetadataProtoBuf.classAnnotation, i))) result.add(ProtoBufClassKind.KLIB_EXT_CLASS_ANNOTATION_LIST)
+            }
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.classFile) != new.hasExtension(KlibMetadataProtoBuf.classFile)) result.add(ProtoBufClassKind.KLIB_EXT_CLASS_FILE)
+        if (old.hasExtension(KlibMetadataProtoBuf.classFile)) {
+            if (old.getExtension(KlibMetadataProtoBuf.classFile) != new.getExtension(KlibMetadataProtoBuf.classFile)) result.add(ProtoBufClassKind.KLIB_EXT_CLASS_FILE)
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.classUniqId) != new.hasExtension(KlibMetadataProtoBuf.classUniqId)) result.add(ProtoBufClassKind.KLIB_EXT_CLASS_UNIQ_ID)
+        if (old.hasExtension(KlibMetadataProtoBuf.classUniqId)) {
+            if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.classUniqId), new.getExtension(KlibMetadataProtoBuf.classUniqId))) result.add(ProtoBufClassKind.KLIB_EXT_CLASS_UNIQ_ID)
+        }
+
         return result
     }
 
@@ -446,6 +499,25 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             for(i in 0..old.getExtensionCount(BuiltInsProtoBuf.functionAnnotation) - 1) {
                 if (!checkEquals(old.getExtension(BuiltInsProtoBuf.functionAnnotation, i), new.getExtension(BuiltInsProtoBuf.functionAnnotation, i))) return false
             }
+        }
+
+        if (old.getExtensionCount(KlibMetadataProtoBuf.functionAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.functionAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.functionAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.functionAnnotation, i), new.getExtension(KlibMetadataProtoBuf.functionAnnotation, i))) return false
+            }
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.functionFile) != new.hasExtension(KlibMetadataProtoBuf.functionFile)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.functionFile)) {
+            if (old.getExtension(KlibMetadataProtoBuf.functionFile) != new.getExtension(KlibMetadataProtoBuf.functionFile)) return false
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.functionUniqId) != new.hasExtension(KlibMetadataProtoBuf.functionUniqId)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.functionUniqId)) {
+            if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.functionUniqId), new.getExtension(KlibMetadataProtoBuf.functionUniqId))) return false
         }
 
         return true
@@ -592,6 +664,48 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.getExtension(BuiltInsProtoBuf.compileTimeValue), new.getExtension(BuiltInsProtoBuf.compileTimeValue))) return false
         }
 
+        if (old.getExtensionCount(KlibMetadataProtoBuf.propertyAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.propertyAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.propertyAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.propertyAnnotation, i), new.getExtension(KlibMetadataProtoBuf.propertyAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(KlibMetadataProtoBuf.propertyGetterAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.propertyGetterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.propertyGetterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, i), new.getExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(KlibMetadataProtoBuf.propertySetterAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.propertySetterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.propertySetterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.propertySetterAnnotation, i), new.getExtension(KlibMetadataProtoBuf.propertySetterAnnotation, i))) return false
+            }
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.compileTimeValue) != new.hasExtension(KlibMetadataProtoBuf.compileTimeValue)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.compileTimeValue)) {
+            if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.compileTimeValue), new.getExtension(KlibMetadataProtoBuf.compileTimeValue))) return false
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.propertyFile) != new.hasExtension(KlibMetadataProtoBuf.propertyFile)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.propertyFile)) {
+            if (old.getExtension(KlibMetadataProtoBuf.propertyFile) != new.getExtension(KlibMetadataProtoBuf.propertyFile)) return false
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.propertyUniqId) != new.hasExtension(KlibMetadataProtoBuf.propertyUniqId)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.propertyUniqId)) {
+            if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.propertyUniqId), new.getExtension(KlibMetadataProtoBuf.propertyUniqId))) return false
+        }
+
         return true
     }
 
@@ -628,6 +742,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (!checkEqualsTypeAliasAnnotation(old, new)) return false
 
         if (!checkEqualsTypeAliasVersionRequirement(old, new)) return false
+
+        if (old.hasExtension(KlibMetadataProtoBuf.typeAliasUniqId) != new.hasExtension(KlibMetadataProtoBuf.typeAliasUniqId)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.typeAliasUniqId)) {
+            if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.typeAliasUniqId), new.getExtension(KlibMetadataProtoBuf.typeAliasUniqId))) return false
+        }
 
         return true
     }
@@ -693,6 +812,20 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             for(i in 0..old.getExtensionCount(BuiltInsProtoBuf.typeParameterAnnotation) - 1) {
                 if (!checkEquals(old.getExtension(BuiltInsProtoBuf.typeParameterAnnotation, i), new.getExtension(BuiltInsProtoBuf.typeParameterAnnotation, i))) return false
             }
+        }
+
+        if (old.getExtensionCount(KlibMetadataProtoBuf.typeParameterAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.typeParameterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.typeParameterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.typeParameterAnnotation, i), new.getExtension(KlibMetadataProtoBuf.typeParameterAnnotation, i))) return false
+            }
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.typeParamUniqId) != new.hasExtension(KlibMetadataProtoBuf.typeParamUniqId)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.typeParamUniqId)) {
+            if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.typeParamUniqId), new.getExtension(KlibMetadataProtoBuf.typeParamUniqId))) return false
         }
 
         return true
@@ -798,6 +931,15 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             }
         }
 
+        if (old.getExtensionCount(KlibMetadataProtoBuf.typeAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.typeAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.typeAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.typeAnnotation, i), new.getExtension(KlibMetadataProtoBuf.typeAnnotation, i))) return false
+            }
+        }
+
         return true
     }
 
@@ -839,6 +981,20 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             }
         }
 
+        if (old.getExtensionCount(KlibMetadataProtoBuf.constructorAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.constructorAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.constructorAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.constructorAnnotation, i), new.getExtension(KlibMetadataProtoBuf.constructorAnnotation, i))) return false
+            }
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.constructorUniqId) != new.hasExtension(KlibMetadataProtoBuf.constructorUniqId)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.constructorUniqId)) {
+            if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.constructorUniqId), new.getExtension(KlibMetadataProtoBuf.constructorUniqId))) return false
+        }
+
         return true
     }
 
@@ -866,6 +1022,25 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             }
         }
 
+        if (old.getExtensionCount(KlibMetadataProtoBuf.enumEntryAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.enumEntryAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.enumEntryAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.enumEntryAnnotation, i), new.getExtension(KlibMetadataProtoBuf.enumEntryAnnotation, i))) return false
+            }
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.enumEntryOrdinal) != new.hasExtension(KlibMetadataProtoBuf.enumEntryOrdinal)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.enumEntryOrdinal)) {
+            if (old.getExtension(KlibMetadataProtoBuf.enumEntryOrdinal) != new.getExtension(KlibMetadataProtoBuf.enumEntryOrdinal)) return false
+        }
+
+        if (old.hasExtension(KlibMetadataProtoBuf.enumEntryUniqId) != new.hasExtension(KlibMetadataProtoBuf.enumEntryUniqId)) return false
+        if (old.hasExtension(KlibMetadataProtoBuf.enumEntryUniqId)) {
+            if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.enumEntryUniqId), new.getExtension(KlibMetadataProtoBuf.enumEntryUniqId))) return false
+        }
+
         return true
     }
 
@@ -873,6 +1048,12 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (!checkClassIdEquals(old.id, new.id)) return false
 
         if (!checkEqualsAnnotationArgument(old, new)) return false
+
+        return true
+    }
+
+    open fun checkEquals(old: KlibMetadataProtoBuf.DescriptorUniqId, new: KlibMetadataProtoBuf.DescriptorUniqId): Boolean {
+        if (old.index != new.index) return false
 
         return true
     }
@@ -920,6 +1101,15 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         else {
             for(i in 0..old.getExtensionCount(BuiltInsProtoBuf.parameterAnnotation) - 1) {
                 if (!checkEquals(old.getExtension(BuiltInsProtoBuf.parameterAnnotation, i), new.getExtension(BuiltInsProtoBuf.parameterAnnotation, i))) return false
+            }
+        }
+
+        if (old.getExtensionCount(KlibMetadataProtoBuf.parameterAnnotation) != new.getExtensionCount(KlibMetadataProtoBuf.parameterAnnotation)) {
+            return false
+        }
+        else {
+            for(i in 0..old.getExtensionCount(KlibMetadataProtoBuf.parameterAnnotation) - 1) {
+                if (!checkEquals(old.getExtension(KlibMetadataProtoBuf.parameterAnnotation, i), new.getExtension(KlibMetadataProtoBuf.parameterAnnotation, i))) return false
             }
         }
 
@@ -1575,6 +1765,10 @@ fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) 
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.packageFqName)
     }
 
+    if (hasExtension(KlibMetadataProtoBuf.packageFqName)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.packageFqName)
+    }
+
     return hashCode
 }
 
@@ -1671,6 +1865,18 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.classAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.classAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.classAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.classFile)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.classFile)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.classUniqId)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.classUniqId).hashCode(stringIndexes, fqNameIndexes)
+    }
+
     return hashCode
 }
 
@@ -1749,6 +1955,18 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     for(i in 0..getExtensionCount(BuiltInsProtoBuf.functionAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.functionAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.functionAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.functionAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.functionFile)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.functionFile)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.functionUniqId)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.functionUniqId).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1855,6 +2073,30 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.compileTimeValue).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.propertyAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.propertyAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.propertyGetterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.propertySetterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.propertySetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.compileTimeValue)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.compileTimeValue).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.propertyFile)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.propertyFile)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.propertyUniqId)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.propertyUniqId).hashCode(stringIndexes, fqNameIndexes)
+    }
+
     return hashCode
 }
 
@@ -1893,6 +2135,10 @@ fun ProtoBuf.TypeAlias.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
 
     for(i in 0..versionRequirementCount - 1) {
         hashCode = 31 * hashCode + getVersionRequirement(i)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.typeAliasUniqId)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.typeAliasUniqId).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -1955,6 +2201,14 @@ fun ProtoBuf.TypeParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: 
 
     for(i in 0..getExtensionCount(BuiltInsProtoBuf.typeParameterAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.typeParameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.typeParameterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.typeParameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.typeParamUniqId)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.typeParamUniqId).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
@@ -2035,6 +2289,10 @@ fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> 
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.typeAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.typeAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.typeAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
     return hashCode
 }
 
@@ -2069,6 +2327,14 @@ fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.constructorAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.constructorAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.constructorAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.constructorUniqId)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.constructorUniqId).hashCode(stringIndexes, fqNameIndexes)
+    }
+
     return hashCode
 }
 
@@ -2087,6 +2353,18 @@ fun ProtoBuf.EnumEntry.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.enumEntryAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.enumEntryAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.enumEntryAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.enumEntryOrdinal)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.enumEntryOrdinal)
+    }
+
+    if (hasExtension(KlibMetadataProtoBuf.enumEntryUniqId)) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.enumEntryUniqId).hashCode(stringIndexes, fqNameIndexes)
+    }
+
     return hashCode
 }
 
@@ -2098,6 +2376,14 @@ fun ProtoBuf.Annotation.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (In
     for(i in 0..argumentCount - 1) {
         hashCode = 31 * hashCode + getArgument(i).hashCode(stringIndexes, fqNameIndexes)
     }
+
+    return hashCode
+}
+
+fun KlibMetadataProtoBuf.DescriptorUniqId.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    hashCode = 31 * hashCode + index.hashCode()
 
     return hashCode
 }
@@ -2133,6 +2419,10 @@ fun ProtoBuf.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes:
 
     for(i in 0..getExtensionCount(BuiltInsProtoBuf.parameterAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.parameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    for(i in 0..getExtensionCount(KlibMetadataProtoBuf.parameterAnnotation) - 1) {
+        hashCode = 31 * hashCode + getExtension(KlibMetadataProtoBuf.parameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     return hashCode
