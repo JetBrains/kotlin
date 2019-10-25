@@ -9,16 +9,20 @@ import com.intellij.completion.ml.ContextFeaturesStorage
 import com.intellij.completion.sorting.RankingModelWrapper
 import com.intellij.completion.sorting.RankingSupport
 import com.intellij.lang.Language
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.reporting.isUnitTestMode
 import com.intellij.stats.PerformanceTracker
 import com.intellij.stats.completion.idString
 import com.intellij.stats.personalization.UserFactorStorage
 import com.intellij.stats.personalization.UserFactorsManager
 import com.intellij.stats.personalization.session.LookupSessionFactorsStorage
+import org.jetbrains.annotations.TestOnly
 
 class MutableLookupStorage(
   override val startedTimestamp: Long,
@@ -39,6 +43,18 @@ class MutableLookupStorage(
   companion object {
     private val LOG = logger<MutableLookupStorage>()
     private val LOOKUP_STORAGE = Key.create<MutableLookupStorage>("completion.ml.lookup.storage")
+
+    @Volatile
+    private var alwaysComputeFeaturesInTests = true
+
+    @TestOnly
+    fun setComputeFeaturesAlways(value: Boolean, parentDisposable: Disposable) {
+      val valueBefore = alwaysComputeFeaturesInTests
+      alwaysComputeFeaturesInTests = value
+      Disposer.register(parentDisposable, Disposable {
+        alwaysComputeFeaturesInTests = valueBefore
+      })
+    }
 
     fun get(lookup: LookupImpl): MutableLookupStorage? {
       return lookup.getUserData(LOOKUP_STORAGE)
@@ -61,7 +77,7 @@ class MutableLookupStorage(
     MutableElementStorage()
   }
 
-  override fun shouldComputeFeatures(): Boolean = model != null || _loggingEnabled
+  override fun shouldComputeFeatures(): Boolean = model != null || _loggingEnabled || (isUnitTestMode() && alwaysComputeFeaturesInTests)
 
   fun isContextFactorsInitialized(): Boolean = contextFeaturesStorage != null
 

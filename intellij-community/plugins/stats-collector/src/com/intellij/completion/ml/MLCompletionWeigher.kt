@@ -13,6 +13,7 @@ class MLCompletionWeigher : CompletionWeigher() {
   override fun weigh(element: LookupElement, location: CompletionLocation): Comparable<Nothing>? {
     val storage = (LookupManager.getActiveLookup(location.completionParameters.editor) as? LookupImpl)
                     ?.let { LookupStorage.get(it) } ?: return DummyComparable.EMPTY
+    if (!storage.shouldComputeFeatures()) return DummyComparable.EMPTY
     val result = mutableMapOf<String, Any>()
     val contextFeatures = storage.contextProvidersResult()
     for (provider in ElementFeatureProvider.forLanguage(storage.language)) {

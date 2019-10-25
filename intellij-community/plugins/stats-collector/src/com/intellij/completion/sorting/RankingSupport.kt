@@ -4,9 +4,11 @@ package com.intellij.completion.sorting
 import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.internal.ml.completion.RankingModelProvider
 import com.intellij.lang.Language
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.extensions.ExtensionPointName
+import com.intellij.openapi.util.Disposer
 import com.intellij.stats.experiment.EmulatedExperiment
 import com.intellij.stats.experiment.WebServiceStatus
 
@@ -14,6 +16,7 @@ import com.intellij.stats.experiment.WebServiceStatus
 object RankingSupport {
   private val EP_NAME: ExtensionPointName<RankingModelProvider> = ExtensionPointName("com.intellij.completion.ml.model")
   private val LOG = logger<RankingSupport>()
+  private var enabledInTests: Boolean = false
 
   fun getRankingModel(language: Language): RankingModelWrapper? {
     val provider = findProviderForLanguage(language)
@@ -47,7 +50,7 @@ object RankingSupport {
   private fun shouldSortByML(provider: RankingModelProvider): Boolean {
     val application = ApplicationManager.getApplication()
     val webServiceStatus = WebServiceStatus.getInstance()
-    if (application.isUnitTestMode) return false
+    if (application.isUnitTestMode) return enabledInTests
     val settings = CompletionMLRankingSettings.getInstance()
     if (application.isEAP && webServiceStatus.isExperimentOnCurrentIDE() && settings.isCompletionLogsSendAllowed) {
       // AB experiment
@@ -55,5 +58,10 @@ object RankingSupport {
     }
 
     return settings.isRankingEnabled && settings.isLanguageEnabled(provider.displayNameInSettings)
+  }
+
+  fun enableInTests(parentDisposable: Disposable) {
+    enabledInTests = true
+    Disposer.register(parentDisposable, Disposable { enabledInTests = false })
   }
 }

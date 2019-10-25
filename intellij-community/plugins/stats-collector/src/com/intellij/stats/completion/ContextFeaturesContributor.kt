@@ -20,7 +20,7 @@ class ContextFeaturesContributor : CompletionContributor() {
     val lookup = LookupManager.getActiveLookup(parameters.editor) as? LookupImpl
     if (lookup != null) {
       val storage = MutableLookupStorage.get(lookup)
-      if (storage != null && !storage.isContextFactorsInitialized()) {
+      if (storage != null && storage.shouldComputeFeatures() && !storage.isContextFactorsInitialized()) {
         calculateContextFactors(lookup, parameters, storage)
       }
     }
