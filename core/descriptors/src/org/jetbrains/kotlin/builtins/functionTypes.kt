@@ -140,12 +140,13 @@ fun KotlinType.getValueParameterTypesFromFunctionType(): List<TypeProjection> {
     return arguments.subList(first, last)
 }
 
-fun KotlinType.getAllParameterProjectionsFromCallableReflectionType(): List<TypeProjection> {
+fun KotlinType.getValueParameterTypesFromCallableReflectionType(withReceiver: Boolean): List<TypeProjection> {
     assert(ReflectionTypes.isKCallableType(this)) { "Not a callable reflection type: $this" }
     val arguments = arguments
+    val first = if (withReceiver) 0 else 1
     val last = arguments.size - 1
-    assert(last >= 0) { "Unexpected number of type arguments in type: $this" }
-    return arguments.subList(0, last)
+    assert(first <= last) { "Not an exact function type: $this" }
+    return arguments.subList(first, last)
 }
 
 fun KotlinType.extractParameterNameFromFunctionTypeArgument(): Name? {

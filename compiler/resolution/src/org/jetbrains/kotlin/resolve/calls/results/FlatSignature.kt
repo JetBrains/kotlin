@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.results
 
-import org.jetbrains.kotlin.builtins.getAllParameterProjectionsFromCallableReflectionType
+import org.jetbrains.kotlin.builtins.getValueParameterTypesFromCallableReflectionType
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.*
 
 interface SpecificityComparisonCallbacks {
@@ -59,11 +61,18 @@ class FlatSignature<out T> constructor(
             numDefaults: Int,
             reflectionType: UnwrappedType
         ): FlatSignature<T> {
+            // Note that receiver is taking over descriptor, not reflection type
+            // This is correct as extension receiver can't have any defaults/varargs/coercions, so there is no need to use reflection type
+            // Plus, currently, receiver for reflection type is taking from *candidate*, see buildReflectionType, this candidate can
+            // have transient receiver which is not the same in its signature
+            val receiver = descriptor.extensionReceiverParameter?.type
+            val parameters = reflectionType.getValueParameterTypesFromCallableReflectionType(receiver == null).map { it.type }
+
             return FlatSignature(
                 origin,
                 descriptor.typeParameters,
-                reflectionType.getAllParameterProjectionsFromCallableReflectionType().map { it.type },
-                hasExtensionReceiver = false,
+                listOfNotNull(receiver) + parameters,
+                hasExtensionReceiver = receiver != null,
                 hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },
                 numDefaults = numDefaults,
                 isExpect = descriptor is MemberDescriptor && descriptor.isExpect,

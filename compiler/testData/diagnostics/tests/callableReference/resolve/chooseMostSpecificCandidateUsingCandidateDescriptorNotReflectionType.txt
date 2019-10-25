@@ -1,0 +1,8 @@
+package
+
+public fun </*0*/ R> foo(/*0*/ f: (kotlin.String) -> R): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun valueParameter(/*0*/ c: kotlin.CharSequence): kotlin.CharSequence
+public fun valueParameter(/*0*/ s: kotlin.String): kotlin.CharSequence
+public fun kotlin.CharSequence.extensionReceiver(): kotlin.CharSequence
+public fun kotlin.String.extensionReceiver(): kotlin.String

@@ -2525,6 +2525,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/chooseCallableReferenceDependingOnInferredReceiver.kt");
                 }
 
+                @TestMetadata("chooseMostSpecificCandidateUsingCandidateDescriptorNotReflectionType.kt")
+                public void testChooseMostSpecificCandidateUsingCandidateDescriptorNotReflectionType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/chooseMostSpecificCandidateUsingCandidateDescriptorNotReflectionType.kt");
+                }
+
                 @TestMetadata("chooseOuterCallBySingleCallableReference.kt")
                 public void testChooseOuterCallBySingleCallableReference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/chooseOuterCallBySingleCallableReference.kt");
