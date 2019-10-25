@@ -57,11 +57,11 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        p: PROPERTY_REFERENCE 'public final y: T of <uninitialized parent> [var]' field=null getter='public final fun <get-y> (): T of <uninitialized parent> declared in <root>' setter='public final fun <set-y> (v: T of <uninitialized parent>): kotlin.Unit declared in <root>' type=T of <uninitialized parent> origin=null
+        p: PROPERTY_REFERENCE 'public final y: T of <uninitialized parent> [var]' field=null getter='public final fun <get-y> (): T of <uninitialized parent> declared in <root>' setter='public final fun <set-y> (v: T of <uninitialized parent>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
       TYPE_OP type=<root>.C<kotlin.String> origin=CAST typeOperand=<root>.C<kotlin.String>
         GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        p: PROPERTY_REFERENCE 'public final y: T of <uninitialized parent> [var]' field=null getter='public final fun <get-y> (): T of <uninitialized parent> declared in <root>' setter='public final fun <set-y> (v: T of <uninitialized parent>): kotlin.Unit declared in <root>' type=T of <uninitialized parent> origin=null
+        p: PROPERTY_REFERENCE 'public final y: T of <uninitialized parent> [var]' field=null getter='public final fun <get-y> (): T of <uninitialized parent> declared in <root>' setter='public final fun <set-y> (v: T of <uninitialized parent>): kotlin.Unit declared in <root>' type=kotlin.reflect.KMutableProperty0<kotlin.String> origin=null

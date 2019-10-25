@@ -53,39 +53,38 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.reflect.KClass<kotlin.Int> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KClass<kotlin.Int> visibility:private [final,static]' type=kotlin.reflect.KClass<kotlin.Int> origin=null
   PROPERTY name:test3 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unsupported callable reference: Q|A|::<Unresolved name: foo>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:IrErrorType
+        FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit>
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:private [final,static]' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> visibility:private [final,static]' type=kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> origin=null
   PROPERTY name:test4 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Unit visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.reflect.KFunction0<<root>.A> visibility:private [final,static]
       EXPRESSION_BODY
-        GET_OBJECT 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.Unit
+        FUNCTION_REFERENCE 'public constructor <init> () [primary] declared in <root>.A' type=kotlin.reflect.KFunction0<<root>.A> origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<<root>.A>
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Unit declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Unit visibility:private [final,static]' type=kotlin.Unit origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.reflect.KFunction0<<root>.A> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.reflect.KFunction0<<root>.A> visibility:private [final,static]' type=kotlin.reflect.KFunction0<<root>.A> origin=null
   PROPERTY name:test5 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test5 type:IrErrorType visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unsupported callable reference: R|/A.A|()::<Unresolved name: foo>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:IrErrorType
+        FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test5> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:IrErrorType visibility:private [final,static]' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.reflect.KFunction0<kotlin.Unit> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
   PROPERTY name:test6 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test6 type:IrErrorType visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unsupported callable reference: ::<Unresolved name: bar>#' type=IrErrorType
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:IrErrorType
+        FUNCTION_REFERENCE 'public final fun bar (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-test6> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:IrErrorType visibility:private [final,static]' type=IrErrorType origin=null
-
+        RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.reflect.KFunction0<kotlin.Unit> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null

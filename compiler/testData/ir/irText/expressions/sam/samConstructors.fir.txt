@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): java.lang.Runnable declared in <root>'
         CALL 'public final fun Runnable (block: kotlin.Function0<kotlin.Unit>): java.lang.Runnable declared in java.lang' type=java.lang.Runnable origin=null
-          block: ERROR_CALL 'Unsupported callable reference: ::<Unresolved name: foo>#' type=IrErrorType
+          block: FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test4 visibility:public modality:FINAL <> () returnType:IrErrorType
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): IrErrorType declared in <root>'

@@ -89,4 +89,4 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
     BLOCK_BODY
       CALL 'public open fun run1 (r: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
         $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
-        r: ERROR_CALL 'Unsupported callable reference: ::<Unresolved name: test9>#' type=IrErrorType
+        r: FUNCTION_REFERENCE 'public final fun test9 (): kotlin.Unit declared in <root>' type=kotlin.Function0<kotlin.Unit> origin=null
