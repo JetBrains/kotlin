@@ -1,4 +1,4 @@
-// IS_APPLICABLE: false
+// PROBLEM: none
 // WITH_RUNTIME
 class A(val _value: Int) {
     operator fun compareTo(other: A) = _value.compareTo(other._value)

@@ -1,27 +1,15 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.intentions
+package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.inspections.ReplaceRangeToWithUntilInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.evaluatesTo
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -33,21 +21,15 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 
-@Suppress("DEPRECATION")
-class ConvertTwoComparisonsToRangeCheckInspection : IntentionBasedInspection<KtBinaryExpression>(
-    ConvertTwoComparisonsToRangeCheckIntention::class
-)
+class ConvertTwoComparisonsToRangeCheckInspection :
+    AbstractApplicabilityBasedInspection<KtBinaryExpression>(KtBinaryExpression::class.java) {
+    override fun inspectionText(element: KtBinaryExpression) = "Two comparisons should be converted to a range check"
 
-class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
-    KtBinaryExpression::class.java,
-    "Convert to range check"
-) {
+    override val defaultFixText = "Convert to a range check"
 
-    private data class RangeExpressionData(val value: KtExpression, val min: String, val max: String)
+    override fun isApplicable(element: KtBinaryExpression) = generateRangeExpressionData(element) != null
 
-    override fun isApplicableTo(element: KtBinaryExpression) = generateRangeExpressionData(element) != null
-
-    override fun applyTo(element: KtBinaryExpression, editor: Editor?) {
+    override fun applyTo(element: KtBinaryExpression, project: Project, editor: Editor?) {
         val rangeData = generateRangeExpressionData(element) ?: return
         val factory = KtPsiFactory(element)
         val replaced = element.replace(
@@ -61,6 +43,8 @@ class ConvertTwoComparisonsToRangeCheckIntention : SelfTargetingOffsetIndependen
             ReplaceRangeToWithUntilInspection.applyFixIfApplicable(it)
         }
     }
+
+    private data class RangeExpressionData(val value: KtExpression, val min: String, val max: String)
 
     private fun generateRangeExpressionData(condition: KtBinaryExpression): RangeExpressionData? {
         if (condition.operationToken != KtTokens.ANDAND) return null
