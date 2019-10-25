@@ -58,8 +58,7 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
 
                     // TODO: NOTE: acquire lock for a several seconds to avoid dead-lock via resolve is a WORKAROUND
 
-                    val notRunning = !initIsRunning.get()
-                    if (notRunning && lock.tryLock(500, TimeUnit.MILLISECONDS)) {
+                    if (!initIsRunning.get() && lock.tryLock(5, TimeUnit.SECONDS)) {
                         try {
                             initIsRunning.set(true)
                             try {
@@ -71,9 +70,6 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
                             lock.unlock()
                         }
                     } else {
-                        if (notRunning) { // means unable to acquire lock within specified time limit
-                            Logger.getInstance(KotlinClassInnerStuffCache::class.java).error("failed to acquire lock for $initializer")
-                        }
                         computeValue()
                     }
                 }
