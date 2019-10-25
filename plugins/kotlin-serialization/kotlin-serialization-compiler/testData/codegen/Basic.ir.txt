@@ -569,16 +569,13 @@ public final class OptionalUser : java/lang/Object {
           LDC ()
           LDC ()
           INVOKESPECIAL (User, <init>, (Ljava/lang/String;Ljava/lang/String;)V)
-          GOTO (L2)
+          ASTORE (1)
         LABEL (L1)
-          ALOAD (1)
-        LABEL (L2)
-          ASTORE (4)
           ALOAD (0)
-          ALOAD (4)
+          ALOAD (1)
           INVOKESPECIAL (OptionalUser, <init>, (LUser;)V)
           RETURN
-        LABEL (L3)
+        LABEL (L2)
     }
 
     public void <init>(int seen1, User user, kotlinx.serialization.SerializationConstructorMarker serializationConstructorMarker) {
