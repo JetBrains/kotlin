@@ -11,6 +11,7 @@ import com.android.build.gradle.internal.SdkLocationSourceSet
 import com.android.build.gradle.internal.SdkLocator
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.android.build.gradle.internal.publishing.AndroidArtifacts.ARTIFACT_TYPE
+import com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask
 import com.android.sdklib.IAndroidTarget
 import com.android.sdklib.repository.AndroidSdkHandler
 import com.android.sdklib.repository.LoggerProgressIndicatorWrapper
@@ -100,7 +101,16 @@ open class KotlinMultiplatformExtension :
             val resolvedExternal = dependencies.filterIsInstance<DefaultExternalModuleDependency>()
                 .flatMap { collectDependencies(it.module, compileClasspathConf) }
 
-            selfResolved + resolvedExternal + androidSdkJar
+            val result = (selfResolved + resolvedExternal + androidSdkJar).toMutableList()
+
+            if (entry.key == "androidMain") {
+                // this is a terrible hack, but looks like the only way, other than proper support via light-classes
+                val task = project.tasks.findByName("processDebugResources") as? LinkApplicationAndroidResourcesTask
+                @Suppress("UnstableApiUsage")
+                task?.rClassOutputJar?.orNull?.asFile?.let { result += it }
+            }
+
+            result
         }.toMap()
     }
 
