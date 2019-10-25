@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 // !RENDER_DIAGNOSTICS_MESSAGES
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS)
@@ -11,5 +12,5 @@ class C<T> {
 }
 
 fun test(a: C<out CharSequence>) {
-    <!MEMBER_PROJECTED_OUT("public final operator fun set(x: Int, y: T): Unit defined in C", "C<out CharSequence>")!>a[1]<!> = 25
+    <!OI;MEMBER_PROJECTED_OUT("public final operator fun set(x: Int, y: T): Unit defined in C", "C<out CharSequence>")!>a[1]<!> = <!NI;CONSTANT_EXPECTED_TYPE_MISMATCH("integer", "Nothing")!>25<!>
 }

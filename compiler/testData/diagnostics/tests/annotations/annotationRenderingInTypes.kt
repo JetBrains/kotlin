@@ -1,5 +1,6 @@
 // !RENDER_DIAGNOSTICS_MESSAGES
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER
+// !WITH_NEW_INFERENCE
 
 fun f1(x: String) {}
 fun f2(f: () -> Unit) {}
@@ -12,7 +13,7 @@ annotation class Ann
 fun <@Ann R : @Ann Any> f3(a: Array<@Ann R>): Array<@Ann R?> =  null!!
 
 fun test2(a: @Ann Array<in @Ann Int>) {
-    val r: Array<in Int?> = <!TYPE_INFERENCE_CANNOT_CAPTURE_TYPES("'R' cannot capture 'in Int'. Type parameter has an upper bound 'Any' that cannot be satisfied capturing 'in' projection")!>f3<!>(a)
+    val r: Array<in Int?> = <!OI;TYPE_INFERENCE_CANNOT_CAPTURE_TYPES("'R' cannot capture 'in Int'. Type parameter has an upper bound 'Any' that cannot be satisfied capturing 'in' projection")!>f3<!>(<!NI;TYPE_MISMATCH("Any", "Int")!>a<!>)
 }
 
 
@@ -22,4 +23,4 @@ var test3: Int = 0
 
 fun f4(fn: (@Ann Int, @Ann Int) -> Unit) {}
 
-val test4 = f4 { <!EXPECTED_PARAMETERS_NUMBER_MISMATCH("2", "Int, Int")!>single<!> -> }
+val test4 = f4 <!NI;TYPE_MISMATCH("(Int, Int) -> Unit", "(Int) -> Unit")!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH("2", "Int, Int")!>single<!> -> }<!>
