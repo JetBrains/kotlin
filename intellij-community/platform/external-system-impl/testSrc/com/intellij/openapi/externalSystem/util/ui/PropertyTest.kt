@@ -12,9 +12,9 @@ class PropertyTest : PropertyTestCase() {
   fun `test property simple usage`() {
     val property = property { "initial value" }
     assertProperty(property, "initial value", false)
-    property.setSynchronously("value")
+    property.set("value")
     assertProperty(property, "value", true)
-    property.setSynchronously("initial value")
+    property.set("initial value")
     assertProperty(property, "initial value", true)
   }
 
@@ -24,10 +24,10 @@ class PropertyTest : PropertyTestCase() {
     var value by property
     assertEquals(value, "initial value")
     assertProperty(property, "initial value", false)
-    invokeAndWaitAll { value = "value" }
+    value = "value"
     assertEquals(value, "value")
     assertProperty(property, "value", true)
-    invokeAndWaitAll { value = "initial value" }
+    value = "initial value"
     assertEquals(value, "initial value")
     assertProperty(property, "initial value", true)
   }
@@ -62,7 +62,7 @@ class PropertyTest : PropertyTestCase() {
     assertProperty(property5, 0, false)
     assertProperty(property6, 0, false)
 
-    property1.setSynchronously(2)
+    property1.set(2)
     assertProperty(property1, 2, true)
     assertProperty(property2, 2, false)
     assertProperty(property3, 2 to 0, false)
@@ -70,7 +70,7 @@ class PropertyTest : PropertyTestCase() {
     assertProperty(property5, 0, false)
     assertProperty(property6, 2, false)
 
-    property1.setSynchronously(4)
+    property1.set(4)
     assertProperty(property1, 4, true)
     assertProperty(property2, 4, false)
     assertProperty(property3, 4 to 0, false)
@@ -78,7 +78,7 @@ class PropertyTest : PropertyTestCase() {
     assertProperty(property5, 0, false)
     assertProperty(property6, 4, false)
 
-    property5.setSynchronously(7)
+    property5.set(7)
     assertProperty(property1, 4, true)
     assertProperty(property2, 4, false)
     assertProperty(property3, 4 to 7, false)
@@ -86,7 +86,7 @@ class PropertyTest : PropertyTestCase() {
     assertProperty(property5, 7, true)
     assertProperty(property6, 11, false)
 
-    property3.setSynchronously(12 to 18)
+    property3.set(12 to 18)
     assertProperty(property1, 4, true)
     assertProperty(property2, 12, false)
     assertProperty(property3, 12 to 18, true)
@@ -112,32 +112,46 @@ class PropertyTest : PropertyTestCase() {
     property3.dependsOn(property4) { property4.get() }
     property4.dependsOn(property3) { property3.get() }
 
-    val counters = listOf(property1, property2, property3, property4)
+    val propagationCounters = listOf(property1, property2, property3, property4)
       .map { property ->
         AtomicInteger(0).also { counter ->
-          property.addListener {
+          property.afterPropagation {
+            counter.incrementAndGet()
+          }
+        }
+      }
+    val changeCounters = listOf(property1, property2, property3, property4)
+      .map { property ->
+        AtomicInteger(0).also { counter ->
+          property.afterChange {
             counter.incrementAndGet()
           }
         }
       }
 
-    property3.setSynchronously(0)
-    assertEquals(listOf(1, 1, 1, 1), counters.map { it.get() })
+    property3.set(0)
+    assertEquals(listOf(1, 1, 1, 1), propagationCounters.map { it.get() })
+    assertEquals(listOf(1, 1, 1, 1), changeCounters.map { it.get() })
 
-    property3.setSynchronously(0)
-    assertEquals(listOf(2, 2, 2, 2), counters.map { it.get() })
+    property3.set(0)
+    assertEquals(listOf(2, 2, 2, 2), propagationCounters.map { it.get() })
+    assertEquals(listOf(2, 2, 2, 2), changeCounters.map { it.get() })
 
-    property4.setSynchronously(0)
-    assertEquals(listOf(2, 2, 2, 3), counters.map { it.get() })
+    property4.set(0)
+    assertEquals(listOf(3, 3, 3, 3), propagationCounters.map { it.get() })
+    assertEquals(listOf(2, 2, 2, 3), changeCounters.map { it.get() })
 
-    property1.setSynchronously(0)
-    assertEquals(listOf(3, 3, 2, 3), counters.map { it.get() })
+    property1.set(0)
+    assertEquals(listOf(4, 4, 4, 4), propagationCounters.map { it.get() })
+    assertEquals(listOf(3, 3, 2, 3), changeCounters.map { it.get() })
 
-    property1.setSynchronously(0)
-    assertEquals(listOf(4, 4, 2, 3), counters.map { it.get() })
+    property1.set(0)
+    assertEquals(listOf(5, 5, 5, 5), propagationCounters.map { it.get() })
+    assertEquals(listOf(4, 4, 2, 3), changeCounters.map { it.get() })
 
-    property2.setSynchronously(0)
-    assertEquals(listOf(4, 5, 2, 3), counters.map { it.get() })
+    property2.set(0)
+    assertEquals(listOf(6, 6, 6, 6), propagationCounters.map { it.get() })
+    assertEquals(listOf(4, 5, 2, 3), changeCounters.map { it.get() })
   }
 
   @Test
@@ -159,9 +173,7 @@ class PropertyTest : PropertyTestCase() {
       thread {
         startLatch.await()
         repeat(numCounts) {
-          invokeLater {
-            property.set(property.get() + 1)
-          }
+          property.set(property.get() + 1)
         }
         finishLatch.countDown()
       }
@@ -169,7 +181,6 @@ class PropertyTest : PropertyTestCase() {
     startLatch.countDown()
     finishLatch.await()
 
-    waitAll()
     assertEquals(numProperties * numCounts, accumulator.get())
     properties.forEach { assertEquals(numCounts, it.get()) }
   }

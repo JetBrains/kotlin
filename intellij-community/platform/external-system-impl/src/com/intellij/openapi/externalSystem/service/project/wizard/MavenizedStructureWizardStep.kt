@@ -7,7 +7,14 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
-import com.intellij.openapi.externalSystem.util.ui.*
+import com.intellij.openapi.externalSystem.util.properties.PropertyGraph
+import com.intellij.openapi.externalSystem.util.properties.ObservableClearableProperty
+import com.intellij.openapi.externalSystem.util.properties.PropertyView.Companion.comap
+import com.intellij.openapi.externalSystem.util.properties.PropertyView.Companion.map
+import com.intellij.openapi.externalSystem.util.properties.UiPropertyImpl.Companion.uiProperty
+import com.intellij.openapi.externalSystem.util.ui.DataView
+import com.intellij.openapi.externalSystem.util.ui.bind
+import com.intellij.openapi.externalSystem.util.ui.myComboBox
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory.createSingleLocalFileDescriptor
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.ValidationInfo
@@ -29,12 +36,13 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
 
   abstract fun findAllParents(): List<Data>
 
-  private val entityNameProperty = property(::suggestName)
-  private val locationProperty = property { getUiPath(suggestLocationByName()) }
-  private val parentProperty = property(::suggestParentByLocation)
-  private val groupIdProperty = property(::suggestGroupIdByParent)
-  private val artifactIdProperty = property(::suggestArtifactIdByName)
-  private val versionProperty = property(::suggestVersionByParent)
+  private val propertyGraph = PropertyGraph()
+  private val entityNameProperty = propertyGraph.uiProperty(::suggestName)
+  private val locationProperty = propertyGraph.uiProperty { getUiPath(suggestLocationByName()) }
+  private val parentProperty = propertyGraph.uiProperty(::suggestParentByLocation)
+  private val groupIdProperty = propertyGraph.uiProperty(::suggestGroupIdByParent)
+  private val artifactIdProperty = propertyGraph.uiProperty(::suggestArtifactIdByName)
+  private val versionProperty = propertyGraph.uiProperty(::suggestVersionByParent)
 
   var entityName by entityNameProperty.map { it.trim() }
   var location by locationProperty.map { getModelPath(it) }.comap { getUiPath(it) }
@@ -58,9 +66,7 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
     locationProperty.dependsOn(parentProperty) { getUiPath(suggestLocationByParentAndName()) }
     locationProperty.dependsOn(entityNameProperty) { getUiPath(suggestLocationByParentAndName()) }
     groupIdProperty.dependsOn(parentProperty, ::suggestGroupIdByParent)
-    groupIdProperty.dependsOn(artifactIdProperty) { groupId } // dependent validation
     artifactIdProperty.dependsOn(entityNameProperty, ::suggestArtifactIdByName)
-    artifactIdProperty.dependsOn(groupIdProperty) { artifactId } // dependent validation
     versionProperty.dependsOn(parentProperty, ::suggestVersionByParent)
   }
 
@@ -287,6 +293,6 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
       override val isPresent: Boolean = false
     }
 
-    private fun <T> Property<T>.asBinding() = PropertyBinding(::get, ::set)
+    private fun <T> ObservableClearableProperty<T>.asBinding() = PropertyBinding(::get, ::set)
   }
 }
