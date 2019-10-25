@@ -2,10 +2,7 @@
 
 package com.intellij.codeInsight.lookup.impl;
 
-import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupElementPresentation;
-import com.intellij.codeInsight.lookup.LookupValueWithUIHint;
-import com.intellij.codeInsight.lookup.RealLookupElementPresentation;
+import com.intellij.codeInsight.lookup.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
@@ -125,7 +122,7 @@ public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
       boolean isSelected,
       boolean hasFocus) {
 
-    boolean nonFocusedSelection = isSelected && myLookup.getFocusDegree() == LookupImpl.FocusDegree.SEMI_FOCUSED;
+    boolean nonFocusedSelection = isSelected && myLookup.getFocusDegree() == Lookup.FocusDegree.SEMI_FOCUSED;
     if (!myLookup.isFocused()) {
       isSelected = false;
     }

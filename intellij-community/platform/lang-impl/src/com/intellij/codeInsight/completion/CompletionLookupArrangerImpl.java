@@ -267,8 +267,8 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
       }
 
       @Override
-      public LookupImpl.FocusDegree getFocusDegree() {
-        return LookupImpl.FocusDegree.FOCUSED;
+      public Lookup.FocusDegree getFocusDegree() {
+        return Lookup.FocusDegree.FOCUSED;
       }
 
       @Override
@@ -409,7 +409,7 @@ public class CompletionLookupArrangerImpl extends LookupArranger implements Comp
   }
 
   private int getItemToSelect(LookupElementListPresenter lookup, List<? extends LookupElement> items, boolean onExplicitAction, @Nullable LookupElement mostRelevant) {
-    if (items.isEmpty() || lookup.getFocusDegree() == LookupImpl.FocusDegree.UNFOCUSED) {
+    if (items.isEmpty() || lookup.getFocusDegree() == Lookup.FocusDegree.UNFOCUSED) {
       return 0;
     }
 

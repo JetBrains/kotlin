@@ -78,7 +78,7 @@ public class ConsoleExecuteAction extends DumbAwareAction {
       Lookup lookup = LookupManager.getActiveLookup(editor);
       // we should check getCurrentItem() also - fast typing could produce outdated lookup, such lookup reports isCompletion() true
       enabled = lookup == null || !lookup.isCompletion() || lookup.getCurrentItem() == null ||
-                lookup instanceof LookupImpl && ((LookupImpl)lookup).getFocusDegree() == LookupImpl.FocusDegree.UNFOCUSED;
+                lookup instanceof LookupImpl && ((LookupImpl)lookup).getFocusDegree() == Lookup.FocusDegree.UNFOCUSED;
     }
 
     e.getPresentation().setEnabled(enabled);
