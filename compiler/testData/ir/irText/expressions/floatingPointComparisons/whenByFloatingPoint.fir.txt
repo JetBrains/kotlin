@@ -5,6 +5,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
       RETURN type=kotlin.Nothing from='public final fun testSimple (x: kotlin.Double): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=WHEN
           VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Double [val]
+            GET_VAR 'x: kotlin.Double declared in <root>.testSimple' type=kotlin.Double origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -27,6 +28,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
       RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenSubject (x: kotlin.Any): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=WHEN
           VAR IR_TEMPORARY_VARIABLE name:tmp1_subject type:kotlin.Double [val]
+            GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenSubject' type=kotlin.Double origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -50,6 +52,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
       RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenCondition (x: kotlin.Double, y: kotlin.Any): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=WHEN
           VAR IR_TEMPORARY_VARIABLE name:tmp2_subject type:kotlin.Double [val]
+            GET_VAR 'x: kotlin.Double declared in <root>.testSmartCastInWhenCondition' type=kotlin.Double origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -65,6 +68,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
       RETURN type=kotlin.Nothing from='public final fun testSmartCastInWhenConditionInBranch (x: kotlin.Any): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=WHEN
           VAR IR_TEMPORARY_VARIABLE name:tmp3_subject type:kotlin.Any [val]
+            GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
@@ -100,6 +104,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
       RETURN type=kotlin.Nothing from='public final fun testSmartCastToDifferentTypes (x: kotlin.Any, y: kotlin.Any): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=WHEN
           VAR IR_TEMPORARY_VARIABLE name:tmp4_subject type:kotlin.Double [val]
+            GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Double origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -120,6 +125,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
       RETURN type=kotlin.Nothing from='public final fun testWithPrematureExitInConditionSubexpression (x: kotlin.Any): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=WHEN
           VAR IR_TEMPORARY_VARIABLE name:tmp5_subject type:kotlin.Any [val]
+            GET_VAR 'x: kotlin.Any declared in <root>.testWithPrematureExitInConditionSubexpression' type=kotlin.Any origin=null
           WHEN type=kotlin.Int origin=WHEN
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
