@@ -16,7 +16,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.SimpleListCellRenderer
 import com.intellij.ui.SortedComboBoxModel
 import com.intellij.ui.layout.*
-import com.intellij.util.ui.JBUI
 import java.io.File
 import java.util.Comparator.comparing
 import java.util.function.Function
@@ -66,7 +65,6 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
   }
 
   private val contentPanel by lazy {
-    val horizontalSize = JBUI.scale(450)
     panel {
       if (!context.isCreatingNewProject) {
         row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.parent.label")) {
@@ -107,17 +105,16 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
         }
         row(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.version.label")) {
           textField(versionProperty.asBinding()).apply {
-            comment(ExternalSystemBundle.message("external.system.mavenized.structure.wizard.version.help"))
             component.bind(versionProperty, ::validateVersion, context.disposable)
           }
         }
       }
-    }.withMaximumWidth(horizontalSize)
+    }
   }
 
   override fun getPreferredFocusedComponent() = contentPanel.preferredFocusedComponent
 
-  override fun getComponent() = JBUI.Panels.simplePanel().addToLeft(contentPanel)
+  override fun getComponent() = contentPanel
 
   override fun updateStep() = (preferredFocusedComponent as JTextField).selectAll()
 
