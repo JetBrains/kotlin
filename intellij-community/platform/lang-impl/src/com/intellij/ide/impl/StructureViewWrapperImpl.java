@@ -95,7 +95,8 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
       LOG.error("StructureViewWrapperImpl must be not created for light project.");
     }
 
-    myUpdateQueue = new MergingUpdateQueue("StructureView", REBUILD_TIME, false, component, this, component);
+    myUpdateQueue = new MergingUpdateQueue("StructureView", REBUILD_TIME, false, component, this, component)
+      .usePassThroughInUnitTestMode();
     myUpdateQueue.setRestartTimerOnAdd(true);
 
     // to check on the next turn
