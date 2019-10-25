@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.TransformationMethodVisitor
 import org.jetbrains.kotlin.codegen.inline.*
-import org.jetbrains.kotlin.codegen.optimization.DeadCodeEliminationMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
 import org.jetbrains.kotlin.codegen.optimization.common.*
 import org.jetbrains.kotlin.codegen.optimization.fixStack.FixStackMethodTransformer
@@ -146,7 +145,8 @@ class CoroutineTransformerMethodVisitor(
         val suspensionPointLineNumbers = suspensionPoints.map { findSuspensionPointLineNumber(it) }
 
         val continuationLabels = suspensionPoints.withIndex().map {
-            transformCallAndReturnContinuationLabel(it.index + 1, it.value, methodNode, suspendMarkerVarIndex)
+            transformCallAndReturnContinuationLabel(
+                it.index + 1, it.value, methodNode, suspendMarkerVarIndex, suspensionPointLineNumbers[it.index])
         }
 
         methodNode.instructions.apply {
@@ -702,12 +702,13 @@ class CoroutineTransformerMethodVisitor(
         id: Int,
         suspension: SuspensionPoint,
         methodNode: MethodNode,
-        suspendMarkerVarIndex: Int
+        suspendMarkerVarIndex: Int,
+        suspendPointLineNumber: LineNumberNode?
     ): LabelNode {
         val continuationLabel = LabelNode()
         val continuationLabelAfterLoadedResult = LabelNode()
         val suspendElementLineNumber = lineNumber
-        var nextLineNumberNode = suspension.suspensionCallEnd.findNextOrNull { it is LineNumberNode } as? LineNumberNode
+        var nextLineNumberNode = nextDefinitelyHitLineNumber(suspension)
         with(methodNode.instructions) {
             // Save state
             insertBefore(
@@ -746,7 +747,6 @@ class CoroutineTransformerMethodVisitor(
             }
             remove(possibleTryCatchBlockStart.previous)
 
-            val afterSuspensionPointLineNumber = nextLineNumberNode?.line ?: suspendElementLineNumber
             insert(possibleTryCatchBlockStart, withInstructionAdapter {
                 generateResumeWithExceptionCheck(languageVersionSettings.isReleaseCoroutines(), dataIndex, exceptionIndex)
 
@@ -755,17 +755,23 @@ class CoroutineTransformerMethodVisitor(
 
                 visitLabel(continuationLabelAfterLoadedResult.label)
 
-                // Extend next instruction linenumber. Can't use line number of suspension point here because both non-suspended execution
-                // and re-entering after suspension passes this label.
-                if (possibleTryCatchBlockStart.next?.opcode?.let {
-                        it != Opcodes.ASTORE && it != Opcodes.CHECKCAST && it != Opcodes.INVOKESTATIC &&
-                                it != Opcodes.INVOKEVIRTUAL && it != Opcodes.INVOKEINTERFACE
-                    } == true
-                ) {
-                    visitLineNumber(afterSuspensionPointLineNumber, continuationLabelAfterLoadedResult.label)
-                } else {
-                    // But keep the linenumber if the result of the call is is used afterwards
-                    nextLineNumberNode = null
+                if (nextLineNumberNode != null) {
+                    // If there is a clear next linenumber instruction, extend it. Can't use line number of suspension point
+                    // here because both non-suspended execution and re-entering after suspension passes this label.
+                    if (possibleTryCatchBlockStart.next?.opcode?.let {
+                            it != Opcodes.ASTORE && it != Opcodes.CHECKCAST && it != Opcodes.INVOKESTATIC &&
+                                    it != Opcodes.INVOKEVIRTUAL && it != Opcodes.INVOKEINTERFACE
+                        } == true
+                    ) {
+                        visitLineNumber(nextLineNumberNode!!.line, continuationLabelAfterLoadedResult.label)
+                    } else {
+                        // But keep the linenumber if the result of the call is used afterwards
+                        nextLineNumberNode = null
+                    }
+                } else if (suspendPointLineNumber != null) {
+                    // If there is no clear next linenumber instruction, the continuation is still on the
+                    // same line as the suspend point.
+                    visitLineNumber(suspendPointLineNumber.line, continuationLabelAfterLoadedResult.label)
                 }
             })
 
@@ -777,6 +783,18 @@ class CoroutineTransformerMethodVisitor(
         }
 
         return continuationLabel
+    }
+
+    // Find the next line number instruction that is defintely hit. That is, a line number
+    // that comes before any branch or method call.
+    private fun nextDefinitelyHitLineNumber(suspension: SuspensionPoint): LineNumberNode? {
+        var next = suspension.suspensionCallEnd.next
+        while (next != null) {
+            if (next.isBranchOrCall) return null
+            else if (next is LineNumberNode) return next
+            else next = next.next
+        }
+        return next
     }
 
     // It's necessary to preserve some sensible invariants like there should be no jump in the middle of try-catch-block

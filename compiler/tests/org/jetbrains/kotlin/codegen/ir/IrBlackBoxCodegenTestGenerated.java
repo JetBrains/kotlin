@@ -6385,9 +6385,19 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/coroutines/debug/fqName.kt");
             }
 
+            @TestMetadata("multipleSuspendCallsOnSameLine.kt")
+            public void testMultipleSuspendCallsOnSameLine() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/debug/multipleSuspendCallsOnSameLine.kt");
+            }
+
             @TestMetadata("runtimeDebugMetadata.kt")
             public void testRuntimeDebugMetadata() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/debug/runtimeDebugMetadata.kt");
+            }
+
+            @TestMetadata("throwsOnSameLine.kt")
+            public void testThrowsOnSameLine() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/debug/throwsOnSameLine.kt");
             }
         }
 
