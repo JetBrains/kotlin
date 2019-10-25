@@ -1447,9 +1447,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         leaveTasks.add(answer -> {
             int index = myFrameMap.leave(functionDescriptor);
 
-            assert !functionDescriptor.getName().isSpecial()
-                    : "Local variable should be generated only for function with name: " + localFunction.getText();
-
             String functionIndex = StringsKt.substringAfterLast(type.getInternalName(), '$', "");
             assert !functionIndex.isEmpty();
 
