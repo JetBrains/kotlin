@@ -220,10 +220,19 @@ class ExpressionCodegen(
                 irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
                 irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
                 irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
-        if (!notCallableFromJava) {
-            irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
-            irFunction.valueParameters.forEach(::generateNonNullAssertion)
-        }
+
+        if (notCallableFromJava)
+            return
+
+        // Do not generate non-null checks for suspend function views. When resumed the arguments
+        // will be null and the actual values are taken from the continuation.
+        val isSuspendFunctionView = irFunction.origin == JvmLoweredDeclarationOrigin.SUSPEND_FUNCTION_VIEW
+
+        if (isSuspendFunctionView)
+            return
+
+        irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
+        irFunction.valueParameters.forEach(::generateNonNullAssertion)
     }
 
     private fun generateNonNullAssertion(param: IrValueParameter) {

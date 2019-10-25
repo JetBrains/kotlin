@@ -44,5 +44,6 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object INLINE_CLASS_GENERATED_IMPL_METHOD : IrDeclarationOriginImpl("INLINE_CLASS_GENERATED_IMPL_METHOD")
     object GENERATED_ASSERTION_ENABLED_FIELD : IrDeclarationOriginImpl("GENERATED_ASSERTION_ENABLED_FIELD", isSynthetic = true)
     object GENERATED_MAIN_FOR_PARAMETERLESS_MAIN_METHOD : IrDeclarationOriginImpl("GENERATED_MAIN_FOR_PARAMETERLESS_MAIN_METHOD", isSynthetic = true)
+    object SUSPEND_FUNCTION_VIEW : IrDeclarationOriginImpl("SUSPEND_FUNCTION_VIEW")
     object SUSPEND_IMPL_STATIC_FUNCTION :  IrDeclarationOriginImpl("SUSPEND_IMPL_STATIC_FUNCTION", isSynthetic = true)
 }
