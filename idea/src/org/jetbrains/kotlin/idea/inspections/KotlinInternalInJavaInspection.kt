@@ -9,7 +9,7 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens.INTERNAL_KEYWORD
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 
@@ -39,5 +39,5 @@ class KotlinInternalInJavaInspection : LocalInspectionTool() {
         }
     }
 
-    private fun PsiElement.inSameModule(element: PsiElement) = getNullableModuleInfo()?.equals(element.getNullableModuleInfo()) ?: true
+    private fun PsiElement.inSameModule(element: PsiElement) = module?.equals(element.module) ?: true
 }
