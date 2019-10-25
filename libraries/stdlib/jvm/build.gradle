@@ -133,6 +133,8 @@ compileTestKotlin {
                 "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
                 "-Xopt-in=kotlin.ExperimentalStdlibApi",
         ]
+        // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
+        freeCompilerArgs.remove("-Xno-optimized-callable-references")
     }
 }
 

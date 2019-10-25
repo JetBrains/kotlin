@@ -19,6 +19,9 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.runtime.structure.createArrayType
+import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
+import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
@@ -27,19 +30,16 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 import kotlin.LazyThreadSafetyMode.PUBLICATION
+import kotlin.jvm.internal.KTypeBase
 import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
-import org.jetbrains.kotlin.descriptors.runtime.structure.createArrayType
-import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
-import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
 import kotlin.reflect.jvm.jvmErasure
 
 internal class KTypeImpl(
     val type: KotlinType,
     computeJavaType: () -> Type
-) : KType {
-    internal val javaType: Type by ReflectProperties.lazySoft(computeJavaType)
+) : KTypeBase {
+    override val javaType: Type by ReflectProperties.lazySoft(computeJavaType)
 
     override val classifier: KClassifier? by ReflectProperties.lazySoft { convert(type) }
 
