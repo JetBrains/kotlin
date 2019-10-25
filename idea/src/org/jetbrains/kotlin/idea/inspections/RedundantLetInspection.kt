@@ -59,6 +59,7 @@ abstract class RedundantLetInspection : AbstractApplicabilityBasedInspection<KtC
             is KtDotQualifiedExpression -> bodyExpression.applyTo(element)
             is KtBinaryExpression -> bodyExpression.applyTo(element)
             is KtCallExpression -> bodyExpression.applyTo(element, lambdaExpression.functionLiteral, editor)
+            is KtSimpleNameExpression -> deleteCall(element)
         }
     }
 }
@@ -69,7 +70,11 @@ class SimpleRedundantLetInspection : RedundantLetInspection() {
         bodyExpression: PsiElement,
         lambdaExpression: KtLambdaExpression,
         parameterName: String
-    ): Boolean = if (bodyExpression is KtDotQualifiedExpression) bodyExpression.isApplicable(parameterName) else false
+    ): Boolean = when (bodyExpression) {
+        is KtDotQualifiedExpression -> bodyExpression.isApplicable(parameterName)
+        is KtSimpleNameExpression -> bodyExpression.text == parameterName
+        else -> false
+    }
 }
 
 class ComplexRedundantLetInspection : RedundantLetInspection() {
@@ -135,6 +140,16 @@ private fun KtDotQualifiedExpression.applyTo(element: KtCallExpression) {
         else -> {
             element.replace(deleteFirstReceiver())
         }
+    }
+}
+
+private fun deleteCall(element: KtCallExpression) {
+    val parent = element.parent as? KtDotQualifiedExpression
+    if (parent != null) {
+        val replacement = parent.selectorExpression?.takeIf { it != element } ?: parent.receiverExpression
+        parent.replace(replacement)
+    } else {
+        element.delete()
     }
 }
 
