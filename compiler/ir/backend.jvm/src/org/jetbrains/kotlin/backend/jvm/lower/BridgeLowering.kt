@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -372,7 +369,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
     private inner class FunctionHandleForIrFunction(val irFunction: IrSimpleFunction) : FunctionHandle {
         override val isDeclaration get() = irFunction.origin != IrDeclarationOrigin.FAKE_OVERRIDE
         override val isAbstract get() = irFunction.modality == Modality.ABSTRACT
-        override val mayBeUsedAsSuperImplementation get() = !irFunction.parentAsClass.isInterface || irFunction.hasJvmDefault()
+        override val mayBeUsedAsSuperImplementation
+            get() = !irFunction.parentAsClass.isInterface || irFunction.hasJvmDefault() || irFunction.isDelegationToDefaultImpls(context)
 
         override fun getOverridden() = irFunction.overriddenSymbols.map { FunctionHandleForIrFunction(it.owner) }
 

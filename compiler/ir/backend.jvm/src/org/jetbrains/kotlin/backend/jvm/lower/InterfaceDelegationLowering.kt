@@ -46,13 +46,18 @@ internal val interfaceDelegationPhase = makeIrFilePhase(
     description = "Delegate calls to interface members with default implementations to DefaultImpls"
 )
 
+internal fun IrSimpleFunction.isDelegationToDefaultImpls(context: JvmBackendContext): Boolean =
+    (parent as? IrClass)?.isInterface == true &&
+            !Visibilities.isPrivate(visibility) &&
+            !isDefinitelyNotDefaultImplsMethod() && // => maybe a DefaultImpls method
+            !isMethodOfAny() &&
+            (context.state.jvmDefaultMode.isCompatibility || !hasJvmDefault())
+
 private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
     val replacementMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
 
     override fun lower(irFile: IrFile) {
         irFile.acceptChildrenVoid(this)
-        // TODO: Replacer should be run on whole module, not on a single file.
-        irFile.acceptVoid(OverriddenSymbolsReplacer(replacementMap))
     }
 
     override fun visitElement(element: IrElement) {
@@ -78,15 +83,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
             }
 
             val implementation = function.resolveFakeOverride() ?: continue
-
-            if (!implementation.hasInterfaceParent()
-                || Visibilities.isPrivate(implementation.visibility)
-                || implementation.isDefinitelyNotDefaultImplsMethod()
-                || implementation.isMethodOfAny()
-                || (!context.state.jvmDefaultMode.isCompatibility && implementation.hasJvmDefault())
-            ) {
-                continue
-            }
+            if (!implementation.isDelegationToDefaultImpls(context)) continue
 
             toRemove.add(function)
 
@@ -162,22 +159,6 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
 
         return irFunction
     }
-
-    private class OverriddenSymbolsReplacer(val replacementMap: Map<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>) :
-        IrElementVisitorVoid {
-
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-            declaration.overriddenSymbols.replaceAll { symbol -> replacementMap[symbol] ?: symbol }
-            super.visitSimpleFunction(declaration)
-        }
-    }
-
-    private fun IrSimpleFunction.hasInterfaceParent() =
-        (parent as? IrClass)?.isInterface == true
 }
 
 internal val interfaceSuperCallsPhase = makeIrFilePhase(
