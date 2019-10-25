@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.wizard
 
-import com.intellij.icons.AllIcons
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
@@ -21,7 +20,6 @@ import com.intellij.util.ui.JBUI
 import java.io.File
 import java.util.Comparator.comparing
 import java.util.function.Function
-import javax.swing.Icon
 import javax.swing.JList
 import javax.swing.JTextField
 import javax.swing.ListCellRenderer
@@ -131,7 +129,7 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
                              selected: Boolean,
                              hasFocus: Boolean) {
         text = value.presentationName
-        icon = value.icon
+        icon = DataView.getIcon(value)
       }
     }
   }
@@ -290,8 +288,8 @@ abstract class MavenizedStructureWizardStep<Data : Any>(val context: WizardConte
     private val EMPTY_VIEW = object : DataView<Nothing>() {
       override val data: Nothing by lazy { throw UnsupportedOperationException() }
       override val location: String = ""
-      override val icon: Icon = AllIcons.Nodes.EmptyNode
-      override val presentationName: String = "none"
+      override val icon: Nothing by lazy { throw UnsupportedOperationException() }
+      override val presentationName: String = "<None>"
       override val groupId: String = "org.example"
       override val version: String = "1.0-SNAPSHOT"
 

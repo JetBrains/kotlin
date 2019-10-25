@@ -27,5 +27,9 @@ abstract class DataView<out Data> {
     fun <Data : Any> getData(view: DataView<Data>): Data? {
       return if (view.isPresent) view.data else null
     }
+
+    fun getIcon(view: DataView<*>): Icon? {
+      return if (view.isPresent) view.icon else null
+    }
   }
 }
