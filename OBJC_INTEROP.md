@@ -237,12 +237,15 @@ but the features supported retain meaningful information.
 Generics are currently not enabled by default. To have the framework header written with generics, add an experimental
 flag to the compiler config:
 
-```
-compilations.main {
-    outputKinds("framework")
-    extraOpts "-Xobjc-generics"
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
+```kotlin
+binaries.framework {
+     freeCompilerArgs += "-Xobjc-generics"
 }
 ```
+
+</div>
 
 #### Limitations
 
@@ -256,13 +259,19 @@ Generics can only be defined on classes, not on interfaces (protocols in Objc an
 Kotlin and Swift both define nullability as part of the type specification, while Objc defines nullability on methods
 and properties of a type. As such, the following:
 
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
 ```kotlin
 class Sample<T>(){
   fun myVal():T
 }
 ```
 
+</div>
+
 will (logically) look like this:
+
+<div class="sample" markdown="1" theme="idea" mode="swift">
 
 ```swift
 class Sample<T>(){
@@ -270,16 +279,22 @@ class Sample<T>(){
 }
 ```
 
+</div>
+
 In order to support a potentially nullable type, the Objc header needs to define `myVal` with a nullable return value.
 
 To mitigate this, when defining your generic classes, if the generic type should *never* be null, provide a non-null 
 type constraint:
+
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
 
 ```kotlin
 class Sample<T:Any>(){
   fun myVal():T
 }
 ```
+
+</div>
 
 That will force the Objc header to mark `myVal` as non-null.
 
@@ -288,15 +303,23 @@ That will force the Objc header to mark `myVal` as non-null.
 Objective-C allows generics to be declared covariant or contravariant. Swift has no support for variance. Generic classes coming
 from Objective-C can be force-cast as needed.
 
+<div class="sample" markdown="1" theme="idea" data-highlight-only>
+
 ```kotlin
 data class SomeData(val num:Int = 42):BaseData()
 class GenVarOut<out T:Any>(val arg:T)
 ```
 
+</div>
+
+<div class="sample" markdown="1" theme="idea" mode="swift">
+
 ```swift
 let variOut = GenVarOut<SomeData>(arg: sd)
 let variOutAny : GenVarOut<BaseData> = variOut as! GenVarOut<BaseData>
 ```
+
+</div>
 
 #### Constraints
 
