@@ -439,8 +439,10 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     if (irFunction.dispatchReceiverParameter != null) {
                         it.dispatchReceiver = capturedThisValue
                     }
-                    if (irFunction.extensionReceiverParameter != null) {
-                        it.extensionReceiver = irNull()
+                    irFunction.extensionReceiverParameter?.let { extensionReceiverParameter ->
+                        it.extensionReceiver = IrConstImpl.defaultValueForType(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, extensionReceiverParameter.type
+                        )
                     }
                     for ((i, parameter) in irFunction.valueParameters.withIndex()) {
                         val defaultValueForParameter = IrConstImpl.defaultValueForType(
