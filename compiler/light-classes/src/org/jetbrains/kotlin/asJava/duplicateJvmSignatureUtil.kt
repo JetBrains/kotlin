@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
 import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForFileFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
+import org.jetbrains.kotlin.asJava.classes.safeIsScript
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.cast
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -57,7 +58,7 @@ fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostic
 
     fun doGetDiagnostics(): Diagnostics? {
         //TODO: enable this diagnostic when light classes for scripts are ready
-        if ((element.containingFile as? KtFile)?.isScript() == true) return null
+        if ((element.containingFile as? KtFile)?.safeIsScript() == true) return null
 
         var parent = element.parent
         if (element is KtPropertyAccessor) {

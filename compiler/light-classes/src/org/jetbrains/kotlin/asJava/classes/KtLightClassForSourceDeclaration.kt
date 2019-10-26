@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.util.isOrdinaryClass
 import java.util.*
 import javax.swing.Icon
 
@@ -359,7 +358,7 @@ abstract class KtLightClassForSourceDeclaration(
                 classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral() ->
                     KtLightClassForAnonymousDeclaration(classOrObject)
 
-                classOrObject.isLocal ->
+                classOrObject.safeIsLocal() ->
                     KtLightClassForLocalDeclaration(classOrObject)
 
                 else ->
@@ -372,9 +371,9 @@ abstract class KtLightClassForSourceDeclaration(
                 return InvalidLightClassDataHolder
             }
 
-            val containingScript = classOrObject.containingKtFile.script
+            val containingScript = classOrObject.containingKtFile.safeScript()
             return when {
-                !classOrObject.isLocal && containingScript != null ->
+                !classOrObject.safeIsLocal() && containingScript != null ->
                     KtLightClassForScript.getLightClassCachedValue(containingScript).value
                 else ->
                     getLightClassCachedValue(classOrObject).value
@@ -546,7 +545,7 @@ fun KtClassOrObject.shouldNotBeVisibleAsLightClass(): Boolean {
         return true
     }
 
-    if (isLocal) {
+    if (safeIsLocal()) {
         if (containingFile.virtualFile == null) return true
         if (hasParseErrorsAround(this) || PsiUtilCore.hasErrorElementChild(this)) return true
     }

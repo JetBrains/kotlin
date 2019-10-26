@@ -129,7 +129,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     override fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
         if (element.shouldNotBeVisibleAsLightClass() ||
             element is KtEnumEntry ||
-            element.containingKtFile.isScript()
+            element.containingKtFile.safeIsScript()
         ) {
             return null
         }
@@ -139,7 +139,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 element is KtObjectDeclaration && element.isObjectLiteral() ->
                     KtUltraLightClassForAnonymousDeclaration(element, support)
 
-                element.isLocal ->
+                element.safeIsLocal() ->
                     KtUltraLightClassForLocalDeclaration(element, support)
 
                 (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
@@ -220,4 +220,3 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
 
     override fun analyzeWithContent(element: KtClassOrObject) = element.analyzeWithContent()
 }
-

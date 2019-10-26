@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import com.google.common.collect.Lists
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
 import com.intellij.psi.impl.cache.ModifierFlags
 import com.intellij.psi.impl.cache.TypeInfo
@@ -184,10 +186,9 @@ fun createTypeFromCanonicalText(
 }
 
 fun tryGetPredefinedName(klass: ClassDescriptor): String? {
-
     val sourceClass = (klass.source as? KotlinSourceElement)?.psi as? KtClassOrObject
 
-    return if (sourceClass?.isLocal == true)
+    return if (sourceClass?.safeIsLocal() == true)
         (sourceClass.nameAsName ?: SpecialNames.NO_NAME_PROVIDED).asString()
     else null
 }
@@ -380,3 +381,14 @@ internal inline fun Project.applyCompilerPlugins(body: (UltraLightClassModifierE
 
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be loaded for not too complex ultra-light classes! Qualified name: ${javaClass.name}")
+
+
+inline fun <T> runReadAction(crossinline runnable: () -> T): T {
+    return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
+}
+
+inline fun KtClassOrObject.safeIsLocal(): Boolean = runReadAction { this.isLocal }
+
+inline fun KtFile.safeIsScript() = runReadAction { this.isScript() }
+
+inline fun KtFile.safeScript() = runReadAction { this.script }
