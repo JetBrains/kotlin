@@ -65,15 +65,10 @@ class SDLAudio(val player: VideoPlayer) : DisposableContainer() {
     }
 }
 
-// Only set in the audio thread
-@ThreadLocal
-private var decoder: DecoderWorker? = null
-
 private fun audioCallback(userdata: COpaquePointer?, buffer: CPointer<Uint8Var>?, length: Int) {
     // This handler will be invoked in the audio thread, so reinit runtime.
     kotlin.native.initRuntimeIfNeeded()
-    val decoder = decoder ?:
-        DecoderWorker(Worker.fromCPointer(userdata)).also { decoder = it }
+    val decoder = DecoderWorker(Worker.fromCPointer(userdata))
     var outPosition = 0
     while (outPosition < length) {
         val frame = decoder.nextAudioFrame(length - outPosition)

@@ -316,7 +316,7 @@ private class Decoder(
     fun audioVideoSynced() = (audio?.isSynced() ?: true) || done()
 }
 
-class DecoderWorker(val worker: Worker) : Disposable {
+inline class DecoderWorker(val worker: Worker) : Disposable {
     // This class must have no other state, but this worker object.
     // All the real state must be stored on the worker's side.
     constructor() : this(Worker.start())
