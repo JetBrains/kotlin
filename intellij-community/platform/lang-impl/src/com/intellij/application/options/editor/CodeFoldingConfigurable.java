@@ -3,24 +3,22 @@
 package com.intellij.application.options.editor;
 
 import com.intellij.codeInsight.folding.CodeFoldingManager;
-import com.intellij.ide.ui.search.OptionDescription;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
-import com.intellij.openapi.options.*;
+import com.intellij.openapi.options.CompositeConfigurable;
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +26,7 @@ import java.util.List;
  */
 public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOptionsProvider> implements EditorOptionsProvider {
   public static final String ID = "editor.preferences.folding";
+
   private JCheckBox myCbFolding;
   private JPanel myRootPanel;
   private JPanel myFoldingPanel;
@@ -52,23 +51,6 @@ public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOp
                                                                 GridBagConstraints.HORIZONTAL, JBUI.emptyInsets(), 0, 0));
     }
     return myRootPanel;
-  }
-
-  @NotNull
-  List<OptionDescription> getDescriptors() {
-    String byDefault = ApplicationBundle.message("label.fold.by.default");
-    List<OptionDescription> result = new ArrayList<>();
-    for (CodeFoldingOptionsProvider c : getConfigurables()) {
-      UnnamedConfigurable configurable = c instanceof ConfigurableWrapper ? ((ConfigurableWrapper)c).getConfigurable() : c;
-      if (!(configurable instanceof ConfigurableWithOptionDescriptors)) {
-        continue;
-      }
-
-      String title = c instanceof BeanConfigurable ? ((BeanConfigurable<?>)c).getTitle() : null;
-      String prefix = title == null ? byDefault + " " : StringUtil.trimEnd(byDefault, ':') + " in " + title + ": ";
-      result.addAll(((ConfigurableWithOptionDescriptors)c).getOptionDescriptors(ID, s -> prefix + s));
-    }
-    return result;
   }
 
   @Override

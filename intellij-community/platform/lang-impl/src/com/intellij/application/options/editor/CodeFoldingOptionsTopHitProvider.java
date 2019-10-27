@@ -3,9 +3,17 @@ package com.intellij.application.options.editor;
 
 import com.intellij.ide.ui.OptionsSearchTopHitProvider;
 import com.intellij.ide.ui.search.OptionDescription;
+import com.intellij.openapi.application.ApplicationBundle;
+import com.intellij.openapi.options.BeanConfigurable;
+import com.intellij.openapi.options.ConfigurableWithOptionDescriptors;
+import com.intellij.openapi.options.UnnamedConfigurable;
+import com.intellij.openapi.options.ex.ConfigurableWrapper;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 final class CodeFoldingOptionsTopHitProvider implements OptionsSearchTopHitProvider.ApplicationLevelProvider {
   @NotNull
@@ -17,6 +25,20 @@ final class CodeFoldingOptionsTopHitProvider implements OptionsSearchTopHitProvi
   @NotNull
   @Override
   public Collection<OptionDescription> getOptions() {
-    return new CodeFoldingConfigurable().getDescriptors();
+    String byDefault = ApplicationBundle.message("label.fold.by.default");
+    List<OptionDescription> result = new ArrayList<>();
+    CodeFoldingOptionsProviderEP.EP_NAME.forEachExtensionSafe(ep -> {
+      CodeFoldingOptionsProvider wrapper = ConfigurableWrapper.wrapConfigurable(ep);
+      UnnamedConfigurable configurable =
+        wrapper instanceof ConfigurableWrapper ? ((ConfigurableWrapper)wrapper).getConfigurable() : wrapper;
+      if (!(configurable instanceof ConfigurableWithOptionDescriptors)) {
+        return;
+      }
+
+      String title = configurable instanceof BeanConfigurable ? ((BeanConfigurable<?>)configurable).getTitle() : null;
+      String prefix = title == null ? byDefault + " " : StringUtil.trimEnd(byDefault, ':') + " in " + title + ": ";
+      result.addAll(((ConfigurableWithOptionDescriptors)configurable).getOptionDescriptors(CodeFoldingConfigurable.ID, s -> prefix + s));
+    });
+    return result;
   }
 }
