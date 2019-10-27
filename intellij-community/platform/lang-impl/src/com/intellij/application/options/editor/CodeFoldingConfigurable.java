@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.application.options.editor;
 
@@ -10,20 +10,17 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
-import com.intellij.openapi.options.BeanConfigurable;
-import com.intellij.openapi.options.CompositeConfigurable;
-import com.intellij.openapi.options.ConfigurableWithOptionDescriptors;
-import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.*;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,14 +57,18 @@ public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOp
   @NotNull
   List<OptionDescription> getDescriptors() {
     String byDefault = ApplicationBundle.message("label.fold.by.default");
-    return JBIterable.from(getConfigurables())
-      .map(c -> c instanceof ConfigurableWrapper ? ((ConfigurableWrapper)c).getConfigurable() : c)
-      .filter(ConfigurableWithOptionDescriptors.class)
-      .flatMap(c -> {
-        String title = c instanceof BeanConfigurable ? ((BeanConfigurable<?>)c).getTitle() : null;
-        String prefix = title == null ? byDefault + " " : StringUtil.trimEnd(byDefault, ':') + " in " + title + ": ";
-        return c.getOptionDescriptors(ID, s -> prefix + s);
-      }).toList();
+    List<OptionDescription> result = new ArrayList<>();
+    for (CodeFoldingOptionsProvider c : getConfigurables()) {
+      UnnamedConfigurable configurable = c instanceof ConfigurableWrapper ? ((ConfigurableWrapper)c).getConfigurable() : c;
+      if (!(configurable instanceof ConfigurableWithOptionDescriptors)) {
+        continue;
+      }
+
+      String title = c instanceof BeanConfigurable ? ((BeanConfigurable<?>)c).getTitle() : null;
+      String prefix = title == null ? byDefault + " " : StringUtil.trimEnd(byDefault, ':') + " in " + title + ": ";
+      result.addAll(((ConfigurableWithOptionDescriptors)c).getOptionDescriptors(ID, s -> prefix + s));
+    }
+    return result;
   }
 
   @Override
