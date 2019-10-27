@@ -9,17 +9,22 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.isTrueConstant
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.PARTIAL
 import org.jetbrains.kotlin.types.isFlexible
@@ -153,10 +158,44 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
         return KotlinBuiltIns.isBoolean(type) && !type.isFlexible()
     }
 
-    private fun KtExpression.canBeReducedToBooleanConstant(constant: Boolean? = null): Boolean =
-        CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, this.analyze(PARTIAL), constant)
+    private fun KtExpression.canBeReducedToBooleanConstant(constant: Boolean? = null): Boolean {
+        val context = this.analyze(PARTIAL)
+        if (this is KtBinaryExpression) {
+            val operation = (this.operationToken as? KtSingleValueToken)?.value
+            val left = this.left
+            val right = this.right
+            if (operation != null && left != null && right != null) {
+                val psiFactory = KtPsiFactory(this)
+                val leftConstantValue = left.constantValue(context)
+                val rightConstantValue = right.constantValue(context)
+                if (leftConstantValue.isFpMinusZero() || rightConstantValue.isFpMinusZero()) {
+                    val newLeft = when (leftConstantValue) {
+                        -0.0 -> psiFactory.createExpression("0.0")
+                        -0.0f -> psiFactory.createExpression("0.0f")
+                        else -> left
+                    }
+                    val newRight = when (rightConstantValue) {
+                        -0.0 -> psiFactory.createExpression("0.0")
+                        -0.0f -> psiFactory.createExpression("0.0f")
+                        else -> right
+                    }
+                    val newExpression = psiFactory.createExpressionByPattern("$0 $1 $2", newLeft, operation, newRight, reformat = false)
+                    val newContext = newExpression.analyzeAsReplacement(this, context)
+                    return CompileTimeConstantUtils.canBeReducedToBooleanConstant(newExpression, newContext, constant)
+                }
+            }
+        }
+        return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, context, constant)
+    }
 
     private fun KtExpression.canBeReducedToTrue() = canBeReducedToBooleanConstant(true)
 
     private fun KtExpression.canBeReducedToFalse() = canBeReducedToBooleanConstant(false)
+
+    private fun KtExpression?.constantValue(context: BindingContext): Any? {
+        val expression = KtPsiUtil.deparenthesize(this) ?: return null
+        return (ConstantExpressionEvaluator.getConstant(expression, context) as? TypedCompileTimeConstant)?.constantValue?.value
+    }
+
+    private fun Any?.isFpMinusZero(): Boolean = this == -0.0 || this == -0.0f
 }

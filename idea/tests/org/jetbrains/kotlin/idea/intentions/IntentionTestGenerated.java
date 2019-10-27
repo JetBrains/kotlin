@@ -15008,6 +15008,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusDoubleZeroEquals2.kt");
         }
 
+        @TestMetadata("minusDoubleZeroNotEquals.kt")
+        public void testMinusDoubleZeroNotEquals() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusDoubleZeroNotEquals.kt");
+        }
+
         @TestMetadata("minusFloatZeroCompareTo.kt")
         public void testMinusFloatZeroCompareTo() throws Exception {
             runTest("idea/testData/intentions/simplifyBooleanWithConstants/minusFloatZeroCompareTo.kt");
