@@ -16,7 +16,7 @@ import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.PathUtil;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -98,7 +98,7 @@ public abstract class AbstractDependencyDataService<E extends AbstractDependency
       }
 
       final ModifiableModuleModel modifiableModuleModel = modelsProvider.getModifiableModuleModel();
-      List<I> orphanEntries = ContainerUtil.newSmartList();
+      List<I> orphanEntries = new SmartList<>();
       for (Module module : modelsProvider.getModules(projectData)) {
         for (OrderEntry entry : modelsProvider.getOrderEntries(module)) {
           // do not remove recently created library w/o name

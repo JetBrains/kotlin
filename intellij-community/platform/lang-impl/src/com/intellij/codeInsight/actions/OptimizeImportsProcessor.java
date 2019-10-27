@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.actions;
 
@@ -26,6 +12,7 @@ import com.intellij.openapi.util.EmptyRunnable;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.codeStyle.CodeStyleManagerImpl;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,7 +28,7 @@ import static com.intellij.codeInsight.actions.OptimizeImportsProcessor.Notifica
 public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
   private static final String PROGRESS_TEXT = CodeInsightBundle.message("progress.text.optimizing.imports");
   public static final String COMMAND_NAME = CodeInsightBundle.message("process.optimize.imports");
-  private final List<NotificationInfo> myOptimizerNotifications = ContainerUtil.newSmartList();
+  private final List<NotificationInfo> myOptimizerNotifications = new SmartList<>();
 
   public OptimizeImportsProcessor(@NotNull Project project) {
     super(project, COMMAND_NAME, PROGRESS_TEXT, false);
@@ -81,7 +68,7 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
     if (DumbService.isDumb(file.getProject())) {
       return new FutureTask<>(EmptyRunnable.INSTANCE, true);
     }
-    
+
     final Set<ImportOptimizer> optimizers = LanguageImportStatements.INSTANCE.forFile(file);
     final List<Runnable> runnables = new ArrayList<>();
     List<PsiFile> files = file.getViewProvider().getAllFiles();
@@ -106,7 +93,7 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
         CodeStyleManagerImpl.setSequentialProcessingAllowed(true);
       }
     } : EmptyRunnable.getInstance();
-      
+
     return new FutureTask<>(runnable, true);
   }
 

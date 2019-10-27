@@ -198,9 +198,9 @@ public class JpsProjectTaskRunner extends ProjectTaskRunner {
 
   private static ModulesBuildSettings assembleModulesBuildSettings(Collection<? extends ProjectTask> buildTasks) {
     Collection<Module> modules = new SmartList<>();
-    Collection<ModuleBuildTask> incrementalTasks = ContainerUtil.newSmartList();
-    Collection<ModuleBuildTask> excludeDependentTasks = ContainerUtil.newSmartList();
-    Collection<ModuleBuildTask> excludeRuntimeTasks = ContainerUtil.newSmartList();
+    Collection<ModuleBuildTask> incrementalTasks = new SmartList<>();
+    Collection<ModuleBuildTask> excludeDependentTasks = new SmartList<>();
+    Collection<ModuleBuildTask> excludeRuntimeTasks = new SmartList<>();
 
     for (ProjectTask buildProjectTask : buildTasks) {
       ModuleBuildTask moduleBuildTask = (ModuleBuildTask)buildProjectTask;

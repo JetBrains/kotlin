@@ -6,6 +6,7 @@ import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.ChangedRangesInfo;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +44,7 @@ class ChangedRangesUtil {
     if (allChangedRanges.isEmpty()) return allChangedRanges;
     List<TextRange> sorted = ContainerUtil.sorted(allChangedRanges, Segment.BY_START_OFFSET_THEN_END_OFFSET);
 
-    List<TextRange> result = ContainerUtil.newSmartList();
+    List<TextRange> result = new SmartList<>();
 
     TextRange prev = sorted.get(0);
     for (TextRange next : sorted) {

@@ -37,6 +37,7 @@ import com.intellij.ui.treeStructure.*;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.SwingHelper;
@@ -230,7 +231,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
 
   @NotNull
   private List<TaskActivationEntry> findSelectedTasks() {
-    List<TaskActivationEntry> tasks = ContainerUtil.newSmartList();
+    List<TaskActivationEntry> tasks = new SmartList<>();
     for (DefaultMutableTreeNode node : myTree.getSelectedNodes(DefaultMutableTreeNode.class, null)) {
       tasks.addAll(findTasksUnder(ContainerUtil.ar((MyNode)node.getUserObject())));
     }
@@ -239,7 +240,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
 
   @NotNull
   private List<TaskActivationEntry> findTasksUnder(@NotNull SimpleNode[] nodes) {
-    List<TaskActivationEntry> tasks = ContainerUtil.newSmartList();
+    List<TaskActivationEntry> tasks = new SmartList<>();
     for (SimpleNode node : nodes) {
       if (node instanceof TaskNode) {
         final TaskNode taskNode = (TaskNode)node;

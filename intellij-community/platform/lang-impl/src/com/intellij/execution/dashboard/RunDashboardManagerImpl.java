@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.dashboard;
 
 import com.google.common.collect.Sets;
@@ -31,6 +31,7 @@ import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.ui.content.*;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBusConnection;
 import gnu.trove.THashMap;
@@ -285,7 +286,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   @NotNull
   List<RunDashboardCustomizer> getCustomizers(@NotNull RunnerAndConfigurationSettings settings,
                                               @Nullable RunContentDescriptor descriptor) {
-    List<RunDashboardCustomizer> customizers = ContainerUtil.newSmartList();
+    List<RunDashboardCustomizer> customizers = new SmartList<>();
     for (RunDashboardCustomizer customizer : CUSTOMIZER_EP_NAME.getExtensions()) {
       if (customizer.isApplicable(settings, descriptor)) {
         customizers.add(customizer);
@@ -346,7 +347,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
       for (RunnerAndConfigurationSettings settings : settingsList) {
         List<RunDashboardServiceImpl> syncedServices = getServices(settings);
         if (syncedServices == null) {
-          syncedServices = ContainerUtil.newSmartList(new RunDashboardServiceImpl(settings));
+          syncedServices = new SmartList<>(new RunDashboardServiceImpl(settings));
         }
         result.add(syncedServices);
       }
@@ -410,7 +411,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   private void doAddServiceContent(@NotNull RunnerAndConfigurationSettings settings, @NotNull Content content) {
     List<RunDashboardServiceImpl> settingsServices = getServices(settings);
     if (settingsServices == null) {
-      settingsServices = ContainerUtil.newSmartList(new RunDashboardServiceImpl(settings));
+      settingsServices = new SmartList<>(new RunDashboardServiceImpl(settings));
       myServices.add(settingsServices);
     }
 

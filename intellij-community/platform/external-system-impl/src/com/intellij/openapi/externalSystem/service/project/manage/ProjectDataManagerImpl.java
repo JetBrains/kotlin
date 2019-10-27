@@ -21,6 +21,7 @@ import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.serviceContainer.NonInjectable;
 import com.intellij.util.ExceptionUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -116,8 +117,8 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
       ExternalSystemUtil.scheduleExternalViewStructureUpdate(project, projectSystemId);
     }
 
-    List<Runnable> onSuccessImportTasks = ContainerUtil.newSmartList();
-    List<Runnable> onFailureImportTasks = ContainerUtil.newSmartList();
+    List<Runnable> onSuccessImportTasks = new SmartList<>();
+    List<Runnable> onFailureImportTasks = new SmartList<>();
     final Collection<DataNode<?>> traceNodes = grouped.get(PerformanceTrace.TRACE_NODE_KEY);
 
     final PerformanceTrace trace;
@@ -141,7 +142,7 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
       }
       final int size = allKeys.size();
       int count = 0;
-      List<Runnable> postImportTasks = ContainerUtil.newSmartList();
+      List<Runnable> postImportTasks = new SmartList<>();
       for (Key<?> key : allKeys) {
         if (indicator != null) {
           String message = ExternalSystemBundle.message(
@@ -225,7 +226,7 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
 
   @Override
   public <T> void importData(@NotNull Collection<DataNode<T>> nodes, @NotNull Project project, boolean synchronous) {
-    Collection<DataNode<?>> dummy = ContainerUtil.newSmartList();
+    Collection<DataNode<?>> dummy = new SmartList<>();
     dummy.addAll(nodes);
     importData(dummy, project, new IdeModifiableModelsProviderImpl(project), synchronous);
   }
@@ -235,7 +236,7 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
                              @NotNull Project project,
                              @NotNull IdeModifiableModelsProvider modelsProvider,
                              boolean synchronous) {
-    Collection<DataNode<?>> dummy = ContainerUtil.newSmartList();
+    Collection<DataNode<?>> dummy = new SmartList<>();
     dummy.add(node);
     importData(dummy, project, modelsProvider, synchronous);
   }
@@ -260,8 +261,8 @@ public class ProjectDataManagerImpl implements ProjectDataManager {
       return;
     }
 
-    final Collection<DataNode<?>> toImport = ContainerUtil.newSmartList();
-    final Collection<DataNode<?>> toIgnore = ContainerUtil.newSmartList();
+    final Collection<DataNode<?>> toImport = new SmartList<>();
+    final Collection<DataNode<?>> toIgnore = new SmartList<>();
 
     for (DataNode<?> node : nodes) {
       if (!key.equals(node.getKey())) continue;

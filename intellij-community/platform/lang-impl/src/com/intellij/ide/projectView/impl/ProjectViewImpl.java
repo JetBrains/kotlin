@@ -1044,7 +1044,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
     pane.addToolbarActions(myActionGroup);
 
-    List<AnAction> titleActions = ContainerUtil.newSmartList();
+    List<AnAction> titleActions = new SmartList<>();
     createTitleActions(titleActions);
     if (!titleActions.isEmpty()) {
       ToolWindowEx window = (ToolWindowEx)ToolWindowManager.getInstance(myProject).getToolWindow(ToolWindowId.PROJECT_VIEW);

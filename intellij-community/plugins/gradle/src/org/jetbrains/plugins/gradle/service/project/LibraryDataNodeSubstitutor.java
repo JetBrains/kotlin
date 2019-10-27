@@ -7,6 +7,7 @@ import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.gradle.util.GradleVersion;
@@ -187,7 +188,7 @@ public class LibraryDataNodeSubstitutor {
 
     if (libraryDependencyDataNode.getParent() != null) {
       if (libraryPaths.size() > 1) {
-        List<String> toRemove = ContainerUtil.newSmartList();
+        List<String> toRemove = new SmartList<>();
         for (String path : libraryPaths) {
           final File binaryPath = new File(path);
           if (binaryPath.isFile()) {

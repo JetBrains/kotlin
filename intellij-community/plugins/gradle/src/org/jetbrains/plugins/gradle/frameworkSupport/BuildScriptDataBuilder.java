@@ -4,6 +4,7 @@ package org.jetbrains.plugins.gradle.frameworkSupport;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.Function;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
@@ -104,7 +105,7 @@ public class BuildScriptDataBuilder {
   private void addBuildscriptLines(@NotNull List<? super String> lines, @NotNull Function<? super String, String> padding) {
     if (!buildScriptRepositories.isEmpty() || !buildScriptDependencies.isEmpty() || !buildScriptProperties.isEmpty()) {
       lines.add("buildscript {");
-      final List<String> buildScriptLines = ContainerUtil.newSmartList();
+      final List<String> buildScriptLines = new SmartList<>();
       if (!buildScriptProperties.isEmpty()) {
         buildScriptLines.addAll(buildScriptProperties);
         buildScriptLines.add("");

@@ -17,6 +17,7 @@ import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +46,7 @@ public class ModuleDataService extends AbstractModuleDataService<ModuleData> {
                                                           @NotNull final Project project,
                                                           @NotNull final IdeModifiableModelsProvider modelsProvider) {
     return () -> {
-      List<Module> orphanIdeModules = ContainerUtil.newSmartList();
+      List<Module> orphanIdeModules = new SmartList<>();
 
       for (Module module : modelsProvider.getModules()) {
         if (!ExternalSystemApiUtil.isExternalSystemAwareModule(projectData.getOwner(), module)) continue;

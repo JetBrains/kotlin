@@ -37,8 +37,8 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.PathUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.concurrency.Semaphore;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.PathKt;
 import com.intellij.util.io.TestFileSystemItem;
 import com.intellij.util.ui.UIUtil;
@@ -117,7 +117,7 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
   }
 
   public static Collection<String> collectRootsInside(String root) {
-    final List<String> roots = ContainerUtil.newSmartList();
+    final List<String> roots = new SmartList<>();
     roots.add(root);
     FileUtil.processFilesRecursively(new File(root), file -> {
       try {

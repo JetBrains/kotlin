@@ -28,6 +28,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.NotNullFunction;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -163,7 +164,7 @@ public final class LibraryDataService extends AbstractProjectDataService<Library
     // and hence orphans will be detected incorrectly
     if (modelsProvider instanceof ProjectStructureUIModifiableModelsProvider) return;
 
-    final List<Library> orphanIdeLibraries = ContainerUtil.newSmartList();
+    final List<Library> orphanIdeLibraries = new SmartList<>();
     final LibraryTable.ModifiableModel librariesModel = modelsProvider.getModifiableProjectLibrariesModel();
     final Map<String, Library> namesToLibs = new HashMap<>();
     final Set<Library> potentialOrphans = new HashSet<>();

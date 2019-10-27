@@ -373,7 +373,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
         tracedResolverChain.populateModuleTasks(ideaModule, moduleDataNode, projectDataNode);
       }
 
-      final List<DataNode<? extends ModuleData>> modules = ContainerUtil.newSmartList();
+      final List<DataNode<? extends ModuleData>> modules = new SmartList<>();
       modules.add(moduleDataNode);
       modules.addAll(findAll(moduleDataNode, GradleSourceSetData.KEY));
 

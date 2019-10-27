@@ -13,7 +13,7 @@ import com.intellij.usages.Usage;
 import com.intellij.usages.UsageView;
 import com.intellij.usages.impl.UsageViewImpl;
 import com.intellij.util.Alarm;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -35,7 +35,7 @@ public abstract class BackgroundUpdaterTaskBase<T> extends Task.Backgroundable {
 
   public BackgroundUpdaterTaskBase(@Nullable Project project, @NotNull String title, @Nullable Comparator<T> comparator) {
     super(project, title);
-    myData = comparator == null ? ContainerUtil.newSmartList() : new TreeSet<>(comparator);
+    myData = comparator == null ? new SmartList<>() : new TreeSet<>(comparator);
   }
 
   @TestOnly

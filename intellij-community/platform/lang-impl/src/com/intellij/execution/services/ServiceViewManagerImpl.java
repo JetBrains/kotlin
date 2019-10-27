@@ -36,6 +36,7 @@ import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import com.intellij.ui.content.*;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FactoryMap;
 import org.jdom.Element;
@@ -59,7 +60,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   private final ServiceModel myModel;
   private final ServiceModelFilter myModelFilter;
   private final Map<String, Collection<ServiceViewContributor<?>>> myGroups;
-  private final List<ServiceViewContentHolder> myContentHolders = ContainerUtil.newSmartList();
+  private final List<ServiceViewContentHolder> myContentHolders = new SmartList<>();
   private boolean myActivationActionsRegistered;
   private AutoScrollToSourceHandler myAutoScrollToSourceHandler;
 
@@ -283,7 +284,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
         return;
       }
       Runnable runnable = () -> {
-        List<Content> contents = ContainerUtil.newSmartList(holder.contentManager.getContents());
+        List<Content> contents = new SmartList<>(holder.contentManager.getContents());
         if (contents.isEmpty()) {
           result.setError("Content not initialized");
           return;
@@ -404,7 +405,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           if (index < 0) return;
 
           contentManager.removeContent(content, true);
-          ServiceListModel listModel = new ServiceListModel(myModel, myModelFilter, ContainerUtil.newSmartList(item),
+          ServiceListModel listModel = new ServiceListModel(myModel, myModelFilter, new SmartList<>(item),
                                                             viewModel.getFilter().getParent());
           ServiceView listView = ServiceView.createView(myProject, listModel, prepareViewState(new ServiceViewState()));
           Content listContent = addServiceContent(contentManager, listView, item.getViewDescriptor().getContentPresentation(), true, index);
@@ -489,7 +490,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     Set<ServiceViewContributor<?>> contributors = ContainerUtil.newHashSet(ServiceModel.getContributors());
     if (Registry.is("ide.service.view.split")) {
       for (ServiceViewContributor<?> contributor : contributors) {
-        result.put(contributor.getClass().getName(), ContainerUtil.newSmartList(contributor));
+        result.put(contributor.getClass().getName(), new SmartList<>(contributor));
       }
     }
     else {
@@ -525,7 +526,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       holder.mainView.saveState(mainState);
       mainState.groupId = holder.toolWindowId;
 
-      List<ServiceView> processedViews = ContainerUtil.newSmartList();
+      List<ServiceView> processedViews = new SmartList<>();
       for (Content content : holder.contentManager.getContents()) {
         ServiceView serviceView = getServiceView(content);
         if (serviceView == null || isMainView(serviceView)) continue;
@@ -860,7 +861,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
     List<ServiceView> getServiceViews() {
       List<ServiceView> views = ContainerUtil.mapNotNull(contentManager.getContents(), ServiceViewManagerImpl::getServiceView);
-      if (views.isEmpty()) return ContainerUtil.newSmartList(mainView);
+      if (views.isEmpty()) return new SmartList<>(mainView);
 
       if (!views.contains(mainView)) {
         views.add(0, mainView);

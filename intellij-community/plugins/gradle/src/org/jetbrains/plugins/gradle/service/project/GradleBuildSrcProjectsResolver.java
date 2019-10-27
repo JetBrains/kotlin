@@ -8,7 +8,7 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.MultiMap;
 import gnu.trove.THashSet;
 import org.gradle.tooling.ProjectConnection;
@@ -99,7 +99,7 @@ public class GradleBuildSrcProjectsResolver {
       }
     }
 
-    List<String> jvmOptions = ContainerUtil.newSmartList();
+    List<String> jvmOptions = new SmartList<>();
     // the BuildEnvironment jvm arguments of the main build should be used for the 'buildSrc' import
     // to avoid spawning of the second gradle daemon
     BuildEnvironment mainBuildEnvironment = myResolverContext.getModels().getBuildEnvironment();

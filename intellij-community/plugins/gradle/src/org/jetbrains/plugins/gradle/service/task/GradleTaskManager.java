@@ -21,10 +21,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.UserDataHolderBase;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtilRt;
-import com.intellij.util.Consumer;
-import com.intellij.util.Function;
-import com.intellij.util.SystemProperties;
+import com.intellij.util.*;
 import org.gradle.api.Task;
 import org.gradle.tooling.BuildLauncher;
 import org.gradle.tooling.CancellationTokenSource;
@@ -101,7 +98,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
             effectiveSettings.withArguments(GradleConstants.INCLUDE_BUILD_CMD_OPTION, buildParticipant.getProjectPath());
           }
 
-          List<String> args = newSmartList();
+          List<String> args = new SmartList<>();
           for (Iterator<String> iterator = effectiveSettings.getArguments().iterator(); iterator.hasNext(); ) {
             String arg = iterator.next();
             if ("--args".equals(arg) && iterator.hasNext()) {

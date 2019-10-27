@@ -13,6 +13,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.util.SimpleModificationTracker;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jdom.Element;
@@ -31,7 +32,7 @@ public class PostfixTemplateStorage extends SimpleModificationTracker implements
 
   private final Map<String, PostfixTemplateProvider> myTemplateProviders;
   private final MultiMap<String, PostfixTemplate> myTemplates = MultiMap.createSmart();
-  private final List<Element> myUnloadedTemplates = ContainerUtil.newSmartList();
+  private final List<Element> myUnloadedTemplates = new SmartList<>();
 
   public PostfixTemplateStorage() {
     myTemplateProviders = new HashMap<>();

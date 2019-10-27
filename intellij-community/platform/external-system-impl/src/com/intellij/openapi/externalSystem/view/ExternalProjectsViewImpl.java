@@ -579,7 +579,7 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
     final List<ExternalSystemNode> selectedNodes = getSelectedNodes(ExternalSystemNode.class);
     if (selectedNodes.isEmpty()) return null;
 
-    List<TaskData> tasks = ContainerUtil.newSmartList();
+    List<TaskData> tasks = new SmartList<>();
 
     ExternalTaskExecutionInfo taskExecutionInfo = new ExternalTaskExecutionInfo();
 

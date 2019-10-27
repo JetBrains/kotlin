@@ -12,6 +12,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.arrangement.Rearranger;
 import com.intellij.psi.codeStyle.arrangement.engine.ArrangementEngine;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.diff.FilesTooBigForDiffException;
 import org.jetbrains.annotations.NotNull;
@@ -112,6 +113,6 @@ public class RearrangeCodeProcessor extends AbstractLayoutCodeProcessor {
       return FormatChangedTextUtil.getInstance().getChangedTextRanges(myProject, file);
     }
 
-    return ContainerUtil.newSmartList(file.getTextRange());
+    return new SmartList<>(file.getTextRange());
   }
 }
