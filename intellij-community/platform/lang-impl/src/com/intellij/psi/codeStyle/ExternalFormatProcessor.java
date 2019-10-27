@@ -4,7 +4,10 @@ package com.intellij.psi.codeStyle;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
@@ -70,12 +73,7 @@ public interface ExternalFormatProcessor {
 
   @Nullable
   static ExternalFormatProcessor activeExternalFormatProcessor(@NotNull PsiFile source) {
-    for (ExternalFormatProcessor efp : EP_NAME.getExtensionList()) {
-      if (efp.activeForFile(source)) {
-        return efp;
-      }
-    }
-    return null;
+    return EP_NAME.getExtensionList().stream().filter(efp -> efp.activeForFile(source)).findFirst().orElse(null);
   }
 
   /**

@@ -14,7 +14,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.ClassLoaderUtil;
-import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -330,7 +329,7 @@ public class FileTemplateUtil {
     String fileName_ = fileName;
     String mergedText = ClassLoaderUtil.computeWithClassLoader(
       classLoader != null ? classLoader : FileTemplateUtil.class.getClassLoader(),
-      (ThrowableComputable<String, IOException>)() -> template.getText(props_));
+      () -> template.getText(props_));
     String templateText = StringUtil.convertLineSeparators(mergedText);
 
     return WriteCommandAction
@@ -347,12 +346,9 @@ public class FileTemplateUtil {
 
   @NotNull
   public static CreateFromTemplateHandler findHandler(@NotNull FileTemplate template) {
-    for (CreateFromTemplateHandler handler : CreateFromTemplateHandler.EP_NAME.getExtensionList()) {
-      if (handler.handlesTemplate(template)) {
-        return handler;
-      }
-    }
-    return DEFAULT_HANDLER;
+    return CreateFromTemplateHandler.EP_NAME.getExtensionList().stream()
+      .filter(handler -> handler.handlesTemplate(template)).findFirst()
+      .orElse(DEFAULT_HANDLER);
   }
 
   public static void fillDefaultProperties(@NotNull Properties props, @NotNull PsiDirectory directory) {
