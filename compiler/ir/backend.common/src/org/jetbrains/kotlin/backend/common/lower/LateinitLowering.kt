@@ -172,7 +172,8 @@ open class LateinitLowering(val context: CommonBackendContext) : FileLoweringPas
 
                 val receiver = expression.extensionReceiver as IrPropertyReference
 
-                val property = receiver.getter?.owner?.resolveFakeOverride()?.correspondingProperty!!.also { assert(it.isLateinit) }
+                val property =
+                    receiver.getter?.owner?.resolveFakeOverride()?.correspondingPropertySymbol!!.owner.also { assert(it.isLateinit) }
 
                 val nullableField =
                     buildOrGetNullableField(property.backingField ?: error("Lateinit property is supposed to have backing field"))

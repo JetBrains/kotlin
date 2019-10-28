@@ -88,7 +88,7 @@ open class DescriptorReferenceSerializer(
         }
 
         val discoverableDescriptorsDeclaration: IrDeclaration? = if (isAccessor) {
-            (realDeclaration as IrSimpleFunction).correspondingProperty!!
+            (realDeclaration as IrSimpleFunction).correspondingPropertySymbol!!.owner
         } else if (isBackingField) {
             (realDeclaration as IrField).correspondingProperty!!
         } else if (isDefaultConstructor || isEnumEntry) {
