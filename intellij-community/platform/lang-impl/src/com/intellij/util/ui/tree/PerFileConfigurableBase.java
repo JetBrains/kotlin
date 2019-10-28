@@ -690,14 +690,14 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
   @NotNull
   protected final AnAction createValueAction(@Nullable Object target, @NotNull Value<T> value) {
     return new ComboBoxAction() {
-      void updateText() {
+      void updateText(Presentation p) {
         String text = renderValue(value.get(), StringUtil.notNullize(getNullValueText(target)));
-        getTemplatePresentation().setText(StringUtil.shortenTextWithEllipsis(text, 40, 0));
+        p.setText(StringUtil.shortenTextWithEllipsis(text, 40, 0));
       }
 
       @Override
       public void update(@NotNull AnActionEvent e) {
-        updateText();
+        updateText(getTemplatePresentation());
       }
 
       @NotNull
@@ -713,7 +713,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
           protected JBPopup createPopup(Runnable onDispose) {
             JBPopup popup = createValueEditorPopup(target, value.get(), onDispose, getDataContext(), o -> {
               value.set(o);
-              updateText();
+              updateText(presentation);
             }, value::commit);
             popup.setMinimumSize(new Dimension(getMinWidth(), getMinHeight()));
             return popup;
