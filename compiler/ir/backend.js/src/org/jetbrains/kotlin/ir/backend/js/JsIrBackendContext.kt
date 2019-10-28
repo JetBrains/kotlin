@@ -48,6 +48,7 @@ class JsIrBackendContext(
     override val scriptMode: Boolean = false
 ) : CommonBackendContext {
     override val transformedFunction = mutableMapOf<IrFunctionSymbol, IrSimpleFunctionSymbol>()
+    override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
 
     override val builtIns = module.builtIns
 

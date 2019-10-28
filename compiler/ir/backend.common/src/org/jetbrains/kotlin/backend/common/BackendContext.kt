@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -33,4 +34,5 @@ interface BackendContext {
     val declarationFactory: DeclarationFactory
     val internalPackageFqn: FqName
     val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
+    val lateinitNullableFields: MutableMap<IrField, IrField>
 }
