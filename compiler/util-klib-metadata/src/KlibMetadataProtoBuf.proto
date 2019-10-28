@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.library.metadata;
 
 import "core/metadata/src/metadata.proto";
+import "core/metadata/src/ext_options.proto";
 
 option java_outer_classname = "KlibMetadataProtoBuf";
 option optimize_for = LITE_RUNTIME;
@@ -56,19 +57,19 @@ extend org.jetbrains.kotlin.metadata.Package {
 
 extend org.jetbrains.kotlin.metadata.Class {
   repeated org.jetbrains.kotlin.metadata.Annotation class_annotation = 170;
-  optional int32 class_file = 175;
-  optional DescriptorUniqId class_uniq_id = 171;
+  optional int32 class_file = 175 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
+  optional DescriptorUniqId class_uniq_id = 171 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
 }
 
 extend org.jetbrains.kotlin.metadata.Constructor {
   repeated org.jetbrains.kotlin.metadata.Annotation constructor_annotation = 170;
-  optional DescriptorUniqId constructor_uniq_id = 172;
+  optional DescriptorUniqId constructor_uniq_id = 172 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
 }
 
 extend org.jetbrains.kotlin.metadata.Function {
   repeated org.jetbrains.kotlin.metadata.Annotation function_annotation = 170;
-  optional int32 function_file = 172;
-  optional DescriptorUniqId function_uniq_id = 173;
+  optional int32 function_file = 172 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
+  optional DescriptorUniqId function_uniq_id = 173 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
 }
 
 extend org.jetbrains.kotlin.metadata.Property {
@@ -76,14 +77,14 @@ extend org.jetbrains.kotlin.metadata.Property {
   repeated org.jetbrains.kotlin.metadata.Annotation property_getter_annotation = 177;
   repeated org.jetbrains.kotlin.metadata.Annotation property_setter_annotation = 178;
   optional org.jetbrains.kotlin.metadata.Annotation.Argument.Value compile_time_value = 173;
-  optional int32 property_file = 176;
-  optional DescriptorUniqId property_uniq_id = 179;
+  optional int32 property_file = 176 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
+  optional DescriptorUniqId property_uniq_id = 179 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
 }
 
 extend org.jetbrains.kotlin.metadata.EnumEntry {
   repeated org.jetbrains.kotlin.metadata.Annotation enum_entry_annotation = 170;
   optional int32 enum_entry_ordinal = 171;
-  optional DescriptorUniqId enum_entry_uniq_id = 172;
+  optional DescriptorUniqId enum_entry_uniq_id = 172 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
 }
 
 extend org.jetbrains.kotlin.metadata.ValueParameter {
@@ -96,11 +97,11 @@ extend org.jetbrains.kotlin.metadata.Type {
 
 extend org.jetbrains.kotlin.metadata.TypeParameter {
   repeated org.jetbrains.kotlin.metadata.Annotation type_parameter_annotation = 170;
-  optional DescriptorUniqId type_param_uniq_id = 171;
+  optional DescriptorUniqId type_param_uniq_id = 171 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
 }
 
 extend org.jetbrains.kotlin.metadata.PackageFragment {
-  repeated int32 package_fragment_files = 170;
+  repeated int32 package_fragment_files = 170 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
   optional bool is_empty = 172;
   optional string fq_name = 173;
   // id in StringTable
@@ -109,5 +110,5 @@ extend org.jetbrains.kotlin.metadata.PackageFragment {
 
 extend org.jetbrains.kotlin.metadata.TypeAlias {
   // TODO repeated org.jetbrains.kotlin.metadata.Annotation type_alias_annotation = 130;
-  optional DescriptorUniqId type_alias_uniq_id = 131;
+  optional DescriptorUniqId type_alias_uniq_id = 131 [(org.jetbrains.kotlin.metadata.skip_in_comparison) = true];
 }

@@ -274,10 +274,7 @@ class DifferenceCalculatorForClass(
                 }
                 ProtoBufClassKind.KLIB_EXT_CLASS_ANNOTATION_LIST -> {
                     isClassAffected = true
-                }
-                ProtoBufClassKind.KLIB_EXT_CLASS_FILE,
-                ProtoBufClassKind.KLIB_EXT_CLASS_UNIQ_ID -> {
-                    // Not affected (probably?)
+                    areSubclassesAffected = true
                 }
             }
         }
