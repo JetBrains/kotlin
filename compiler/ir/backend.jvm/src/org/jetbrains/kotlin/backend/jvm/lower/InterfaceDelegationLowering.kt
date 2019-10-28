@@ -57,16 +57,11 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
     }
 
     private fun generateInterfaceMethods(irClass: IrClass) {
-        val toRemove = mutableListOf<IrSimpleFunction>()
-        for (function in irClass.functions.toList()) { // Copy the list, because we are adding new declarations from the loop
-            function.getTargetForRedirection()?.let { implementation ->
-                toRemove.add(function)
-
-                val delegation = generateDelegationToDefaultImpl(implementation, function)
-                irClass.declarations.add(delegation)
-            }
+        irClass.declarations.transform { declaration ->
+            (declaration as? IrSimpleFunction)?.getTargetForRedirection()?.let { implementation ->
+                generateDelegationToDefaultImpl(implementation, declaration)
+            } ?: declaration
         }
-        irClass.declarations.removeAll(toRemove)
     }
 
     private fun IrSimpleFunction.getTargetForRedirection(): IrSimpleFunction? {
