@@ -95,7 +95,6 @@ public final class FrameworkDetectionManager implements FrameworkDetectionIndexL
   public void doInitialize() {
     myDetectionQueue = new MergingUpdateQueue("FrameworkDetectionQueue", 500, true, null, myProject);
     if (ApplicationManager.getApplication().isUnitTestMode()) {
-      myDetectionQueue.setPassThrough(false);
       myDetectionQueue.hideNotify();
     }
     myDetectedFrameworksData = new DetectedFrameworksData(myProject);

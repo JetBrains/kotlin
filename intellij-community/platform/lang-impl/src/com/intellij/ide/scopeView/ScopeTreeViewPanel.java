@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.scopeView;
 
@@ -146,7 +146,6 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
 
   public ScopeTreeViewPanel(@NotNull Project project) {
     super(new BorderLayout());
-    myUpdateQueue.setPassThrough(false);  // we don't want passthrough mode, even in unit tests
     myProject = project;
     initTree();
 

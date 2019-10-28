@@ -152,7 +152,6 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     LookupManager.getInstance(getProject()).addPropertyChangeListener(myLookupManagerListener);
 
     myQueue = new MergingUpdateQueue("completion lookup progress", ourShowPopupAfterFirstItemGroupingTime, true, myEditor.getContentComponent());
-    myQueue.setPassThrough(false);
 
     ApplicationManager.getApplication().assertIsDispatchThread();
 
