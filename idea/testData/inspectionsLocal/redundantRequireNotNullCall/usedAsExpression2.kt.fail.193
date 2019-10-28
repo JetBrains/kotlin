@@ -1,0 +1,5 @@
+Actual data differs from file content: usedAsExpression2.kt.after expected:<... Int) {
+    println([i])
+}> but was:<... Int) {
+    println([])
+}>

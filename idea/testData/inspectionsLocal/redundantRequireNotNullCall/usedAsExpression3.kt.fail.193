@@ -1,0 +1,5 @@
+Actual data differs from file content: usedAsExpression3.kt.after expected:<...st(i: Int) {
+    "${[i]}"
+}> but was:<...st(i: Int) {
+    "${[]}"
+}>

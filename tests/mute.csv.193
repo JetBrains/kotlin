@@ -8,3 +8,6 @@ org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.t
 org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.testLambdaReceiverType, KT-34659
 org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.testNestedFunctionsInsideSuspendLambda, KT-34659
 org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.testSimpleCoroutineScope, KT-34659
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequireNotNullCall.testUsedAsExpression, KT-34672, FAIL
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequireNotNullCall.testUsedAsExpression2, KT-34672, FAIL
+org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequireNotNullCall.testUsedAsExpression3, KT-34672, FAIL

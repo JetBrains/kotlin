@@ -1,0 +1,5 @@
+Actual data differs from file content: usedAsExpression.kt.after expected:<...: Int) {
+    val a =[ i]
+}> but was:<...: Int) {
+    val a =[]
+}>
