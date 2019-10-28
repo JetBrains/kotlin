@@ -210,10 +210,10 @@ class GenerationState private constructor(
         target,
         isIrBackend
     )
+    val canReplaceStdlibRuntimeApiBehavior = languageVersionSettings.apiVersion <= ApiVersion.parse(KotlinVersion.CURRENT.toString())!!
     val intrinsics: IntrinsicMethods = run {
         val shouldUseConsistentEquals = languageVersionSettings.supportsFeature(LanguageFeature.ThrowNpeOnExplicitEqualsForBoxedNull) &&
                 !configuration.getBoolean(JVMConfigurationKeys.NO_EXCEPTION_ON_EXPLICIT_EQUALS_FOR_BOXED_NULL)
-        val canReplaceStdlibRuntimeApiBehavior = languageVersionSettings.apiVersion <= ApiVersion.parse(KotlinVersion.CURRENT.toString())!!
         IntrinsicMethods(target, canReplaceStdlibRuntimeApiBehavior, shouldUseConsistentEquals)
     }
     val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)

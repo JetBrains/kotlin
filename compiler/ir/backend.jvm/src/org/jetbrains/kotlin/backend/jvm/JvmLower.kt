@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -137,6 +138,17 @@ private val jvmLocalClassExtractionPhase = makeIrFilePhase(
     ::JvmLocalClassPopupLowering,
     name = "JvmLocalClassExtraction",
     description = "Move local classes from field initializers and anonymous init blocks into the containing class"
+)
+
+private val computeStringTrimPhase = makeIrFilePhase<JvmBackendContext>(
+    { context ->
+        if (context.state.canReplaceStdlibRuntimeApiBehavior)
+            StringTrimLowering(context)
+        else
+            FileLoweringPass.Empty
+    },
+    name = "StringTrimLowering",
+    description = "Compute trimIndent and trimMargin operations on constant strings"
 )
 
 private val defaultArgumentStubPhase = makeIrFilePhase(

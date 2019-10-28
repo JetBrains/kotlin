@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -19,12 +18,6 @@ import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
-
-val computeStringTrimPhase = makeIrFilePhase(
-    ::StringTrimLowering,
-    name = "StringTrimLowering",
-    description = "Compute trimIndent and trimMargin operations on constant strings"
-)
 
 class StringTrimLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
     override fun lower(irFile: IrFile) {
