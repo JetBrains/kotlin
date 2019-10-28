@@ -41,7 +41,7 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
     }
 
     public void testAllFilesPresentInBytecodeText() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true, "ieee754/oldLanguageVersions");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true, "oldLanguageVersions");
     }
 
     @TestMetadata("annotationDefaultValue.kt")
@@ -2259,7 +2259,7 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         public void testAllFilesPresentInIeee754() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ieee754"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true, "oldLanguageVersions");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/ieee754"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("nullableDoubleEquals.kt")

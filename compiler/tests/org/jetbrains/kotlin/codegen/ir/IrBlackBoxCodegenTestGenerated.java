@@ -26,7 +26,7 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true, "ieee754/oldLanguageVersions", "operatorConventions/oldLanguageVersions");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true, "oldLanguageVersions");
     }
 
     @TestMetadata("compiler/testData/codegen/box/annotations")
@@ -10806,7 +10806,7 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         public void testAllFilesPresentInIeee754() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ieee754"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true, "oldLanguageVersions");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ieee754"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("anyToReal.kt")
@@ -16197,7 +16197,7 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         public void testAllFilesPresentInOperatorConventions() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true, "oldLanguageVersions");
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("annotatedAssignment.kt")

@@ -10628,49 +10628,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testWhen_properIeeeComparisons() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/when_properIeeeComparisons.kt");
         }
-
-        @TestMetadata("compiler/testData/codegen/box/ieee754/oldLanguageVersions")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class OldLanguageVersions extends AbstractJsCodegenBoxTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInOldLanguageVersions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/ieee754/oldLanguageVersions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
-            }
-
-            @TestMetadata("nullableDoubleEquals10.kt")
-            public void testNullableDoubleEquals10() throws Exception {
-                runTest("compiler/testData/codegen/box/ieee754/oldLanguageVersions/nullableDoubleEquals10.kt");
-            }
-
-            @TestMetadata("nullableDoubleNotEquals10.kt")
-            public void testNullableDoubleNotEquals10() throws Exception {
-                runTest("compiler/testData/codegen/box/ieee754/oldLanguageVersions/nullableDoubleNotEquals10.kt");
-            }
-
-            @TestMetadata("nullableFloatEquals10.kt")
-            public void testNullableFloatEquals10() throws Exception {
-                runTest("compiler/testData/codegen/box/ieee754/oldLanguageVersions/nullableFloatEquals10.kt");
-            }
-
-            @TestMetadata("nullableFloatNotEquals10.kt")
-            public void testNullableFloatNotEquals10() throws Exception {
-                runTest("compiler/testData/codegen/box/ieee754/oldLanguageVersions/nullableFloatNotEquals10.kt");
-            }
-
-            @TestMetadata("when10.kt")
-            public void testWhen10() throws Exception {
-                runTest("compiler/testData/codegen/box/ieee754/oldLanguageVersions/when10.kt");
-            }
-
-            @TestMetadata("whenNullableSmartCast10.kt")
-            public void testWhenNullableSmartCast10() throws Exception {
-                runTest("compiler/testData/codegen/box/ieee754/oldLanguageVersions/whenNullableSmartCast10.kt");
-            }
-        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/increment")
@@ -14476,6 +14433,75 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/oldLanguageVersions")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class OldLanguageVersions extends AbstractJsCodegenBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInOldLanguageVersions() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/oldLanguageVersions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/oldLanguageVersions/ieee754")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Ieee754 extends AbstractJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIeee754() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/oldLanguageVersions/ieee754"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+
+            @TestMetadata("nullableDoubleEquals10.kt")
+            public void testNullableDoubleEquals10() throws Exception {
+                runTest("compiler/testData/codegen/box/oldLanguageVersions/ieee754/nullableDoubleEquals10.kt");
+            }
+
+            @TestMetadata("nullableDoubleNotEquals10.kt")
+            public void testNullableDoubleNotEquals10() throws Exception {
+                runTest("compiler/testData/codegen/box/oldLanguageVersions/ieee754/nullableDoubleNotEquals10.kt");
+            }
+
+            @TestMetadata("nullableFloatEquals10.kt")
+            public void testNullableFloatEquals10() throws Exception {
+                runTest("compiler/testData/codegen/box/oldLanguageVersions/ieee754/nullableFloatEquals10.kt");
+            }
+
+            @TestMetadata("nullableFloatNotEquals10.kt")
+            public void testNullableFloatNotEquals10() throws Exception {
+                runTest("compiler/testData/codegen/box/oldLanguageVersions/ieee754/nullableFloatNotEquals10.kt");
+            }
+
+            @TestMetadata("when10.kt")
+            public void testWhen10() throws Exception {
+                runTest("compiler/testData/codegen/box/oldLanguageVersions/ieee754/when10.kt");
+            }
+
+            @TestMetadata("whenNullableSmartCast10.kt")
+            public void testWhenNullableSmartCast10() throws Exception {
+                runTest("compiler/testData/codegen/box/oldLanguageVersions/ieee754/whenNullableSmartCast10.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/box/oldLanguageVersions/operatorConventions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class OperatorConventions extends AbstractJsCodegenBoxTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInOperatorConventions() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/oldLanguageVersions/operatorConventions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/operatorConventions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -14643,19 +14669,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("longInt.kt")
             public void testLongInt() throws Exception {
                 runTest("compiler/testData/codegen/box/operatorConventions/compareTo/longInt.kt");
-            }
-        }
-
-        @TestMetadata("compiler/testData/codegen/box/operatorConventions/oldLanguageVersions")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class OldLanguageVersions extends AbstractJsCodegenBoxTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInOldLanguageVersions() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/operatorConventions/oldLanguageVersions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
             }
         }
     }
