@@ -271,6 +271,10 @@ final class PassExecutorService implements Disposable {
   private FileEditor getPreferredFileEditor(Document document, @NotNull Collection<? extends FileEditor> fileEditors) {
     assert !fileEditors.isEmpty();
     if (document != null) {
+      FileEditor focusedEditor = ContainerUtil.find(fileEditors, it -> it instanceof TextEditor &&
+                                                                       ((TextEditor)it).getEditor().getContentComponent().isFocusOwner());
+      if (focusedEditor != null) return focusedEditor;
+
       final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
       if (file != null) {
         final FileEditor selected = FileEditorManager.getInstance(myProject).getSelectedEditor(file);
