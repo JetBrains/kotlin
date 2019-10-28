@@ -444,6 +444,16 @@ internal class InvokeImportFix(expression: KtExpression) : OrdinaryImportFixBase
     }
 }
 
+internal class IteratorImportFix(expression: KtExpression) : OrdinaryImportFixBase<KtExpression>(expression, MyFactory) {
+    override val importNames = listOf(OperatorNameConventions.ITERATOR)
+
+    override fun getCallTypeAndReceiver() = element?.let { CallTypeAndReceiver.OPERATOR(it) }
+
+    companion object MyFactory : Factory() {
+        override fun createImportAction(diagnostic: Diagnostic) = (diagnostic.psiElement as? KtExpression)?.let(::IteratorImportFix)
+    }
+}
+
 internal open class ArrayAccessorImportFix(
     element: KtArrayAccessExpression,
     override val importNames: Collection<Name>,
