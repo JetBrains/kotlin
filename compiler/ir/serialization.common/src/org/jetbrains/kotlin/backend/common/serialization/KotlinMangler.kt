@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.ir.isExpect
+import org.jetbrains.kotlin.backend.common.ir.isProperExpect
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -296,7 +298,10 @@ abstract class KotlinManglerImpl : KotlinMangler {
         is IrTypeParameter -> this.symbolName
         is IrTypeAlias -> this.symbolName
         else -> error("Unexpected exported declaration: $this")
-    }
+    } + expectPart
+
+    // TODO: need to figure out the proper OptionalExpectation behavior
+    private val IrDeclaration.expectPart get() = if (this.isProperExpect) "#expect" else ""
 
     private val IrDeclarationParent.fqNameUnique: FqName
         get() = when (this) {

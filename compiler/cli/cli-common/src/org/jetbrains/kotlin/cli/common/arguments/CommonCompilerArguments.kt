@@ -320,6 +320,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var useMixedNamedArguments: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xklib-mpp",
+        description = "Enable experimental support for multi-platform klib libraries"
+    )
+    var klibBasedMpp: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
 
@@ -341,6 +347,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 collector.report(CompilerMessageSeverity.WARNING, "'-Xexperimental' is deprecated and will be removed in a future release")
             }
             put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty() + optIn?.toList().orEmpty())
+            put(AnalysisFlags.klibBasedMpp, klibBasedMpp)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
             put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
             ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(

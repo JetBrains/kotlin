@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
+import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
+import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
 import org.jetbrains.kotlin.backend.common.serialization.newDescriptorUniqId
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -14,7 +16,10 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.StringTableImpl
@@ -28,7 +33,9 @@ internal fun <T, R> Iterable<T>.maybeChunked(size: Int?, transform: (List<T>) ->
 abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
-    val descriptorTable: DescriptorTable
+    val moduleDescriptor: ModuleDescriptor,
+    val descriptorTable: DescriptorTable,
+    val skipExpects: Boolean = false
 ) {
 
     lateinit var serializerContext: SerializerContext
@@ -109,12 +116,30 @@ abstract class KlibMetadataSerializer(
         }
     }
 
-    protected fun serializeClasses(packageName: FqName,
+    // TODO: we filter out expects with present actuals.
+    // This is done because deserialized member scope doesn't give us actuals
+    // when it has a choice
+    private fun List<DeclarationDescriptor>.filterOutExpectsWithActuals(): List<DeclarationDescriptor> {
+        val actualClassIds = this.filter{ !it.isExpectMember }.map { ClassId.topLevel(it.fqNameSafe) }
+        return this.filterNot {
+            // TODO: this only filters classes for now.
+            // Need to do the same for functions etc
+            (it is ClassDescriptor) && it.isExpect() && ClassId.topLevel(it.fqNameSafe) in actualClassIds
+        }
+    }
+
+    protected fun List<DeclarationDescriptor>.filterOutExpects(): List<DeclarationDescriptor> =
+        if (skipExpects)
+            this.filterNot { it.isExpectMember && !it.isSerializableExpectClass }
+        else
+            this.filterOutExpectsWithActuals()
+
+    private fun serializeClasses(packageName: FqName,
                                  //builder: ProtoBuf.PackageFragment.Builder,
                                  descriptors: Collection<DeclarationDescriptor>): List<Pair<ProtoBuf.Class, Int>> {
 
         return descriptors.filterIsInstance<ClassDescriptor>().flatMap {
-            serializeClass(packageName, /*builder, */it)
+            serializeClass(packageName, it)
         }
     }
 
@@ -130,6 +155,9 @@ abstract class KlibMetadataSerializer(
         classifierDescriptors: List<DeclarationDescriptor>,
         topLevelDescriptors: List<DeclarationDescriptor>
     ): List<ProtoBuf.PackageFragment> {
+
+        val classifierDescriptors = classifierDescriptors.filterOutExpects()
+        val topLevelDescriptors = topLevelDescriptors.filterOutExpects()
 
         if (TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE == null &&
             TOP_LEVEL_DECLARATION_COUNT_PER_FILE == null) {

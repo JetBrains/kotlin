@@ -81,6 +81,7 @@ message IrFile {
   repeated int32 fq_name = 3;
   repeated IrConstructorCall annotation = 4;
   repeated int32 explicitly_exported_to_compiler = 5;
+  repeated Actual actuals = 6;
 }
 
 /* ------ IrSymbols --------------------------------------------- */
@@ -111,6 +112,11 @@ message IrSymbolData {
 
   repeated int32 fq_name = 6;
   optional DescriptorReference descriptor_reference = 7;
+}
+
+message Actual {
+    required int32 actual_symbol = 1;
+    required int32 expect_symbol = 2;
 }
 
 /* ------ IrTypes --------------------------------------------- */

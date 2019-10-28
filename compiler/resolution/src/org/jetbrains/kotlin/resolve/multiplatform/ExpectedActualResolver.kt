@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compati
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
@@ -55,7 +57,7 @@ object ExpectedActualResolver {
                     // TODO: use some other way to determine that the declaration is from Kotlin.
                     //       This way behavior differs between fast and PSI-based Java class reading mode
                     // TODO: support non-source definitions (e.g. from Java)
-                    actual.source.containingFile != SourceFile.NO_SOURCE_FILE
+                    actual.couldHaveASource
                 }.groupBy { actual ->
                     areCompatibleCallables(expected, actual, platformModule)
                 }
@@ -63,7 +65,7 @@ object ExpectedActualResolver {
             is ClassDescriptor -> {
                 expected.findClassifiersFromModule(platformModule, moduleVisibilityFilter).filter { actual ->
                     expected != actual && !actual.isExpect &&
-                    actual.source.containingFile != SourceFile.NO_SOURCE_FILE
+                    actual.couldHaveASource
                 }.groupBy { actual ->
                     areCompatibleClassifiers(expected, actual)
                 }
@@ -560,3 +562,24 @@ object ExpectedActualResolver {
     }
 }
 
+fun DeclarationDescriptor.findExpects(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
+    return ExpectedActualResolver.findExpectedForActual(
+        this as MemberDescriptor,
+        inModule,
+        { true }
+    )?.get(Compatible).orEmpty()
+}
+
+fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
+    return ExpectedActualResolver.findActualForExpected(
+        (this as MemberDescriptor),
+        inModule,
+        { true }
+    )?.get(Compatible).orEmpty()
+}
+
+// TODO: Klibs still need to better handle source in deserialized descriptors.
+val DeclarationDescriptorWithSource.couldHaveASource: Boolean get() =
+    this.source.containingFile != SourceFile.NO_SOURCE_FILE ||
+    this is DeserializedMemberDescriptor ||
+    this is DeserializedClassDescriptor

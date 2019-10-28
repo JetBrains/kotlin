@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
@@ -87,6 +88,21 @@ abstract class DescriptorReferenceDeserializer(
         return ClassMembers(classConstructorDescriptor, allMembersMap, realMembersMap)
     }
 
+    // TODO: the real findExpects() returns a list.
+    // Need to account for multiple expects here.
+    private fun MemberDescriptor.toExpect() =
+        if (this.isExpect)
+            this
+        else
+            ExpectedActualResolver.findExpectedForActual(
+                this,
+                currentModule,
+                { true }
+            )?.get(ExpectedActualResolver.Compatibility.Compatible)?.single()
+
+    private fun Collection<DeclarationDescriptor>.toExpects() = this.map { (it as MemberDescriptor).toExpect() }.filterNotNull().distinct()
+
+
     open fun deserializeDescriptorReference(
         packageFqName: FqName,
         classFqName: FqName,
@@ -98,10 +114,21 @@ abstract class DescriptorReferenceDeserializer(
         val protoIndex = index
 
         val (clazz, members) = if (classFqName.isRoot) {
-            Pair(null, getContributedDescriptors(packageFqName, name))
+            Pair(null,
+                getContributedDescriptors(packageFqName, name).let {
+                    if (DescriptorReferenceFlags.IS_EXPECT.decode(flags)) it.toExpects() else it
+                }
+            )
         } else {
-            val clazz = currentModule.findClassAcrossModuleDependencies(ClassId(packageFqName, classFqName, false))!!
-            Pair(clazz, getContributedDescriptors(clazz.unsubstitutedMemberScope, name) + clazz.getConstructors())
+            val classifier = (currentModule.findClassifierAcrossModuleDependencies(ClassId(packageFqName, classFqName, false)) as? MemberDescriptor)
+                ?: error("Could not find class across modules: $packageFqName/$classFqName")
+
+            val expect = if (DescriptorReferenceFlags.IS_EXPECT.decode(flags)) {
+                classifier.toExpect()
+            } else null
+
+            val expectOrActualClass = (expect as ClassDescriptor?) ?: (classifier as ClassDescriptor) // TODO: OMG!!!
+            Pair(expectOrActualClass, getContributedDescriptors(expectOrActualClass.unsubstitutedMemberScope, name) + expectOrActualClass.getConstructors())
         }
 
         // TODO: This is still native specific. Eliminate.
@@ -157,7 +184,7 @@ abstract class DescriptorReferenceDeserializer(
 
         val membersWithIndices = getMembers(members)
 
-        return when {
+        val result =  when {
             DescriptorReferenceFlags.IS_DEFAULT_CONSTRUCTOR.decode(flags) -> membersWithIndices.defaultConstructor
 
             else -> {
@@ -172,5 +199,11 @@ abstract class DescriptorReferenceDeserializer(
             }
         } ?:
         error("Could not find serialized descriptor for index: ${index} ${packageFqName},${classFqName},${name}")
+
+        // TODO: why we don't have "expect" bit on all the expect declarations?
+        //if (DescriptorReferenceFlags.IS_EXPECT.decode(flags)) assert(if (result is ClassConstructorDescriptor) result.constructedClass.isExpect() else result.isExpectMember) {
+        //    "expected expect, found $result"
+        //}
+        return result
     }
 }
