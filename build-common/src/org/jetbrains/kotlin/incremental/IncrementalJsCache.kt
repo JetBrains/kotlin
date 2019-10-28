@@ -266,9 +266,23 @@ private class IrTranslationResultMap(
 ) :
     BasicStringMap<IrTranslationResultValue>(storageFile, IrTranslationResultValueExternalizer) {
     override fun dumpValue(value: IrTranslationResultValue): String =
-        "Filedata: ${value.fileData.md5()}, Symbols: ${value.symbols.md5()}, Types: ${value.types.md5()}, Strings: ${value.strings.md5()}, Declarations: ${value.declarations.md5()}, Bodies: ${value.bodies.md5()}"
+        "Filedata: ${value.fileData.md5()}, " +
+                "Symbols: ${value.symbols.md5()}, " +
+                "Types: ${value.types.md5()}, " +
+                "Strings: ${value.strings.md5()}, " +
+                "Declarations: ${value.declarations.md5()}, " +
+                "Bodies: ${value.bodies.md5()}"
 
-    fun put(sourceFile: File, newFiledata: ByteArray, newSymbols: ByteArray, newTypes: ByteArray, newStrings: ByteArray, newDeclarations: ByteArray, newBodies: ByteArray, fqn: ByteArray) {
+    fun put(
+        sourceFile: File,
+        newFiledata: ByteArray,
+        newSymbols: ByteArray,
+        newTypes: ByteArray,
+        newStrings: ByteArray,
+        newDeclarations: ByteArray,
+        newBodies: ByteArray,
+        fqn: ByteArray
+    ) {
         storage[pathConverter.toPath(sourceFile)] =
             IrTranslationResultValue(newFiledata, newSymbols, newTypes, newStrings, newDeclarations, newBodies, fqn)
     }
@@ -297,7 +311,8 @@ private class ProtoDataProvider(private val serializerProtocol: SerializerExtens
         }
 
         proto.`package`.apply {
-            val packageFqName = getExtensionOrNull(serializerProtocol.packageFqName)?.let(nameResolver::getPackageFqName)?.let(::FqName) ?: FqName.ROOT
+            val packageNameId = getExtensionOrNull(serializerProtocol.packageFqName)
+            val packageFqName = packageNameId?.let { FqName(nameResolver.getPackageFqName(it)) } ?: FqName.ROOT
             val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalize() + "Kt"))
             classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
         }
