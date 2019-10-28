@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 class KlibMetadataMonolithicSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
-    descriptorTable: DescriptorTable
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, descriptorTable) {
+    moduleDescriptor: ModuleDescriptor,
+    descriptorTable: DescriptorTable,
+    skipExpects: Boolean
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, moduleDescriptor, descriptorTable, skipExpects) {
 
     private fun serializePackageFragment(fqName: FqName, module: ModuleDescriptor): List<ProtoBuf.PackageFragment> {
 
@@ -33,13 +35,13 @@ class KlibMetadataMonolithicSerializer(
         val classifierDescriptors = DescriptorSerializer.sort(
             fragments.flatMap {
                 it.getMemberScope().getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS)
-            }.filter { !it.isExpectMember || it.isSerializableExpectClass }
+            }
         )
 
         val topLevelDescriptors = DescriptorSerializer.sort(
             fragments.flatMap { fragment ->
                 fragment.getMemberScope().getDescriptorsFiltered(DescriptorKindFilter.CALLABLES)
-            }.filter { !it.isExpectMember }
+            }
         )
 
         return serializeDescriptors(fqName, classifierDescriptors, topLevelDescriptors)

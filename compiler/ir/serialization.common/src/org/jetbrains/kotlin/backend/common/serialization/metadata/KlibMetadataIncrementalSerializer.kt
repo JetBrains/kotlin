@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata
 
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
-import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
-import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataSerializer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -26,8 +24,10 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 class KlibMetadataIncrementalSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
-    descriptorTable: DescriptorTable
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, descriptorTable) {
+    moduleDescriptor: ModuleDescriptor,
+    descriptorTable: DescriptorTable,
+    skipExpects: Boolean
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, moduleDescriptor, descriptorTable, skipExpects) {
 
     fun serializePackageFragment(
         module: ModuleDescriptor,
@@ -41,13 +41,11 @@ class KlibMetadataIncrementalSerializer(
 
         val classifierDescriptors = allDescriptors
             .filterIsInstance<ClassifierDescriptor>()
-            .filter { !it.isExpectMember || it.isSerializableExpectClass }
             .sortedBy { it.fqNameSafe.asString() }
 
         val topLevelDescriptors = DescriptorSerializer.sort(
             allDescriptors
                 .filterIsInstance<CallableDescriptor>()
-                .filter { !it.isExpectMember }
         )
 
         // TODO: For now, in the incremental serializer, we assume

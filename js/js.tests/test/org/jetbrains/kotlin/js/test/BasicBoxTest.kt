@@ -119,6 +119,7 @@ abstract class BasicBoxTest(
 
         val runPlainBoxFunction = RUN_PLAIN_BOX_FUNCTION.matcher(fileContent).find()
         val inferMainModule = INFER_MAIN_MODULE.matcher(fileContent).find()
+        val klibBasedMpp = KLIB_BASED_MPP.matcher(fileContent).find()
 
         TestFileFactoryImpl(coroutinesPackage).use { testFactory ->
             val inputFiles = TestFiles.createTestFiles(
@@ -162,7 +163,7 @@ abstract class BasicBoxTest(
                     testFactory.tmpDir,
                     file.parent, module, outputFileName, dceOutputFileName, dependencies, allDependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(), outputPrefixFile, outputPostfixFile,
-                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule
+                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule, klibBasedMpp
                 )
 
                 when {
@@ -362,7 +363,8 @@ abstract class BasicBoxTest(
         testPackage: String?,
         testFunction: String,
         needsFullIrRuntime: Boolean,
-        isMainModule: Boolean
+        isMainModule: Boolean,
+        klibBasedMpp: Boolean
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -378,7 +380,7 @@ abstract class BasicBoxTest(
         val psiFiles = createPsiFiles(allSourceFiles.sortedBy { it.canonicalPath }.map { it.canonicalPath })
 
         val sourceDirs = (testFiles + additionalFiles).map { File(it).parent }.distinct()
-        val config = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, tmpDir, incrementalData = null)
+        val config = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, tmpDir, incrementalData = null, klibBasedMpp = klibBasedMpp)
         val outputFile = File(outputFileName)
         val dceOutputFile = File(dceOutputFileName)
 
@@ -391,7 +393,7 @@ abstract class BasicBoxTest(
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
             checkIncrementalCompilation(
                 sourceDirs, module, kotlinFiles, dependencies, allDependencies, friends, multiModule, tmpDir, remap,
-                outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, needsFullIrRuntime
+                outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, needsFullIrRuntime, klibBasedMpp
             )
         }
     }
@@ -413,7 +415,8 @@ abstract class BasicBoxTest(
         incrementalData: IncrementalData,
         testPackage: String?,
         testFunction: String,
-        needsFullIrRuntime: Boolean
+        needsFullIrRuntime: Boolean,
+        klibBasedMpp: Boolean
     ) {
         val sourceToTranslationUnit = hashMapOf<File, TranslationUnit>()
         for (testFile in kotlinFiles) {
@@ -431,7 +434,7 @@ abstract class BasicBoxTest(
                 .sortedBy { it.canonicalPath }
                 .map { sourceToTranslationUnit[it]!! }
 
-        val recompiledConfig = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, tmpDir, incrementalData)
+        val recompiledConfig = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, tmpDir, incrementalData, klibBasedMpp)
         val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
 
         translateFiles(
@@ -644,7 +647,7 @@ abstract class BasicBoxTest(
 
     private fun createConfig(
         sourceDirs: List<String>, module: TestModule, dependencies: List<String>, allDependencies: List<String>, friends: List<String>,
-        multiModule: Boolean, tmpDir: File, incrementalData: IncrementalData?
+        multiModule: Boolean, tmpDir: File, incrementalData: IncrementalData?, klibBasedMpp: Boolean
     ): JsConfig {
         val configuration = environment.configuration.copy()
 
@@ -695,6 +698,8 @@ abstract class BasicBoxTest(
                 File(".").absolutePath.removeSuffix(".") to ""
             )
         )
+
+        configuration.put(CommonConfigurationKeys.KLIB_MPP, klibBasedMpp)
 
         return JsConfig(project, configuration, METADATA_CACHE, (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).toSet())
     }
@@ -889,6 +894,7 @@ abstract class BasicBoxTest(
         private val SOURCE_MAP_SOURCE_EMBEDDING = Regex("^// *SOURCE_MAP_EMBED_SOURCES: ([A-Z]+)*\$", RegexOption.MULTILINE)
         private val CALL_MAIN_PATTERN = Pattern.compile("^// *CALL_MAIN *$", Pattern.MULTILINE)
         private val KJS_WITH_FULL_RUNTIME = Pattern.compile("^// *KJS_WITH_FULL_RUNTIME *\$", Pattern.MULTILINE)
+        private val KLIB_BASED_MPP = Pattern.compile("^// KLIB_BASED_MPP *$", Pattern.MULTILINE)
 
         @JvmStatic
         protected val runTestInNashorn = getBoolean("kotlin.js.useNashorn")

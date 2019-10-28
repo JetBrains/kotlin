@@ -82,6 +82,8 @@ fun compile(
     ExternalDependenciesGenerator(symbolTable, irProvidersWithoutDeserializer).generateUnboundSymbolsAsDependencies()
     moduleFragment.patchDeclarationParents()
 
+    deserializer.finalizeExpectActualLinker()
+
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
 
     jsPhases.invokeToplevel(phaseConfig, context, moduleFragment)

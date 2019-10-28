@@ -14,7 +14,8 @@ enum class DescriptorReferenceFlags {
     IS_DEFAULT_CONSTRUCTOR,
     IS_ENUM_ENTRY,
     IS_ENUM_SPECIAL,
-    IS_TYPE_PARAMETER;
+    IS_TYPE_PARAMETER,
+    IS_EXPECT;
 
     fun encode(isSet: Boolean): Int = if (isSet) 1 shl ordinal else 0
     fun decode(flags: Int): Boolean = (flags and (1 shl ordinal) != 0)
