@@ -43,7 +43,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -308,6 +310,13 @@ public class SdkConfigurationUtil {
   }
 
   public static void selectSdkHome(@NotNull final SdkType sdkType, @NotNull final Consumer<? super String> consumer) {
+    selectSdkHome(sdkType, null, null, consumer);
+  }
+
+  public static void selectSdkHome(@NotNull final SdkType sdkType,
+                                   @Nullable Project project,
+                                   @Nullable Component component,
+                                   @NotNull final Consumer<? super String> consumer) {
     final FileChooserDescriptor descriptor = sdkType.getHomeChooserDescriptor();
     if (ApplicationManager.getApplication().isUnitTestMode()) {
       Sdk sdk = ProjectJdkTable.getInstance().findMostRecentSdkOfType(sdkType);
@@ -315,7 +324,7 @@ public class SdkConfigurationUtil {
       consumer.consume(sdk.getHomePath());
       return;
     }
-    FileChooser.chooseFiles(descriptor, null, getSuggestedSdkRoot(sdkType), chosen -> {
+    FileChooser.chooseFiles(descriptor, project, component, getSuggestedSdkRoot(sdkType), chosen -> {
       final String path = chosen.get(0).getPath();
       if (sdkType.isValidSdkHome(path)) {
         consumer.consume(path);

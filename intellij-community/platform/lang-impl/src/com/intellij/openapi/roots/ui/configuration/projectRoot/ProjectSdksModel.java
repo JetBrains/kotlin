@@ -268,10 +268,16 @@ public class ProjectSdksModel implements SdkModel {
   }
 
   public void addSdk(@NotNull SdkType type, @NotNull String home, @Nullable Consumer<? super Sdk> callback) {
+    final Sdk newJdk = createSdk(type, home);
+    setupSdk(newJdk, callback);
+  }
+
+  @NotNull
+  public Sdk createSdk(@NotNull SdkType type, @NotNull String home) {
     String newSdkName = SdkConfigurationUtil.createUniqueSdkName(type, home, myProjectSdks.values());
     final ProjectJdkImpl newJdk = new ProjectJdkImpl(newSdkName, type);
     newJdk.setHomePath(home);
-    setupSdk(newJdk, callback);
+    return newJdk;
   }
 
   private void setupSdk(@NotNull Sdk newJdk, @Nullable Consumer<? super Sdk> callback) {
