@@ -44,6 +44,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.ReferenceRange;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.testFramework.TestModeFlags;
 import com.intellij.ui.GuiUtils;
 import com.intellij.ui.LightweightHint;
@@ -185,6 +186,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   }
 
   void duringCompletion(CompletionInitializationContext initContext, CompletionParameters parameters) {
+    PsiUtilCore.ensureValid(parameters.getPosition());
     if (isAutopopupCompletion() && shouldPreselectFirstSuggestion(parameters)) {
       myLookup.setFocusDegree(CodeInsightSettings.getInstance().isSelectAutopopupSuggestionsByChars()
                               ? LookupImpl.FocusDegree.FOCUSED
