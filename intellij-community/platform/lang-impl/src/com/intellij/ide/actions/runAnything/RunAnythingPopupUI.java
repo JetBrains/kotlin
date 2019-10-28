@@ -87,7 +87,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private static final String HELP_PLACEHOLDER = "?";
   private static final int LIST_REBUILD_DELAY = 100;
   private final Alarm myAlarm = new Alarm(Alarm.ThreadToUse.SWING_THREAD, ApplicationManager.getApplication());
-  private final AnActionEvent myActionEvent;
   private boolean myIsUsedTrigger;
   private CalcThread myCalcThread;
   private volatile ActionCallback myCurrentWorker;
@@ -420,7 +419,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
     dataMap.put(CommonDataKeys.VIRTUAL_FILE.getName(), getWorkDirectory());
     dataMap.put(EXECUTOR_KEY.getName(), getExecutor());
     dataMap.put(RunAnythingProvider.EXECUTING_CONTEXT.getName(), myChooseContextAction.getSelectedContext());
-    return SimpleDataContext.getSimpleContext(dataMap, myActionEvent.getDataContext());
+    return SimpleDataContext.getSimpleContext(dataMap, null);
   }
 
   public void initMySearchField() {
@@ -834,13 +833,11 @@ public class RunAnythingPopupUI extends BigPopupUI {
   public RunAnythingPopupUI(@NotNull AnActionEvent actionEvent) {
     super(actionEvent.getProject());
 
-    myActionEvent = actionEvent;
-
     myCurrentWorker = ActionCallback.DONE;
     myVirtualFile = actionEvent.getData(CommonDataKeys.VIRTUAL_FILE);
 
-    myProject = ObjectUtils.notNull(myActionEvent.getData(CommonDataKeys.PROJECT));
-    myModule = myActionEvent.getData(LangDataKeys.MODULE);
+    myProject = ObjectUtils.notNull(actionEvent.getData(CommonDataKeys.PROJECT));
+    myModule = actionEvent.getData(LangDataKeys.MODULE);
 
     init();
 
