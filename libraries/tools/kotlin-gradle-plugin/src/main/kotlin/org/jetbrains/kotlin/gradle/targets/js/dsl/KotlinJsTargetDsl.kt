@@ -61,10 +61,10 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
         }
     }
 
-    @ExperimentalDce
+    @ExperimentalDceDsl
     fun dceTask(body: KotlinJsDce.() -> Unit)
 
-    @ExperimentalDce
+    @ExperimentalDceDsl
     fun dceTask(fn: Closure<*>) {
         dceTask {
             ConfigureUtil.configure(fn, this)

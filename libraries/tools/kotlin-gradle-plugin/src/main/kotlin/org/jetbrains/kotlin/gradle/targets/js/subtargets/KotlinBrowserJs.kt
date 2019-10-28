@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariant
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BuildVariantKind
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDce
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -56,7 +56,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
         commonWebpackConfigurations.add(body)
     }
 
-    @ExperimentalDce
+    @ExperimentalDceDsl
     override fun dceTask(body: KotlinJsDce.() -> Unit) {
         dceConfigurations.add(body)
     }

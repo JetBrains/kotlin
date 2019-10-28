@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
-@Experimental
+@Experimental(level = Experimental.Level.WARNING)
 @Target(AnnotationTarget.FUNCTION)
-annotation class ExperimentalDce
+annotation class ExperimentalDceDsl
