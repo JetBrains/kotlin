@@ -35,11 +35,11 @@ plugins {
 }
 
 dependencies {
-    compileOnly(KOTLIN_COMPOSE_STDLIB)
-    compileOnly("org.jetbrains.kotlin:kotlin-compiler:$COMPOSE_VERSION")
-    compileOnly("org.jetbrains.kotlin:kotlin-plugin:$COMPOSE_VERSION")
-    compileOnly("org.jetbrains.kotlin:kotlin-intellij-core:$COMPOSE_VERSION")
-    compileOnly("org.jetbrains.kotlin:kotlin-platform-api:$COMPOSE_VERSION")
+    compileOnly(KOTLIN_STDLIB)
+    compileOnly("org.jetbrains.kotlin:kotlin-compiler:$KOTLIN_VERSION")
+    compileOnly("org.jetbrains.kotlin:kotlin-plugin:$KOTLIN_VERSION")
+    compileOnly("org.jetbrains.kotlin:kotlin-intellij-core:$KOTLIN_VERSION")
+    compileOnly("org.jetbrains.kotlin:kotlin-platform-api:$KOTLIN_VERSION")
 }
 
 tasks.withType(KotlinCompile).configureEach {
