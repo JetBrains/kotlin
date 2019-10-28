@@ -360,31 +360,17 @@ class Fir2IrVisitor(
                     overriddenSymbols += overriddenSymbol
                 }
             }
-            body = firFunction?.body?.convertToIrBlockBody()
-            if (this !is IrConstructor) {
-                // Scope for primary constructor should be left after class declaration
-                // Scope for secondary constructor should be left after delegating call
-                declarationStorage.leaveScope(descriptor)
-            }
-        }
-        return this
-    }
-
-    override fun visitConstructor(constructor: FirConstructor, data: Any?): IrElement {
-        val irConstructor = declarationStorage.getIrConstructor(
-            constructor, irParent = parentStack.last() as? IrClass
-        )
-        return irConstructor.setParentByParentStack().withFunction {
-            setFunctionContent(irConstructor.descriptor, constructor)
-        }.withParent {
-            if (!parentAsClass.isAnnotationClass) {
-                val body = this.body as IrBlockBody? ?: IrBlockBodyImpl(startOffset, endOffset)
-                val delegatedConstructor = constructor.delegatedConstructor
+            var body = firFunction?.body?.convertToIrBlockBody()
+            if (firFunction is FirConstructor && this is IrConstructor && !parentAsClass.isAnnotationClass) {
+                if (body == null) {
+                    body = IrBlockBodyImpl(startOffset, endOffset)
+                }
+                val delegatedConstructor = firFunction.delegatedConstructor
                 if (delegatedConstructor != null) {
                     val irDelegatingConstructorCall = delegatedConstructor.toIrDelegatingConstructorCall()
                     body.statements += irDelegatingConstructorCall ?: delegatedConstructor.convertWithOffsets { startOffset, endOffset ->
                         IrErrorCallExpressionImpl(
-                            startOffset, endOffset, irConstructor.returnType, "Cannot find delegated constructor call"
+                            startOffset, endOffset, returnType, "Cannot find delegated constructor call"
                         )
                     }
                 }
@@ -397,10 +383,23 @@ class Fir2IrVisitor(
                 if (body.statements.isNotEmpty()) {
                     this.body = body
                 }
+            } else if (this !is IrConstructor) {
+                this.body = body
             }
-            if (!constructor.isPrimary) {
-                declarationStorage.leaveScope(irConstructor.descriptor)
+            if (this !is IrConstructor || !this.isPrimary) {
+                // Scope for primary constructor should be left after class declaration
+                declarationStorage.leaveScope(descriptor)
             }
+        }
+        return this
+    }
+
+    override fun visitConstructor(constructor: FirConstructor, data: Any?): IrElement {
+        val irConstructor = declarationStorage.getIrConstructor(
+            constructor, irParent = parentStack.last() as? IrClass
+        )
+        return irConstructor.setParentByParentStack().withFunction {
+            setFunctionContent(irConstructor.descriptor, constructor)
         }
     }
 

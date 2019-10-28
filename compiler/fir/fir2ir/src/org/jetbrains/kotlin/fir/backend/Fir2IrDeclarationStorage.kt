@@ -423,22 +423,26 @@ class Fir2IrDeclarationStorage(
         irParent: IrDeclarationParent? = null,
         shouldLeaveScope: Boolean = false
     ): IrConstructor {
-        return constructorCache.getOrPut(constructor) {
-            val descriptor = WrappedClassConstructorDescriptor()
-            val origin = IrDeclarationOrigin.DEFINED
-            val isPrimary = constructor.isPrimary
-            return constructor.convertWithOffsets { startOffset, endOffset ->
-                irSymbolTable.declareConstructor(startOffset, endOffset, origin, descriptor) { symbol ->
-                    IrConstructorImpl(
-                        startOffset, endOffset, origin, symbol,
-                        constructor.name, constructor.visibility,
-                        constructor.returnTypeRef.toIrType(session, this),
-                        isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
-                    ).bindAndDeclareParameters(constructor, descriptor, irParent, isStatic = true, shouldLeaveScope = shouldLeaveScope)
-                }
-            }
-
+        val cached = constructorCache[constructor]
+        if (cached != null) {
+            return if (shouldLeaveScope) cached else cached.enterLocalScope(constructor)
         }
+
+        val descriptor = WrappedClassConstructorDescriptor()
+        val origin = IrDeclarationOrigin.DEFINED
+        val isPrimary = constructor.isPrimary
+        val created = constructor.convertWithOffsets { startOffset, endOffset ->
+            irSymbolTable.declareConstructor(startOffset, endOffset, origin, descriptor) { symbol ->
+                IrConstructorImpl(
+                    startOffset, endOffset, origin, symbol,
+                    constructor.name, constructor.visibility,
+                    constructor.returnTypeRef.toIrType(session, this),
+                    isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
+                ).bindAndDeclareParameters(constructor, descriptor, irParent, isStatic = true, shouldLeaveScope = shouldLeaveScope)
+            }
+        }
+        constructorCache[constructor] = created
+        return created
     }
 
     private fun createIrPropertyAccessor(
