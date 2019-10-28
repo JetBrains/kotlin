@@ -7,12 +7,13 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.target.LanguageRuntimeType;
-import com.intellij.execution.target.RemoteTargetsListConfigurable;
 import com.intellij.execution.target.RemoteTargetsManager;
 import com.intellij.execution.target.TargetEnvironmentAwareRunProfile;
+import com.intellij.execution.target.TargetEnvironmentsConfigurable;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataKey;
+import com.intellij.openapi.application.Experiments;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
@@ -492,7 +493,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       myCbStoreProjectConfiguration.setVisible(!settings.isTemplate());
       myCbStoreProjectConfigurationValidator.revalidate();
 
-      boolean targetAware = configuration instanceof TargetEnvironmentAwareRunProfile;
+      boolean targetAware = configuration instanceof TargetEnvironmentAwareRunProfile && Experiments.getInstance().isFeatureEnabled("runtime.environments");
       myRunOnPanel.setVisible(targetAware);
       if (targetAware) {
         String defaultTargetName = ((TargetEnvironmentAwareRunProfile)configuration).getDefaultTargetName();
@@ -562,7 +563,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       myRunOnComboBox = new RunOnTargetComboBox(myProject);
       myManageTargetsLabel = LinkLabel.create(ExecutionBundle.message("edit.run.configuration.run.configuration.manage.targets.label"), () -> {
             String selectedName = ((RunOnTargetComboBox)myRunOnComboBox).getSelectedTargetName();
-            RemoteTargetsListConfigurable configurable = new RemoteTargetsListConfigurable(myProject, selectedName);
+            TargetEnvironmentsConfigurable configurable = new TargetEnvironmentsConfigurable(myProject, selectedName);
             if (ShowSettingsUtil.getInstance().editConfigurable(myWholePanel, configurable)) {
               resetRunOnComboBox(selectedName);
             }

@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DetailsComponent
 import javax.swing.JComponent
 
-class RemoteTargetsListConfigurable(project: Project, initialSelectedName: String? = null) : SearchableConfigurable, MasterDetails {
+class TargetEnvironmentsConfigurable(project: Project, initialSelectedName: String? = null) : SearchableConfigurable, MasterDetails {
   @Suppress("unused")
   constructor(project: Project) : this(project, null)
 
@@ -23,9 +23,9 @@ class RemoteTargetsListConfigurable(project: Project, initialSelectedName: Strin
 
   override fun isModified(): Boolean = editor.isModified
 
-  override fun getId(): String = "Remote.Runners.Configurable"
+  override fun getId(): String = "Runtime.Targets.Configurable"
 
-  override fun getDisplayName(): String = "Remote Targets"
+  override fun getDisplayName(): String = "Runtime Targets"
 
   override fun createComponent(): JComponent = editor.createComponent()
 
