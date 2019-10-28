@@ -27,7 +27,7 @@ class ServiceViewTreeUi implements ServiceViewUi {
   private final JPanel myMasterPanel;
   private final JPanel myDetailsPanel;
   private final JPanel myNavBarPanel;
-  private final JBPanelWithEmptyText myMessagePanel = new JBPanelWithEmptyText().withEmptyText("Select service in tree to view details");
+  private final JBPanelWithEmptyText myMessagePanel = new JBPanelWithEmptyText().withEmptyText("Select service to view details");
   private final Set<JComponent> myDetailsComponents = ContainerUtil.createWeakSet();
   private ActionToolbar myServiceActionToolbar;
   private ActionToolbar myMasterActionToolbar;

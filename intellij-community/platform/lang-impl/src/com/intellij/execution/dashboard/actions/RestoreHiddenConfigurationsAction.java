@@ -4,9 +4,11 @@ package com.intellij.execution.dashboard.actions;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.dashboard.*;
+import com.intellij.execution.dashboard.tree.ConfigurationTypeDashboardGroupingRule;
 import com.intellij.execution.dashboard.tree.GroupingNode;
 import com.intellij.execution.dashboard.tree.RunDashboardGroupImpl;
 import com.intellij.execution.services.ServiceViewActionUtils;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -31,9 +33,12 @@ public class RestoreHiddenConfigurationsAction extends DumbAwareAction {
     }
     RunDashboardServiceViewContributor root = ServiceViewActionUtils.getTarget(e, RunDashboardServiceViewContributor.class);
     if (root != null) {
-      Set<RunConfiguration> hiddenConfigurations =
-        ((RunDashboardManagerImpl)RunDashboardManager.getInstance(project)).getHiddenConfigurations();
-      e.getPresentation().setEnabledAndVisible(!hiddenConfigurations.isEmpty());
+      e.getPresentation().setEnabledAndVisible(hasHiddenConfiguration(project));
+      return;
+    }
+    if (!PropertiesComponent.getInstance(project).getBoolean(ConfigurationTypeDashboardGroupingRule.NAME, true)) {
+      JBIterable<RunDashboardNode> nodes = ServiceViewActionUtils.getTargets(e, RunDashboardNode.class);
+      e.getPresentation().setEnabledAndVisible(nodes.isNotEmpty() && hasHiddenConfiguration(project));
       return;
     }
     Set<ConfigurationType> types = getTargetTypes(e);
@@ -54,8 +59,10 @@ public class RestoreHiddenConfigurationsAction extends DumbAwareAction {
     if (project == null) return;
 
     RunDashboardServiceViewContributor root = ServiceViewActionUtils.getTarget(e, RunDashboardServiceViewContributor.class);
-    if (root != null) {
-      // Restore all hidden configurations.
+    if (root != null ||
+        !PropertiesComponent.getInstance(project).getBoolean(ConfigurationTypeDashboardGroupingRule.NAME, true)) {
+      // Restore all hidden configurations if action is invoked on Run Dashboard contributor root node or
+      // when grouping by configuration type is disabled.
       RunDashboardManagerImpl runDashboardManager = (RunDashboardManagerImpl)RunDashboardManager.getInstance(project);
       runDashboardManager.restoreConfigurations(new THashSet<>(runDashboardManager.getHiddenConfigurations()));
       return;
@@ -66,6 +73,10 @@ public class RestoreHiddenConfigurationsAction extends DumbAwareAction {
     List<RunConfiguration> configurations =
       ContainerUtil.filter(runDashboardManager.getHiddenConfigurations(), configuration -> types.contains(configuration.getType()));
     runDashboardManager.restoreConfigurations(configurations);
+  }
+
+  private static boolean hasHiddenConfiguration(Project project) {
+    return !((RunDashboardManagerImpl)RunDashboardManager.getInstance(project)).getHiddenConfigurations().isEmpty();
   }
 
   private static Set<ConfigurationType> getTargetTypes(AnActionEvent e) {
