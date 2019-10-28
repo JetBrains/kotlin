@@ -1799,29 +1799,29 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
-            @TestMetadata("forInArrrayWithIndexNoElementVar.kt")
-            public void testForInArrrayWithIndexNoElementVar() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInArrrayWithIndexNoElementVar.kt");
+            @TestMetadata("forInArrayWithIndexNoElementVar.kt")
+            public void testForInArrayWithIndexNoElementVar() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInArrayWithIndexNoElementVar.kt");
             }
 
-            @TestMetadata("forInArrrayWithIndexNoIndexVar.kt")
-            public void testForInArrrayWithIndexNoIndexVar() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInArrrayWithIndexNoIndexVar.kt");
+            @TestMetadata("forInArrayWithIndexNoIndexVar.kt")
+            public void testForInArrayWithIndexNoIndexVar() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInArrayWithIndexNoIndexVar.kt");
             }
 
-            @TestMetadata("forInEmptyArrrayWithIndex.kt")
-            public void testForInEmptyArrrayWithIndex() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInEmptyArrrayWithIndex.kt");
+            @TestMetadata("forInEmptyArrayWithIndex.kt")
+            public void testForInEmptyArrayWithIndex() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInEmptyArrayWithIndex.kt");
             }
 
-            @TestMetadata("forInIntArrrayWithIndex.kt")
-            public void testForInIntArrrayWithIndex() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInIntArrrayWithIndex.kt");
+            @TestMetadata("forInIntArrayWithIndex.kt")
+            public void testForInIntArrayWithIndex() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInIntArrayWithIndex.kt");
             }
 
-            @TestMetadata("forInObjectArrrayWithIndex.kt")
-            public void testForInObjectArrrayWithIndex() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInObjectArrrayWithIndex.kt");
+            @TestMetadata("forInObjectArrayWithIndex.kt")
+            public void testForInObjectArrayWithIndex() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInArrayWithIndex/forInObjectArrayWithIndex.kt");
             }
         }
 
