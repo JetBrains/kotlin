@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirBackingFieldReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
@@ -28,12 +27,17 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
 import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
+import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class FirCallResolver(
@@ -215,6 +219,88 @@ class FirCallResolver(
         }
         if (resultExpression is FirExpression) transformer.storeTypeFromCallee(resultExpression)
         return resultExpression
+    }
+
+    fun resolveCallableReference(callableReferenceAccess: FirCallableReferenceAccess, lhs: DoubleColonLHS?): FirCallableReferenceAccess {
+        val resultCollector = ReferencesCandidateCollector(this, resolutionStageRunner)
+
+        val consumer =
+            createCallableReferencesConsumerForLHS(
+                callableReferenceAccess, lhs, resultCollector
+            )
+
+        towerResolver.runResolver(consumer, implicitReceiverStack.receiversAsReversed())
+
+        val result = resultCollector.results.firstOrNull() ?: return callableReferenceAccess
+
+        val resultingType: ConeKotlinType = when (val fir = result.symbol.fir) {
+            is FirSimpleFunction -> createKFunctionType(fir, lhs)
+            is FirProperty -> createKPropertyType(fir)
+            else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
+        }
+
+        callableReferenceAccess.replaceTypeRef(FirResolvedTypeRefImpl(null, resultingType))
+
+        return callableReferenceAccess.transformCalleeReference(
+            StoreNameReference,
+            FirNamedReferenceWithCandidate(callableReferenceAccess.psi, callableReferenceAccess.calleeReference.name, result)
+        )
+    }
+
+    private fun createKPropertyType(fir: FirProperty): ConeKotlinType {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun createKFunctionType(
+        function: FirSimpleFunction,
+        lhs: DoubleColonLHS?
+    ): ConeKotlinType {
+        val receiverType = (lhs as? DoubleColonLHS.Type)?.type
+        val parameterTypes = function.valueParameters.map {
+            it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter $it")
+        }
+
+        return createFunctionalType(
+            parameterTypes, receiverType = receiverType,
+            rawReturnType = function.returnTypeRef.coneTypeSafe() ?: ConeKotlinErrorType("No type for return type of $this")
+        )
+    }
+
+    private fun createCallableReferencesConsumerForLHS(
+        callableReferenceAccess: FirCallableReferenceAccess,
+        lhs: DoubleColonLHS?,
+        resultCollector: CandidateCollector
+    ): TowerDataConsumer {
+        val name = callableReferenceAccess.calleeReference.name
+
+        return when (lhs) {
+            is DoubleColonLHS.Expression, null -> createCallableReferencesConsumerForReceiver(
+                name, resultCollector, callableReferenceAccess.explicitReceiver
+            )
+            is DoubleColonLHS.Type -> createCallableReferencesConsumerForReceiver(
+                name, resultCollector,
+                FirExpressionStub(callableReferenceAccess.psi).apply { replaceTypeRef(FirResolvedTypeRefImpl(null, lhs.type)) }
+            )
+        }
+    }
+
+    private fun createCallableReferencesConsumerForReceiver(
+        name: Name,
+        resultCollector: CandidateCollector,
+        receiver: FirExpression?
+    ): TowerDataConsumer {
+        val info = CallInfo(
+            CallKind.CallableReference,
+            receiver,
+            emptyList(),
+            false,
+            emptyList(),
+            session,
+            file,
+            transformer.components.container
+        ) { it.resultType }
+
+        return createCallableReferencesConsumer(session, name, info, this, resultCollector)
     }
 
     private fun createResolvedNamedReference(

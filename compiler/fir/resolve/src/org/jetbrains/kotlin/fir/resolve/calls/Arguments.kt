@@ -49,7 +49,7 @@ fun resolveArgumentExpression(
             typeProvider
         )
         // TODO:!
-        is FirCallableReferenceAccess -> Unit
+        is FirCallableReferenceAccess -> preprocessCallableReference(csBuilder, argument, expectedType, sink)
         // NB: FirCallableReferenceAccess should be checked earlier
         is FirQualifiedAccessExpression -> resolvePlainExpressionArgument(
             csBuilder,

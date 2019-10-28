@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -42,6 +45,19 @@ fun preprocessLambdaArgument(
     acceptLambdaAtoms(resolvedArgument)
 }
 
+fun preprocessCallableReference(
+    csBuilder: ConstraintSystemBuilder,
+    argument: FirCallableReferenceAccess,
+    expectedType: ConeKotlinType,
+    sink: CheckerSink
+) {
+    val type = argument.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
+    val candidate = argument.candidate() ?: return resolvePlainArgumentType(
+        csBuilder, type, expectedType, sink, isReceiver = false, isSafeCall = false
+    )
+    val argumentType = candidate.substitutor.substituteOrSelf(type)
+    resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver = false, isSafeCall = false)
+}
 
 val ConeKotlinType.isBuiltinFunctionalType: Boolean
     get() {
@@ -77,14 +93,14 @@ private fun isFunctionalTypeWithReceiver(typeRef: FirTypeRef) =
         coneTypeSafe.lookupTag.classId.asString() == "kotlin/ExtensionFunctionType"
     }
 
-private val ConeKotlinType.returnType: ConeKotlinType?
+val ConeKotlinType.returnType: ConeKotlinType?
     get() {
         require(this is ConeClassType)
         val projection = typeArguments.last()
         return (projection as? ConeTypedProjection)?.type
     }
 
-private val ConeKotlinType.valueParameterTypes: List<ConeKotlinType?>
+val ConeKotlinType.valueParameterTypes: List<ConeKotlinType?>
     get() {
         require(this is ConeClassType)
         return typeArguments.dropLast(1).map {

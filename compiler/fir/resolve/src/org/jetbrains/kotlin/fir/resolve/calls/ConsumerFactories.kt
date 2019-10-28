@@ -136,3 +136,19 @@ fun createSimpleConsumer(
         NoExplicitReceiverTowerDataConsumer(session, name, token, factory, resultCollector)
     }
 }
+
+fun createCallableReferencesConsumer(
+    session: FirSession,
+    name: Name,
+    callInfo: CallInfo,
+    bodyResolveComponents: BodyResolveComponents,
+    resultCollector: CandidateCollector
+): TowerDataConsumer {
+    // TODO: Use SamePriorityConsumer
+    return PrioritizedTowerDataConsumer(
+        resultCollector,
+        createSimpleConsumer(session, name, TowerScopeLevel.Token.Functions, callInfo, bodyResolveComponents, resultCollector)
+        // TODO: Support properties
+        //  , createSimpleConsumer(session, name, TowerScopeLevel.Token.Properties, callInfo, bodyResolveComponents, resultCollector)
+    )
+}

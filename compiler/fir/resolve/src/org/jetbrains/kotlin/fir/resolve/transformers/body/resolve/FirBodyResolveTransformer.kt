@@ -77,6 +77,13 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformFunctionCall(functionCall, data)
     }
 
+    override fun transformCallableReferenceAccess(
+        callableReferenceAccess: FirCallableReferenceAccess,
+        data: Any?
+    ): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformCallableReferenceAccess(callableReferenceAccess, data)
+    }
+
     override fun transformBlock(block: FirBlock, data: Any?): CompositeTransformResult<FirStatement> {
         return expressionsTransformer.transformBlock(block, data)
     }

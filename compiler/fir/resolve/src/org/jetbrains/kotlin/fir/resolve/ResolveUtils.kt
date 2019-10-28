@@ -216,11 +216,13 @@ fun FirFunction<*>.constructFunctionalTypeRef(session: FirSession): FirResolvedT
 fun createFunctionalType(
     parameters: List<ConeKotlinType>,
     receiverType: ConeKotlinType?,
-    rawReturnType: ConeKotlinType
+    rawReturnType: ConeKotlinType,
+    isKFunctionType: Boolean = false
 ): ConeLookupTagBasedType {
     val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
 
-    val functionalTypeId = StandardClassIds.byName("Function${receiverAndParameterTypes.size - 1}")
+    val postfix = "Function${receiverAndParameterTypes.size - 1}"
+    val functionalTypeId = if (isKFunctionType) StandardClassIds.reflectByName("K$postfix") else StandardClassIds.byName(postfix)
     return ConeClassTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), receiverAndParameterTypes.toTypedArray(), isNullable = false)
 }
 

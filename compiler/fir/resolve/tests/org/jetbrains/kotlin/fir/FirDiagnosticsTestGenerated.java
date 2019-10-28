@@ -28,6 +28,44 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/diagnostics/callableReferences")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CallableReferences extends AbstractFirDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCallableReferences() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/diagnostics/callableReferences"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("inferenceFromCallableReferenceType.kt")
+        public void testInferenceFromCallableReferenceType() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/inferenceFromCallableReferenceType.kt");
+        }
+
+        @TestMetadata("inferenceFromExpectedType.kt")
+        public void testInferenceFromExpectedType() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/inferenceFromExpectedType.kt");
+        }
+
+        @TestMetadata("simpleClassReceiver.kt")
+        public void testSimpleClassReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/simpleClassReceiver.kt");
+        }
+
+        @TestMetadata("simpleExpressionReceiver.kt")
+        public void testSimpleExpressionReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/simpleExpressionReceiver.kt");
+        }
+
+        @TestMetadata("simpleNoReceiver.kt")
+        public void testSimpleNoReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/callableReferences/simpleNoReceiver.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/diagnostics/j+k")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

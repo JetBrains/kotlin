@@ -1,0 +1,39 @@
+FILE: inferenceFromExpectedType.kt
+    public final fun foo(x: R|kotlin/Function1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun foo2(x: R|kotlin/Function2<A, kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun <T, E> baz(x: R|T|): R|E| {
+            ^baz when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
+                ==($subj$, Null(null)) ->  {
+                    throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
+                }
+                else ->  {
+                    R|<local>/<bangbang>|
+                }
+            }
+
+        }
+
+    }
+    public final fun <T, E> bar(x: R|T|): R|E| {
+        ^bar when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
+            ==($subj$, Null(null)) ->  {
+                throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
+            }
+            else ->  {
+                R|<local>/<bangbang>|
+            }
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/foo|(::R|/bar<kotlin/String, kotlin/Int>|)
+        R|/foo|(R|/A.A|()::R|/A.baz<kotlin/String, kotlin/Int>|)
+        R|/foo2|(Q|A|::R|/A.baz<kotlin/String, kotlin/Int>|)
+    }

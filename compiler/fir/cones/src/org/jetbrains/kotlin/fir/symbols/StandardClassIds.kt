@@ -38,6 +38,7 @@ object StandardClassIds {
     val KProperty = "KProperty".reflectId()
 
     fun byName(name: String) = name.baseId()
+    fun reflectByName(name: String) = name.reflectId()
 
     val primitiveArrayTypeByElementType: Map<ClassId, ClassId> = mutableMapOf<ClassId, ClassId>().apply {
         fun addPrimitive(id: ClassId) {

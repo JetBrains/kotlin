@@ -90,6 +90,16 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         }
     }
 
+    private fun List<ConeKotlinType>.renderTypesSeparated() {
+        for ((index, element) in this.withIndex()) {
+            if (index > 0) {
+                print(", ")
+            }
+            print(element.render())
+        }
+    }
+
+
     private fun List<FirValueParameter>.renderParameters() {
         print("(")
         renderSeparated()
@@ -806,6 +816,18 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         }
         val symbol = resolvedCallableReference.resolvedSymbol
         print(symbol.render())
+
+
+        if (resolvedCallableReference is FirResolvedRealCallableReference) {
+            if (resolvedCallableReference.inferredTypeArguments.isNotEmpty()) {
+                print("<")
+
+                resolvedCallableReference.inferredTypeArguments.renderTypesSeparated()
+
+                print(">")
+            }
+        }
+
         if (isFakeOverride) {
             when (symbol) {
                 is FirNamedFunctionSymbol -> {
@@ -820,6 +842,10 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             print(">")
         }
         print("|")
+    }
+
+    override fun visitResolvedRealCallableReference(resolvedRealCallableReference: FirResolvedRealCallableReference) {
+        visitResolvedCallableReference(resolvedRealCallableReference)
     }
 
     override fun visitThisReference(thisReference: FirThisReference) {

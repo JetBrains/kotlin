@@ -43,4 +43,12 @@ sealed class CallKind {
             CheckReceivers.Extension
         )
     }
+
+    object CallableReference : CallKind() {
+        override val resolutionSequence: List<ResolutionStage> = listOf(
+            CheckVisibility,
+            DiscriminateSynthetics,
+            CreateFreshTypeVariableSubstitutorStage
+        )
+    }
 }
