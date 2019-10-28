@@ -28,7 +28,7 @@ class GradleIncrementalImportingTest : BuildViewMessagesImportingTestCase() {
   override fun setUp() {
     super.setUp()
     myProject.registerServiceInstance(ModelConsumer::class.java, ModelConsumer())
-    GradleProjectResolverExtension.EP_NAME.getPoint(null).registerExtension(TestProjectResolverExtension(), testRootDisposable)
+    GradleProjectResolverExtension.EP_NAME.getPoint(null).registerExtension(TestProjectIncrementalResolverExtension(), testRootDisposable)
     ProjectModelContributor.EP_NAME.getPoint(null).registerExtension(TestProjectModelContributor(), testRootDisposable)
   }
 
@@ -51,7 +51,7 @@ class GradleIncrementalImportingTest : BuildViewMessagesImportingTestCase() {
                                       ImportSpecBuilder(myProject, SYSTEM_ID)
                                         .use(ProgressExecutionMode.MODAL_SYNC)
                                         .projectResolverPolicy(
-                                          GradleIncrementalResolverPolicy(Predicate { it is TestProjectResolverExtension }))
+                                          GradleIncrementalResolverPolicy(Predicate { it is TestProjectIncrementalResolverExtension }))
     )
 
     assertSyncViewTreeEquals("-\n" +
@@ -168,7 +168,7 @@ class GradleIncrementalImportingTest : BuildViewMessagesImportingTestCase() {
   }
 }
 
-class TestProjectResolverExtension : AbstractProjectResolverExtension() {
+class TestProjectIncrementalResolverExtension : AbstractProjectResolverExtension() {
 
   override fun projectsLoaded(models: ModelsHolder<BuildModel, ProjectModel>?) {
     val buildFinishedModel = models?.getModel(BuildFinishedModel::class.java)
