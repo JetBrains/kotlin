@@ -82,9 +82,21 @@ abstract class DifferenceCalculator {
         val result = hashSetOf<String>()
 
         val oldMap =
-            oldList.groupBy { it.getHashCode({ compareObject.oldGetIndexOfString(it) }, { compareObject.oldGetIndexOfClassId(it) }) }
+            oldList.groupBy {
+                it.getHashCode(
+                    compareObject::oldGetIndexOfString,
+                    compareObject::oldGetIndexOfClassId,
+                    compareObject::oldGetTypeById
+                )
+            }
         val newMap =
-            newList.groupBy { it.getHashCode({ compareObject.newGetIndexOfString(it) }, { compareObject.newGetIndexOfClassId(it) }) }
+            newList.groupBy {
+                it.getHashCode(
+                    compareObject::newGetIndexOfString,
+                    compareObject::newGetIndexOfClassId,
+                    compareObject::newGetTypeById
+                )
+            }
 
         val hashes = oldMap.keys + newMap.keys
         for (hash in hashes) {
@@ -134,12 +146,12 @@ abstract class DifferenceCalculator {
         return oldNames.union(newNames) - oldNames.intersect(newNames)
     }
 
-    private fun MessageLite.getHashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    private fun MessageLite.getHashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeTable: (Int) -> ProtoBuf.Type): Int {
         return when (this) {
-            is ProtoBuf.Constructor -> hashCode(stringIndexes, fqNameIndexes)
-            is ProtoBuf.Function -> hashCode(stringIndexes, fqNameIndexes)
-            is ProtoBuf.Property -> hashCode(stringIndexes, fqNameIndexes)
-            is ProtoBuf.TypeAlias -> hashCode(stringIndexes, fqNameIndexes)
+            is ProtoBuf.Constructor -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+            is ProtoBuf.Function -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+            is ProtoBuf.Property -> hashCode(stringIndexes, fqNameIndexes, typeTable)
+            is ProtoBuf.TypeAlias -> hashCode(stringIndexes, fqNameIndexes, typeTable)
             else -> error("Unknown message: $this")
         }
     }
@@ -159,7 +171,12 @@ class DifferenceCalculatorForClass(
     private val oldData: ClassProtoData,
     private val newData: ClassProtoData
 ) : DifferenceCalculator() {
-    override val compareObject = ProtoCompareGenerated(oldData.nameResolver, newData.nameResolver)
+    override val compareObject = ProtoCompareGenerated(
+        oldNameResolver = oldData.nameResolver,
+        newNameResolver = newData.nameResolver,
+        oldTypeTable = oldData.proto.typeTableOrNull,
+        newTypeTable = newData.proto.typeTableOrNull
+    )
 
     override fun difference(): Difference {
         val (oldProto, oldNameResolver) = oldData
@@ -273,7 +290,12 @@ class DifferenceCalculatorForPackageFacade(
     private val oldData: PackagePartProtoData,
     private val newData: PackagePartProtoData
 ) : DifferenceCalculator() {
-    override val compareObject = ProtoCompareGenerated(oldData.nameResolver, newData.nameResolver)
+    override val compareObject = ProtoCompareGenerated(
+        oldNameResolver = oldData.nameResolver,
+        newNameResolver = newData.nameResolver,
+        oldTypeTable = oldData.proto.typeTableOrNull,
+        newTypeTable = newData.proto.typeTableOrNull
+    )
 
     override fun difference(): Difference {
         val oldProto = oldData.proto
@@ -322,3 +344,9 @@ class DifferenceCalculatorForPackageFacade(
 
 private val ProtoBuf.Class.isSealed: Boolean
     get() = ProtoBuf.Modality.SEALED == Flags.MODALITY.get(flags)
+
+val ProtoBuf.Class.typeTableOrNull: ProtoBuf.TypeTable?
+    get() = if (hasTypeTable()) typeTable else null
+
+val ProtoBuf.Package.typeTableOrNull: ProtoBuf.TypeTable?
+    get() = if (hasTypeTable()) typeTable else null

@@ -25,4 +25,5 @@ extend google.protobuf.FieldOptions {
   optional bool name_id_in_table = 50001;
   optional bool fq_name_id_in_table = 50002;
   optional bool string_id_in_table = 50003;
+  optional bool type_id_in_table = 50004;
 }
