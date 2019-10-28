@@ -3,3 +3,8 @@ org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.t
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testJdkClass, KT-34542
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testLightClassForLibrarySource, KT-34542
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testOurKotlinClass, KT-34542
+org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.testCoroutineContextCheck, KT-34659
+org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.testDispatchersTypeDetection, KT-34659
+org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.testLambdaReceiverType, KT-34659
+org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.testNestedFunctionsInsideSuspendLambda, KT-34659
+org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.testSimpleCoroutineScope, KT-34659

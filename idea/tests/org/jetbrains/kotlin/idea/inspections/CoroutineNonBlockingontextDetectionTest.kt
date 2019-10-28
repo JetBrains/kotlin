@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.runTest
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
@@ -26,27 +27,29 @@ class CoroutineNonBlockingContextDetectionTest : KotlinLightCodeInsightFixtureTe
     }
 
     fun testSimpleCoroutineScope() {
-        myFixture.configureByFile("InsideCoroutine.kt")
-        myFixture.testHighlighting(true, false, false, "InsideCoroutine.kt")
+        doTest("InsideCoroutine.kt")
     }
 
     fun testCoroutineContextCheck() {
-        myFixture.configureByFile("ContextCheck.kt")
-        myFixture.testHighlighting(true, false, false, "ContextCheck.kt")
+        doTest("ContextCheck.kt")
     }
 
     fun testLambdaReceiverType() {
-        myFixture.configureByFile("LambdaReceiverTypeCheck.kt")
-        myFixture.testHighlighting(true, false, false, "LambdaReceiverTypeCheck.kt")
+        doTest("LambdaReceiverTypeCheck.kt")
     }
 
     fun testNestedFunctionsInsideSuspendLambda() {
-        myFixture.configureByFile("NestedFunctionsInsideSuspendLambda.kt")
-        myFixture.testHighlighting(true, false, false, "NestedFunctionsInsideSuspendLambda.kt")
+        doTest("NestedFunctionsInsideSuspendLambda.kt")
     }
 
     fun testDispatchersTypeDetection() {
-        myFixture.configureByFile("DispatchersTypeCheck.kt")
-        myFixture.testHighlighting(true, false, false, "DispatchersTypeCheck.kt")
+        doTest("DispatchersTypeCheck.kt")
+    }
+
+    private fun doTest(fileName: String) {
+        runTest {
+            myFixture.configureByFile(fileName)
+            myFixture.testHighlighting(true, false, false, fileName)
+        }
     }
 }
