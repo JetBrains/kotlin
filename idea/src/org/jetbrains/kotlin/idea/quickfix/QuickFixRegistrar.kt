@@ -171,6 +171,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         FUNCTION_EXPECTED.registerFactory(InvokeImportFix)
 
+        ITERATOR_MISSING.registerFactory(IteratorImportFix)
+
         DELEGATE_SPECIAL_FUNCTION_MISSING.registerFactory(DelegateAccessorsImportFix)
         COMPONENT_FUNCTION_MISSING.registerFactory(ComponentsImportFix, AddDataModifierFix)
 
