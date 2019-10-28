@@ -86,10 +86,6 @@ public class BaseProjectImportErrorHandler extends AbstractProjectImportErrorHan
 
     LOG.debug(String.format("Failed to run Gradle project at '%1$s'", projectPath), error);
 
-    if (error instanceof ProcessCanceledException) {
-      return new ExternalSystemException("Project build was cancelled");
-    }
-
     Throwable rootCause = executionErrorHandler.getRootCause();
     String location = executionErrorHandler.getLocation();
     if (location == null && !StringUtil.isEmpty(buildFilePath)) {

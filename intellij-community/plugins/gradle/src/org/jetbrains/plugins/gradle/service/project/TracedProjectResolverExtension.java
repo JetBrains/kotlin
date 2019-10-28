@@ -9,6 +9,7 @@ import com.intellij.openapi.externalSystem.service.project.PerformanceTrace;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -21,15 +22,6 @@ public class TracedProjectResolverExtension extends AbstractProjectResolverExten
     myTrace = trace;
   }
 
-  @NotNull
-  @Override
-  public ProjectData createProject() {
-    final long startTime = System.currentTimeMillis();
-    final ProjectData project = super.createProject();
-    myTrace.logPerformance("Resolver chain createProject", System.currentTimeMillis() - startTime);
-    return project;
-  }
-
   @Override
   public void populateProjectExtraModels(@NotNull IdeaProject gradleProject, @NotNull DataNode<ProjectData> ideProject) {
     final long startTime = System.currentTimeMillis();
@@ -38,7 +30,7 @@ public class TracedProjectResolverExtension extends AbstractProjectResolverExten
                            System.currentTimeMillis() - startTime);
   }
 
-  @NotNull
+  @Nullable
   @Override
   public DataNode<ModuleData> createModule(@NotNull IdeaModule gradleModule, @NotNull DataNode<ProjectData> projectDataNode) {
     final long startTime = System.currentTimeMillis();

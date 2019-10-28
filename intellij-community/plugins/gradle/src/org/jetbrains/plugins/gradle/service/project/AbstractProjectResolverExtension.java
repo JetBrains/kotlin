@@ -69,18 +69,12 @@ public abstract class AbstractProjectResolverExtension implements GradleProjectR
     return nextResolver;
   }
 
-  @NotNull
-  @Override
-  public ProjectData createProject() {
-    return nextResolver.createProject();
-  }
-
   @Override
   public void populateProjectExtraModels(@NotNull IdeaProject gradleProject, @NotNull DataNode<ProjectData> ideProject) {
     nextResolver.populateProjectExtraModels(gradleProject, ideProject);
   }
 
-  @NotNull
+  @Nullable
   @Override
   public DataNode<ModuleData> createModule(@NotNull IdeaModule gradleModule, @NotNull DataNode<ProjectData> projectDataNode) {
     return nextResolver.createModule(gradleModule, projectDataNode);

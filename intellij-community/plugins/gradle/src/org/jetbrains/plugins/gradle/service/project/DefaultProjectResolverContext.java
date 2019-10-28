@@ -15,6 +15,7 @@ import org.gradle.tooling.GradleConnector;
 import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.idea.IdeaModule;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.ProjectImportAction;
@@ -39,13 +40,15 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable private String myProjectGradleVersion;
   @Nullable private String myBuildSrcGroup;
   @Nullable private BuildEnvironment myBuildEnvironment;
+  private final GradleIncrementalResolverPolicy myPolicy;
 
   public DefaultProjectResolverContext(@NotNull final ExternalSystemTaskId externalSystemTaskId,
                                        @NotNull final String projectPath,
                                        @Nullable final GradleExecutionSettings settings,
                                        @NotNull final ExternalSystemTaskNotificationListener listener,
+                                       @Nullable GradleIncrementalResolverPolicy resolverPolicy,
                                        final boolean isPreviewMode) {
-    this(externalSystemTaskId, projectPath, settings, null, listener, isPreviewMode);
+    this(externalSystemTaskId, projectPath, settings, null, listener, resolverPolicy, isPreviewMode);
   }
 
 
@@ -54,12 +57,14 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
                                        @Nullable final GradleExecutionSettings settings,
                                        final ProjectConnection connection,
                                        @NotNull final ExternalSystemTaskNotificationListener listener,
+                                       @Nullable GradleIncrementalResolverPolicy resolverPolicy,
                                        final boolean isPreviewMode) {
     myExternalSystemTaskId = externalSystemTaskId;
     myProjectPath = projectPath;
     mySettings = settings;
     myConnection = connection;
     myListener = listener;
+    myPolicy = resolverPolicy;
     myIsPreviewMode = isPreviewMode;
     myCancellationTokenSource = GradleConnector.newCancellationTokenSource();
   }
@@ -209,5 +214,10 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable
   public BuildEnvironment getBuildEnvironment() {
     return myBuildEnvironment;
+  }
+
+  @ApiStatus.Experimental
+  public GradleIncrementalResolverPolicy getPolicy() {
+    return myPolicy;
   }
 }

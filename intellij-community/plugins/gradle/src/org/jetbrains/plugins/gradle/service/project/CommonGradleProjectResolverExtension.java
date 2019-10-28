@@ -1,17 +1,13 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
-import com.amazon.ion.IonType;
-import com.google.gson.GsonBuilder;
 import com.intellij.build.events.MessageEvent;
 import com.intellij.build.issue.BuildIssue;
-import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.debugger.DebuggerBackendExtension;
 import com.intellij.openapi.externalSystem.model.ConfigurationDataImpl;
 import com.intellij.openapi.externalSystem.model.DataNode;
-import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
@@ -26,7 +22,6 @@ import com.intellij.openapi.externalSystem.util.PathPrefixTreeMap;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.registry.Registry;
@@ -36,16 +31,11 @@ import com.intellij.util.PathUtil;
 import com.intellij.util.ReflectionUtil;
 import com.intellij.util.SystemProperties;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.net.HttpConfigurable;
-import gnu.trove.THash;
 import gnu.trove.THashSet;
-import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
-import org.gradle.internal.impldep.com.google.common.collect.Multimap;
 import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.GradleModuleVersion;
 import org.gradle.tooling.model.GradleTask;
 import org.gradle.tooling.model.UnsupportedMethodException;
-import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.idea.*;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NonNls;
@@ -59,7 +49,6 @@ import org.jetbrains.plugins.gradle.model.tests.ExternalTestsModel;
 import org.jetbrains.plugins.gradle.service.project.data.ExternalProjectDataCache;
 import org.jetbrains.plugins.gradle.service.project.data.GradleExtensionsDataService;
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings;
-import org.jetbrains.plugins.gradle.tooling.builder.ModelBuildScriptClasspathBuilderImpl;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
@@ -73,7 +62,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.intellij.openapi.util.Pair.pair;
 import static com.intellij.openapi.util.text.StringUtil.*;
 import static com.intellij.util.containers.ContainerUtil.newLinkedHashSet;
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.CONFIGURATION_ARTIFACTS;
@@ -81,43 +69,15 @@ import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.*;
 
 /**
- * {@link BaseGradleProjectResolverExtension} provides base implementation of Gradle project resolver.
+ * {@link CommonGradleProjectResolverExtension} provides implementation of Gradle project resolver common to all project types.
  *
  * @author Vladislav.Soroka
  */
-@Order(Integer.MAX_VALUE)
-public class BaseGradleProjectResolverExtension implements GradleProjectResolverExtension {
-  private static final Logger LOG = Logger.getInstance(BaseGradleProjectResolverExtension.class);
+@Order(Integer.MAX_VALUE - 1)
+public class CommonGradleProjectResolverExtension extends AbstractProjectResolverExtension {
+  private static final Logger LOG = Logger.getInstance(CommonGradleProjectResolverExtension.class);
 
   @NotNull @NonNls private static final String UNRESOLVED_DEPENDENCY_PREFIX = "unresolved dependency - ";
-
-  @NotNull private ProjectResolverContext resolverCtx;
-  @NotNull private final BaseProjectImportErrorHandler myErrorHandler = new BaseProjectImportErrorHandler();
-
-  @Override
-  public void setProjectResolverContext(@NotNull ProjectResolverContext projectResolverContext) {
-    resolverCtx = projectResolverContext;
-  }
-
-  @Override
-  public void setNext(@NotNull GradleProjectResolverExtension next) {
-    // should be the last extension in the chain
-  }
-
-  @Nullable
-  @Override
-  public GradleProjectResolverExtension getNext() {
-    return null;
-  }
-
-  @NotNull
-  @Override
-  public ProjectData createProject() {
-    final String projectDirPath = resolverCtx.getProjectPath();
-    final ExternalProject externalProject = resolverCtx.getExtraProject(ExternalProject.class);
-    String projectName = externalProject != null ? externalProject.getName() : resolverCtx.getModels().getIdeaProject().getName();
-    return new ProjectData(GradleConstants.SYSTEM_ID, projectName, projectDirPath, projectDirPath);
-  }
 
   @Override
   public void populateProjectExtraModels(@NotNull IdeaProject gradleProject, @NotNull DataNode<ProjectData> ideProject) {
@@ -230,7 +190,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
   }
 
   @NotNull
-  protected String[] getIdeModuleGroup(String moduleName, IdeaModule gradleModule) {
+  private static String[] getIdeModuleGroup(String moduleName, IdeaModule gradleModule) {
     final String gradlePath = gradleModule.getGradleProject().getPath();
     final String rootName = gradleModule.getProject().getName();
     if (isEmpty(gradlePath) || ":".equals(gradlePath)) {
@@ -749,29 +709,6 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
     return new ClassSetImportModelProvider(getExtraProjectModelClasses(), newLinkedHashSet(ExternalProject.class, IdeaProject.class));
   }
 
-  @NotNull
-  @Override
-  public Set<Class> getToolingExtensionsClasses() {
-    return newLinkedHashSet(
-      // external-system-rt.jar
-      ExternalSystemSourceType.class,
-      // gradle-tooling-extension-api jar
-      ProjectImportAction.class,
-      // gradle-tooling-extension-impl jar
-      ModelBuildScriptClasspathBuilderImpl.class,
-      // repacked gradle guava
-      Multimap.class,
-      GsonBuilder.class,
-      ShortTypeHandling.class,
-      // trove4j jar
-      THash.class,
-      // ion-java jar
-      IonType.class,
-      // util-rt jat
-      SystemInfoRt.class // !!! do not replace it with SystemInfo.class from util module
-    );
-  }
-
   @Override
   public Set<Class> getTargetTypes() {
     return newLinkedHashSet(
@@ -780,61 +717,6 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       FileCollectionDependency.class,
       UnresolvedExternalDependency.class
     );
-  }
-
-  @NotNull
-  @Override
-  public List<Pair<String, String>> getExtraJvmArgs() {
-    if (ExternalSystemApiUtil.isInProcessMode(GradleConstants.SYSTEM_ID)) {
-      final List<Pair<String, String>> extraJvmArgs = new ArrayList<>();
-
-      final HttpConfigurable httpConfigurable = HttpConfigurable.getInstance();
-      if (!isEmpty(httpConfigurable.PROXY_EXCEPTIONS)) {
-        List<String> hosts = split(httpConfigurable.PROXY_EXCEPTIONS, ",");
-        if (!hosts.isEmpty()) {
-          final String nonProxyHosts = join(hosts, TRIMMER, "|");
-          extraJvmArgs.add(pair("http.nonProxyHosts", nonProxyHosts));
-          extraJvmArgs.add(pair("https.nonProxyHosts", nonProxyHosts));
-        }
-      }
-      if (httpConfigurable.USE_HTTP_PROXY && isNotEmpty(httpConfigurable.getProxyLogin())) {
-        extraJvmArgs.add(pair("http.proxyUser", httpConfigurable.getProxyLogin()));
-        extraJvmArgs.add(pair("https.proxyUser", httpConfigurable.getProxyLogin()));
-        final String plainProxyPassword = httpConfigurable.getPlainProxyPassword();
-        extraJvmArgs.add(pair("http.proxyPassword", plainProxyPassword));
-        extraJvmArgs.add(pair("https.proxyPassword", plainProxyPassword));
-      }
-      extraJvmArgs.addAll(httpConfigurable.getJvmProperties(false, null));
-
-      return extraJvmArgs;
-    }
-
-    return Collections.emptyList();
-  }
-
-  @NotNull
-  @Override
-  public List<String> getExtraCommandLineArgs() {
-    return Collections.emptyList();
-  }
-
-  @NotNull
-  @Override
-  public ExternalSystemException getUserFriendlyError(@Nullable BuildEnvironment buildEnvironment,
-                                                      @NotNull Throwable error,
-                                                      @NotNull String projectPath,
-                                                      @Nullable String buildFilePath) {
-    return myErrorHandler.getUserFriendlyError(buildEnvironment, error, projectPath, buildFilePath);
-  }
-
-  @Override
-  public void preImportCheck() {
-  }
-
-  @Override
-  public void enhanceTaskProcessing(@NotNull List<String> taskNames,
-                                    @Nullable String jvmParametersSetup,
-                                    @NotNull Consumer<String> initScriptConsumer) {
   }
 
   @Override
@@ -861,11 +743,6 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
 
     final String script = join(lines, SystemProperties.getLineSeparator());
     initScriptConsumer.consume(script);
-  }
-
-  @Override
-  public void enhanceRemoteProcessing(@NotNull SimpleJavaParameters parameters) {
-    // IntelliJ Gradle integration uses in-process calls for gradle tooling api
   }
 
   /**

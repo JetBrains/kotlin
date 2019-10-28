@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.gradle.tooling.*
 import org.gradle.tooling.model.BuildModel
 import org.gradle.tooling.model.ProjectModel
@@ -123,7 +124,13 @@ class BuildActionRunner(
   private fun createPhasedExecuter(projectsLoadedCallBack: Consumer<ModelsHolder<BuildModel, ProjectModel>>): BuildActionExecuter<Void> {
     buildAction.prepareForPhasedExecuter()
     val executer = resolverCtx.connection.action()
-      .projectsLoaded(buildAction, IntermediateResultHandler { projectsLoadedCallBack.accept(it) })
+      .projectsLoaded(buildAction, IntermediateResultHandler {
+        try {
+          projectsLoadedCallBack.accept(it)
+        } catch (e: ProcessCanceledException) {
+          resolverCtx.cancellationTokenSource?.cancel()
+        }
+      })
       .buildFinished(buildAction, modelsHandler)
       .build()
     executer.prepare()

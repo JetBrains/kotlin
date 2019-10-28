@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle;
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -26,7 +25,6 @@ import com.intellij.openapi.externalSystem.service.ui.DefaultExternalSystemUiAwa
 import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle;
-import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.module.Module;
@@ -39,30 +37,23 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.openapi.util.AtomicClearableLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopes;
 import com.intellij.util.Function;
-import com.intellij.util.PathUtil;
-import com.intellij.util.PathsList;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.messages.MessageBusConnection;
 import icons.GradleIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter;
 import org.jetbrains.plugins.gradle.model.data.BuildParticipant;
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager;
 import org.jetbrains.plugins.gradle.service.project.GradleAutoImportAware;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver;
-import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension;
 import org.jetbrains.plugins.gradle.service.settings.GradleConfigurable;
 import org.jetbrains.plugins.gradle.service.task.GradleTaskManager;
 import org.jetbrains.plugins.gradle.settings.*;
@@ -87,19 +78,8 @@ public final class GradleManager
 
   private static final Logger LOG = Logger.getInstance(GradleManager.class);
 
-  @NotNull private final ExternalSystemAutoImportAware myAutoImportDelegate =
-    new CachingExternalSystemAutoImportAware(new GradleAutoImportAware());
-
-  @NotNull private static final AtomicClearableLazyValue<List<GradleProjectResolverExtension>> RESOLVER_EXTENSIONS =
-    new AtomicClearableLazyValue<List<GradleProjectResolverExtension>>() {
-      @NotNull
-      @Override
-      protected List<GradleProjectResolverExtension> compute() {
-        List<GradleProjectResolverExtension> result = new ArrayList<>(GradleProjectResolverExtension.EP_NAME.getExtensionList());
-        ExternalSystemApiUtil.orderAwareSort(result);
-        return result;
-      }
-    };
+  @NotNull
+  private final ExternalSystemAutoImportAware myAutoImportDelegate = new CachingExternalSystemAutoImportAware(new GradleAutoImportAware());
 
   @NotNull
   @Override
@@ -155,10 +135,6 @@ public final class GradleManager
                                                                    distributionType,
                                                                    settings.getGradleVmOptions(),
                                                                    settings.isOfflineWork());
-      for (GradleProjectResolverExtension extension : RESOLVER_EXTENSIONS.getValue()) {
-        result.addResolverExtensionClass(ClassHolder.from(extension.getClass()));
-      }
-
       final String rootProjectPath = projectLevelSettings != null ? projectLevelSettings.getExternalProjectPath() : projectPath;
       final Sdk gradleJdk = gradleInstallationManager.getGradleJdk(project, rootProjectPath);
       final String javaHome = gradleJdk != null ? gradleJdk.getHomePath() : null;
@@ -225,12 +201,11 @@ public final class GradleManager
 
       if (projectData == null || projectData.getExternalProjectStructure() == null) continue;
 
-      Collection<DataNode<ModuleData>> moduleNodes =
-        ExternalSystemApiUtil.findAll(projectData.getExternalProjectStructure(), ProjectKeys.MODULE);
+      Collection<DataNode<ModuleData>> moduleNodes = findAll(projectData.getExternalProjectStructure(), ProjectKeys.MODULE);
       for (DataNode<ModuleData> moduleNode : moduleNodes) {
         ModuleData moduleData = moduleNode.getData();
         if (moduleData.getArtifacts().isEmpty()) {
-          Collection<DataNode<GradleSourceSetData>> sourceSetNodes = ExternalSystemApiUtil.findAll(moduleNode, GradleSourceSetData.KEY);
+          Collection<DataNode<GradleSourceSetData>> sourceSetNodes = findAll(moduleNode, GradleSourceSetData.KEY);
           for (DataNode<GradleSourceSetData> sourceSetNode : sourceSetNodes) {
             buildParticipant.addModule(sourceSetNode.getData());
           }
@@ -244,23 +219,8 @@ public final class GradleManager
   }
 
   @Override
-  public void enhanceRemoteProcessing(@NotNull SimpleJavaParameters parameters) throws ExecutionException {
-    final Set<String> additionalEntries = new HashSet<>();
-    for (GradleProjectResolverExtension extension : RESOLVER_EXTENSIONS.getValue()) {
-      ContainerUtil.addIfNotNull(additionalEntries, PathUtil.getJarPathForClass(extension.getClass()));
-      for (Class aClass : extension.getExtraProjectModelClasses()) {
-        ContainerUtil.addIfNotNull(additionalEntries, PathUtil.getJarPathForClass(aClass));
-      }
-      extension.enhanceRemoteProcessing(parameters);
-    }
-
-    final PathsList classPath = parameters.getClassPath();
-    for (String entry : additionalEntries) {
-      classPath.add(entry);
-    }
-
-    parameters.getVMParametersList().addProperty(
-      ExternalSystemConstants.EXTERNAL_SYSTEM_ID_KEY, GradleConstants.SYSTEM_ID.getId());
+  public void enhanceRemoteProcessing(@NotNull SimpleJavaParameters parameters) {
+    throw new UnsupportedOperationException();
   }
 
   @NotNull
@@ -487,10 +447,5 @@ public final class GradleManager
         s.setExternalProjectPath(newPath);
       }
     }
-  }
-
-  @TestOnly
-  public static void clearPreloadedExtensions() {
-    RESOLVER_EXTENSIONS.drop();
   }
 }

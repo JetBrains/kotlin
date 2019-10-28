@@ -90,6 +90,9 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
     // JDK compatibility issues should be handled by org.jetbrains.plugins.gradle.issue.IncompatibleGradleJdkIssueChecker
     if (reason.startsWith("Could not create service of type ") && reason.contains(" using BuildScopeServices.")) return false
 
+    // Build cancellation errors should be handled by org.jetbrains.plugins.gradle.issue.GradleBuildCancelledIssueChecker
+    if (reason.contains("Build cancelled.")) return false
+
     if (location != null && filter != null) {
       val errorText = description.toString()
       val reasonAndFilePosition = getReasonAndFilePosition(reason, errorText, filter)

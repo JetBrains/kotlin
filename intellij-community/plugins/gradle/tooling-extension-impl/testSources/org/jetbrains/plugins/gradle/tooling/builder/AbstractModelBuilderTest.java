@@ -16,6 +16,7 @@
 package org.jetbrains.plugins.gradle.tooling.builder;
 
 import com.amazon.ion.IonType;
+import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
@@ -41,6 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
 import org.jetbrains.plugins.gradle.tooling.VersionMatcherRule;
+import org.jetbrains.plugins.gradle.tooling.internal.init.Init;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.junit.After;
 import org.junit.Before;
@@ -189,12 +191,13 @@ public abstract class AbstractModelBuilderTest {
 
   @NotNull
   private Set<Class> getToolingExtensionClasses() {
-    final Set<Class> classes = ContainerUtil.set(
-      ExternalProject.class,
+    final Set<Class> classes = set(
+      // external-system-rt.jar
+      ExternalSystemSourceType.class,
       // gradle-tooling-extension-api jar
       ProjectImportAction.class,
       // gradle-tooling-extension-impl jar
-      ModelBuildScriptClasspathBuilderImpl.class,
+      Init.class,
       Multimap.class,
       ShortTypeHandling.class,
       // trove4j jar
@@ -225,7 +228,7 @@ public abstract class AbstractModelBuilderTest {
 
 
   protected <T> Map<String, T> getModulesMap(final Class<T> aClass) {
-    final DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getIdeaProject().getModules();
+    final DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getModel(IdeaProject.class).getModules();
 
     final String filterKey = "to_filter";
     final Map<String, T> map = ContainerUtil.map2Map(ideaModules, (Function<IdeaModule, Pair<String, T>>)module -> {

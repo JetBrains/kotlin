@@ -25,7 +25,6 @@ class GradleActionWithImportTest: GradleImportingTestCase() {
 
   override fun setUp() {
     super.setUp()
-    GradleManager.clearPreloadedExtensions()
     val point = Extensions.getRootArea().getExtensionPoint(GradleProjectResolverExtension.EP_NAME)
     point.registerExtension(TestProjectResolverExtension(), testRootDisposable)
   }
@@ -142,7 +141,6 @@ class TestProjectResolverExtension : AbstractProjectResolverExtension() {
     }
 
     fun cleanup() {
-      GradleManager.clearPreloadedExtensions()
       extensions.clear()
     }
   }

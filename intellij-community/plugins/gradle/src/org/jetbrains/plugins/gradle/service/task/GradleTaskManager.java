@@ -34,6 +34,7 @@ import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
 import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver;
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension;
+import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleBuildParticipant;
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings;
@@ -43,6 +44,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.intellij.util.containers.ContainerUtil.*;
 import static org.jetbrains.plugins.gradle.util.GradleUtil.determineRootProject;
@@ -129,7 +131,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
       catch (RuntimeException e) {
         LOG.debug("Gradle build launcher error", e);
         BuildEnvironment buildEnvironment = GradleExecutionHelper.getBuildEnvironment(connection, id, listener, cancellationTokenSource);
-        final GradleProjectResolverExtension projectResolverChain = GradleProjectResolver.createProjectResolverChain(effectiveSettings);
+        final GradleProjectResolverExtension projectResolverChain = GradleProjectResolver.createProjectResolverChain();
         throw projectResolverChain.getUserFriendlyError(buildEnvironment, e, projectPath, null);
       }
     };
@@ -166,10 +168,8 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
                                               @Nullable String jvmParametersSetup,
                                               @NotNull GradleExecutionSettings effectiveSettings) {
     final List<String> initScripts = new ArrayList<>();
-    final GradleProjectResolverExtension projectResolverChain = GradleProjectResolver.createProjectResolverChain(effectiveSettings);
-    for (GradleProjectResolverExtension resolverExtension = projectResolverChain;
-         resolverExtension != null;
-         resolverExtension = resolverExtension.getNext()) {
+    List<GradleProjectResolverExtension> extensions = GradleProjectResolverUtil.createProjectResolvers(null).collect(Collectors.toList());
+    for (GradleProjectResolverExtension resolverExtension : extensions) {
       final String resolverClassName = resolverExtension.getClass().getName();
       Consumer<String> initScriptConsumer = script -> {
         if (StringUtil.isNotEmpty(script)) {

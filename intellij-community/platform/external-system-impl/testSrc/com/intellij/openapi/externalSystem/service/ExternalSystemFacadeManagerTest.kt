@@ -56,7 +56,7 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
       TestCase.assertNotNull(facade)
 
       val taskId = ExternalSystemTaskId.create(TEST_EXTERNAL_SYSTEM_ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
-      val projectDataNode = facade.resolver.resolveProjectInfo(taskId, "fake/path", false, null);
+      val projectDataNode = facade.resolver.resolveProjectInfo(taskId, "fake/path", false, null, null);
 
       assertNotNull(projectDataNode)
       assertEquals("ExternalName", projectDataNode!!.data.externalName)
@@ -89,7 +89,7 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
     try {
       val taskId = ExternalSystemTaskId.create(TEST_EXTERNAL_SYSTEM_ID, ExternalSystemTaskType.RESOLVE_PROJECT, project)
       val settings = CustomLibUrlSettings(libUrl)
-      val projectDataNode = facade.resolver.resolveProjectInfo(taskId, "fake/path", false, settings);
+      val projectDataNode = facade.resolver.resolveProjectInfo(taskId, "fake/path", false, settings, null);
 
       assertNotNull(projectDataNode)
       assertEquals("ExternalName", projectDataNode!!.data.externalName)

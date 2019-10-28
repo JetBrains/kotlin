@@ -19,6 +19,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.idea.IdeaModule;
+import org.gradle.tooling.model.idea.IdeaProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel;
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions;
@@ -43,7 +44,7 @@ public class ModelBuildScriptClasspathBuilderImplTest extends AbstractModelBuild
   @TargetVersions("2.0+")
   public void testModelBuildScriptClasspathBuilder() {
 
-    DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getIdeaProject().getModules();
+    DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getModel(IdeaProject.class).getModules();
 
     List<BuildScriptClasspathModel> ideaModule =
       ContainerUtil.mapNotNull(ideaModules, (Function<IdeaModule, BuildScriptClasspathModel>)module -> {

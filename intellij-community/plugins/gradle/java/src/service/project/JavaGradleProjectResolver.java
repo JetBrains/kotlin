@@ -46,20 +46,25 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
   @Override
   public void populateProjectExtraModels(@NotNull IdeaProject gradleProject, @NotNull DataNode<ProjectData> ideProject) {
     // import java project data
-
     final String projectDirPath = resolverCtx.getProjectPath();
-    final IdeaProject ideaProject = resolverCtx.getModels().getIdeaProject();
 
     // Gradle API doesn't expose gradleProject compile output path yet.
     JavaProjectData javaProjectData = new JavaProjectData(GradleConstants.SYSTEM_ID, projectDirPath + "/build/classes");
-    javaProjectData.setJdkVersion(ideaProject.getJdkName());
+
+    IdeaProject ideaProject = resolverCtx.getModels().getModel(IdeaProject.class);
+    if (ideaProject != null) {
+      javaProjectData.setJdkVersion(ideaProject.getJdkName());
+    }
     LanguageLevel resolvedLanguageLevel = null;
     // org.gradle.tooling.model.idea.IdeaLanguageLevel.getLevel() returns something like JDK_1_6
-    final String languageLevel = ideaProject.getLanguageLevel().getLevel();
-    for (LanguageLevel level : LanguageLevel.values()) {
-      if (level.name().equals(languageLevel)) {
-        resolvedLanguageLevel = level;
-        break;
+    String languageLevel = null;
+    if (ideaProject != null) {
+      languageLevel = ideaProject.getLanguageLevel().getLevel();
+      for (LanguageLevel level : LanguageLevel.values()) {
+        if (level.name().equals(languageLevel)) {
+          resolvedLanguageLevel = level;
+          break;
+        }
       }
     }
     if (resolvedLanguageLevel != null) {

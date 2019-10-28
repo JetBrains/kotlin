@@ -357,8 +357,6 @@ public class ExternalSystemUtil {
     boolean isPreviewMode = importSpec.isPreviewMode();
     ProgressExecutionMode progressExecutionMode = importSpec.getProgressExecutionMode();
     boolean reportRefreshError = importSpec.isReportRefreshError();
-    String arguments = importSpec.getArguments();
-    String vmOptions = importSpec.getVmOptions();
 
     File projectFile = new File(externalProjectPath);
     final String projectName;
@@ -369,14 +367,13 @@ public class ExternalSystemUtil {
       projectName = projectFile.getName();
     }
 
-    AbstractExternalSystemLocalSettings localSettings = ExternalSystemApiUtil.getLocalSettings(project, externalSystemId);
+    AbstractExternalSystemLocalSettings<?> localSettings = ExternalSystemApiUtil.getLocalSettings(project, externalSystemId);
     AbstractExternalSystemLocalSettings.SyncType syncType =
       isPreviewMode ? PREVIEW :
       localSettings.getProjectSyncType().get(externalProjectPath) == PREVIEW ? IMPORT : RE_IMPORT;
     localSettings.getProjectSyncType().put(externalProjectPath, syncType);
 
-    final ExternalSystemResolveProjectTask resolveProjectTask =
-      new ExternalSystemResolveProjectTask(externalSystemId, project, externalProjectPath, vmOptions, arguments, isPreviewMode);
+    ExternalSystemResolveProjectTask resolveProjectTask = new ExternalSystemResolveProjectTask(project, externalProjectPath, importSpec);
 
     final TaskUnderProgress refreshProjectStructureTask = new TaskUnderProgress() {
 
@@ -510,6 +507,14 @@ public class ExternalSystemUtil {
                 createFailureResult(title, e, externalSystemId, project, dataProvider);
               finishSyncEventSupplier.set(() -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "failed", failureResult));
               processHandler.notifyProcessTerminated(1);
+            }
+
+            @Override
+            public void onEnd(@NotNull ExternalSystemTaskId id) {
+              if (finishSyncEventSupplier.isNull()) {
+                finishSyncEventSupplier.set(
+                  () -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "finished", new SuccessResultImpl()));
+              }
             }
 
             @Override

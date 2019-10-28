@@ -5,12 +5,10 @@ import com.intellij.build.events.MessageEvent;
 import com.intellij.build.issue.BuildIssue;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.model.DataNode;
-import com.intellij.openapi.externalSystem.model.Key;
 import com.intellij.openapi.externalSystem.model.ProjectKeys;
 import com.intellij.openapi.externalSystem.model.project.*;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
-import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.externalSystem.util.ExternalSystemDebugEnvironment;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleType;
@@ -30,8 +28,11 @@ import gnu.trove.THashSet;
 import gnu.trove.TObjectHashingStrategy;
 import org.gradle.api.artifacts.Dependency;
 import org.gradle.tooling.model.GradleProject;
+import org.gradle.tooling.model.ProjectIdentifier;
 import org.gradle.tooling.model.idea.IdeaModule;
+import org.gradle.tooling.model.idea.IdeaProject;
 import org.gradle.util.GradleVersion;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
@@ -49,14 +50,13 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Vladislav.Soroka
  */
 public class GradleProjectResolverUtil {
   private static final Logger LOG = Logger.getInstance(GradleProjectResolverUtil.class);
-  @NotNull
-  private static final Key<Object> CONTAINER_KEY = Key.create(Object.class, ExternalSystemConstants.UNORDERED);
   public static final String BUILD_SRC_NAME = "buildSrc";
 
   @NotNull
@@ -184,11 +184,25 @@ public class GradleProjectResolverUtil {
   }
 
   @NotNull
+  public static String getModuleId(@NotNull ProjectResolverContext resolverCtx, @NotNull Build build, @NotNull Project project) {
+    ProjectIdentifier projectIdentifier = project.getProjectIdentifier();
+    String gradlePath = projectIdentifier.getProjectPath();
+    String compositePrefix = "";
+    if (build != resolverCtx.getModels().getMainBuild()) {
+      if (!StringUtil.isEmpty(gradlePath) && !":".equals(gradlePath)) {
+        compositePrefix = build.getName();
+      }
+    }
+    return compositePrefix + getModuleId(gradlePath, project.getName());
+  }
+
+
+  @NotNull
   public static String getModuleId(@NotNull ProjectResolverContext resolverCtx, @NotNull IdeaModule gradleModule) {
     GradleProject gradleProject = gradleModule.getGradleProject();
     String gradlePath = gradleProject.getPath();
     String compositePrefix = "";
-    if (gradleModule.getProject() != resolverCtx.getModels().getIdeaProject()) {
+    if (gradleModule.getProject() != resolverCtx.getModels().getModel(IdeaProject.class)) {
       if (!StringUtil.isEmpty(gradlePath) && !":".equals(gradlePath)) {
         compositePrefix = gradleModule.getProject().getName();
       }
@@ -765,6 +779,23 @@ public class GradleProjectResolverUtil {
   public static DataNode<ModuleData> findModuleById(@Nullable final DataNode<ProjectData> projectNode, @NotNull final String path) {
     if (projectNode == null) return null;
     return ExternalSystemApiUtil.find(projectNode, ProjectKeys.MODULE, node -> node.getData().getId().equals(path));
+  }
+
+  @ApiStatus.Internal
+  public static Stream<GradleProjectResolverExtension> createProjectResolvers(@Nullable ProjectResolverContext projectResolverContext) {
+    return GradleProjectResolverExtension.EP_NAME.extensions().map(extension -> {
+      try {
+        GradleProjectResolverExtension resolverExtension = extension.getClass().newInstance();
+        if (projectResolverContext != null) {
+          resolverExtension.setProjectResolverContext(projectResolverContext);
+        }
+        return resolverExtension;
+      }
+      catch (Exception e) {
+        LOG.error(e);
+      }
+      return null;
+    }).sorted(ExternalSystemApiUtil.ORDER_AWARE_COMPARATOR);
   }
 
   @Nullable

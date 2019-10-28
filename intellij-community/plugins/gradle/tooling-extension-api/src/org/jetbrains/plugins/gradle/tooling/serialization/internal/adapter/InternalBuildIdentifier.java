@@ -20,4 +20,18 @@ public class InternalBuildIdentifier implements BuildIdentifier {
   public String toString() {
     return "build=" + this.rootDir.getPath();
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    InternalBuildIdentifier that = (InternalBuildIdentifier)o;
+    if (rootDir == that.rootDir) return true;
+    return rootDir.getPath().equals(that.rootDir.getPath());
+  }
+
+  @Override
+  public int hashCode() {
+    return rootDir != null ? rootDir.getPath().hashCode() : 0;
+  }
 }

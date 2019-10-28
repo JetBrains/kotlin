@@ -1,5 +1,6 @@
 package com.intellij.openapi.externalSystem.service.remote;
 
+import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
@@ -26,13 +27,14 @@ public class RemoteExternalSystemProjectResolverImpl<S extends ExternalSystemExe
 
   @Nullable
   @Override
-  public DataNode<ProjectData> resolveProjectInfo(@NotNull final ExternalSystemTaskId id,
-                                                  @NotNull final String projectPath,
-                                                  final boolean isPreviewMode,
-                                                  final S settings)
-    throws ExternalSystemException, IllegalArgumentException, IllegalStateException
-  {
-    return execute(id, () -> myDelegate.resolveProjectInfo(id, projectPath, isPreviewMode, settings, getNotificationListener()));
+  public DataNode<ProjectData> resolveProjectInfo(@NotNull ExternalSystemTaskId id,
+                                                  @NotNull String projectPath,
+                                                  boolean isPreviewMode,
+                                                  @Nullable S settings,
+                                                  @Nullable ProjectResolverPolicy resolverPolicy)
+    throws ExternalSystemException, IllegalArgumentException, IllegalStateException {
+    return execute(id, () ->
+      myDelegate.resolveProjectInfo(id, projectPath, isPreviewMode, settings, resolverPolicy, getNotificationListener()));
   }
 
   @Override

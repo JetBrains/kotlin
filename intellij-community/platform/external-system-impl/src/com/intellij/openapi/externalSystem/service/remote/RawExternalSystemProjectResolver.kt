@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.remote
 
+import com.intellij.openapi.externalSystem.importing.ProjectResolverPolicy
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener
@@ -20,14 +21,16 @@ interface RawExternalSystemProjectResolver<S : ExternalSystemExecutionSettings>
   fun resolveProjectInfo(id: ExternalSystemTaskId,
                          projectPath: String,
                          isPreviewMode: Boolean,
-                         settings: S?): ByteArray?
+                         settings: S?,
+                         resolverPolicy: ProjectResolverPolicy?): ByteArray?
 
   companion object {
     val NULL_OBJECT = object: RawExternalSystemProjectResolver<ExternalSystemExecutionSettings> {
       override fun resolveProjectInfo(id: ExternalSystemTaskId,
                                       projectPath: String,
                                       isPreviewMode: Boolean,
-                                      settings: ExternalSystemExecutionSettings?): ByteArray? = null
+                                      settings: ExternalSystemExecutionSettings?,
+                                      resolverPolicy: ProjectResolverPolicy?): ByteArray? = null
 
       override fun getTasksInProgress(): MutableMap<ExternalSystemTaskType, MutableSet<ExternalSystemTaskId>> = mutableMapOf()
 
@@ -56,8 +59,12 @@ class RawExternalSystemProjectResolverImpl<S: ExternalSystemExecutionSettings>(
   : AbstractRemoteExternalSystemService<S>(), RawExternalSystemProjectResolver<S> {
   override fun cancelTask(id: ExternalSystemTaskId): Boolean = resolverDelegate.cancelTask(id)
 
-  override fun resolveProjectInfo(id: ExternalSystemTaskId, projectPath: String, isPreviewMode: Boolean, settings: S?): ByteArray? {
-    val result = resolverDelegate.resolveProjectInfo(id, projectPath, isPreviewMode, settings) ?: return null
+  override fun resolveProjectInfo(id: ExternalSystemTaskId,
+                                  projectPath: String,
+                                  isPreviewMode: Boolean,
+                                  settings: S?,
+                                  resolverPolicy: ProjectResolverPolicy?): ByteArray? {
+    val result = resolverDelegate.resolveProjectInfo(id, projectPath, isPreviewMode, settings, resolverPolicy) ?: return null
     val outputStream = ByteArrayOutputStream()
     ObjectOutputStream(outputStream).writeObject(result)
     return outputStream.toByteArray()

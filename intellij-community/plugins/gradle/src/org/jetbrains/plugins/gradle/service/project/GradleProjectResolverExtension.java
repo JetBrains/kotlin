@@ -53,6 +53,7 @@ import java.util.*;
  */
 public interface GradleProjectResolverExtension extends ParametersEnhancer {
 
+  @ApiStatus.Internal
   ExtensionPointName<GradleProjectResolverExtension> EP_NAME = ExtensionPointName.create("org.jetbrains.plugins.gradle.projectResolve");
 
   void setProjectResolverContext(@NotNull ProjectResolverContext projectResolverContext);
@@ -62,12 +63,19 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
   @Nullable
   GradleProjectResolverExtension getNext();
 
+  /**
+   * @deprecated is not used anymore
+   */
   @NotNull
-  ProjectData createProject();
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.2")
+  default ProjectData createProject() {
+    throw new UnsupportedOperationException();
+  }
 
   void populateProjectExtraModels(@NotNull IdeaProject gradleProject, @NotNull DataNode<ProjectData> ideProject);
 
-  @NotNull
+  @Nullable
   DataNode<ModuleData> createModule(@NotNull IdeaModule gradleModule, @NotNull DataNode<ProjectData> projectDataNode);
 
   /**

@@ -142,7 +142,7 @@ public class GradleBuildSrcProjectsResolver {
 
       final String buildSrcProjectPath = buildPath + "/buildSrc";
       DefaultProjectResolverContext buildSrcResolverCtx =
-        new DefaultProjectResolverContext(mySyncTaskId, buildSrcProjectPath, buildSrcProjectSettings, myListener, false);
+        new DefaultProjectResolverContext(mySyncTaskId, buildSrcProjectPath, buildSrcProjectSettings, myListener, myResolverContext.getPolicy(), false);
       myResolverContext.copyUserDataTo(buildSrcResolverCtx);
       String buildName = buildNames.get(buildPath);
 

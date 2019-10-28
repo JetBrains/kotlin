@@ -139,14 +139,14 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         addBuildModels(mySerializer, controller, myAllModels, includedBuild, isProjectsLoadedAction);
       }
     }
-    return isProjectsLoadedAction && myAllModels.hasModels() ? null : myAllModels;
+    return isProjectsLoadedAction && !myAllModels.hasModels() ? null : myAllModels;
   }
 
   @NotNull
   private static Build convert(@NotNull GradleBuild build) {
-    DefaultBuild rootProject = new DefaultBuild(build.getBuildIdentifier().getRootDir());
+    DefaultBuild rootProject = new DefaultBuild(build.getRootProject().getName(), build.getBuildIdentifier().getRootDir());
     for (BasicGradleProject project : build.getProjects()) {
-      rootProject.addProject(project.getProjectIdentifier());
+      rootProject.addProject(project.getName(), project.getProjectIdentifier());
     }
     return rootProject;
   }
@@ -308,7 +308,11 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
       addModel(ideaProject, IdeaProject.class);
     }
 
+    /**
+     * @deprecated use {@link #getModel(Class<IdeaProject>)}
+     */
     @NotNull
+    @Deprecated
     public IdeaProject getIdeaProject() {
       IdeaProject ideaProject = getModel(IdeaProject.class);
       assert ideaProject != null;
@@ -435,10 +439,19 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
   }
 
   private final static class DefaultBuild implements Build, Serializable {
+    private final String myName;
     private final DefaultBuildIdentifier myBuildIdentifier;
-    private final Collection<ProjectModel> myProjects = new ArrayList<ProjectModel>(0);
+    private final Collection<Project> myProjects = new ArrayList<Project>(0);
 
-    private DefaultBuild(File rootDir) {myBuildIdentifier = new DefaultBuildIdentifier(rootDir);}
+    private DefaultBuild(String name, File rootDir) {
+      myName = name;
+      myBuildIdentifier = new DefaultBuildIdentifier(rootDir);
+    }
+
+    @Override
+    public String getName() {
+      return myName;
+    }
 
     @Override
     public BuildIdentifier getBuildIdentifier() {
@@ -446,22 +459,29 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     }
 
     @Override
-    public Collection<ProjectModel> getProjects() {
+    public Collection<Project> getProjects() {
       return myProjects;
     }
 
-    private void addProject(final ProjectIdentifier projectIdentifier) {
+    private void addProject(String name, final ProjectIdentifier projectIdentifier) {
       final String projectPath = projectIdentifier.getProjectPath();
       File rootDir = myBuildIdentifier.getRootDir();
       assert rootDir.getPath().equals(projectIdentifier.getBuildIdentifier().getRootDir().getPath());
-      myProjects.add(new DefaultProjectModel(rootDir, projectPath));
+      myProjects.add(new DefaultProjectModel(name, rootDir, projectPath));
     }
 
-    private final static class DefaultProjectModel implements ProjectModel, Serializable {
+    private final static class DefaultProjectModel implements Project, Serializable {
+      private final String myName;
       private final DefaultProjectIdentifier myProjectIdentifier;
 
-      private DefaultProjectModel(@NotNull File rootDir, @NotNull String projectPath) {
+      private DefaultProjectModel(@NotNull String name, @NotNull File rootDir, @NotNull String projectPath) {
+        myName = name;
         myProjectIdentifier = new DefaultProjectIdentifier(rootDir, projectPath);
+      }
+
+      @Override
+      public String getName() {
+        return myName;
       }
 
       @Override
