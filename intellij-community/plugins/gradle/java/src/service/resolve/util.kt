@@ -16,7 +16,7 @@ val saveProjectType: PatternCondition<GroovyMethodResult> = object : PatternCond
     // Given the closure matched some method,
     // we want to determine what we know about this Project.
     // This PatternCondition just saves the info into the ProcessingContext.
-    context?.put(projectTypeKey, result.candidate?.receiver as? GradleProjectAwareType)
+    context?.put(projectTypeKey, result.candidate?.receiverType as? GradleProjectAwareType)
     return true
   }
 }
