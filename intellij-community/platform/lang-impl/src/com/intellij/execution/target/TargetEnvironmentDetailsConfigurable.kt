@@ -19,7 +19,7 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-internal class RemoteTargetDetailsConfigurable(private val project: Project, private val config: TargetEnvironmentConfiguration)
+internal class TargetEnvironmentDetailsConfigurable(private val project: Project, private val config: TargetEnvironmentConfiguration)
   : NamedConfigurable<TargetEnvironmentConfiguration>(true, null) {
 
   private val targetConfigurable: Configurable = config.getTargetType().createConfigurable(project, config)

@@ -5,9 +5,9 @@ import com.intellij.ide.wizard.AbstractWizardStepEx;
 import com.intellij.ide.wizard.CommitStepException;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class RemoteTargetWizardStep extends AbstractWizardStepEx {
+public abstract class TargetEnvironmentWizardStep extends AbstractWizardStepEx {
 
-  public RemoteTargetWizardStep(@Nullable String title) {
+  public TargetEnvironmentWizardStep(@Nullable String title) {
     super(title);
   }
 

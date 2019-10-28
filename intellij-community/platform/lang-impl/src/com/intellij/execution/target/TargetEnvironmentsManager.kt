@@ -8,7 +8,7 @@ import com.intellij.util.xmlb.annotations.Tag
 import com.intellij.util.xmlb.annotations.XCollection
 
 @State(name = "RemoteTargetsManager", storages = [Storage("remote-targets.xml")])
-class RemoteTargetsManager : PersistentStateComponent<RemoteTargetsManager.TargetsListState> {
+class TargetEnvironmentsManager : PersistentStateComponent<TargetEnvironmentsManager.TargetsListState> {
 
   val targets: BaseExtendableList<TargetEnvironmentConfiguration, RemoteTargetType<*>> = TargetsList()
 
@@ -45,8 +45,8 @@ class RemoteTargetsManager : PersistentStateComponent<RemoteTargetsManager.Targe
 
   companion object {
     @JvmStatic
-    val instance: RemoteTargetsManager = ServiceManager.getService(
-      RemoteTargetsManager::class.java)
+    val instance: TargetEnvironmentsManager = ServiceManager.getService(
+      TargetEnvironmentsManager::class.java)
   }
 
   internal class TargetsList : BaseExtendableList<TargetEnvironmentConfiguration, RemoteTargetType<*>>(RemoteTargetType.EXTENSION_NAME) {

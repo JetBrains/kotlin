@@ -11,7 +11,7 @@ class TargetEnvironmentsConfigurable(project: Project, initialSelectedName: Stri
   @Suppress("unused")
   constructor(project: Project) : this(project, null)
 
-  private val editor = RemoteTargetsMasterDetails(project, initialSelectedName)
+  private val editor = TargetEnvironmentsMasterDetails(project, initialSelectedName)
 
   override fun initUi() = editor.initUi()
 

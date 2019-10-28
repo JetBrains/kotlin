@@ -14,7 +14,7 @@ import com.intellij.util.PlatformIcons
 import com.intellij.util.containers.toArray
 import com.intellij.util.text.UniqueNameGenerator
 
-class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: Project, private val initialSelectedName: String? = null)
+class TargetEnvironmentsMasterDetails @JvmOverloads constructor(private val project: Project, private val initialSelectedName: String? = null)
   : MasterDetailsComponent() {
 
   init {
@@ -51,12 +51,12 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
 
   override fun processRemovedItems() {
     val deletedTargets = deletedTargets()
-    deletedTargets.forEach { RemoteTargetsManager.instance.targets.removeConfig(it) }
+    deletedTargets.forEach { TargetEnvironmentsManager.instance.targets.removeConfig(it) }
     super.processRemovedItems()
   }
 
   override fun wasObjectStored(editableObject: Any?): Boolean {
-    return RemoteTargetsManager.instance.targets.resolvedConfigs().contains(editableObject)
+    return TargetEnvironmentsManager.instance.targets.resolvedConfigs().contains(editableObject)
   }
 
   private fun deletedTargets(): Set<TargetEnvironmentConfiguration> = allTargets().toSet() - getConfiguredTargets()
@@ -64,14 +64,14 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
   override fun apply() {
     super.apply()
 
-    val addedConfigs = getConfiguredTargets() - RemoteTargetsManager.instance.targets.resolvedConfigs()
-    addedConfigs.forEach { RemoteTargetsManager.instance.addTarget(it) }
+    val addedConfigs = getConfiguredTargets() - TargetEnvironmentsManager.instance.targets.resolvedConfigs()
+    addedConfigs.forEach { TargetEnvironmentsManager.instance.addTarget(it) }
   }
 
-  private fun allTargets() = RemoteTargetsManager.instance.targets.resolvedConfigs()
+  private fun allTargets() = TargetEnvironmentsManager.instance.targets.resolvedConfigs()
 
   private fun addTargetNode(config: TargetEnvironmentConfiguration): MyNode {
-    val configurable = RemoteTargetDetailsConfigurable(project, config)
+    val configurable = TargetEnvironmentDetailsConfigurable(project, config)
     val node = MyNode(configurable)
     addNode(node, myRoot)
     selectNodeInTree(node)
@@ -93,7 +93,7 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
       newConfig.displayName = UniqueNameGenerator.generateUniqueName(type.displayName) { curName ->
         getConfiguredTargets().none { it.displayName == curName }
       }
-      RemoteTargetsManager.instance.ensureUniqueName(newConfig)
+      TargetEnvironmentsManager.instance.ensureUniqueName(newConfig)
       val newNode = addTargetNode(newConfig)
       selectNodeInTree(newNode, true, true)
     }
@@ -123,7 +123,7 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
 
     override fun actionPerformed(e: AnActionEvent) {
       duplicateSelected()?.let { copy ->
-        RemoteTargetsManager.instance.addTarget(copy)
+        TargetEnvironmentsManager.instance.addTarget(copy)
         val newNode = addTargetNode(copy)
         selectNodeInTree(newNode, true, true)
       }

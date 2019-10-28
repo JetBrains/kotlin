@@ -7,9 +7,9 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.target.LanguageRuntimeType;
-import com.intellij.execution.target.RemoteTargetsManager;
 import com.intellij.execution.target.TargetEnvironmentAwareRunProfile;
 import com.intellij.execution.target.TargetEnvironmentsConfigurable;
+import com.intellij.execution.target.TargetEnvironmentsManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataKey;
@@ -511,7 +511,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
 
     private void resetRunOnComboBox(@Nullable String targetNameToChoose) {
       ((RunOnTargetComboBox)myRunOnComboBox).initModel();
-      ((RunOnTargetComboBox)myRunOnComboBox).addTargets(RemoteTargetsManager.getInstance().getTargets().resolvedConfigs());
+      ((RunOnTargetComboBox)myRunOnComboBox).addTargets(TargetEnvironmentsManager.getInstance().getTargets().resolvedConfigs());
       ((RunOnTargetComboBox)myRunOnComboBox).selectTarget(targetNameToChoose);
     }
 

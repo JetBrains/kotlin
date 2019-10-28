@@ -159,7 +159,7 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
           TargetEnvironmentConfiguration newTarget = wizardData.first;
           TargetEnvironmentWizard wizard = new TargetEnvironmentWizard(myProject, "New Target", newTarget, wizardData.second);
           if (wizard.showAndGet()) {
-            RemoteTargetsManager.getInstance().addTarget(newTarget);
+            TargetEnvironmentsManager.getInstance().addTarget(newTarget);
             addTarget(newTarget, 2);
             setSelectedIndex(2);
           }
