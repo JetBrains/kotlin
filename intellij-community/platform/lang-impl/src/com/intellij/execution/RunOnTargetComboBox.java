@@ -57,12 +57,12 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
     myDefaultRuntimeType = defaultLanguageRuntimeType;
   }
 
-  public void addTarget(@NotNull RemoteTargetConfiguration config, int index) {
+  public void addTarget(@NotNull TargetEnvironmentConfiguration config, int index) {
     if (!hasSavedTargets) {
       hasSavedTargets = true;
       ((MyModel)getModel()).insertElementAt(new Separator("Saved Targets"), 1);
     }
-    Icon icon = RemoteTargetConfigurationKt.getTargetType(config).getIcon();
+    Icon icon = TargetEnvironmentConfigurationKt.getTargetType(config).getIcon();
     ((MyModel)getModel()).insertElementAt(new Target(config.getDisplayName(), icon), index);
   }
 
@@ -71,9 +71,9 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
     return ObjectUtils.doIfCast(getSelectedItem(), Item.class, i -> i.getDisplayName());
   }
 
-  public void addTargets(List<RemoteTargetConfiguration> configs) {
+  public void addTargets(List<TargetEnvironmentConfiguration> configs) {
     int index = 2;
-    for (RemoteTargetConfiguration config : configs) {
+    for (TargetEnvironmentConfiguration config : configs) {
       addTarget(config, index);
       index++;
     }
@@ -124,7 +124,7 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
     }
   }
 
-  private static class Type<T extends RemoteTargetConfiguration> extends Item {
+  private static class Type<T extends TargetEnvironmentConfiguration> extends Item {
     @NotNull
     private final RemoteTargetType<T> type;
 
@@ -153,10 +153,10 @@ public class RunOnTargetComboBox extends ComboBox<RunOnTargetComboBox.Item> {
       }
       if (anObject instanceof Type) {
         //noinspection unchecked,rawtypes
-        Pair<RemoteTargetConfiguration, List<AbstractWizardStepEx>> wizardData =
+        Pair<TargetEnvironmentConfiguration, List<AbstractWizardStepEx>> wizardData =
           ((Type)anObject).createStepsForNewWizard(myProject, myDefaultRuntimeType);
         if (wizardData != null) {
-          RemoteTargetConfiguration newTarget = wizardData.first;
+          TargetEnvironmentConfiguration newTarget = wizardData.first;
           TargetEnvironmentWizard wizard = new TargetEnvironmentWizard(myProject, "New Target", newTarget, wizardData.second);
           if (wizard.showAndGet()) {
             RemoteTargetsManager.getInstance().addTarget(newTarget);

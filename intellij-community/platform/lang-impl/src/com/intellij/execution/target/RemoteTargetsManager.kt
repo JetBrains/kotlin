@@ -10,7 +10,7 @@ import com.intellij.util.xmlb.annotations.XCollection
 @State(name = "RemoteTargetsManager", storages = [Storage("remote-targets.xml")])
 class RemoteTargetsManager : PersistentStateComponent<RemoteTargetsManager.TargetsListState> {
 
-  val targets: BaseExtendableList<RemoteTargetConfiguration, RemoteTargetType<*>> = TargetsList()
+  val targets: BaseExtendableList<TargetEnvironmentConfiguration, RemoteTargetType<*>> = TargetsList()
 
   override fun getState(): TargetsListState {
     val result = TargetsListState()
@@ -24,18 +24,18 @@ class RemoteTargetsManager : PersistentStateComponent<RemoteTargetsManager.Targe
     targets.loadState(state.targets)
   }
 
-  fun addTarget(target: RemoteTargetConfiguration) {
+  fun addTarget(target: TargetEnvironmentConfiguration) {
     if (!targets.resolvedConfigs().contains(target)) {
       ensureUniqueName(target)
       targets.addConfig(target)
     }
   }
 
-  fun removeTarget(target: RemoteTargetConfiguration) {
+  fun removeTarget(target: TargetEnvironmentConfiguration) {
     targets.removeConfig(target)
   }
 
-  internal fun ensureUniqueName(target: RemoteTargetConfiguration) {
+  internal fun ensureUniqueName(target: TargetEnvironmentConfiguration) {
     if (!targets.resolvedConfigs().contains(target)) {
       val existingNames = targets.resolvedConfigs().map { it.displayName }.toSet() + targets.unresolvedNames()
       val uniqueName = UniqueNameGenerator.generateUniqueName(target.displayName, existingNames)
@@ -49,14 +49,14 @@ class RemoteTargetsManager : PersistentStateComponent<RemoteTargetsManager.Targe
       RemoteTargetsManager::class.java)
   }
 
-  internal class TargetsList : BaseExtendableList<RemoteTargetConfiguration, RemoteTargetType<*>>(RemoteTargetType.EXTENSION_NAME) {
-    override fun toBaseState(config: RemoteTargetConfiguration): OneTargetState =
+  internal class TargetsList : BaseExtendableList<TargetEnvironmentConfiguration, RemoteTargetType<*>>(RemoteTargetType.EXTENSION_NAME) {
+    override fun toBaseState(config: TargetEnvironmentConfiguration): OneTargetState =
       OneTargetState().also {
         it.loadFromConfiguration(config)
         it.runtimes = config.runtimes.state.configs
       }
 
-    override fun fromOneState(state: BaseExtendableState): RemoteTargetConfiguration? {
+    override fun fromOneState(state: BaseExtendableState): TargetEnvironmentConfiguration? {
       val result = super.fromOneState(state)
       if (result != null && state is OneTargetState) {
         result.runtimes.loadState(state.runtimes)

@@ -5,7 +5,7 @@ import com.intellij.ide.wizard.AbstractWizardEx
 import com.intellij.ide.wizard.AbstractWizardStepEx
 import com.intellij.openapi.project.Project
 
-class TargetEnvironmentWizard(project: Project, title: String, val subject: RemoteTargetConfiguration, steps: List<AbstractWizardStepEx>)
+class TargetEnvironmentWizard(project: Project, title: String, val subject: TargetEnvironmentConfiguration, steps: List<AbstractWizardStepEx>)
   : AbstractWizardEx(title, project, steps) {
   override fun getHelpId(): String? = "reference.remote.target.wizard.${subject.typeId}"
 }

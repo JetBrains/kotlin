@@ -59,7 +59,7 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
     return RemoteTargetsManager.instance.targets.resolvedConfigs().contains(editableObject)
   }
 
-  private fun deletedTargets(): Set<RemoteTargetConfiguration> = allTargets().toSet() - getConfiguredTargets()
+  private fun deletedTargets(): Set<TargetEnvironmentConfiguration> = allTargets().toSet() - getConfiguredTargets()
 
   override fun apply() {
     super.apply()
@@ -70,7 +70,7 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
 
   private fun allTargets() = RemoteTargetsManager.instance.targets.resolvedConfigs()
 
-  private fun addTargetNode(config: RemoteTargetConfiguration): MyNode {
+  private fun addTargetNode(config: TargetEnvironmentConfiguration): MyNode {
     val configurable = RemoteTargetDetailsConfigurable(project, config)
     val node = MyNode(configurable)
     addNode(node, myRoot)
@@ -78,9 +78,9 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
     return myRoot
   }
 
-  private fun getConfiguredTargets(): List<RemoteTargetConfiguration> =
+  private fun getConfiguredTargets(): List<TargetEnvironmentConfiguration> =
     myRoot.children().asSequence()
-      .map { node -> (node as MyNode).configurable?.editableObject as? RemoteTargetConfiguration }
+      .map { node -> (node as MyNode).configurable?.editableObject as? TargetEnvironmentConfiguration }
       .filterNotNull()
       .toList()
 
@@ -129,9 +129,9 @@ class RemoteTargetsMasterDetails @JvmOverloads constructor(private val project: 
       }
     }
 
-    private fun duplicateSelected(): RemoteTargetConfiguration? =
+    private fun duplicateSelected(): TargetEnvironmentConfiguration? =
       getSelectedTarget()?.let { it.getTargetType().duplicateConfig(it) }
 
-    private fun getSelectedTarget() = selectedNode?.configurable?.editableObject as? RemoteTargetConfiguration
+    private fun getSelectedTarget() = selectedNode?.configurable?.editableObject as? TargetEnvironmentConfiguration
   }
 }
