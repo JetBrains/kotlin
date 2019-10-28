@@ -214,7 +214,7 @@ public class ExtensionsRootType extends RootType {
   }
 
   private static void extractResources(@NotNull VirtualFile from, @NotNull File to) throws IOException {
-    VfsUtilCore.visitChildrenRecursively(from, new VirtualFileVisitor(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
+    VfsUtilCore.visitChildrenRecursively(from, new VirtualFileVisitor<Void>(VirtualFileVisitor.NO_FOLLOW_SYMLINKS) {
       @NotNull
       @Override
       public Result visitFileEx(@NotNull VirtualFile file) {

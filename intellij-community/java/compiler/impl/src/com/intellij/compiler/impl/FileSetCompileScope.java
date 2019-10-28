@@ -119,7 +119,7 @@ public class FileSetCompileScope extends ExportableUserDataHolderBase implements
   }
 
   private static void addRecursively(@NotNull Collection<? super VirtualFile> container, @NotNull VirtualFile fromDirectory, @Nullable FileType fileType) {
-    VfsUtilCore.visitChildrenRecursively(fromDirectory, new VirtualFileVisitor(VirtualFileVisitor.SKIP_ROOT) {
+    VfsUtilCore.visitChildrenRecursively(fromDirectory, new VirtualFileVisitor<Void>(VirtualFileVisitor.SKIP_ROOT) {
       @Override
       public boolean visitFile(@NotNull VirtualFile child) {
         if (!child.isDirectory() && (fileType == null || FileTypeRegistry.getInstance().isFileOfType(child, fileType))) {
