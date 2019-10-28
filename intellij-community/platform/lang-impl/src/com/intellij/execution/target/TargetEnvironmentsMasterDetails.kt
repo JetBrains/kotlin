@@ -9,6 +9,7 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MasterDetailsComponent
+import com.intellij.ui.CommonActionsPanel
 import com.intellij.util.IconUtil
 import com.intellij.util.PlatformIcons
 import com.intellij.util.containers.toArray
@@ -102,7 +103,7 @@ class TargetEnvironmentsMasterDetails @JvmOverloads constructor(private val proj
   private inner class CreateNewTargetGroup : ActionGroup("Add", "", IconUtil.getAddIcon()),
                                              ActionGroupWithPreselection, DumbAware {
     init {
-      registerCustomShortcutSet(CommonShortcuts.INSERT, myTree)
+      registerCustomShortcutSet(CommonActionsPanel.getCommonShortcut(CommonActionsPanel.Buttons.ADD), myTree)
     }
 
     override fun getChildren(e: AnActionEvent?): Array<AnAction> {
@@ -117,6 +118,10 @@ class TargetEnvironmentsMasterDetails @JvmOverloads constructor(private val proj
   }
 
   private inner class DuplicateAction : DumbAwareAction("Duplicate", "Duplicate", PlatformIcons.COPY_ICON) {
+    init {
+      registerCustomShortcutSet(CommonShortcuts.getDuplicate(), myTree)
+    }
+
     override fun update(e: AnActionEvent) {
       templatePresentation.isEnabled = getSelectedTarget() != null
     }
