@@ -211,7 +211,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
             if (contentManager.getContentCount() > 1) {
               contentManager.removeContent(mainContent, false);
             }
-            else {
+            else if (mainView.hasItems()) {
+              // Hide tool window only if model roots became empty and there were some services shown in master component before update.
               hideToolWindow(toolWindowId, toolWindow);
             }
           }

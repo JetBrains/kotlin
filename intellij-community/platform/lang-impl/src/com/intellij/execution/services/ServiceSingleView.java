@@ -73,6 +73,11 @@ class ServiceSingleView extends ServiceView {
   }
 
   @Override
+  boolean hasItems() {
+    return myUi.getDetailsComponent() != null;
+  }
+
+  @Override
   public void dispose() {
     getModel().removeModelListener(myListener);
   }
