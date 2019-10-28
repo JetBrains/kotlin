@@ -88,7 +88,7 @@ class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
     }
   }
 
-  override fun runAnything(dataContext: DataContext, commandLine: CommandLine): Boolean {
+  override fun run(dataContext: DataContext, commandLine: CommandLine): Boolean {
     val project = RunAnythingUtil.fetchProject(dataContext)
     val executionContext = dataContext.getData(EXECUTING_CONTEXT) ?: ProjectContext(project)
     val context = createContext(project, executionContext, dataContext)
