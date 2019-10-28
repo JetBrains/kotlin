@@ -242,7 +242,13 @@ class KotlinPlatformContainerImpl() : KotlinPlatformContainer {
     override fun supports(simplePlatform: KotlinPlatform): Boolean = platforms.contains(simplePlatform)
 
     override fun addSimplePlatforms(platforms: Collection<KotlinPlatform>) {
-        (myPlatforms ?: HashSet<KotlinPlatform>().apply { myPlatforms = this }).addAll(platforms)
+        (myPlatforms ?: HashSet<KotlinPlatform>().apply { myPlatforms = this }).let {
+            it.addAll(platforms)
+            if (it.contains(KotlinPlatform.COMMON)) {
+                it.clear()
+                it.addAll(defaultCommonPlatform)
+            }
+        }
     }
 }
 

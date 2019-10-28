@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.gradle
 import com.intellij.openapi.roots.DependencyScope
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
-import org.jetbrains.kotlin.config.ResourceKotlinRootType
-import org.jetbrains.kotlin.config.SourceKotlinRootType
-import org.jetbrains.kotlin.config.TestResourceKotlinRootType
-import org.jetbrains.kotlin.config.TestSourceKotlinRootType
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -426,6 +423,63 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("project_jvmTest") {
                 externalSystemTestTask("test", "project:jvmTest", "jvm")
             }
+        }
+    }
+
+
+    @Test
+    fun testSingleAndroidTarget() {
+        configureByFiles()
+        importProject()
+        checkProjectStructure(exhaustiveDependencyList = false) {
+            module("app") {
+                sourceFolder("app/src/androidAndroidTest/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/androidAndroidTestDebug/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/androidDebug/kotlin", JavaSourceRootType.SOURCE)
+                sourceFolder("app/src/androidDebugAndroidTest/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/androidDebugUnitTest/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/androidMain/kotlin", JavaSourceRootType.SOURCE)
+                sourceFolder("app/src/androidRelease/kotlin", JavaSourceRootType.SOURCE)
+                sourceFolder("app/src/androidReleaseUnitTest/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/androidTest/java", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/androidTest/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/androidTestDebug/java", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/androidTestDebug/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/androidTestRelease/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/debug/java", JavaSourceRootType.SOURCE)
+                sourceFolder("app/src/debug/kotlin", JavaSourceRootType.SOURCE)
+                sourceFolder("app/src/main/java", JavaSourceRootType.SOURCE)
+                sourceFolder("app/src/main/kotlin", JavaSourceRootType.SOURCE)
+                sourceFolder("app/src/release/java", JavaSourceRootType.SOURCE)
+                sourceFolder("app/src/release/kotlin", JavaSourceRootType.SOURCE)
+                sourceFolder("app/src/test/java", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/test/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/testDebug/java", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/testDebug/kotlin", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/testRelease/java", JavaSourceRootType.TEST_SOURCE)
+                sourceFolder("app/src/testRelease/kotlin", JavaSourceRootType.TEST_SOURCE)
+
+                sourceFolder("app/src/androidAndroidTest/resources", JavaResourceRootType.TEST_RESOURCE)
+                sourceFolder("app/src/androidAndroidTestDebug/resources", JavaResourceRootType.TEST_RESOURCE)
+                sourceFolder("app/src/androidDebug/resources", JavaResourceRootType.RESOURCE)
+                sourceFolder("app/src/androidDebugAndroidTest/resources", JavaResourceRootType.TEST_RESOURCE)
+                sourceFolder("app/src/androidDebugUnitTest/resources", JavaResourceRootType.TEST_RESOURCE)
+                sourceFolder("app/src/androidMain/resources", JavaResourceRootType.RESOURCE)
+                sourceFolder("app/src/androidRelease/resources", JavaResourceRootType.RESOURCE)
+                sourceFolder("app/src/androidReleaseUnitTest/resources", JavaResourceRootType.TEST_RESOURCE)
+                sourceFolder("app/src/androidTest/resources", JavaResourceRootType.TEST_RESOURCE)
+                sourceFolder("app/src/androidTestDebug/resources", JavaResourceRootType.TEST_RESOURCE)
+                sourceFolder("app/src/androidTestRelease/resources", JavaResourceRootType.TEST_RESOURCE)
+            }
+            module("app_commonMain") {
+                sourceFolder("app/src/commonMain/kotlin", SourceKotlinRootType)
+                sourceFolder("app/src/commonMain/resources", ResourceKotlinRootType)
+            }
+            module("app_commonTest") {
+                sourceFolder("app/src/commonTest/kotlin", TestSourceKotlinRootType)
+                sourceFolder("app/src/commonTest/resources", TestResourceKotlinRootType)
+            }
+            module("project")
         }
     }
 
