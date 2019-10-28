@@ -7,6 +7,7 @@ import com.intellij.ide.actions.runAnything.RunAnythingContext
 import com.intellij.ide.actions.runAnything.RunAnythingContext.*
 import com.intellij.ide.actions.runAnything.RunAnythingUtil
 import com.intellij.ide.actions.runAnything.activity.RunAnythingCommandLineProvider
+import com.intellij.ide.actions.runAnything.getPath
 import com.intellij.ide.util.gotoByName.GotoClassModel2
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.externalSystem.model.DataNode
@@ -92,8 +93,8 @@ class GradleRunAnythingProvider : RunAnythingCommandLineProvider() {
     val project = RunAnythingUtil.fetchProject(dataContext)
     val executionContext = dataContext.getData(EXECUTING_CONTEXT) ?: ProjectContext(project)
     val context = createContext(project, executionContext, dataContext)
-    val externalProjectPath = context.externalProjectPath ?: return false
-    GradleExecuteTaskAction.runGradle(project, context.executor, externalProjectPath, commandLine.command)
+    val workDirectory = context.externalProjectPath ?: executionContext.getPath() ?: return false
+    GradleExecuteTaskAction.runGradle(project, context.executor, workDirectory, commandLine.command)
     return true
   }
 
