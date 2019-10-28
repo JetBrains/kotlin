@@ -668,6 +668,18 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
 
         for (sourceSet in sourceSets.values) {
+            if (!isHMPPEnabled) {
+                val name = sourceSet.name
+                if (name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME) {
+                    sourceSet.isTestModule = false
+                    continue
+                }
+                if (name == KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME) {
+                    sourceSet.isTestModule = true
+                    continue
+                }
+            }
+
             (allSourceSetToCompilations[sourceSet]?.all { it.isTestModule }
                 ?: if (!isHMPPEnabled && sourceSet.name == KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME) true else null)?.let { isTest ->
                 sourceSet.isTestModule = isTest
