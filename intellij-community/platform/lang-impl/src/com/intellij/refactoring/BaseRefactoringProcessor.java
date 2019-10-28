@@ -76,7 +76,7 @@ public abstract class BaseRefactoringProcessor implements Runnable {
   private RefactoringTransaction myTransaction;
   private boolean myIsPreviewUsages;
   protected Runnable myPrepareSuccessfulSwingThreadCallback;
-  private UsageView myUsageView = null;
+  private UsageView myUsageView;
 
   protected BaseRefactoringProcessor(@NotNull Project project) {
     this(project, null);

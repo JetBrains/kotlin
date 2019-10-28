@@ -299,6 +299,7 @@ public class MoveDirectoryWithClassesProcessor extends BaseRefactoringProcessor 
     return RefactoringBundle.message("moving.directories.command");
   }
 
+  @NotNull
   public TargetDirectoryWrapper getTargetDirectory(PsiDirectory dir) {
     return new TargetDirectoryWrapper(myTargetDirectory);
   }

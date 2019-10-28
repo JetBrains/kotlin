@@ -206,7 +206,9 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     myInfos = new ArrayList<>();
     addHighlightsFromResults(myInfos);
 
-    if (isOnTheFly) highlightRedundantSuppressions(toolWrappers, iManager, inside, outside, elementDialectIds);
+    if (isOnTheFly) {
+      highlightRedundantSuppressions(toolWrappers, iManager, inside, outside, elementDialectIds);
+    }
   }
 
   private void highlightRedundantSuppressions(@NotNull List<? extends LocalInspectionToolWrapper> toolWrappers,
