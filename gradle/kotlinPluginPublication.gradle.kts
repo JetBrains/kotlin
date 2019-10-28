@@ -6,6 +6,31 @@ configure<PublishingExtension> {
             val artifactName = if (project.name == "idea-plugin") "kotlin-plugin" else project.name
             artifactId = "$artifactName-${IdeVersionConfigurator.currentIde.name.toLowerCase()}"
             from(components["java"])
+
+            pom {
+                name.set("${project.group}:$artifactId")
+                packaging = "jar"
+                description.set(project.description)
+                url.set("https://kotlinlang.org/")
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                scm {
+                    url.set("https://github.com/JetBrains/kotlin")
+                    connection.set("scm:git:https://github.com/JetBrains/kotlin.git")
+                    developerConnection.set("scm:git:https://github.com/JetBrains/kotlin.git")
+                }
+                developers {
+                    developer {
+                        name.set("Kotlin Team")
+                        organization.set("JetBrains")
+                        organizationUrl.set("https://www.jetbrains.com")
+                    }
+                }
+            }
         }
     }
 
