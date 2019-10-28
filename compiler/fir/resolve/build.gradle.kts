@@ -25,6 +25,7 @@ dependencies {
     
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(project(":kotlin-reflect"))
+    implementation(kotlin("reflect"))
 }
 
 sourceSets {

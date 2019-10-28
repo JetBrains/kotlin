@@ -1,0 +1,18 @@
+FILE: infixFunctions.kt
+    public final infix fun R|kotlin/Int|.good(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final infix fun R|kotlin/Int|.foo(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final infix fun R|kotlin/Int|.bar(): R|kotlin/Unit| {
+    }
+    public final infix fun baz(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias B = R|A|
+    public final val x: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
