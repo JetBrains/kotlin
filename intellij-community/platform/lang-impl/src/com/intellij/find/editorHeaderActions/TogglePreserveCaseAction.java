@@ -28,11 +28,11 @@ public class TogglePreserveCaseAction extends EditorHeaderToggleAction {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    super.update(e);
-
     EditorSearchSession search = e.getData(EditorSearchSession.SESSION_KEY);
     FindModel findModel = search != null ? search.getFindModel() : null;
     e.getPresentation().setEnabled(findModel != null && !findModel.isRegularExpressions());
+
+    super.update(e);
   }
 
   @Override

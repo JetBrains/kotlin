@@ -12,11 +12,11 @@ public class ToggleWholeWordsOnlyAction extends EditorHeaderToggleAction {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    super.update(e);
-
     SearchSession session = e.getData(SearchSession.KEY);
     e.getPresentation().setEnabled(session != null && !session.getFindModel().isRegularExpressions());
     e.getPresentation().setVisible(session != null && !session.getFindModel().isMultiline());
+
+    super.update(e);
   }
 
   @Override
