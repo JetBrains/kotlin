@@ -204,7 +204,7 @@ class DataClassMembersGenerator(
             when (val typeConstructorDescriptor = type.constructor.declarationDescriptor) {
                 is ClassDescriptor ->
                     if (KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor))
-                        context.irBuiltIns.dataClassArrayMemberHashCodeSymbol.descriptor
+                        context.irBuiltIns.dataClassArrayMemberHashCode
                     else
                         type.memberScope.findFirstFunction("hashCode") { it.valueParameters.isEmpty() }
 

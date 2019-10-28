@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.constructors
@@ -92,7 +93,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     // Type checks:
 
     val jsInstanceOf = binOpBool("jsInstanceOf")
-    val jsTypeOf = unOp("jsTypeOf", irBuiltIns.string)
+    val jsTypeOf = unOp("jsTypeOf", irBuiltIns.stringType)
 
     // Number conversions:
 
@@ -336,18 +337,18 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         }
     }
 
-    private fun unOp(name: String, returnType: KotlinType = irBuiltIns.anyN) =
-        irBuiltIns.run { defineOperator(name, returnType, listOf(anyN)) }
+    private fun unOp(name: String, returnType: IrType = irBuiltIns.anyNType) =
+        irBuiltIns.run { defineOperator(name, returnType, listOf(anyNType)) }
 
-    private fun unOpBool(name: String) = unOp(name, irBuiltIns.bool)
-    private fun unOpInt(name: String) = unOp(name, irBuiltIns.int)
+    private fun unOpBool(name: String) = unOp(name, irBuiltIns.booleanType)
+    private fun unOpInt(name: String) = unOp(name, irBuiltIns.intType)
 
-    private fun binOp(name: String, returnType: KotlinType = irBuiltIns.anyN) =
-        irBuiltIns.run { defineOperator(name, returnType, listOf(anyN, anyN)) }
+    private fun binOp(name: String, returnType: IrType = irBuiltIns.anyNType) =
+        irBuiltIns.run { defineOperator(name, returnType, listOf(anyNType, anyNType)) }
 
-    private fun tripleOp(name: String, returnType: KotlinType = irBuiltIns.anyN) =
-        irBuiltIns.run { defineOperator(name, returnType, listOf(anyN, anyN, anyN)) }
+    private fun tripleOp(name: String, returnType: IrType = irBuiltIns.anyNType) =
+        irBuiltIns.run { defineOperator(name, returnType, listOf(anyNType, anyNType, anyNType)) }
 
-    private fun binOpBool(name: String) = binOp(name, irBuiltIns.bool)
-    private fun binOpInt(name: String) = binOp(name, irBuiltIns.int)
+    private fun binOpBool(name: String) = binOp(name, irBuiltIns.booleanType)
+    private fun binOpInt(name: String) = binOp(name, irBuiltIns.intType)
 }

@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -70,13 +72,13 @@ class WasmSymbols(
         context.irBuiltIns.doubleType to getInternalFunction("wasm_f64_eq")
     )
 
-    private fun wasmString(simpleType: SimpleType): String = with(context.irBuiltIns) {
-        when (simpleType) {
-            bool, byte, short, char, int -> "i32"
-            float -> "f32"
-            double -> "f64"
-            long -> "i64"
-            else -> error("Unkonow primitive type")
+    private fun wasmString(classfier: IrClassifierSymbol): String = with(context.irBuiltIns) {
+        when (classfier) {
+            booleanClass, byteClass, shortClass, charClass, intClass -> "i32"
+            floatClass -> "f32"
+            doubleClass -> "f64"
+            longClass -> "i64"
+            else -> error("Unknown primitive type")
         }
     }
 

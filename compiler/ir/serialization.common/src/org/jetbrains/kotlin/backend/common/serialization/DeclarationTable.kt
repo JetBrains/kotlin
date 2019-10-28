@@ -35,14 +35,12 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler, privat
 
     constructor(mangler: KotlinMangler) : this(mangler, UniqIdClashTracker.DEFAULT_TRACKER)
 
-    protected open fun loadKnownBuiltins(builtIns: IrBuiltIns, startIndex: Long): Long {
-        var index = startIndex
+    protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
         val mask = 1L shl 63
         builtIns.knownBuiltins.forEach {
-            table[it.owner] = UniqId(index or mask).also { id -> clashTracker.commit(it.owner, id) }
-            index++
+            val index = with(mangler) { it.mangle.hashMangle }
+            table[it] = UniqId(index or mask).also { id -> clashTracker.commit(it, id) }
         }
-        return index
     }
 
     open fun computeUniqIdByDeclaration(declaration: IrDeclaration): UniqId {

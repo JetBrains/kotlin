@@ -257,7 +257,7 @@ internal class StepHandler(
             //
             // We insert this check in the lowered form only if necessary.
             val stepType = data.stepType(context.irBuiltIns)
-            val stepGreaterFun = context.irBuiltIns.greaterFunByOperandType[stepType.toKotlinType()]!!
+            val stepGreaterFun = context.irBuiltIns.greaterFunByOperandType[stepType.classifierOrFail]!!
             val zeroStep = if (data == ProgressionType.LONG_PROGRESSION) irLong(0) else irInt(0)
             val throwIllegalStepExceptionCall = {
                 irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {

@@ -41,6 +41,6 @@ class JsUniqIdClashTracker : UniqIdClashTracker {
 
 class JsGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(JsMangler, JsUniqIdClashTracker()) {
     init {
-        loadKnownBuiltins(builtIns, PUBLIC_LOCAL_UNIQ_ID_EDGE)
+        loadKnownBuiltins(builtIns)
     }
 }

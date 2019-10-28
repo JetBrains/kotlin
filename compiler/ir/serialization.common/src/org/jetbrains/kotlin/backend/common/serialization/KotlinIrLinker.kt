@@ -51,7 +51,7 @@ abstract class KotlinIrLinker(
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
     private val forwardModuleDescriptor: ModuleDescriptor?,
-    private val firstKnownBuiltinsIndex: Long
+    mangler: KotlinMangler
 ) : DescriptorUniqIdAware, IrDeserializer {
 
 
@@ -472,18 +472,18 @@ abstract class KotlinIrLinker(
 
     protected abstract val descriptorReferenceDeserializer: DescriptorReferenceDeserializer
 
-    protected val indexAfterKnownBuiltins = loadKnownBuiltinSymbols()
-
-    private fun loadKnownBuiltinSymbols(): Long {
-        var currentIndex = firstKnownBuiltinsIndex
+    private fun loadKnownBuiltinSymbols(mangler: KotlinMangler) {
         val mask = 1L shl 63
         val globalDeserializedSymbols = globalDeserializationState.deserializedSymbols
         builtIns.knownBuiltins.forEach {
-            globalDeserializedSymbols[UniqId(currentIndex or mask)] = it
-            assert(symbolTable.referenceSimpleFunction(it.descriptor) == it)
-            currentIndex++
+            val currentIndex = with(mangler) { it.mangle.hashMangle }
+            globalDeserializedSymbols[UniqId(currentIndex or mask)] = it.symbol
+            assert(symbolTable.referenceSimpleFunction(it.symbol.descriptor as SimpleFunctionDescriptor).owner === it)
         }
-        return currentIndex
+    }
+
+    init {
+        loadKnownBuiltinSymbols(mangler)
     }
 
     private val ByteArray.codedInputStream: org.jetbrains.kotlin.protobuf.CodedInputStream

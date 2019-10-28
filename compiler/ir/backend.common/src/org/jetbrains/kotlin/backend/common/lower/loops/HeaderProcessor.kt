@@ -78,10 +78,10 @@ internal sealed class ForLoopHeader(
         with(builder) {
             val builtIns = context.irBuiltIns
             val progressionType = headerInfo.progressionType
-            val progressionKotlinType = progressionType.elementType(builtIns).toKotlinType()
+            val progressionElementType = progressionType.elementType(builtIns)
             val compFun =
-                if (isLastInclusive) builtIns.lessOrEqualFunByOperandType[progressionKotlinType]!!
-                else builtIns.lessFunByOperandType[progressionKotlinType]!!
+                if (isLastInclusive) builtIns.lessOrEqualFunByOperandType[progressionElementType.classifierOrFail]!!
+                else builtIns.lessFunByOperandType[progressionElementType.classifierOrFail]!!
 
             // The default condition depends on the direction.
             when (headerInfo.direction) {
@@ -101,11 +101,11 @@ internal sealed class ForLoopHeader(
                     // If the direction is unknown, we check depending on the "step" value:
                     //   // (use `<` if last is exclusive)
                     //   (step > 0 && inductionVar <= last) || (step < 0 || last <= inductionVar)
-                    val stepKotlinType = progressionType.stepType(builtIns).toKotlinType()
+                    val stepType = progressionType.stepType(builtIns)
                     val isLong = progressionType == ProgressionType.LONG_PROGRESSION
                     context.oror(
                         context.andand(
-                            irCall(builtIns.greaterFunByOperandType[stepKotlinType]!!).apply {
+                            irCall(builtIns.greaterFunByOperandType[stepType.classifierOrFail]!!).apply {
                                 putValueArgument(0, irGet(step))
                                 putValueArgument(1, if (isLong) irLong(0) else irInt(0))
                             },
@@ -114,7 +114,7 @@ internal sealed class ForLoopHeader(
                                 putValueArgument(1, lastExpression)
                             }),
                         context.andand(
-                            irCall(builtIns.lessFunByOperandType[stepKotlinType]!!).apply {
+                            irCall(builtIns.lessFunByOperandType[stepType.classifierOrFail]!!).apply {
                                 putValueArgument(0, irGet(step))
                                 putValueArgument(1, if (isLong) irLong(0) else irInt(0))
                             },

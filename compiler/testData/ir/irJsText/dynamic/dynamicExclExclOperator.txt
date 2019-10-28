@@ -3,6 +3,6 @@ FILE fqName:<root> fileName:/dynamicExclExclOperator.kt
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (d: dynamic): dynamic declared in <root>'
-        CALL 'public final fun CHECK_NOT_NULL <T> (x: T of kotlin.internal.ir.CHECK_NOT_NULL?): T of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=dynamic origin=EXCLEXCL
-          <T>: dynamic
-          x: GET_VAR 'd: dynamic declared in <root>.test' type=dynamic origin=null
+        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=dynamic origin=EXCLEXCL
+          <T0>: dynamic
+          arg0: GET_VAR 'd: dynamic declared in <root>.test' type=dynamic origin=null
