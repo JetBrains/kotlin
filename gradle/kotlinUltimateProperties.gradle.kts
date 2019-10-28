@@ -82,6 +82,7 @@ val appcodeJavaPluginDownloadUrl: URL? by rootProject.extra(
         else
             null
 )
+val xCodeCompatPluginVersion by rootProject.extra(rootProject.extra["versions.xcode-compat"] as String)
 
 if (rootProject.extra.has("versions.nativeDebug")) {
     val nativeDebugVersion: String = rootProject.extra["versions.nativeDebug"] as String

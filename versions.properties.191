@@ -11,6 +11,7 @@ versions.ideaPluginForCidr.repo=Kotlin_dev_Aggregate
 versions.appcode=191.8026.49
 versions.appcode.strict=true
 versions.appcode.repo=ijplatform_IjPlatform191_Cidr_AppCode_PublicInstallers
+versions.xcode-compat=0.2.5
 
 versions.clion=191.7479.33
 versions.clion.strict=true

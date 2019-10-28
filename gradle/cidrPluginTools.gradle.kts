@@ -394,11 +394,14 @@ fun Project.getTemplateParameters(): Map<String, String> {
         else -> kotlinBuildNumber // otherwise use the full build number
     }
 
+    val xCodeCompatPluginVersion: String by rootProject.extra
+    
     return mapOf(
             "MPP_GRADLE_PLUGIN_VERSION" to gradlePluginVersion,
             "MPP_CUSTOM_PLUGIN_REPOS_4S" to customPluginRepos(releaseType, kotlinBuildNumber, 4),
             "MPP_CUSTOM_PLUGIN_REPOS_8S" to customPluginRepos(releaseType, kotlinBuildNumber, 8),
-            "MPP_PLUGIN_RESOLUTION_RULES" to pluginResolutionRules(releaseType)
+            "MPP_PLUGIN_RESOLUTION_RULES" to pluginResolutionRules(releaseType),
+            "MPP_XCODE_COMPAT_PLUGIN_VERSION" to xCodeCompatPluginVersion
     ).also {
         logger.kotlinInfo {
             """
