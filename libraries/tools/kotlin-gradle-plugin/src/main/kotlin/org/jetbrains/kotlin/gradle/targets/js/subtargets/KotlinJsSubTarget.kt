@@ -131,4 +131,8 @@ abstract class KotlinJsSubTarget(
     }
 
     protected abstract fun configureMain(compilation: KotlinJsCompilation)
+
+    companion object {
+        const val RUN_TASK_NAME = "run"
+    }
 }

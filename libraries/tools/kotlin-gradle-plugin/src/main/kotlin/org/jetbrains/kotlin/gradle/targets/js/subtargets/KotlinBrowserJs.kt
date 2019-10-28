@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
@@ -85,7 +86,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             val runTask = project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
                     buildVariant.name,
-                    "run"
+                    RUN_TASK_NAME
                 )
             ) {
                 it.dependsOn(
@@ -132,6 +133,9 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
             if (kind == BuildVariantKind.DEVELOPMENT) {
                 target.runTask.dependsOn(runTask)
+                project.registerTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {
+                    it.dependsOn(runTask)
+                }
             }
         }
     }
@@ -152,7 +156,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             val webpackTask = project.registerTask<KotlinWebpack>(
                 disambiguateCamelCased(
                     buildVariant.name,
-                    "webpack"
+                    WEBPACK_TASK_NAME
 
                 )
             ) {
@@ -191,6 +195,9 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
             if (kind == BuildVariantKind.PRODUCTION) {
                 project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(webpackTask)
+                project.registerTask<Task>(disambiguateCamelCased(WEBPACK_TASK_NAME)) {
+                    it.dependsOn(webpackTask)
+                }
             }
         }
     }
@@ -265,5 +272,7 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         const val PRODUCTION = "production"
         const val DEVELOPMENT = "development"
+
+        private const val WEBPACK_TASK_NAME = "webpack"
     }
 }
