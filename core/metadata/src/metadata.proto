@@ -23,6 +23,8 @@ option optimize_for = LITE_RUNTIME;
 
 message StringTable {
   repeated string string = 1;
+
+  option (skip_message_in_comparison) = true;
 }
 
 message QualifiedNameTable {
@@ -40,6 +42,8 @@ message QualifiedNameTable {
   }
 
   repeated QualifiedName qualified_name = 1;
+
+  option (skip_message_in_comparison) = true;
 }
 
 message Annotation {
@@ -256,6 +260,8 @@ message TypeTable {
   // Index starting from which all types are nullable, or nothing if all types in this table are non-null.
   // Note that the 'nullable' field of Type messages is ignored and shouldn't be written because it wastes too much space
   optional int32 first_nullable = 2 [default = -1];
+
+  option (skip_message_in_comparison) = true;
 }
 
 message Constructor {

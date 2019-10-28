@@ -53,11 +53,6 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsPackageTypeAlias(old, new)) return false
 
-        if (old.hasTypeTable() != new.hasTypeTable()) return false
-        if (old.hasTypeTable()) {
-            if (!checkEquals(old.typeTable, new.typeTable)) return false
-        }
-
         if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) return false
         if (old.hasVersionRequirementTable()) {
             if (!checkEquals(old.versionRequirementTable, new.versionRequirementTable)) return false
@@ -98,7 +93,6 @@ open class ProtoCompareGenerated(
         FUNCTION_LIST,
         PROPERTY_LIST,
         TYPE_ALIAS_LIST,
-        TYPE_TABLE,
         VERSION_REQUIREMENT_TABLE,
         JVM_EXT_PACKAGE_MODULE_NAME,
         JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST,
@@ -115,11 +109,6 @@ open class ProtoCompareGenerated(
         if (!checkEqualsPackageProperty(old, new)) result.add(ProtoBufPackageKind.PROPERTY_LIST)
 
         if (!checkEqualsPackageTypeAlias(old, new)) result.add(ProtoBufPackageKind.TYPE_ALIAS_LIST)
-
-        if (old.hasTypeTable() != new.hasTypeTable()) result.add(ProtoBufPackageKind.TYPE_TABLE)
-        if (old.hasTypeTable()) {
-            if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufPackageKind.TYPE_TABLE)
-        }
 
         if (old.hasVersionRequirementTable() != new.hasVersionRequirementTable()) result.add(ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE)
         if (old.hasVersionRequirementTable()) {
@@ -190,11 +179,6 @@ open class ProtoCompareGenerated(
         if (!checkEqualsClassEnumEntry(old, new)) return false
 
         if (!checkEqualsClassSealedSubclassFqName(old, new)) return false
-
-        if (old.hasTypeTable() != new.hasTypeTable()) return false
-        if (old.hasTypeTable()) {
-            if (!checkEquals(old.typeTable, new.typeTable)) return false
-        }
 
         if (!checkEqualsClassVersionRequirement(old, new)) return false
 
@@ -275,7 +259,6 @@ open class ProtoCompareGenerated(
         TYPE_ALIAS_LIST,
         ENUM_ENTRY_LIST,
         SEALED_SUBCLASS_FQ_NAME_LIST,
-        TYPE_TABLE,
         VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
         JVM_EXT_CLASS_MODULE_NAME,
@@ -322,11 +305,6 @@ open class ProtoCompareGenerated(
         if (!checkEqualsClassEnumEntry(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_LIST)
 
         if (!checkEqualsClassSealedSubclassFqName(old, new)) result.add(ProtoBufClassKind.SEALED_SUBCLASS_FQ_NAME_LIST)
-
-        if (old.hasTypeTable() != new.hasTypeTable()) result.add(ProtoBufClassKind.TYPE_TABLE)
-        if (old.hasTypeTable()) {
-            if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufClassKind.TYPE_TABLE)
-        }
 
         if (!checkEqualsClassVersionRequirement(old, new)) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_LIST)
 
@@ -430,11 +408,6 @@ open class ProtoCompareGenerated(
         }
 
         if (!checkEqualsFunctionValueParameter(old, new)) return false
-
-        if (old.hasTypeTable() != new.hasTypeTable()) return false
-        if (old.hasTypeTable()) {
-            if (!checkEquals(old.typeTable, new.typeTable)) return false
-        }
 
         if (!checkEqualsFunctionVersionRequirement(old, new)) return false
 
@@ -707,17 +680,6 @@ open class ProtoCompareGenerated(
         if (!checkEqualsTypeAliasAnnotation(old, new)) return false
 
         if (!checkEqualsTypeAliasVersionRequirement(old, new)) return false
-
-        return true
-    }
-
-    open fun checkEquals(old: ProtoBuf.TypeTable, new: ProtoBuf.TypeTable): Boolean {
-        if (!checkEqualsTypeTableType(old, new)) return false
-
-        if (old.hasFirstNullable() != new.hasFirstNullable()) return false
-        if (old.hasFirstNullable()) {
-            if (old.firstNullable != new.firstNullable) return false
-        }
 
         return true
     }
@@ -1504,16 +1466,6 @@ open class ProtoCompareGenerated(
         return true
     }
 
-    open fun checkEqualsTypeTableType(old: ProtoBuf.TypeTable, new: ProtoBuf.TypeTable): Boolean {
-        if (old.typeCount != new.typeCount) return false
-
-        for(i in 0..old.typeCount - 1) {
-            if (!checkEquals(old.getType(i), new.getType(i))) return false
-        }
-
-        return true
-    }
-
     open fun checkEqualsVersionRequirementTableRequirement(old: ProtoBuf.VersionRequirementTable, new: ProtoBuf.VersionRequirementTable): Boolean {
         if (old.requirementCount != new.requirementCount) return false
 
@@ -1683,10 +1635,6 @@ fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) 
         hashCode = 31 * hashCode + getTypeAlias(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
-    if (hasTypeTable()) {
-        hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
     if (hasVersionRequirementTable()) {
         hashCode = 31 * hashCode + versionRequirementTable.hashCode(stringIndexes, fqNameIndexes, typeById)
     }
@@ -1767,10 +1715,6 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + fqNameIndexes(getSealedSubclassFqName(i))
     }
 
-    if (hasTypeTable()) {
-        hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
     for(i in 0..versionRequirementCount - 1) {
         hashCode = 31 * hashCode + getVersionRequirement(i)
     }
@@ -1849,10 +1793,6 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     for(i in 0..valueParameterCount - 1) {
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    if (hasTypeTable()) {
-        hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..versionRequirementCount - 1) {
@@ -2053,20 +1993,6 @@ fun ProtoBuf.TypeAlias.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
 
     for(i in 0..versionRequirementCount - 1) {
         hashCode = 31 * hashCode + getVersionRequirement(i)
-    }
-
-    return hashCode
-}
-
-fun ProtoBuf.TypeTable.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeById: (Int) -> ProtoBuf.Type): Int {
-    var hashCode = 1
-
-    for(i in 0..typeCount - 1) {
-        hashCode = 31 * hashCode + getType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    if (hasFirstNullable()) {
-        hashCode = 31 * hashCode + firstNullable
     }
 
     return hashCode

@@ -27,3 +27,7 @@ extend google.protobuf.FieldOptions {
   optional bool string_id_in_table = 50003;
   optional bool type_id_in_table = 50004;
 }
+
+extend google.protobuf.MessageOptions {
+  optional bool skip_message_in_comparison = 50100;
+}

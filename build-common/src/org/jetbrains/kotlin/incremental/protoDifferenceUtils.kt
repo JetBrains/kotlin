@@ -239,9 +239,6 @@ class DifferenceCalculatorForClass(
                     //     when (x as Base) { is Impl -> ... }
                     areSubclassesAffected = true
                 }
-                ProtoBufClassKind.TYPE_TABLE -> {
-                    // TODO
-                }
                 ProtoBufClassKind.VERSION_REQUIREMENT_LIST,
                 ProtoBufClassKind.VERSION_REQUIREMENT_TABLE -> {
                     // TODO
@@ -317,7 +314,6 @@ class DifferenceCalculatorForPackageFacade(
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getPropertyList))
                 ProtoBufPackageKind.TYPE_ALIAS_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Package::getTypeAliasList))
-                ProtoBufPackageKind.TYPE_TABLE,
                 ProtoBufPackageKind.VERSION_REQUIREMENT_TABLE,
                 ProtoBufPackageKind.JVM_EXT_PACKAGE_MODULE_NAME,
                 ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME -> {

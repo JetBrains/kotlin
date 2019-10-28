@@ -215,8 +215,8 @@ class GenerateProtoBufCompare {
     fun generateHashCodeFun(descriptor: Descriptors.Descriptor, p: Printer) {
         val typeName = descriptor.typeName
 
-        val fields = descriptor.fields.filter { !it.isSkip }
-        val extFields = extensions[descriptor]?.filter { !it.isSkip } ?: emptyList()
+        val fields = descriptor.fields.filter { !it.shouldSkip }
+        val extFields = extensions[descriptor]?.filter { !it.shouldSkip } ?: emptyList()
 
         p.println()
         p.println("fun $typeName.$HASH_CODE_NAME(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeById: (Int) -> ProtoBuf.Type): Int {")
@@ -261,8 +261,8 @@ class GenerateProtoBufCompare {
     fun generateForMessage(descriptor: Descriptors.Descriptor, p: Printer) {
         val typeName = descriptor.typeName
 
-        val fields = descriptor.fields.filter { !it.isSkip }
-        val extFields = extensions[descriptor]?.filter { !it.isSkip } ?: emptyList()
+        val fields = descriptor.fields.filter { !it.shouldSkip }
+        val extFields = extensions[descriptor]?.filter { !it.shouldSkip } ?: emptyList()
 
         p.println("open fun $CHECK_EQUALS_NAME(old: $typeName, new: $typeName): Boolean {")
         p.pushIndent()
@@ -280,8 +280,8 @@ class GenerateProtoBufCompare {
         val typeName = descriptor.typeName
         val className = typeName.replace(".", "")
 
-        val fields = descriptor.fields.filter { !it.isSkip }
-        val extFields = extensions[descriptor]?.filter { !it.isSkip } ?: emptyList()
+        val fields = descriptor.fields.filter { !it.shouldSkip }
+        val extFields = extensions[descriptor]?.filter { !it.shouldSkip } ?: emptyList()
         val allFields = fields + extFields
 
         p.println("enum class ${className}Kind {")
@@ -421,8 +421,12 @@ class GenerateProtoBufCompare {
     private val Descriptors.FieldDescriptor.statementForDiff: String
         get() = "$RESULT_NAME.add(${containingType.typeName.replace(".", "")}Kind.${extensions.getEnumName(this)})"
 
-    private val Descriptors.FieldDescriptor.isSkip: Boolean
+    private val Descriptors.Descriptor.shouldSkip: Boolean
+        get() = options.getExtension(DebugExtOptionsProtoBuf.skipMessageInComparison)
+
+    private val Descriptors.FieldDescriptor.shouldSkip: Boolean
         get() = options.getExtension(DebugExtOptionsProtoBuf.skipInComparison)
+                || (type == Descriptors.FieldDescriptor.Type.MESSAGE && messageType.shouldSkip)
 
     private fun addMessageTypeToProcessIfNeeded(field: Descriptors.FieldDescriptor) {
         if (field.javaType == Descriptors.FieldDescriptor.JavaType.MESSAGE) {
@@ -431,7 +435,7 @@ class GenerateProtoBufCompare {
     }
 
     private fun addMessageToProcessIfNeeded(descriptor: Descriptors.Descriptor) {
-        if (descriptor !in allMessages) {
+        if (descriptor !in allMessages && !descriptor.shouldSkip) {
             allMessages.add(descriptor)
             messagesToProcess.add(descriptor)
         }
