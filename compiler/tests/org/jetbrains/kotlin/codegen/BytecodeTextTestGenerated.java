@@ -94,11 +94,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         runTest("compiler/testData/codegen/bytecodeText/constClosureOptimization.kt");
     }
 
-    @TestMetadata("constCoroutine.kt")
-    public void testConstCoroutine() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeText/constCoroutine.kt");
-    }
-
     @TestMetadata("defaultMethodBody.kt")
     public void testDefaultMethodBody() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/defaultMethodBody.kt");
@@ -262,11 +257,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
     @TestMetadata("noFlagAnnotations.kt")
     public void testNoFlagAnnotations() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/noFlagAnnotations.kt");
-    }
-
-    @TestMetadata("noInlineJavaProtectedConstants.kt")
-    public void testNoInlineJavaProtectedConstants() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeText/noInlineJavaProtectedConstants.kt");
     }
 
     @TestMetadata("noNumberCheckCast.kt")
@@ -1093,11 +1083,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
 
-        @TestMetadata("accessorsForPrivateConstants.kt")
-        public void testAccessorsForPrivateConstants() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/constProperty/accessorsForPrivateConstants.kt");
-        }
-
         public void testAllFilesPresentInConstProperty() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/constProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
@@ -1273,11 +1258,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
-        @TestMetadata("crossinlineSuspendContinuation_1_2.kt")
-        public void testCrossinlineSuspendContinuation_1_2() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/coroutines/crossinlineSuspendContinuation_1_2.kt");
-        }
-
         @TestMetadata("crossinlineSuspendContinuation_1_3.kt")
         public void testCrossinlineSuspendContinuation_1_3() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/crossinlineSuspendContinuation_1_3.kt");
@@ -1286,11 +1266,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("doNotReassignContinuation.kt")
         public void testDoNotReassignContinuation() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation.kt");
-        }
-
-        @TestMetadata("doNotReassignContinuation_1_2.kt")
-        public void testDoNotReassignContinuation_1_2() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/coroutines/doNotReassignContinuation_1_2.kt");
         }
 
         @TestMetadata("returnUnitInLambda.kt")
@@ -1316,16 +1291,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("varValueConflictsWithTableSameSort.kt")
         public void testVarValueConflictsWithTableSameSort() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort.kt");
-        }
-
-        @TestMetadata("varValueConflictsWithTableSameSort_1_2.kt")
-        public void testVarValueConflictsWithTableSameSort_1_2() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort_1_2.kt");
-        }
-
-        @TestMetadata("varValueConflictsWithTable_1_2.kt")
-        public void testVarValueConflictsWithTable_1_2() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTable_1_2.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/debug")
@@ -3413,6 +3378,67 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
 
         public void testAllFilesPresentInOldLanguageVersions() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/oldLanguageVersions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("constCoroutine.kt")
+        public void testConstCoroutine() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/constCoroutine.kt");
+        }
+
+        @TestMetadata("noInlineJavaProtectedConstants.kt")
+        public void testNoInlineJavaProtectedConstants() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/noInlineJavaProtectedConstants.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/oldLanguageVersions/constProperty")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ConstProperty extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            @TestMetadata("accessorsForPrivateConstants.kt")
+            public void testAccessorsForPrivateConstants() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/constProperty/accessorsForPrivateConstants.kt");
+            }
+
+            public void testAllFilesPresentInConstProperty() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/oldLanguageVersions/constProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/oldLanguageVersions/coroutines")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Coroutines extends AbstractBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCoroutines() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/oldLanguageVersions/coroutines"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("crossinlineSuspendContinuation_1_2.kt")
+            public void testCrossinlineSuspendContinuation_1_2() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/coroutines/crossinlineSuspendContinuation_1_2.kt");
+            }
+
+            @TestMetadata("doNotReassignContinuation_1_2.kt")
+            public void testDoNotReassignContinuation_1_2() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/coroutines/doNotReassignContinuation_1_2.kt");
+            }
+
+            @TestMetadata("varValueConflictsWithTableSameSort_1_2.kt")
+            public void testVarValueConflictsWithTableSameSort_1_2() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/coroutines/varValueConflictsWithTableSameSort_1_2.kt");
+            }
+
+            @TestMetadata("varValueConflictsWithTable_1_2.kt")
+            public void testVarValueConflictsWithTable_1_2() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/oldLanguageVersions/coroutines/varValueConflictsWithTable_1_2.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeText/oldLanguageVersions/ieee754")
