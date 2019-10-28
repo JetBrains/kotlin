@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
 interface ImplicitReceiverStack {
-    fun add(name: Name, value: ImplicitReceiverValue<*>)
-    fun pop(name: Name)
+    fun add(name: Name?, value: ImplicitReceiverValue<*>)
+    fun pop(name: Name?)
 
     operator fun get(name: String?): ImplicitReceiverValue<*>?
 
@@ -31,17 +31,21 @@ class ImplicitReceiverStackImpl : ImplicitReceiverStack, Iterable<ImplicitReceiv
     private val indexesPerSymbol: MutableMap<FirBasedSymbol<*>, Int> = mutableMapOf()
     val size: Int get() = stack.size
 
-    override fun add(name: Name, value: ImplicitReceiverValue<*>) {
+    override fun add(name: Name?, value: ImplicitReceiverValue<*>) {
         stack += value
         originalTypes += value.type
         val index = stack.size - 1
-        indexesPerLabel.put(name, index)
+        if (name != null) {
+            indexesPerLabel.put(name, index)
+        }
         indexesPerSymbol.put(value.boundSymbol, index)
     }
 
-    override fun pop(name: Name) {
+    override fun pop(name: Name?) {
         val index = stack.size - 1
-        indexesPerLabel.remove(name, index)
+        if (name != null) {
+            indexesPerLabel.remove(name, index)
+        }
         originalTypes.removeAt(index)
         val value = stack.removeAt(index)
         indexesPerSymbol.remove(value.boundSymbol)

@@ -360,7 +360,8 @@ class Fir2IrDeclarationStorage(
             val containerSource = function.containerSource
             val descriptor = containerSource?.let { WrappedFunctionDescriptorWithContainerSource(it) } ?: WrappedSimpleFunctionDescriptor()
             return function.convertWithOffsets { startOffset, endOffset ->
-                irSymbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
+                enterScope(descriptor)
+                val result = irSymbolTable.declareSimpleFunction(startOffset, endOffset, origin, descriptor) { symbol ->
                     IrFunctionImpl(
                         startOffset, endOffset, origin, symbol,
                         function.name, function.visibility, function.modality!!,
@@ -372,6 +373,8 @@ class Fir2IrDeclarationStorage(
                         isExpect = function.isExpect
                     )
                 }
+                leaveScope(descriptor)
+                result
             }.bindAndDeclareParameters(function, descriptor, irParent, isStatic = function.isStatic, shouldLeaveScope = shouldLeaveScope)
         }
 
@@ -486,7 +489,8 @@ class Fir2IrDeclarationStorage(
             val containerSource = property.containerSource
             val descriptor = containerSource?.let { WrappedPropertyDescriptorWithContainerSource(it) } ?: WrappedPropertyDescriptor()
             property.convertWithOffsets { startOffset, endOffset ->
-                irSymbolTable.declareProperty(
+                enterScope(descriptor)
+                val result = irSymbolTable.declareProperty(
                     startOffset, endOffset,
                     origin, descriptor, property.delegate != null
                 ) { symbol ->
@@ -525,6 +529,8 @@ class Fir2IrDeclarationStorage(
                         }
                     }
                 }
+                leaveScope(descriptor)
+                result
             }
         }
     }

@@ -1,12 +1,12 @@
 FILE: localImplicitBodies.kt
     public final fun foo(): R|kotlin/Unit| {
-        lval x: R|kotlin/Any| = object : R|kotlin/Any| {
+        lval x: R|anonymous| = object : R|kotlin/Any| {
             private constructor(): R|kotlin/Any| {
                 super<R|kotlin/Any|>()
             }
 
-            public final fun sss(): <ERROR TYPE REF: Unresolved name: abc> {
-                ^sss <Unresolved name: abc>#()
+            public final fun sss(): <ERROR TYPE REF: Cannot calculate return type (local class/object?)> {
+                ^sss R?C|/abc|()
             }
 
             public final fun abc(): R|kotlin/Int| {
@@ -15,5 +15,5 @@ FILE: localImplicitBodies.kt
 
         }
 
-        lval g: <ERROR TYPE REF: Unresolved name: sss> = R|<local>/x|.<Unresolved name: sss>#()
+        lval g: <ERROR TYPE REF: Cannot calculate return type (local class/object?)> = R|<local>/x|.R?C|/sss|()
     }

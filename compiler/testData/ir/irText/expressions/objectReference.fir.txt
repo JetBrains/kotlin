@@ -109,7 +109,7 @@ FILE fqName:<root> fileName:/objectReference.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aLambda type:kotlin.Function0<kotlin.Unit> visibility:private [final]' type=kotlin.Function0<kotlin.Unit> origin=null
               receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z.<get-aLambda>' type=<root>.Z origin=null
     PROPERTY name:anObject visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:anObject type:kotlin.Any visibility:private [final]
+      FIELD PROPERTY_BACKING_FIELD name:anObject type:<uninitialized parent>.<anonymous> visibility:private [final]
         EXPRESSION_BODY
           BLOCK type=<root>.Z.anObject.<no name provided> origin=OBJECT_LITERAL
             CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
@@ -144,12 +144,12 @@ FILE fqName:<root> fileName:/objectReference.kt
                   CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
                     $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
             CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Z.anObject.<no name provided>' type=<root>.Z.anObject.<no name provided> origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anObject> visibility:public modality:FINAL <> ($this:<root>.Z) returnType:kotlin.Any
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anObject> visibility:public modality:FINAL <> ($this:<root>.Z) returnType:<uninitialized parent>.<anonymous>
         correspondingProperty: PROPERTY name:anObject visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Z
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): kotlin.Any declared in <root>.Z'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-anObject> (): <uninitialized parent>.<anonymous> declared in <root>.Z'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anObject type:<uninitialized parent>.<anonymous> visibility:private [final]' type=<uninitialized parent>.<anonymous> origin=null
               receiver: GET_VAR '<this>: <root>.Z declared in <root>.Z.<get-anObject>' type=<root>.Z origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

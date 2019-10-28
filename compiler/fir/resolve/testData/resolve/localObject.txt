@@ -8,7 +8,7 @@ FILE: localObject.kt
     }
     public final fun tesLambda(x: R|kotlin/Int|): R|kotlin/Int| {
         ^tesLambda R|/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| {
-            lval obj: R|Foo| = object : R|Foo| {
+            lval obj: R|anonymous| = object : R|Foo| {
                 private constructor(): R|kotlin/Any| {
                     super<R|kotlin/Any|>()
                 }
@@ -34,7 +34,7 @@ FILE: localObject.kt
         public final var x: R|kotlin/Int| = Int(1)
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit| {
-                lval obj: R|Foo| = object : R|Foo| {
+                lval obj: R|anonymous| = object : R|Foo| {
                     private constructor(): R|kotlin/Any| {
                         super<R|kotlin/Any|>()
                     }
@@ -50,7 +50,7 @@ FILE: localObject.kt
 
         public final val y: R|kotlin/Int|
             public get(): R|kotlin/Int| {
-                lval obj: R|Foo| = object : R|Foo| {
+                lval obj: R|anonymous| = object : R|Foo| {
                     private constructor(): R|kotlin/Any| {
                         super<R|kotlin/Any|>()
                     }
@@ -65,7 +65,7 @@ FILE: localObject.kt
             }
 
         public final val z: R|kotlin/Int| = R|/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| {
-            lval obj: R|Foo| = object : R|Foo| {
+            lval obj: R|anonymous| = object : R|Foo| {
                 private constructor(): R|kotlin/Any| {
                     super<R|kotlin/Any|>()
                 }

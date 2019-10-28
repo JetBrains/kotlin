@@ -55,7 +55,7 @@ fun FirClassSymbol<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builde
     }
 }
 
-fun FirRegularClass.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
+fun FirClass<*>.buildUseSiteMemberScope(useSiteSession: FirSession, builder: ScopeSession): FirScope? {
     if (classId.isLocal) {
         // It's not possible to find local class by symbol
         return buildDefaultUseSiteMemberScope(useSiteSession, builder)

@@ -150,6 +150,10 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformRegularClass(regularClass, data)
     }
 
+    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): CompositeTransformResult<FirStatement> {
+        return declarationsTransformer.transformAnonymousObject(anonymousObject, data)
+    }
+
     override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
         return declarationsTransformer.transformSimpleFunction(simpleFunction, data)
     }

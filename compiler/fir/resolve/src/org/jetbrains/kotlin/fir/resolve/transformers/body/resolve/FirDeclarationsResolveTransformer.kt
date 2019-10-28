@@ -151,6 +151,15 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         return result as CompositeTransformResult<FirStatement>
     }
 
+    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): CompositeTransformResult<FirStatement> {
+        val type = anonymousObject.defaultType()
+        anonymousObject.resultType = FirResolvedTypeRefImpl(anonymousObject.source, type)
+        val result = withLabelAndReceiverType(null, anonymousObject, type) {
+            transformDeclaration(anonymousObject, data)
+        }
+        return result as CompositeTransformResult<FirStatement>
+    }
+
     private fun transformAnonymousFunctionWithLambdaResolution(
         anonymousFunction: FirAnonymousFunction, lambdaResolution: LambdaResolution
     ): FirAnonymousFunction {
@@ -339,13 +348,13 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     private inline fun <T> withLabelAndReceiverType(
-        labelName: Name,
+        labelName: Name?,
         owner: FirDeclaration,
         type: ConeKotlinType,
         block: () -> T
     ): T {
         val implicitReceiverValue = when (owner) {
-            is FirRegularClass -> {
+            is FirClass<*> -> {
                 ImplicitDispatchReceiverValue(owner.symbol, type, symbolProvider, session, scopeSession)
             }
             is FirFunction<*> -> {

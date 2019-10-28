@@ -67,10 +67,9 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
             classId.outerClassId
         }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
 
-        if (file == null || outerClasses.any { it == null }) return FirErrorTypeRefImpl(
-            null,
-            "I don't know what todo"
-        )
+        if (file == null || outerClasses.any { it == null }) {
+            return FirErrorTypeRefImpl(null, "Cannot calculate return type (local class/object?)")
+        }
 
         declaration.transformReturnTypeRef(
             TransformImplicitType,

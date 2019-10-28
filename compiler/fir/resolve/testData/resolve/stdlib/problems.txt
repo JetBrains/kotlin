@@ -1,7 +1,7 @@
 FILE: problems.kt
     public final val sb: R|java/lang/StringBuilder| = R|java/lang/StringBuilder.StringBuilder|()
         public get(): R|java/lang/StringBuilder|
-    public final val o: R|kotlin/Any| = object : R|kotlin/Any| {
+    public final val o: R|anonymous| = object : R|kotlin/Any| {
         private constructor(): R|kotlin/Any| {
             super<R|kotlin/Any|>()
         }
@@ -10,12 +10,12 @@ FILE: problems.kt
             public get(): R|kotlin/String|
 
         public final fun test(): R|kotlin/Unit| {
-            <Unresolved name: name>#
+            R|/name|
         }
 
     }
 
-        public get(): R|kotlin/Any|
+        public get(): R|anonymous|
     public final fun test(): R|kotlin/Unit| {
         local final class Local : R|kotlin/Any| {
             public constructor(): R|Local| {

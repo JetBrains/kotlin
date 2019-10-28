@@ -526,6 +526,7 @@ class Fir2IrVisitor(
         property: FirProperty,
         firOverriddenSymbol: FirPropertySymbol? = null
     ): IrProperty {
+        declarationStorage.enterScope(descriptor)
         val initializer = property.initializer
         val delegate = property.delegate
         val irParent = this.parent
@@ -572,6 +573,7 @@ class Fir2IrVisitor(
         property.annotations.forEach {
             annotations += it.accept(this@Fir2IrVisitor, null) as IrConstructorCall
         }
+        declarationStorage.leaveScope(descriptor)
         return this
     }
 
