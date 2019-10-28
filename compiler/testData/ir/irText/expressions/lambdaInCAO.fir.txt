@@ -17,7 +17,12 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
   FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: R|<local>/a|' type=IrErrorType
+      CALL 'public final fun plusAssign (lambda: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        $receiver: GET_VAR 'a: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+        lambda: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+            BLOCK_BODY
+              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY

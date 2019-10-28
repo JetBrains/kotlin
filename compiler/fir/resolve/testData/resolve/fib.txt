@@ -13,7 +13,7 @@ FILE: fib.kt
         while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
             lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
             lval temp: R|kotlin/Int| = R|<local>/current|
-            R|<local>/current| += R|<local>/prev|
+            R|<local>/current| = R|<local>/current|.R|kotlin/Int.plus|(R|<local>/prev|)
             R|<local>/prev| = R|<local>/temp|
         }
 

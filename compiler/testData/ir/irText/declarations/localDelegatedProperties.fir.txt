@@ -14,5 +14,6 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
         ERROR_CALL 'Unresolved reference: <Ambiguity: inc, [kotlin/inc, kotlin/inc]>#' type=IrErrorType
       GET_VAR 'val <unary>: IrErrorType [val] declared in <root>.test2' type=IrErrorType origin=null
-      SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
-        CONST Int type=IrErrorType value=1
+      CALL 'public final fun plusAssign (element: T of <uninitialized parent>): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
+        $receiver: GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
+        element: CONST Int type=kotlin.Int value=1

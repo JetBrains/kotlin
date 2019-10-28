@@ -219,9 +219,11 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
       VALUE_PARAMETER name:b index:0 type:<root>.B
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-          receiver: GET_VAR '<this>: <root>.B declared in <root>.Host.plusAssign' type=<root>.B origin=null
-          value: CALL 'public final fun <get-s> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
-            $this: GET_VAR 'b: <root>.B declared in <root>.Host.plusAssign' type=<root>.B origin=null
+          value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun <get-s> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
+              $this: GET_VAR '<this>: <root>.B declared in <root>.Host.plusAssign' type=<root>.B origin=null
+            other: CALL 'public final fun <get-s> (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=null
+              $this: GET_VAR 'b: <root>.B declared in <root>.Host.plusAssign' type=<root>.B origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -239,4 +241,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Host
     VALUE_PARAMETER name:v index:0 type:<root>.B
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: R|<local>/v|' type=IrErrorType
+      CALL 'public final fun plusAssign (b: <root>.B): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+        $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
+        b: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.Int) [primary] declared in <root>.B' type=<root>.B origin=null
+          s: CONST Int type=kotlin.Int value=1000

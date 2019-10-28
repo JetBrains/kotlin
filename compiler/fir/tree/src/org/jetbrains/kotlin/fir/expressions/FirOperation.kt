@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 enum class FirOperation(val operator: String = "???") {
@@ -46,4 +48,26 @@ enum class FirOperation(val operator: String = "???") {
 
         val TYPES: Set<FirOperation> = EnumSet.of(IS, NOT_IS, AS, SAFE_AS)
     }
+}
+
+object FirOperationNameConventions {
+    val ASSIGNMENTS: Map<FirOperation, Name> = EnumMap(
+        mapOf(
+            FirOperation.PLUS_ASSIGN to OperatorNameConventions.PLUS_ASSIGN,
+            FirOperation.MINUS_ASSIGN to OperatorNameConventions.MINUS_ASSIGN,
+            FirOperation.TIMES_ASSIGN to OperatorNameConventions.TIMES_ASSIGN,
+            FirOperation.DIV_ASSIGN to OperatorNameConventions.DIV_ASSIGN,
+            FirOperation.REM_ASSIGN to OperatorNameConventions.REM_ASSIGN
+        )
+    )
+
+    val ASSIGNMENTS_TO_SIMPLE_OPERATOR: Map<FirOperation, Name> = EnumMap(
+        mapOf(
+            FirOperation.PLUS_ASSIGN to OperatorNameConventions.PLUS,
+            FirOperation.MINUS_ASSIGN to OperatorNameConventions.MINUS,
+            FirOperation.TIMES_ASSIGN to OperatorNameConventions.TIMES,
+            FirOperation.DIV_ASSIGN to OperatorNameConventions.DIV,
+            FirOperation.REM_ASSIGN to OperatorNameConventions.REM
+        )
+    )
 }

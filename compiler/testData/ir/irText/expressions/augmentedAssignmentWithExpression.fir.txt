@@ -12,7 +12,9 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
     FUN name:test1 visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
+        CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+          $this: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
+          x: CONST Int type=kotlin.Int value=1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -33,7 +35,9 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
   FUN name:test2 visibility:public modality:FINAL <> ($receiver:<root>.Host) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Host
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
+      CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+        $this: GET_VAR '<this>: <root>.Host declared in <root>.test2' type=<root>.Host origin=null
+        x: CONST Int type=kotlin.Int value=1
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:<complex-set> type:<root>.Host [val]

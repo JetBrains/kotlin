@@ -1,0 +1,28 @@
+FILE: plusAssign.kt
+    public final operator fun R|Foo|.plusAssign(x: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun plusAssign(x: R|Foo|): R|kotlin/Unit| {
+        }
+
+        public final operator fun plusAssign(x: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval f: R|Foo| = R|/Foo.Foo|()
+        R|<local>/f|.<Unresolved name: plus>#(R|<local>/f|)
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval f: R|Foo| = R|/Foo.Foo|()
+        R|<local>/f|.R|/Foo.plusAssign|(R|<local>/f|)
+    }
+    public final fun test_3(f: R|Foo|): R|kotlin/Unit| {
+        R|<local>/f|.R|/Foo.plusAssign|(R|<local>/f|)
+        R|<local>/f|.R|/Foo.plusAssign|(String())
+        R|<local>/f|.R|/plusAssign|(Int(1))
+    }

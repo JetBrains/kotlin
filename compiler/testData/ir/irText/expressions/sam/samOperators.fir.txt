@@ -26,5 +26,9 @@ FILE fqName:<root> fileName:/samOperators.kt
   FUN name:test3 visibility:public modality:FINAL <> ($receiver:<root>.J) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.J
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
-      ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
+      CALL 'public open fun plusAssign (i: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        $this: GET_VAR '<this>: <root>.J declared in <root>.test3' type=<root>.J origin=null
+        i: ERROR_CALL 'Unsupported callable reference: ::<Unresolved name: f>#' type=IrErrorType
+      CALL 'public open fun minusAssign (i: java.lang.Runnable?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        $this: GET_VAR '<this>: <root>.J declared in <root>.test3' type=<root>.J origin=null
+        i: ERROR_CALL 'Unsupported callable reference: ::<Unresolved name: f>#' type=IrErrorType

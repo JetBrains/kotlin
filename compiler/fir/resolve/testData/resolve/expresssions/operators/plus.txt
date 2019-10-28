@@ -1,0 +1,20 @@
+FILE: plus.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun plus(other: R|Foo|): R|Foo| {
+            ^plus this@R|/Foo|
+        }
+
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval f1: R|Foo| = R|/Foo.Foo|()
+        lval f2: R|Foo| = R|/Foo.Foo|()
+        lval f3: R|Foo| = R|<local>/f1|.R|/Foo.plus|(R|<local>/f2|)
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lvar f: R|Foo| = R|/Foo.Foo|()
+        R|<local>/f| = R|<local>/f|.R|/Foo.plus|(R|/Foo.Foo|())
+    }

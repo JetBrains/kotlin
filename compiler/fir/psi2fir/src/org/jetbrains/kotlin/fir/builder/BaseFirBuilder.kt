@@ -475,6 +475,15 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 }
             }
         }
+
+        if (operation in FirOperation.ASSIGNMENTS && operation != FirOperation.ASSIGN) {
+            return FirOperatorCallImpl(psi, operation).apply {
+                // TODO: take good psi
+                arguments += this@generateAssignment?.convert() ?: FirErrorExpressionImpl(null, "Unsupported left value of assignment: ${psi?.text}")
+                arguments += value
+            }
+        }
+
         return FirVariableAssignmentImpl(psi, false, value, operation).apply {
             lValue = initializeLValue(this@generateAssignment) { convert() as? FirQualifiedAccess }
         }

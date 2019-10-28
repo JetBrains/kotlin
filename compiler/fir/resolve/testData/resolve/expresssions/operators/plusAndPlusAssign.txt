@@ -1,0 +1,17 @@
+FILE: plusAndPlusAssign.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun plus(f: R|Foo|): R|Foo| {
+        }
+
+        public final operator fun plusAssign(f: R|Foo|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lvar f: R|Foo| = R|/Foo.Foo|()
+        ERROR_EXPR(Operator overload ambiguity. plusAssign and plus are compatible)
+    }

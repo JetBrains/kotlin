@@ -37,6 +37,6 @@ FILE: destructuring.kt
         lval <unary>: <implicit> = x#
         x# = R|<local>/<unary>|.inc#()
         R|<local>/<unary>|
-        y# *= Double(2.0)
+        *=(y#, Double(2.0))
         z# = String()
     }
