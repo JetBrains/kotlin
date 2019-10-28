@@ -16,6 +16,9 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlinx.cinterop.*
 
+// Ensure loaded function IR classes aren't ordered by arity:
+internal fun referenceFunction1(block: (Any?) -> Unit) {}
+
 // Constants
 const val dbl: Double = 3.14
 const val flt: Float = 2.73F

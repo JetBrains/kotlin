@@ -440,6 +440,9 @@ static const char* getBlockEncoding(id block) {
 
 // Note: replaced by compiler in appropriate compilation modes.
 __attribute__((weak)) convertReferenceFromObjC* Kotlin_ObjCExport_blockToFunctionConverters = nullptr;
+__attribute__((weak)) int Kotlin_ObjCExport_blockToFunctionConverters_size = 0;
+
+extern "C" id objc_retainBlock(id self);
 
 static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
   const char* encoding = getBlockEncoding(block);
@@ -447,10 +450,6 @@ static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
   // TODO: optimize:
   NSMethodSignature *signature = [NSMethodSignature signatureWithObjCTypes:encoding];
   int parameterCount = signature.numberOfArguments - 1; // 1 for the block itself.
-
-  if (parameterCount > 22) {
-    [NSException raise:NSGenericException format:@"Blocks with %d (>22) parameters aren't supported", parameterCount];
-  }
 
   for (int i = 1; i <= parameterCount; ++i) {
     const char* argEncoding = [signature getArgumentTypeAtIndex:i];
@@ -466,7 +465,17 @@ static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
           format:@"Blocks with non-reference-typed return value aren't supported (%s)", returnTypeEncoding];
   }
 
-  RETURN_RESULT_OF(Kotlin_ObjCExport_blockToFunctionConverters[parameterCount], block);
+  auto converter = parameterCount < Kotlin_ObjCExport_blockToFunctionConverters_size
+          ? Kotlin_ObjCExport_blockToFunctionConverters[parameterCount]
+          : nullptr;
+
+  if (converter != nullptr) {
+    RETURN_RESULT_OF(converter, block);
+  } else {
+    // There is no function class for this arity, so resulting object will not be cast to FunctionN class,
+    // and it is enough to convert block to arbitrary object conforming Function.
+    RETURN_RESULT_OF(AllocInstanceWithAssociatedObject, theOpaqueFunctionTypeInfo, objc_retainBlock(block));
+  }
 }
 
 static id Kotlin_ObjCExport_refToObjC_slowpath(ObjHeader* obj);

@@ -295,3 +295,7 @@ private fun Kotlin_Throwable_getMessage(throwable: Throwable): String? = throwab
 @ExportForCppRuntime
 private fun Kotlin_ObjCExport_getWrappedError(throwable: Throwable): Any? =
         (throwable as? ObjCErrorException)?.error
+
+@ExportTypeInfo("theOpaqueFunctionTypeInfo")
+@PublishedApi
+internal class OpaqueFunction : Function<Any?>

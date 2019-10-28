@@ -96,6 +96,7 @@ extern const TypeInfo* theFloatArrayTypeInfo;
 extern const TypeInfo* theForeignObjCObjectTypeInfo;
 extern const TypeInfo* theFreezableAtomicReferenceTypeInfo;
 extern const TypeInfo* theObjCObjectWrapperTypeInfo;
+extern const TypeInfo* theOpaqueFunctionTypeInfo;
 extern const TypeInfo* theShortArrayTypeInfo;
 extern const TypeInfo* theStringTypeInfo;
 extern const TypeInfo* theThrowableTypeInfo;

@@ -487,6 +487,9 @@ private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
 private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LLVMTypeRef
     get() = functionType(int8TypePtr, false, codegen.kObjHeaderPtr)
 
+private val ObjCExportCodeGenerator.objCToKotlinFunctionType: LLVMTypeRef
+    get() = functionType(codegen.kObjHeaderPtr, false, int8TypePtr, codegen.kObjHeaderPtrPtr)
+
 private fun ObjCExportCodeGenerator.emitBoxConverters() {
     val irBuiltIns = context.irBuiltIns
 
@@ -537,20 +540,36 @@ private fun ObjCExportCodeGenerator.emitFunctionConverters() {
 }
 
 private fun ObjCExportCodeGenerator.emitBlockToKotlinFunctionConverters() {
-    val converters = context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.map {
-        val bridge = BlockPointerBridge(numberOfParameters = it.arity, returnsVoid = false)
-        constPointer(blockToKotlinFunctionConverter(bridge))
+    val functionClassesByArity =
+            context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.associateBy { it.arity }
+
+    val count = (functionClassesByArity.keys.max() ?: -1) + 1
+
+    val converters = (0 until count).map { arity ->
+        val functionClass = functionClassesByArity[arity]
+        if (functionClass != null) {
+            val bridge = BlockPointerBridge(numberOfParameters = functionClass.arity, returnsVoid = false)
+            constPointer(blockToKotlinFunctionConverter(bridge))
+        } else {
+            NullPointer(objCToKotlinFunctionType)
+        }
     }
+
     val ptr = staticData.placeGlobalArray(
             "",
-            converters.first().llvmType,
+            pointerType(objCToKotlinFunctionType),
             converters
     ).pointer.getElementPtr(0)
 
-    // Note: this global replaces the weak global defined in runtime.
+    // Note: replacing weak globals defined in runtime.
     replaceExternalWeakOrCommonGlobal(
             "Kotlin_ObjCExport_blockToFunctionConverters",
             ptr,
+            context.standardLlvmSymbolsOrigin
+    )
+    replaceExternalWeakOrCommonGlobal(
+            "Kotlin_ObjCExport_blockToFunctionConverters_size",
+            Int32(count),
             context.standardLlvmSymbolsOrigin
     )
 }
