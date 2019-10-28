@@ -313,6 +313,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var useMixedNamedArguments: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xklib-mpp",
+        description = "Enable experimental support for multi-platform klib libraries"
+    )
+    var klibBasedMpp: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
 
@@ -328,6 +334,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
             put(AnalysisFlags.multiPlatformDoNotCheckActual, noCheckActual)
+            put(AnalysisFlags.klibBasedMpp, klibBasedMpp)
             put(AnalysisFlags.experimental, experimental?.toList().orEmpty())
             put(AnalysisFlags.useExperimental, useExperimental?.toList().orEmpty())
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)

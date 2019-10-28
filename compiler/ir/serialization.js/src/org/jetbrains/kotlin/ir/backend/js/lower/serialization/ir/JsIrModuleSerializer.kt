@@ -9,14 +9,21 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
-class JsIrModuleSerializer(logger: LoggingContext, irBuiltIns: IrBuiltIns, private val descriptorTable: DescriptorTable) :
-    IrModuleSerializer<JsIrFileSerializer>(logger) {
+class JsIrModuleSerializer(
+    logger: LoggingContext,
+    irBuiltIns: IrBuiltIns,
+    private val descriptorTable: DescriptorTable,
+    private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    val skipExpects: Boolean
+) : IrModuleSerializer<JsIrFileSerializer>(logger) {
 
     private val globalDeclarationTable = JsGlobalDeclarationTable(irBuiltIns)
 
     override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
-        JsIrFileSerializer(logger, DeclarationTable(descriptorTable, globalDeclarationTable, 0))
+        JsIrFileSerializer(logger, DeclarationTable(descriptorTable, globalDeclarationTable, 0), expectDescriptorToSymbol, skipExpects = skipExpects)
 }

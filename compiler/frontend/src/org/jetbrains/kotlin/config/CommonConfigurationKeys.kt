@@ -44,6 +44,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val USE_FIR = CompilerConfigurationKey.create<Boolean>("front-end IR")
+
+    @JvmField
+    val KLIB_MPP = CompilerConfigurationKey.create<Boolean>("Klib based MPP")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

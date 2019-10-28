@@ -13,6 +13,9 @@ object AnalysisFlags {
     val multiPlatformDoNotCheckActual by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
+    val klibBasedMpp by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
     val experimental by AnalysisFlag.Delegates.ListOfStrings
 
     @JvmStatic

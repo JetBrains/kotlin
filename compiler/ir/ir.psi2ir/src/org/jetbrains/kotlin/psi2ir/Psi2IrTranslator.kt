@@ -17,16 +17,15 @@
 package org.jetbrains.kotlin.psi2ir
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.generators.AnnotationGenerator
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
-import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
+import org.jetbrains.kotlin.psi2ir.generators.*
 import org.jetbrains.kotlin.psi2ir.transformations.insertImplicitCasts
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
@@ -68,11 +67,13 @@ class Psi2IrTranslator(
     fun generateModuleFragment(
         context: GeneratorContext,
         ktFiles: Collection<KtFile>,
-        irProviders: List<IrProvider>
+        irProviders: List<IrProvider>,
+        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
     ): IrModuleFragment {
         val moduleGenerator = ModuleGenerator(context)
         val irModule = moduleGenerator.generateModuleFragmentWithoutDependencies(ktFiles)
 
+        expectDescriptorToSymbol ?. let { referenceExpectsForUsedActuals(it, context.symbolTable, irModule) }
         irModule.patchDeclarationParents()
         postprocess(context, irModule)
         // do not generate unbound symbols before postprocessing,
@@ -81,6 +82,7 @@ class Psi2IrTranslator(
         irModule.computeUniqIdForDeclarations(context.symbolTable)
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
+
         return irModule
     }
 
