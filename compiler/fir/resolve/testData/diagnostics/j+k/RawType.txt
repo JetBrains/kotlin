@@ -1,0 +1,10 @@
+FILE: test.kt
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test(list: R|kotlin/collections/ArrayList<Some>|): R|kotlin/Unit| {
+        Q|JavaClass|.R|/JavaClass.foo|(R|<local>/list|)
+    }

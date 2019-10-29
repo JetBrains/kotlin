@@ -236,6 +236,16 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/complexFlexibleInference.kt");
         }
 
+        @TestMetadata("FieldAndGetter.kt")
+        public void testFieldAndGetter() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/FieldAndGetter.kt");
+        }
+
+        @TestMetadata("FieldSubstitution.kt")
+        public void testFieldSubstitution() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/FieldSubstitution.kt");
+        }
+
         @TestMetadata("FunctionTypeInJava.kt")
         public void testFunctionTypeInJava() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/FunctionTypeInJava.kt");
@@ -276,6 +286,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/KotlinClassParameterGeneric.kt");
         }
 
+        @TestMetadata("LoggerInstance.kt")
+        public void testLoggerInstance() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/LoggerInstance.kt");
+        }
+
         @TestMetadata("MyException.kt")
         public void testMyException() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/MyException.kt");
@@ -294,6 +309,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("outerInnerClasses.kt")
         public void testOuterInnerClasses() throws Exception {
             runTest("compiler/fir/resolve/testData/diagnostics/j+k/outerInnerClasses.kt");
+        }
+
+        @TestMetadata("RawType.kt")
+        public void testRawType() throws Exception {
+            runTest("compiler/fir/resolve/testData/diagnostics/j+k/RawType.kt");
         }
     }
 
