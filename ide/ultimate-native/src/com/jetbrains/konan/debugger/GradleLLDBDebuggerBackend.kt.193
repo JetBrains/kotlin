@@ -30,7 +30,7 @@ class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
 
     override fun initializationCode(dispatchPort: String, sertializedParams: String): List<String> {
         val params = splitParameters(sertializedParams)
-        val debugServerPath = params[DEBUG_SERVER_PATH_KEY] ?: throw ExecutionException("Executable for debug server is not specified")
+        val debugServerPath = params[DEBUG_SERVER_PATH_KEY] ?: return emptyList()
         val debugServerArgs = params[DEBUG_SERVER_ARGS_KEY]?.split(":") ?: emptyList()
 
         return listOf(
