@@ -6,7 +6,6 @@ import com.intellij.internal.statistic.IdeActivity;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.diagnostic.ControlFlowException;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -240,29 +239,22 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   @Nullable
   @ApiStatus.Experimental
   public static <T> T waitForPromise(@NotNull Promise<T> promise) {
-    while (promise.getState() == Promise.State.PENDING) {
+    AtomicBoolean complete = new AtomicBoolean(false);
+    promise.onProcessed(ignore -> complete.set(true));
+    T result = null;
+    do {
       ProgressManager.checkCanceled();
       try {
-        return promise.blockingGet(100, TimeUnit.MILLISECONDS);
+        result = promise.blockingGet(10, TimeUnit.MILLISECONDS);
       }
       catch (TimeoutException ignore) {
       }
       catch (java.util.concurrent.ExecutionException e) {
-        if (e.getCause() instanceof ControlFlowException) {
-          ExceptionUtil.rethrowUnchecked(e.getCause());
-        }
-        return null;
+        ExceptionUtil.rethrow(e);
       }
     }
-    if (promise.getState() == Promise.State.SUCCEEDED) {
-      try {
-        return promise.blockingGet(Integer.MAX_VALUE);
-      }
-      catch (java.util.concurrent.ExecutionException | TimeoutException e) {
-        LOG.error(e);
-      }
-    }
-    return null;
+    while (!complete.get());
+    return result;
   }
 
   @NotNull
