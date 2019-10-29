@@ -98,11 +98,6 @@ public class CodeStyleFacadeImpl extends CodeStyleFacade {
   }
 
   @Override
-  public boolean isUnsuitableCodeStyleConfigurable(final Configurable c) {
-    return false;
-  }
-
-  @Override
   public int getRightMargin(Language language) {
     return CodeStyle.getProjectOrDefaultSettings(myProject).getRightMargin(language);
   }
