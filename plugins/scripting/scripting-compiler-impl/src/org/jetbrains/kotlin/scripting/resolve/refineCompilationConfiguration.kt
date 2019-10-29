@@ -79,9 +79,7 @@ open class KtFileScriptSource(val ktFile: KtFile, preloadedText: String? = null)
     override val name: String? get() = ktFile.name
 
     override fun equals(other: Any?): Boolean =
-        this === other
-                || (other as? KtFileScriptSource)?.let { ktFile == it.ktFile } == true
-                || super.equals(other)
+        this === other || (other as? KtFileScriptSource)?.let { ktFile == it.ktFile } == true
 
     override fun hashCode(): Int = ktFile.hashCode()
 }
