@@ -94,7 +94,7 @@ public class RenameProcessor extends BaseRefactoringProcessor {
 
     setNewName(newName);
 
-    logScopeStatistics("search.scope.started");
+    logScopeStatistics("started");
   }
 
   public Set<PsiElement> getElements() {
@@ -359,7 +359,7 @@ public class RenameProcessor extends BaseRefactoringProcessor {
 
   @Override
   public void performRefactoring(@NotNull UsageInfo[] usages) {
-    logScopeStatistics("search.scope.executed");
+    logScopeStatistics("executed");
 
     List<Runnable> postRenameCallbacks = new ArrayList<>();
 
