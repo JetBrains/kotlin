@@ -45,6 +45,7 @@ fun testWithMuteInFile(test: DoTest, extraSuffix: String): DoTest {
                 test.invoke(filePath)
             } catch (e: Throwable) {
                 if (checkFailFile(e, testDataFile, extraSuffix)) {
+                    System.err.println("MUTED TEST (FAIL): $filePath")
                     return
                 }
 
