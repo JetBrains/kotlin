@@ -28,6 +28,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -167,6 +168,17 @@ val Module.languageVersionSettings: LanguageVersionSettings
 
         return cachedValue.value
     }
+
+@TestOnly // public for tests
+fun Module.setLanguageVersionSettings(value: LanguageVersionSettings) =
+    putUserData(
+        LANGUAGE_VERSION_SETTINGS,
+        CachedValuesManager.getManager(project).createCachedValue({
+                                                                      CachedValueProvider.Result(
+                                                                          value, ProjectRootModificationTracker.getInstance(project)
+                                                                      )
+                                                                  }, false)
+    )
 
 private fun Module.createCachedValueForLanguageVersionSettings(): CachedValue<LanguageVersionSettings> {
     return CachedValuesManager.getManager(project).createCachedValue({

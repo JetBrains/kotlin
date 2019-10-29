@@ -125,7 +125,9 @@ class MainFunctionDetector {
             if (typeArguments.size != 1) return false
 
             val typeArgument = typeArguments[0].type
-            if (!KotlinBuiltIns.isStringOrNullableString(typeArgument)) {
+            if (!(languageVersionSettings.supportsFeature(LanguageFeature.AllowNullableArrayArgsInMain) &&
+                        KotlinBuiltIns.isStringOrNullableString(typeArgument) || KotlinBuiltIns.isString(typeArgument))
+            ) {
                 return false
             }
             if (typeArguments[0].projectionKind === Variance.IN_VARIANCE) {

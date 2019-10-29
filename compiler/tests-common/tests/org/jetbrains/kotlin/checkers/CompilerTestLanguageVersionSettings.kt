@@ -92,12 +92,16 @@ fun parseLanguageVersionSettings(directives: Map<String, String>): CompilerTestL
 fun defaultLanguageVersionSettings(): CompilerTestLanguageVersionSettings =
     CompilerTestLanguageVersionSettings(emptyMap(), ApiVersion.LATEST_STABLE, LanguageVersion.LATEST_STABLE)
 
-fun setupLanguageVersionSettingsForMultifileCompilerTests(files: List<File>, environment: KotlinCoreEnvironment) {
+fun languageVersionSettingsFromText(fileTexts: List<String>): LanguageVersionSettings {
     val allDirectives = HashMap<String, String>()
-    for (file in files) {
-        allDirectives.putAll(KotlinTestUtils.parseDirectives(file.readText()))
+    for (fileText in fileTexts) {
+        allDirectives.putAll(KotlinTestUtils.parseDirectives(fileText))
     }
-    environment.configuration.languageVersionSettings = parseLanguageVersionSettingsOrDefault(allDirectives)
+    return parseLanguageVersionSettingsOrDefault(allDirectives)
+}
+
+fun setupLanguageVersionSettingsForMultifileCompilerTests(files: List<File>, environment: KotlinCoreEnvironment) {
+    environment.configuration.languageVersionSettings = languageVersionSettingsFromText(files.map { it.readText() })
 }
 
 fun setupLanguageVersionSettingsForCompilerTests(originalFileText: String, environment: KotlinCoreEnvironment) {
