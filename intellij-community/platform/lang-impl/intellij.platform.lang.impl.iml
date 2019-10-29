@@ -37,5 +37,6 @@
     <orderEntry type="library" name="lz4-java" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util" />
     <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
+    <orderEntry type="module" module-name="intellij.platform.workspaceModel.ide" scope="RUNTIME" />
   </component>
 </module>
