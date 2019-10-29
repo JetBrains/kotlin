@@ -40,7 +40,7 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable private String myProjectGradleVersion;
   @Nullable private String myBuildSrcGroup;
   @Nullable private BuildEnvironment myBuildEnvironment;
-  private final GradleIncrementalResolverPolicy myPolicy;
+  @Nullable private final GradleIncrementalResolverPolicy myPolicy;
 
   public DefaultProjectResolverContext(@NotNull final ExternalSystemTaskId externalSystemTaskId,
                                        @NotNull final String projectPath,
@@ -216,6 +216,7 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
     return myBuildEnvironment;
   }
 
+  @Nullable
   @ApiStatus.Experimental
   public GradleIncrementalResolverPolicy getPolicy() {
     return myPolicy;
