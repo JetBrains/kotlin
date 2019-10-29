@@ -18,7 +18,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.ModuleTestCase
-import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -396,7 +395,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
             for (sourceFolder in contentEntry.sourceFolders) {
                 if (((!inTests && !sourceFolder.isTestSource) || (inTests && sourceFolder.isTestSource)) && sourceFolder.file != null) {
                     return runWriteAction {
-                        PlatformTestCase.getVirtualFile(fileToCopyIO).copy(this, sourceFolder.file!!, fileName)
+                        getVirtualFile(fileToCopyIO).copy(this, sourceFolder.file!!, fileName)
                     }
                 }
             }
@@ -407,7 +406,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
 
     private fun createFileInProject(fileName: String): VirtualFile {
         return runWriteAction {
-            PlatformTestCase.getVirtualFile(createTempFile(fileName, "")).copy(this, project.baseDir, fileName)
+            getVirtualFile(createTempFile(fileName, "")).copy(this, project.baseDir, fileName)
         }
     }
 
