@@ -53,6 +53,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -111,7 +112,7 @@ class FindInProjectTask {
     TooManyUsagesStatus.createFor(myProgress);
   }
 
-  public void findUsages(@NotNull FindUsagesProcessPresentation processPresentation, @NotNull Processor<? super UsageInfo> consumer) {
+  void findUsages(@NotNull FindUsagesProcessPresentation processPresentation, @NotNull Processor<? super UsageInfo> consumer) {
     CoreProgressManager.assertUnderProgress(myProgress);
 
     try {
@@ -178,7 +179,7 @@ class FindInProjectTask {
                              @NotNull final Processor<? super UsageInfo> consumer) {
     AtomicInteger occurrenceCount = new AtomicInteger();
     AtomicInteger processedFileCount = new AtomicInteger();
-
+    Map<VirtualFile, Set<UsageInfo>> usagesBeingProcessed = new ConcurrentHashMap<>();
     Processor<VirtualFile> processor = virtualFile -> {
       if (!virtualFile.isValid()) return true;
 
@@ -205,11 +206,26 @@ class FindInProjectTask {
 
       Pair.NonNull<PsiFile, VirtualFile> pair = ReadAction.compute(() -> findFile(virtualFile));
       if (pair == null) return true;
+
+      Set<UsageInfo> processedUsages = usagesBeingProcessed.computeIfAbsent(virtualFile, __ -> ContainerUtil.newConcurrentSet());
       PsiFile psiFile = pair.first;
       VirtualFile sourceVirtualFile = pair.second;
-      int countInFile = FindInProjectUtil.processUsagesInFile(psiFile, sourceVirtualFile, myFindModel, info -> skipProjectFile || consumer.process(info));
+      AtomicBoolean projectFileUsagesFound = new AtomicBoolean();
+      if (!FindInProjectUtil.processUsagesInFile(psiFile, sourceVirtualFile, myFindModel, info -> {
+        if (skipProjectFile) {
+          projectFileUsagesFound.set(true);
+          return true;
+        }
+        if (processedUsages.contains(info)) {
+          return true;
+        }
+        boolean success = consumer.process(info);
+        processedUsages.add(info);
+        return success;
+      })) return false;
+      usagesBeingProcessed.remove(virtualFile); // after the whole virtualFile processed successfully, remove mapping to save memory
 
-      if (countInFile > 0 && skipProjectFile) {
+      if (projectFileUsagesFound.get()) {
         processPresentation.projectFileUsagesFound(() -> {
           FindModel model = myFindModel.clone();
           model.setSearchInProjectFiles(true);
@@ -219,12 +235,12 @@ class FindInProjectTask {
       }
 
       long totalSize;
-      if (countInFile > 0) {
-        occurrenceCount.addAndGet(countInFile);
-        totalSize = myTotalFilesSize.addAndGet(fileLength);
+      if (processedUsages.isEmpty()) {
+        totalSize = myTotalFilesSize.get();
       }
       else {
-        totalSize = myTotalFilesSize.get();
+        occurrenceCount.addAndGet(processedUsages.size());
+        totalSize = myTotalFilesSize.addAndGet(fileLength);
       }
 
       if (totalSize > FILES_SIZE_LIMIT) {
@@ -323,7 +339,7 @@ class FindInProjectTask {
     else if (myDirectory != null) {
       boolean checkExcluded = !ProjectFileIndex.SERVICE.getInstance(myProject).isExcluded(myDirectory) && !Registry.is("find.search.in.excluded.dirs");
       VirtualFileVisitor.Option limit = VirtualFileVisitor.limit(myFindModel.isWithSubdirectories() ? -1 : 1);
-      VfsUtilCore.visitChildrenRecursively(myDirectory, new VirtualFileVisitor(limit) {
+      VfsUtilCore.visitChildrenRecursively(myDirectory, new VirtualFileVisitor<Void>(limit) {
         @Override
         public boolean visitFile(@NotNull VirtualFile file) {
           if (checkExcluded && myProjectFileIndex.isExcluded(file)) return false;
