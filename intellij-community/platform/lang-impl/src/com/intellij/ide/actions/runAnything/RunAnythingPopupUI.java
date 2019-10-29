@@ -821,9 +821,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
         synchronized (lock) {
           myCurrentWorker = ActionCallback.DONE;
           myCalcThread = null;
-          myVirtualFile = null;
-          myProject = null;
-          myModule = null;
         }
       }
     });
