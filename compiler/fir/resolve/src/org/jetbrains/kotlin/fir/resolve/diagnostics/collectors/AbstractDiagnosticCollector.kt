@@ -9,15 +9,8 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.components.AbstractDiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
-
-abstract class AbstractDiagnosticCollectorComponent(private val collector: AbstractDiagnosticCollector) : FirVisitorVoid() {
-    override fun visitElement(element: FirElement) {}
-
-    protected fun runCheck(block: (DiagnosticReporter) -> Unit) {
-        collector.runCheck(block)
-    }
-}
 
 abstract class AbstractDiagnosticCollector {
     fun collectDiagnostics(firFile: FirFile): Iterable<ConeDiagnostic> {

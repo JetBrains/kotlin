@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.resolve.diagnostics.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.resolve.diagnostics.checkers.declaration.FirDeclarationChecker
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.AbstractDiagnosticCollector
-import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.AbstractDiagnosticCollectorComponent
 
 class DeclarationCheckersDiagnosticComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
     override fun visitProperty(property: FirProperty) {
