@@ -15,7 +15,6 @@ open class PerformanceExtension(private val project: Project) {
     val version: String
         get() = project.version.toString()
 
-    @Optional
     var metrics = listOf(TrackableMetric.COMPILE_TIME, TrackableMetric.CODE_SIZE)
 
     val trackedBinaries = mutableListOf<NativeBinary>()

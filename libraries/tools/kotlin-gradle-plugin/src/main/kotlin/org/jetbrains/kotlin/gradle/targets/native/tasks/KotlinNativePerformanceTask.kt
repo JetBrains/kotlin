@@ -34,9 +34,9 @@ open class NativePerformanceReport : DefaultTask() {
     @Internal
     lateinit var settings: PerformanceExtension
 
-    private fun getCompilationResults(tasksPathes: Iterable<String>, success: Boolean): String {
-        val status = success && tasksPathes.all { timeListener.tasksTimes.containsKey(it) }
-        val time = tasksPathes.map { timeListener.getTime(it) }.sum()
+    private fun getCompilationResults(tasksPaths: Iterable<String>, success: Boolean): String {
+        val status = success && tasksPaths.all { timeListener.tasksTimes.containsKey(it) }
+        val time = tasksPaths.map { timeListener.getTime(it) }.sum()
         return "${if (status) "PASSED" else "FAILED"}\nCOMPILE_TIME $time"
     }
 
@@ -56,15 +56,16 @@ open class NativePerformanceReport : DefaultTask() {
         else
             listOf(binary.linkTask.compilation.compileKotlinTask)
         val allExecutedTasks = listOf(binary.linkTask) + compileTasks
-        val upToDateTasks = allExecutedTasks.filter { it.state.upToDate }.map { it.name }.joinToString("\n", "- ")
-        if (upToDateTasks.isEmpty()) {
+        val upToDateTasks = allExecutedTasks.filter { it.state.upToDate }.map { it.name }
+        if (upToDateTasks.isNotEmpty()) {
             if (reportDirectory.exists()) {
                 project.delete(reportDirectory.absolutePath)
             }
-            project.logger.warn("Next compile tasks which are needed for time measurement are upToDate and weren't executed:\n${upToDateTasks}")
+            project.logger.warn("Next compile tasks which are needed for time measurement are upToDate" +
+                                        " and weren't executed:\n${upToDateTasks.joinToString("\n", "- ")}")
             return
         }
-        val successStatus = allExecutedTasks.map { it.state.failure == null }.reduce { acc, it -> acc && it }
+        val successStatus = allExecutedTasks.all { it.state.failure == null }
         // Get code size metric.
         var codeSize: String? = null
         if (TrackableMetric.CODE_SIZE in settings.metrics) {
