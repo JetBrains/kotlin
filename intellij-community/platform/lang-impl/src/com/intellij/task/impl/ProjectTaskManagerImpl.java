@@ -239,13 +239,10 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   @Nullable
   @ApiStatus.Experimental
   public static <T> T waitForPromise(@NotNull Promise<T> promise) {
-    AtomicBoolean complete = new AtomicBoolean(false);
-    promise.onProcessed(ignore -> complete.set(true));
-    T result = null;
     do {
       ProgressManager.checkCanceled();
       try {
-        result = promise.blockingGet(10, TimeUnit.MILLISECONDS);
+        return promise.blockingGet(10, TimeUnit.MILLISECONDS);
       }
       catch (TimeoutException ignore) {
       }
@@ -253,8 +250,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
         ExceptionUtil.rethrow(e);
       }
     }
-    while (!complete.get());
-    return result;
+    while (true);
   }
 
   @NotNull
