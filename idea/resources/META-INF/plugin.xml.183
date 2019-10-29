@@ -53,6 +53,8 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
   <xi:include href="kotlinx-serialization.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
+  <xi:include href="scripting-support.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
   <extensionPoints>
     <xi:include href="extensions/compiler.xml" xpointer="xpointer(/idea-plugin/extensionPoints/*)"/>
 
@@ -64,10 +66,6 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
 
   <extensions defaultExtensionNs="com.intellij.jvm">
     <declarationSearcher language="kotlin" implementationClass="org.jetbrains.kotlin.idea.jvm.KotlinDeclarationSearcher"/>
-  </extensions>
-
-  <extensions defaultExtensionNs="com.intellij">
-     <trafficLightRendererContributor implementation="org.jetbrains.kotlin.idea.core.script.ScriptTrafficLightRendererContributor"/>
   </extensions>
 
 </idea-plugin>
