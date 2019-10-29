@@ -23,18 +23,6 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
       .toSortedSet(compareBy { it.displayName })
     configurables = allInlayLanguages.map { SingleLanguageInlayHintsConfigurable(project, it) }
     panel = InlayHintsPanel(allInlayLanguages, this, settings)
-
-    //ApplicationManager.getApplication().messageBus.connect().subscribe(
-    //  InlayHintsSettings.INLAY_SETTINGS_CHANGED,
-    //  object : InlayHintsSettings.SettingsListener {
-    //    override fun didGlobalEnabledStatusChanged(newEnabled: Boolean) {}
-    //
-    //    override fun didSettingsChanged() {
-    //      for (configurable in configurables) {
-    //        configurable.reset()
-    //      }
-    //    }
-    //  })
   }
 
   override fun getConfigurables(): Array<Configurable> {
