@@ -3701,6 +3701,29 @@ task library_mismatch(type: KonanDriverTest) {
     goldValue = isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
 }
 
+task library_ir_provider_mismatch(type: KonanDriverTest) {
+    def dir = buildDir.absolutePath
+    def lib = "$projectDir/link/ir_providers/library/empty.kt"
+    def invalidManifest = "$projectDir/link/ir_providers/library/manifest.properties"
+
+    def currentTarget = project.target.name
+
+    doBefore {
+        def konancScript = isWindows() ? "konanc.bat" : "konanc"
+        def konanc = "$dist/bin/$konancScript"
+        "$konanc $lib -p library -o $dir/supported_ir_provider/empty -target $currentTarget".execute().waitFor()
+        "$konanc $lib -p library -o $dir/unsupported_ir_provider/empty -manifest $invalidManifest -target $currentTarget".execute().waitFor()
+
+    }
+    source = "link/ir_providers/hello.kt"
+    flags = ['-target', currentTarget, '-l', 'empty', '-r', "$dir/unsupported_ir_provider", '-r', "$dir/supported_ir_provider"]
+    compilerMessages = true
+    def messages =
+            "warning: skipping $dir/unsupported_ir_provider/empty.klib. The library requires unknown IR provider UNSUPPORTED.\n" +
+                    "hello\n"
+    goldValue = isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+}
+
 def target = ext.platformManager.targetByName(project.testTarget ?: 'host')
 def targetName = target.name
 

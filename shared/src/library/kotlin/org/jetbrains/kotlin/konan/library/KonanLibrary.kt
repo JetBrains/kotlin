@@ -10,6 +10,8 @@ const val KLIB_PROPERTY_INTEROP = "interop"
 const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations"
 const val KLIB_PROPERTY_INCLUDED_HEADERS = "includedHeaders"
 
+const val KLIB_INTEROP_IR_PROVIDER_IDENTIFIER = "kotlin.native.cinterop"
+
 interface TargetedLibrary {
     val targetList: List<String>
     val includedPaths: List<String>
