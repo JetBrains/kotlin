@@ -70,7 +70,6 @@ public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
                         @NotNull ProblemsHolder problemsHolder,
                         @NotNull GlobalInspectionContext globalContext,
                         @NotNull ProblemDescriptionsProcessor problemDescriptionsProcessor) {
-    if (!((GlobalInspectionContextBase)globalContext).isToCheckFile(file, this)) return;
     InspectionSuppressor extension = LanguageInspectionSuppressors.INSTANCE.forLanguage(file.getLanguage());
     if (!(extension instanceof RedundantSuppressionDetector)) return;
     final CommonProblemDescriptor[] descriptors = checkElement(file, (RedundantSuppressionDetector)extension, manager);
