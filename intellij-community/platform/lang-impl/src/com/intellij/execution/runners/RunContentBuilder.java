@@ -15,6 +15,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.terminal.TerminalExecutionConsole;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.tabs.PinToolwindowTabAction;
 import com.intellij.util.SmartList;
@@ -60,16 +61,28 @@ public class RunContentBuilder extends RunTab {
 
     final ExecutionConsole console = myExecutionResult.getExecutionConsole();
     RunContentDescriptor contentDescriptor = new RunContentDescriptor(profile, myExecutionResult, myUi);
+    AnAction[] consoleActionsToMerge = AnAction.EMPTY_ARRAY;
+    Content consoleContent = null;
     if (console != null) {
       if (console instanceof ExecutionConsoleEx) {
         ((ExecutionConsoleEx)console).buildUi(myUi);
       }
       else {
-        buildConsoleUiDefault(myUi, console);
+        consoleContent = buildConsoleUiDefault(myUi, console);
       }
       initLogConsoles(profile, contentDescriptor, console);
     }
-    myUi.getOptions().setLeftToolbar(createActionToolbar(contentDescriptor), ActionPlaces.RUNNER_TOOLBAR);
+    if (consoleContent != null && myUi.getContentManager().getContentCount() == 1 && console instanceof TerminalExecutionConsole) {
+      // TerminalExecutionConsole provides too few toolbar actions. Such console toolbar doesn't look good, but occupy
+      // valuable space.
+      // Let's show terminal console actions right in the main toolbar iff console content is the only one.
+      // Otherwise (with multiple contents), it's unclear what content will be affected by a console action from
+      // the main toolbar.
+      consoleActionsToMerge = ((TerminalExecutionConsole)console).createConsoleActions();
+      // clear console toolbar actions to remove the console toolbar
+      consoleContent.setActions(new DefaultActionGroup(), ActionPlaces.RUNNER_TOOLBAR, console.getComponent());
+    }
+    myUi.getOptions().setLeftToolbar(createActionToolbar(contentDescriptor, consoleActionsToMerge), ActionPlaces.RUNNER_TOOLBAR);
 
     if (profile instanceof RunConfigurationBase) {
       if (console instanceof ObservableConsoleView && !ApplicationManager.getApplication().isUnitTestMode()) {
@@ -96,14 +109,16 @@ public class RunContentBuilder extends RunTab {
     return JAVA_RUNNER;
   }
 
-  public static void buildConsoleUiDefault(RunnerLayoutUi ui, final ExecutionConsole console) {
-    final Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, console.getComponent(), "Console",
-                                                    AllIcons.Debugger.Console,
-                                                    console.getPreferredFocusableComponent());
+  @NotNull
+  public static Content buildConsoleUiDefault(@NotNull RunnerLayoutUi ui, @NotNull ExecutionConsole console) {
+    Content consoleContent = ui.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, console.getComponent(), "Console",
+                                              AllIcons.Debugger.Console,
+                                              console.getPreferredFocusableComponent());
 
     consoleContent.setCloseable(false);
     addAdditionalConsoleEditorActions(console, consoleContent);
     ui.addContent(consoleContent, 0, PlaceInGrid.bottom, false);
+    return consoleContent;
   }
 
   public static void addAdditionalConsoleEditorActions(final ExecutionConsole console, final Content consoleContent) {
@@ -118,7 +133,7 @@ public class RunContentBuilder extends RunTab {
   }
 
   @NotNull
-  private ActionGroup createActionToolbar(@NotNull final RunContentDescriptor contentDescriptor) {
+  private ActionGroup createActionToolbar(@NotNull RunContentDescriptor contentDescriptor, @NotNull AnAction[] consoleActions) {
     final DefaultActionGroup actionGroup = new DefaultActionGroup();
     actionGroup.add(ActionManager.getInstance().getAction(IdeActions.ACTION_RERUN));
     final AnAction[] actions = contentDescriptor.getRestartActions();
@@ -130,6 +145,10 @@ public class RunContentBuilder extends RunTab {
 
     actionGroup.add(ActionManager.getInstance().getAction(IdeActions.ACTION_STOP_PROGRAM));
     actionGroup.addAll(myExecutionResult.getActions());
+    if (consoleActions.length > 0) {
+      actionGroup.addSeparator();
+      actionGroup.addAll(consoleActions);
+    }
 
     for (AnAction anAction : myRunnerActions) {
       if (anAction != null) {
