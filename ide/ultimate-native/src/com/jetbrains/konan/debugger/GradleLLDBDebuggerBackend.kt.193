@@ -36,14 +36,18 @@ class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
         return listOf(
             "gradle.taskGraph.beforeTask { Task task ->",
             "  if (task instanceof Exec || task instanceof AbstractTestTask) {",
-            "    def debugPort = ForkedDebuggerHelper.setupDebugger('${id()}', task.path, '', $dispatchPort)",
-            "    task.args = [" + debuggerSetupArgs(debugServerArgs) + "] + task.args",
-            "    task.executable = new File('$debugServerPath')",
+            "    if (task.hasProperty('executable') && task.executable) {",
+            "      def debugPort = ForkedDebuggerHelper.setupDebugger('${id()}', task.path, '', $dispatchPort)",
+            "      task.args = [" + debuggerSetupArgs(debugServerArgs) + "] + task.args",
+            "      task.executable = new File('$debugServerPath')",
+            "    }",
             "  }",
             "}",
             "gradle.taskGraph.afterTask { Task task ->",
-            "  if (task instanceof Exec) {",
-            "    ForkedDebuggerHelper.signalizeFinish('${id()}', task.path, $dispatchPort)",
+            "  if (task instanceof Exec || task instanceof AbstractTestTask) {",
+            "    if (task.hasProperty('executable') && task.executable) {",
+            "      ForkedDebuggerHelper.signalizeFinish('${id()}', task.path, $dispatchPort)",
+            "    }",
             "  }",
             "}"
         )
@@ -82,11 +86,12 @@ class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
         processName: String,
         processParameters: String
     ): RunnerAndConfigurationSettings {
+        val workspace = IdeaKonanWorkspace.getInstance(project)
         val runManager = RunManager.getInstance(project)
 
-        val isTest = processName.contains("Test")
+        val isTest = processName.endsWith("Test")
 
-        val executable = findExecutable(project, processName.removePrefix(":"))
+        val executable = findExecutable(project, processName.substring(processName.lastIndexOf(':') + 1))
             ?: throw ExecutionException("No executable for processName=$processName")
 
         val params = splitParameters(processParameters)
