@@ -1,5 +1,5 @@
 FILE: simpleClass.kt
-    public? final? interface SomeInterface : kotlin/Any {
+    public? final? interface SomeInterface : R|kotlin/Any| {
         public? final? fun foo(x: Int, y: String): String
 
         public? final? val bar: Boolean
@@ -8,7 +8,7 @@ FILE: simpleClass.kt
     }
     public? final? class SomeClass : SomeInterface {
         public? constructor(): R|SomeClass| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
         private final? val baz: <implicit> = Int(42)
@@ -22,17 +22,17 @@ FILE: simpleClass.kt
             public? get(): Boolean {
                 ^ Boolean(true)
             }
-            public? set(value: Boolean): kotlin/Unit {
+            public? set(value: Boolean): R|kotlin/Unit| {
             }
 
         public? final? lateinit var fau: Double
             public? get(): Double
-            public? set(value: Double): kotlin/Unit
+            public? set(value: Double): R|kotlin/Unit|
 
     }
-    public? final? inline class InlineClass : kotlin/Any {
+    public? final? inline class InlineClass : R|kotlin/Any| {
         public? constructor(): R|InlineClass| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
     }

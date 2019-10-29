@@ -1,8 +1,8 @@
 FILE: locals.kt
     public? final? fun withLocals(p: Int): Int {
-        local final? class Local : kotlin/Any {
+        local final? class Local : R|kotlin/Any| {
             public? constructor(pp: Int): R|Local| {
-                super<kotlin/Any>()
+                super<R|kotlin/Any|>()
             }
 
             public? final? val pp: Int = R|<local>/pp|

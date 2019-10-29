@@ -1,19 +1,19 @@
 public open class PropertyComplexTypes<T> : R|kotlin/Any| {
     public final var genericType: R|T|
         public get(): R|T|
-        public set(value: R|T|): kotlin/Unit
+        public set(value: R|T|): R|kotlin/Unit|
 
     public final var listDefinedGeneric: R|java/util/ArrayList<kotlin/String>|
         public get(): R|java/util/ArrayList<kotlin/String>|
-        public set(value: R|java/util/ArrayList<kotlin/String>|): kotlin/Unit
+        public set(value: R|java/util/ArrayList<kotlin/String>|): R|kotlin/Unit|
 
     public final var listGeneric: R|java/util/ArrayList<T>|
         public get(): R|java/util/ArrayList<T>|
-        public set(value: R|java/util/ArrayList<T>|): kotlin/Unit
+        public set(value: R|java/util/ArrayList<T>|): R|kotlin/Unit|
 
     public final var listOfGenericList: R|java/util/ArrayList<java/util/ArrayList<T>>|
         public get(): R|java/util/ArrayList<java/util/ArrayList<T>>|
-        public set(value: R|java/util/ArrayList<java/util/ArrayList<T>>|): kotlin/Unit
+        public set(value: R|java/util/ArrayList<java/util/ArrayList<T>>|): R|kotlin/Unit|
 
     public constructor<T>(): R|test/PropertyComplexTypes<T>|
 

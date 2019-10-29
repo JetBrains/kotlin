@@ -8,20 +8,20 @@ FILE: calls.kt
     public? final? fun testRegular(): Int {
         ^testRegular distance#(Int(3), Int(4))
     }
-    public? final? class My : kotlin/Any {
+    public? final? class My : R|kotlin/Any| {
         public? constructor(x: Int): R|My| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? var x: Int = R|<local>/x|
             public? get(): Int
-            public? set(value: Int): kotlin/Unit
+            public? set(value: Int): R|kotlin/Unit|
 
         public? final? operator fun invoke(): <implicit> {
             ^invoke x#
         }
 
-        public? final? fun foo(): kotlin/Unit {
+        public? final? fun foo(): R|kotlin/Unit| {
         }
 
         public? final? fun copy(): <implicit> {
@@ -32,7 +32,7 @@ FILE: calls.kt
     public? final? fun testInvoke(): Int {
         ^testInvoke invoke#(My#(Int(13)))
     }
-    public? final? fun testQualified(first: My, second: My?): kotlin/Unit {
+    public? final? fun testQualified(first: My, second: My?): R|kotlin/Unit| {
         println#(first#.x#)
         println#(second#?.x#)
         first#.foo#()

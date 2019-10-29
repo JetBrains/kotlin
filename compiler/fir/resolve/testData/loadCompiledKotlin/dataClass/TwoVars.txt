@@ -13,11 +13,11 @@ public final data class DataClass : R|kotlin/Any| {
 
     public final var x: R|kotlin/String|
         public get(): R|kotlin/String|
-        public set(value: R|kotlin/String|): kotlin/Unit
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
 
     public final var y: R|kotlin/Int|
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): kotlin/Unit
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     public constructor(x: R|kotlin/String|, y: R|kotlin/Int|): R|test/DataClass|
 

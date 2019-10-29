@@ -1,23 +1,23 @@
 public final class ClassVar : R|kotlin/Any| {
     public final var property1: R|kotlin/Int|
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): kotlin/Unit
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     internal final var property2: R|kotlin/Int|
         internal get(): R|kotlin/Int|
-        internal set(value: R|kotlin/Int|): kotlin/Unit
+        internal set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     private final var property3: R|java/lang/Object|
         private get(): R|java/lang/Object|
-        private set(value: R|java/lang/Object|): kotlin/Unit
+        private set(value: R|java/lang/Object|): R|kotlin/Unit|
 
     protected final var property4: R|kotlin/String|
         protected get(): R|kotlin/String|
-        protected set(value: R|kotlin/String|): kotlin/Unit
+        protected set(value: R|kotlin/String|): R|kotlin/Unit|
 
     public final var property5: R|kotlin/Int|
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): kotlin/Unit
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     public constructor(): R|test/ClassVar|
 

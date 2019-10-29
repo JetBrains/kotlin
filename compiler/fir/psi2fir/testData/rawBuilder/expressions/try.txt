@@ -1,5 +1,5 @@
 FILE: try.kt
-    public? final? fun some(): kotlin/Unit {
+    public? final? fun some(): R|kotlin/Unit| {
         try {
             throw KotlinNullPointerException#()
         }

@@ -1,7 +1,7 @@
 FILE: namedArgument.kt
-    public? final? fun foo(first: String = String(), second: Boolean = Boolean(true), third: Double = Double(3.1415)): kotlin/Unit {
+    public? final? fun foo(first: String = String(), second: Boolean = Boolean(true), third: Double = Double(3.1415)): R|kotlin/Unit| {
     }
-    public? final? fun test(): kotlin/Unit {
+    public? final? fun test(): R|kotlin/Unit| {
         foo#()
         foo#(String(Alpha), Boolean(false), Double(2.71))
         foo#(first = String(Hello), second = Boolean(true))

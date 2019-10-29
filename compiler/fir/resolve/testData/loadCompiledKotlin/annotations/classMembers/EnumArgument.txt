@@ -11,7 +11,7 @@ public final class Class : R|kotlin/Any| {
 
     public final var bar: R|kotlin/Int|
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): kotlin/Unit
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     public constructor(): R|test/Class|
 

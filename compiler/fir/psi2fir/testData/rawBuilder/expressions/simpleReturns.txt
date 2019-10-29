@@ -1,5 +1,5 @@
 FILE: simpleReturns.kt
-    public? final? fun foo(): kotlin/Unit {
+    public? final? fun foo(): R|kotlin/Unit| {
         ^foo Unit
     }
     public? final? fun bar(): String {

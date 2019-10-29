@@ -1,5 +1,5 @@
 FILE: for.kt
-    public? final? fun foo(): kotlin/Unit {
+    public? final? fun foo(): R|kotlin/Unit| {
         lval <range>: <implicit> = Int(1).rangeTo#(Int(10))
         lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
         while(R|<local>/<iterator>|.hasNext#()) {
@@ -8,7 +8,7 @@ FILE: for.kt
         }
 
     }
-    public? final? fun bar(list: List<String>): kotlin/Unit {
+    public? final? fun bar(list: List<String>): R|kotlin/Unit| {
         lval <range>: <implicit> = list#.subList#(Int(0), Int(10))
         lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
         while(R|<local>/<iterator>|.hasNext#()) {
@@ -24,9 +24,9 @@ FILE: for.kt
         }
 
     }
-    public? final? data class Some : kotlin/Any {
+    public? final? data class Some : R|kotlin/Any| {
         public? constructor(x: Int, y: Int): R|Some| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? val x: Int = R|<local>/x|
@@ -47,7 +47,7 @@ FILE: for.kt
         }
 
     }
-    public? final? fun baz(set: Set<Some>): kotlin/Unit {
+    public? final? fun baz(set: Set<Some>): R|kotlin/Unit| {
         lval <range>: <implicit> = set#
         lval <iterator>: <implicit> = R|<local>/<range>|.iterator#()
         while(R|<local>/<iterator>|.hasNext#()) {

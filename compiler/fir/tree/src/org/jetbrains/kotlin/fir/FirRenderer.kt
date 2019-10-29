@@ -737,14 +737,10 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         resolvedTypeRef.annotations.renderAnnotations()
-        if (resolvedTypeRef !is FirImplicitBuiltinTypeRef) {
-            print("R|")
-        }
+        print("R|")
         val coneType = resolvedTypeRef.type
         print(coneType.render())
-        if (resolvedTypeRef !is FirImplicitBuiltinTypeRef) {
-            print("|")
-        }
+        print("|")
     }
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {

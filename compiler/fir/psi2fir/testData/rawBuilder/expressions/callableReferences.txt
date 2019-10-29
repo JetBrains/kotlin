@@ -1,19 +1,19 @@
 FILE: callableReferences.kt
-    public? final? class A : kotlin/Any {
+    public? final? class A : R|kotlin/Any| {
         public? constructor(): R|A| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
-        public? final? fun foo(): kotlin/Unit {
+        public? final? fun foo(): R|kotlin/Unit| {
         }
 
         public? final? val bar: <implicit> = Int(0)
             public? get(): <implicit>
 
     }
-    public? final? fun A.qux(): kotlin/Unit {
+    public? final? fun A.qux(): R|kotlin/Unit| {
     }
-    public? final? fun baz(): kotlin/Unit {
+    public? final? fun baz(): R|kotlin/Unit| {
     }
     public? final? val test1: <implicit> = A#()::foo#
         public? get(): <implicit>

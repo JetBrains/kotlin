@@ -29,7 +29,7 @@ FILE: kotlinSam.kt
     public final fun foo4(m: R|Derived|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        lval f: R|kotlin/Function1<kotlin/Int, kotlin/Boolean>| = fun <anonymous>(t: R|kotlin/Int|): kotlin/Boolean {
+        lval f: R|kotlin/Function1<kotlin/Int, kotlin/Boolean>| = fun <anonymous>(t: R|kotlin/Int|): R|kotlin/Boolean| {
             >(R|<local>/t|, Int(1))
         }
 
@@ -38,8 +38,8 @@ FILE: kotlinSam.kt
         }
         )
         R|/foo1|(R|<local>/f|)
-        <Inapplicable(INAPPLICABLE): [/foo2]>#(<L> = foo2@fun <implicit>.<anonymous>(x: <implicit>): <implicit> {
-            >(x#, Int(1))
+        <Inapplicable(INAPPLICABLE): [/foo2]>#(<L> = foo2@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Boolean|
+            >(R|<local>/x|, Int(1))
         }
         )
         <Inapplicable(INAPPLICABLE): [/foo2]>#(R|<local>/f|)

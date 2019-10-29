@@ -6,7 +6,7 @@ public final class PrivateClassMembers : R|kotlin/Any| {
 
     private final var r: R|kotlin/Int|
         private get(): R|kotlin/Int|
-        private set(value: R|kotlin/Int|): kotlin/Unit
+        private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     private final val v: R|kotlin/Int|
         private get(): R|kotlin/Int|

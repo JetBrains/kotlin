@@ -1,16 +1,16 @@
 FILE: nestedClass.kt
-    public? abstract class Base : kotlin/Any {
+    public? abstract class Base : R|kotlin/Any| {
         public? constructor(s: String): R|Base| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? val s: String = R|<local>/s|
             public? get(): String
 
     }
-    public? final? class Outer : kotlin/Any {
+    public? final? class Outer : R|kotlin/Any| {
         public? constructor(): R|Outer| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? class Derived : Base {

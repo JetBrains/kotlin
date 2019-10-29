@@ -1,7 +1,7 @@
 FILE: derivedClass.kt
-    public? open class Base<T> : kotlin/Any {
+    public? open class Base<T> : R|kotlin/Any| {
         public? constructor<T>(x: T): R|Base<T>| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? val x: T = R|<local>/x|

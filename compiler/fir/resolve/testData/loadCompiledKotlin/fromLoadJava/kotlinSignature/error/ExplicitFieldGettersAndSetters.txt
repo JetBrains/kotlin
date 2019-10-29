@@ -1,7 +1,7 @@
 public open class ExplicitFieldGettersAndSetters : R|kotlin/Any| {
     public final var foo: R|kotlin/String?|
         public get(): R|kotlin/String?|
-        public set(value: R|kotlin/String?|): kotlin/Unit
+        public set(value: R|kotlin/String?|): R|kotlin/Unit|
 
     public constructor(): R|test/ExplicitFieldGettersAndSetters|
 

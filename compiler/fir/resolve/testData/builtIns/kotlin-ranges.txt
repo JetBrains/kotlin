@@ -39,11 +39,11 @@ internal final class CharProgressionIterator : R|kotlin/collections/CharIterator
 
     private final var hasNext: R|kotlin/Boolean|
         private get(): R|kotlin/Boolean|
-        private set(value: R|kotlin/Boolean|): kotlin/Unit
+        private set(value: R|kotlin/Boolean|): R|kotlin/Unit|
 
     private final var next: R|kotlin/Int|
         private get(): R|kotlin/Int|
-        private set(value: R|kotlin/Int|): kotlin/Unit
+        private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     public final val step: R|kotlin/Int|
         public get(): R|kotlin/Int|
@@ -135,11 +135,11 @@ internal final class IntProgressionIterator : R|kotlin/collections/IntIterator| 
 
     private final var hasNext: R|kotlin/Boolean|
         private get(): R|kotlin/Boolean|
-        private set(value: R|kotlin/Boolean|): kotlin/Unit
+        private set(value: R|kotlin/Boolean|): R|kotlin/Unit|
 
     private final var next: R|kotlin/Int|
         private get(): R|kotlin/Int|
-        private set(value: R|kotlin/Int|): kotlin/Unit
+        private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     public final val step: R|kotlin/Int|
         public get(): R|kotlin/Int|
@@ -218,11 +218,11 @@ internal final class LongProgressionIterator : R|kotlin/collections/LongIterator
 
     private final var hasNext: R|kotlin/Boolean|
         private get(): R|kotlin/Boolean|
-        private set(value: R|kotlin/Boolean|): kotlin/Unit
+        private set(value: R|kotlin/Boolean|): R|kotlin/Unit|
 
     private final var next: R|kotlin/Long|
         private get(): R|kotlin/Long|
-        private set(value: R|kotlin/Long|): kotlin/Unit
+        private set(value: R|kotlin/Long|): R|kotlin/Unit|
 
     public final val step: R|kotlin/Long|
         public get(): R|kotlin/Long|

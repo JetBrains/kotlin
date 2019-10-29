@@ -10,22 +10,22 @@ public abstract interface Test : R|kotlin/Any| {
 
         public final var prop2: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            protected set(value: R|kotlin/Int|): kotlin/Unit
+            protected set(value: R|kotlin/Int|): R|kotlin/Unit|
 
         public final val prop3: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
         public final var prop4: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): kotlin/Unit
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
         public final var prop5: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): kotlin/Unit
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
         public final var prop7: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): kotlin/Unit
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
         private constructor(): R|test/Test.Companion|
 

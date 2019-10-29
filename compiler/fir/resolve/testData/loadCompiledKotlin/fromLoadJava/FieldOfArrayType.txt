@@ -1,7 +1,7 @@
 public open class FieldOfArrayType : R|kotlin/Any| {
     public final var files: R|kotlin/Array<java/io/File>?|
         public get(): R|kotlin/Array<java/io/File>?|
-        public set(value: R|kotlin/Array<java/io/File>?|): kotlin/Unit
+        public set(value: R|kotlin/Array<java/io/File>?|): R|kotlin/Unit|
 
     public constructor(): R|test/FieldOfArrayType|
 

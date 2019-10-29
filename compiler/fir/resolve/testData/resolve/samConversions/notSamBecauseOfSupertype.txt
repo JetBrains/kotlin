@@ -2,15 +2,15 @@ FILE: main.kt
     public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(<L> = foo@fun <implicit>.<anonymous>(x: <implicit>): <implicit> {
-            >(x#, Int(1))
+        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(<L> = foo@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Boolean| {
+            >(R|<local>/x|, Int(1))
         }
         )
-        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(foo@fun <implicit>.<anonymous>(): <implicit> {
-            >(it#, Int(1))
+        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo]>#(foo@fun <anonymous>(): R|kotlin/Boolean| {
+            >(<Unresolved name: it>#, Int(1))
         }
         )
-        lval x: R|kotlin/Function1<kotlin/Int, kotlin/Boolean>| = fun <anonymous>(x: R|kotlin/Int|): kotlin/Boolean {
+        lval x: R|kotlin/Function1<kotlin/Int, kotlin/Boolean>| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
             >(R|<local>/x|, Int(1))
         }
 

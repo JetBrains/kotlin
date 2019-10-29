@@ -1,7 +1,7 @@
 FILE: NestedSuperType.kt
-    public? abstract class My : kotlin/Any {
+    public? abstract class My : R|kotlin/Any| {
         public? constructor(): R|p/My| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
         public? abstract class NestedOne : My {

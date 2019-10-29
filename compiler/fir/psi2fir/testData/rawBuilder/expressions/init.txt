@@ -1,7 +1,7 @@
 FILE: init.kt
-    public? final? class WithInit : kotlin/Any {
+    public? final? class WithInit : R|kotlin/Any| {
         public? constructor(x: Int): R|WithInit| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? val x: Int

@@ -1,10 +1,10 @@
 FILE: noPrimaryConstructor.kt
-    public? final? class NoPrimary : kotlin/Any {
+    public? final? class NoPrimary : R|kotlin/Any| {
         public? final? val x: String
             public? get(): String
 
         public? constructor(x: String): R|NoPrimary| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
             this#.x# = x#
         }
 

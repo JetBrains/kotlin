@@ -1,7 +1,7 @@
 FILE: these.kt
-    public? final? class Some : kotlin/Any {
+    public? final? class Some : R|kotlin/Any| {
         public? constructor(): R|Some| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? fun foo(): Int {

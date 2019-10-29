@@ -1,5 +1,5 @@
 FILE: simpleFun.kt
-    public? final? fun foo(): kotlin/Unit {
+    public? final? fun foo(): R|kotlin/Unit| {
     }
-    public? final? suspend fun bar(): kotlin/Unit {
+    public? final? suspend fun bar(): R|kotlin/Unit| {
     }

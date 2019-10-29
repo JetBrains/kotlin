@@ -9,7 +9,7 @@ public final class Class : R|kotlin/Any| {
     public final companion object Companion : R|kotlin/Any| {
         public final var property: R|kotlin/Int|
             public get(): R|kotlin/Int|
-            public set(value: R|kotlin/Int|): kotlin/Unit
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
         private constructor(): R|test/Class.Companion|
 

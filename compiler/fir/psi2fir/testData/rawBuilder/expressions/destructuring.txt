@@ -1,7 +1,7 @@
 FILE: destructuring.kt
-    public? final? data class Some : kotlin/Any {
+    public? final? data class Some : R|kotlin/Any| {
         public? constructor(first: Int, second: Double, third: String): R|Some| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
         public? final? val first: Int = R|<local>/first|
@@ -29,7 +29,7 @@ FILE: destructuring.kt
         }
 
     }
-    public? final? fun foo(some: Some): kotlin/Unit {
+    public? final? fun foo(some: Some): R|kotlin/Unit| {
         lval <destruct>: <implicit> = some#
         lvar x: <implicit> = R|<local>/<destruct>|.component1()
         lvar y: <implicit> = R|<local>/<destruct>|.component2()

@@ -1,16 +1,16 @@
 FILE: modifications.kt
-    public? final? fun simple(): kotlin/Unit {
+    public? final? fun simple(): R|kotlin/Unit| {
         lvar x: <implicit> = Int(10)
         +=(x#, Int(20))
         -=(x#, Int(5))
         /=(x#, Int(5))
         *=(x#, Int(10))
     }
-    public? final? fun List<String>.modify(): kotlin/Unit {
+    public? final? fun List<String>.modify(): R|kotlin/Unit| {
         +=(this#, String(Alpha))
         +=(this#, String(Omega))
     }
-    public? final? fun Any.modify(): kotlin/Unit {
+    public? final? fun Any.modify(): R|kotlin/Unit| {
         lval <complex-set>: <implicit> = (this# as List<Int>)
         <complex-set># += Int(42)
     }

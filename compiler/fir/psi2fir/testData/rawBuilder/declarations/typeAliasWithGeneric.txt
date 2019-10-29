@@ -1,16 +1,16 @@
 FILE: typeAliasWithGeneric.kt
-    public? open class A : kotlin/Any {
+    public? open class A : R|kotlin/Any| {
         public? constructor(): R|A| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
     }
-    public? final? interface B<S, T : A> : kotlin/Any {
+    public? final? interface B<S, T : A> : R|kotlin/Any| {
     }
     public? final typealias C<T> = B<T, A>
     public? final? class D : C<A> {
         public? constructor(): R|D| {
-            super<kotlin/Any>()
+            super<R|kotlin/Any|>()
         }
 
     }
