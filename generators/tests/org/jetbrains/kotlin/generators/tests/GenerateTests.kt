@@ -140,6 +140,8 @@ import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
+import org.jetbrains.kotlin.kapt3.test.AbstractIrClassFileToSourceStubConverterTest
+import org.jetbrains.kotlin.kapt3.test.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterSingleFileTest
@@ -1241,6 +1243,14 @@ fun main(args: Array<String>) {
 
         testClass<AbstractKotlinKaptContextTest> {
             model("kotlinRunner")
+        }
+
+        testClass<AbstractIrClassFileToSourceStubConverterTest> {
+            model("converter", targetBackend = TargetBackend.JVM_IR)
+        }
+
+        testClass<AbstractIrKotlinKaptContextTest> {
+            model("kotlinRunner", targetBackend = TargetBackend.JVM_IR)
         }
     }
 
