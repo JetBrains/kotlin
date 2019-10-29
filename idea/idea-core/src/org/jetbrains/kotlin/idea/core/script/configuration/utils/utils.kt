@@ -17,7 +17,7 @@ fun Project.getKtFile(
 ): KtFile? {
     if (virtualFile == null) return null
     if (ktFile != null) {
-        check(ktFile.virtualFile == virtualFile)
+        check(ktFile.originalFile.virtualFile == virtualFile)
         return ktFile
     } else {
         return runReadAction { PsiManager.getInstance(this).findFile(virtualFile) as? KtFile }
