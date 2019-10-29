@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInliner
 
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class CallableUsageReplacementStrategy(
     private val replacement: CodeToInline,
@@ -34,7 +36,15 @@ class CallableUsageReplacementStrategy(
         if (!resolvedCall.status.isSuccess) return null
 
         val callElement = when (resolvedCall) {
-            is VariableAsFunctionResolvedCall -> resolvedCall.variableCall.call.callElement
+            is VariableAsFunctionResolvedCall -> {
+                val callElement = resolvedCall.variableCall.call.callElement
+                val descriptor = resolvedCall.resultingDescriptor
+                if (descriptor is FunctionDescriptor && descriptor.isOperator && descriptor.name == OperatorNameConventions.INVOKE) {
+                    callElement.parent as? KtCallExpression ?: callElement
+                } else {
+                    callElement
+                }
+            }
             else -> resolvedCall.call.callElement
         }
 

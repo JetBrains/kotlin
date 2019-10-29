@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -135,6 +136,14 @@ class CodeInliner<TCallElement : KtElement>(
             .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
         val replacementPerformer = when (elementToBeReplaced) {
+            is KtCallExpression -> {
+                if (descriptor is FunctionDescriptor && descriptor.isOperator && descriptor.name == OperatorNameConventions.INVOKE) {
+                    val calleeExpression = elementToBeReplaced.calleeExpression
+                    val receiverExpression = (codeToInline.mainExpression as? KtQualifiedExpression)?.receiverExpression
+                    if (calleeExpression != null && receiverExpression is KtThisExpression) receiverExpression.replace(calleeExpression)
+                }
+                ExpressionReplacementPerformer(codeToInline, elementToBeReplaced)
+            }
             is KtExpression -> ExpressionReplacementPerformer(codeToInline, elementToBeReplaced)
             is KtAnnotationEntry -> AnnotationEntryReplacementPerformer(codeToInline, elementToBeReplaced)
             is KtSuperTypeCallEntry -> SuperTypeCallEntryReplacementPerformer(codeToInline, elementToBeReplaced)
