@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Experimental builder of the IDE project model based on Gradle project data resolved by {@link ProjectModelContributor}s.
  * The underlying implementation should be able to build IDE project model e.g. {@link com.intellij.openapi.externalSystem.model.DataNode} graph or
- * new upcoming {@link com.intellij.treeProjectModel}
+ * new upcoming {@link com.intellij.workspace}
  */
 @ApiStatus.Experimental
 public interface ProjectModelBuilder extends GradleProjectModel {
