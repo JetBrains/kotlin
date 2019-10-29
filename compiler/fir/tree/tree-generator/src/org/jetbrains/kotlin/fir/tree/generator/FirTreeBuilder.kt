@@ -39,7 +39,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val variable = element("Variable", Declaration, callableDeclaration, namedDeclaration, statement)
     val valueParameter = element("ValueParameter", Declaration, variable)
     val property = element("Property", Declaration, variable, controlFlowGraphOwner, typeParametersOwner, callableMemberDeclaration)
-    val field = element("Field", Declaration, variable, callableMemberDeclaration) // TODO: add noImpl
+    val field = element("Field", Declaration, variable, callableMemberDeclaration)
     val classLikeDeclaration = element("ClassLikeDeclaration", Declaration, declaration, statement, symbolOwner)
     val klass = element("Class", Declaration, classLikeDeclaration, statement, annotationContainer)
     val regularClass = element("RegularClass", Declaration, memberDeclaration, typeParametersOwner, klass)

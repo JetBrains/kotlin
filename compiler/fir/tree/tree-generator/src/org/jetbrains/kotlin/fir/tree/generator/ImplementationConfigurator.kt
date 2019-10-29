@@ -49,7 +49,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         noImpl(declarationStatus)
         noImpl(resolvedDeclarationStatus)
-        noImpl(field)
 
         val modifiableClass = impl(klass, "FirModifiableClass")
 
@@ -278,6 +277,19 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 value = "if (isLocal) FirResolvePhase.DECLARATIONS else FirResolvePhase.RAW_FIR"
             }
             useTypes(backingFieldSymbolType, delegateFieldSymbolType)
+        }
+
+        impl(field) {
+            default("isVal") {
+                value = "!isVar"
+                withGetter = true
+            }
+
+            default("resolvePhase") {
+                value = "FirResolvePhase.DECLARATIONS"
+            }
+
+            defaultNull("delegateFieldSymbol", "receiverTypeRef", "initializer", "delegate", "getter", "setter", withGetter = true)
         }
 
         impl(namedArgumentExpression) {

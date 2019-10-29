@@ -77,7 +77,7 @@ class JavaClassEnhancementScope(
         name: Name
     ): FirCallableSymbol<*> {
         when (val firElement = original.fir) {
-            is FirJavaField -> {
+            is FirField -> {
                 if (firElement.returnTypeRef !is FirJavaTypeRef) return original
                 val memberContext = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, firElement.annotations)
                 val newReturnTypeRef = enhanceReturnType(firElement, emptyList(), memberContext, null)

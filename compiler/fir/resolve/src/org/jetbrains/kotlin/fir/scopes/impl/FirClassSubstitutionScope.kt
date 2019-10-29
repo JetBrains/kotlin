@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.impl.FirFieldImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
@@ -33,6 +35,7 @@ class FirClassSubstitutionScope(
 
     private val fakeOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
     private val fakeOverrideProperties = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
+    private val fakeOverrideFields = mutableMapOf<FirFieldSymbol, FirFieldSymbol>()
 
     private val substitutor = substitutorByMap(substitution)
 
@@ -49,11 +52,18 @@ class FirClassSubstitutionScope(
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         return useSiteMemberScope.processPropertiesByName(name) process@{ original ->
-            if (original is FirPropertySymbol) {
-                val property = fakeOverrideProperties.getOrPut(original) { createFakeOverrideProperty(original) }
-                processor(property)
-            } else {
-                processor(original)
+            when (original) {
+                is FirPropertySymbol -> {
+                    val property = fakeOverrideProperties.getOrPut(original) { createFakeOverrideProperty(original) }
+                    processor(property)
+                }
+                is FirFieldSymbol -> {
+                    val field = fakeOverrideFields.getOrPut(original) { createFakeOverrideField(original) }
+                    processor(field)
+                }
+                else -> {
+                    processor(original)
+                }
             }
         }
     }
@@ -102,6 +112,15 @@ class FirClassSubstitutionScope(
         }
 
         return createFakeOverrideProperty(session, member, original, newReceiverType, newReturnType)
+    }
+
+    private fun createFakeOverrideField(original: FirFieldSymbol): FirFieldSymbol {
+        val member = original.fir
+
+        val returnType = typeCalculator.tryCalculateReturnType(member).type
+        val newReturnType = returnType.substitute() ?: return original
+
+        return createFakeOverrideField(session, member, original, newReturnType)
     }
 
     companion object {
@@ -172,6 +191,25 @@ class FirClassSubstitutionScope(
                     baseProperty.status
                 ).apply {
                     resolvePhase = baseProperty.resolvePhase
+                }
+            }
+            return symbol
+        }
+
+        fun createFakeOverrideField(
+            session: FirSession,
+            baseField: FirField,
+            baseSymbol: FirFieldSymbol,
+            newReturnType: ConeKotlinType? = null
+        ): FirFieldSymbol {
+            val symbol = FirFieldSymbol(baseSymbol.callableId)
+            with(baseField) {
+                FirFieldImpl(
+                    source, session,
+                    baseField.returnTypeRef.withReplacedConeType(newReturnType),
+                    name, symbol, isVar, baseField.status
+                ).apply {
+                    resolvePhase = baseField.resolvePhase
                 }
             }
             return symbol
