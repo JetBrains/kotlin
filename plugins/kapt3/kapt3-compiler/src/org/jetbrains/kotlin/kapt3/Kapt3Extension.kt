@@ -263,7 +263,9 @@ abstract class AbstractKapt3Extension(
             bindingContext,
             files,
             compilerConfiguration
-        ).targetId(targetId).build()
+        ).targetId(targetId)
+            .isIrBackend(false)
+            .build()
 
         val (classFilesCompilationTime) = measureTimeMillis {
             KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
