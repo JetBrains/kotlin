@@ -1,0 +1,22 @@
+sealed class Foo {
+
+    companion object {
+        fun foo() {
+        }
+
+        fun values(): Array<Foo> {
+            return arrayOf(A, B)
+        }
+
+        fun valueOf(value: String): Foo {
+            return when (value) {
+                "A" -> A
+                "B" -> B
+                else -> throw IllegalArgumentException("No object Foo.$value")
+            }
+        }
+    }
+
+    object A : Foo()
+    object B : Foo()
+}

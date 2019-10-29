@@ -4614,6 +4614,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertEnumToSealedClass/entriesOnly.kt");
         }
 
+        @TestMetadata("hasCompanion.kt")
+        public void testHasCompanion() throws Exception {
+            runTest("idea/testData/intentions/convertEnumToSealedClass/hasCompanion.kt");
+        }
+
         @TestMetadata("membersOnly.kt")
         public void testMembersOnly() throws Exception {
             runTest("idea/testData/intentions/convertEnumToSealedClass/membersOnly.kt");

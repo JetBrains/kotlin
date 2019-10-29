@@ -4,6 +4,20 @@ sealed class <caret>MyEnum(val s: String = "") {
     object FOO : MyEnum("FOO")
     object BAR : MyEnum("BAR")
     object DEFAULT : MyEnum()
+    companion object {
+        fun values(): Array<MyEnum> {
+            return arrayOf(FOO, BAR, DEFAULT)
+        }
+
+        fun valueOf(value: String): MyEnum {
+            return when (value) {
+                "FOO" -> FOO
+                "BAR" -> BAR
+                "DEFAULT" -> DEFAULT
+                else -> throw IllegalArgumentException("No object MyEnum.$value")
+            }
+        }
+    }
 }
 
 fun test(e: MyEnum) {
