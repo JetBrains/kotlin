@@ -35,8 +35,9 @@ class NewInlayProviderSettingsModel<T : Any>(
 
 
   override fun apply() {
-    config.storeSettings(providerWithSettings.provider.key, providerWithSettings.language, providerWithSettings.settings)
-    config.changeHintTypeStatus(providerWithSettings.provider.key, providerWithSettings.language, isEnabled)
+    val copy = providerWithSettings.withSettingsCopy()
+    config.storeSettings(copy.provider.key, copy.language, copy.settings)
+    config.changeHintTypeStatus(copy.provider.key, copy.language, isEnabled)
   }
 
   override fun isModified(): Boolean {
