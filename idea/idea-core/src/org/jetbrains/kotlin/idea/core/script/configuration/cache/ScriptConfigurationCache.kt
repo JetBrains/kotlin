@@ -40,7 +40,8 @@ interface ScriptConfigurationCache {
     operator fun get(file: VirtualFile): ScriptConfigurationSnapshot?
     operator fun set(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
 
-    fun markOutOfDate(file: VirtualFile)
+    fun markUpToDate(file: VirtualFile, inputs: CachedConfigurationInputs)
+    fun markOutOfDate(file: VirtualFile) = markUpToDate(file, CachedConfigurationInputs.OutOfDate)
 
     fun all(): Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
 }

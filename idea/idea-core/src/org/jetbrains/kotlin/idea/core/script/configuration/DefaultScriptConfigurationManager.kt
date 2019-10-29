@@ -15,25 +15,26 @@ import com.intellij.ui.EditorNotifications
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.*
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.*
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationFileAttributeCache
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationMemoryCache
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.DefaultScriptChangeListener
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
-import org.jetbrains.kotlin.idea.core.script.configuration.loader.*
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptOutsiderFileConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.BackgroundExecutor
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
-import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.script.experimental.api.ScriptDiagnostic
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 
 /**
  * Standard implementation of scripts configuration loading and caching
@@ -111,24 +112,9 @@ internal class DefaultScriptConfigurationManager(project: Project) :
 
     private val notifier = ScriptChangesNotifier(project, updater, listeners)
 
-    /**
-     * Loaded but not applied result.
-     * Weakness required since it is hard to track editor and notification hiding.
-     */
-    private val notApplied = WeakHashMap<VirtualFile, LoadedScriptConfiguration>()
     private val saveLock = ReentrantLock()
 
-    override fun createCache(): ScriptConfigurationCache {
-        return object : ScriptConfigurationMemoryCache(project) {
-            override fun markOutOfDate(file: VirtualFile) {
-                super.markOutOfDate(file)
-
-                synchronized(notApplied) {
-                    notApplied.remove(file)
-                }
-            }
-        }
-    }
+    override fun createCache() = ScriptConfigurationMemoryCache(project)
 
     /**
      * Will be called on [cache] miss to initiate loading of [file]'s script configuration.
@@ -146,17 +132,17 @@ internal class DefaultScriptConfigurationManager(project: Project) :
      * - invalid, waiting for apply. `cache[file]?.upToDate == false && file !in backgroundExecutor` and has notification panel?
      *
      * Async:
-     * - up-to-date:
-     *   [reloadOutOfDateConfiguration] will not be called.
+     * - up-to-date: [reloadOutOfDateConfiguration] will not be called.
      * - `unknown` and `invalid, in queue`:
      *   Concurrent async loading will be guarded by `backgroundExecutor.ensureScheduled`
      *   (only one task per file will be scheduled at same time)
-     * - `invalid`:
-     *   Loading should be rescheduled, since the work already started for old input.
-     *   This will work, because file will be removed from backgroundExecutor.
-     *   - `loading`: Scheduled loading for unchanged file will be noop thanks to isUpToDate check
-     *   - `not applied`: Scheduled loading for unchanged file with loaded but not applied
-     *      configuration will be also noop thanks check in [notApplied] map.
+     * - `invalid, loading`
+     *   Loading should be removed from `backgroundExecutor`, and will be rescheduled on change
+     *   and file will be up-to-date checked again. This will happen after current loading,
+     *   because only `backgroundExecutor` execute tasks in one thread.
+     * - `invalid, waiting for apply`:
+     *   Loading will not be queued, since we are marking file is up to date with
+     *   not yet applied configuration.
      *
      * Sync:
      * - up-to-date:
@@ -192,23 +178,9 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                     // don't start loading if nothing was changed
                     // (in case we checking for up-to-date and loading concurrently)
                     val cached = getCachedConfiguration(virtualFile)
-                    if (cached?.inputs?.isUpToDate(project, virtualFile) != true) {
-                        val prevNotApplied = synchronized(notApplied) { notApplied[virtualFile] }
-                        if (prevNotApplied?.inputs?.isUpToDate(project, virtualFile) == true) {
-                            // reuse loaded but not applied result
-                            // (in case we checking for up-to-date and waiting notification answer concurrently)
-                            loadingContext.suggestNewConfiguration(
-                                virtualFile,
-                                prevNotApplied
-                            )
-                        } else {
-                            synchronized(notApplied) {
-                                notApplied.remove(virtualFile)
-                            }
-
-                            val actualIsFirstLoad = cached == null
-                            async.first { it.loadDependencies(actualIsFirstLoad, virtualFile, scriptDefinition, loadingContext) }
-                        }
+                    if (cached == null || !cached.inputs.isUpToDate(project, virtualFile)) {
+                        val actualIsFirstLoad = cached == null
+                        async.first { it.loadDependencies(actualIsFirstLoad, virtualFile, scriptDefinition, loadingContext) }
                     }
                 }
             }
@@ -220,7 +192,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
      * Start indexing for new class/source roots.
      * Re-highlight opened scripts with changed configuration.
      */
-    override fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, LoadedScriptConfiguration>>) {
+    override fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, ScriptConfigurationSnapshot>>) {
         rootsIndexer.transaction {
             for ((file, result) in files) {
                 loadingContext.saveNewConfiguration(file, result)
@@ -229,33 +201,35 @@ internal class DefaultScriptConfigurationManager(project: Project) :
     }
 
     private val loadingContext = object : ScriptConfigurationLoadingContext {
-        override fun getCachedConfiguration(file: VirtualFile): CachedConfigurationSnapshot? =
+        override fun getCachedConfiguration(file: VirtualFile): ScriptConfigurationSnapshot? =
             this@DefaultScriptConfigurationManager.getCachedConfiguration(file)
 
-        override fun suggestNewConfiguration(file: VirtualFile, newResult: LoadedScriptConfiguration) {
+        override fun suggestNewConfiguration(file: VirtualFile, newResult: ScriptConfigurationSnapshot) {
             suggestOrSaveConfiguration(file, newResult, false)
         }
 
-        override fun saveNewConfiguration(file: VirtualFile, newResult: LoadedScriptConfiguration) {
+        override fun saveNewConfiguration(file: VirtualFile, newResult: ScriptConfigurationSnapshot) {
             suggestOrSaveConfiguration(file, newResult, true)
         }
     }
 
     private fun suggestOrSaveConfiguration(
         file: VirtualFile,
-        newResult: LoadedScriptConfiguration,
+        newResult: ScriptConfigurationSnapshot,
         skipNotification: Boolean
     ) {
         saveLock.withLock {
             debug(file) { "configuration received = $newResult" }
 
-            saveReports(file, newResult.reports)
+            markUpToDate(file, newResult.inputs)
 
             val newConfiguration = newResult.configuration
-            if (newConfiguration != null) {
-                val newConfigurationSnapshot = CachedConfigurationSnapshot(newResult.inputs, newConfiguration)
+            if (newConfiguration == null) {
+                saveReports(file, newResult.reports)
+            } else {
                 val oldConfiguration = getCachedConfiguration(file)?.configuration
                 if (oldConfiguration == newConfiguration) {
+                    saveReports(file, newResult.reports)
                     file.removeScriptDependenciesNotificationPanel(project)
                 } else {
                     val autoReload = skipNotification
@@ -267,39 +241,25 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                         if (oldConfiguration != null) {
                             file.removeScriptDependenciesNotificationPanel(project)
                         }
-                        saveChangedConfiguration(file, newConfigurationSnapshot)
+                        saveReports(file, newResult.reports)
+                        saveChangedConfiguration(file, newResult)
                     } else {
                         debug(file) {
                             "configuration changed, notification is shown: old = $oldConfiguration, new = $newConfiguration"
                         }
-                        synchronized(notApplied) {
-                            notApplied[file] = newResult
-                        }
                         file.addScriptDependenciesNotificationPanel(
                             newConfiguration, project,
                             onClick = {
+                                saveReports(file, newResult.reports)
                                 file.removeScriptDependenciesNotificationPanel(project)
                                 rootsIndexer.transaction {
-                                    saveChangedConfiguration(file, newConfigurationSnapshot)
-                                }
-                            },
-                            onHide = {
-                                synchronized(notApplied) {
-                                    notApplied.remove(file)
+                                    saveChangedConfiguration(file, newResult)
                                 }
                             }
                         )
                     }
                 }
             }
-        }
-    }
-
-    override fun saveChangedConfiguration(file: VirtualFile, newConfigurationSnapshot: CachedConfigurationSnapshot?) {
-        super.saveChangedConfiguration(file, newConfigurationSnapshot)
-
-        synchronized(notApplied) {
-            notApplied.remove(file)
         }
     }
 

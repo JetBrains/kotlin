@@ -193,6 +193,13 @@ internal abstract class AbstractScriptConfigurationManager(
         updateHighlighting(listOf(file))
     }
 
+    protected fun markUpToDate(
+        file: VirtualFile,
+        inputs: CachedConfigurationInputs
+    ) {
+        cache.markUpToDate(file, inputs)
+    }
+
     private fun hasNotCachedRoots(configuration: ScriptCompilationConfigurationWrapper): Boolean {
         return classpathRoots.hasNotCachedRoots(configuration)
     }

@@ -34,8 +34,7 @@ fun VirtualFile.removeScriptDependenciesNotificationPanel(project: Project) {
 fun VirtualFile.addScriptDependenciesNotificationPanel(
     compilationConfigurationResult: ScriptCompilationConfigurationWrapper,
     project: Project,
-    onClick: () -> Unit,
-    onHide: () -> Unit
+    onClick: () -> Unit
 ) {
     withSelectedEditor(project) { manager ->
         val existingPanel = notificationPanel
@@ -50,11 +49,6 @@ fun VirtualFile.addScriptDependenciesNotificationPanel(
 
         val panel = NewScriptDependenciesNotificationPanel(onClick, compilationConfigurationResult, project)
         notificationPanel = panel
-        panel.addComponentListener(object: ComponentAdapter() {
-            override fun componentHidden(e: ComponentEvent) {
-                onHide()
-            }
-        })
         manager.addTopComponent(this, panel)
     }
 }
