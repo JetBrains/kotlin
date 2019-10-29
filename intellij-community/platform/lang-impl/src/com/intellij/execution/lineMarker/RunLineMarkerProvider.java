@@ -22,7 +22,10 @@ import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
 import com.intellij.util.ThreeState;
@@ -172,10 +175,24 @@ public class RunLineMarkerProvider extends LineMarkerProviderDescriptor {
             boolean hasRunMarkers = ContainerUtil.findInstance(
               DaemonCodeAnalyzerImpl.getLineMarkers(editor.getDocument(), project),
               RunLineMarkerInfo.class) != null;
-            file.putUserData(HAS_ANYTHING_RUNNABLE, hasRunMarkers);
+            FileViewProvider vp = PsiManager.getInstance(project).findViewProvider(file);
+            if (hasRunMarkers || (vp != null && weMayTrustRunGutterContributors(vp))) {
+              file.putUserData(HAS_ANYTHING_RUNNABLE, hasRunMarkers);
+            }
           }
         }
       }
+    }
+
+    private static boolean weMayTrustRunGutterContributors(FileViewProvider vp) {
+      for (PsiFile file : vp.getAllFiles()) {
+        for (RunLineMarkerContributor contributor : RunLineMarkerContributor.EXTENSION.allForLanguage(file.getLanguage())) {
+          if (!contributor.producesAllPossibleConfigurations(file)) {
+            return false;
+          }
+        }
+      }
+      return true;
     }
   }
 
