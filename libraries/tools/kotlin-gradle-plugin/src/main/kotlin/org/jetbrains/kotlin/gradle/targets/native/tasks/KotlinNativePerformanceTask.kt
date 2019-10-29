@@ -58,8 +58,8 @@ open class NativePerformanceReport : DefaultTask() {
         val allExecutedTasks = listOf(binary.linkTask) + compileTasks
         val upToDateTasks = allExecutedTasks.filter { it.state.upToDate }.map { it.name }
         if (upToDateTasks.isNotEmpty()) {
-            if (reportDirectory.exists()) {
-                project.delete(reportDirectory.absolutePath)
+            if (outputFile.exists()) {
+                project.delete(outputFile.absolutePath)
             }
             project.logger.warn("Next compile tasks which are needed for time measurement are upToDate" +
                                         " and weren't executed:\n${upToDateTasks.joinToString("\n", "- ")}")
@@ -83,8 +83,8 @@ open class NativePerformanceReport : DefaultTask() {
         }
 
         // Create report.
-        if (!outputFile.exists()) {
-            project.mkdir(outputFile.absolutePath)
+        if (!reportDirectory.exists()) {
+            project.mkdir(reportDirectory.absolutePath)
         }
         val name = settings.binaryNamesForReport[binary]!!
         outputFile.writeText(name)
