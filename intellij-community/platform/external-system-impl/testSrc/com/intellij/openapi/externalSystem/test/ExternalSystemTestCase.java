@@ -38,18 +38,16 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ExceptionUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.io.PathKt;
 import com.intellij.util.io.TestFileSystemItem;
-import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.SystemIndependent;
+import org.jetbrains.concurrency.Promise;
 import org.junit.After;
 import org.junit.Before;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -408,26 +406,17 @@ public abstract class ExternalSystemTestCase extends UsefulTestCase {
   }
 
   private void build(@NotNull Object[] buildableElements) {
-    final Semaphore semaphore = new Semaphore();
-    semaphore.down();
+    Promise<ProjectTaskManager.Result> promise;
     if (buildableElements instanceof Module[]) {
-      ProjectTaskManager.getInstance(myProject)
-        .build((Module[])buildableElements)
-        .onProcessed(result -> semaphore.up());
+      promise = ProjectTaskManager.getInstance(myProject).build((Module[])buildableElements);
     }
     else if (buildableElements instanceof Artifact[]) {
-      ProjectTaskManager.getInstance(myProject)
-        .build((Artifact[])buildableElements)
-        .onProcessed(result -> semaphore.up());
+      promise = ProjectTaskManager.getInstance(myProject).build((Artifact[])buildableElements);
     }
     else {
-      assert false : "Unsupported buildableElements: " + Arrays.toString(buildableElements);
+      throw new AssertionError("Unsupported buildableElements: " + Arrays.toString(buildableElements));
     }
-    while (!semaphore.waitFor(100)) {
-      if (SwingUtilities.isEventDispatchThread()) {
-        UIUtil.dispatchAllInvocationEvents();
-      }
-    }
+    edt(() -> PlatformTestUtil.waitForPromise(promise));
   }
 
   private void compile(@NotNull CompileScope scope) {
