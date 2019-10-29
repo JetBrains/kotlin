@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 fun run(block: () -> Unit) {}
 
 fun branch(x: Int) = run {
