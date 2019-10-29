@@ -460,7 +460,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     }
 
     @Override
-    public boolean contains(@NotNull BiPredicate<? super ProjectTask, ? super ProjectTaskState> predicate) {
+    public boolean anyTaskMatches(@NotNull BiPredicate<? super ProjectTask, ? super ProjectTaskState> predicate) {
       return myTasksState.entrySet().stream().anyMatch(entry -> predicate.test(entry.getKey(), entry.getValue()));
     }
   }
@@ -487,8 +487,8 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
     }
 
     @Override
-    public boolean contains(@NotNull BiPredicate<? super ProjectTask, ? super ProjectTaskState> predicate) {
-      return myResult.contains(predicate);
+    public boolean anyTaskMatches(@NotNull BiPredicate<? super ProjectTask, ? super ProjectTaskState> predicate) {
+      return myResult.anyTaskMatches(predicate);
     }
   }
 }
