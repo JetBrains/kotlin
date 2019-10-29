@@ -4,7 +4,7 @@ FILE: functionTypes.kt
     }
     public final fun <T, R> R|kotlin/collections/List<T>|.simpleMap(f: R|kotlin/Function1<T, R>|): R|R| {
     }
-    public final fun <T> simpleWith(t: R|T|, f: R|kotlin/Function1<T, kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun <T> simpleWith(t: R|T|, f: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function1<T, kotlin/Unit>|): R|kotlin/Unit| {
         ^simpleWith R|<local>/t|.<Unresolved name: f>#()
     }
     public abstract interface KMutableProperty1<T, R> : R|KProperty1<T, R>|, R|KMutableProperty<R>| {

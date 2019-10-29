@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -1393,7 +1394,12 @@ class DeclarationsConverter(
             isNullable,
             receiverTypeReference,
             returnTypeReference
-        ).apply { valueParameters += valueParametersList.map { it.firValueParameter } }
+        ).apply {
+            valueParameters += valueParametersList.map { it.firValueParameter }
+            if (receiverTypeReference != null) {
+                annotations += extensionFunctionAnnotation
+            }
+        }
     }
 
     /**
@@ -1444,4 +1450,17 @@ class DeclarationsConverter(
         ).apply { annotations += modifiers.annotations }
         return ValueParameter(isVal, isVar, modifiers, firValueParameter, destructuringDeclaration)
     }
+
+    private val extensionFunctionAnnotation = FirAnnotationCallImpl(
+        null,
+        null,
+        FirResolvedTypeRefImpl(
+            null,
+            ConeClassTypeImpl(
+                ConeClassLikeLookupTagImpl(ClassId.fromString("kotlin/ExtensionFunctionType")),
+                emptyArray(),
+                false
+            )
+        )
+    )
 }

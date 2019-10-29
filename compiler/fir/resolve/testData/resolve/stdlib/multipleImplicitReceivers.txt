@@ -25,10 +25,10 @@ FILE: multipleImplicitReceivers.kt
 
     }
     public final fun test(fooImpl: R|IFoo|, invokeImpl: R|IInvoke|): R|kotlin/Unit| {
-        R|kotlin/with|<R|A|, R|kotlin/Int|>(Q|A|, <L> = with@fun R|A|.<anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-            R|kotlin/with|<R|IFoo|, R|kotlin/Int|>(R|<local>/fooImpl|, <L> = with@fun R|IFoo|.<anonymous>(it: R|IFoo|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|A|, R|kotlin/Int|>(Q|A|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            R|kotlin/with|<R|IFoo|, R|kotlin/Int|>(R|<local>/fooImpl|, <L> = with@fun R|IFoo|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
                 (this@R|/IFoo|, this@R|special/anonymous|).R|/IFoo.foo|
-                R|kotlin/with|<R|IInvoke|, R|kotlin/Int|>(R|<local>/invokeImpl|, <L> = with@fun R|IInvoke|.<anonymous>(it: R|IInvoke|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+                R|kotlin/with|<R|IInvoke|, R|kotlin/Int|>(R|<local>/invokeImpl|, <L> = with@fun R|IInvoke|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
                     (this@R|/IInvoke|, (this@R|/IFoo|, this@R|special/anonymous|).R|/IFoo.foo|).R|/IInvoke.invoke|()
                 }
                 )

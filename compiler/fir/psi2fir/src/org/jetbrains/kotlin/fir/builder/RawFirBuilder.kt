@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -850,6 +851,9 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     for (valueParameter in unwrappedElement.parameters) {
                         functionType.valueParameters += valueParameter.convert<FirValueParameter>()
                     }
+                    if (functionType.receiverTypeRef != null) {
+                        functionType.annotations += extensionFunctionAnnotation
+                    }
                     functionType
                 }
                 null -> FirErrorTypeRefImpl(source, "Unwrapped type is null")
@@ -1356,4 +1360,17 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             return FirExpressionStub(expression.toFirSourceElement())
         }
     }
+
+    private val extensionFunctionAnnotation = FirAnnotationCallImpl(
+        null,
+        null,
+        FirResolvedTypeRefImpl(
+            null,
+            ConeClassTypeImpl(
+                ConeClassLikeLookupTagImpl(ClassId.fromString("kotlin/ExtensionFunctionType")),
+                emptyArray(),
+                false
+            )
+        )
+    )
 }

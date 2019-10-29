@@ -30,19 +30,19 @@ FILE: chooseCallableReferenceDependingOnInferredReceiver.kt
         ^bar R|kotlin/TODO|()
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/myWith|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = myWith@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=UNKNOWN>  {
-            lval t1: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/bar]> = <Inapplicable(INAPPLICABLE): [/bar]>#(::foo#)
-            lval t2: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/bar]> = <Inapplicable(INAPPLICABLE): [/bar]>#(::baz#)
-            R|/myWith|<R|B|, R|kotlin/Unit|>(R|/B.B|(), <L> = myWith@fun <anonymous>(it: R|B|): R|kotlin/Unit| <kind=UNKNOWN>  {
-                lval a: R|A| = <Inapplicable(INAPPLICABLE): [/bar]>#(::foo#)
-                lval b: R|B| = <Inapplicable(INAPPLICABLE): [/bar]>#(::foo#)
-                lval t3: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/bar]> = <Inapplicable(INAPPLICABLE): [/bar]>#(::baz#)
-                <Inapplicable(INAPPLICABLE): [/bar]>#(::foo#)
+        R|/myWith|<R|A|, R|kotlin/Unit|>(R|/A.A|(), <L> = myWith@fun R|A|.<anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
+            lval t1: R|A| = R|/bar|<R|A|>(::R|/A.foo|)
+            lval t2: R|A| = R|/bar|<R|A|>(::R|/A.baz|)
+            R|/myWith|<R|B|, R|kotlin/Unit|>(R|/B.B|(), <L> = myWith@fun R|B|.<anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
+                lval a: R|A| = R|/bar|<R|A|>(::R|/A.foo|)
+                lval b: R|B| = R|/bar|<R|B|>(::R|/B.foo|)
+                lval t3: R|B| = R|/bar|<R|B|>(::R|/B.baz|)
+                R|/bar|<R|kotlin/Unit|>(::<Unresolved reference: foo>#)
             }
             )
         }
         )
     }
-    public final inline fun <T, R> myWith(receiver: R|T|, block: R|kotlin/Function1<T, R>|): R|R| {
+    public final inline fun <T, R> myWith(receiver: R|T|, block: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function1<T, R>|): R|R| {
         ^myWith R|kotlin/TODO|()
     }

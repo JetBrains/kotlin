@@ -108,13 +108,16 @@ class FirCallCompleter(
             stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
         ): Pair<List<FirExpression>, InferenceSession> {
 
+            val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == (if (receiverType != null) 2 else 1)
+
             val itParam = when {
-                lambdaArgument.valueParameters.isEmpty() && parameters.size == 1 -> {
+                needItParam -> {
                     val name = Name.identifier("it")
+                    val itType = if (receiverType != null) parameters[1] else parameters.single()
                     FirValueParameterImpl(
                         null,
                         session,
-                        FirResolvedTypeRefImpl(null, parameters.single()),
+                        FirResolvedTypeRefImpl(null, itType),
                         name,
                         FirVariableSymbol(name),
                         defaultValue = null,
@@ -129,7 +132,7 @@ class FirCallCompleter(
             val expectedReturnTypeRef = expectedReturnType?.let { lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(it) }
 
             val newLambdaExpression = lambdaArgument.copy(
-                receiverTypeRef = receiverType?.let { lambdaArgument.receiverTypeRef!!.resolvedTypeFromPrototype(it) },
+                receiverTypeRef = receiverType?.let { lambdaArgument.receiverTypeRef?.resolvedTypeFromPrototype(it) },
                 valueParameters = lambdaArgument.valueParameters.mapIndexed { index, parameter ->
                     parameter.transformReturnTypeRef(StoreType, parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index]))
                     parameter

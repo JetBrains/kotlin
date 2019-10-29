@@ -8,7 +8,7 @@ FILE: implicitReceivers.kt
         }
 
     }
-    public final fun <T> R|T|.with(block: R|kotlin/Function1<T, kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun <T> R|T|.with(block: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function1<T, kotlin/Unit>|): R|kotlin/Unit| {
     }
     public final fun R|kotlin/Any?|.test_1(): R|kotlin/Unit| {
         when () {
@@ -41,9 +41,9 @@ FILE: implicitReceivers.kt
         <Unresolved name: foo>#()
     }
     public final fun test_3(a: R|kotlin/Any|, b: R|kotlin/Any|, c: R|kotlin/Any|): R|kotlin/Unit| {
-        R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/a|, <L> = wa@fun R|kotlin/Any|.<anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-            R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-                R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/a|, <L> = wa@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+                R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
                     (this@R|special/anonymous| as R|A|)
                     this@R|special/anonymous|.R|/A.foo|()
                     this@R|/A|.R|/A.foo|()

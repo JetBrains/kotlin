@@ -326,6 +326,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/lambda.kt");
         }
 
+        @TestMetadata("lambdaWithReceiver.kt")
+        public void testLambdaWithReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/lambdaWithReceiver.kt");
+        }
+
         @TestMetadata("localConstructor.kt")
         public void testLocalConstructor() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/localConstructor.kt");
