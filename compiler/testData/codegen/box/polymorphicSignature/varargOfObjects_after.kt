@@ -47,5 +47,16 @@ fun box(): String {
     val r8 = mh.invoke(arrayOf(args))
     if (r8 !is Array<*> || !r8.contentEquals(args)) return "Fail 8: $r8"
 
+    // The next two calls check behavior in a statement context (where the call result is not used)
+
+    try {
+        mh.invokeExact(args)
+        return "Fail 9"
+    } catch (e: WrongMethodTypeException) {
+        // OK
+    }
+
+    mh.invoke(args)
+
     return "OK"
 }

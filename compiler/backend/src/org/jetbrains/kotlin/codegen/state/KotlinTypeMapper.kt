@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall
 import org.jetbrains.kotlin.resolve.BindingContextUtils.isBoxedLocalCapturedInClosure
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
@@ -725,27 +726,26 @@ class KotlinTypeMapper @JvmOverloads constructor(
             val builtIns = f.builtIns
             val arrayOfNullableAny = builtIns.getArrayType(Variance.INVARIANT, builtIns.nullableAnyType)
             return mapSignatureWithCustomParameters(
-                f, kind, sequenceOf(arrayOfNullableAny), null,
+                f, kind, sequenceOf(arrayOfNullableAny), null, null,
                 skipGenericSignature = false,
                 hasSpecialBridge = false
             )
         }
 
         val parameterTypes: Sequence<KotlinType>
-        val returnType: KotlinType?
-
-        if (languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature) && isPolymorphicSignature(f)) {
-            if (resolvedCall == null) {
-                throw UnsupportedOperationException("Cannot determine polymorphic signature without a resolved call: $f")
+        val (returnType, returnAsmType) =
+            if (languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature) && isPolymorphicSignature(f)) {
+                if (resolvedCall == null) {
+                    throw UnsupportedOperationException("Cannot determine polymorphic signature without a resolved call: $f")
+                }
+                parameterTypes = extractPolymorphicParameterTypes(resolvedCall)
+                extractPolymorphicReturnType(resolvedCall)
+            } else {
+                parameterTypes = f.valueParameters.asSequence().map { it.type }
+                null to null
             }
-            parameterTypes = extractPolymorphicParameterTypes(resolvedCall)
-            returnType = extractPolymorphicReturnType(resolvedCall)
-        } else {
-            parameterTypes = f.valueParameters.asSequence().map { it.type }
-            returnType = null
-        }
 
-        return mapSignatureWithCustomParameters(f, kind, parameterTypes, returnType, skipGenericSignature, hasSpecialBridge)
+        return mapSignatureWithCustomParameters(f, kind, parameterTypes, returnType, returnAsmType, skipGenericSignature, hasSpecialBridge)
     }
 
     fun mapSignatureWithCustomParameters(
@@ -753,15 +753,15 @@ class KotlinTypeMapper @JvmOverloads constructor(
         kind: OwnerKind,
         valueParameters: List<ValueParameterDescriptor>,
         skipGenericSignature: Boolean
-    ): JvmMethodGenericSignature {
-        return mapSignatureWithCustomParameters(f, kind, valueParameters.asSequence().map { it.type }, null, skipGenericSignature, false)
-    }
+    ): JvmMethodGenericSignature =
+        mapSignatureWithCustomParameters(f, kind, valueParameters.asSequence().map { it.type }, null, null, skipGenericSignature, false)
 
     private fun mapSignatureWithCustomParameters(
         f: FunctionDescriptor,
         kind: OwnerKind,
         valueParameterTypes: Sequence<KotlinType>,
         customReturnType: KotlinType?,
+        customReturnAsmType: Type?,
         skipGenericSignature: Boolean,
         hasSpecialBridge: Boolean
     ): JvmMethodGenericSignature {
@@ -827,7 +827,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
             }
 
             sw.writeReturnType()
-            customReturnType?.let { mapReturnType(f, sw, it) } ?: mapReturnType(f, sw)
+            when {
+                customReturnAsmType != null -> sw.writeAsmType(customReturnAsmType)
+                customReturnType != null -> mapReturnType(f, sw, customReturnType)
+                else -> mapReturnType(f, sw)
+            }
             sw.writeReturnTypeEnd()
         }
 
@@ -859,10 +863,10 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
     }
 
-    private fun extractPolymorphicReturnType(resolvedCall: ResolvedCall<*>): KotlinType? {
+    private fun extractPolymorphicReturnType(resolvedCall: ResolvedCall<*>): Pair<KotlinType?, Type?> {
         // Return type is polymorphic only in case it's Object; see VarHandle.compareAndSet and similar.
         val originalReturnType = resolvedCall.resultingDescriptor.returnType
-        if (originalReturnType != null && !KotlinBuiltIns.isAny(originalReturnType)) return null
+        if (originalReturnType != null && !KotlinBuiltIns.isAny(originalReturnType)) return null to null
 
         var expression = resolvedCall.call.callElement as? KtExpression ?: throw UnsupportedOperationException(
             "Polymorphic signature method call must be an expression: " + resolvedCall.resultingDescriptor
@@ -873,10 +877,16 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
         expression = expression.getOutermostParenthesizerOrThis()
 
-        return if (expression.parent is KtBinaryExpressionWithTypeRHS)
-            bindingContext.getType(expression.parent as KtExpression)
-        else
-            null
+        // See https://docs.oracle.com/javase/11/docs/api/java/lang/invoke/MethodHandle.html
+        return when {
+            // `invokeExact(...) as X` is generated to `invokevirtual (...)LX;`.
+            expression.parent is KtBinaryExpressionWithTypeRHS ->
+                bindingContext.getType(expression.parent as KtExpression) to null
+            // `invokeExact(...)` without a cast is generated to `invokevirtual (...)V` in a statement context,
+            // and to `invokevirtual (...)Ljava/lang/Object;` in an expression context.
+            expression.isUsedAsExpression(bindingContext) -> null to OBJECT_TYPE
+            else -> null to Type.VOID_TYPE
+        }
     }
 
     private fun checkOwnerCompatibility(descriptor: FunctionDescriptor) {

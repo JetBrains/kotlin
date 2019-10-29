@@ -18419,6 +18419,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testVarargOfObjects_before() throws Exception {
             runTest("compiler/testData/codegen/box/polymorphicSignature/varargOfObjects_before.kt");
         }
+
+        @TestMetadata("voidReturnType.kt")
+        public void testVoidReturnType() throws Exception {
+            runTest("compiler/testData/codegen/box/polymorphicSignature/voidReturnType.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/primitiveTypes")
