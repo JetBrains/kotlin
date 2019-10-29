@@ -159,6 +159,7 @@ include ":kotlin-build-common",
         ":kotlin-source-map-loader",
         ":kotlinx-metadata",
         ":kotlinx-metadata-jvm",
+        ":kotlinx-metadata-klib",
         ":prepare:build.version",
         ":kotlin-build-common",
         ":prepare:formatter",
@@ -324,6 +325,7 @@ project(':kotlin-reflect').projectDir = "$rootDir/libraries/reflect" as File
 project(':kotlin-reflect-api').projectDir = "$rootDir/libraries/reflect/api" as File
 project(':kotlinx-metadata').projectDir = "$rootDir/libraries/kotlinx-metadata" as File
 project(':kotlinx-metadata-jvm').projectDir = "$rootDir/libraries/kotlinx-metadata/jvm" as File
+project(':kotlinx-metadata-klib').projectDir = "$rootDir/libraries/kotlinx-metadata/klib" as File
 project(':kotlin-compiler').projectDir = "$rootDir/prepare/compiler" as File
 project(':kotlin-compiler-embeddable').projectDir = "$rootDir/prepare/compiler-embeddable" as File
 project(':kotlin-compiler-client-embeddable').projectDir = "$rootDir/prepare/compiler-client-embeddable" as File
