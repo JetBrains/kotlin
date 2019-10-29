@@ -190,59 +190,8 @@ public class RenameDialog extends RefactoringDialog {
 
   @NotNull
   public SearchScope getRefactoringScope() {
-    logScopeStatistics();
     SearchScope scope = myScopeCombo.getSelectedScope();
     return scope != null ? scope : GlobalSearchScope.projectScope(myProject);
-  }
-
-  private void logScopeStatistics() {
-    Class<? extends RenamePsiElementProcessor> renameProcessor = RenamePsiElementProcessor.forElement(getPsiElement()).getClass();
-    FUCounterUsageLogger.getInstance().logEvent(
-      myProject,
-      "rename.usages",
-      "search.scope",
-      new FeatureUsageData()
-        .addData("scope_type", getStatisticsCompatibleScopeName())
-        .addData("rename_processor", PluginInfoDetectorKt.getPluginInfo(renameProcessor).isSafeToReport()
-                                     ? renameProcessor.getName()
-                                     : "third.party")
-        .addLanguage(getPsiElement().getLanguage())
-    );
-  }
-
-  private String getStatisticsCompatibleScopeName() {
-    SearchScope selectedScope = myScopeCombo.getSelectedScope();
-    if (selectedScope != null) {
-      String displayName = selectedScope.getDisplayName();
-      if (displayName.equals(PsiBundle.message("psi.search.scope.project"))) {
-        return "project";
-      }
-
-      if (displayName.equals(PsiBundle.message("psi.search.scope.test.files"))) {
-        return "tests";
-      }
-
-      if (displayName.equals(PsiBundle.message("psi.search.scope.production.files"))) {
-        return "production";
-      }
-
-      if (selectedScope instanceof LocalSearchScope) {
-        return "current file";
-      }
-
-      Module module = ModuleUtilCore.findModuleForPsiElement(getPsiElement());
-      if (module != null && selectedScope.equals(module.getModuleScope())) {
-        return "module";
-      }
-
-      if (!PluginInfoDetectorKt.getPluginInfo(selectedScope.getClass()).isSafeToReport()) {
-        return "third.party";
-      }
-
-      return "unknown";
-    }
-
-    return "default";
   }
 
   public boolean isSearchInComments() {

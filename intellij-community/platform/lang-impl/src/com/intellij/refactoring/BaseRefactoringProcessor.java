@@ -71,7 +71,7 @@ public abstract class BaseRefactoringProcessor implements Runnable {
   private static boolean PREVIEW_IN_TESTS = true;
 
   protected final Project myProject;
-  protected final SearchScope myRefactoringScope;
+  protected final @NotNull SearchScope myRefactoringScope;
 
   private RefactoringTransaction myTransaction;
   private boolean myIsPreviewUsages;

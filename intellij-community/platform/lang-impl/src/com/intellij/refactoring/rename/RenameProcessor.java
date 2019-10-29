@@ -1,11 +1,16 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.rename;
 
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.lang.findUsages.DescriptiveNameUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.MessageType;
@@ -18,6 +23,7 @@ import com.intellij.openapi.wm.ex.StatusBarEx;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.light.LightElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.refactoring.RefactoringBundle;
@@ -87,6 +93,8 @@ public class RenameProcessor extends BaseRefactoringProcessor {
     mySearchTextOccurrences = isSearchTextOccurrences;
 
     setNewName(newName);
+
+    logScopeStatistics("search.scope.started");
   }
 
   public Set<PsiElement> getElements() {
@@ -351,6 +359,8 @@ public class RenameProcessor extends BaseRefactoringProcessor {
 
   @Override
   public void performRefactoring(@NotNull UsageInfo[] usages) {
+    logScopeStatistics("search.scope.executed");
+
     List<Runnable> postRenameCallbacks = new ArrayList<>();
 
     final MultiMap<PsiElement, UsageInfo> classified = classifyUsages(myAllRenames.keySet(), usages);
@@ -469,5 +479,50 @@ public class RenameProcessor extends BaseRefactoringProcessor {
 
   public void setCommandName(final String commandName) {
     myCommandName = commandName;
+  }
+  
+  private void logScopeStatistics(String eventId) {
+    Class<? extends RenamePsiElementProcessor> renameProcessor = RenamePsiElementProcessor.forElement(myPrimaryElement).getClass();
+    FUCounterUsageLogger.getInstance().logEvent(
+      myProject,
+      "rename.refactoring",
+      eventId,
+      new FeatureUsageData()
+        .addData("scope_type", getStatisticsCompatibleScopeName())
+        .addData("rename_processor", PluginInfoDetectorKt.getPluginInfo(renameProcessor).isSafeToReport()
+                                     ? renameProcessor.getName()
+                                     : "third.party")
+        .addLanguage(myPrimaryElement.getLanguage())
+    );
+  }
+
+  private String getStatisticsCompatibleScopeName() {
+    String displayName = myRefactoringScope.getDisplayName();
+    if (displayName.equals(PsiBundle.message("psi.search.scope.project"))) {
+      return "project";
+    }
+
+    if (displayName.equals(PsiBundle.message("psi.search.scope.test.files"))) {
+      return "tests";
+    }
+
+    if (displayName.equals(PsiBundle.message("psi.search.scope.production.files"))) {
+      return "production";
+    }
+
+    if (myRefactoringScope instanceof LocalSearchScope) {
+      return "current file";
+    }
+
+    Module module = ModuleUtilCore.findModuleForPsiElement(myPrimaryElement);
+    if (module != null && myRefactoringScope.equals(module.getModuleScope())) {
+      return "module";
+    }
+
+    if (!PluginInfoDetectorKt.getPluginInfo(myRefactoringScope.getClass()).isSafeToReport()) {
+      return "third.party";
+    }
+
+    return "unknown";
   }
 }
