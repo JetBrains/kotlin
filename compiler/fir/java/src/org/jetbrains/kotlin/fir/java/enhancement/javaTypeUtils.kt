@@ -179,7 +179,8 @@ private fun JavaClassifierType.enhanceInflexibleType(
         } else {
             val argEnhancedTypeRef = arg.enhancePossiblyFlexible(session, javaTypeParameterStack, annotations, qualifiers, globalArgIndex)
             globalArgIndex += arg.subtreeSize()
-            argEnhancedTypeRef.type.type.toTypeProjection(Variance.INVARIANT)
+            // For arg == null (raw type) we take <out Any> to match everything
+            argEnhancedTypeRef.type.type.toTypeProjection(if (arg == null) Variance.OUT_VARIANCE else Variance.INVARIANT)
         }
     }
 

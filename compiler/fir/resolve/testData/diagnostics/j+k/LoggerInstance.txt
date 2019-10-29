@@ -10,7 +10,7 @@ FILE: test.kt
         private final val klass: R|java/lang/Class<MyTest>| = <getClass>(this@R|/MyTest|).R|kotlin/jvm/java|
             private get(): R|java/lang/Class<MyTest>|
 
-        private final val logger: <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/Logger.getInstance, /Logger.getInstance]> = Q|Logger|.<Inapplicable(INAPPLICABLE): [/Logger.getInstance, /Logger.getInstance]>#(this@R|/MyTest|.R|/MyTest.klass|)
-            private get(): <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [/Logger.getInstance, /Logger.getInstance]>
+        private final val logger: R|ft<Logger, Logger?>!| = Q|Logger|.R|/Logger.getInstance|(this@R|/MyTest|.R|/MyTest.klass|)
+            private get(): R|ft<Logger, Logger?>!|
 
     }
