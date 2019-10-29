@@ -1,19 +1,19 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.target
 
-import com.intellij.openapi.actionSystem.ActionGroup
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonShortcuts
+import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MasterDetailsComponent
 import com.intellij.ui.CommonActionsPanel
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.IconUtil
 import com.intellij.util.PlatformIcons
 import com.intellij.util.containers.toArray
 import com.intellij.util.text.UniqueNameGenerator
+import com.intellij.util.ui.StatusText
 
 class TargetEnvironmentsMasterDetails @JvmOverloads constructor(private val project: Project, private val initialSelectedName: String? = null)
   : MasterDetailsComponent() {
@@ -21,12 +21,21 @@ class TargetEnvironmentsMasterDetails @JvmOverloads constructor(private val proj
   init {
     // note that `MasterDetailsComponent` does not work without `initTree()`
     initTree()
+    myTree.emptyText.text = "No targets added"
+    myTree.emptyText.appendSecondaryText("Add new target", SimpleTextAttributes.LINK_ATTRIBUTES) { e ->
+      val popup = ActionManager.getInstance().createActionPopupMenu("TargetEnvironmentsConfigurable.EmptyListText", CreateNewTargetGroup())
+      val size = myTree.emptyText.preferredSize
+      val textY = myTree.height / if (myTree.emptyText.isShowAboveCenter) 3 else 2
+      popup.component.show(myTree, (myTree.width - size.width) / 2, textY + size.height)
+    }
+    val shortcutText = KeymapUtil.getFirstKeyboardShortcutText(CommonActionsPanel.getCommonShortcut(CommonActionsPanel.Buttons.ADD))
+    myTree.emptyText.appendSecondaryText(" ($shortcutText)", StatusText.DEFAULT_ATTRIBUTES, null)
   }
 
   override fun getDisplayName(): String = "Remote Targets"
 
   override fun getEmptySelectionString(): String? {
-    return "To add new target, click +"
+    return "Select target to configure"
   }
 
   override fun reset() {
