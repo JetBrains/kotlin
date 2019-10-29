@@ -70,8 +70,6 @@ internal class BackgroundExecutor(
         if (queue.add(task)) {
             debug(task.key) { "added to update queue" }
 
-            updateProgress()
-
             // If the queue is longer than PROGRESS_INDICATOR_MIN_QUEUE, show progress and cancel button
             if (queue.size > PROGRESS_INDICATOR_MIN_QUEUE) {
                 requireUnderProgressWorker()
@@ -170,7 +168,11 @@ internal class BackgroundExecutor(
                         val next = synchronized(this@BackgroundExecutor) {
                             if (shouldStop) return
 
-                            if (checkCancelled() || queue.isEmpty()) {
+                            if (checkCancelled()) {
+                                queue.clear()
+                                endBatch()
+                                return
+                            } else if (queue.isEmpty()) {
                                 endBatch()
                                 return
                             }
