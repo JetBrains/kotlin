@@ -142,9 +142,9 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
 
         private fun transformTrivialCheckNotNull(insn: AbstractInsnNode, nullability: Nullability) {
             if (nullability != Nullability.NOT_NULL) return
-            val dupInsn = insn.previous?.takeIf { it.opcode == Opcodes.DUP } ?: return
+            val previousInsn = insn.previous?.takeIf { it.opcode == Opcodes.DUP || it.opcode == Opcodes.ALOAD } ?: return
             methodNode.instructions.run {
-                remove(dupInsn)
+                remove(previousInsn)
                 remove(insn)
             }
         }
@@ -184,9 +184,10 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
                         }
 
                         insn.isCheckNotNull() -> {
-                            val dupInsn = insn.previous ?: continue@insnLoop
-                            if (dupInsn.opcode != Opcodes.DUP) continue@insnLoop
-                            val aLoadInsn = dupInsn.previous ?: continue@insnLoop
+                            val previous = insn.previous ?: continue@insnLoop
+                            val aLoadInsn = if (previous.opcode == Opcodes.DUP) {
+                                previous.previous ?: continue@insnLoop
+                            } else previous
                             if (aLoadInsn.opcode != Opcodes.ALOAD) continue@insnLoop
                             addDependentCheck(insn, aLoadInsn as VarInsnNode)
                         }
@@ -300,6 +301,10 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
             private fun NullabilityAssumptions.injectAssumptionsForNotNullAssertion(varIndex: Int, insn: AbstractInsnNode) {
                 //  ALOAD v
                 //  DUP
+                //  INVOKESTATIC checkNotNull
+                //  <...>   -- v is not null here (otherwise an exception was thrown)
+
+                //  ALOAD v
                 //  INVOKESTATIC checkNotNull
                 //  <...>   -- v is not null here (otherwise an exception was thrown)
 

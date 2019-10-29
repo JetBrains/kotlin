@@ -109,6 +109,10 @@ class JvmSymbols(
             addValueParameter("self", irBuiltIns.stringType.makeNullable())
             addValueParameter("other", irBuiltIns.anyNType)
         }
+        klass.addFunction("checkNotNull", irBuiltIns.unitType, isStatic = true).apply {
+            addValueParameter("object", irBuiltIns.anyNType)
+        }
+        klass.addFunction("throwNpe", irBuiltIns.unitType, isStatic = true)
     }
 
     val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
@@ -122,6 +126,12 @@ class JvmSymbols(
 
     val intrinsicStringPlus: IrFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "stringPlus" }
+
+    val checkNotNull: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "checkNotNull" }
+
+    val throwNpe: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "throwNpe" }
 
     private val firStringBuilder =
         if (firMode) {
