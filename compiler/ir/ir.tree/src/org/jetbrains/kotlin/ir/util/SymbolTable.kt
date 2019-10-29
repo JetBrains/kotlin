@@ -21,6 +21,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -31,6 +32,16 @@ import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 
 interface IrProvider {
     fun getDeclaration(symbol: IrSymbol): IrDeclaration?
+}
+
+/**
+ * Extension of [IrProvider] which always produces inheritors of [IrLazyDeclarationBase].
+ * Thus, it needs [declarationStubGenerator] to be able to produce IR declarations.
+ */
+interface LazyIrProvider: IrProvider {
+    var declarationStubGenerator: DeclarationStubGenerator
+
+    override fun getDeclaration(symbol: IrSymbol): IrLazyDeclarationBase?
 }
 
 interface IrDeserializer : IrProvider {

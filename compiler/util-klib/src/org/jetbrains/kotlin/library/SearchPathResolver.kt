@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.properties.hasProperty
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.util.*
 
@@ -170,7 +171,8 @@ abstract class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
     distributionKlib: String?,
     localKotlinDir: String?,
     skipCurrentDir: Boolean,
-    override val logger: Logger
+    override val logger: Logger,
+    private val knownIrProviders: List<String>
 ) : KotlinLibrarySearchPathResolver<L>(repositories, directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger),
     SearchPathResolverWithAttributes<L>
 {
@@ -207,6 +209,13 @@ abstract class KotlinLibraryProperResolverWithAttributes<L: KotlinLibrary>(
         ) {
             logger.warning("skipping $candidatePath. The library versions don't match. Expected '${unresolved.libraryVersion}', found '${candidateLibraryVersion}'")
             return false
+        }
+
+        candidate.manifestProperties["ir_provider"]?.let {
+            if (it !in knownIrProviders) {
+                logger.warning("skipping $candidatePath. The library requires unknown IR provider $it.")
+                return false
+            }
         }
 
         return true

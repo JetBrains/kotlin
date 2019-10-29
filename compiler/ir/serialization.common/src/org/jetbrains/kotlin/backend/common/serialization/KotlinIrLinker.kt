@@ -506,6 +506,12 @@ abstract class KotlinIrLinker(
         error("Deserializer for declaration $key is not found")
     }
 
+    /**
+     * Check that descriptor shouldn't be processed by some backend-specific logic.
+     * For example, it is the case for Native interop libraries where there is no IR in libraries.
+     */
+    protected open fun DeclarationDescriptor.shouldBeDeserialized(): Boolean = true
+
     private fun deserializeAllReachableTopLevels() {
         do {
             val moduleDeserializer = modulesWithReachableTopLevels.first()
@@ -520,6 +526,9 @@ abstract class KotlinIrLinker(
 
         // This is Native specific. Try to eliminate.
         if (topLevelDescriptor.module.isForwardDeclarationModule) return null
+
+        //
+        if (!topLevelDescriptor.shouldBeDeserialized()) return null
 
         require(checkAccessibility(topLevelDescriptor)) {
             "Locally accessible declarations should not be accessed here $topLevelDescriptor"
