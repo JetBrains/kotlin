@@ -62,6 +62,12 @@ export function runWithTeamCityConsoleAdapter(
                     revertLogMethods.forEach(revert => revert());
                 }
             });
+        },
+        beforeEach(name: string, fn: () => void): void {
+            runner.beforeEach(name, fn);
+        },
+        afterEach(name: string, fn: () => void): void {
+            runner.afterEach(name, fn);
         }
     }
 }

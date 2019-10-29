@@ -45,6 +45,14 @@ export function runWithFilter(
             } finally {
                 path.pop()
             }
+        },
+
+        beforeEach(name: string, fn: () => void): void {
+            runner.beforeEach(name, fn);
+        },
+
+        afterEach(name: string, fn: () => void): void {
+            runner.afterEach(name, fn);
         }
     };
 }

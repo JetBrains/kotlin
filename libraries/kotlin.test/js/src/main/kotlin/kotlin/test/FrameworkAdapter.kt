@@ -39,4 +39,20 @@ public external interface FrameworkAdapter {
      * @param testFn contains test body invocation
      */
     fun test(name: String, ignored: Boolean, testFn: () -> Any?)
+
+    /**
+     * Declares a before each function.
+     *
+     * @param name the before each function name.
+     * @param beforeFn contains before body invocation
+     */
+    fun beforeEach(name: String, beforeFn: () -> Any?)
+
+    /**
+     * Declares an after each function.
+     *
+     * @param name the after each function name.
+     * @param afterFn contains after body invocation
+     */
+    fun afterEach(name: String, afterFn: () -> Any?)
 }

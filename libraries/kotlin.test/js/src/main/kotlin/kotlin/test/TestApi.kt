@@ -40,6 +40,8 @@ internal fun setAssertHook(hook: (AssertionResult) -> Unit) {
  *
  * suite('a suite', false, function() {
  *   suite('a subsuite', false, function() {
+ *     beforeEach('before', function() {...});
+ *     afterEach('after', function() {...});
  *     test('a test', false, function() {...});
  *     test('an ignored/pending test', true, function() {...});
  *   });
@@ -55,6 +57,16 @@ internal fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
 @JsName("test")
 internal fun test(name: String, ignored: Boolean, testFn: () -> Unit) {
     adapter().test(name, ignored, testFn)
+}
+
+@JsName("beforeEach")
+internal fun beforeEach(name: String, beforeFn: () -> Unit) {
+    adapter().beforeEach(name, beforeFn)
+}
+
+@JsName("afterEach")
+internal fun afterEach(name: String, afterFn: () -> Unit) {
+    adapter().afterEach(name, afterFn)
 }
 
 internal var currentAdapter: FrameworkAdapter? = null
