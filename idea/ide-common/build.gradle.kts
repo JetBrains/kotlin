@@ -18,3 +18,4 @@ sourceSets {
     "test" {}
 }
 
+apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")

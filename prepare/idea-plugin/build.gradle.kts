@@ -47,7 +47,6 @@ val projectsToShadow by extra(listOf(
         ":compiler:frontend",
         ":compiler:frontend.common",
         ":compiler:frontend.java",
-        ":idea:ide-common",
         ":idea",
         ":idea:idea-native",
         ":idea:idea-core",
@@ -108,7 +107,8 @@ val libraryProjects = listOf(
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
     ":plugins:android-extensions-compiler",
-    ":kotlinx-serialization-compiler-plugin"
+    ":kotlinx-serialization-compiler-plugin",
+    ":idea:ide-common"
 )
 
 // Gradle tooling model jars are loaded into Gradle during import and should present in plugin as separate jar
