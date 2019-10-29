@@ -1827,12 +1827,8 @@ task sort1(type: KonanLocalTest) {
     source = "runtime/collections/sort1.kt"
 }
 
-// TODO: Enable devirtualization and make the test not standalone
-// when KT-26315 is fixed.
-standaloneTest("sortWith") {
+task sortWith(type: KonanLocalTest) {
     source = "runtime/collections/SortWith.kt"
-    flags = ['-tr', '-Xdisable=devirtualization']
-    arguments = ['--ktest_logger=SILENT']
 }
 
 task if_else(type: KonanLocalTest) {
