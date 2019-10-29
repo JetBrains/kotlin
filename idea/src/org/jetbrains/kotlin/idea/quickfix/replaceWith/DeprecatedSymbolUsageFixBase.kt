@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.ClassUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
+import org.jetbrains.kotlin.idea.intentions.isInvokeOperator
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
@@ -193,7 +194,10 @@ abstract class DeprecatedSymbolUsageFixBase(
         ): UsageReplacementStrategy? {
             val resolutionFacade = element.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
-            var target = element.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return null
+            val resolvedCall = element.getResolvedCall(bindingContext)
+            var target = resolvedCall?.resultingDescriptor?.takeIf { it.isInvokeOperator }
+                ?: element.mainReference.resolveToDescriptors(bindingContext).singleOrNull()
+                ?: return null
 
             var replacePatternFromSymbol =
                 fetchReplaceWithPattern(target, resolutionFacade.project, element, replaceWith.replaceInWholeProject)
@@ -208,7 +212,7 @@ abstract class DeprecatedSymbolUsageFixBase(
 
             when (target) {
                 is CallableDescriptor -> {
-                    val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
+                    if (resolvedCall == null) return null
                     if (!resolvedCall.isReallySuccess()) return null
                     val replacement = ReplaceWithAnnotationAnalyzer.analyzeCallableReplacement(
                         replaceWith, target, resolutionFacade, reformat
