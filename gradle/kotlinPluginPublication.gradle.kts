@@ -6,6 +6,8 @@ configure<PublishingExtension> {
             val artifactName = if (project.name == "idea-plugin") "kotlin-plugin" else project.name
             artifactId = "$artifactName-${IdeVersionConfigurator.currentIde.name.toLowerCase()}"
             from(components["java"])
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
 
             pom {
                 name.set("${project.group}:$artifactId")

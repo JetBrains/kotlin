@@ -35,6 +35,10 @@ sourceSets {
 
 runtimeJar()
 
+sourcesJar()
+
+javadocJar()
+
 testsJar()
 
 projectTest(parallel = true) {

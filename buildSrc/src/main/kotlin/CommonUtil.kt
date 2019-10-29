@@ -10,10 +10,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceSetOutput
-import org.gradle.kotlin.dsl.creating
-import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.registering
-import org.gradle.kotlin.dsl.the
+import org.gradle.kotlin.dsl.*
 import java.io.File
 import java.util.concurrent.Callable
 
@@ -70,3 +67,5 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
 inline fun CopySourceSpec.from(crossinline filesProvider: () -> Any?): CopySourceSpec = from(Callable { filesProvider() })
 
 fun Project.javaPluginConvention(): JavaPluginConvention = the()
+
+fun Project.findJavaPluginConvention(): JavaPluginConvention? = convention.findByType() ?: convention.findPlugin()

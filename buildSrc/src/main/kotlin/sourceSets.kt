@@ -1,4 +1,5 @@
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 
@@ -37,7 +38,13 @@ val Project.sourceSets: SourceSetContainer
     get() = javaPluginConvention().sourceSets
 
 val Project.mainSourceSet: SourceSet
-    get() = sourceSets.getByName("main")
+    get() = javaPluginConvention().mainSourceSet
 
 val Project.testSourceSet: SourceSet
+    get() = javaPluginConvention().testSourceSet
+
+val JavaPluginConvention.mainSourceSet: SourceSet
+    get() = sourceSets.getByName("main")
+
+val JavaPluginConvention.testSourceSet: SourceSet
     get() = sourceSets.getByName("test")

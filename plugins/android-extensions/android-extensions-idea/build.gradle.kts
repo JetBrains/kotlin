@@ -88,4 +88,8 @@ projectTest(parallel = true) {
 
 runtimeJar()
 
+sourcesJar()
+
+javadocJar()
+
 apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")

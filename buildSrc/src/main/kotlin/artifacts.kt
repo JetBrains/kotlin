@@ -98,7 +98,12 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
                     .resolvedArtifacts
                     .map { it.id.componentIdentifier }
                     .filterIsInstance<ProjectComponentIdentifier>()
-                    .map { project(it.projectPath).mainSourceSet.allSource }
+                    .mapNotNull {
+                        project(it.projectPath)
+                            .findJavaPluginConvention()
+                            ?.mainSourceSet
+                            ?.allSource
+                    }
             })
         }
 
