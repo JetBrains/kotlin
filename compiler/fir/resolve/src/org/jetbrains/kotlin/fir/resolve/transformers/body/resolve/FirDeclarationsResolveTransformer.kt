@@ -355,7 +355,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     ): T {
         val implicitReceiverValue = when (owner) {
             is FirClass<*> -> {
-                ImplicitDispatchReceiverValue(owner.symbol, type, symbolProvider, session, scopeSession)
+                ImplicitDispatchReceiverValue(owner.symbol, type, session, scopeSession)
             }
             is FirFunction<*> -> {
                 ImplicitExtensionReceiverValue(owner.symbol, type, session, scopeSession)
