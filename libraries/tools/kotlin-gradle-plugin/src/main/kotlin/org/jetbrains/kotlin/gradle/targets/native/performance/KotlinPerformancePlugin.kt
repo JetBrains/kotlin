@@ -32,7 +32,8 @@ class TaskTimerListener(project: Project) : TaskExecutionListener {
     }
 
     override fun afterExecute(task: Task, taskState: TaskState) {
-        tasksTimes[task.path]!!.duration = (System.nanoTime() - tasksTimes[task.path]!!.startTime) / 1000.0
+        val taskTime = taskTimes.getValue(task.path)
+        taskTime.duration = (System.nanoTime() - taskTime.startTime) / 1000.0
     }
 
     companion object {
