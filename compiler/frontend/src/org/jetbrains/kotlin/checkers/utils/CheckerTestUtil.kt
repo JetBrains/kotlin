@@ -148,7 +148,7 @@ object CheckerTestUtil {
         languageVersionSettings: LanguageVersionSettings?,
         dataFlowValueFactory: DataFlowValueFactory?,
         moduleDescriptor: ModuleDescriptorImpl?,
-        diagnosedRanges: MutableMap<IntRange, MutableSet<String>>?
+        diagnosedRanges: Map<IntRange, MutableSet<String>>?
     ): List<ActualDiagnostic> {
         val debugAnnotations = mutableListOf<ActualDiagnostic>()
 

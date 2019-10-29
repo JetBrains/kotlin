@@ -25,8 +25,7 @@ abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCas
         return createEnvironmentWithMockJdk(configurationKind)
     }
 
-    private fun doCreateAndProcessFir(ktFiles: List<KtFile>): List<FirFile> {
-
+    protected fun doCreateAndProcessFir(ktFiles: List<KtFile>): List<FirFile> {
         val scope = GlobalSearchScope.filesScope(project, ktFiles.mapNotNull { it.virtualFile })
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
         val session = createSession(environment, scope)
@@ -48,26 +47,25 @@ abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCas
         }
     }
 
-    protected fun processInputFile(path: String): List<FirFile> {
+    protected fun generateKtFiles(path: String): List<KtFile> {
         val file = File(path)
 
         val allFiles = listOf(file) + file.parentFile.listFiles { sibling ->
             sibling.name.removePrefix(file.nameWithoutExtension).removeSuffix(file.extension).matches("\\.[0-9]+\\.".toRegex())
         }
 
-        val ktFiles =
-            allFiles.map {
-                val text = KotlinTestUtils.doLoadFile(it)
-                it.name to text
-            }
-                .sortedBy { (_, text) ->
-                    KotlinTestUtils.parseDirectives(text)["analyzePriority"]?.toInt()
-                }
-                .map { (name, text) ->
-                    KotlinTestUtils.createFile(name, text, project)
-                }
+        return allFiles.map {
+            val text = KotlinTestUtils.doLoadFile(it)
+            it.name to text
+        }.sortedBy { (_, text) ->
+            KotlinTestUtils.parseDirectives(text)["analyzePriority"]?.toInt()
+        }.map { (name, text) ->
+            KotlinTestUtils.createFile(name, text, project)
+        }
+    }
 
-        return doCreateAndProcessFir(ktFiles)
+    protected fun processInputFile(path: String): List<FirFile> {
+        return doCreateAndProcessFir(generateKtFiles(path))
     }
 
     open fun doTest(path: String) {
