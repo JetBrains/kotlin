@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class RunAnythingManager {
   private static final String LOCATION_SETTINGS_KEY = "run.anything.popup";
@@ -62,7 +63,10 @@ public class RunAnythingManager {
       .setRequestFocus(true)
       .setCancelKeyEnabled(false)
       .setCancelCallback(() -> {
-        saveSearchText();
+        if (!Objects.equals(myRunAnythingUI.getSearchField().getText(), searchText)) {
+          saveSearchText();
+        }
+
         return true;
       })
       .addUserData("SIMPLE_WINDOW")
