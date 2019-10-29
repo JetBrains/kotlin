@@ -510,14 +510,6 @@ public class ExternalSystemUtil {
             }
 
             @Override
-            public void onEnd(@NotNull ExternalSystemTaskId id) {
-              if (finishSyncEventSupplier.isNull()) {
-                finishSyncEventSupplier.set(
-                  () -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "finished", new SuccessResultImpl()));
-              }
-            }
-
-            @Override
             public void onSuccess(@NotNull ExternalSystemTaskId id) {
               finishSyncEventSupplier.set(
                 () -> new FinishBuildEventImpl(id, null, System.currentTimeMillis(), "finished", new SuccessResultImpl()));
