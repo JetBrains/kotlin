@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.idea.core.script.configuration.loader
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationFileAttributeCache
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 
 interface ScriptConfigurationLoadingContext {
-    fun getCachedConfiguration(file: VirtualFile): CachedConfigurationSnapshot?
+    fun getCachedConfiguration(file: VirtualFile): ScriptConfigurationSnapshot?
 
     /**
      * Show notification about new configuration with suggestion to apply it.
@@ -23,7 +23,7 @@ interface ScriptConfigurationLoadingContext {
      */
     fun suggestNewConfiguration(
         file: VirtualFile,
-        newResult: LoadedScriptConfiguration
+        newResult: ScriptConfigurationSnapshot
     )
 
     /**
@@ -33,6 +33,6 @@ interface ScriptConfigurationLoadingContext {
      */
     fun saveNewConfiguration(
         file: VirtualFile,
-        newResult: LoadedScriptConfiguration
+        newResult: ScriptConfigurationSnapshot
     )
 }

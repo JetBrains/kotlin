@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.core.script.configuration.loader
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.psi.KtFile
@@ -42,7 +43,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
             KtFileScriptSource(file), scriptDefinition, file.project
         )
 
-        val result = LoadedScriptConfiguration(
+        val result = ScriptConfigurationSnapshot(
             inputs,
             scriptingApiResult.reports,
             scriptingApiResult.valueOrNull()

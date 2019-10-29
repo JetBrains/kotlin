@@ -24,8 +24,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.Navigatable
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.getGradleScriptInputsStamp
-import org.jetbrains.kotlin.idea.core.script.configuration.loader.LoadedScriptConfiguration
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
@@ -58,7 +58,7 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSou
         )
         val javaHome = File(gradleExeSettings.javaHome ?: return)
 
-        val files = mutableListOf<Pair<VirtualFile, LoadedScriptConfiguration>>()
+        val files = mutableListOf<Pair<VirtualFile, ScriptConfigurationSnapshot>>()
 
         projectDataNode.gradleKotlinBuildScripts?.forEach { buildScript ->
             val scriptFile = File(buildScript.file)
@@ -70,7 +70,7 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSou
             files.add(
                 Pair(
                     virtualFile,
-                    LoadedScriptConfiguration(
+                    ScriptConfigurationSnapshot(
                         inputs ?: CachedConfigurationInputs.OutOfDate,
                         listOf(),
                         ScriptCompilationConfigurationWrapper.FromLegacy(

@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
+import kotlin.script.experimental.api.ScriptDiagnostic
 
 interface CachedConfigurationInputs {
     fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile? = null): Boolean
@@ -23,14 +24,22 @@ interface CachedConfigurationInputs {
     }
 }
 
-data class CachedConfigurationSnapshot(
+data class ScriptConfigurationSnapshot(
     val inputs: CachedConfigurationInputs,
-    val configuration: ScriptCompilationConfigurationWrapper
+    val reports: List<ScriptDiagnostic>,
+    val configuration: ScriptCompilationConfigurationWrapper?
 )
 
+/**
+ * Cached configurations for file's specific snapshot state.
+ *
+ * Writer should put related inputs snapshot for loaded configuration.
+ * Reader may do up-to-date check for existed entry.
+ */
 interface ScriptConfigurationCache {
-    operator fun get(file: VirtualFile): CachedConfigurationSnapshot?
-    operator fun set(file: VirtualFile, configurationSnapshot: CachedConfigurationSnapshot)
+    operator fun get(file: VirtualFile): ScriptConfigurationSnapshot?
+    operator fun set(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
+
     fun markOutOfDate(file: VirtualFile)
 
     fun all(): Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>

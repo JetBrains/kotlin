@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.core.script.configuration.cache
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.configuration.loader.LoadedScriptConfiguration
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
@@ -38,8 +37,12 @@ internal class ScriptConfigurationFileAttributeCache(
         if (!isFirstLoad) return false
 
         val fromFs = load(virtualFile) ?: return false
-        // todo(KT-34444): save inputs to fs
-        val result = LoadedScriptConfiguration(CachedConfigurationInputs.OutOfDate, listOf(), fromFs)
+        val result =
+            ScriptConfigurationSnapshot(
+                CachedConfigurationInputs.OutOfDate, // todo(KT-34444): save inputs to fs
+                listOf(), // todo(KT-34444): save reports to fs
+                fromFs
+            )
         context.saveNewConfiguration(virtualFile, result)
         return true
     }

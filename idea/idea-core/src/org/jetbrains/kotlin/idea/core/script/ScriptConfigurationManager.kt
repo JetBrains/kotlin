@@ -29,9 +29,8 @@ import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.configuration.AbstractScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationSnapshot
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
-import org.jetbrains.kotlin.idea.core.script.configuration.loader.LoadedScriptConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
@@ -103,7 +102,7 @@ interface ScriptConfigurationManager {
      * Start indexing for new class/source roots.
      * Re-highlight opened scripts with changed configuration.
      */
-    fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, LoadedScriptConfiguration>>)
+    fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, ScriptConfigurationSnapshot>>)
 
     ///////////////
     // classpath roots info:

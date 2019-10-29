@@ -20,8 +20,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.toVfsRoots
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationSnapshot
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCache
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
@@ -86,7 +87,7 @@ internal abstract class AbstractScriptConfigurationManager(
     override fun getScriptClasspath(file: KtFile): List<VirtualFile> =
         toVfsRoots(getConfiguration(file)?.dependenciesClassPath.orEmpty())
 
-    fun getCachedConfiguration(file: VirtualFile?): CachedConfigurationSnapshot? {
+    fun getCachedConfiguration(file: VirtualFile?): ScriptConfigurationSnapshot? {
         if (file == null) return null
         return cache[file]
     }
@@ -173,7 +174,7 @@ internal abstract class AbstractScriptConfigurationManager(
 
     protected open fun saveChangedConfiguration(
         file: VirtualFile,
-        newConfigurationSnapshot: CachedConfigurationSnapshot?
+        newConfigurationSnapshot: ScriptConfigurationSnapshot?
     ) {
         rootsIndexer.checkInTransaction()
         val newConfiguration = newConfigurationSnapshot?.configuration

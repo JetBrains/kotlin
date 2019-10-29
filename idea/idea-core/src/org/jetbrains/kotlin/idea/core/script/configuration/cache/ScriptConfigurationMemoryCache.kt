@@ -8,43 +8,43 @@ package org.jetbrains.kotlin.idea.core.script.configuration.cache
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.SLRUMap
-import org.jetbrains.kotlin.idea.core.script.configuration.AbstractScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-import java.io.DataInput
-import java.io.DataOutput
 
-abstract class ScriptConfigurationMemoryCache(
+class ScriptConfigurationMemoryCache(
     val project: Project
 ) : ScriptConfigurationCache {
     companion object {
         const val MAX_SCRIPTS_CACHED = 50
     }
 
-    private val memoryCache = SLRUMap<VirtualFile, CachedConfigurationSnapshot>(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED)
+    private val memoryCache = SLRUMap<VirtualFile, ScriptConfigurationSnapshot>(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED)
 
     @Synchronized
-    override operator fun get(file: VirtualFile): CachedConfigurationSnapshot? {
+    override operator fun get(file: VirtualFile): ScriptConfigurationSnapshot? {
         return memoryCache.get(file)
     }
 
 
     @Synchronized
-    override operator fun set(file: VirtualFile, configurationSnapshot: CachedConfigurationSnapshot) {
+    override operator fun set(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
         memoryCache.put(
             file,
             configurationSnapshot
         )
     }
 
-    @Synchronized
-    override fun markOutOfDate(file: VirtualFile) {
+    override fun markUpToDate(file: VirtualFile, inputs: CachedConfigurationInputs) {
         val old = memoryCache[file]
         if (old != null) {
-            memoryCache.put(file, old.copy(inputs = CachedConfigurationInputs.OutOfDate))
+            memoryCache.put(file, old.copy(inputs = inputs))
         }
     }
 
     @Synchronized
-    override fun all() = memoryCache.entrySet().map { it.key to it.value.configuration }
+    @Suppress("UNCHECKED_CAST")
+    override fun all() =
+        memoryCache.entrySet().map {
+            if (it.value.configuration == null) null
+            else it.key to it.value.configuration
+        } as Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
 }
