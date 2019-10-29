@@ -239,8 +239,7 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
   @Nullable
   @ApiStatus.Experimental
   public static <T> T waitForPromise(@NotNull Promise<T> promise) {
-    do {
-      ProgressManager.checkCanceled();
+    while (true) {
       try {
         return promise.blockingGet(10, TimeUnit.MILLISECONDS);
       }
@@ -249,8 +248,8 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
       catch (java.util.concurrent.ExecutionException e) {
         ExceptionUtil.rethrow(e);
       }
+      ProgressManager.checkCanceled();
     }
-    while (true);
   }
 
   @NotNull
