@@ -37,4 +37,6 @@ interface FirRegularClass : FirMemberDeclaration, FirTypeParametersOwner, FirCla
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRegularClass(this, data)
 
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass
 }

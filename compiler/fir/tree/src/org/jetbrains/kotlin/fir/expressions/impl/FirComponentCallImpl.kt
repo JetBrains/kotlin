@@ -56,7 +56,7 @@ class FirComponentCallImpl(
         typeRef = typeRef.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
         transformArguments(transformer, data)
-        typeArguments.transformInplace(transformer, data)
+        transformTypeArguments(transformer, data)
         transformCalleeReference(transformer, data)
         explicitReceiver = explicitReceiver.transformSingle(transformer, data)
         return this
@@ -72,6 +72,11 @@ class FirComponentCallImpl(
 
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
         arguments.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirComponentCallImpl {
+        typeArguments.transformInplace(transformer, data)
         return this
     }
 

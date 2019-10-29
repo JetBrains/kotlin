@@ -3,3 +3,7 @@ FILE: reflectionClass.kt
         public get(): R|java/lang/Class<kotlin/String>|
     public final val kotlinClass: R|kotlin/reflect/KClass<kotlin/String>| = <getClass>(Q|kotlin/String|)
         public get(): R|kotlin/reflect/KClass<kotlin/String>|
+    public final fun foo(): R|kotlin/Unit| {
+        lval stringClass: R|java/lang/Class<kotlin/String>| = <getClass>(Q|kotlin/String|).R|kotlin/jvm/java|
+        lval arrayStringClass: <ERROR TYPE REF: Empty diagnostic> = <getClass>(<Inapplicable(PARAMETER_MAPPING_ERROR): [kotlin/Array.Array]>#<R|kotlin/String|>()).<Inapplicable(WRONG_RECEIVER): [kotlin/jvm/java]>#
+    }

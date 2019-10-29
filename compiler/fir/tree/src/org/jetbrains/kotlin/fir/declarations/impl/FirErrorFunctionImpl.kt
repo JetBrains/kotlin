@@ -68,6 +68,10 @@ class FirErrorFunctionImpl(
         return this
     }
 
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        return this
+    }
+
     override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
         controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this

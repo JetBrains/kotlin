@@ -10,7 +10,7 @@ FILE: problems.kt
             public get(): R|kotlin/String|
 
         public final fun test(): R|kotlin/Unit| {
-            R|/name|
+            R|/anonymous.name|
         }
 
     }

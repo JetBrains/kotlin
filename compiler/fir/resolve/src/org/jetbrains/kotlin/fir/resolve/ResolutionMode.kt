@@ -5,15 +5,23 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 sealed class ResolutionMode {
     object ContextDependent : ResolutionMode()
     object ContextIndependent : ResolutionMode()
+    // TODO: it's better not to use WithExpectedType(FirImplicitTypeRef)
     class WithExpectedType(val expectedTypeRef: FirTypeRef) : ResolutionMode()
+
+    class WithStatus(val status: FirDeclarationStatus) : ResolutionMode()
+
     class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?) : ResolutionMode()
 }
 
 fun withExpectedType(expectedTypeRef: FirTypeRef?): ResolutionMode =
     expectedTypeRef?.let { ResolutionMode.WithExpectedType(it) } ?: ResolutionMode.ContextDependent
+
+fun FirDeclarationStatus.mode(): ResolutionMode =
+    ResolutionMode.WithStatus(this)

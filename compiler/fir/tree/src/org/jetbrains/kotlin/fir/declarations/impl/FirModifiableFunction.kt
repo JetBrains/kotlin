@@ -41,6 +41,8 @@ interface FirModifiableFunction<F : FirFunction<F>>  : FirFunction<F>, FirAbstra
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirModifiableFunction<F>
 
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirModifiableFunction<F>
+
     override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirModifiableFunction<F>
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirModifiableFunction<F>

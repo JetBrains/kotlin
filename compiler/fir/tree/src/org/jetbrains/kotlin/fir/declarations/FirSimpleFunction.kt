@@ -44,9 +44,13 @@ abstract class FirSimpleFunction : FirPureAbstractElement(), FirMemberFunction<F
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+
     abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunction
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 
     abstract override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirSimpleFunction
 }

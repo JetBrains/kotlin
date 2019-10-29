@@ -369,9 +369,19 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/localImplicitBodies.kt");
         }
 
+        @TestMetadata("localInnerClass.kt")
+        public void testLocalInnerClass() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/localInnerClass.kt");
+        }
+
         @TestMetadata("localScopes.kt")
         public void testLocalScopes() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/localScopes.kt");
+        }
+
+        @TestMetadata("localTypes.kt")
+        public void testLocalTypes() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/localTypes.kt");
         }
 
         @TestMetadata("memberExtension.kt")
@@ -392,6 +402,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("outerObject.kt")
         public void testOuterObject() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/outerObject.kt");
+        }
+
+        @TestMetadata("privateObjectLiteral.kt")
+        public void testPrivateObjectLiteral() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/privateObjectLiteral.kt");
         }
 
         @TestMetadata("qualifiedExpressions.kt")

@@ -424,9 +424,8 @@ class Fir2IrVisitor(
         val constructedIrType = constructedTypeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
         // TODO: find delegated constructor correctly
         val classId = constructedClassSymbol.classId
-        val provider = this@Fir2IrVisitor.session.firSymbolProvider
         var constructorSymbol: FirConstructorSymbol? = null
-        provider.getClassUseSiteMemberScope(classId, this@Fir2IrVisitor.session, ScopeSession())!!.processFunctionsByName(
+        constructedClassSymbol.buildUseSiteMemberScope(this@Fir2IrVisitor.session, ScopeSession())!!.processFunctionsByName(
             classId.shortClassName
         ) {
             when {

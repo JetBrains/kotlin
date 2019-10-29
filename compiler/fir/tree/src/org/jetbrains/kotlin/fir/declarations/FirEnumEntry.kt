@@ -40,5 +40,7 @@ abstract class FirEnumEntry : FirPureAbstractElement(), FirRegularClass {
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEnumEntry(this, data)
 
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntry
+
     abstract fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirEnumEntry
 }

@@ -42,6 +42,8 @@ interface FirVariable<F : FirVariable<F>> : FirCallableDeclaration<F>, FirNamedD
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<F>
+
     fun <D> transformGetter(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
     fun <D> transformSetter(transformer: FirTransformer<D>, data: D): FirVariable<F>

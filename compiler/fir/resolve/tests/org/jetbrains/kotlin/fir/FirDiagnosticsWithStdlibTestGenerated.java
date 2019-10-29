@@ -38,6 +38,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/arrayFirstOrNull.kt");
     }
 
+    @TestMetadata("arrayInLocal.kt")
+    public void testArrayInLocal() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/arrayInLocal.kt");
+    }
+
     @TestMetadata("backingField.kt")
     public void testBackingField() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/backingField.kt");

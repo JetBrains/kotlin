@@ -65,11 +65,16 @@ class FirEnumEntryImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         annotations.transformInplace(transformer, data)
         typeParameters.transformInplace(transformer, data)
-        status = status.transformSingle(transformer, data)
+        transformStatus(transformer, data)
         declarations.transformInplace(transformer, data)
         superTypeRefs.transformInplace(transformer, data)
         transformArguments(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        status = status.transformSingle(transformer, data)
         return this
     }
 

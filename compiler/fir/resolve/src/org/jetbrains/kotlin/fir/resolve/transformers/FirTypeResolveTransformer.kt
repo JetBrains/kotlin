@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
-import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -83,16 +82,7 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirStatement> {
         val result = transformDeclaration(valueParameter, data).single as FirValueParameter
-        if (result.isVararg) {
-            val returnTypeRef = result.returnTypeRef
-            val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
-            result.transformReturnTypeRef(
-                StoreType,
-                result.returnTypeRef.withReplacedConeType(
-                    returnType.createArrayOf(session)
-                )
-            )
-        }
+        result.transformVarargTypeToArrayType()
         return result.compose()
     }
 

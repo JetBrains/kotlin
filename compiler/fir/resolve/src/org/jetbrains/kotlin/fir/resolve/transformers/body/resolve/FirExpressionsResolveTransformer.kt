@@ -79,14 +79,23 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 qualifiedAccessExpression
             }
             is FirSuperReference -> {
-                if (callee.superTypeRef is FirResolvedTypeRef) {
-                    qualifiedAccessExpression.resultType = callee.superTypeRef
-                } else {
-                    val superTypeRef = implicitReceiverStack.lastDispatchReceiver()
-                        ?.boundSymbol?.phasedFir?.superTypeRefs?.firstOrNull()
-                        ?: FirErrorTypeRefImpl(qualifiedAccessExpression.source, FirSimpleDiagnostic("No super type", DiagnosticKind.NoSupertype))
-                    qualifiedAccessExpression.resultType = superTypeRef
-                    callee.replaceSuperTypeRef(superTypeRef)
+                when (val superTypeRef = callee.superTypeRef) {
+                    is FirResolvedTypeRef -> {
+                        qualifiedAccessExpression.resultType = superTypeRef
+                    }
+                    !is FirImplicitTypeRef -> {
+                        callee.transformChildren(transformer, ResolutionMode.ContextIndependent)
+                        qualifiedAccessExpression.resultType = callee.superTypeRef
+                    }
+                    else -> {
+                        val superTypeRefFromStack = implicitReceiverStack.lastDispatchReceiver()
+                            ?.boundSymbol?.phasedFir?.superTypeRefs?.firstOrNull()
+                            ?: FirErrorTypeRefImpl(
+                                qualifiedAccessExpression.source, FirSimpleDiagnostic("No super type", DiagnosticKind.NoSupertype)
+                            )
+                        qualifiedAccessExpression.resultType = superTypeRefFromStack
+                        callee.replaceSuperTypeRef(superTypeRefFromStack)
+                    }
                 }
                 qualifiedAccessExpression
             }
@@ -139,6 +148,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         dataFlowAnalyzer.enterFunctionCall(functionCall)
         if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
         functionCall.transform<FirFunctionCall, Nothing?>(InvocationKindTransformer, null)
+        functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
         val expectedTypeRef = data.expectedType
         val completeInference =
             try {

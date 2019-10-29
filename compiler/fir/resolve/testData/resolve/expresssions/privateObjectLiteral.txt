@@ -1,0 +1,39 @@
+FILE: privateObjectLiteral.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val x: R|anonymous| = object : R|kotlin/Any| {
+            private constructor(): R|kotlin/Any| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Int| {
+                ^foo Int(42)
+            }
+
+        }
+
+            private get(): R|anonymous|
+
+        public final val y: R|kotlin/Int| = this@R|/C|.R|/C.x|.R|/anonymous.foo|()
+            public get(): R|kotlin/Int|
+
+        internal final val z: R|anonymous| = object : R|kotlin/Any| {
+            private constructor(): R|kotlin/Any| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Int| {
+                ^foo Int(13)
+            }
+
+        }
+
+            internal get(): R|anonymous|
+
+        public final val w: R|kotlin/Int| = this@R|/C|.R|/C.z|.R|/anonymous.foo|()
+            public get(): R|kotlin/Int|
+
+    }

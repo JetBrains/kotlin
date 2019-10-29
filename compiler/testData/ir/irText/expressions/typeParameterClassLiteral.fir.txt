@@ -4,21 +4,21 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun classRefFun <T> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>'
         GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
-          ERROR_CALL 'Unresolved reference: <Unresolved name: T>#' type=IrErrorType
+          ERROR_CALL 'Unresolved reference: R|?|' type=IrErrorType
   FUN name:classRefExtFun visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:kotlin.reflect.KClass<IrErrorType> [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun classRefExtFun <T> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>'
         GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
-          ERROR_CALL 'Unresolved reference: <Unresolved name: T>#' type=IrErrorType
+          ERROR_CALL 'Unresolved reference: R|?|' type=IrErrorType
   PROPERTY name:classRefExtVal visibility:public modality:FINAL [val]
     FUN name:<get-classRefExtVal> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KClass<IrErrorType>
       correspondingProperty: PROPERTY name:classRefExtVal visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-classRefExtVal> (): kotlin.reflect.KClass<IrErrorType> declared in <root>'
           GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
-            ERROR_CALL 'Unresolved reference: <Unresolved name: T>#' type=IrErrorType
+            ERROR_CALL 'Unresolved reference: R|?|' type=IrErrorType
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
     CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary]
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun classRefGenericMemberFun <TF> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>.Host'
           GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
-            ERROR_CALL 'Unresolved reference: <Unresolved name: TF>#' type=IrErrorType
+            ERROR_CALL 'Unresolved reference: R|?|' type=IrErrorType
     FUN name:classRefGenericMemberExtFun visibility:public modality:FINAL <TF> ($this:<root>.Host, $receiver:kotlin.Any) returnType:kotlin.reflect.KClass<IrErrorType> [inline]
       TYPE_PARAMETER name:TF index:0 variance: superTypes:[]
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun classRefGenericMemberExtFun <TF> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>.Host'
           GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
-            ERROR_CALL 'Unresolved reference: <Unresolved name: TF>#' type=IrErrorType
+            ERROR_CALL 'Unresolved reference: R|?|' type=IrErrorType
     PROPERTY name:classRefGenericMemberExtVal visibility:public modality:FINAL [val]
       FUN name:<get-classRefGenericMemberExtVal> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.reflect.KClass<IrErrorType>
         correspondingProperty: PROPERTY name:classRefGenericMemberExtVal visibility:public modality:FINAL [val]
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-classRefGenericMemberExtVal> (): kotlin.reflect.KClass<IrErrorType> declared in <root>.Host'
             GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
-              ERROR_CALL 'Unresolved reference: <Unresolved name: TV>#' type=IrErrorType
+              ERROR_CALL 'Unresolved reference: R|?|' type=IrErrorType
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

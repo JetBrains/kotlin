@@ -40,6 +40,8 @@ abstract class FirErrorFunction : FirPureAbstractElement(), FirFunction<FirError
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
+    abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
+
     abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction

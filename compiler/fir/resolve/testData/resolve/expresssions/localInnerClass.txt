@@ -1,0 +1,26 @@
+FILE: localInnerClass.kt
+    public abstract interface Foo : R|kotlin/Any| {
+    }
+    public final fun bar(): R|kotlin/Unit| {
+        object : R|Foo| {
+            private constructor(): R|kotlin/Any| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|Foo| {
+                ^foo R|/<anonymous>.Derived.Derived|(Int(42))
+            }
+
+            local final inner class Derived : R|Foo| {
+                public constructor(x: R|kotlin/Int|): R|<anonymous>.Derived| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final val x: R|kotlin/Int| = R|<local>/x|
+                    public get(): R|kotlin/Int|
+
+            }
+
+        }
+
+    }

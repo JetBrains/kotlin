@@ -66,12 +66,12 @@ open class FirSimpleFunctionImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         transformReturnTypeRef(transformer, data)
-        receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
+        transformReceiverTypeRef(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         typeParameters.transformInplace(transformer, data)
         transformValueParameters(transformer, data)
         body = body?.transformSingle(transformer, data)
-        status = status.transformSingle(transformer, data)
+        transformStatus(transformer, data)
         annotations.transformInplace(transformer, data)
         transformContractDescription(transformer, data)
         return this
@@ -82,6 +82,11 @@ open class FirSimpleFunctionImpl(
         return this
     }
 
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
+        return this
+    }
+
     override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
@@ -89,6 +94,11 @@ open class FirSimpleFunctionImpl(
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         valueParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        status = status.transformSingle(transformer, data)
         return this
     }
 

@@ -27,4 +27,6 @@ interface FirMemberDeclaration : FirNamedDeclaration, FirAnnotationContainer {
     val status: FirDeclarationStatus
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitMemberDeclaration(this, data)
+
+    fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirMemberDeclaration
 }

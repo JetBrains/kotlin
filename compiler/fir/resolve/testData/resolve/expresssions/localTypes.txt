@@ -1,0 +1,30 @@
+FILE: localTypes.kt
+    public abstract interface Foo : R|kotlin/Any| {
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = Int(1)
+        local final class Bar : R|Foo| {
+            public constructor(): R|Bar| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val y: R|kotlin/String| = String()
+                public get(): R|kotlin/String|
+
+            public final fun R|kotlin/Int|.bar(s: R|kotlin/String|): R|kotlin/Boolean| {
+                lval z: R|kotlin/Double| = Double(0.0)
+                ^bar Boolean(true)
+            }
+
+            public final val R|kotlin/Boolean|.w: R|kotlin/Char|
+                public get(): R|kotlin/Char| {
+                    ^ Char( )
+                }
+
+            public final fun <T : R|Foo|> id(arg: R|T|): R|T| {
+                ^id R|<local>/arg|
+            }
+
+        }
+
+    }

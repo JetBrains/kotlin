@@ -88,4 +88,9 @@ class FirJavaClass internal constructor(
         superTypeRefs.transformInplace(transformer, data)
         return this
     }
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaClass {
+        status = status.transformSingle(transformer, data)
+        return this
+    }
 }

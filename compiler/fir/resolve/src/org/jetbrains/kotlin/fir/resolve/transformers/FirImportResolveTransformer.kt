@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class FirImportResolveTransformer() : FirAbstractTreeTransformer(phase = FirResolvePhase.IMPORTS) {
+class FirImportResolveTransformer() : FirAbstractTreeTransformer<Nothing?>(phase = FirResolvePhase.IMPORTS) {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }

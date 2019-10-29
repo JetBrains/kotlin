@@ -42,6 +42,8 @@ interface FirModifiableRegularClass : FirRegularClass, FirModifiableClass<FirReg
     override val superTypeRefs: MutableList<FirTypeRef>
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirModifiableRegularClass
 
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirModifiableRegularClass
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     override fun replaceSupertypesComputationStatus(newSupertypesComputationStatus: SupertypesComputationStatus)

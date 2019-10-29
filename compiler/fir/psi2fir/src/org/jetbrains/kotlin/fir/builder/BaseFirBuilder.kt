@@ -70,6 +70,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         when {
             local -> CallableId(name)
             context.className == FqName.ROOT -> CallableId(context.packageFqName, name)
+            context.className.shortName() === ANONYMOUS_OBJECT_NAME -> CallableId(FqName.ROOT, FqName("anonymous"), name)
             else -> CallableId(context.packageFqName, context.className, name)
         }
 
@@ -94,6 +95,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
     /**** Common utils ****/
     companion object {
         val KNPE = Name.identifier("KotlinNullPointerException")
+
+        val ANONYMOUS_OBJECT_NAME = Name.special("<anonymous>")
     }
 
     fun FirExpression.toReturn(baseSource: FirSourceElement? = source, labelName: String? = null): FirReturnExpression {

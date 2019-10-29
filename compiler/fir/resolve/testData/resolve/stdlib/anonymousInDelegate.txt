@@ -15,7 +15,7 @@ FILE: anonymousInDelegate.kt
 
         }
 
-        R|<local>/foo|.R|/bar|()
+        R|<local>/foo|.R|/anonymous.bar|()
     }
     )
         public get(): R|kotlin/Int| {

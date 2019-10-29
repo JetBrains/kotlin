@@ -467,24 +467,26 @@ class DeclarationsConverter(
         superTypeRefs.ifEmpty { superTypeRefs += implicitAnyType }
         val delegatedType = delegatedSuperTypeRef ?: implicitAnyType
 
-        return FirAnonymousObjectImpl(null, session, FirAnonymousObjectSymbol()).apply {
-            annotations += modifiers.annotations
-            this.superTypeRefs += superTypeRefs
-            this.typeRef = superTypeRefs.first()
+        return withChildClassName(ANONYMOUS_OBJECT_NAME) {
+            FirAnonymousObjectImpl(null, session, FirAnonymousObjectSymbol()).apply {
+                annotations += modifiers.annotations
+                this.superTypeRefs += superTypeRefs
+                this.typeRef = superTypeRefs.first()
 
-            val classWrapper = ClassWrapper(
-                SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT, hasPrimaryConstructor = false,
-                hasSecondaryConstructor = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
-                delegatedSelfTypeRef = delegatedType,
-                delegatedSuperTypeRef = delegatedType,
-                superTypeCallEntry = superTypeCallEntry
-            )
-            //parse primary constructor
-            convertPrimaryConstructor(primaryConstructor, classWrapper)?.let { this.declarations += it.firConstructor }
+                val classWrapper = ClassWrapper(
+                    SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT, hasPrimaryConstructor = false,
+                    hasSecondaryConstructor = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
+                    delegatedSelfTypeRef = delegatedType,
+                    delegatedSuperTypeRef = delegatedType,
+                    superTypeCallEntry = superTypeCallEntry
+                )
+                //parse primary constructor
+                convertPrimaryConstructor(primaryConstructor, classWrapper)?.let { this.declarations += it.firConstructor }
 
-            //parse declarations
-            classBody?.let {
-                this.declarations += convertClassBody(it, classWrapper)
+                //parse declarations
+                classBody?.let {
+                    this.declarations += convertClassBody(it, classWrapper)
+                }
             }
         }
     }

@@ -3,7 +3,7 @@ FILE: complex.kt
         lval url: R|kotlin/String| = <strcat>(String(https://plugins.jetbrains.com/api/plugins/), R|<local>/pluginId|.<Unresolved name: idString>#, String(/updates?version=), R|<local>/version|)
         lval pluginDTOs: R|kotlin/Array<class error: Symbol not found, for `PluginDTO`>| = try {
             <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <implicit> {
-                GsonBuilder#().create#().fromJson#(it#.inputStream#.reader#(), <getClass>(Array#<R|class error: Symbol not found, for `PluginDTO`|>()).java#)
+                GsonBuilder#().create#().fromJson#(it#.inputStream#.reader#(), <getClass>(Array#<PluginDTO>()).java#)
             }
             )
         }

@@ -28,7 +28,7 @@ digraph complex_kt {
             12 [label="Access variable R|<local>/url|"];
             13 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|)"];
             14 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <implicit> {
-    GsonBuilder#().create#().fromJson#(it#.inputStream#.reader#(), <getClass>(Array#<R|class error: Symbol not found, for `PluginDTO`|>()).java#)
+    GsonBuilder#().create#().fromJson#(it#.inputStream#.reader#(), <getClass>(Array#<PluginDTO>()).java#)
 }
 )"];
             15 [label="Exit block"];

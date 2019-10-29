@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.addImportingScopes
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -51,7 +52,10 @@ open class FirBodyResolveTransformer(
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: ResolutionMode): CompositeTransformResult<FirTypeRef> {
-        return typeRef.compose()
+        if (typeRef is FirResolvedTypeRef) {
+            return typeRef.compose()
+        }
+        return typeResolverTransformer.transformTypeRef(typeRef, null)
     }
 
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ResolutionMode): CompositeTransformResult<FirTypeRef> {
@@ -140,6 +144,13 @@ open class FirBodyResolveTransformer(
 
     override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         return declarationsTransformer.transformDeclaration(declaration, data)
+    }
+
+    override fun transformDeclarationStatus(
+        declarationStatus: FirDeclarationStatus,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirDeclarationStatus> {
+        return declarationsTransformer.transformDeclarationStatus(declarationStatus, data)
     }
 
     override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {

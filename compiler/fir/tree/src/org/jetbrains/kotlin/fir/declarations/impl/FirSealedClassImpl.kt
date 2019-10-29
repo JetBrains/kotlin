@@ -61,11 +61,16 @@ class FirSealedClassImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSealedClassImpl {
         annotations.transformInplace(transformer, data)
         typeParameters.transformInplace(transformer, data)
-        status = status.transformSingle(transformer, data)
+        transformStatus(transformer, data)
         (declarations.firstOrNull { it is FirConstructorImpl } as? FirConstructorImpl)?.typeParameters?.transformInplace(transformer, data)
         declarations.transformInplace(transformer, data)
         companionObject = declarations.asSequence().filterIsInstance<FirRegularClass>().firstOrNull { it.status.isCompanion }
         superTypeRefs.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSealedClassImpl {
+        status = status.transformSingle(transformer, data)
         return this
     }
 

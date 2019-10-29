@@ -38,5 +38,7 @@ abstract class FirFunctionCall : FirQualifiedAccessExpression(), FirCall {
 
     abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirFunctionCall
 
+    abstract fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirFunctionCall
+
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirFunctionCall
 }

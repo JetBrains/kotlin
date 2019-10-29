@@ -1,0 +1,8 @@
+FILE: arrayInLocal.kt
+    public final fun foo(): R|kotlin/Unit| {
+        local final fun convert(vararg paths: R|kotlin/Array<kotlin/String>|): R|kotlin/Array<kotlin/String>| {
+            ^convert R|<local>/paths|.R|kotlin/collections/toList|<R|kotlin/String|>().R|kotlin/collections/toTypedArray|<R|kotlin/String|>()
+        }
+
+        R|<local>/convert|(String(1), String(2), String(3))
+    }

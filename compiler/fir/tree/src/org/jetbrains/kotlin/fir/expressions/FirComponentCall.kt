@@ -37,6 +37,8 @@ abstract class FirComponentCall : FirFunctionCall() {
 
     abstract override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirComponentCall
 
+    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirComponentCall
+
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirComponentCall
 
     abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall

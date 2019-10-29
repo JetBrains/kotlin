@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -100,5 +101,15 @@ internal object StoreReceiver : FirTransformer<FirExpression>() {
     override fun <E : FirElement> transformElement(element: E, data: FirExpression): CompositeTransformResult<E> {
         @Suppress("UNCHECKED_CAST")
         return (data as E).compose()
+    }
+}
+
+internal fun FirValueParameter.transformVarargTypeToArrayType() {
+    if (isVararg) {
+        val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+        transformReturnTypeRef(
+            StoreType,
+            returnTypeRef.withReplacedConeType(returnType.createArrayOf(session))
+        )
     }
 }

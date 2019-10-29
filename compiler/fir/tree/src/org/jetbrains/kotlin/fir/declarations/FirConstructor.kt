@@ -44,7 +44,11 @@ interface FirConstructor : FirMemberFunction<FirConstructor> {
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor
 
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirConstructor
+
     override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirConstructor
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructor
+
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirConstructor
 }

@@ -6,7 +6,7 @@ FILE: localImplicitBodies.kt
             }
 
             public final fun sss(): <ERROR TYPE REF: Cannot calculate return type (local class/object?)> {
-                ^sss R?C|/abc|()
+                ^sss R?C|/anonymous.abc|()
             }
 
             public final fun abc(): R|kotlin/Int| {
@@ -15,5 +15,5 @@ FILE: localImplicitBodies.kt
 
         }
 
-        lval g: <ERROR TYPE REF: Cannot calculate return type (local class/object?)> = R|<local>/x|.R?C|/sss|()
+        lval g: <ERROR TYPE REF: Cannot calculate return type (local class/object?)> = R|<local>/x|.R?C|/anonymous.sss|()
     }

@@ -34,4 +34,6 @@ abstract class FirTypeAlias : FirPureAbstractElement(), FirClassLikeDeclaration<
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeAlias(this, data)
 
     abstract fun replaceExpandedTypeRef(newExpandedTypeRef: FirTypeRef)
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirTypeAlias
 }

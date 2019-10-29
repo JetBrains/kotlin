@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirTypeResolveScopeForBodyResolve
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
@@ -73,6 +74,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected inline val inferenceComponents: InferenceComponents get() = components.inferenceComponents
     protected inline val resolutionStageRunner: ResolutionStageRunner get() = components.resolutionStageRunner
     protected inline val samResolver: FirSamResolver get() = components.samResolver
+    protected inline val typeResolverTransformer: FirSpecificTypeResolverTransformer get() = components.typeResolverTransformer
     protected inline val callCompleter: FirCallCompleter get() = components.callCompleter
     protected inline val dataFlowAnalyzer: FirDataFlowAnalyzer get() = components.dataFlowAnalyzer
     protected inline val scopeSession: ScopeSession get() = components.scopeSession
@@ -114,22 +116,27 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             implicitReceiverStack,
             qualifiedResolver
         )
+        val typeResolverTransformer = FirSpecificTypeResolverTransformer(
+            FirTypeResolveScopeForBodyResolve(topLevelScopes, localScopes), session
+        )
         val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
         val dataFlowAnalyzer: FirDataFlowAnalyzer = FirDataFlowAnalyzer(this)
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this, callCompleter)
 
-        internal var _container: FirDeclaration? = null
+        internal var containerIfAny: FirDeclaration? = null
+            private set
+
         override var container: FirDeclaration
-            get() = _container!!
+            get() = containerIfAny!!
             private set(value) {
-                _container = value
+                containerIfAny = value
             }
 
         internal inline fun <T> withContainer(declaration: FirDeclaration, crossinline f: () -> T): T {
-            val prevContainer = _container
-            _container = declaration
+            val prevContainer = containerIfAny
+            containerIfAny = declaration
             val result = f()
-            _container = prevContainer
+            containerIfAny = prevContainer
             return result
         }
     }

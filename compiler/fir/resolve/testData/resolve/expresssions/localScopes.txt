@@ -32,11 +32,11 @@ FILE: localScopes.kt
 
         }
 
-        R|<local>/anonymous|.R|/baz|()
+        R|<local>/anonymous|.R|/anonymous.baz|()
         R|<local>/anonymous|.R|/Bar.foo|()
-        local final class DerivedLocal : R|class error: Symbol not found, for `BaseLocal`| {
+        local final class DerivedLocal : R|BaseLocal| {
             public constructor(): R|DerivedLocal| {
-                super<R|class error: Symbol not found, for `BaseLocal`|>()
+                super<R|BaseLocal|>()
             }
 
             public final fun gau(): R|kotlin/Unit| {
@@ -46,6 +46,6 @@ FILE: localScopes.kt
 
         lval derived: R|DerivedLocal| = R|/DerivedLocal.DerivedLocal|()
         R|<local>/derived|.R|/DerivedLocal.gau|()
-        R|<local>/derived|.<Unresolved name: baz>#()
-        R|<local>/derived|.<Unresolved name: foo>#()
+        R|<local>/derived|.R|/BaseLocal.baz|()
+        R|<local>/derived|.R|/Bar.foo|()
     }

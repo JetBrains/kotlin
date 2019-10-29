@@ -62,12 +62,17 @@ class FirFieldImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         transformReturnTypeRef(transformer, data)
+        transformStatus(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         return this
     }
 
@@ -79,10 +84,14 @@ class FirFieldImpl(
         return this
     }
 
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirFieldImpl {
+        status = status.transformSingle(transformer, data)
+        return this
+    }
+
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirFieldImpl {
         annotations.transformInplace(transformer, data)
         typeParameters.transformInplace(transformer, data)
-        status = status.transformSingle(transformer, data)
         return this
     }
 

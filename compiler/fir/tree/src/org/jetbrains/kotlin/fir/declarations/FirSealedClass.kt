@@ -40,4 +40,6 @@ abstract class FirSealedClass : FirPureAbstractElement(), FirRegularClass {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSealedClass(this, data)
 
     abstract fun replaceInheritors(newInheritors: List<ClassId>)
+
+    abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirSealedClass
 }

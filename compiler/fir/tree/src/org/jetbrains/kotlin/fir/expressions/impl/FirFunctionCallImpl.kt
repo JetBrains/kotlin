@@ -60,7 +60,7 @@ class FirFunctionCallImpl(
             extensionReceiver = extensionReceiver.transformSingle(transformer, data)
         }
         transformArguments(transformer, data)
-        typeArguments.transformInplace(transformer, data)
+        transformTypeArguments(transformer, data)
         transformCalleeReference(transformer, data)
         return this
     }
@@ -82,6 +82,11 @@ class FirFunctionCallImpl(
 
     override fun <D> transformArguments(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
         arguments.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirFunctionCallImpl {
+        typeArguments.transformInplace(transformer, data)
         return this
     }
 
