@@ -8,6 +8,7 @@ import com.intellij.find.replaceInProject.ReplaceInProjectManager;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.ide.ui.UISettings;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.MnemonicHelper;
@@ -99,6 +100,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
                                                                                                   ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK);
   private static final KeyStroke REPLACE_ALL = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK | InputEvent.ALT_MASK);
 
+  private static final String FIND_TYPE = "FindInPath";
   private static final String SERVICE_KEY = "find.popup";
   private static final String SPLITTER_SERVICE_KEY = "find.popup.splitter";
   @NotNull private final FindUIHelper myHelper;
@@ -174,7 +176,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     initComponents();
     initByModel();
 
-    FindUtil.triggerUsedOptionsStats("FindInPath", myHelper.getModel());
+    FindUtil.triggerUsedOptionsStats(FIND_TYPE, myHelper.getModel());
   }
 
   @Override
@@ -413,17 +415,17 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     RelativeFont.BOLD.install(myTitleLabel);
     myLoadingDecorator = new LoadingDecorator(new JLabel(EmptyIcon.ICON_16), getDisposable(), 250, true, new AsyncProcessIcon("FindInPathLoading"));
     myLoadingDecorator.setLoadingText("");
-    myCbCaseSensitive = createCheckBox("find.popup.case.sensitive", "FindPopupPanel$ToggleCaseSensitive");
+    myCbCaseSensitive = createCheckBox("find.popup.case.sensitive", "CaseSensitive");
     ItemListener liveResultsPreviewUpdateListener = __ -> scheduleResultsUpdate();
     myCbCaseSensitive.addItemListener(liveResultsPreviewUpdateListener);
-    myCbPreserveCase = createCheckBox("find.options.replace.preserve.case", "FindPopupPanel$TogglePreserveCase");
+    myCbPreserveCase = createCheckBox("find.options.replace.preserve.case", "PreserveCase");
     myCbPreserveCase.addItemListener(liveResultsPreviewUpdateListener);
     myCbPreserveCase.setVisible(myHelper.getModel().isReplaceState());
-    myCbWholeWordsOnly = createCheckBox("find.popup.whole.words", "FindPopupPanel$ToggleWholeWords");
+    myCbWholeWordsOnly = createCheckBox("find.popup.whole.words", "WholeWords");
     myCbWholeWordsOnly.addItemListener(liveResultsPreviewUpdateListener);
-    myCbRegularExpressions = createCheckBox("find.popup.regex", "FindPopupPanel$ToggleRegex");
+    myCbRegularExpressions = createCheckBox("find.popup.regex", "Regex");
     myCbRegularExpressions.addItemListener(liveResultsPreviewUpdateListener);
-    myCbFileFilter = createCheckBox("find.popup.filemask", "FindPopupPanel$ToggleFileFilter");
+    myCbFileFilter = createCheckBox("find.popup.filemask", "FileFilter");
     myCbFileFilter.addItemListener(__ -> {
       if (myCbFileFilter.isSelected()) {
         myFileMaskField.setEnabled(true);
@@ -788,7 +790,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
     myTitlePanel.add(Box.createHorizontalGlue(), "growx, pushx");
     JPanel regexpPanel = new JPanel(new BorderLayout(JBUIScale.scale(4), 0));
     regexpPanel.add(myCbRegularExpressions, BorderLayout.CENTER);
-    regexpPanel.add(RegExHelpPopup.createRegExLink("<html><body><b>?</b></body></html>", myCbRegularExpressions, LOG), BorderLayout.EAST);
+    regexpPanel.add(RegExHelpPopup.createRegExLink("<html><body><b>?</b></body></html>", myCbRegularExpressions, LOG, FIND_TYPE), BorderLayout.EAST);
     int gap = 16;
     AnAction[] actions = {
       new DefaultCustomComponentAction(() -> myCbCaseSensitive),
@@ -915,9 +917,16 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   }
 
   @NotNull
-  private static StateRestoringCheckBox createCheckBox(String message, String featureId) {
+  private static StateRestoringCheckBox createCheckBox(String message, String optionName) {
     StateRestoringCheckBox checkBox = new StateRestoringCheckBox(FindBundle.message(message));
-    checkBox.addActionListener(__ -> FUCounterUsageLogger.getInstance().logEvent("find", featureId));
+    checkBox.addActionListener(
+      __ -> FUCounterUsageLogger.getInstance().logEvent(
+        "find", "check.box.toggled", new FeatureUsageData().
+          addData("type", FIND_TYPE).
+          addData("option_name", optionName).
+          addData("option_value", checkBox.isSelected())
+      )
+    );
     return checkBox;
   }
 
