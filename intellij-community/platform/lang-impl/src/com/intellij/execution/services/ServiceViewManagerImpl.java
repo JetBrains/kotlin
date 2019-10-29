@@ -526,6 +526,8 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
       myState.viewStates.add(mainState);
       holder.mainView.saveState(mainState);
       mainState.groupId = holder.toolWindowId;
+      mainState.treeStateElement = new Element("root");
+      mainState.treeState.writeExternal(mainState.treeStateElement);
 
       List<ServiceView> processedViews = new SmartList<>();
       for (Content content : holder.contentManager.getContents()) {
