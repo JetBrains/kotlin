@@ -5,13 +5,12 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":js:js.frontend"))
-    compile(project(":js:js.serializer"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep())
+    compileOnly(project(":compiler:util"))
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:frontend.java"))
+    compileOnly(project(":js:js.frontend"))
+    compileOnly(project(":js:js.serializer"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 }
 
 sourceSets {
