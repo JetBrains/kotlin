@@ -71,6 +71,11 @@ public class RunDashboardServiceViewContributor
       public ActionGroup getPopupActions() {
         return RunDashboardServiceViewContributor.getPopupActions();
       }
+
+      @Override
+      public DataProvider getDataProvider() {
+        return id -> PlatformDataKeys.DELETE_ELEMENT_PROVIDER.is(id) ? new RunDashboardServiceViewDeleteProvider() : null;
+      }
     };
 
   @NotNull
