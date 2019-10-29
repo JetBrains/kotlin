@@ -120,6 +120,10 @@ class JvmSymbols(
             addValueParameter("self", irBuiltIns.stringType.makeNullable())
             addValueParameter("other", irBuiltIns.anyNType)
         }
+        klass.addFunction("checkNotNull", irBuiltIns.unitType, isStatic = true).apply {
+            addValueParameter("object", irBuiltIns.anyNType)
+        }
+        klass.addFunction("throwNpe", irBuiltIns.unitType, isStatic = true)
     }
 
     val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
@@ -127,6 +131,12 @@ class JvmSymbols(
 
     val checkNotNullExpressionValue: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "checkNotNullExpressionValue" }
+
+    val checkNotNull: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "checkNotNull" }
+
+    val throwNpe: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "throwNpe" }
 
     override val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwUninitializedPropertyAccessException" }

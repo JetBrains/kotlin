@@ -189,6 +189,7 @@ private val jvmFilePhases =
         annotationPhase then
         varargPhase then
         arrayConstructorPhase then
+        checkNotNullPhase then
 
         lateinitPhase then
 
