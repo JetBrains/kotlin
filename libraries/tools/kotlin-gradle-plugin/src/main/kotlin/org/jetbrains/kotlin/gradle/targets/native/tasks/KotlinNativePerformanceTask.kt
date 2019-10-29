@@ -83,8 +83,8 @@ open class NativePerformanceReport : DefaultTask() {
         }
 
         // Create report.
-        if (!reportDirectory.exists()) {
-            project.mkdir(reportDirectory.absolutePath)
+        if (!outputFile.exists()) {
+            project.mkdir(outputFile.absolutePath)
         }
         val name = settings.binaryNamesForReport[binary]!!
         outputFile.writeText(name)
