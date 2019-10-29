@@ -35,10 +35,10 @@ class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
 
         return listOf(
             "gradle.taskGraph.beforeTask { Task task ->",
-            "  if (task instanceof Exec) {",
+            "  if (task instanceof Exec || task instanceof AbstractTestTask) {",
             "    def debugPort = ForkedDebuggerHelper.setupDebugger('${id()}', task.path, '', $dispatchPort)",
             "    task.args = [" + debuggerSetupArgs(debugServerArgs) + "] + task.args",
-            "    task.executable = '$debugServerPath'",
+            "    task.executable = new File('$debugServerPath')",
             "  }",
             "}",
             "gradle.taskGraph.afterTask { Task task ->",
@@ -57,23 +57,45 @@ class GradleLLDBDebuggerBackend : DebuggerBackendExtension {
         return result.configuration as IdeaKonanRunConfiguration
     }
 
+    private fun findExecutable(project: Project, processName: String): KonanExecutable? {
+        val workspace = IdeaKonanWorkspace.getInstance(project)
+
+        if (processName.startsWith("run")) {
+            val executableId = processName.removePrefix("run")
+            return workspace.executables.find {
+                it.executionTargets.any { t -> t.gradleTask.contains(executableId) }
+            }
+        }
+
+        if (processName.endsWith("Test")) {
+            val targetId = processName.removeSuffix("Test")
+            return workspace.executables.find {
+                it.base.name.contains(targetId) && it.base.name.contains("test")
+            }
+        }
+
+        return null
+    }
+
     override fun debugConfigurationSettings(
         project: Project,
         processName: String,
         processParameters: String
     ): RunnerAndConfigurationSettings {
-        val workspace = IdeaKonanWorkspace.getInstance(project)
         val runManager = RunManager.getInstance(project)
 
-        val executableId = processName.removePrefix(":run")
-        val executable = workspace.executables.find {
-            it.executionTargets.any { t -> t.gradleTask.contains(executableId) }
-        } ?: throw ExecutionException("No executable for executableId=$executableId")
+        val isTest = processName.contains("Test")
+
+        val executable = findExecutable(project, processName.removePrefix(":"))
+            ?: throw ExecutionException("No executable for processName=$processName")
 
         val params = splitParameters(processParameters)
 
         val settings = runManager.createConfiguration(processName, IdeaKonanRunConfigurationType.instance.factory)
         with(settings.configuration as IdeaKonanRunConfiguration) {
+            if (isTest) {
+                programParameters = "$processParameters --ktest_no_exit_code"
+            }
             copyFrom(findKonanConfiguration(runManager, executable))
             debugPort = params[ForkedDebuggerHelper.DEBUG_SERVER_PORT_KEY]?.toInt()
         }
