@@ -12,7 +12,6 @@ import com.google.gson.stream.JsonWriter
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.hash.FileHasher
-import org.jetbrains.kotlin.daemon.common.toHexString
 import java.io.File
 
 /**
@@ -163,7 +162,7 @@ internal open class ProcessedFilesCache(
         }
     }
 
-    class Element(
+    data class Element(
         val src: String,
         val target: String?
     )
@@ -207,11 +206,7 @@ internal open class ProcessedFilesCache(
         val key = compute()?.relativeTo(targetDir)?.toString()
         val existedTarget = state.byTarget[key]
         if (key != null && existedTarget != null) {
-            if (File(existedTarget.src).exists()) {
-                if (existedTarget.src != file.canonicalPath) {
-                    reportTargetClash(key, file, File(existedTarget.src))
-                }
-            } else {
+            if (!File(existedTarget.src).exists()) {
                 project.logger.warn("Removing cache for removed source `${existedTarget.src}`")
                 state.remove(existedTarget)
             }
@@ -221,13 +216,10 @@ internal open class ProcessedFilesCache(
         return key
     }
 
-    fun checkTarget(target: String?): Boolean {
+    private fun checkTarget(target: String?): Boolean {
         if (target == null) return true
         return targetDir.resolve(target).exists()
     }
-
-    protected open fun reportTargetClash(target: String, existedSrc: File, newSrc: File): Nothing =
-        error("Both `$existedSrc` and `$newSrc` produces `$target`")
 
     override fun close() {
         stateFile.parentFile.mkdirs()
