@@ -49,6 +49,7 @@ import static java.util.stream.Collectors.groupingBy;
 /**
  * @author Vladislav.Soroka
  */
+@SuppressWarnings("deprecation")
 public class ProjectTaskManagerImpl extends ProjectTaskManager {
 
   private static final Logger LOG = Logger.getInstance("#com.intellij.task.ProjectTaskManager");
@@ -491,4 +492,158 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
       return myResult.anyTaskMatches(predicate);
     }
   }
+  //<editor-fold desc="Deprecated methods. To be removed in 2020.1">
+
+  /**
+   * @deprecated use {@link #run(ProjectTask)}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void run(@NotNull ProjectTask projectTask, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(run(projectTask), callback);
+  }
+
+  /**
+   * @deprecated use {@link #run(ProjectTaskContext, ProjectTask)}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void run(@NotNull ProjectTaskContext context,
+                  @NotNull ProjectTask projectTask,
+                  @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(run(context, projectTask), callback);
+  }
+
+  /**
+   * @deprecated use {@link #buildAllModules()}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void buildAllModules(@Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(buildAllModules(), callback);
+  }
+
+  /**
+   * @deprecated use {@link #rebuildAllModules()}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void rebuildAllModules(@Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(rebuildAllModules(), callback);
+  }
+
+  /**
+   * @deprecated use {@link #build(Module[])}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void build(@NotNull Module[] modules, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(build(modules), callback);
+  }
+
+  /**
+   * @deprecated use {@link #rebuild(Module[])}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void rebuild(@NotNull Module[] modules, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(rebuild(modules), callback);
+  }
+
+  /**
+   * @deprecated use {@link #compile(VirtualFile[])}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void compile(@NotNull VirtualFile[] files, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(compile(files), callback);
+  }
+
+  /**
+   * @deprecated use {@link #build(ProjectModelBuildableElement[])}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void build(@NotNull ProjectModelBuildableElement[] buildableElements, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(build(buildableElements), callback);
+  }
+
+  /**
+   * @deprecated use {@link #rebuild(ProjectModelBuildableElement[])}
+   */
+  @Override
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
+  @Deprecated
+  public void rebuild(@NotNull ProjectModelBuildableElement[] buildableElements, @Nullable ProjectTaskNotification callback) {
+    assertUnsupportedOperation(callback);
+    notifyIfNeeded(rebuild(buildableElements), callback);
+  }
+
+  private static void notifyIfNeeded(@NotNull Promise<Result> promise, @Nullable ProjectTaskNotification callback) {
+    if (callback != null) {
+      promise
+        .onSuccess(
+          result -> callback.finished(result.getContext(), new ProjectTaskResult(result.isAborted(), result.hasErrors() ? 1 : 0, 0)))
+        .onError(throwable -> callback.finished(new ProjectTaskContext(), new ProjectTaskResult(true, 0, 0)));
+    }
+  }
+
+  private static void assertUnsupportedOperation(@Nullable ProjectTaskNotification callback) {
+    if (callback instanceof ProjectTaskNotificationAdapter) {
+      throw new UnsupportedOperationException("Please, provide implementation for non-deprecated methods");
+    }
+  }
+
+  private static class ProjectTaskNotificationAdapter implements ProjectTaskNotification {
+    private final AsyncPromise<Result> myPromise;
+    private final ProjectTaskContext myContext;
+
+    private ProjectTaskNotificationAdapter(@NotNull AsyncPromise<Result> promise, @NotNull ProjectTaskContext context) {
+      myPromise = promise;
+      myContext = context;
+    }
+
+    @Override
+    public void finished(@NotNull ProjectTaskResult executionResult) {
+      myPromise.setResult(new Result() {
+        @NotNull
+        @Override
+        public ProjectTaskContext getContext() {
+          return myContext;
+        }
+
+        @Override
+        public boolean isAborted() {
+          return executionResult.isAborted();
+        }
+
+        @Override
+        public boolean hasErrors() {
+          return executionResult.getErrors() > 0;
+        }
+
+        @Override
+        public boolean anyTaskMatches(@NotNull BiPredicate<? super ProjectTask, ? super ProjectTaskState> predicate) {
+          return executionResult.anyMatch(predicate);
+        }
+      });
+    }
+  }
+  //</editor-fold>
 }
