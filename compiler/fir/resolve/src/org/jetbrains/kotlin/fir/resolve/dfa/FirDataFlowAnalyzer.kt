@@ -561,8 +561,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
          *      x.length
          *   }
          */
-        variableStorage[initializer]?.let { initializerVariable ->
-            assert(initializerVariable.isSynthetic())
+        variableStorage[initializer]?.takeIf { it.isSynthetic() }?.let { initializerVariable ->
             val realVariable = getOrCreateRealVariable(variable)
             requireNotNull(realVariable)
             logicSystem.changeVariableForConditionFlow(node.flow, initializerVariable, realVariable)
