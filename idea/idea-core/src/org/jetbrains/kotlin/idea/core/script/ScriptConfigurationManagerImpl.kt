@@ -72,7 +72,7 @@ class ScriptConfigurationManagerImpl internal constructor(private val project: P
     override fun updateConfigurationsIfNotCached(files: List<KtFile>): Boolean {
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return false
 
-        val notCached = files.filterNot { isConfigurationUpToDate(it.originalFile.virtualFile) }
+        val notCached = files.filterNot { isConfigurationUpToDate(it) }
         if (notCached.isNotEmpty()) {
             rootsManager.transaction {
                 for (file in notCached) {
@@ -124,7 +124,7 @@ class ScriptConfigurationManagerImpl internal constructor(private val project: P
             return cached
         }
 
-        if (ScriptDefinitionsManager.getInstance(project).isReady() && !isConfigurationUpToDate(virtualFile)) {
+        if (ScriptDefinitionsManager.getInstance(project).isReady() && !isConfigurationUpToDate(file)) {
             rootsManager.transaction {
                 reloadConfiguration(file)
             }
@@ -151,7 +151,7 @@ class ScriptConfigurationManagerImpl internal constructor(private val project: P
             "PsiFile should be a KtFile, otherwise script dependencies cannot be loaded"
         }
 
-        if (isConfigurationUpToDate(file.virtualFile)) return
+        if (isConfigurationUpToDate(file)) return
 
         rootsManager.transaction {
             val result = fromRefinedLoader.loadDependencies(true, file as KtFile, scriptDefinition)
@@ -164,7 +164,7 @@ class ScriptConfigurationManagerImpl internal constructor(private val project: P
     private fun reloadConfiguration(file: KtFile) {
         val virtualFile = file.originalFile.virtualFile
 
-        memoryCache.setUpToDate(virtualFile)
+        memoryCache.setUpToDate(file)
 
         val scriptDefinition = file.findScriptDefinition() ?: return
 
@@ -324,8 +324,8 @@ class ScriptConfigurationManagerImpl internal constructor(private val project: P
         return getCachedConfiguration(file) != null || file in fileAttributesCache
     }
 
-    private fun isConfigurationUpToDate(file: VirtualFile): Boolean {
-        return isConfigurationCached(file) && memoryCache.isConfigurationUpToDate(file)
+    private fun isConfigurationUpToDate(file: PsiFile): Boolean {
+        return isConfigurationCached(file.originalFile.virtualFile) && memoryCache.isConfigurationUpToDate(file)
     }
 
     private fun rehighlightOpenedScripts() {

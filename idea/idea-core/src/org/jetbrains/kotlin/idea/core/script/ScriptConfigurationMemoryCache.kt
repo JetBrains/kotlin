@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElementFinder
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.NonClasspathDirectoriesScope
@@ -52,15 +53,15 @@ class ScriptConfigurationMemoryCache internal constructor(private val project: P
     private val cacheLock = ReentrantReadWriteLock()
 
     private val scriptDependenciesCache = SLRUCacheWithLock<VirtualFile, ScriptCompilationConfigurationWrapper>()
-    private val scriptsModificationStampsCache = SLRUCacheWithLock<VirtualFile, Long>()
+    private val scriptsModificationStampsCache = SLRUCacheWithLock<PsiFile, Long>()
 
     fun getCachedConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? = scriptDependenciesCache.get(file)
 
-    fun isConfigurationUpToDate(file: VirtualFile): Boolean {
+    fun isConfigurationUpToDate(file: PsiFile): Boolean {
         return scriptsModificationStampsCache.get(file) == file.modificationStamp
     }
 
-    fun setUpToDate(file: VirtualFile) {
+    fun setUpToDate(file: PsiFile) {
         scriptsModificationStampsCache.replace(file, file.modificationStamp)
     }
 
