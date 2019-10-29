@@ -21,16 +21,17 @@ import org.jetbrains.report.json.*
 import org.jetbrains.build.Build
 
 const val teamCityUrl = "https://buildserver.labs.intellij.net/app/rest"
-const val downloadBintrayUrl = "https://dl.bintray.com/content/lepilkinaelena/KotlinNativePerformance"
-const val uploadBintrayUrl = "https://api.bintray.com/content/lepilkinaelena/KotlinNativePerformance"
+const val artifactoryUrl = "https://repo.labs.intellij.net/kotlin-native-benchmarks"
 const val buildsFileName = "buildsSummary.csv"
 const val goldenResultsFileName = "goldenResults.csv"
-const val bintrayPackage = "builds"
+const val artifactoryBuildsDirectory = "builds"
 const val buildsInfoPartsNumber = 11
 
 operator fun <K, V> Map<K, V>?.get(key: K) = this?.get(key)
 
-// Local cache for saving information about builds got from Bintray.
+fun getArtifactoryHeader(artifactoryApiKey: String) = Pair("X-JFrog-Art-Api", artifactoryApiKey)
+
+// Local cache for saving information about builds got from Artifactory.
 object LocalCache {
     private val knownTargets = listOf("Linux", "MacOSX", "Windows10")
     private val buildsInfo = mutableMapOf<String, MutableMap<String, String>>()
@@ -43,7 +44,7 @@ object LocalCache {
 
     fun fill(onlyTarget: String? = null) {
         onlyTarget?.let {
-            val buildsDescription = getBuildsInfoFromBintray(onlyTarget).lines().drop(1)
+            val buildsDescription = getBuildsInfoFromArtifactory(onlyTarget).lines().drop(1)
             buildsInfo[onlyTarget] = mutableMapOf<String, String>()
             buildsDescription.forEach {
                 if (!it.isEmpty()) {
@@ -65,19 +66,19 @@ object LocalCache {
     fun buildExists(target: String, buildNumber: String) =
             buildsInfo[target][buildNumber]?.let { true } ?: false
 
-    fun delete(target: String, builds: Iterable<String>, bintrayUser: String, bintrayPassword: String): Boolean {
-        // Delete from bintray.
-        val buildsDescription = getBuildsInfoFromBintray(target).lines()
+    fun delete(target: String, builds: Iterable<String>, apiKey: String): Boolean {
+        // Delete from Artifactory.
+        val buildsDescription = getBuildsInfoFromArtifactory(target).lines()
 
         val newBuildsDescription = buildsDescription.filter {
             val buildNumber = it.substringBefore(',')
             buildNumber !in builds
         }
-
         if (newBuildsDescription.size < buildsDescription.size) {
             // Upload new version of file.
-            val uploadUrl = "$uploadBintrayUrl/$bintrayPackage/latest/$target/$buildsFileName?publish=1&override=1"
-            sendUploadRequest(uploadUrl, newBuildsDescription.joinToString("\n"), bintrayUser, bintrayPassword)
+            val uploadUrl = "$artifactoryUrl/$artifactoryBuildsDirectory/$target/$buildsFileName"
+            sendUploadRequest(uploadUrl, newBuildsDescription.joinToString("\n"),
+                    extraHeaders = listOf(getArtifactoryHeader(apiKey)))
 
             // Reload values.
             clean(target)
@@ -111,15 +112,14 @@ object LocalCache {
 }
 
 data class GoldenResult(val benchmarkName: String, val metric: String, val value: Double)
-data class GoldenResultsInfo(val bintrayUser: String, val bintrayPassword: String, val goldenResults: Array<GoldenResult>)
+data class GoldenResultsInfo(val apiKey: String, val goldenResults: Array<GoldenResult>)
 
 // Build information provided from request.
 data class BuildInfo(val buildNumber: String, val branch: String, val startTime: String,
                      val finishTime: String)
 
 data class BuildRegister(val buildId: String, val teamCityUser: String, val teamCityPassword: String,
-                    val bintrayUser: String, val bintrayPassword: String,
-                    val target: String, val buildType: String, val failuresNumber: Int,
+                    val artifactoryApiKey: String, val target: String, val buildType: String, val failuresNumber: Int,
                     val executionTime: String, val compileTime: String, val codeSize: String,
                     val bundleSize: String?) {
     companion object {
@@ -127,8 +127,8 @@ data class BuildRegister(val buildId: String, val teamCityUser: String, val team
             val requestDetails = JSON.parse<BuildRegister>(json)
             // Parse method doesn't create real instance with all methods. So create it by hands.
             return BuildRegister(requestDetails.buildId, requestDetails.teamCityUser, requestDetails.teamCityPassword,
-                    requestDetails.bintrayUser, requestDetails.bintrayPassword, requestDetails.target,
-                    requestDetails.buildType, requestDetails.failuresNumber, requestDetails.executionTime, requestDetails.compileTime,
+                    requestDetails.artifactoryApiKey, requestDetails.target, requestDetails.buildType,
+                    requestDetails.failuresNumber, requestDetails.executionTime, requestDetails.compileTime,
                     requestDetails.codeSize, requestDetails.bundleSize)
         }
     }
@@ -189,8 +189,8 @@ class CommitsList(data: JsonElement): ConvertedFromJson {
     }
 }
 
-fun getBuildsInfoFromBintray(target: String) =
-        sendGetRequest("$downloadBintrayUrl/$target/$buildsFileName")
+fun getBuildsInfoFromArtifactory(target: String) =
+        sendGetRequest("$artifactoryUrl/$artifactoryBuildsDirectory/$target/$buildsFileName")
 
 fun checkBuildType(currentType: String, targetType: String): Boolean {
     val releasesBuildTypes = listOf("release", "eap", "rc1", "rc2")
@@ -226,7 +226,7 @@ fun router() {
     val express = require("express")
     val router = express.Router()
 
-    // Register build on Bintray.
+    // Register build on Artifactory.
     router.post("/register", { request, response ->
         val maxCommitsNumber = 5
         val register = BuildRegister.create(JSON.stringify(request.body))
@@ -251,8 +251,8 @@ fun router() {
             }
         }
 
-        // Get summary file from Bintray.
-        var buildsDescription = getBuildsInfoFromBintray(register.target)
+        // Get summary file from Artifactory.
+        var buildsDescription = getBuildsInfoFromArtifactory(register.target)
         // Add information about new build.
         //var buildsDescription = "build, start time, finish time, branch, commits, type, failuresNumber, execution time, compile time, code size, bundle size\n"
         buildsDescription += "${buildInfo.buildNumber}, ${buildInfo.startTime}, ${buildInfo.finishTime}, " +
@@ -261,8 +261,8 @@ fun router() {
                 "${register.bundleSize ?: "-"}\n"
 
         // Upload new version of file.
-        val uploadUrl = "$uploadBintrayUrl/$bintrayPackage/latest/${register.target}/${buildsFileName}?publish=1&override=1"
-        sendUploadRequest(uploadUrl, buildsDescription, register.bintrayUser, register.bintrayPassword)
+        val uploadUrl = "$artifactoryUrl/$artifactoryBuildsDirectory/${register.target}/${buildsFileName}"
+        sendUploadRequest(uploadUrl, buildsDescription, extraHeaders = listOf(getArtifactoryHeader(register.artifactoryApiKey)))
 
         LocalCache.clean(register.target)
         LocalCache.fill(register.target)
@@ -271,16 +271,17 @@ fun router() {
         response.sendStatus(200)
     })
 
-    // Register golden results to normalize on Bintray.
+    // Register golden results to normalize on Artifactory.
     router.post("/registerGolden", { request, response ->
         val goldenResultsInfo = JSON.parse<GoldenResultsInfo>(JSON.stringify(request.body))
-        val buildsDescription = StringBuilder(sendGetRequest("$downloadBintrayUrl/$goldenResultsFileName"))
+        val buildsDescription = StringBuilder(sendGetRequest("$artifactoryUrl/$artifactoryBuildsDirectory/$goldenResultsFileName"))
         goldenResultsInfo.goldenResults.forEach {
             buildsDescription.append("${it.benchmarkName}, ${it.metric}, ${it.value}\n")
         }
         // Upload new version of file.
-        val uploadUrl = "$uploadBintrayUrl/$bintrayPackage/latest/$goldenResultsFileName?publish=1&override=1"
-        sendUploadRequest(uploadUrl, buildsDescription.toString(), goldenResultsInfo.bintrayUser, goldenResultsInfo.bintrayPassword)
+        val uploadUrl = "$artifactoryUrl/$artifactoryBuildsDirectory/$goldenResultsFileName"
+        sendUploadRequest(uploadUrl, buildsDescription.toString(),
+                extraHeaders = listOf(getArtifactoryHeader(goldenResultsInfo.apiKey)))
         // Send response.
         response.sendStatus(200)
     })
@@ -318,7 +319,7 @@ fun router() {
 
     router.get("/delete/:target", { request, response ->
         val buildsToDelete: List<String> = request.query.builds.toString().split(",").map { it.trim() }
-        val result = LocalCache.delete(request.params.target, buildsToDelete, request.query.user, request.query.key)
+        val result = LocalCache.delete(request.params.target, buildsToDelete, request.query.key)
         if (result) {
             response.sendStatus(200)
         } else {
@@ -362,11 +363,15 @@ fun sendGetRequest(url: String, user: String? = null, password: String? = null, 
     return response.getBody().toString()
 }
 
-fun sendUploadRequest(url: String, fileContent: String, user: String? = null, password: String? = null) {
+fun sendUploadRequest(url: String, fileContent: String, user: String? = null, password: String? = null,
+                      extraHeaders: List<Pair<String, String>> = emptyList()) {
     val request = require("sync-request")
     val headers = mutableListOf<Pair<String, String>>("Content-type" to "text/plain")
     if (user != null && password != null) {
         headers.add("Authorization" to getAuth(user, password))
+    }
+    extraHeaders.forEach {
+        headers.add(it.first to it.second)
     }
     val response = request("PUT", url,
             json(

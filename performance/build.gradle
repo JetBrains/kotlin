@@ -64,18 +64,16 @@ task slackSummary(type: RegressionsSummaryReporter) {
                           'Windows': "${rootBuildDirectory}/targetsResults/Windows 10.txt".toString()]
 }
 
-private def uploadBenchmarkResultToBintray(String fileName) {
+private def uploadBenchmarkResultToArtifactory(String fileName) {
     def teamcityConfig = System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")
     if (teamcityConfig) {
         def buildProperties = new Properties()
         buildProperties.load(new FileInputStream(teamcityConfig))
-        def user = buildProperties.getProperty("bintray.user")
-        def password = buildProperties.getProperty("bintray.apikey")
+        def password = buildProperties.getProperty("artifactory.apikey")
         def buildNumber = buildProperties.getProperty("build.number")
         def target = System.getProperty("os.name").replaceAll("\\s", "")
-        MPPTools.uploadFileToBintray("${bintrayUrl}", "${bintrayRepo}",
-                buildNumber, "${bintrayPackage}", "${target}/${buildNumber}/${fileName}",
-                "${buildDir.absolutePath}/${fileName}", user, password)
+        MPPTools.uploadFileToArtifactory("${artifactoryUrl}", "${artifactoryRepo}",
+                "${target}/${buildNumber}/${fileName}", "${buildDir.absolutePath}/${fileName}", password)
     }
 }
 
@@ -126,7 +124,7 @@ task registerExternalBenchmarks {
         if (!merged.isEmpty()) {
             mkdir buildDir.absolutePath
             new File(buildDir, externalBenchmarksReport).write(merged)
-            uploadBenchmarkResultToBintray(externalBenchmarksReport)
+            uploadBenchmarkResultToArtifactory(externalBenchmarksReport)
         }
     }
 }
@@ -164,14 +162,14 @@ def mergeReports(String fileName) {
 task mergeNativeReports {
     doLast {
         mergeReports(nativeJson)
-        uploadBenchmarkResultToBintray(nativeJson)
+        uploadBenchmarkResultToArtifactory(nativeJson)
     }
 }
 
 task mergeJvmReports {
     doLast {
         mergeReports(jvmJson)
-        uploadBenchmarkResultToBintray(jvmJson)
+        uploadBenchmarkResultToArtifactory(jvmJson)
     }
 }
 

@@ -125,8 +125,8 @@ open class RegressionsReporter : DefaultTask() {
             }
         }
 
-        // File name on bintray is the same as current.
-        val bintrayFileName = currentBenchmarksReportFile.substringAfterLast("/")
+        // File name on Artifactory is the same as current.
+        val artifactoryFileName = currentBenchmarksReportFile.substringAfterLast("/")
 
         // Get compare to build.
         val compareToBuild = getBuild(previousBuildLocator(buildTypeId, defaultBranch), user, password)
@@ -135,21 +135,21 @@ open class RegressionsReporter : DefaultTask() {
         val target = System.getProperty("os.name").replace("\\s".toRegex(), "")
 
         // Generate comparison report.
-        val output = arrayOf("$analyzer", "-r", "html", "$currentBenchmarksReportFile", "bintray:$compareToBuildNumber:$target:$bintrayFileName", "-o", "$htmlReport")
+        val output = arrayOf("$analyzer", "-r", "html", "$currentBenchmarksReportFile", "artifactory:$compareToBuildNumber:$target:$artifactoryFileName", "-o", "$htmlReport")
                 .runCommand()
 
         if (output.contains("Uncaught exception")) {
             error("Error during comparasion of $currentBenchmarksReportFile and " +
-                    "bintray:$compareToBuildNumber:$target:$bintrayFileName with $analyzer! " +
+                    "artifactory:$compareToBuildNumber:$target:$artifactoryFileName with $analyzer! " +
                     "Please check files existance and their correctness.")
         }
-        arrayOf("$analyzer", "-r", "statistics", "$currentBenchmarksReportFile", "bintray:$compareToBuildNumber:$target:$bintrayFileName", "-o", "$summaryFile")
+        arrayOf("$analyzer", "-r", "statistics", "$currentBenchmarksReportFile", "artifactory:$compareToBuildNumber:$target:$artifactoryFileName", "-o", "$summaryFile")
                 .runCommand()
 
         val reportLink = "https://kotlin-native-perf-summary.labs.jb.gg/?target=$target&build=$buildNumber"
         val detailedReportLink = "https://kotlin-native-performance.labs.jb.gg/?" +
-                "report=bintray:$buildNumber:$target:$bintrayFileName&" +
-                "compareTo=bintray:$compareToBuildNumber:$target:$bintrayFileName"
+                "report=artifactory:$buildNumber:$target:$artifactoryFileName&" +
+                "compareTo=artifactory:$compareToBuildNumber:$target:$artifactoryFileName"
 
         val title = "\n*Performance report for target $target (build $buildNumber)* - $reportLink\n" +
                 "*Detailed info - * $detailedReportLink"

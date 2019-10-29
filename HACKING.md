@@ -153,15 +153,15 @@ and then a final native binary is produced from this klibrary using the -Xinclud
  Output can be redirected to file with flag `--output/-o`.
  To get detailed information about supported options, please use `--help/-h`.
  
- Analyzer tool can compare both local files and files placed on Bintray/TeamCity.
+ Analyzer tool can compare both local files and files placed on Artifactory/TeamCity.
  
- File description stored on Bintray
+ File description stored on Artifactory
  
-    bintray:<build number>:<target (Linux|Windows10|MacOSX)>:<filename>
+    artifactory:<build number>:<target (Linux|Windows10|MacOSX)>:<filename>
     
  Example
     
-    bintray:1.2-dev-7942:Windows10:nativeReport.json
+    artifactory:1.2-dev-7942:Windows10:nativeReport.json
     
  File description stored on TeamCity
   

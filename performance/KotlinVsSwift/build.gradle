@@ -35,14 +35,14 @@ defaultTasks 'konanRun'
 task mergeNativeReports {
     doLast {
         mergeReports(nativeJson)
-        uploadBenchmarkResultToBintray(nativeJson)
+        uploadBenchmarkResultToArtifactory(nativeJson)
     }
 }
 
 task mergeJvmReports {
     doLast {
         mergeReports(jvmJson)
-        uploadBenchmarkResultToBintray(jvmJson)
+        uploadBenchmarkResultToArtifactory(jvmJson)
     }
 }
 

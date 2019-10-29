@@ -31,27 +31,27 @@ abstract class Connector {
     abstract fun getFileContent(fileLocation: String, user: String? = null): String
 }
 
-object BintrayConnector : Connector() {
-    override val connectorPrefix = "bintray:"
-    val bintrayUrl = "https://dl.bintray.com/content/lepilkinaelena/KotlinNativePerformance"
+object ArtifactoryConnector : Connector() {
+    override val connectorPrefix = "artifactory:"
+    val artifactoryUrl = "https://repo.labs.intellij.net/kotlin-native-benchmarks"
 
     override fun getFileContent(fileLocation: String, user: String?): String {
         val fileParametersSize = 3
         val fileDescription = fileLocation.substringAfter(connectorPrefix)
         val fileParameters = fileDescription.split(':', limit = fileParametersSize)
 
-        // Right link to bintray file.
+        // Right link to Artifactory file.
         if (fileParameters.size == 1) {
-            val accessFileUrl = "$bintrayUrl/${fileParameters[0]}"
+            val accessFileUrl = "$artifactoryUrl/${fileParameters[0]}"
             return sendGetRequest(accessFileUrl, followLocation = true)
         }
         // Used builds description format.
         if (fileParameters.size != fileParametersSize) {
-            error("To get file from bintray, please, specify, build number from TeamCity and target" +
-                    " in format bintray:build_number:target:filename")
+            error("To get file from Artifactory, please, specify, build number from TeamCity and target" +
+                    " in format artifactory:build_number:target:filename")
         }
         val (buildNumber, target, fileName) = fileParameters
-        val accessFileUrl = "$bintrayUrl/$target/$buildNumber/$fileName"
+        val accessFileUrl = "$artifactoryUrl/$target/$buildNumber/$fileName"
         return sendGetRequest(accessFileUrl, followLocation = true)
     }
 }
@@ -78,7 +78,7 @@ object TeamCityConnector: Connector() {
 
 fun getFileContent(fileName: String, user: String? = null): String {
     return when {
-        BintrayConnector.isCompatible(fileName) -> BintrayConnector.getFileContent(fileName, user)
+        ArtifactoryConnector.isCompatible(fileName) -> ArtifactoryConnector.getFileContent(fileName, user)
         TeamCityConnector.isCompatible(fileName) -> TeamCityConnector.getFileContent(fileName, user)
         else -> readFile(fileName)
     }

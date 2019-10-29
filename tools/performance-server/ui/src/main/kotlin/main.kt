@@ -182,10 +182,10 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
                 element = data.element.replace(rectangle)
             }
             // Add tooltips.
-            val linkToDetailedInfo = "https://kotlin-native-performance.labs.jb.gg/?report=bintray:" +
+            val linkToDetailedInfo = "https://kotlin-native-performance.labs.jb.gg/?report=artifactory:" +
                     "${currentBuild.buildNumber}:${parameters["target"]}:nativeReport.json" +
                     "${if (data.index - 1 >= 0)
-                        "&compareTo=bintray:${buildsGroup.get(data.index - 1).buildNumber}:${parameters["target"]}:nativeReport.json"
+                        "&compareTo=artifactory:${buildsGroup.get(data.index - 1).buildNumber}:${parameters["target"]}:nativeReport.json"
                     else ""}"
             val information = buildString {
                 append("<a href=\"$linkToDetailedInfo\">${currentBuild.buildNumber}</a><br>")

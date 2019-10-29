@@ -141,13 +141,14 @@ fun getCompileOnlyBenchmarksOpts(project: Project, defaultCompilerOpts: List<Str
 fun findFile(fileName: String, directory: String): String? =
     File(directory).walkBottomUp().find { it.name == fileName }?.getAbsolutePath()
 
-fun uploadFileToBintray(url: String, project: String, version: String, packageName: String, bintrayFilePath: String,
-                        filePath: String, username: String? = null, password: String? = null) {
-    val uploadUrl = "$url/$project/$packageName/$version/$bintrayFilePath?publish=1"
-    sendUploadRequest(uploadUrl, filePath, username, password)
+fun uploadFileToArtifactory(url: String, project: String, artifactoryFilePath: String,
+                        filePath: String, password: String) {
+    val uploadUrl = "$url/$project/$artifactoryFilePath"
+    sendUploadRequest(uploadUrl, filePath, extraHeaders = listOf(Pair("X-JFrog-Art-Api", password)))
 }
 
-fun sendUploadRequest(url: String, fileName: String, username: String? = null, password: String? = null) {
+fun sendUploadRequest(url: String, fileName: String, username: String? = null, password: String? = null,
+                      extraHeaders: List<Pair<String, String>> = emptyList()) {
     val uploadingFile = File(fileName)
     val connection = URL(url).openConnection() as HttpURLConnection
     connection.doOutput = true
@@ -158,7 +159,9 @@ fun sendUploadRequest(url: String, fileName: String, username: String? = null, p
         val auth = Base64.getEncoder().encode((username + ":" + password).toByteArray()).toString(Charsets.UTF_8)
         connection.addRequestProperty("Authorization", "Basic $auth")
     }
-
+    extraHeaders.forEach {
+        connection.addRequestProperty(it.first, it.second)
+    }
     try {
         connection.connect()
         BufferedOutputStream(connection.outputStream).use { output ->

@@ -89,11 +89,10 @@ open class BuildRegister : DefaultTask() {
         val buildProperties = Properties()
         buildProperties.load(FileInputStream(teamcityConfig))
         val buildId = buildProperties.getProperty("teamcity.build.id")
-        val bintrayUser = buildProperties.getProperty("bintray.user")
-        val bintrayApiKey = buildProperties.getProperty("bintray.apikey")
         val teamCityUser = buildProperties.getProperty("teamcity.auth.userId")
         val teamCityPassword = buildProperties.getProperty("teamcity.auth.password")
         val buildNumber = buildProperties.getProperty("build.number")
+        val apiKey = buildProperties.getProperty("artifactory.apikey")
 
         // Get branch.
         val currentBuild = getBuild("id:$buildId", teamCityUser, teamCityPassword)
@@ -104,8 +103,8 @@ open class BuildRegister : DefaultTask() {
         // Get summary information.
         val output = arrayOf("$analyzer", "summary", "--exec-samples", "all", "--compile", "samples",
                 "--compile-samples", "HelloWorld,Videoplayer", "--codesize-samples", "all",
-                "--exec-normalize", "bintray:goldenResults.csv",
-                "--codesize-normalize", "bintray:goldenResults.csv", "$currentBenchmarksReportFile")
+                "--exec-normalize", "artifactory:builds/goldenResults.csv",
+                "--codesize-normalize", "artifactory:builds/goldenResults.csv", "$currentBenchmarksReportFile")
                 .runCommand()
 
         // Postprocess information.
@@ -131,7 +130,7 @@ open class BuildRegister : DefaultTask() {
 
             val frameworkOutput = arrayOf("$analyzer", "summary", "--compile", "samples",
                     "--compile-samples", "FrameworkBenchmarksAnalyzer", "--codesize-samples", "FrameworkBenchmarksAnalyzer",
-                    "--codesize-normalize", "bintray:goldenResults.csv", "$currentBenchmarksReportFile")
+                    "--codesize-normalize", "artifactory:builds/goldenResults.csv", "$currentBenchmarksReportFile")
                     .runCommand()
 
             val buildInfoPartsFramework = frameworkOutput.split(',')
@@ -154,8 +153,7 @@ open class BuildRegister : DefaultTask() {
             append("{\"buildId\":\"$buildId\",")
             append("\"teamCityUser\":\"$teamCityUser\",")
             append("\"teamCityPassword\":\"$teamCityPassword\",")
-            append("\"bintrayUser\": \"$bintrayUser\", ")
-            append("\"bintrayPassword\":\"$bintrayApiKey\", ")
+            append("\"artifactoryApiKey\":\"$apiKey\",")
             append("\"target\": \"$target\",")
             append("\"buildType\": \"$buildType\",")
             append("\"failuresNumber\": $failures,")
