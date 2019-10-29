@@ -306,9 +306,9 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             CustomScriptTemplateProvider(environment)
         }
 
-        PlatformTestUtil.registerExtension(
-            Extensions.getArea(project),
+        addExtensionPointInTest(
             ScriptDefinitionContributor.EP_NAME,
+            project,
             provider,
             testRootDisposable
         )
