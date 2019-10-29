@@ -23,10 +23,11 @@ import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.settings.DistributionType
 import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModuleSettingsStep
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
-import org.jetbrains.plugins.gradle.service.project.wizard.GradleStructureWizardStep
+import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
 import javax.swing.Icon
 
 abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
@@ -49,14 +50,13 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
         this.name = null
         this.contentEntryPath = null
         this.moduleFilePath = null
-        this.projectId = null
     }
 
     override fun createWizardSteps(wizardContext: WizardContext, modulesProvider: ModulesProvider): Array<ModuleWizardStep> {
         super.createWizardSteps(wizardContext, modulesProvider)  // initializes GradleModuleBuilder.myWizardContext
         return arrayOf(
             // Let us have to edit project name only
-            GradleStructureWizardStep(this, wizardContext)
+            ExternalModuleSettingsStep(wizardContext, this, GradleProjectSettingsControl(externalProjectSettings))
         )
     }
 
