@@ -37,7 +37,7 @@ abstract class AbstractFirResolveWithDiagnosticsTestCase : AbstractFirResolveTes
 
         val actual = diagnostics.joinToString("\n\n") {
             val text = (it.source as FirPsiSourceElement).psi.text
-            "<${it.factory.name}>: $text"
+            "<${it.diagnostic.factory.name}>: $text"
         }
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
     }
