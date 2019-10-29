@@ -25,7 +25,6 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
@@ -95,11 +94,6 @@ public class CodeStyleFacadeImpl extends CodeStyleFacade {
   @Override
   public String getLineSeparator() {
     return CodeStyle.getProjectOrDefaultSettings(myProject).getLineSeparator();
-  }
-
-  @Override
-  public int getRightMargin(Language language) {
-    return CodeStyle.getProjectOrDefaultSettings(myProject).getRightMargin(language);
   }
 
   @Override
