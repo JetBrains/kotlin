@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal fun ObjCExportCodeGenerator.generateBlockToKotlinFunctionConverter(
+internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         bridge: BlockPointerBridge
 ): LLVMValueRef {
     val irInterface = symbols.functionN(bridge.numberOfParameters).owner
@@ -133,9 +133,7 @@ private val BlockPointerBridge.blockInvokeLlvmType: LLVMTypeRef
 private val BlockPointerBridge.nameSuffix: String
     get() = numberOfParameters.toString() + if (returnsVoid) "V" else ""
 
-internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjCExportCodeGenerator) {
-    private val codegen get() = objCExportCodeGenerator.codegen
-
+internal class BlockAdapterToFunctionGenerator(private val codegen: CodeGenerator) {
     private val kRefSharedHolderType = LLVMGetTypeByName(codegen.runtime.llvmModule, "class.KRefSharedHolder")!!
 
     private val blockLiteralType = structType(
@@ -220,7 +218,7 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
 
 
 
-    private fun ObjCExportCodeGenerator.generateInvoke(bridge: BlockPointerBridge): ConstPointer {
+    private fun ObjCExportCodeGeneratorBase.generateInvoke(bridge: BlockPointerBridge): ConstPointer {
         val numberOfParameters = bridge.numberOfParameters
 
         val result = generateFunction(codegen, bridge.blockInvokeLlvmType, "invokeBlock${bridge.nameSuffix}") {
@@ -255,7 +253,7 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
         return constPointer(result)
     }
 
-    fun ObjCExportCodeGenerator.generateConvertFunctionToBlock(bridge: BlockPointerBridge): LLVMValueRef {
+    fun ObjCExportCodeGeneratorBase.generateConvertFunctionToBlock(bridge: BlockPointerBridge): LLVMValueRef {
         val blockDescriptor = codegen.staticData.placeGlobal(
                 "",
                 generateDescriptorForBlockAdapterToFunction(bridge)
@@ -311,7 +309,7 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
     }
 }
 
-private val ObjCExportCodeGenerator.retainBlock get() = context.llvm.externalFunction(
+private val ObjCExportCodeGeneratorBase.retainBlock get() = context.llvm.externalFunction(
         "objc_retainBlock",
         functionType(int8TypePtr, false, int8TypePtr),
         CurrentKlibModuleOrigin

@@ -34,14 +34,8 @@ internal fun TypeBridge.makeNothing() = when (this) {
     is ValueTypeBridge -> LLVMConstNull(this.objCValueType.llvmType)!!
 }
 
-internal class ObjCExportCodeGenerator(
-        codegen: CodeGenerator,
-        val namer: ObjCExportNamer,
-        val mapper: ObjCExportMapper
-) : ObjCCodeGenerator(codegen) {
-
+internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCodeGenerator(codegen) {
     val symbols get() = context.ir.symbols
-
     val runtime get() = codegen.runtime
     val staticData get() = codegen.staticData
 
@@ -56,10 +50,6 @@ internal class ObjCExportCodeGenerator(
             setFunctionNoUnwind(it)
         }
     }
-
-    val referencedSelectors = mutableMapOf<String, MethodBridge>()
-
-    val externalGlobalInitializers = mutableMapOf<LLVMValueRef, ConstValue>()
 
     // TODO: currently bridges don't have any custom `landingpad`s,
     // so it is correct to use [callAtFunctionScope] here.
@@ -76,6 +66,55 @@ internal class ObjCExportCodeGenerator(
 
         return call(function, args, resultLifetime, ExceptionHandler.Caller)
     }
+
+    fun FunctionGenerationContext.kotlinReferenceToObjC(value: LLVMValueRef) =
+            callFromBridge(context.llvm.Kotlin_ObjCExport_refToObjC, listOf(value))
+
+    fun FunctionGenerationContext.objCReferenceToKotlin(value: LLVMValueRef, resultLifetime: Lifetime) =
+            callFromBridge(context.llvm.Kotlin_ObjCExport_refFromObjC, listOf(value), resultLifetime)
+
+    private val blockToKotlinFunctionConverterCache = mutableMapOf<BlockPointerBridge, LLVMValueRef>()
+
+    internal fun blockToKotlinFunctionConverter(bridge: BlockPointerBridge): LLVMValueRef =
+            blockToKotlinFunctionConverterCache.getOrPut(bridge) {
+                generateBlockToKotlinFunctionConverter(bridge)
+            }
+
+    private val blockAdapterToFunctionGenerator = BlockAdapterToFunctionGenerator(this.codegen)
+    private val functionToBlockConverterCache = mutableMapOf<BlockPointerBridge, LLVMValueRef>()
+
+    internal fun kotlinFunctionToBlockConverter(bridge: BlockPointerBridge): LLVMValueRef =
+            functionToBlockConverterCache.getOrPut(bridge) {
+                blockAdapterToFunctionGenerator.run {
+                    generateConvertFunctionToBlock(bridge)
+                }
+            }
+}
+
+internal class ObjCExportBlockCodeGenerator(codegen: CodeGenerator) : ObjCExportCodeGeneratorBase(codegen) {
+    init {
+        // Must be generated along with stdlib:
+        // 1. Enumerates [BuiltInFictitiousFunctionIrClassFactory] built classes, which may be incomplete otherwise.
+        // 2. Modifies stdlib global initializers.
+        // 3. Defines runtime-declared globals.
+        require(context.producedLlvmModuleContainsStdlib)
+    }
+
+    fun generate() {
+        emitFunctionConverters()
+        emitBlockToKotlinFunctionConverters()
+    }
+}
+
+internal class ObjCExportCodeGenerator(
+        codegen: CodeGenerator,
+        val namer: ObjCExportNamer,
+        val mapper: ObjCExportMapper
+) : ObjCExportCodeGeneratorBase(codegen) {
+
+    val referencedSelectors = mutableMapOf<String, MethodBridge>()
+
+    val externalGlobalInitializers = mutableMapOf<LLVMValueRef, ConstValue>()
 
     fun FunctionGenerationContext.genSendMessage(
             returnType: LLVMTypeRef,
@@ -119,12 +158,6 @@ internal class ObjCExportCodeGenerator(
         ObjCValueType.FLOAT, ObjCValueType.DOUBLE, ObjCValueType.POINTER -> value
     }
 
-    fun FunctionGenerationContext.kotlinReferenceToObjC(value: LLVMValueRef) =
-            callFromBridge(context.llvm.Kotlin_ObjCExport_refToObjC, listOf(value))
-
-    fun FunctionGenerationContext.objCReferenceToKotlin(value: LLVMValueRef, resultLifetime: Lifetime) =
-            callFromBridge(context.llvm.Kotlin_ObjCExport_refFromObjC, listOf(value), resultLifetime)
-
     private fun FunctionGenerationContext.objCBlockPointerToKotlin(
             value: LLVMValueRef,
             typeBridge: BlockPointerBridge,
@@ -135,28 +168,10 @@ internal class ObjCExportCodeGenerator(
             resultLifetime
     )
 
-    private val blockToKotlinFunctionConverterCache = mutableMapOf<BlockPointerBridge, LLVMValueRef>()
-
-    internal fun blockToKotlinFunctionConverter(bridge: BlockPointerBridge): LLVMValueRef =
-            blockToKotlinFunctionConverterCache.getOrPut(bridge) {
-                generateBlockToKotlinFunctionConverter(bridge)
-            }
-
     private fun FunctionGenerationContext.kotlinFunctionToObjCBlockPointer(
             typeBridge: BlockPointerBridge,
             value: LLVMValueRef
     ) = callFromBridge(kotlinFunctionToBlockConverter(typeBridge), listOf(value))
-
-    private val blockAdapterToFunctionGenerator = BlockAdapterToFunctionGenerator(this)
-
-    private val functionToBlockConverterCache = mutableMapOf<BlockPointerBridge, LLVMValueRef>()
-
-    internal fun kotlinFunctionToBlockConverter(bridge: BlockPointerBridge): LLVMValueRef =
-            functionToBlockConverterCache.getOrPut(bridge) {
-                blockAdapterToFunctionGenerator.run {
-                    generateConvertFunctionToBlock(bridge)
-                }
-            }
 
     fun FunctionGenerationContext.kotlinToObjC(
             value: LLVMValueRef,
@@ -459,6 +474,36 @@ private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
         objCClass: ConstPointer? = null,
         typeAdapter: ConstPointer? = null
 ) {
+    val writableTypeInfoValue = buildWritableTypeInfoValue(
+            converter = converter,
+            objCClass = objCClass,
+            typeAdapter = typeAdapter
+    )
+
+    if (codegen.isExternal(irClass)) {
+        // Note: this global replaces the external one with common linkage.
+        replaceExternalWeakOrCommonGlobal(
+                irClass.writableTypeInfoSymbolName,
+                writableTypeInfoValue,
+                irClass.llvmSymbolOrigin
+        )
+    } else {
+        setOwnWritableTypeInfo(irClass, writableTypeInfoValue)
+    }
+}
+
+private fun ObjCExportCodeGeneratorBase.setOwnWritableTypeInfo(irClass: IrClass, writableTypeInfoValue: Struct) {
+    require(!codegen.isExternal(irClass))
+    val writeableTypeInfoGlobal = context.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal!!
+    writeableTypeInfoGlobal.setLinkage(LLVMLinkage.LLVMExternalLinkage)
+    writeableTypeInfoGlobal.setInitializer(writableTypeInfoValue)
+}
+
+private fun ObjCExportCodeGeneratorBase.buildWritableTypeInfoValue(
+        converter: ConstPointer? = null,
+        objCClass: ConstPointer? = null,
+        typeAdapter: ConstPointer? = null
+): Struct {
     if (converter != null) {
         assert(converter.llvmType == pointerType(functionType(int8TypePtr, false, codegen.kObjHeaderPtr)))
     }
@@ -470,26 +515,13 @@ private fun ObjCExportCodeGenerator.setObjCExportTypeInfo(
     )
 
     val writableTypeInfoType = runtime.writableTypeInfoType!!
-    val writableTypeInfoValue = Struct(writableTypeInfoType, objCExportAddition)
-
-    if (codegen.isExternal(irClass)) {
-        // Note: this global replaces the external one with common linkage.
-        replaceExternalWeakOrCommonGlobal(
-                irClass.writableTypeInfoSymbolName,
-                writableTypeInfoValue,
-                irClass.llvmSymbolOrigin
-        )
-    } else {
-        context.llvmDeclarations.forClass(irClass).writableTypeInfoGlobal!!.also {
-            it.setLinkage(LLVMLinkage.LLVMExternalLinkage)
-        }.setInitializer(writableTypeInfoValue)
-    }
+    return Struct(writableTypeInfoType, objCExportAddition)
 }
 
 private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LLVMTypeRef
     get() = functionType(int8TypePtr, false, codegen.kObjHeaderPtr)
 
-private val ObjCExportCodeGenerator.objCToKotlinFunctionType: LLVMTypeRef
+private val ObjCExportCodeGeneratorBase.objCToKotlinFunctionType: LLVMTypeRef
     get() = functionType(codegen.kObjHeaderPtr, false, int8TypePtr, codegen.kObjHeaderPtrPtr)
 
 private fun ObjCExportCodeGenerator.emitBoxConverters() {
@@ -534,14 +566,18 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
     setObjCExportTypeInfo(boxClass, constPointer(converter))
 }
 
-private fun ObjCExportCodeGenerator.emitFunctionConverters() {
+private fun ObjCExportBlockCodeGenerator.emitFunctionConverters() {
+    require(context.producedLlvmModuleContainsStdlib)
     context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.forEach { functionClass ->
         val converter = kotlinFunctionToBlockConverter(BlockPointerBridge(functionClass.arity, returnsVoid = false))
-        setObjCExportTypeInfo(functionClass.irClass, constPointer(converter))
+
+        val writableTypeInfoValue = buildWritableTypeInfoValue(converter = constPointer(converter))
+        setOwnWritableTypeInfo(functionClass.irClass, writableTypeInfoValue)
     }
 }
 
-private fun ObjCExportCodeGenerator.emitBlockToKotlinFunctionConverters() {
+private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
+    require(context.producedLlvmModuleContainsStdlib)
     val functionClassesByArity =
             context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.associateBy { it.arity }
 
@@ -563,17 +599,9 @@ private fun ObjCExportCodeGenerator.emitBlockToKotlinFunctionConverters() {
             converters
     ).pointer.getElementPtr(0)
 
-    // Note: replacing weak globals defined in runtime.
-    replaceExternalWeakOrCommonGlobal(
-            "Kotlin_ObjCExport_blockToFunctionConverters",
-            ptr,
-            context.standardLlvmSymbolsOrigin
-    )
-    replaceExternalWeakOrCommonGlobal(
-            "Kotlin_ObjCExport_blockToFunctionConverters_size",
-            Int32(count),
-            context.standardLlvmSymbolsOrigin
-    )
+    // Note: defining globals declared in runtime.
+    staticData.placeGlobal("Kotlin_ObjCExport_blockToFunctionConverters", ptr, isExported = true)
+    staticData.placeGlobal("Kotlin_ObjCExport_blockToFunctionConverters_size", Int32(count), isExported = true)
 }
 
 private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
@@ -585,10 +613,6 @@ private fun ObjCExportCodeGenerator.emitSpecialClassesConvertions() {
     emitCollectionConverters()
 
     emitBoxConverters()
-
-    emitFunctionConverters()
-
-    emitBlockToKotlinFunctionConverters()
 }
 
 private fun ObjCExportCodeGenerator.emitCollectionConverters() {

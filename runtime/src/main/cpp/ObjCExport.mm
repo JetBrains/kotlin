@@ -439,9 +439,9 @@ static const char* getBlockEncoding(id block) {
       reinterpret_cast<struct Block_descriptor_1_without_helpers*>(literal->descriptor)->signature;
 }
 
-// Note: replaced by compiler in appropriate compilation modes.
-__attribute__((weak)) convertReferenceFromObjC* Kotlin_ObjCExport_blockToFunctionConverters = nullptr;
-__attribute__((weak)) int Kotlin_ObjCExport_blockToFunctionConverters_size = 0;
+// Note: defined by compiler.
+extern "C" convertReferenceFromObjC* Kotlin_ObjCExport_blockToFunctionConverters;
+extern "C" int Kotlin_ObjCExport_blockToFunctionConverters_size;
 
 extern "C" id objc_retainBlock(id self);
 

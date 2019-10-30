@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.getExportedDependencies
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -74,6 +75,10 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
 
     internal fun generate(codegen: CodeGenerator) {
         if (!target.family.isAppleFamily) return
+
+        if (context.producedLlvmModuleContainsStdlib) {
+            ObjCExportBlockCodeGenerator(codegen).generate()
+        }
 
         if (!context.config.produce.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
