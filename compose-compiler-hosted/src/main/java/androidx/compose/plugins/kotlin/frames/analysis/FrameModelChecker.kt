@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 
-class FrameModelChecker : DeclarationChecker, StorageComponentContainerContributor {
+open class FrameModelChecker : DeclarationChecker, StorageComponentContainerContributor {
 
     override fun registerModuleComponents(
         container: StorageComponentContainer,
@@ -42,6 +43,13 @@ class FrameModelChecker : DeclarationChecker, StorageComponentContainerContribut
                 val element = (declaration as? KtClass)?.nameIdentifier ?: declaration
                 context.trace.reportFromPlugin(
                     ComposeErrors.OPEN_MODEL.on(element),
+                    ComposeDefaultErrorMessages
+                )
+            }
+            if (descriptor.getAllSuperclassesWithoutAny().isNotEmpty()) {
+                val element = (declaration as? KtClass)?.nameIdentifier ?: declaration
+                context.trace.reportFromPlugin(
+                    ComposeErrors.UNSUPPORTED_MODEL_INHERITANCE.on(element),
                     ComposeDefaultErrorMessages
                 )
             }

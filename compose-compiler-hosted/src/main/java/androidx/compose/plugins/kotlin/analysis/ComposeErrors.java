@@ -34,13 +34,8 @@ import java.util.Collection;
  * Error messages
  */
 public interface ComposeErrors {
-    DiagnosticFactory0<PsiElement> DUPLICATE_ATTRIBUTE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> OPEN_COMPONENT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> OPEN_MODEL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> UNSUPPORTED_MODEL_INHERITANCE = DiagnosticFactory0.create(ERROR);
-
-    DiagnosticFactory1<KtElement, String>
-            SVC_INVOCATION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<KtElement>
             SUSPEND_FUNCTION_USED_AS_SFC = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement>
@@ -53,8 +48,6 @@ public interface ComposeErrors {
             INVALID_COMPOSER_IMPLEMENTATION = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtExpression, Collection<KotlinType>, Collection<KotlinType>>
             ILLEGAL_ASSIGN_TO_UNIONTYPE = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory0<KtElement>
-            CHILDREN_MUST_BE_LAST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement>
             ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE = DiagnosticFactory0.create(ERROR);
 

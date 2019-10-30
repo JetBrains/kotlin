@@ -23,14 +23,6 @@ object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
             "Couldn't find a valid composer."
         )
         MAP.put(
-            ComposeErrors.DUPLICATE_ATTRIBUTE,
-            "Duplicate attribute; Attributes must appear at most once per tag."
-        )
-        MAP.put(
-            ComposeErrors.OPEN_COMPONENT,
-            "Component is open. Components cannot be an open or abstract class."
-        )
-        MAP.put(
             ComposeErrors.OPEN_MODEL,
             "Model objects cannot be open or abstract"
         )
@@ -52,12 +44,6 @@ object ComposeDefaultErrorMessages : DefaultErrorMessages.Extension {
         MAP.put(
             ComposeErrors.INVALID_TYPE_SIGNATURE_SFC,
             "Only Unit-returning functions are allowed to be used as Components"
-        )
-        MAP.put(
-            ComposeErrors.SVC_INVOCATION,
-            "Stateless Functional Components (SFCs) should not be invoked, use <{0} /> " +
-                    "syntax instead",
-            OUR_STRING_RENDERER
         )
         MAP.put(
             ComposeErrors.COMPOSABLE_INVOCATION_IN_NON_COMPOSABLE,
