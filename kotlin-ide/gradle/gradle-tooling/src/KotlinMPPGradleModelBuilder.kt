@@ -919,11 +919,16 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 }
             }
 
-        fun Project.getTargets(): Collection<Named>? {
+        fun Project.getTargets(includeSinglePlatform: Boolean = false): Collection<Named>? {
             val kotlinExt = project.extensions.findByName("kotlin") ?: return null
-            val getTargets = kotlinExt.javaClass.getMethodOrNull("getTargets") ?: return null
+            val getTargets = kotlinExt.javaClass.getMethodOrNull("getTargets")
+            if (getTargets == null && includeSinglePlatform) {
+                val getTarget = kotlinExt.javaClass.getMethodOrNull("getTarget")
+                val target = getTarget?.invoke(kotlinExt) as? Named
+                return if (target == null) emptyList() else listOf(target)
+            }
             @Suppress("UNCHECKED_CAST")
-            return (getTargets.invoke(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList()
+            return (getTargets?.invoke(kotlinExt) as? NamedDomainObjectContainer<Named>)?.asMap?.values ?: emptyList()
         }
 
         fun getCompilations(target: Named): Collection<Named>? {
