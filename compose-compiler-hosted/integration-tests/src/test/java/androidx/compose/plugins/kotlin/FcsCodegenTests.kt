@@ -2179,6 +2179,11 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             class NotStable { val value = 10 }
 
+            enum class EnumState {
+              One,
+              Two
+            }
+
             @Composable
             fun MemoInt(a: Int) {
               output.add("MemoInt a=${'$'}a")
@@ -2210,12 +2215,19 @@ class FcsCodegenTests : AbstractCodegenTest() {
             }
 
             @Composable
+            fun MemoEnum(a: EnumState) {
+              output.add("MemoEnum")
+              Button(text="memo ${'$'}{a}")
+            }
+
+            @Composable
             fun TestSkipping(
                 a: Int,
                 b: Float,
                 c: Double,
                 d: NotStable,
-                e: ValueHolder
+                e: ValueHolder,
+                f: EnumState
             ) {
               val am = a + m.count
               output.add("TestSkipping a=${'$'}a am=${'$'}am")
@@ -2224,11 +2236,12 @@ class FcsCodegenTests : AbstractCodegenTest() {
               MemoDouble(a=c)
               MemoNotStable(a=d)
               MemoModel(a=e)
+              MemoEnum(a=f)
             }
 
             @Composable
             fun Main(v: ValueHolder, n: NotStable) {
-              TestSkipping(a=1, b=1f, c=2.0, d=NotStable(), e=v)
+              TestSkipping(a=1, b=1f, c=2.0, d=NotStable(), e=v, f=EnumState.One)
             }
         """, {
             mapOf(
@@ -2242,7 +2255,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             // Expect that all the methods are called in order
             assertEquals(
                 "TestSkipping a=1 am=1, MemoInt a=1, MemoFloat, " +
-                        "MemoDouble, MemoNotStable, MemoModelHolder",
+                        "MemoDouble, MemoNotStable, MemoModelHolder, MemoEnum",
                 output.joinToString()
             )
             output.clear()
