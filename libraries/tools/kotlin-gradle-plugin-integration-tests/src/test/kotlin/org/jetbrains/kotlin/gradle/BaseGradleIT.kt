@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert
@@ -21,6 +20,8 @@ import org.junit.Before
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.test.*
+
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 
 val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
 
@@ -205,8 +206,14 @@ abstract class BaseGradleIT {
         val withBuildCache: Boolean = false,
         val kaptOptions: KaptOptions? = null,
         val parallelTasksInProject: Boolean? = null,
-        val jsCompilerType: KotlinJsCompilerType? = null
+        val jsCompilerType: KotlinJsCompilerType? = null,
+        val configurationCache: Boolean = false,
+        val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL
     )
+
+    enum class ConfigurationCacheProblems {
+        FAIL, WARN
+    }
 
     data class KaptOptions(
         val verbose: Boolean,
@@ -707,9 +714,9 @@ Finished executing task ':$taskName'|
         val xmlString = buildString {
             appendln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
             appendln("<results>")
-            files.forEach {
+            files.forEach { file ->
                 appendln(
-                    it.readText()
+                    file.readText()
                         .trimTrailingWhitespaces()
                         .replace(projectDir.absolutePath, "/\$PROJECT_DIR$")
                         .replace(projectDir.name, "\$PROJECT_NAME$")
@@ -800,6 +807,9 @@ Finished executing task ':$taskName'|
             options.jsCompilerType?.let {
                 add("-Pkotlin.js.compiler=$it")
             }
+
+            add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
+            add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.toLowerCase()}")
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")

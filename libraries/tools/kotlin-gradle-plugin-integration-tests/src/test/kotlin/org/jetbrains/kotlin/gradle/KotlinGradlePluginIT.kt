@@ -365,7 +365,7 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDowngradeTo106() {
+    fun testDowngradePluginVersion() {
         val project = Project("kotlinProject")
         val options = defaultBuildOptions().copy(incremental = true, withDaemon = false)
 
@@ -373,7 +373,7 @@ class KotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
         }
 
-        project.build("clean", "assemble", options = options.copy(kotlinVersion = "1.0.6")) {
+        project.build("clean", "assemble", options = options.copy(kotlinVersion = "1.3.41")) {
             assertSuccessful()
         }
     }

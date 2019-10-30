@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.invocation.Gradle
 import org.gradle.util.GradleVersion
 
 internal data class ParsedGradleVersion(val major: Int, val minor: Int) : Comparable<ParsedGradleVersion> {
@@ -57,3 +58,11 @@ internal data class ParsedGradleVersion(val major: Int, val minor: Int) : Compar
 fun isGradleVersionAtLeast(major: Int, minor: Int) =
     ParsedGradleVersion.parse(GradleVersion.current().version)
         ?.let { it >= ParsedGradleVersion(major, minor) } ?: false
+
+fun isConfigurationCacheAvailable(gradle: Gradle) =
+    try {
+        val startParameters = gradle.startParameter
+        startParameters.javaClass.getMethod("isConfigurationCache").invoke(startParameters) as? Boolean
+    } catch (_: Exception) {
+        null
+    } ?: false

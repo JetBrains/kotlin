@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGene
 import org.jetbrains.kotlin.gradle.targets.native.internal.setUpKotlinNativePlatformDependencies
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -89,11 +90,9 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         createTargetConfigurator().configureTarget(result)
 
         SingleActionPerProject.run(project, "setUpKotlinNativePlatformDependencies") {
-            project.gradle.addListener(object : BuildAdapter() {
-                override fun projectsEvaluated(gradle: Gradle) {
-                    project.setUpKotlinNativePlatformDependencies()
-                }
-            })
+            project.gradle.projectsEvaluated {
+                project.setUpKotlinNativePlatformDependencies()
+            }
         }
 
         if (!konanTarget.enabledOnCurrentHost) {

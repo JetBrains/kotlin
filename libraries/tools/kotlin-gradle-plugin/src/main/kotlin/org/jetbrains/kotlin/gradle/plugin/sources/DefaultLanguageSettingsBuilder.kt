@@ -69,6 +69,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
     }
 
     /* A Kotlin task that is responsible for code analysis of the owner of this language settings builder. */
+    @Transient // not needed during Gradle Instant Execution
     var compilerPluginOptionsTask: Lazy<AbstractCompile?> = lazyOf(null)
 
     val compilerPluginArguments: List<String>?
@@ -76,7 +77,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
             val pluginOptionsTask = compilerPluginOptionsTask.value ?: return null
             return when (pluginOptionsTask) {
                 is AbstractKotlinCompile<*> -> pluginOptionsTask.pluginOptions
-                is AbstractKotlinNativeCompile<*> -> pluginOptionsTask.compilerPluginOptions
+                is AbstractKotlinNativeCompile<*, *> -> pluginOptionsTask.compilerPluginOptions
                 else -> error("Unexpected task: $pluginOptionsTask")
             }.arguments
         }
@@ -86,7 +87,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
             val pluginClasspathTask = compilerPluginOptionsTask.value ?: return null
             return when (pluginClasspathTask) {
                 is AbstractKotlinCompile<*> -> pluginClasspathTask.pluginClasspath
-                is AbstractKotlinNativeCompile<*> -> pluginClasspathTask.compilerPluginClasspath ?: pluginClasspathTask.project.files()
+                is AbstractKotlinNativeCompile<*, *> -> pluginClasspathTask.compilerPluginClasspath ?: pluginClasspathTask.project.files()
                 else -> error("Unexpected task: $pluginClasspathTask")
             }
         }

@@ -103,7 +103,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
     private fun prepareKotlinCompileTask(): TaskProvider<out T> =
         registerKotlinCompileTask(register = ::doRegisterTask).also { task ->
-            kotlinCompilation.output.addClassesDir { project.files(task.map { it.destinationDir }) }
+            kotlinCompilation.output.addClassesDir { project.files(task.map { it.destinationDir }).builtBy(task) }
         }
 
     protected fun registerKotlinCompileTask(
