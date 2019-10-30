@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.core.script
+package org.jetbrains.kotlin.idea.core.script.configuration.listener
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.EditorFactory
@@ -17,6 +17,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.Alarm
+import org.jetbrains.kotlin.idea.core.script.configuration.ScriptConfigurationManagerImpl
+import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.isNonScript

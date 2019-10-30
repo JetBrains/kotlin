@@ -308,7 +308,7 @@
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptDependenciesProvider"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager"
-                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManagerImpl"/>
+                    serviceImplementation="org.jetbrains.kotlin.idea.core.script.configuration.ScriptConfigurationManagerImpl"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.scripting.resolve.ScriptReportSink"
                     serviceImplementation="org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink"/>

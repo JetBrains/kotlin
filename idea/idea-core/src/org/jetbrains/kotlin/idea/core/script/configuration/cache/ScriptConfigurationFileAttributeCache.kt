@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.core.script.dependencies
+package org.jetbrains.kotlin.idea.core.script.configuration.cache
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.util.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -20,7 +21,8 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
-class ScriptConfigurationFileAttributeCache : ScriptDependenciesLoader {
+class ScriptConfigurationFileAttributeCache :
+    ScriptDependenciesLoader {
     operator fun contains(file: VirtualFile): Boolean =
         file.scriptDependencies != null || file.scriptCompilationConfiguration != null
 

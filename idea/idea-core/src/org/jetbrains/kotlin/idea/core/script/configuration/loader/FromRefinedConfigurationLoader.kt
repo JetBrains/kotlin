@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.core.script.dependencies
+package org.jetbrains.kotlin.idea.core.script.configuration.loader
 
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.psi.KtFile
@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResu
 import org.jetbrains.kotlin.scripting.resolve.refineScriptCompilationConfiguration
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 
-class FromRefinedConfigurationLoader internal constructor() : ScriptDependenciesLoader {
+class FromRefinedConfigurationLoader internal constructor() :
+    ScriptDependenciesLoader {
     override fun isAsync(file: KtFile, scriptDefinition: ScriptDefinition): Boolean {
         return scriptDefinition.asLegacyOrNull<KotlinScriptDefinition>()?.dependencyResolver?.let {
             it is AsyncDependenciesResolver || it is LegacyResolverWrapper

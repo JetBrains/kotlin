@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.core.script
+package org.jetbrains.kotlin.idea.core.script.configuration
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.application.ApplicationManager
@@ -19,8 +19,18 @@ import com.intellij.ui.EditorNotifications
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.core.script.*
+import org.jetbrains.kotlin.idea.core.script.LOG
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.toVfsRoots
-import org.jetbrains.kotlin.idea.core.script.dependencies.*
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationFileAttributeCache
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationMemoryCache
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptsListener
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.FromRefinedConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.OutsiderFileDependenciesLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptDependenciesLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.BackgroundLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsManager
+import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
@@ -33,7 +43,8 @@ import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.valueOrNull
 
-class ScriptConfigurationManagerImpl internal constructor(private val project: Project) : ScriptConfigurationManager {
+class ScriptConfigurationManagerImpl internal constructor(private val project: Project) :
+    ScriptConfigurationManager {
     private val rootsManager = ScriptClassRootsManager(project)
 
     private val memoryCache = ScriptConfigurationMemoryCache(project)

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.core.script
+package org.jetbrains.kotlin.idea.core.script.configuration.utils
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
@@ -11,6 +11,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx
 import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationMemoryCache
+import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.util.concurrent.atomic.AtomicInteger
@@ -74,7 +77,8 @@ internal class ScriptClassRootsManager(val project: Project) {
                 debug { "roots change event" }
 
                 ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
-                ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
+                ScriptDependenciesModificationTracker.getInstance(project)
+                    .incModificationCount()
             }
         }
 
