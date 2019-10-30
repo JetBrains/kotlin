@@ -94,3 +94,27 @@ import kotlin.native.concurrent.*
         assertEquals(1, counter.value)
     }
 }
+
+@Test fun runTest6() {
+    // Ensure zero timeout works properly.
+    Worker.current.park(0, process = true)
+}
+
+@Test fun runTest7() {
+    val counter = AtomicInt(0)
+    withWorker {
+        val f1 = execute(TransferMode.SAFE, { counter }) { counter ->
+            Worker.current.park(Long.MAX_VALUE / 1000L, process = true)
+            counter.increment()
+        }
+        // wait a bit
+        Worker.current.park(10_000L)
+        // submit a task
+        val f2 = execute(TransferMode.SAFE, { counter }) { counter ->
+            counter.increment()
+        }
+        f1.consume {}
+        f2.consume {}
+        assertEquals(2, counter.value)
+    }
+}

@@ -772,10 +772,15 @@ bool Worker::waitForQueueLocked(KLong timeoutMicroseconds, KLong* remaining) {
     if (timeoutMicroseconds >= 0) {
         closestToRun = timeoutMicroseconds < closestToRun || closestToRun < 0 ? timeoutMicroseconds : closestToRun;
     }
-    if (closestToRun > 0) {
+    if (closestToRun == 0) {
+      // Just no wait at all here.
+    } else if (closestToRun > 0) {
       struct timeval tv;
       struct timespec ts;
       gettimeofday(&tv, nullptr);
+      // Protect from potential overflow, cutting at 10_000_000 seconds, aka 115 days.
+      if (closestToRun > 10LL * 1000 * 1000 * 1000 * 1000)
+        closestToRun = 10LL * 1000 * 1000 * 1000 * 1000;
       KLong nsDelta = closestToRun * 1000LL;
       ts.tv_nsec = (tv.tv_usec * 1000LL + nsDelta) % 1000000000LL;
       ts.tv_sec = (tv.tv_sec * 1000000000LL + nsDelta) / 1000000000LL;
