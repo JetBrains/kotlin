@@ -57,14 +57,23 @@ public interface NativeDefinitionsTypes {
   IElementType NO_STRING_CONVERSION = new NativeDefinitionsTokenType("noStringConversion");
   IElementType OSX = new NativeDefinitionsTokenType("osx");
   IElementType PACKAGE = new NativeDefinitionsTokenType("package");
+  IElementType PLATFORM__26_0 = new NativeDefinitionsTokenType("platform__26_0");
   IElementType SEPARATOR = new NativeDefinitionsTokenType("SEPARATOR");
   IElementType STATIC_LIBRARIES = new NativeDefinitionsTokenType("staticLibraries");
   IElementType STRICT_ENUMS = new NativeDefinitionsTokenType("strictEnums");
+  IElementType TVOS = new NativeDefinitionsTokenType("TVOS");
+  IElementType TVOS_ARM64 = new NativeDefinitionsTokenType("TVOS_ARM64");
+  IElementType TVOS_X64 = new NativeDefinitionsTokenType("TVOS_X64");
   IElementType UNKNOWN_KEY = new NativeDefinitionsTokenType("<unknown key>");
   IElementType UNKNOWN_PLATFORM = new NativeDefinitionsTokenType("<unknown platform>");
   IElementType VALUE = new NativeDefinitionsTokenType("VALUE");
   IElementType WASM = new NativeDefinitionsTokenType("wasm");
   IElementType WASM32 = new NativeDefinitionsTokenType("wasm32");
+  IElementType WATCHOS = new NativeDefinitionsTokenType("WATCHOS");
+  IElementType WATCHOS_ARM32 = new NativeDefinitionsTokenType("WATCHOS_ARM32");
+  IElementType WATCHOS_ARM64 = new NativeDefinitionsTokenType("WATCHOS_ARM64");
+  IElementType WATCHOS_X64 = new NativeDefinitionsTokenType("WATCHOS_X64");
+  IElementType WATCHOS_X86 = new NativeDefinitionsTokenType("WATCHOS_X86");
   IElementType X64 = new NativeDefinitionsTokenType("x64");
 
   class Factory {

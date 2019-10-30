@@ -23,34 +23,15 @@ public class NativeDefinitionsParser implements PsiParser, LightPsiParser {
     boolean r;
     b = adapt_builder_(t, b, this, null);
     Marker m = enter_section_(b, 0, _COLLAPSE_, null);
-    if (t == BOOL_KEY) {
-      r = boolKey(b, 0);
-    }
-    else if (t == BOOL_VALUE) {
-      r = boolValue(b, 0);
-    }
-    else if (t == CODE) {
-      r = code(b, 0);
-    }
-    else if (t == STRING_KEY) {
-      r = stringKey(b, 0);
-    }
-    else if (t == STRING_VALUE) {
-      r = stringValue(b, 0);
-    }
-    else if (t == STRINGS_KEY) {
-      r = stringsKey(b, 0);
-    }
-    else if (t == STRINGS_VALUE) {
-      r = stringsValue(b, 0);
-    }
-    else {
-      r = parse_root_(t, b, 0);
-    }
+    r = parse_root_(t, b);
     exit_section_(b, 0, m, t, r, true, TRUE_CONDITION);
   }
 
-  protected boolean parse_root_(IElementType t, PsiBuilder b, int l) {
+  protected boolean parse_root_(IElementType t, PsiBuilder b) {
+    return parse_root_(t, b, 0);
+  }
+
+  static boolean parse_root_(IElementType t, PsiBuilder b, int l) {
     return root(b, l + 1);
   }
 
@@ -204,10 +185,12 @@ public class NativeDefinitionsParser implements PsiParser, LightPsiParser {
   // ANDROID | ANDROID_ARM32 | ANDROID_ARM64 | ARM32 | ARM64 | IOS | IOS_ARM32
   //                         | IOS_ARM64 | IOS_X64 | LINUX | LINUX_ARM32_HFP | LINUX_MIPS32
   //                         | LINUX_MIPSEL32 | LINUX_X64 | MACOS_X64 | MINGW | MINGW_X64 | MIPS32
-  //                         | MIPSEL32 | OSX | WASM | WASM32 | X64 | UNKNOWN_PLATFORM
+  //                         | MIPSEL32 | OSX | TVOS | TVOS_ARM64 | TVOS_X64 | WASM | WASM32 | WATCHOS |
+  //                         | WATCHOS_ARM32 | WATCHOS_ARM64 | WATCHOS_X64 | WATCHOS_X86 | X64 | UNKNOWN_PLATFORM
   static boolean platform_(PsiBuilder b, int l) {
     if (!recursion_guard_(b, l, "platform_")) return false;
     boolean r;
+    Marker m = enter_section_(b);
     r = consumeToken(b, ANDROID);
     if (!r) r = consumeToken(b, ANDROID_ARM32);
     if (!r) r = consumeToken(b, ANDROID_ARM64);
@@ -228,10 +211,20 @@ public class NativeDefinitionsParser implements PsiParser, LightPsiParser {
     if (!r) r = consumeToken(b, MIPS32);
     if (!r) r = consumeToken(b, MIPSEL32);
     if (!r) r = consumeToken(b, OSX);
+    if (!r) r = consumeToken(b, TVOS);
+    if (!r) r = consumeToken(b, TVOS_ARM64);
+    if (!r) r = consumeToken(b, TVOS_X64);
     if (!r) r = consumeToken(b, WASM);
     if (!r) r = consumeToken(b, WASM32);
+    if (!r) r = consumeToken(b, WATCHOS);
+    if (!r) r = consumeToken(b, PLATFORM__26_0);
+    if (!r) r = consumeToken(b, WATCHOS_ARM32);
+    if (!r) r = consumeToken(b, WATCHOS_ARM64);
+    if (!r) r = consumeToken(b, WATCHOS_X64);
+    if (!r) r = consumeToken(b, WATCHOS_X86);
     if (!r) r = consumeToken(b, X64);
     if (!r) r = consumeToken(b, UNKNOWN_PLATFORM);
+    exit_section_(b, m, null, r);
     return r;
   }
 

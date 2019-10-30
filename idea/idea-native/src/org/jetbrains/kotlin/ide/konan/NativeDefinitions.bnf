@@ -92,6 +92,7 @@ private incorrectDefinition_ ::= UNKNOWN_KEY? UNKNOWN_PLATFORM? SEPARATOR VALUE?
 private platform_ ::= ANDROID | ANDROID_ARM32 | ANDROID_ARM64 | ARM32 | ARM64 | IOS | IOS_ARM32
                         | IOS_ARM64 | IOS_X64 | LINUX | LINUX_ARM32_HFP | LINUX_MIPS32
                         | LINUX_MIPSEL32 | LINUX_X64 | MACOS_X64 | MINGW | MINGW_X64 | MIPS32
-                        | MIPSEL32 | OSX | WASM | WASM32 | X64 | UNKNOWN_PLATFORM
+                        | MIPSEL32 | OSX | TVOS | TVOS_ARM64 | TVOS_X64 | WASM | WASM32 | WATCHOS |
+                        | WATCHOS_ARM32 | WATCHOS_ARM64 | WATCHOS_X64 | WATCHOS_X86 | X64 | UNKNOWN_PLATFORM
 
 code ::= CODE_CHARS

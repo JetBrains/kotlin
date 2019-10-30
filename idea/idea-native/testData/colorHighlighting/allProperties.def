@@ -25,12 +25,14 @@ linker=clang
 linkerOpts = -DBAR=bar -DBAZ=baz
 linkerOpts.linux_mipsel32 = -fpic
 entryPoint = main1 main2
+entryPoint.tvos_x64 = main3
 
 nonStrictEnums.wasm32 = non strict
 noStringConversion.linux_arm32_hfp = no string
 strictEnums.android_arm64 = strict enums
 
 modules.osx = baba
+modules.watchos_arm64 = deda
 
 ---
 
