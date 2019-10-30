@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
+import org.jetbrains.kotlin.gradle.tasks.GradleCompileTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
@@ -50,9 +51,16 @@ const val COULD_NOT_CONNECT_TO_DAEMON_MESSAGE = "Could not connect to Kotlin com
 internal fun kotlinCompilerExecutionStrategy(): String =
     System.getProperty(KOTLIN_COMPILER_EXECUTION_STRATEGY_PROPERTY) ?: DAEMON_EXECUTION_STRATEGY
 
-internal open class GradleCompilerRunner(protected val task: Task) {
-    protected val project: Project
-        get() = task.project
+internal open class GradleCompilerRunner(protected val taskProvider: TaskProvider<out GradleCompileTask>) {
+
+    internal val pathProvider = taskProvider.map { it.path }
+    internal val loggerProvider = taskProvider.map { it.logger }
+    internal val buildDirProvider = taskProvider.map { it.buildDir }
+    internal val projectDirProvider = taskProvider.map { it.projectDir }
+    internal val projectRootDirProvider = taskProvider.map { it.rootDir }
+    internal val sessionDirProvider = taskProvider.map { it.sessionsDir }
+    internal val projectNameProvider = taskProvider.map { it.projectName }
+    internal val incrementalModuleInfoProvider = taskProvider.map { it.buildModulesInfo }
 
     /**
      * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
@@ -107,7 +115,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
         environment: GradleCompilerEnvironment
     ) {
         if (compilerArgs.version) {
-            task.logger.lifecycle(
+            loggerProvider.get().lifecycle(
                 "Kotlin version " + loadCompilerVersion(environment.compilerClasspath) +
                         " (JRE " + System.getProperty("java.runtime.version") + ")"
             )
@@ -115,9 +123,9 @@ internal open class GradleCompilerRunner(protected val task: Task) {
         }
         val argsArray = ArgumentUtils.convertArgumentsToStringList(compilerArgs).toTypedArray()
         val incrementalCompilationEnvironment = environment.incrementalCompilationEnvironment
-        val modulesInfo = incrementalCompilationEnvironment?.let { buildModulesInfo(project.gradle) }
+        val modulesInfo = incrementalCompilationEnvironment?.let { incrementalModuleInfoProvider.get() }
         val workArgs = GradleKotlinCompilerWorkArguments(
-            projectFiles = ProjectFilesForCompilation(project),
+            projectFiles = ProjectFilesForCompilation(loggerProvider.get(), projectDirProvider.get(), buildDirProvider.get(), projectNameProvider.get(), projectRootDirProvider.get(), sessionDirProvider.get()),
             compilerFullClasspath = environment.compilerFullClasspath,
             compilerClassName = compilerClassName,
             compilerArgs = argsArray,
@@ -125,12 +133,12 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             incrementalCompilationEnvironment = incrementalCompilationEnvironment,
             incrementalModuleInfo = modulesInfo,
             outputFiles = environment.outputFiles.toList(),
-            taskPath = task.path,
+            taskPath = pathProvider.get(),
             buildReportMode = environment.buildReportMode,
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors
         )
-        TaskLoggers.put(task.path, task.logger)
+        TaskLoggers.put(pathProvider.get(), loggerProvider.get())
         runCompilerAsync(workArgs)
     }
 
@@ -208,7 +216,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
                         } else {
                             if (target is KotlinWithJavaTarget<*>) {
                                 val jar = project.tasks.getByName(target.artifactsTaskName) as Jar
-                                jarToClassListFile[jar.archivePathCompatible.canonicalFile] = target.defaultArtifactClassesListFile
+                                jarToClassListFile[jar.archivePathCompatible.canonicalFile] = target.defaultArtifactClassesListFile.get()
                             }
                         }
                     }
@@ -248,11 +256,9 @@ internal open class GradleCompilerRunner(protected val task: Task) {
         private var clientIsAliveFlagFile: File? = null
 
         @Synchronized
-        internal fun getOrCreateClientFlagFile(project: Project): File {
-            val log = project.logger
+        internal fun getOrCreateClientFlagFile(log: Logger, projectName: String): File {
             if (clientIsAliveFlagFile == null || !clientIsAliveFlagFile!!.exists()) {
-                val projectName = project.rootProject.name.normalizeForFlagFile()
-                clientIsAliveFlagFile = newTmpFile(prefix = "kotlin-compiler-in-$projectName-", suffix = ".alive")
+                clientIsAliveFlagFile = newTmpFile(prefix = "kotlin-compiler-in-${projectName}-", suffix = ".alive")
                 log.kotlinDebug { CREATED_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.canonicalPath }
             } else {
                 log.kotlinDebug { EXISTING_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.canonicalPath }
@@ -261,7 +267,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             return clientIsAliveFlagFile!!
         }
 
-        private fun String.normalizeForFlagFile(): String {
+        internal fun String.normalizeForFlagFile(): String {
             val validChars = ('a'..'z') + ('0'..'9') + "-_"
             return filter { it in validChars }
         }
@@ -272,19 +278,19 @@ internal open class GradleCompilerRunner(protected val task: Task) {
 
         // session files are deleted at org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices.buildFinished
         @Synchronized
-        internal fun getOrCreateSessionFlagFile(project: Project): File {
-            val log = project.logger
+        internal fun getOrCreateSessionFlagFile(log: Logger, sessionsDir: File, projectRootDir: File): File {
             if (sessionFlagFile == null || !sessionFlagFile!!.exists()) {
-                val sessionFilesDir = sessionsDir(project).apply { mkdirs() }
+                val sessionFilesDir = sessionsDir.apply { mkdirs() }
                 sessionFlagFile = newTmpFile(prefix = "kotlin-compiler-", suffix = ".salive", directory = sessionFilesDir)
-                log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeToRoot(project) }
+                log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrCanonical(projectRootDir) }
             } else {
-                log.kotlinDebug { EXISTING_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeToRoot(project) }
+                log.kotlinDebug { EXISTING_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrCanonical(projectRootDir) }
             }
 
             return sessionFlagFile!!
         }
 
+        // TODO move?
         internal fun sessionsDir(project: Project): File =
             File(File(project.rootProject.buildDir, "kotlin"), "sessions")
     }

@@ -144,7 +144,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
         }
 
         private fun AbstractKotlinCompile<*>.createExperimentalFeatures(): ExperimentalFeatures {
-            return ExperimentalFeaturesImpl(coroutinesStr)
+            return ExperimentalFeaturesImpl(coroutinesStr.get())
         }
     }
 }

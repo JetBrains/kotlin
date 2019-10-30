@@ -27,18 +27,30 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
     @Suppress("MemberVisibilityCanBePrivate")
     @get:OutputFile
     internal val classesListFile: File by lazy {
-        (project.kotlinExtension as KotlinSingleJavaTargetExtension).target.defaultArtifactClassesListFile
+        (project.kotlinExtension as KotlinSingleJavaTargetExtension).target.defaultArtifactClassesListFile.get()
     }
+
+    @get:InputFiles
+    internal val sourceSetOutputClassesDir by lazy {
+        project.convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets?.findByName(sourceSetName)?.output?.classesDirs
+    }
+
+    @get:Internal
+    internal val fileTrees
+        get() = sourceSetOutputClassesDir?.map { objects.fileTree().from(it).include("**/*.class") }
+
+    @get:Internal
+    internal val objects = project.objects
 
     @Suppress("MemberVisibilityCanBePrivate")
     @get:InputFiles
     internal val classFiles: FileCollection
         get() {
-            val convention = project.convention.findPlugin(JavaPluginConvention::class.java)
-            val sourceSet = convention?.sourceSets?.findByName(sourceSetName) ?: return project.files()
-
-            val fileTrees = sourceSet.output.classesDirs.map { project.fileTree(it).include("**/*.class") }
-            return project.files(fileTrees)
+            if (sourceSetOutputClassesDir != null) {
+                val fileTrees = sourceSetOutputClassesDir!!.map { objects.fileTree().from(it).include("**/*.class") }
+                return objects.fileCollection().from(fileTrees)
+            }
+            return objects.fileCollection()
         }
 
     @TaskAction

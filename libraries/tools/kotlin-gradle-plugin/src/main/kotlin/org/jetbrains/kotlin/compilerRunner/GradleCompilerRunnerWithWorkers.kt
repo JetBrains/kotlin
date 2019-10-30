@@ -9,13 +9,15 @@ import org.gradle.api.Task
 import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
+import org.jetbrains.kotlin.gradle.tasks.GradleCompileTask
 
 internal class GradleCompilerRunnerWithWorkers(
-    task: Task,
+    taskProvider: TaskProvider<out GradleCompileTask>,
     private val workersExecutor: WorkerExecutor
-) : GradleCompilerRunner(task) {
+) : GradleCompilerRunner(taskProvider) {
+
     override fun runCompilerAsync(workArgs: GradleKotlinCompilerWorkArguments) {
-        task.logger.kotlinDebug { "Starting Kotlin compiler work from task '${task.path}'" }
+        loggerProvider.get().kotlinDebug { "Starting Kotlin compiler work from task '${pathProvider.get()}'" }
         // todo: write tests with Workers enabled;
         workersExecutor.submit(GradleKotlinCompilerWork::class.java) { config ->
             config.isolationMode = IsolationMode.NONE

@@ -20,14 +20,6 @@ internal operator fun <T> Property<T>.setValue(thisRef: Any?, property: KPropert
     set(value)
 }
 
-internal fun <T : Any> Project.newProperty(initialize: (() -> T)? = null): Property<T> =
-    @Suppress("UNCHECKED_CAST")
-    // use Any and not T::class to allow using lists and maps as the property type, which is otherwise not allowed
-    (project.objects.property(Any::class.java) as Property<T>).apply {
-        if (initialize != null)
-            set(provider(initialize))
-    }
-
 private class OptionalProviderDelegate<T>(private val provider: Provider<T?>) : ReadOnlyProperty<Any?, T?> {
     override fun getValue(thisRef: Any?, property: KProperty<*>): T? =
         if (provider.isPresent)
@@ -37,6 +29,13 @@ private class OptionalProviderDelegate<T>(private val provider: Provider<T?>) : 
 
 internal fun <T> Project.optionalProvider(initialize: () -> T?): ReadOnlyProperty<Any?, T?> =
     OptionalProviderDelegate(provider(initialize))
+
+internal fun <T : Any> Project.newProperty(initialize: (() -> T)? = null): Property<T> =
+    @Suppress("UNCHECKED_CAST")
+    (project.objects.property(Any::class.java) as Property<T>).apply {
+        if (initialize != null)
+            set(provider(initialize))
+    }
 
 // Before 5.0 fileProperty is created via ProjectLayout
 // https://docs.gradle.org/current/javadoc/org/gradle/api/model/ObjectFactory.html#fileProperty--

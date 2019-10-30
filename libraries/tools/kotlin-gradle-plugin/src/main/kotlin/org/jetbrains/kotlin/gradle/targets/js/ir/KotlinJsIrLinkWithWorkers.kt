@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers
+import org.jetbrains.kotlin.gradle.tasks.thisTaskProvider
 import javax.inject.Inject
 
 @CacheableTask
@@ -16,5 +17,5 @@ internal open class KotlinJsIrLinkWithWorkers
 constructor(
     private val workerExecutor: WorkerExecutor
 ) : KotlinJsIrLink() {
-    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(this, workerExecutor)
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(thisTaskProvider, workerExecutor)
 }

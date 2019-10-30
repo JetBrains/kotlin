@@ -24,6 +24,11 @@ import org.jetbrains.kotlin.gradle.tasks.DefFileTask
 import org.jetbrains.kotlin.gradle.tasks.DummyFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.PodspecTask
+import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildSettingsProperties
+import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildTask
+import org.jetbrains.kotlin.gradle.targets.native.tasks.PodInstallTask
+import org.jetbrains.kotlin.gradle.targets.native.tasks.PodSetupBuildTask
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager

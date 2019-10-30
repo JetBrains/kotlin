@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,7 @@ import java.io.File
 import java.net.URI
 import kotlin.test.fail
 
-class InstantExecutionIT : BaseGradleIT() {
+class ConfigurationCacheIT : BaseGradleIT() {
     private val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v4_0_ALPHA_8
 
@@ -23,7 +23,7 @@ class InstantExecutionIT : BaseGradleIT() {
             androidGradlePluginVersion = androidGradlePluginVersion
         )
 
-    private val minimumGradleVersion = GradleVersionRequired.AtLeast("6.1-rc-3")
+    private val minimumGradleVersion = GradleVersionRequired.AtLeast("6.6-milestone-2")
 
     @Test
     fun testSimpleKotlinJvmProject() = with(Project("kotlinProject", minimumGradleVersion)) {
@@ -145,5 +145,55 @@ class InstantExecutionIT : BaseGradleIT() {
             }
             $resolutionStrategyHack
         """.trimIndent())
+    }
+
+    @Test
+    fun testInstantExecution() {
+        val project = Project("instantExecution")
+
+        //first run without cache
+        project.build("assemble") {
+            assertSuccessful()
+            assertTasksExecuted(
+                ":compileKotlin",
+                ":compileTestKotlin"
+            )
+        }
+
+        //second run should use cache
+        project.build("assemble") {
+            assertSuccessful()
+            assertTasksExecuted(
+                ":compileKotlin",
+                ":compileTestKotlin"
+            )
+        }
+
+    }
+
+    @Test
+    fun testInstantExecutionForJs() {
+        val project = Project("instantExecutionToJs")
+
+        project.build("assemble") {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                ":compileKotlin2Js",
+                ":compileTestKotlin2Js"
+            )
+
+            assertFileExists("build/kotlin2js/main/module.js")
+            assertFileExists("build/kotlin2js/test/module-tests.js")
+        }
+
+        project.build("assemble") {
+            assertSuccessful()
+            assertContains("Reusing configuration cache.")
+
+            assertFileExists("build/kotlin2js/main/module.js")
+            assertFileExists("build/kotlin2js/test/module-tests.js")
+        }
+
     }
 }

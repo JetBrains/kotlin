@@ -1,0 +1,1 @@
+include ':main-project', ':lib-project'

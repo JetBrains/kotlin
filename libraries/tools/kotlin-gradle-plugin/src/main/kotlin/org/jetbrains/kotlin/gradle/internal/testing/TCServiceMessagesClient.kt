@@ -392,7 +392,6 @@ internal open class TCServiceMessagesClient(
         override val descriptor: TestDescriptorInternal = object : DefaultTestSuiteDescriptor(settings.rootNodeName, localId) {
             override fun getOwnerBuildOperationId(): Any? = this@RootNode.ownerBuildOperationId
             override fun getParent(): TestDescriptorInternal? = null
-            override fun isRoot(): Boolean = true
             override fun toString(): String = name
         }
 
