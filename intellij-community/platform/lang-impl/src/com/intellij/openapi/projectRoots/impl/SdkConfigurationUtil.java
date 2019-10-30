@@ -310,11 +310,10 @@ public class SdkConfigurationUtil {
   }
 
   public static void selectSdkHome(@NotNull final SdkType sdkType, @NotNull final Consumer<? super String> consumer) {
-    selectSdkHome(sdkType, null, null, consumer);
+    selectSdkHome(sdkType, null, consumer);
   }
 
   public static void selectSdkHome(@NotNull final SdkType sdkType,
-                                   @Nullable Project project,
                                    @Nullable Component component,
                                    @NotNull final Consumer<? super String> consumer) {
     final FileChooserDescriptor descriptor = sdkType.getHomeChooserDescriptor();
@@ -324,7 +323,10 @@ public class SdkConfigurationUtil {
       consumer.consume(sdk.getHomePath());
       return;
     }
-    FileChooser.chooseFiles(descriptor, project, component, getSuggestedSdkRoot(sdkType), chosen -> {
+    // passing project instance here seems to be the right idea, but it would make the dialog
+    // selecting the last opened project path, instead of the suggested detected JDK home (one of many).
+    // The behaviour may also depend on the FileChooser implementations which does not reuse that code
+    FileChooser.chooseFiles(descriptor, null, component, getSuggestedSdkRoot(sdkType), chosen -> {
       final String path = chosen.get(0).getPath();
       if (sdkType.isValidSdkHome(path)) {
         consumer.consume(path);
