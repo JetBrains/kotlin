@@ -87,14 +87,16 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
     sourceFoldersByModule[moduleName]?.sourceFolders
   }
 
-  private fun unsafeRemoveSourceFolder(url: String) {
-    val sourceFolder = sourceFolders.remove(url) ?: return
-    val module = sourceFolder.module
-    val moduleModel = sourceFoldersByModule[module.name] ?: return
-    val sourceFolders = moduleModel.sourceFolders
-    sourceFolders.remove(url)
-    if (sourceFolders.isEmpty()) {
-      sourceFoldersByModule.remove(module.name)
+  private fun removeSourceFolder(url: String) {
+    synchronized(mutex) {
+      val sourceFolder = sourceFolders.remove(url) ?: return
+      val module = sourceFolder.module
+      val moduleModel = sourceFoldersByModule[module.name] ?: return
+      val sourceFolders = moduleModel.sourceFolders
+      sourceFolders.remove(url)
+      if (sourceFolders.isEmpty()) {
+        sourceFoldersByModule.remove(module.name)
+      }
     }
   }
 
@@ -126,7 +128,7 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
             val sourceFolderFile = virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
             if (sourceFolderFile != null && sourceFolderFile.isValid) {
               sourceFoldersToChange.computeIfAbsent(sourceFolder.module) { ArrayList() }.add(Pair(event.file!!, sourceFolder))
-              synchronized(mutex) { unsafeRemoveSourceFolder(sourceFolder.url) }
+              removeSourceFolder(sourceFolder.url)
             }
           }
         }
@@ -156,7 +158,7 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
       val sourceFolderFile = virtualFileManager.refreshAndFindFileByUrl(sourceFolder.url)
       if (sourceFolderFile != null && sourceFolderFile.isValid) {
         sourceFoldersToChange.computeIfAbsent(sourceFolder.module) { ArrayList() }.add(Pair(sourceFolderFile, sourceFolder))
-        synchronized(mutex) { unsafeRemoveSourceFolder(sourceFolder.url) }
+        removeSourceFolder(sourceFolder.url)
       }
 
       updateSourceFolders(sourceFoldersToChange)
