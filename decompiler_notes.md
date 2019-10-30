@@ -10,7 +10,6 @@
 
 - функции высших порядков и лямбды (https://kotlinlang.org/docs/reference/lambdas.html): **надо больше тестов**
 - Работа со scope functions - https://kotlinlang.org/docs/reference/scope-functions.html **надо больше тестов**
-- 
 - cast операторы as, as?
 - делегирование (https://kotlinlang.org/docs/reference/delegation.html, https://kotlinlang.org/docs/reference/delegated-properties.html)
 - typealias со стрелкой (для функций высших порядков)
@@ -20,7 +19,6 @@
 
 ## LATER
 
-1 очередь:
 - companion object, именованный object, top-level object
 - inner, nested классы.
 - when с множественным условием через запятую
