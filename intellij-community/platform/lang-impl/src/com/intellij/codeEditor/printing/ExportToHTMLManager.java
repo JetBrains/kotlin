@@ -47,8 +47,7 @@ class ExportToHTMLManager {
     }
 
     Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
-    Project project = editor.getProject();
-
+    Project project = psiDirectory != null ? psiDirectory.getProject() : editor != null ? editor.getProject() : CommonDataKeys.PROJECT.getData(dataContext);
 
     String shortFileName = null;
     String directoryName = null;
