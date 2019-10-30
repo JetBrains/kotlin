@@ -551,7 +551,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     return null;
   }
 
-  private Set<String> getEnableByDefaultTypes() {
+  Set<String> getEnableByDefaultTypes() {
     Set<String> result = new THashSet<>();
     for (RunDashboardDefaultTypesProvider provider : DEFAULT_TYPES_PROVIDER_EP_NAME.getExtensionList()) {
       result.addAll(provider.getDefaultTypeIds(myProject));
