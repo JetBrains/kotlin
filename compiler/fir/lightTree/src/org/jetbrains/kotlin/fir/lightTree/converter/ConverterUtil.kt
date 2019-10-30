@@ -82,7 +82,8 @@ fun FirTypeParametersOwner.joinTypeParameters(typeConstraints: List<TypeConstrai
         this.typeParameters.forEach { typeParameter ->
             if (typeConstraint.identifier == typeParameter.name.identifier) {
                 (typeParameter as FirTypeParameterImpl).bounds += typeConstraint.firTypeRef
-                typeParameter.annotations += typeConstraint.firTypeRef.annotations
+//                TODO: why this is necessary?
+//                typeParameter.annotations += typeConstraint.firTypeRef.annotations
                 typeParameter.annotations += typeConstraint.annotations
             }
             (typeParameter as FirTypeParameterImpl).addDefaultBoundIfNecessary()
