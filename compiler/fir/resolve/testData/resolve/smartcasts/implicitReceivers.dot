@@ -237,7 +237,7 @@ digraph implicitReceivers_kt {
                 }
                 85 [label="Exit function anonymousFunction"];
               }
-              86 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+              86 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
     (this@R|special/anonymous| as R|A|)
     this@R|special/anonymous|.R|/A.foo|()
     this@R|/A|.R|/A.foo|()
@@ -250,8 +250,8 @@ digraph implicitReceivers_kt {
             }
             91 [label="Exit function anonymousFunction"];
           }
-          92 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-    R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+          92 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
         (this@R|special/anonymous| as R|A|)
         this@R|special/anonymous|.R|/A.foo|()
         this@R|/A|.R|/A.foo|()
@@ -265,9 +265,9 @@ digraph implicitReceivers_kt {
         }
         94 [label="Exit function anonymousFunction"];
       }
-      95 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/a|, <L> = wa@fun R|kotlin/Any|.<anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-    R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-        R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(it: R|kotlin/Any|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+      95 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/a|, <L> = wa@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             (this@R|special/anonymous| as R|A|)
             this@R|special/anonymous|.R|/A.foo|()
             this@R|/A|.R|/A.foo|()

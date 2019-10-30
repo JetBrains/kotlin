@@ -19,9 +19,8 @@ FILE fqName:<root> fileName:/builtinMap.kt
                 <class: K>: <none>
                 <class: V>: <none>
                 <anonymous Java parameter>: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
-              block: FUN_EXPR type=kotlin.Function2<java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, kotlin.Unit> origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.Unit
-                  VALUE_PARAMETER name:it index:0 type:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>
+              block: FUN_EXPR type=kotlin.Function1<java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, kotlin.Unit> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                   BLOCK_BODY
                     CALL 'public open fun put (<anonymous Java parameter>: K1 of <root>.plus, <anonymous Java parameter>: V1 of <root>.plus): V1 of <root>.plus declared in java.util.HashMap' type=V1 of <root>.plus origin=null
                       $this: GET_VAR '<this>: java.util.HashMap declared in java.util.HashMap' type=java.util.HashMap<*, *> origin=null
