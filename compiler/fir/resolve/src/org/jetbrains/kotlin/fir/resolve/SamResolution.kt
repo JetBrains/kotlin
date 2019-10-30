@@ -134,7 +134,10 @@ class FirSamResolverImpl(
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
             newTypeParameter.bounds += oldTypeParameter.bounds.mapNotNull { typeRef ->
-                FirResolvedTypeRefImpl(typeRef.source, substitutor.substituteOrSelf(typeRef.coneTypeSafe() ?: return@mapNotNull null))
+                FirResolvedTypeRefImpl(
+                    typeRef.source,
+                    substitutor.substituteOrSelf(typeRef.coneTypeSafe<ConeKotlinType>() ?: return@mapNotNull null)
+                )
             }
         }
 
