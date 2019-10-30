@@ -20,7 +20,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -158,7 +157,7 @@ public class TemplateContext {
 
     Element element = new Element(TemplateSettings.CONTEXT);
     List<Map.Entry<String, Boolean>> entries = new ArrayList<>(myContextStates.entrySet());
-    entries.sort(Comparator.comparing(Map.Entry::getKey));
+    entries.sort(Map.Entry.comparingByKey());
     for (Map.Entry<String, Boolean> entry : entries) {
       Boolean ownValue = entry.getValue();
       if (ownValue == null) {
