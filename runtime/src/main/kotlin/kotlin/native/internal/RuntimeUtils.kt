@@ -62,6 +62,11 @@ internal fun ThrowIllegalArgumentException() : Nothing {
 }
 
 @ExportForCppRuntime
+internal fun ThrowIllegalArgumentExceptionWithMessage(message: String) : Nothing {
+    throw IllegalArgumentException(message)
+}
+
+@ExportForCppRuntime
 internal fun ThrowIllegalStateException() : Nothing {
     throw IllegalStateException()
 }

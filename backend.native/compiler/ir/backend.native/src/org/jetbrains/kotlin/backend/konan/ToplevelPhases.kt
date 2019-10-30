@@ -282,6 +282,7 @@ internal val allLoweringsPhase = namedIrModulePhase(
                         name = "IrLowerByFile",
                         description = "IR Lowering by file",
                         lower = lateinitPhase then
+                                forLoopsPhase then
                                 stringConcatenationPhase then
                                 enumConstructorsPhase then
                                 initializersPhase then
@@ -290,7 +291,6 @@ internal val allLoweringsPhase = namedIrModulePhase(
                                 tailrecPhase then
                                 defaultParameterExtentPhase then
                                 innerClassPhase then
-                                forLoopsPhase then
                                 dataClassesPhase then
                                 builtinOperatorPhase then
                                 finallyBlocksPhase then

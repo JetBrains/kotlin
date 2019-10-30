@@ -2195,6 +2195,13 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                 else -> icmpLe(args[0], args[1])
                             }
                         }
+                        functionSymbol == context.irBuiltIns.illegalArgumentExceptionSymbol -> {
+                            callDirect(
+                                    context.ir.symbols.throwIllegalArgumentExceptionWithMessage.owner,
+                                    args,
+                                    Lifetime.GLOBAL
+                            )
+                        }
                         else -> TODO(function.name.toString())
                     }
                 }
