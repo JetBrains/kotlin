@@ -44,10 +44,29 @@ fun Project.configureFormInstrumentation() {
         // classes from the "friendly directory" to the compile classpath.
         val testCompile = tasks.findByName("compileTestKotlin") as AbstractCompile?
         testCompile?.doFirst {
+            val originalClassesDirs = files((mainSourceSet as ExtensionAware).extra.get("classesDirsCopy"))
+
             testCompile.classpath = (testCompile.classpath
                     - mainSourceSet.output.classesDirs
-                    + files((mainSourceSet as ExtensionAware).extra.get("classesDirsCopy")))
+                    + originalClassesDirs)
+
+            // Since Kotlin 1.3.60, the friend paths available to the test compile task are calculated as the main source set's
+            // output.classesDirs. Since the classesDirs are excluded from the classpath (replaced by the originalClassesDirs),
+            // in order to be able to access the internals of 'main', tests need to receive the original classes dirs as a
+            // -Xfriend-paths compiler argument as well.
+            fun addFreeCompilerArgs(kotlinCompileTask: AbstractCompile, vararg args: String) {
+                val getKotlinOptions = kotlinCompileTask::class.java.getMethod("getKotlinOptions")
+                val kotlinOptions = getKotlinOptions(kotlinCompileTask)
+
+                val getFreeCompilerArgs = kotlinOptions::class.java.getMethod("getFreeCompilerArgs")
+                val freeCompilerArgs = getFreeCompilerArgs(kotlinOptions) as List<*>
+
+                val setFreeCompilerArgs = kotlinOptions::class.java.getMethod("setFreeCompilerArgs", List::class.java)
+                setFreeCompilerArgs(kotlinOptions, freeCompilerArgs + args)
+            }
+            addFreeCompilerArgs(testCompile, "-Xfriend-paths=" + originalClassesDirs.joinToString(",")  { it.absolutePath })
         }
+
     }
 
     val instrumentationClasspathCfg = configurations.create("instrumentationClasspath")
