@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.tooling.tasks
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
@@ -25,8 +24,6 @@ class DependenciesReport extends DefaultTask {
 
   @TaskAction
   void generate() {
-    List<ComponentNode> graph = []
-    Gson gson = new GsonBuilder().create()
     Collection<Configuration> configurationList
     if (configurations.isEmpty()) {
       configurationList = project.configurations
@@ -41,56 +38,62 @@ class DependenciesReport extends DefaultTask {
       }
     }
 
+    List<ConfigurationNode> graph = []
     for (configuration in configurationList) {
       if (!configuration.isCanBeResolved()) continue
-      ResolutionResult resolutionResult = configuration.getIncoming().getResolutionResult()
-      RenderableDependency root = new RenderableModuleResult(resolutionResult.root)
-      graph.add(toNode(gson, root, configuration.name, project.path, true, [:], new IdGenerator()))
+      graph.add(buildDependenciesGraph(configuration, project.path))
     }
     outputFile.parentFile.mkdirs()
-    outputFile.text = gson.toJson(graph)
+    outputFile.text = new GsonBuilder().create().toJson(graph)
   }
 
-  static ComponentNode toNode(Gson gson,
-                              RenderableDependency dependency,
-                              String configurationName,
-                              String projectPath,
-                              boolean isConfigurationNode,
-                              Map<Object, ComponentNode> added,
-                              IdGenerator idGenerator) {
-    def id = idGenerator.getId(dependency, configurationName)
+  static ConfigurationNode buildDependenciesGraph(Configuration configuration, String projectPath) {
+    ResolutionResult resolutionResult = configuration.getIncoming().getResolutionResult()
+    RenderableDependency root = new RenderableModuleResult(resolutionResult.root)
+    String configurationName = configuration.name
+    IdGenerator idGenerator = new IdGenerator()
+    long id = idGenerator.getId(root, configurationName)
+    AbstractComponentNode node = new ConfigurationNode(id, projectPath, configurationName)
+    node.setState(root.resolutionState.name())
+    for (RenderableDependency child in root.getChildren()) {
+      node.children.add(toNode(child, configurationName, [:], idGenerator))
+    }
+    return node
+  }
+
+  static private ComponentNode toNode(RenderableDependency dependency,
+                                      String configurationName,
+                                      Map<Object, ComponentNode> added,
+                                      IdGenerator idGenerator) {
+    long id = idGenerator.getId(dependency, configurationName)
     ComponentNode alreadySeenNode = added.get(id)
     if (alreadySeenNode != null) {
       return new ReferenceNode(id)
     }
 
     AbstractComponentNode node
-    if (isConfigurationNode) {
-      node = new ConfigurationNode(id, projectPath, configurationName)
+    if (dependency.id instanceof ProjectComponentIdentifier) {
+      ProjectComponentIdentifier projectId = dependency.id as ProjectComponentIdentifier
+      node = new ProjectComponentNode(id, projectId.projectPath)
+    }
+    else if (dependency.id instanceof ModuleComponentIdentifier) {
+      ModuleComponentIdentifier moduleId = dependency.id as ModuleComponentIdentifier
+      node = new ArtifactComponentNode(id, moduleId.group, moduleId.module, moduleId.version)
     }
     else {
-      if (dependency.id instanceof ProjectComponentIdentifier) {
-        ProjectComponentIdentifier projectId = dependency.id as ProjectComponentIdentifier
-        node = new ProjectComponentNode(id, projectId.projectPath)
-      }
-      else if (dependency.id instanceof ModuleComponentIdentifier) {
-        ModuleComponentIdentifier moduleId = dependency.id as ModuleComponentIdentifier
-        node = new ArtifactComponentNode(id, moduleId.group, moduleId.module, moduleId.version)
-      }
-      else {
-        node = new BaseComponentNode(id, dependency.name)
-      }
+      node = new BaseComponentNode(id, dependency.name)
     }
     node.setState(dependency.resolutionState.name())
-
     added.put(id, node)
-    dependency.getChildren().each { RenderableDependency child ->
-      node.children.add(toNode(gson, child, configurationName, projectPath, false, added, idGenerator))
+    Iterator<? extends RenderableDependency> iterator = dependency.getChildren().iterator()
+    while(iterator.hasNext()) {
+      RenderableDependency child = iterator.next()
+      node.children.add(toNode(child, configurationName, added, idGenerator))
     }
     return node
   }
 
-  static class IdGenerator {
+  private static class IdGenerator {
     private Map<String, Long> idMap = new HashMap<>()
     private long value
 
