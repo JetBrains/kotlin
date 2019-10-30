@@ -79,8 +79,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val compileKotlinTask = compilation.compileKotlinTask
 
-        val dceOutputFileAppliers: MutableList<KotlinJsDce.(File) -> Unit> = mutableListOf()
-
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
             val runTask = project.registerTask<KotlinWebpack>(
@@ -109,9 +107,11 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 when (kind) {
                     BuildVariantKind.PRODUCTION -> {
-                        dceOutputFileAppliers.add { file ->
-                            it.entry = file
-                        }
+                        // Breaking of Task Configuration Avoidance is not so critical
+                        // because this task is dependent on DCE task
+                        it.entry = dceTaskProvider.get()
+                            .destinationDir
+                            .resolve(compileKotlinTask.outputFile.name)
                         it.resolveFromModulesFirst = true
                         it.dependsOn(dceTaskProvider)
                     }
@@ -122,12 +122,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 commonRunConfigurations.forEach { configure ->
                     it.configure()
-                }
-            }
-
-            dceTaskProvider.configure {
-                dceOutputFileAppliers.forEach { dceOutputFileApplier ->
-                    it.dceOutputFileApplier(it.destinationDir.resolve(compileKotlinTask.outputFile.name))
                 }
             }
 
@@ -149,8 +143,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
         val compileKotlinTask = compilation.compileKotlinTask
 
-        val dceOutputFileAppliers: MutableList<KotlinJsDce.(File) -> Unit> = mutableListOf()
-
         buildVariants.all { buildVariant ->
             val kind = buildVariant.kind
             val webpackTask = project.registerTask<KotlinWebpack>(
@@ -171,9 +163,11 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 when (kind) {
                     BuildVariantKind.PRODUCTION -> {
-                        dceOutputFileAppliers.add { file ->
-                            it.entry = file
-                        }
+                        // Breaking of Task Configuration Avoidance is not so critical
+                        // because this task is dependent on DCE task
+                        it.entry = dceTaskProvider.get()
+                            .destinationDir
+                            .resolve(compileKotlinTask.outputFile.name)
                         it.resolveFromModulesFirst = true
                         it.dependsOn(dceTaskProvider)
                     }
@@ -184,12 +178,6 @@ open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                 commonWebpackConfigurations.forEach { configure ->
                     it.configure()
-                }
-            }
-
-            dceTaskProvider.configure {
-                dceOutputFileAppliers.forEach { dceOutputFileApplier ->
-                    it.dceOutputFileApplier(it.destinationDir.resolve(compileKotlinTask.outputFile.name))
                 }
             }
 
