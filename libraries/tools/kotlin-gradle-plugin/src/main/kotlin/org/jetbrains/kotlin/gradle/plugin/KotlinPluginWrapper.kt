@@ -24,6 +24,7 @@ import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.build.event.BuildEventsListenerRegistry
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -49,6 +50,7 @@ import kotlin.reflect.KClass
 abstract class KotlinBasePluginWrapper(
     protected val fileResolver: FileResolver
 ) : Plugin<Project> {
+
     private val log = Logging.getLogger(this.javaClass)
     val kotlinPluginVersion = loadKotlinVersionFromResource(log)
 
@@ -58,7 +60,8 @@ abstract class KotlinBasePluginWrapper(
         DefaultKotlinSourceSetFactory(project, fileResolver)
 
     override fun apply(project: Project) {
-        val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project.gradle)
+        val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
+        val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project, listenerRegistryHolder)
         statisticsReporter?.report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
 
         checkGradleCompatibility()
@@ -80,7 +83,8 @@ abstract class KotlinBasePluginWrapper(
 
         // TODO: consider only set if if daemon or parallel compilation are enabled, though this way it should be safe too
         System.setProperty(org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
-        val kotlinGradleBuildServices = KotlinGradleBuildServices.getInstance(project.gradle)
+
+        val kotlinGradleBuildServices = KotlinGradleBuildServices.getInstance(project, listenerRegistryHolder)
 
         kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
@@ -167,7 +171,8 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
 }
 
 open class KotlinJsPluginWrapper @Inject constructor(
-    fileResolver: FileResolver
+    fileResolver: FileResolver,
+    listenerRegistry: BuildEventsListenerRegistry
 ) : KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinJsPlugin(kotlinPluginVersion)

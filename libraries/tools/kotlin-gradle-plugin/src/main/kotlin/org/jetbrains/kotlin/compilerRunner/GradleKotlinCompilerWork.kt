@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
@@ -35,11 +36,12 @@ internal class ProjectFilesForCompilation(
     val sessionFlagFile: File,
     val buildDir: File
 ) : Serializable {
-    constructor(project: Project) : this(
-        projectRootFile = project.rootProject.projectDir,
-        clientIsAliveFlagFile = GradleCompilerRunner.getOrCreateClientFlagFile(project),
-        sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(project),
-        buildDir = project.buildDir
+    //TODO
+    constructor(logger: Logger, projectDir:File, buildDir: File, prjectName: String, projectRootDir: File, sessionDir: File) : this(
+        projectRootFile = projectDir,
+        clientIsAliveFlagFile = GradleCompilerRunner.getOrCreateClientFlagFile(logger, prjectName),
+        sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(logger, sessionDir, projectRootDir),
+        buildDir = buildDir
     )
 
     companion object {

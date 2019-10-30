@@ -44,7 +44,7 @@ internal open class AbstractKotlinCompileArgumentsContributor<T : CommonCompiler
 
     protected val logger by taskProvider.map { it.logger }
 
-    private val isMultiplatform by taskProvider.map { it.isMultiplatform }
+    private val isMultiplatform = taskProvider.map { it.isMultiplatform }.get()
 
     private val pluginClasspath by taskProvider.map { it.pluginClasspath }
     private val pluginOptions by taskProvider.map { it.pluginOptions }
@@ -53,7 +53,7 @@ internal open class AbstractKotlinCompileArgumentsContributor<T : CommonCompiler
         args: T,
         flags: Collection<CompilerArgumentsConfigurationFlag>
     ) {
-        args.coroutinesState = when (coroutines) {
+        args.coroutinesState = when (coroutines.get()) {
             Coroutines.ENABLE -> CommonCompilerArguments.ENABLE
             Coroutines.WARN -> CommonCompilerArguments.WARN
             Coroutines.ERROR -> CommonCompilerArguments.ERROR
@@ -84,6 +84,11 @@ internal open class KotlinJvmCompilerArgumentsContributor(
 
     private val moduleName by taskProvider.map { it.moduleName }
 
+    //TODO
+    //objects.fileCollection
+    // .from(taskData.compilation.output.classesDir, taskData.compilation.friendArtifacts)
+    // .elements
+    // .map { it.asFile.canonicalPath }
     private val friendPaths by taskProvider.map { it.friendPaths }
 
     private val compileClasspath by taskProvider.map { it.compileClasspath }

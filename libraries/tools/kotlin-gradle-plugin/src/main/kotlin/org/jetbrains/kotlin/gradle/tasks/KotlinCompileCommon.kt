@@ -96,7 +96,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
     override fun callCompilerAsync(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
-        val compilerRunner = compilerRunner()
+        val compilerRunner = compilerRunner
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
             buildReportMode = buildReportMode,

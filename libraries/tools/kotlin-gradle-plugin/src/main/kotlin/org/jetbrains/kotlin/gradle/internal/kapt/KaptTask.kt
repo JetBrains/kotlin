@@ -28,7 +28,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
         outputs.cacheIf(reason) { useBuildCache }
     }
 
-    override fun localStateDirectories(): FileCollection = project.files()
+    override fun localStateDirectories(): FileCollection = objects.fileCollection()
 
     @get:Internal
     @field:Transient
@@ -37,10 +37,13 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     @get:Internal
     internal lateinit var stubsDir: File
 
+    @get:Internal
+    internal val objects = project.objects
+
     @get:Classpath
     @get:InputFiles
     val kaptClasspath: FileCollection
-        get() = project.files(kaptClasspathConfigurations)
+        get() = objects.fileCollection().from(kaptClasspathConfigurations)
 
     @get:Classpath
     @get:InputFiles

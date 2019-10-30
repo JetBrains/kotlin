@@ -116,10 +116,14 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
             destinationDir.set(project.provider { defaultKotlinDestinationDir })
         }
 
-        return register(project, name) {
+        val result = register(project, name) {
             it.description = taskDescription
             it.mapClasspath { kotlinCompilation.compileDependencyFiles }
         }
+
+        kotlinCompilation.output.addClassesDir { project.files(result.get().destinationDir).builtBy(result) }
+
+        return result
     }
 
     override fun run() {

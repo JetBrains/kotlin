@@ -27,16 +27,16 @@ import java.io.File
 
 internal fun AbstractCompile.appendClasspathDynamically(file: File) {
     var added = false
-
+    val objects = project.objects
     doFirst {
         if (file !in classpath) {
-            classpath += project.files(file)
+            classpath += objects.fileCollection().from(file)
             added = true
         }
     }
     doLast {
         if (added) {
-            classpath -= project.files(file)
+            classpath -= objects.fileCollection().from(file)
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,33 +13,34 @@ import java.io.File
 import java.net.URI
 import kotlin.test.fail
 
-class InstantExecutionIT : BaseGradleIT() {
+class ConfigurationCacheIT : BaseGradleIT() {
     private val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v4_0_ALPHA_8
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
             androidHome = KotlinTestUtils.findAndroidSdk(),
-            androidGradlePluginVersion = androidGradlePluginVersion
+            androidGradlePluginVersion = androidGradlePluginVersion,
+            configurationCache = true
         )
 
-    private val minimumGradleVersion = GradleVersionRequired.AtLeast("6.1-rc-3")
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast("6.6-milestone-2")
 
     @Test
-    fun testSimpleKotlinJvmProject() = with(Project("kotlinProject", minimumGradleVersion)) {
-        testInstantExecutionOf(":compileKotlin")
+    fun testSimpleKotlinJvmProject() = with(Project("kotlinProject")) {
+        testConfigurationCacheOf(":compileKotlin")
     }
 
     @Test
-    fun testSimpleKotlinAndroidProject() = with(Project("android-dagger", minimumGradleVersion, "kapt2")) {
+    fun testSimpleKotlinAndroidProject() = with(Project("android-dagger", directoryPrefix = "kapt2")) {
         applyAndroid40Alpha4KotlinVersionWorkaround()
         projectDir.resolve("gradle.properties").appendText("\nkapt.incremental.apt=false")
-        testInstantExecutionOf(":app:compileDebugKotlin", ":app:kaptDebugKotlin", ":app:kaptGenerateStubsDebugKotlin")
+        testConfigurationCacheOf(":app:compileDebugKotlin", ":app:kaptDebugKotlin", ":app:kaptGenerateStubsDebugKotlin")
     }
 
     @Test
     fun testIncrementalKaptProject() = with(getIncrementalKaptProject()) {
-        testInstantExecutionOf(
+        testConfigurationCacheOf(
             ":compileKotlin",
             ":kaptKotlin",
             buildOptions = defaultBuildOptions().copy(
@@ -55,13 +56,13 @@ class InstantExecutionIT : BaseGradleIT() {
     }
 
     private fun getIncrementalKaptProject() =
-        Project("kaptIncrementalCompilationProject", minimumGradleVersion).apply {
+        Project("kaptIncrementalCompilationProject").apply {
             setupIncrementalAptProject("AGGREGATING")
         }
 
-    private fun Project.testInstantExecutionOf(vararg taskNames: String, buildOptions: BuildOptions = defaultBuildOptions()) {
+    private fun Project.testConfigurationCacheOf(vararg taskNames: String, buildOptions: BuildOptions = defaultBuildOptions()) {
         // First, run a build that serializes the tasks state for instant execution in further builds
-        instantExecutionOf(*taskNames, buildOptions = buildOptions) {
+        configurationCacheOf(*taskNames, buildOptions = buildOptions) {
             assertSuccessful()
             assertTasksExecuted(*taskNames)
             checkInstantExecutionSucceeded()
@@ -72,12 +73,12 @@ class InstantExecutionIT : BaseGradleIT() {
         }
 
         // Then run a build where tasks states are deserialized to check that they work correctly in this mode
-        instantExecutionOf(*taskNames, buildOptions = buildOptions) {
+        configurationCacheOf(*taskNames, buildOptions = buildOptions) {
             assertSuccessful()
             assertTasksExecuted(*taskNames)
         }
 
-        instantExecutionOf(*taskNames, buildOptions = buildOptions) {
+        configurationCacheOf(*taskNames, buildOptions = buildOptions) {
             assertSuccessful()
             assertTasksUpToDate(*taskNames)
         }
@@ -89,12 +90,12 @@ class InstantExecutionIT : BaseGradleIT() {
         }
     }
 
-    private fun Project.instantExecutionOf(
+    private fun Project.configurationCacheOf(
         vararg tasks: String,
         buildOptions: BuildOptions = defaultBuildOptions(),
         check: CompiledProject.() -> Unit
     ) =
-        build("-Dorg.gradle.unsafe.instant-execution=true", *tasks, options = buildOptions, check = check)
+        build("-Dorg.gradle.unsafe.configuration-cache=true", *tasks, options = buildOptions, check = check)
 
     /**
      * Copies all files from the directory containing the given [htmlReportFile] to a
@@ -112,8 +113,8 @@ class InstantExecutionIT : BaseGradleIT() {
      * found while caching the task graph.
      */
     private fun Project.instantExecutionReportFile() = projectDir
-        .resolve(".instant-execution-state")
-        .findFileByName("instant-execution-report.html")
+        .resolve("configuration-cache")
+        .findFileByName("configuration-cache-report.html")
         ?.let { copyReportToTempDir(it) }
 
     private fun File.asClickableFileUrl(): String =
@@ -145,5 +146,61 @@ class InstantExecutionIT : BaseGradleIT() {
             }
             $resolutionStrategyHack
         """.trimIndent())
+    }
+
+    @Test
+    fun testInstantExecution() {
+        val project = Project("instantExecution")
+
+        //first run without cache
+        project.build("assemble") {
+            assertSuccessful()
+            assertContains("Calculating task graph as no configuration cache is available for tasks: assemble")
+
+            assertTasksExecuted(
+                ":compileKotlin",
+                ":compileTestKotlin"
+            )
+        }
+
+        //second run should use cache
+        project.build("assemble") {
+            assertSuccessful()
+
+            assertContains("Reusing configuration cache.")
+
+            assertTasksExecuted(
+                ":compileKotlin",
+                ":compileTestKotlin"
+            )
+        }
+
+    }
+
+    @Test
+    fun testInstantExecutionForJs() {
+        val project = Project("instantExecutionToJs")
+
+        project.build("assemble") {
+            assertSuccessful()
+            assertContains("Calculating task graph as no configuration cache is available for tasks: assemble")
+
+            assertTasksExecuted(
+                ":compileKotlin2Js",
+                ":compileTestKotlin2Js"
+            )
+
+            assertFileExists("build/kotlin2js/main/module.js")
+            assertFileExists("build/kotlin2js/test/module-tests.js")
+        }
+
+        project.build("assemble") {
+            assertSuccessful()
+            assertContains("Reusing configuration cache.")
+
+            assertFileExists("build/kotlin2js/main/module.js")
+            assertFileExists("build/kotlin2js/test/module-tests.js")
+        }
+
     }
 }

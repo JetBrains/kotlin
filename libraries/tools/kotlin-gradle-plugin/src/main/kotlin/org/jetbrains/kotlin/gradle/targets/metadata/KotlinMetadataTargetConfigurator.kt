@@ -457,6 +457,31 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                 }
             }
         )
+        /*
+        val transformedFilesByOriginalFiles = project.provider {
+            transformationTaskHolders
+                .flatMap { it.get().filesByOriginalFiles.toList() }
+                .groupBy({ it.first }, valueTransform = { it.second })
+        }
+
+        val builtBySet = mutableSetOf<FileCollection>()
+        val resultFiles = project.files(Callable {
+            val originalFiles = fromFiles.toSet()
+            val filesToAdd = mutableSetOf<File>()
+            val filesToExclude = mutableSetOf<File>()
+
+            transformedFilesByOriginalFiles.get().forEach { (original, replacement) ->
+                if (original.all { it in originalFiles }) {
+                    builtBySet.addAll(replacement)
+                    filesToAdd += replacement.flatMap { it.files }
+                    filesToExclude += original
+                }
+            }
+
+            originalFiles - filesToExclude + filesToAdd
+        })
+        return resultFiles.builtBy(builtBySet)
+         */
     }
 
     private fun createCommonMainElementsConfiguration(target: KotlinMetadataTarget) {
