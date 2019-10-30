@@ -70,7 +70,13 @@ open class InliningContext(
             nameGenerator.subGenerator("lambda"),
             //mark lambda inlined
             hashMapOf(lambdaInfo.lambdaClassType.internalName to null),
-            lambdaInfo
+            lambdaInfo,
+            // TODO we also want this for the old backend (KT-28064), but this changes EnclosingMethod of objects
+            //      in inline lambdas, so use a language version flag.
+            if (state.isIrBackend)
+                false // Do not regenerate objects in lambdas inlined into regenerated objects unless needed for some other reason.
+            else
+                classRegeneration
         )
 
     fun subInlineWithClassRegeneration(
@@ -86,7 +92,8 @@ open class InliningContext(
     fun subInline(
         generator: NameGenerator,
         additionalTypeMappings: Map<String, String?> = emptyMap(),
-        lambdaInfo: LambdaInfo? = this.lambdaInfo
+        lambdaInfo: LambdaInfo? = this.lambdaInfo,
+        classRegeneration: Boolean = this.classRegeneration
     ): InliningContext {
         val isInliningLambda = lambdaInfo != null
         return InliningContext(
