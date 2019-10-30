@@ -39,7 +39,6 @@ import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class IdeaModuleInfoTest : ModuleTestCase() {
-
     fun testSimpleModuleDependency() {
         val (a, b) = modules()
         b.addDependency(a)
@@ -346,13 +345,18 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     fun testSdkForScript() {
+        // The first known jdk will be used for scripting if there is no jdk in the project
         runWriteAction {
             ProjectJdkTable.getInstance().addJdk(mockJdk6())
             ProjectJdkTable.getInstance().addJdk(mockJdk9())
+
+            ProjectRootManager.getInstance(project).projectSdk = null
         }
 
+        val firstSDK = ProjectJdkTable.getInstance().allJdks.first()
+
         with(createFileInProject("script.kts").moduleInfo) {
-            dependencies().filterIsInstance<SdkInfo>().single { it.sdk == mockJdk6() }
+            dependencies().filterIsInstance<SdkInfo>().single { it.sdk == firstSDK }
         }
     }
 
