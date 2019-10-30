@@ -3855,7 +3855,7 @@ if (UtilsKt.testTargetSupportsCodeCoverage(project)) {
 
         binaryName = "CoverageBasic"
         numberOfCoveredFunctions = 1
-        numberOfCoveredLines = 1
+        numberOfCoveredLines = 3
 
         konanArtifacts {
             program(binaryName, targets: [ target ]) {
@@ -3892,7 +3892,7 @@ if (UtilsKt.testTargetSupportsCodeCoverage(project)) {
     task coverage_smoke0(type: CoverageTest) {
         binaryName = "CoverageSmoke0"
         numberOfCoveredFunctions = 2
-        numberOfCoveredLines = 3
+        numberOfCoveredLines = 5
 
         konanArtifacts {
             program(binaryName, targets: [ target ]) {

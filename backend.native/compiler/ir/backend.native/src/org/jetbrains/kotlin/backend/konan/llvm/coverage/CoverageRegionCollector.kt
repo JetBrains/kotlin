@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -39,12 +40,10 @@ internal class CoverageRegionCollector(private val fileFilter: (IrFile) -> Boole
 
         override fun visitFunction(declaration: IrFunction) {
             if (!declaration.isInline && !declaration.isExternal && !declaration.isGeneratedByCompiler) {
-                declaration.body?.let {
-                    val regionsCollector = IrFunctionRegionsCollector(fileFilter, file)
-                    regionsCollector.visitBody(it)
-                    if (regionsCollector.regions.isNotEmpty()) {
-                        functionRegions += FunctionRegions(declaration, regionsCollector.regions)
-                    }
+                val regionsCollector = IrFunctionRegionsCollector(fileFilter, file)
+                regionsCollector.visitFunction(declaration)
+                if (regionsCollector.regions.isNotEmpty()) {
+                    functionRegions += FunctionRegions(declaration, regionsCollector.regions)
                 }
             }
             // TODO: Decide how to work with local functions. Should they be process separately?
@@ -57,7 +56,7 @@ internal class CoverageRegionCollector(private val fileFilter: (IrFile) -> Boole
 // So lets filter them.
 private val IrDeclaration.isGeneratedByCompiler: Boolean
     get() {
-        return origin != IrDeclarationOrigin.DEFINED
+        return origin != IrDeclarationOrigin.DEFINED || nameForIrSerialization.asString() == "Konan_start"
     }
 
 /**
@@ -83,6 +82,10 @@ private class IrFunctionRegionsCollector(
     }
 
     override fun visitFunction(declaration: IrFunction) {
+        declaration.body?.let {
+            recordRegion(it)
+            visitBody(it)
+        }
     }
 
     override fun visitExpression(expression: IrExpression) {
