@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.codeInsight.gradle
 
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.testFramework.runInEdtAndWait
@@ -29,7 +30,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         runInEdtAndWait {
             runWriteAction {
                 // Create not configured build.gradle for project
-                myProject.baseDir.createChildData(null, "build.gradle")
+                myProject.guessProjectDir()!!.createChildData(null, "build.gradle")
 
                 val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
                 val moduleGroup = module.toModuleGroup()
