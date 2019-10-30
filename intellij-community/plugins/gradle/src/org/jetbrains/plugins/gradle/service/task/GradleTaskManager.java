@@ -263,7 +263,7 @@ public class GradleTaskManager extends BaseExternalSystemTaskManager<GradleExecu
                         "allprojects {\n" +
                         "  afterEvaluate { project ->\n" +
                         "    if(project.path == '" + gradlePath + "') {\n" +
-                        "        def overwrite = project.tasks.findByName('" + taskName + "') != null" +
+                        "        def overwrite = project.tasks.findByName('" + taskName + "') != null\n" +
                         "        project.tasks.create(name: '" + taskName + "', overwrite: overwrite, type: " + taskClass.getName() + ") {\n" +
                         StringUtil.notNullize(taskConfiguration) + "\n" +
                         "        }\n" +
