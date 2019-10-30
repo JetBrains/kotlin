@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -20,12 +20,13 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirErrorLoop(
-    override val source: FirSourceElement?
-) : FirPureAbstractElement(), FirLoop, FirAbstractAnnotatedElement {
+class FirErrorLoopImpl(
+    override val source: FirSourceElement?,
+    override val diagnostic: FirDiagnostic
+) : FirErrorLoop(), FirAbstractAnnotatedElement {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var block: FirBlock = FirEmptyExpressionBlock()
-    override var condition: FirExpression = FirErrorExpressionImpl(source, "error loop")
+    override var condition: FirExpression = FirErrorExpressionImpl(source, diagnostic)
     override var label: FirLabel? = null
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -35,24 +36,24 @@ class FirErrorLoop(
         label?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorLoop {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
         transformBlock(transformer, data)
         transformCondition(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
 
-    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoop {
+    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
         block = block.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoop {
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
         condition = condition.transformSingle(transformer, data)
         return this
     }
 
-    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorLoop {
+    override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorLoopImpl {
         annotations.transformInplace(transformer, data)
         label = label?.transformSingle(transformer, data)
         return this

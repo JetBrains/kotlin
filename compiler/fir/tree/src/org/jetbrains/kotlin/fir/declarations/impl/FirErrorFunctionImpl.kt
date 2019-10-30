@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
@@ -29,12 +30,12 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirErrorFunctionImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
-    override val reason: String,
+    override val diagnostic: FirDiagnostic,
     override val symbol: FirErrorFunctionSymbol
 ) : FirErrorFunction(), FirAbstractAnnotatedElement {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, reason)
+    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
@@ -55,7 +56,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformExpression(expression: FirExpression, data: Any?): CompositeTransformResult<FirStatement> {
         if (expression.resultType is FirImplicitTypeRef && expression !is FirWrappedExpression) {
-            val type = FirErrorTypeRefImpl(expression.source, "Type calculating for ${expression::class} is not supported")
+            val type = FirErrorTypeRefImpl(expression.source, FirSimpleDiagnostic("Type calculating for ${expression::class} is not supported"))
             expression.resultType = type
         }
         return (expression.transformChildren(transformer, data) as FirStatement).compose()
@@ -83,7 +84,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 } else {
                     val superTypeRef = implicitReceiverStack.lastDispatchReceiver()
                         ?.boundSymbol?.phasedFir?.superTypeRefs?.firstOrNull()
-                        ?: FirErrorTypeRefImpl(qualifiedAccessExpression.source, "No super type")
+                        ?: FirErrorTypeRefImpl(qualifiedAccessExpression.source, FirSimpleDiagnostic("No super type"))
                     qualifiedAccessExpression.resultType = superTypeRef
                     callee.replaceSuperTypeRef(superTypeRef)
                 }
@@ -171,7 +172,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         block.resultType = if (resultExpression == null) {
             FirImplicitUnitTypeRef(block.source)
         } else {
-            (resultExpression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(null, "No type for block")
+            (resultExpression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(null, FirSimpleDiagnostic("No type for block"))
         }
         dataFlowAnalyzer.exitBlock(block)
         return block.compose()
@@ -228,13 +229,13 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     val assignment =
                         FirVariableAssignmentImpl(operatorCall.source, false, resolvedOperatorCall, FirOperation.ASSIGN).apply {
                             lValue = (leftArgument as? FirQualifiedAccess)?.calleeReference
-                                ?: FirErrorNamedReferenceImpl(null, "Unresolved reference")
+                                ?: FirErrorNamedReferenceImpl(null, FirSimpleDiagnostic("Unresolved reference"))
                         }
                     assignment.transform(transformer, noExpectedType)
                 }
                 else -> FirErrorExpressionImpl(
                     operatorCall.source,
-                    "Operator overload ambiguity. $assignmentOperatorName and $simpleOperatorName are compatible"
+                    FirSimpleDiagnostic("Operator overload ambiguity. $assignmentOperatorName and $simpleOperatorName are compatible")
                 ).compose()
             }
         }

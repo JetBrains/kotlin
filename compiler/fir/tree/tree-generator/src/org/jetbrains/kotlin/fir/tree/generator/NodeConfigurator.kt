@@ -59,6 +59,10 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +field("calleeReference", reference).withTransform()
         }
 
+        diagnosticHolder.configure {
+            +field("diagnostic", firDiagnosticType)
+        }
+
         declaration.configure {
             +field("session", firSessionType)
             +field("resolvePhase", resolvePhaseType, withReplace = true).apply { isMutable = true }
@@ -95,7 +99,6 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         errorFunction.configure {
             parentArg(function, "F", errorFunction)
-            +stringField("reason")
             +symbol("FirErrorFunctionSymbol")
         }
 
@@ -398,10 +401,6 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +intField("componentIndex")
         }
 
-        errorExpression.configure {
-            +stringField("reason")
-        }
-
         expressionWithSmartcast.configure {
             +field("originalExpression", qualifiedAccessExpression)
             +field("typesFromSmartcast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
@@ -493,10 +492,6 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             +field("type", coneKotlinTypeType)
         }
 
-        errorTypeRef.configure {
-            +stringField("reason")
-        }
-
         delegatedTypeRef.configure {
             +field("delegate", expression, nullable = true)
             +field(typeRef)
@@ -531,10 +526,6 @@ object NodeConfigurator : AbstractFieldConfigurator() {
         typeProjectionWithVariance.configure {
             +field(typeRef)
             +field(varianceType)
-        }
-
-        errorNamedReference.configure {
-            +stringField("errorReason")
         }
 
         contractDescription.configure {

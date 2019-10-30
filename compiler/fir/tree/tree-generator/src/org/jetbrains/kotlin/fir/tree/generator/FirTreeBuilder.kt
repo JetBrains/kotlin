@@ -59,7 +59,10 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val anonymousFunction = element("AnonymousFunction", Declaration, function, expression)
     val anonymousObject = element("AnonymousObject", Declaration, klass, expression)
 
+    val diagnosticHolder = element("DiagnosticHolder", Diagnostics)
+
     val loop = element("Loop", Expression, statement, targetElement, annotationContainer)
+    val errorLoop = element("ErrorLoop", Expression, loop, diagnosticHolder)
     val doWhileLoop = element("DoWhileLoop", Expression, loop)
     val whileLoop = element("WhileLoop", Expression, loop)
 
@@ -88,8 +91,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val arrayOfCall = element("ArrayOfCall", Expression, expression, call)
     val arraySetCall = element("ArraySetCall", Expression, qualifiedAccess, call)
     val classReferenceExpression = element("ClassReferenceExpression", Expression, expression)
-    val errorExpression = element("ErrorExpression", Expression, expression)
-    val errorFunction = element("ErrorFunction", Declaration, function)
+    val errorExpression = element("ErrorExpression", Expression, expression, diagnosticHolder)
+    val errorFunction = element("ErrorFunction", Declaration, function, diagnosticHolder)
     val qualifiedAccessExpression = element("QualifiedAccessExpression", Expression, expression, qualifiedAccess)
     val functionCall = element("FunctionCall", Expression, qualifiedAccessExpression, call)
     val componentCall = element("ComponentCall", Expression, functionCall)
@@ -113,7 +116,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val wrappedDelegateExpression = element("WrappedDelegateExpression", Expression, wrappedExpression)
 
     val namedReference = element("NamedReference", Reference, reference)
-    val errorNamedReference = element("ErrorNamedReference", Reference, namedReference)
+    val errorNamedReference = element("ErrorNamedReference", Reference, namedReference, diagnosticHolder)
     val superReference = element("SuperReference", Reference, reference)
     val thisReference = element("ThisReference", Reference, reference)
     val controlFlowGraphReference = element("ControlFlowGraphReference", Reference, reference)
@@ -125,7 +128,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val resolvedCallableReference = element("ResolvedCallableReference", Reference, resolvedNamedReference)
 
     val resolvedTypeRef = element("ResolvedTypeRef", TypeRef, typeRef)
-    val errorTypeRef = element("ErrorTypeRef", TypeRef, resolvedTypeRef)
+    val errorTypeRef = element("ErrorTypeRef", TypeRef, resolvedTypeRef, diagnosticHolder)
     val delegatedTypeRef = element("DelegatedTypeRef", TypeRef, typeRef)
     val typeRefWithNullability = element("TypeRefWithNullability", TypeRef, typeRef)
     val userTypeRef = element("UserTypeRef", TypeRef, typeRefWithNullability)

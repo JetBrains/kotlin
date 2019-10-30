@@ -125,6 +125,7 @@ class Element(val name: String, kind: Kind) : AbstractElement {
         Reference("references"),
         TypeRef("types"),
         Contracts("contracts"),
+        Diagnostics("diagnostics"),
         Other("")
     }
 }

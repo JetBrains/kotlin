@@ -48,7 +48,9 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirLoop
+import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -294,8 +296,16 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformElement(anonymousObject, data)
     }
 
+    open fun transformDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: D): CompositeTransformResult<FirDiagnosticHolder> {
+        return transformElement(diagnosticHolder, data)
+    }
+
     open fun transformLoop(loop: FirLoop, data: D): CompositeTransformResult<FirStatement> {
         return transformElement(loop, data)
+    }
+
+    open fun transformErrorLoop(errorLoop: FirErrorLoop, data: D): CompositeTransformResult<FirStatement> {
+        return transformElement(errorLoop, data)
     }
 
     open fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: D): CompositeTransformResult<FirStatement> {
@@ -734,8 +744,16 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformAnonymousObject(anonymousObject, data)
     }
 
+    final override fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: D): CompositeTransformResult<FirDiagnosticHolder> {
+        return transformDiagnosticHolder(diagnosticHolder, data)
+    }
+
     final override fun visitLoop(loop: FirLoop, data: D): CompositeTransformResult<FirStatement> {
         return transformLoop(loop, data)
+    }
+
+    final override fun visitErrorLoop(errorLoop: FirErrorLoop, data: D): CompositeTransformResult<FirStatement> {
+        return transformErrorLoop(errorLoop, data)
     }
 
     final override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: D): CompositeTransformResult<FirStatement> {

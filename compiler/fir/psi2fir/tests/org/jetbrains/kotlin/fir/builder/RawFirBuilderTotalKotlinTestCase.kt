@@ -76,7 +76,7 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
                         val calleeReference = qualifiedAccess.calleeReference
                         if (calleeReference is FirErrorNamedReference) {
                             errorReferences++
-                            println(calleeReference.errorReason)
+                            println(calleeReference.diagnostic.reason)
                         } else {
                             normalReferences++
                         }

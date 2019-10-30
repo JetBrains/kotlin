@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -84,7 +85,7 @@ class PostponedArgumentsAnalyzer(
             candidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
                 FirErrorNamedReferenceImpl(
                     callableReferenceAccess.source,
-                    "Unresolved reference: ${callableReferenceAccess.calleeReference.name}"
+                    FirSimpleDiagnostic("Unresolved reference: ${callableReferenceAccess.calleeReference.name}")
                 )
             else -> FirNamedReferenceWithCandidate(callableReferenceAccess.source, callableReferenceAccess.calleeReference.name, candidate)
         }

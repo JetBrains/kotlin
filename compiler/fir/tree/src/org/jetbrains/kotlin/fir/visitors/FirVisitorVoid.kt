@@ -48,7 +48,9 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirLoop
+import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -292,8 +294,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(anonymousObject)
     }
 
+    open fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder) {
+        visitElement(diagnosticHolder)
+    }
+
     open fun visitLoop(loop: FirLoop) {
         visitElement(loop)
+    }
+
+    open fun visitErrorLoop(errorLoop: FirErrorLoop) {
+        visitElement(errorLoop)
     }
 
     open fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop) {
@@ -732,8 +742,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitAnonymousObject(anonymousObject)
     }
 
+    final override fun visitDiagnosticHolder(diagnosticHolder: FirDiagnosticHolder, data: Nothing?) {
+        visitDiagnosticHolder(diagnosticHolder)
+    }
+
     final override fun visitLoop(loop: FirLoop, data: Nothing?) {
         visitLoop(loop)
+    }
+
+    final override fun visitErrorLoop(errorLoop: FirErrorLoop, data: Nothing?) {
+        visitErrorLoop(errorLoop)
     }
 
     final override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: Nothing?) {

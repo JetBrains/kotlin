@@ -224,11 +224,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             noSource()
         }
 
-        impl(errorExpression)
-
-        impl(loop, "FirErrorLoop") {
+        impl(errorLoop) {
             default("block", "FirEmptyExpressionBlock()")
-            default("condition", "FirErrorExpressionImpl(source, \"error loop\")")
+            default("condition", "FirErrorExpressionImpl(source, diagnostic)")
             defaultNull("label")
             useTypes(emptyExpressionBlock)
         }
@@ -496,13 +494,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(resolvedTypeRef)
 
         val errorTypeRefImpl = impl(errorTypeRef) {
-            default("type", "ConeClassErrorType(reason)")
+            default("type", "ConeClassErrorType(diagnostic.reason)")
             useTypes(coneClassErrorTypeType)
         }
 
         impl(errorFunction) {
             defaultNull("receiverTypeRef", "body", withGetter = true)
-            default("returnTypeRef", "FirErrorTypeRefImpl(null, reason)")
+            default("returnTypeRef", "FirErrorTypeRefImpl(null, diagnostic)")
             useTypes(errorTypeRefImpl)
         }
 
@@ -524,7 +522,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(errorNamedReference) {
-            default("name", "Name.special(\"<\$errorReason>\")")
+            default("name", "Name.special(\"<\$diagnostic.reason>\")")
             defaultNull("candidateSymbol", withGetter = true)
         }
 

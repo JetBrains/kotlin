@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 class FirErrorExpressionImpl(
     override val source: FirSourceElement?,
-    override val reason: String
+    override val diagnostic: FirDiagnostic
 ) : FirErrorExpression(), FirAbstractAnnotatedElement {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()

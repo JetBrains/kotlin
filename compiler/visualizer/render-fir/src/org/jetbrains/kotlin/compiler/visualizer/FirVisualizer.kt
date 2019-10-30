@@ -358,7 +358,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitNamedReference(namedReference: FirNamedReference, data: StringBuilder) {
             if (namedReference is FirErrorNamedReference) {
-                data.append("[ERROR : ${namedReference.errorReason}]")
+                data.append("[ERROR : ${namedReference.diagnostic.reason}]")
                 return
             }
             visitElement(namedReference, data)
@@ -416,7 +416,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         functionCall.typeRef.accept(this, data)
                     }
                 }
-                is FirErrorNamedReference -> data.append("[ERROR : ${callee.errorReason}]")
+                is FirErrorNamedReference -> data.append("[ERROR : ${callee.diagnostic.reason}]")
             }
         }
 
@@ -470,7 +470,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: StringBuilder) {
-            data.append("[ERROR : ${errorTypeRef.reason}]")
+            data.append("[ERROR : ${errorTypeRef.diagnostic.reason}]")
         }
 
         override fun visitResolvedFunctionTypeRef(resolvedFunctionTypeRef: FirResolvedFunctionTypeRef, data: StringBuilder) {

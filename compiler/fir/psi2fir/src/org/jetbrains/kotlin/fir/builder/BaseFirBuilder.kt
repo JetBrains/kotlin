@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
+import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -110,7 +111,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                         FirErrorFunctionImpl(
                             source,
                             this@BaseFirBuilder.session,
-                            "Cannot bind unlabeled return to a function",
+                            FirSimpleDiagnostic("Cannot bind unlabeled return to a function"),
                             FirErrorFunctionSymbol()
                         )
                     )
@@ -136,7 +137,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                     FirErrorFunctionImpl(
                         source,
                         this@BaseFirBuilder.session,
-                        "Cannot bind label $labelName to a function",
+                        FirSimpleDiagnostic("Cannot bind label $labelName to a function"),
                         FirErrorFunctionSymbol()
                     )
                 )
@@ -238,7 +239,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                         expression.getSourceOrNull(), IrConstKind.Int, convertedText.toInt(), "Incorrect int: $text"
                     )
                 } else {
-                    FirErrorExpressionImpl(expression.getSourceOrNull(), reason = "Incorrect constant expression: $text")
+                    FirErrorExpressionImpl(expression.getSourceOrNull(), diagnostic = FirSimpleDiagnostic("Incorrect constant expression: $text"))
                 }
             FLOAT_CONSTANT ->
                 if (convertedText is Float) {
@@ -290,7 +291,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 else -> {
                     hasExpressions = true
                     FirErrorExpressionImpl(
-                        entry.getSourceOrNull(), "Incorrect template entry: ${entry.asText}"
+                        entry.getSourceOrNull(), FirSimpleDiagnostic("Incorrect template entry: ${entry.asText}")
                     )
                 }
             }
@@ -343,7 +344,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         convert: T.() -> FirExpression
     ): FirExpression {
         if (argument == null) {
-            return FirErrorExpressionImpl(argument, "Inc/dec without operand")
+            return FirErrorExpressionImpl(argument, FirSimpleDiagnostic("Inc/dec without operand"))
         }
         val source = baseExpression?.toFirSourceElement()
         return FirBlockImpl(source).apply {
@@ -410,7 +411,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                         firMemberAccess.calleeReference
                     } else {
                         FirErrorNamedReferenceImpl(
-                            left.getSourceOrNull(), "Unsupported qualified LValue: ${left.asText}"
+                            left.getSourceOrNull(), FirSimpleDiagnostic("Unsupported qualified LValue: ${left.asText}")
                         )
                     }
                 }
@@ -419,7 +420,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 }
             }
         }
-        return FirErrorNamedReferenceImpl(left.getSourceOrNull(), "Unsupported LValue: $tokenType")
+        return FirErrorNamedReferenceImpl(left.getSourceOrNull(), FirSimpleDiagnostic("Unsupported LValue: $tokenType"))
     }
 
     fun T?.generateAssignment(
@@ -468,7 +469,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 statements += generateTemporaryVariable(
                     this@BaseFirBuilder.session, this@generateAssignment.getSourceOrNull(), name,
                     this@generateAssignment?.convert()
-                        ?: FirErrorExpressionImpl(this.getSourceOrNull(), "No LValue in assignment")
+                        ?: FirErrorExpressionImpl(this.getSourceOrNull(), FirSimpleDiagnostic("No LValue in assignment"))
                 )
                 statements += FirVariableAssignmentImpl(source, false, value, operation).apply {
                     lValue = FirSimpleNamedReference(this.getSourceOrNull(), name, null)
@@ -479,7 +480,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         if (operation in FirOperation.ASSIGNMENTS && operation != FirOperation.ASSIGN) {
             return FirOperatorCallImpl(source, operation).apply {
                 // TODO: take good psi
-                arguments += this@generateAssignment?.convert() ?: FirErrorExpressionImpl(null, "Unsupported left value of assignment: ${source?.psi?.text}")
+                arguments += this@generateAssignment?.convert() ?: FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unsupported left value of assignment: ${source?.psi?.text}"))
                 arguments += value
             }
         }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
@@ -200,7 +201,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
             }
         }
         else -> {
-            FirErrorExpressionImpl(this.toFirSourceElement(), "Unsupported when condition: ${this.javaClass}")
+            FirErrorExpressionImpl(this.toFirSourceElement(), FirSimpleDiagnostic("Unsupported when condition: ${this.javaClass}"))
         }
     }
 }

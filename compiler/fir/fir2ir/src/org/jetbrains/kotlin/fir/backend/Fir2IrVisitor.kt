@@ -969,7 +969,7 @@ class Fir2IrVisitor(
             IrErrorExpressionImpl(
                 startOffset, endOffset,
                 errorExpression.typeRef.toIrType(session, declarationStorage),
-                errorExpression.reason
+                errorExpression.diagnostic.reason
             )
         }
     }

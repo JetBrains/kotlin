@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
@@ -105,21 +106,21 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             convertSafe() ?: implicitUnitType
 
         private fun KtTypeReference?.toFirOrErrorType(): FirTypeRef =
-            convertSafe() ?: FirErrorTypeRefImpl(this?.toFirSourceElement(), if (this == null) "Incomplete code" else "Conversion failed")
+            convertSafe() ?: FirErrorTypeRefImpl(this?.toFirSourceElement(), FirSimpleDiagnostic(if (this == null) "Incomplete code" else "Conversion failed"))
 
         // Here we accept lambda as receiver to prevent expression calculation in stub mode
         private fun (() -> KtExpression?).toFirExpression(errorReason: String): FirExpression =
             if (stubMode) FirExpressionStub(null)
             else with(this()) {
-                convertSafe<FirExpression>() ?: FirErrorExpressionImpl(this?.toFirSourceElement(), errorReason)
+                convertSafe<FirExpression>() ?: FirErrorExpressionImpl(this?.toFirSourceElement(), FirSimpleDiagnostic(errorReason))
             }
 
         private fun KtExpression?.toFirExpression(errorReason: String): FirExpression =
             if (stubMode) FirExpressionStub(null)
-            else convertSafe<FirExpression>() ?: FirErrorExpressionImpl(this?.toFirSourceElement(), errorReason)
+            else convertSafe<FirExpression>() ?: FirErrorExpressionImpl(this?.toFirSourceElement(), FirSimpleDiagnostic(errorReason))
 
         private fun KtExpression.toFirStatement(errorReason: String): FirStatement =
-            convertSafe() ?: FirErrorExpressionImpl(this.toFirSourceElement(), errorReason)
+            convertSafe() ?: FirErrorExpressionImpl(this.toFirSourceElement(), FirSimpleDiagnostic(errorReason))
 
         private fun KtExpression.toFirStatement(): FirStatement =
             convert()
@@ -130,7 +131,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             return when (this) {
                 is KtSecondaryConstructor -> toFirConstructor(
                     delegatedSuperType,
-                    delegatedSelfType ?: FirErrorTypeRefImpl(this.toFirSourceElement(), "Constructor in object"),
+                    delegatedSelfType ?: FirErrorTypeRefImpl(this.toFirSourceElement(), FirSimpleDiagnostic("Constructor in object")),
                     owner,
                     hasPrimaryConstructor
                 )
@@ -165,7 +166,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             }
 
         private fun ValueArgument?.toFirExpression(): FirExpression {
-            this ?: return FirErrorExpressionImpl((this as? KtElement)?.toFirSourceElement(), "No argument given")
+            this ?: return FirErrorExpressionImpl((this as? KtElement)?.toFirSourceElement(), FirSimpleDiagnostic("No argument given"))
             val name = this.getArgumentName()?.asName
             val expression = this.getArgumentExpression()
             val firExpression = when (expression) {
@@ -718,7 +719,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             val source = this.toFirSourceElement()
             val delegatedType = when {
                 isThis -> delegatedSelfTypeRef
-                else -> delegatedSuperTypeRef ?: FirErrorTypeRefImpl(source, "No super type")
+                else -> delegatedSuperTypeRef ?: FirErrorTypeRefImpl(source, FirSimpleDiagnostic("No super type"))
             }
             return FirDelegatedConstructorCallImpl(
                 source,
@@ -837,7 +838,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
                         userType
                     } else {
-                        FirErrorTypeRefImpl(source, "Incomplete user type")
+                        FirErrorTypeRefImpl(source, FirSimpleDiagnostic("Incomplete user type"))
                     }
                 }
                 is KtFunctionType -> {
@@ -856,7 +857,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     }
                     functionType
                 }
-                null -> FirErrorTypeRefImpl(source, "Unwrapped type is null")
+                null -> FirErrorTypeRefImpl(source, FirSimpleDiagnostic("Unwrapped type is null"))
                 else -> throw AssertionError("Unexpected type element: ${unwrappedElement.text}")
             }
 
@@ -1230,7 +1231,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                         calleeExpression.toFirSourceElement(), calleeExpression.getReferencedNameAsName(), null
                     )
                     null -> FirErrorNamedReferenceImpl(
-                        null, "Call has no callee"
+                        null, FirSimpleDiagnostic("Call has no callee")
                     )
                     else -> {
                         arguments += calleeExpression.toFirExpression("Incorrect invoke receiver")
@@ -1263,7 +1264,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitQualifiedExpression(expression: KtQualifiedExpression, data: Unit): FirElement {
             val selector = expression.selectorExpression
-                ?: return FirErrorExpressionImpl(expression.toFirSourceElement(), "Qualified expression without selector")
+                ?: return FirErrorExpressionImpl(expression.toFirSourceElement(), FirSimpleDiagnostic("Qualified expression without selector"))
             val firSelector = selector.toFirExpression("Incorrect selector expression")
             if (firSelector is FirModifiableQualifiedAccess) {
                 firSelector.safe = expression is KtSafeQualifiedExpression
@@ -1287,7 +1288,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         }
 
         override fun visitParenthesizedExpression(expression: KtParenthesizedExpression, data: Unit): FirElement {
-            return expression.expression?.accept(this, data) ?: FirErrorExpressionImpl(expression.toFirSourceElement(), "Empty parentheses")
+            return expression.expression?.accept(this, data) ?: FirErrorExpressionImpl(expression.toFirSourceElement(), FirSimpleDiagnostic("Empty parentheses"))
         }
 
         override fun visitLabeledExpression(expression: KtLabeledExpression, data: Unit): FirElement {
@@ -1297,7 +1298,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             if (labelName != null) {
                 context.firLabels += FirLabelImpl(source, labelName)
             }
-            val result = expression.baseExpression?.accept(this, data) ?: FirErrorExpressionImpl(source, "Empty label")
+            val result = expression.baseExpression?.accept(this, data) ?: FirErrorExpressionImpl(source, FirSimpleDiagnostic("Empty label"))
             if (size != context.firLabels.size) {
                 context.firLabels.removeLast()
                 println("Unused label: ${expression.text}")
@@ -1308,7 +1309,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         override fun visitAnnotatedExpression(expression: KtAnnotatedExpression, data: Unit): FirElement {
             val rawResult = expression.baseExpression?.accept(this, data)
             val result = rawResult as? FirAbstractAnnotatedElement
-                ?: FirErrorExpressionImpl(expression.toFirSourceElement(), "Strange annotated expression: ${rawResult?.render()}")
+                ?: FirErrorExpressionImpl(expression.toFirSourceElement(), FirSimpleDiagnostic("Strange annotated expression: ${rawResult?.render()}"))
             expression.extractAnnotationsTo(result)
             return result
         }

@@ -703,7 +703,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
         visitTypeRef(errorTypeRef)
-        print("<ERROR TYPE REF: ${errorTypeRef.reason}>")
+        print("<ERROR TYPE REF: ${errorTypeRef.diagnostic.reason}>")
     }
 
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
@@ -790,7 +790,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             symbol != null -> {
                 print("R?C|${symbol.render()}|")
             }
-            namedReference is FirErrorNamedReference -> print("<${namedReference.errorReason}>#")
+            namedReference is FirErrorNamedReference -> print("<${namedReference.diagnostic.reason}>#")
             else -> print("${namedReference.name}#")
         }
     }
@@ -1000,7 +1000,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression) {
-        print("ERROR_EXPR(${errorExpression.reason})")
+        print("ERROR_EXPR(${errorExpression.diagnostic.reason})")
     }
 
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {

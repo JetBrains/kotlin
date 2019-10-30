@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -17,11 +17,19 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirErrorExpression : FirPureAbstractElement(), FirExpression, FirDiagnosticHolder {
+abstract class FirErrorLoop : FirPureAbstractElement(), FirLoop, FirDiagnosticHolder {
     abstract override val source: FirSourceElement?
-    abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
+    abstract override val block: FirBlock
+    abstract override val condition: FirExpression
+    abstract override val label: FirLabel?
     abstract override val diagnostic: FirDiagnostic
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorLoop(this, data)
+
+    abstract override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirErrorLoop
+
+    abstract override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirErrorLoop
+
+    abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorLoop
 }

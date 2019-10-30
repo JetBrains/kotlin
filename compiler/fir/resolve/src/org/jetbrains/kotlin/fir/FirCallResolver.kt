@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
@@ -365,12 +366,12 @@ class FirCallResolver(
         val source = namedReference.source
         return when {
             candidates.isEmpty() -> FirErrorNamedReferenceImpl(
-                source, "Unresolved name: $name"
+                source, FirSimpleDiagnostic("Unresolved name: $name")
             )
             applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
                 FirErrorNamedReferenceImpl(
                     source,
-                    "Inapplicable($applicability): ${candidates.map { describeSymbol(it.symbol) }}"
+                    FirSimpleDiagnostic("Inapplicable($applicability): ${candidates.map { describeSymbol(it.symbol) }}")
                 )
             }
             candidates.size == 1 -> {
@@ -387,7 +388,7 @@ class FirCallResolver(
                 }
             }
             else -> FirErrorNamedReferenceImpl(
-                source, "Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}"
+                source, FirSimpleDiagnostic("Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}")
             )
         }
     }
