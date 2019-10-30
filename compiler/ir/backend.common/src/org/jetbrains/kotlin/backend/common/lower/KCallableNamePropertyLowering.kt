@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrCallableReference
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.isSubclassOf
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 
 val kCallableNamePropertyPhase = makeIrFilePhase(
     ::KCallableNamePropertyLowering,
@@ -45,6 +45,15 @@ private class KCallableNamePropertyLowering(val context: BackendContext) : FileL
 }
 
 private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyLowering) : IrElementTransformerVoid() {
+
+    private fun nameForCallableMember(reference: IrCallableReference): Name {
+        return when (reference) {
+            is IrFunctionReference -> reference.symbol.owner.name
+            is IrPropertyReference -> reference.symbol.owner.name
+            is IrLocalDelegatedPropertyReference -> reference.symbol.owner.name
+            else -> error("Unexpected callable reference type ${reference.render()}")
+        }
+    }
 
     override fun visitCall(expression: IrCall): IrExpression {
 
@@ -76,7 +85,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
                     expression.startOffset,
                     expression.endOffset,
                     lower.context.irBuiltIns.stringType,
-                    callableReference.symbol.descriptor.name.asString()
+                    nameForCallableMember(callableReference).asString()
                 )
             )
         }
