@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.ConcurrentLinkedQueue
 
-internal class BackgroundLoader(
+internal class BackgroundExecutor(
     private val project: Project,
-    private val rootsManager: ScriptClassRootsManager,
+    private val rootsManager: ScriptClassRootsIndexer,
     private val loadDependencies: (KtFile) -> Unit
 ) {
     private var task: Task? = null

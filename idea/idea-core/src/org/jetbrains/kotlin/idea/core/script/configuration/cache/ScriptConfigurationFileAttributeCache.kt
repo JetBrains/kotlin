@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.core.script.configuration.cache
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptDependenciesLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.util.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -22,7 +22,7 @@ import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
 class ScriptConfigurationFileAttributeCache :
-    ScriptDependenciesLoader {
+    ScriptConfigurationLoader {
     operator fun contains(file: VirtualFile): Boolean =
         file.scriptDependencies != null || file.scriptCompilationConfiguration != null
 

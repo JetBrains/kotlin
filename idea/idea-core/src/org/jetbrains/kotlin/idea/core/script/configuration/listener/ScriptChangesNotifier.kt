@@ -17,15 +17,15 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.Alarm
-import org.jetbrains.kotlin.idea.core.script.configuration.ScriptConfigurationManagerImpl
+import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.isNonScript
 
-class ScriptsListener(
+class ScriptChangesNotifier(
     private val project: Project,
-    private val scriptsManager: ScriptConfigurationManagerImpl
+    private val scriptsManager: DefaultScriptConfigurationManager
 ) {
     private val scriptsQueue = Alarm(Alarm.ThreadToUse.SWING_THREAD, project)
     private val scriptChangesListenerDelay = 1400

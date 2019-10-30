@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResu
 import org.jetbrains.kotlin.scripting.resolve.refineScriptCompilationConfiguration
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 
-class FromRefinedConfigurationLoader internal constructor() :
-    ScriptDependenciesLoader {
+class DefaultScriptConfigurationLoader internal constructor() :
+    ScriptConfigurationLoader {
     override fun isAsync(file: KtFile, scriptDefinition: ScriptDefinition): Boolean {
         return scriptDefinition.asLegacyOrNull<KotlinScriptDefinition>()?.dependencyResolver?.let {
             it is AsyncDependenciesResolver || it is LegacyResolverWrapper

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.valueOrNull
 
-class ScriptConfigurationManagerImpl internal constructor(private val project: Project) :
+class DefaultScriptConfigurationManager internal constructor(private val project: Project) :
     ScriptConfigurationManager {
     private val rootsManager = ScriptClassRootsManager(project)
 
