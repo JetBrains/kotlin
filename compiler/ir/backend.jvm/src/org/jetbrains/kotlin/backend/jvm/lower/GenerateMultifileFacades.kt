@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower
-import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.PhaserState
@@ -167,7 +166,7 @@ private fun IrField.shouldMoveToFacade(): Boolean {
 
 private fun IrFunction.createMultifileDelegateIfNeeded(context: JvmBackendContext, facadeClass: IrClass): IrFunction? {
     if (Visibilities.isPrivate(visibility) ||
-        name == InitializersLowering.clinitName ||
+        name == StaticInitializersLowering.clinitName ||
         origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
     ) return null
 

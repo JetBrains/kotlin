@@ -258,8 +258,8 @@ private val primaryConstructorLoweringPhase = makeJsModulePhase(
     prerequisite = setOf(enumClassConstructorLoweringPhase)
 )
 
-private val initializersLoweringPhase = makeCustomJsModulePhase(
-    { context, module -> InitializersLowering(context, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).lower(module) },
+private val initializersLoweringPhase = makeJsModulePhase(
+    ::InitializersLowering,
     name = "InitializersLowering",
     description = "Merge init block and field initializers into [primary] constructor",
     prerequisite = setOf(enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase)

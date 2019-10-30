@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.wasm.lower.BuiltInsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.WasmBlockDecomposerLowering
 import org.jetbrains.kotlin.backend.wasm.lower.excludeDeclarationsFromCodegen
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineFunctionsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -199,8 +201,8 @@ private val primaryConstructorLoweringPhase = makeWasmModulePhase(
     description = "Creates primary constructor if it doesn't exist"
 )
 
-private val initializersLoweringPhase = makeCustomWasmModulePhase(
-    { context, module -> InitializersLowering(context, JsLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER, false).lower(module) },
+private val initializersLoweringPhase = makeWasmModulePhase(
+    ::InitializersLowering,
     name = "InitializersLowering",
     description = "Merge init block and field initializers into [primary] constructor",
     prerequisite = setOf(primaryConstructorLoweringPhase)
