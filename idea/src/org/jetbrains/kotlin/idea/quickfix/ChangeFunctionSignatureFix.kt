@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
@@ -64,6 +65,12 @@ abstract class ChangeFunctionSignatureFix(
             argumentName != null -> KotlinNameSuggester.suggestNameByName(argumentName.asName.asString(), validator)
             expression != null -> {
                 val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
+                if (expression.text == "it") {
+                    val type = expression.getType(bindingContext)
+                    if (type != null) {
+                        return KotlinNameSuggester.suggestNamesByType(type, validator, "param").first()
+                    }
+                }
                 KotlinNameSuggester.suggestNamesByExpressionAndType(expression, null, bindingContext, validator, "param").first()
             }
             else -> KotlinNameSuggester.suggestNameByName("param", validator)
