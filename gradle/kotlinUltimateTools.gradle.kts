@@ -1,4 +1,3 @@
-import java.util.*
 import kotlin.reflect.KFunction
 
 // --------------------------------------------------
@@ -7,8 +6,9 @@ import kotlin.reflect.KFunction
 
 // TODO: pack this as a Gradle plugin
 val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
-    ::enableTasksIfAtLeast,
-    ::enableTasksIfOsIsNot,
+    ::ijProductBranch,
+    ::disableBuildTasks,
+
     ::addCidrDeps,
     ::addIdeaNativeModuleDeps
 ).map { it.name to it }.toMap()
@@ -19,40 +19,21 @@ rootProject.extensions.add("ultimateTools", ultimateTools)
 // Compatibility tasks:
 // --------------------------------------------------
 
-fun enableTasksIfAtLeast(project: Project, productVersion: String, expectedProductBranch: Int) = with(project) {
-    val productBranch = productVersion.substringBefore('.').toIntOrNull()
+fun ijProductBranch(productVersion: String): Int {
+    return productVersion.substringBefore('.').toIntOrNull()
         ?: error("Invalid product version format: $productVersion")
-
-    if (productBranch >= expectedProductBranch)
-        return // OK, nothing to disable
-
-    // otherwise: disable build tasks
-    disableBuildTasks { "$productVersion is NOT at least $expectedProductBranch" }
-}
-
-fun enableTasksIfOsIsNot(project: Project, osNames: List<String>) = with(project) {
-    osNames.forEach { osName ->
-        if (osName.isBlank() || osName.trim() != osName)
-            error("Invalid OS name: $osName")
-    }
-
-    val hostOsName = System.getProperty("os.name")!!.toLowerCase(Locale.US)
-
-    if (osNames.any { it.toLowerCase(Locale.US) in hostOsName }) {
-        disableBuildTasks { "\"$hostOsName\" is NOT one of ${osNames.joinToString { "\"$it\"" }}" }
-    }
 }
 
 // disable anything but "clean" and tasks from "help" group
 // log the appropriate message
-fun Project.disableBuildTasks(message: () -> String) {
+fun disableBuildTasks(project: Project, reason: String) = with(project) {
     val tasksToDisable = tasks.filter {
         it.enabled && it.name != "clean" && it.group != "help"
     }
 
     if (tasksToDisable.isNotEmpty()) {
         tasksToDisable.forEach { it.enabled = false }
-        logger.warn("Build tasks in $project have been disabled due to condition mismatch: ${message()}: ${tasksToDisable.joinToString { it.name }}")
+        logger.warn("Build tasks in $project have been disabled due to condition mismatch: $reason: ${tasksToDisable.joinToString { it.name }}")
     }
 }
 
@@ -81,7 +62,7 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
         val intellijUltimateEnabled: Boolean? by rootProject.extra
         val ideName = if (intellijUltimateEnabled == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
         val ideVersion = rootProject.extra["versions.intellijSdk"] as String
-        val ideBranch = ideVersion.substringBefore('.').toIntOrNull() ?: error("Invalid product version format: $ideVersion")
+        val ideBranch = ijProductBranch(ideVersion)
         val javaModuleName = if (ideBranch >= 192) "java" else ideName
 
         add("compile", "kotlin.build:$javaModuleName:$ideVersion") {

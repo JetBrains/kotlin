@@ -110,8 +110,10 @@ val artifactsForCidrDir: File by rootProject.extra(rootProject.rootDir.resolve("
 val clionPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("clionPlugin/Kotlin"))
 val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("appcodePlugin/Kotlin"))
 
+val useAppCodeForCommon = findProperty("useAppCodeForCommon").toBoolean()
+val cidrVersion: String by rootProject.extra(if (useAppCodeForCommon) appcodeVersion else clionVersion)
+
 if (isStandaloneBuild) { // setup additional properties that are required only when running in standalone mode:
-    val useAppCodeForCommon = findProperty("useAppCodeForCommon").toBoolean()
     if (useAppCodeForCommon) {
         val cidrIdeDir: File by rootProject.extra(externalDepsDir("cidr", "appcode-$appcodeVersion"))
         val cidrIdeArtifact: String by rootProject.extra("$appcodeRepo:$appcodeVersion:AppCode-$appcodeVersion.sit")
@@ -141,10 +143,7 @@ if (isStandaloneBuild) { // setup additional properties that are required only w
 val intellijBranch: Int by rootProject.extra(
         when {
             rootProject.extra.has("versions.intellijSdk") -> ijProductBranch(rootProject.extra["versions.intellijSdk"] as String)
-            isStandaloneBuild -> {
-                val useAppCodeForCommon = findProperty("useAppCodeForCommon").toBoolean()
-                ijProductBranch(if (useAppCodeForCommon) appcodeVersion else clionVersion)
-            }
+            isStandaloneBuild -> ijProductBranch(cidrVersion)
             else -> error("Can't determine effective IntelliJ platform branch")
         }
 )

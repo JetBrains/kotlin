@@ -1,3 +1,4 @@
+import java.util.Locale
 import org.gradle.jvm.tasks.Jar
 import java.net.URL
 
@@ -6,8 +7,8 @@ plugins {
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
-val enableTasksIfAtLeast: (Project, String, Int) -> Unit by ultimateTools
-val enableTasksIfOsIsNot: (Project, List<String>) -> Unit by ultimateTools
+val ijProductBranch: (String) -> Int by ultimateTools
+val disableBuildTasks: Project.(String) -> Unit by ultimateTools
 
 val cidrPluginTools: Map<String, Any> by rootProject.extensions
 val preparePluginXml: (Project, String, String, Boolean, String, Boolean) -> Copy by cidrPluginTools
@@ -74,5 +75,9 @@ val appcodeUpdatePluginsXmlTask: Task = cidrUpdatePluginsXml(
         appcodeJavaPluginDownloadUrl
 )
 
-enableTasksIfAtLeast(project, appcodeVersion, 191)
-enableTasksIfOsIsNot(project, listOf("Windows"))
+if (ijProductBranch(appcodeVersion) < 192)
+    disableBuildTasks("Too old AppCode version: $appcodeVersion")
+else
+    System.getProperty("os.name")!!.toLowerCase(Locale.US).takeIf { "windows" in it }?.let {
+        disableBuildTasks("Can't build AppCode plugin under Windows")
+    }

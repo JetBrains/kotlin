@@ -1,10 +1,12 @@
+import java.util.Locale
+
 plugins {
     kotlin("jvm")
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
-val enableTasksIfAtLeast: (Project, String, Int) -> Unit by ultimateTools
-val enableTasksIfOsIsNot: (Project, List<String>) -> Unit by ultimateTools
+val ijProductBranch: (String) -> Int by ultimateTools
+val disableBuildTasks: Project.(String) -> Unit by ultimateTools
 
 val appcodeVersion: String by rootProject.extra
 val appcodeUnscrambledJarDir: File by rootProject.extra
@@ -19,5 +21,9 @@ the<JavaPluginConvention>().sourceSets["main"].apply {
     resources.setSrcDirs(listOf("resources"))
 }
 
-enableTasksIfAtLeast(project, appcodeVersion, 191)
-enableTasksIfOsIsNot(project, listOf("Windows"))
+if (ijProductBranch(appcodeVersion) < 192)
+    disableBuildTasks("Too old AppCode version: $appcodeVersion")
+else
+    System.getProperty("os.name")!!.toLowerCase(Locale.US).takeIf { "windows" in it }?.let {
+        disableBuildTasks("Can't build AppCode plugin under Windows")
+    }
