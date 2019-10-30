@@ -45,7 +45,7 @@ public class KdocRenameTest extends LightCodeInsightTestCase {
     private void doTest(String newName) throws Exception {
         configureByFile(getTestName(false) + ".kt");
         PsiElement element = TargetElementUtil
-                .findTargetElement(myEditor,
+                .findTargetElement(getEditor(),
                                    TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED);
         assertNotNull(element);
         new RenameProcessor(getProject(), element, newName, true, true).run();

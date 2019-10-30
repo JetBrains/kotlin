@@ -15,11 +15,11 @@ import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.HeavyPlatformTestCase
 import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.io.File
 
-fun PlatformTestCase.projectLibrary(
+fun HeavyPlatformTestCase.projectLibrary(
         libraryName: String = "TestLibrary",
         classesRoot: VirtualFile? = null,
         sourcesRoot: VirtualFile? = null,

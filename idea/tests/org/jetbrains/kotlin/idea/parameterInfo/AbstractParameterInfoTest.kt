@@ -44,9 +44,9 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
         val mainFile = File(FileUtil.toSystemDependentName(fileName))
         mainFile.parentFile
             .listFiles { _, name -> name.startsWith("$prefix.") && name != mainFile.name }
-            .forEach { myFixture.configureByFile(FileUtil.toSystemIndependentName(it.path)) }
+            .forEach { myFixture.configureByFile(it.absolutePath.substringAfter(myFixture.testDataPath)) }
 
-        myFixture.configureByFile(fileName)
+        myFixture.configureByFile(File(fileName).absolutePath.substringAfter(myFixture.testDataPath))
 
         val file = myFixture.file as KtFile
 

@@ -16,6 +16,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.test.IdeaSystemPropertiesForParallelRunConfigurator
 import org.jetbrains.uast.UastContext
 import org.jetbrains.uast.UastLanguagePlugin
+import org.jetbrains.uast.analysis.UastAnalysisPlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
 import org.jetbrains.uast.java.JavaUastLanguagePlugin
 import java.io.File
@@ -65,6 +66,13 @@ abstract class AbstractTestWithCoreEnvironment : TestCase() {
                 Extensions.getRootArea(),
                 UEvaluatorExtension.EXTENSION_POINT_NAME,
                 UEvaluatorExtension::class.java)
+
+        @Suppress("UnstableApiUsage")
+        CoreApplicationEnvironment.registerExtensionPoint(
+            Extensions.getRootArea(),
+            UastAnalysisPlugin.extensionPointName,
+            UastAnalysisPlugin::class.java
+        )
 
         project.registerService(UastContext::class.java, UastContext::class.java)
 

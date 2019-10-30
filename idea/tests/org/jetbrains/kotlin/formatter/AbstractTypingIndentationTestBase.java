@@ -45,7 +45,7 @@ public abstract class AbstractTypingIndentationTestBase extends LightCodeInsight
             doNewlineTest(originFilePath, afterFilePath);
         }
         finally {
-            getSettings().clearCodeStyleSettings();
+            CodeStyle.getSettings(getProject()).clearCodeStyleSettings();
         }
     }
 
@@ -58,10 +58,6 @@ public abstract class AbstractTypingIndentationTestBase extends LightCodeInsight
         String actualTextWithCaret = new StringBuilder(getEditor().getDocument().getText()).insert(offset, EditorTestUtil.CARET_TAG).toString();
 
         KotlinTestUtils.assertEqualsToFile(new File(afterFilePath), actualTextWithCaret);
-    }
-
-    public static CodeStyleSettings getSettings() {
-        return CodeStyle.getSettings(getProject());
     }
 
     @NotNull

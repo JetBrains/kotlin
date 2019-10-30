@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.uast.*
+import org.jetbrains.uast.analysis.UastAnalysisPlugin
 import org.jetbrains.uast.expressions.UInjectionHost
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclaration
 import org.jetbrains.uast.kotlin.KotlinConverter.convertDeclarationOrElement
@@ -163,6 +164,11 @@ class KotlinUastLanguagePlugin : UastLanguagePlugin {
             element is KtClassOrObject -> KotlinConverter.convertClassOrObject(element, null, requiredTypes) as Sequence<T>
             else -> sequenceOf(convertElementWithParent(element, requiredTypes.nonEmptyOr(DEFAULT_TYPES_LIST)) as? T).filterNotNull()
         }
+
+    @Suppress("UnstableApiUsage")
+    override val analysisPlugin: UastAnalysisPlugin? by lazy {
+        UastAnalysisPlugin.byLanguage(KotlinLanguage.INSTANCE)
+    }
 }
 
 internal inline fun <reified ActualT : UElement> Class<*>?.el(f: () -> UElement?): UElement? {

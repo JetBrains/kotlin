@@ -7,17 +7,12 @@ package org.jetbrains.kotlin.git
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Couple
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vcs.FilePath
 import git4idea.checkin.GitCheckinExplicitMovementProvider
 import org.jetbrains.kotlin.idea.actions.pathBeforeJ2K
 import java.util.*
 
 class KotlinExplicitMovementProvider : GitCheckinExplicitMovementProvider() {
-    init {
-        Registry.get("git.explicit.commit.renames.prohibit.multiple.calls").setValue(false)
-    }
-
     override fun isEnabled(project: Project): Boolean {
         return true
     }

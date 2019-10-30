@@ -27,9 +27,11 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.uast.UastLanguagePlugin
+import org.jetbrains.uast.analysis.UastAnalysisPlugin
 import org.jetbrains.uast.evaluation.UEvaluatorExtension
 import org.jetbrains.uast.kotlin.KotlinUastLanguagePlugin
 import org.jetbrains.uast.kotlin.KotlinUastResolveProviderService
+import org.jetbrains.uast.kotlin.analysis.KotlinUastAnalysisPlugin
 import org.jetbrains.uast.kotlin.evaluation.KotlinEvaluatorExtension
 import org.jetbrains.uast.kotlin.internal.CliKotlinUastResolveProviderService
 import org.jetbrains.uast.kotlin.internal.UastAnalysisHandlerExtension
@@ -97,6 +99,9 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
                 .registerExtension(KotlinUastLanguagePlugin())
         area.getExtensionPoint(UEvaluatorExtension.EXTENSION_POINT_NAME)
                 .registerExtension(KotlinEvaluatorExtension())
+        @Suppress("UnstableApiUsage")
+        area.getExtensionPoint(UastAnalysisPlugin.extensionPointName)
+                .registerExtension(KotlinUastAnalysisPlugin())
 
         project.registerService(
             KotlinUastResolveProviderService::class.java,

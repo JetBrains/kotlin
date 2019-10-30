@@ -46,9 +46,9 @@ abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixture
         return LightCodeInsightFixtureTestCase.JAVA_LATEST
     }
 
-    fun doTest(fileName: String) {
+    fun doTest(path: String) {
         val fixture = myFixture
-        fixture.configureByFile(fileName)
+        fixture.configureByFile(fileName())
 
         val jetFile = fixture.file as KtFile
         val element = jetFile.findElementAt(fixture.caretOffset)!!
@@ -58,6 +58,6 @@ abstract class AbstractDataFlowValueRenderingTest: KotlinLightCodeInsightFixture
         val allValues = (info.completeTypeInfo.keySet() + info.completeNullabilityInfo.keySet()).toSet()
         val actual = allValues.mapNotNull { it.render() }.sorted().joinToString("\n")
 
-        KotlinTestUtils.assertEqualsToFile(File(FileUtil.getNameWithoutExtension(fileName) + ".txt"), actual)
+        KotlinTestUtils.assertEqualsToFile(File(FileUtil.getNameWithoutExtension(path) + ".txt"), actual)
     }
 }
