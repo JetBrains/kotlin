@@ -1,0 +1,15 @@
+Actual data differs from file content: LibraryClassUsages.results.txt expected:<... class J extends A {[
+[library.kt] Nested class/object 63 val t = A.T(1)
+[library.kt] Nested class/object 64 val tt = A.T()
+[library.kt] Nested class/object 66 val fff = A.T::bar
+[library.kt] New instance creation 57 val a = A(1)
+[library.kt] New instance creation 58 val aa = A()
+[library.kt] Supertype 19 class B: A {
+[library.kt] Supertype 22 class U: A.T {
+[library.kt] Supertype 27 class C(): A(1) {
+[library.kt] Supertype 28 class V(): A.T(1)
+[library.kt] Supertype 31 class BB: A {
+[library.kt] Supertype 34 class UU: A.T {
+[library.kt] Supertype 39 class CC(): A() {
+[library.kt] Supertype 40 class VV(): A.T()
+[library.kt] Unclassified usage 61 val ff = A::foo]> but was:<... class J extends A {[]>

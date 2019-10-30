@@ -1,0 +1,3 @@
+Actual data differs from file content: LibraryObjectUsages.results.txt expected:<... 7 O o = O.INSTANCE;[
+[library.kt] Value read 55 val o = O
+]> but was:<... 7 O o = O.INSTANCE;[]>

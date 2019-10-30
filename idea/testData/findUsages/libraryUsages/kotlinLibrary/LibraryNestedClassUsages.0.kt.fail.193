@@ -1,0 +1,8 @@
+Actual data differs from file content: LibraryNestedClassUsages.results.txt expected:<...lass J extends A.T {[
+[library.kt] New instance creation 63 val t = A.T(1)
+[library.kt] New instance creation 64 val tt = A.T()
+[library.kt] Supertype 22 class U: A.T {
+[library.kt] Supertype 28 class V(): A.T(1)
+[library.kt] Supertype 34 class UU: A.T {
+[library.kt] Supertype 40 class VV(): A.T()
+[library.kt] Unclassified usage 66 val fff = A.T::bar]> but was:<...lass J extends A.T {[]>
