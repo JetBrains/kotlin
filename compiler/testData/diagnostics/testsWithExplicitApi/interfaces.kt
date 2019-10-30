@@ -1,9 +1,11 @@
-interface <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>I1<!> {
-    <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>fun i()<!>
+// SKIP_TXT
+
+<!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>interface I1<!> {
+    <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>fun i<!>()
 }
 
 public interface I2 {
-    <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>fun i()<!>
+    <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>fun i<!>()
 }
 
 public interface I3 {
@@ -23,8 +25,8 @@ public class Impl: I3 {
 }
 
 public class Impl2: I4 {
-    <!NO_EXPLICIT_RETURN_TYPE_IN_API_MODE!>override fun i()<!> = 10
-    <!NO_EXPLICIT_RETURN_TYPE_IN_API_MODE!>override val v<!> = 10
+    override fun <!NO_EXPLICIT_RETURN_TYPE_IN_API_MODE!>i<!>() = 10
+    override val <!NO_EXPLICIT_RETURN_TYPE_IN_API_MODE!>v<!> = 10
 }
 
 private class PrivateImpl: I4 {

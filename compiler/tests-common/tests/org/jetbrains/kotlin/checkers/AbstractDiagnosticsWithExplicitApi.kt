@@ -16,8 +16,8 @@ abstract class AbstractDiagnosticsWithExplicitApi : AbstractDiagnosticsTest() {
     override fun defaultLanguageVersionSettings(): LanguageVersionSettings =
         CompilerTestLanguageVersionSettings(
             DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
-            ApiVersion.KOTLIN_1_3,
-            LanguageVersion.KOTLIN_1_3,
+            LanguageVersionSettingsImpl.DEFAULT.apiVersion,
+            LanguageVersionSettingsImpl.DEFAULT.languageVersion,
             mapOf(AnalysisFlags.explicitApiMode to ExplicitApiMode.STRICT)
         )
 }

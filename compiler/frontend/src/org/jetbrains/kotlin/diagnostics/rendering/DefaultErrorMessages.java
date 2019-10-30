@@ -119,10 +119,10 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATED_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is deprecated for ''{1}''", TO_STRING, TO_STRING);
         MAP.put(DEPRECATED_MODIFIER, "Modifier ''{0}'' is deprecated, use ''{1}'' instead", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE, "Declaration ''{0}'' is effectively public API and API mode is on, but no visibility is specified", NAME);
-        MAP.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE, "This declaration is effectively public API and API mode is on, but no explicit return type is specified");
-        MAP.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING, "Declaration ''{0}'' is effectively public API and API mode is on, but no visibility is specified", NAME);
-        MAP.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING, "This declaration is effectively public API and API mode is on, but no explicit return type is specified");
+        MAP.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE, "Visibility must be specified in explicit API mode");
+        MAP.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE, "Return type must be specified in explicit API mode");
+        MAP.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING, "Visibility must be specified in explicit API mode");
+        MAP.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING, "Return type must be specified in explicit API mode");
         MAP.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, TO_STRING);
         MAP.put(DEPRECATED_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is deprecated inside ''{1}''", TO_STRING, TO_STRING);
         MAP.put(ILLEGAL_INLINE_PARAMETER_MODIFIER, "Modifier ''{0}'' is allowed only for function parameters of an inline function", TO_STRING);

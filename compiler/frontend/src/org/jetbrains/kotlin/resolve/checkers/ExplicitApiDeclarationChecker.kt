@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ExplicitApiMode
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
@@ -19,11 +17,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 
 class ExplicitApiDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        val state = isEnabled(context.languageVersionSettings)
+        val state = context.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode)
         if (state == ExplicitApiMode.DISABLED) return
 
-        val isApi = (descriptor as? DeclarationDescriptorWithVisibility)?.isEffectivelyPublicApi ?: return
-        if (!isApi) return
+        if (descriptor !is DeclarationDescriptorWithVisibility) return
+        if (!descriptor.isEffectivelyPublicApi) return
 
         checkVisibilityModifier(state, declaration, descriptor, context)
         checkExplicitReturnType(state, declaration, descriptor, context)
@@ -35,16 +33,16 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
         descriptor: DeclarationDescriptorWithVisibility,
         context: DeclarationCheckerContext
     ) {
-        val modifier = declaration.visibilityModifier()?.node?.elementType as? KtModifierKeywordToken
+        val modifier = declaration.visibilityModifier()
         if (modifier != null) return
 
         if (excludeForDiagnostic(descriptor)) return
         val diagnostic =
             if (state == ExplicitApiMode.STRICT)
-                Errors.NO_EXPLICIT_VISIBILITY_IN_API_MODE.on(declaration, descriptor)
+                Errors.NO_EXPLICIT_VISIBILITY_IN_API_MODE
             else
-                Errors.NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING.on(declaration, descriptor)
-        context.trace.reportDiagnosticOnce(diagnostic)
+                Errors.NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING
+        context.trace.reportDiagnosticOnce(diagnostic.on(declaration))
     }
 
     private fun checkExplicitReturnType(
@@ -65,11 +63,10 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
         if (shouldReport) {
             val diagnostic =
                 if (state == ExplicitApiMode.STRICT)
-                    Errors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE.on(declaration)
+                    Errors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE
                 else
                     Errors.NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING
-                        .on(declaration)
-            context.trace.reportDiagnosticOnce(diagnostic)
+            context.trace.reportDiagnosticOnce(diagnostic.on(declaration))
         }
     }
 
@@ -91,29 +88,23 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
     }
 
     companion object {
-        fun isEnabled(settings: LanguageVersionSettings): ExplicitApiMode {
-            return settings.getFlag(AnalysisFlags.explicitApiMode)
-        }
-
         fun returnTypeRequired(
             element: KtCallableDeclaration,
             descriptor: DeclarationDescriptor?,
             checkForPublicApi: Boolean,
             checkForInternal: Boolean,
             checkForPrivate: Boolean
-        ): Boolean =
-            element.containingClassOrObject?.isLocal != true &&
-                    when (element) {
-                        is KtFunction -> !element.isLocal
-                        is KtProperty -> !element.isLocal
-                        else -> false
-                    } && run {
-                val callableMemberDescriptor = descriptor as? CallableMemberDescriptor
+        ): Boolean {
+            if (element.containingClassOrObject?.isLocal == true) return false
+            if (element is KtFunction && element.isLocal) return false
+            if (element is KtProperty && element.isLocal) return false
 
-                val visibility = callableMemberDescriptor?.effectiveVisibility()?.toVisibility()
-                (checkForPublicApi && visibility?.isPublicAPI == true) || (checkForInternal && visibility == Visibilities.INTERNAL) ||
-                        (checkForPrivate && visibility == Visibilities.PRIVATE)
-            }
+            val callableMemberDescriptor = descriptor as? CallableMemberDescriptor
+
+            val visibility = callableMemberDescriptor?.effectiveVisibility()?.toVisibility()
+            return (checkForPublicApi && visibility?.isPublicAPI == true) || (checkForInternal && visibility == Visibilities.INTERNAL) ||
+                    (checkForPrivate && visibility == Visibilities.PRIVATE)
+        }
 
         fun returnTypeCheckIsApplicable(element: KtCallableDeclaration): Boolean {
             if (element.containingFile is KtCodeFragment) return false

@@ -1,3 +1,5 @@
+// SKIP_TXT
+
 private class Foo {
     fun method() {}
 }

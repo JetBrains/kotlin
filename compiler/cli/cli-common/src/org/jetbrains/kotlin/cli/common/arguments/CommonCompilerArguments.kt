@@ -319,7 +319,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     @Argument(
         value = "-Xexplicit-api",
         valueDescription = "{strict|warning|disable}",
-        description = "Force compiler to report errors an all public API declarations without explicit visibility.\n" +
+        description = "Force compiler to report errors on all public API declarations without explicit visibility or return type.\n" +
                 "Use 'warning' level to issue warnings instead of errors."
     )
     var explicitApi: String by FreezableVar(ExplicitApiMode.DISABLED.state)
