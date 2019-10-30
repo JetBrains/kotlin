@@ -13,6 +13,7 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesColle
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,9 @@ public class RunDashboardUsagesCollector extends ProjectUsagesCollector {
   @Override
   public Set<MetricEvent> getMetrics(@NotNull Project project) {
     final Set<MetricEvent> metricEvents = new HashSet<>();
-    final Set<String> dashboardTypes = RunDashboardManager.getInstance(project).getTypes();
+    RunDashboardManagerImpl runDashboardManager = (RunDashboardManagerImpl)RunDashboardManager.getInstance(project);
+    final Set<String> dashboardTypes = new THashSet<>(runDashboardManager.getTypes());
+    dashboardTypes.removeAll(runDashboardManager.getEnableByDefaultTypes()); // do not report enable by default types
     metricEvents.add(MetricEventFactoryKt.newBooleanMetric("run.dashboard", !dashboardTypes.isEmpty()));
 
     if (!dashboardTypes.isEmpty()) {
