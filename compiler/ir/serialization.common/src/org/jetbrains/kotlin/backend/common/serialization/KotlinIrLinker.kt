@@ -95,7 +95,7 @@ abstract class KotlinIrLinker(
         }
 
         class SimpleDeserializationState: DeserializationState<UniqId>() {
-            private val reachableTopLevels = mutableSetOf<UniqId>()
+            private val reachableTopLevels = LinkedHashSet<UniqId>()
 
             override fun addUniqID(key: UniqId) {
                 reachableTopLevels.add(key)
@@ -147,8 +147,11 @@ abstract class KotlinIrLinker(
         // This is a heavy initializer
         val module = deserializeIrModuleHeader()
 
-        inner class IrDeserializerForFile(private var annotationsProto: ProtoAnnotations?, private var fordcedDeclarations: List<UniqId>?, private val fileIndex: Int, onlyHeaders: Boolean) :
-            IrFileDeserializer(logger, builtIns, symbolTable) {
+        inner class IrDeserializerForFile(
+            private var annotationsProto: ProtoAnnotations?,
+            private val fileIndex: Int,
+            onlyHeaders: Boolean
+        ) : IrFileDeserializer(logger, builtIns, symbolTable) {
 
             private var fileLoops = mutableMapOf<Int, IrLoopBase>()
 
@@ -398,10 +401,6 @@ abstract class KotlinIrLinker(
                     file.annotations.addAll(deserializeAnnotations(it))
                     annotationsProto = null
                 }
-                fordcedDeclarations?.let {
-                    it.forEach { fileLocalDeserializationState.addUniqID(it) }
-                    fordcedDeclarations = null
-                }
             }
 
             fun deserializeAllFileReachableTopLevel() {
@@ -418,10 +417,14 @@ abstract class KotlinIrLinker(
 
             val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
 
-            val explicitlyExported = mutableListOf<UniqId>()
-
             val fileDeserializer =
-                IrDeserializerForFile(fileProto.annotations, explicitlyExported, fileIndex, !deserializationStrategy.needBodies)
+                IrDeserializerForFile(fileProto.annotations, fileIndex, !deserializationStrategy.needBodies).apply {
+                    // Explicitly exported declarations (e.g. top-level initializers) must be deserialized before all other declarations.
+                    // Thus we schedule their deserialization in deserializer's constructor.
+                    fileProto.explicitlyExportedToCompilerList.forEach {
+                        fileLocalDeserializationState.addUniqID(loadSymbolData(it.index).topLevelUniqId.uniqId())
+                    }
+                }
 
             val fqName = fileDeserializer.deserializeFqName(fileProto.fqName)
 
@@ -437,10 +440,6 @@ abstract class KotlinIrLinker(
 
             fileUniqIdIndex.forEach {
                 moduleReversedFileIndex.getOrPut(it) { fileDeserializer }
-            }
-
-            fileProto.explicitlyExportedToCompilerList.mapTo(explicitlyExported) {
-                fileDeserializer.loadSymbolData(it.index).topLevelUniqId.uniqId()
             }
 
             if (deserializationStrategy.theWholeWorld) {
