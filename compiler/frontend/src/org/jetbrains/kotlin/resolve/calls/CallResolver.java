@@ -185,8 +185,10 @@ public class CallResolver {
                 NewResolutionOldInference.ResolutionKind.Invoke.INSTANCE);
     }
 
+    // this declaration is used by compiler plugins
+    @SuppressWarnings("WeakerAccess")
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksAndResolveCall(
+    public <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksAndResolveCall(
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull KtReferenceExpression referenceExpression,
@@ -196,8 +198,10 @@ public class CallResolver {
         return computeTasksAndResolveCall(context, name, tracing, kind);
     }
 
+    // this declaration is used by compiler plugins
+    @SuppressWarnings("WeakerAccess")
     @NotNull
-    private <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksAndResolveCall(
+    public <D extends CallableDescriptor> OverloadResolutionResults<D> computeTasksAndResolveCall(
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull TracingStrategy tracing,
