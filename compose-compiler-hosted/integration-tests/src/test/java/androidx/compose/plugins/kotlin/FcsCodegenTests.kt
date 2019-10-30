@@ -22,6 +22,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
@@ -1152,6 +1153,49 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
             assertEquals("inner", "value: 3", inner.text)
             assertEquals("outer", "value: 3", outer.text)
+        }
+    }
+
+    @Ignore("Test case for b/143464846 - re-enable when bug is fixed.")
+    @Test
+    fun testAmbientConsumedFromDefaultParameter(): Unit = ensureSetup {
+        val initialText = "no text"
+        val helloWorld = "Hello World!"
+        compose("""
+            val TextAmbient = Ambient.of { "$initialText" }
+
+            @Composable
+            fun Main() {
+                var text = +state { "$initialText" }
+                TextAmbient.Provider(text.value) {
+                    LinearLayout {
+                        ConsumesAmbientFromDefaultParameter()
+                        Button(
+                            text = "Change ambient value",
+                            onClick={ text.value = "$helloWorld" },
+                            id=101
+                        )
+                    }
+                }
+            }
+
+            @Composable
+            fun ConsumesAmbientFromDefaultParameter(text: String = +ambient(TextAmbient)) {
+                TextView(text = text, id = 42)
+            }
+        """,
+            noParameters,
+            "Main()"
+        ).then { activity ->
+            val textView = activity.findViewById(42) as TextView
+            assertEquals(initialText, textView.text)
+        }.then { activity ->
+            val button = activity.findViewById(101) as Button
+            button.performClick()
+        }
+        .then { activity ->
+            val textView = activity.findViewById(42) as TextView
+            assertEquals(helloWorld, textView.text)
         }
     }
 
