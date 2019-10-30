@@ -9,6 +9,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -59,6 +60,7 @@ public class RunAnythingHelpGroup<P extends RunAnythingProvider> extends RunAnyt
       .stream()
       .map(provider -> provider.getHelpItem(dataContext))
       .filter(Objects::nonNull)
+      .sorted(Comparator.comparing(RunAnythingItem::getCommand))
       .collect(Collectors.toList());
   }
 
