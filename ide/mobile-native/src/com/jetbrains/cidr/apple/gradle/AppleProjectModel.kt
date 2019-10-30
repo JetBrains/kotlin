@@ -1,7 +1,5 @@
 package com.jetbrains.cidr.apple.gradle
 
-import com.jetbrains.swift.symbols.SwiftBridgeTarget
-import org.jetbrains.konan.resolve.konan.KonanBridgeTarget
 import java.io.File
 import java.io.Serializable
 
@@ -9,8 +7,8 @@ interface AppleProjectModel : Serializable {
     val targets: Map<String, AppleTargetModel>
 }
 
-interface AppleTargetModel : Serializable, KonanBridgeTarget, SwiftBridgeTarget {
-    override val name: String
+interface AppleTargetModel : Serializable {
+    val name: String
     val sourceFolders: Set<File>
     val bridgingHeader: File?
 }

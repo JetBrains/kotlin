@@ -75,5 +75,6 @@
     <moduleMapManagerRequestor implementation="com.jetbrains.cidr.apple.gradle.GradleAppleModuleMapManagerRequestor"/>
     <!-- swift -->
     <swiftSourceModuleProvider implementation="com.jetbrains.swift.codeinsight.resolve.MobileSwiftSourceModuleProvider"/>
+    <customHeaderProvider implementation="com.jetbrains.swift.bridging.MobileSwiftBridgeHeaderProvider"/>
   </extensions>
 </idea-plugin>

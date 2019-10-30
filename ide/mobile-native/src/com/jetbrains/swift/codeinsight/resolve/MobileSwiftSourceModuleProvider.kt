@@ -2,11 +2,15 @@ package com.jetbrains.swift.codeinsight.resolve
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider.Result
 import com.intellij.psi.util.CachedValuesManager
+import com.jetbrains.cidr.apple.bridging.MobileBridgeTarget
+import com.jetbrains.cidr.apple.gradle.AppleTargetModel
 import com.jetbrains.cidr.apple.gradle.GradleAppleWorkspace
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
@@ -15,19 +19,20 @@ import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.swift.codeinsight.resolve.module.SwiftSourceModuleFile
 import com.jetbrains.swift.psi.SwiftFile
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
+import com.jetbrains.swift.symbols.SwiftBridgeVirtualFile
 import com.jetbrains.swift.symbols.SwiftModuleSymbol
 import com.jetbrains.swift.symbols.impl.SwiftSourceModuleSymbol
 import com.jetbrains.swift.symbols.impl.SymbolProps
 import java.util.*
 
 class MobileSwiftSourceModuleProvider : SwiftSourceModuleProvider {
-    override fun isAvailable(configuration: OCResolveConfiguration): Boolean =
-        GradleAppleWorkspace.getInstance(configuration.project).isOwnerOf(configuration)
-                && configuration.sourceUrls.any { it.endsWith(".swift", true) }
+    override fun isAvailable(configuration: OCResolveConfiguration): Boolean = Companion.isAvailable(configuration)
 
     override fun createModule(configuration: OCResolveConfiguration): SwiftModule = object : SwiftModule, UserDataHolderBase() {
         private val project: Project
             get() = configuration.project
+
+        private val target: AppleTargetModel = GradleAppleWorkspace.getInstance(project).getTarget(configuration)!!
 
         private val cachedBridgedSymbols: CachedValue<SwiftGlobalSymbols> = CachedValuesManager.getManager(project).createCachedValue(
             {
@@ -37,7 +42,10 @@ class MobileSwiftSourceModuleProvider : SwiftSourceModuleProvider {
             }, false
         )
 
-        override fun getBridgeFile(path: String): VirtualFile? = null // TODO
+        override fun getBridgeFile(path: String): VirtualFile? = when {
+            FileUtil.pathsEqual(path, "${target.name}-Swift.h") -> SwiftBridgeVirtualFile.forTarget(MobileBridgeTarget(target), path, project)
+            else -> null
+        }
 
         override fun isSourceModule(): Boolean = true
 
@@ -77,5 +85,11 @@ class MobileSwiftSourceModuleProvider : SwiftSourceModuleProvider {
 
         override fun getBridgedHeaders(): List<VirtualFile> =
             listOfNotNull(GradleAppleWorkspace.getInstance(project).getBridgingHeader(configuration))
+    }
+
+    companion object {
+        fun isAvailable(configuration: OCResolveConfiguration): Boolean =
+            GradleAppleWorkspace.getInstance(configuration.project).isOwnerOf(configuration)
+                    && configuration.sourceUrls.any { FileUtilRt.extensionEquals(it, "swift") }
     }
 }

@@ -39,7 +39,11 @@ class GradleAppleWorkspace(private val project: Project) {
     private var disposable: Disposable = Disposer.newDisposable()
     private var configurationData: Map<String, Data> = emptyMap()
 
-    private data class Data(val bridgingHeader: VirtualFilePointer?)
+    private class Data(val target: AppleTargetModel, disposable: Disposable) {
+        val bridgingHeader: VirtualFilePointer? = target.bridgingHeader?.let {
+            VirtualFilePointerManager.getInstance().create(VfsUtil.fileToUrl(it), disposable, null)
+        }
+    }
 
     init {
         ExternalProjectsManager.getInstance(project).runWhenInitialized { update() }
@@ -80,9 +84,7 @@ class GradleAppleWorkspace(private val project: Project) {
                     assert(alreadyAddedConfigurations.add(id)) { "Duplicate configuration id" }
 
                     val config = workspace.addConfiguration(id, name, OCVariant(buildConfig))
-                    configData[id] = Data(target.bridgingHeader?.let {
-                        VirtualFilePointerManager.getInstance().create(VfsUtil.fileToUrl(it), newDisposable, null)
-                    })
+                    configData[id] = Data(target, newDisposable)
 
                     // TODO Proper compiler detection and switch building
                     val compilerKind = OCCompilerKind.CLANG
@@ -148,6 +150,24 @@ class GradleAppleWorkspace(private val project: Project) {
 
     fun isOwnerOf(config: OCResolveConfiguration): Boolean = synchronized(this) {
         configurationData.containsKey(config.uniqueId)
+    }
+
+    fun getTarget(config: OCResolveConfiguration): AppleTargetModel? = synchronized(this) {
+        configurationData[config.uniqueId]?.target
+    }
+
+    fun getTarget(name: String): AppleTargetModel? = synchronized(this) {
+        for (data in configurationData.values) {
+            return@synchronized data.target.takeIf { it.name == name } ?: continue
+        }
+        null
+    }
+
+    fun getConfiguration(project: Project, targetName: String) = synchronized(this) {
+        for ((id, data) in configurationData) {
+            if (data.target.name == targetName) return@synchronized OCWorkspace.getInstance(project).getConfigurationById(id)
+        }
+        null
     }
 
     fun getBridgingHeader(config: OCResolveConfiguration): VirtualFile? = synchronized(this) {
