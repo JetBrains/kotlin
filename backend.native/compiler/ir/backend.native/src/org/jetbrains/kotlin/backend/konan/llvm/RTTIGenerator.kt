@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import llvm.*
-import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.*
@@ -311,7 +310,15 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
 
     fun interfaceTableRecords(irClass: IrClass): Pair<List<InterfaceTableRecord>, Int> {
         // The details are in ClassLayoutBuilder.
-        val interfaceLayouts = irClass.implementedInterfaces.map { context.getLayoutBuilder(it) }
+        val interfaces = irClass.implementedInterfaces
+        val (interfaceTableSkeleton, interfaceTableSize) = interfaceTableSkeleton(interfaces)
+
+        val interfaceTableEntries = interfaceTableRecords(irClass, interfaceTableSkeleton)
+        return Pair(interfaceTableEntries, interfaceTableSize)
+    }
+
+    private fun interfaceTableSkeleton(interfaces: List<IrClass>): Pair<Array<out ClassLayoutBuilder?>, Int> {
+        val interfaceLayouts = interfaces.map { context.getLayoutBuilder(it) }
         val interfaceColors = interfaceLayouts.map { it.hierarchyInfo.interfaceColor }
 
         // Find the optimal size. It must be a power of 2.
@@ -344,10 +351,18 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                 it[interfaceLayout.hierarchyInfo.interfaceId % size] = interfaceLayout
         }
 
+        val interfaceTableSize = if (conservative) -size else (size - 1)
+        return Pair(interfaceTableSkeleton, interfaceTableSize)
+    }
+
+    private fun interfaceTableRecords(
+            irClass: IrClass,
+            interfaceTableSkeleton: Array<out ClassLayoutBuilder?>
+    ): List<InterfaceTableRecord> {
         val methodTableEntries = context.getLayoutBuilder(irClass).methodTableEntries
         val className = irClass.fqNameForIrSerialization
 
-        val interfaceTableEntries = interfaceTableSkeleton.map { iface ->
+        return interfaceTableSkeleton.map { iface ->
             val interfaceId = iface?.hierarchyInfo?.interfaceId ?: 0
             InterfaceTableRecord(
                     Int32(interfaceId),
@@ -371,7 +386,6 @@ internal class RTTIGenerator(override val context: Context) : ContextUtils {
                     }
             )
         }
-        return Pair(interfaceTableEntries, if (conservative) -size else (size - 1))
     }
 
     private fun mapRuntimeType(type: LLVMTypeRef): Int =
