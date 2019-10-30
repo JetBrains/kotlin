@@ -2185,6 +2185,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/changeSignature/addEnumConstructorParameter5.kt");
         }
 
+        @TestMetadata("addForItParameter.kt")
+        public void testAddForItParameter() throws Exception {
+            runTest("idea/testData/quickfix/changeSignature/addForItParameter.kt");
+        }
+
         @TestMetadata("addFunctionParameter.kt")
         public void testAddFunctionParameter() throws Exception {
             runTest("idea/testData/quickfix/changeSignature/addFunctionParameter.kt");
