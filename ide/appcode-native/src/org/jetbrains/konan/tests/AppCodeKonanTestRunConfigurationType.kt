@@ -17,17 +17,17 @@ import com.jetbrains.cidr.xcode.model.XcodeMetaData
 
 class AppCodeKonanTestRunConfigurationType: AppCodeRunConfigurationType(
   "KonanTestRunConfigurationType",
-  KonanTestRunConfigurationData.FRAMEWORK_ID,
+  TODO("KonanTestRunConfigurationData.FRAMEWORK_ID"),
   "Kotlin/Native test",
   "Kotlin/Native test configuration",
   { AllIcons.RunConfigurations.Junit }) {
 
   override fun createRunConfiguration(project: Project, factory: ConfigurationFactory): AppCodeRunConfiguration {
-    return AppCodeTestRunConfigurationEx(project, factory, "", KonanTestRunConfigurationData.FACTORY)
+    return TODO("""AppCodeTestRunConfigurationEx(project, factory, "", KonanTestRunConfigurationData.FACTORY)""")
   }
 
   override fun createEditor(project: Project): SettingsEditor<out AppCodeRunConfiguration> {
-    return KonanTestRunConfigurationEditor(project, getHelper(project))
+    return TODO("KonanTestRunConfigurationEditor(project, getHelper(project))")
   }
 
   override fun selectTargets(all: MutableList<PBXTarget>): List<PBXTarget> {

@@ -42,9 +42,12 @@ abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> 
 
     override fun hashCodeExcludingOffset(): Int = (name.hashCode() * 31 + file.hashCode()) * 31 + project.hashCode()
 
-    override fun getSwiftAttributes(): SwiftAttributesInfo = SwiftAttributesInfo.EMPTY //todo???
+    override val swiftAttributes: SwiftAttributesInfo
+        get() = SwiftAttributesInfo.EMPTY //todo???
 
-    override fun getObjcName(): String? = name      //todo???
-    override fun getShortObjcName(): String? = name          //todo???
+    override val shortObjcName: String?
+        get() = name //todo???
 
+    override val objcName: String?
+        get() = name //todo???
 }

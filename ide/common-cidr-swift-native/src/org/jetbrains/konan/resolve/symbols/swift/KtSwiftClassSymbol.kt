@@ -12,11 +12,13 @@ class KtSwiftClassSymbol : KtSwiftTypeSymbol<KtSwiftClassSymbol.ClassState, ObjC
     constructor(stub: ObjCInterface, project: Project, file: VirtualFile) : super(stub, project, file)
     constructor() : super()
 
-    override fun getDeclarationKind(): SwiftDeclarationKind = SwiftDeclarationKind.classDeclaration
+    override val declarationKind: SwiftDeclarationKind
+        get() = SwiftDeclarationKind.classDeclaration
 
     override fun computeState(stub: ObjCInterface, project: Project): ClassState = ClassState(this, stub, project)
 
-    override fun getRawSuperTypes(): List<SwiftClassType> = state.superTypes
+    override val rawSuperTypes: List<SwiftClassType>
+        get() = state.superTypes
 
     //todo [medvedev] ??? also implement SwiftObjcClassSymbol.getDesignatedInitializers
     override fun getDesignatedInitializers(): List<SwiftInitializerSymbol> = emptyList()

@@ -21,7 +21,8 @@ class KtSwiftProtocolSymbol : KtSwiftTypeSymbol<KtSwiftProtocolSymbol.ProtocolSt
     constructor(stub: ObjCProtocol, project: Project, file: VirtualFile) : super(stub, project, file)
     constructor() : super()
 
-    override fun getDeclarationKind(): SwiftDeclarationKind = SwiftDeclarationKind.protocolDeclaration
+    override val declarationKind: SwiftDeclarationKind
+        get() = SwiftDeclarationKind.protocolDeclaration
 
     override fun getAssociatedTypes(): List<SwiftAssociatedTypeSymbol> = emptyList()
 
@@ -37,8 +38,9 @@ class KtSwiftProtocolSymbol : KtSwiftTypeSymbol<KtSwiftProtocolSymbol.ProtocolSt
     }
 
     override fun getRequirements(): List<SwiftRequirementInfo> = emptyList()
-
-    override fun getRawSuperTypes(): List<SwiftClassType> = state.superTypes
+    
+    override val rawSuperTypes: List<SwiftClassType>
+        get() = state.superTypes
 
     override fun computeState(stub: ObjCProtocol, project: Project): ProtocolState = ProtocolState(this, stub, project)
 

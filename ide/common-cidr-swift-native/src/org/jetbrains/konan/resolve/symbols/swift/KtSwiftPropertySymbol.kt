@@ -21,9 +21,11 @@ class KtSwiftPropertySymbol : KtSwiftMemberSymbol, SwiftPropertySymbol {
 
     constructor() : super()
 
-    override fun getDeclarationKind(): SwiftDeclarationKind = SwiftDeclarationKind.propertyDeclaration
+    override val declarationKind: SwiftDeclarationKind
+        get() = SwiftDeclarationKind.propertyDeclaration
 
-    override fun getSwiftType(): SwiftType = this.type
+    override val swiftType: SwiftType
+        get() = this.type
 
     override fun isReadOnly(): Boolean {
         val modifiers = this.modifiers

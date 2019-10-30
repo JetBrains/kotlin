@@ -34,13 +34,15 @@ class KonanSwiftSourceModule(
 
     override fun getBridgeFile(name: String): VirtualFile? = null
 
+    override fun getBridgedHeaders(): List<VirtualFile> = emptyList()
+
     override fun isSourceModule(): Boolean = true
 
     override fun getName(): String = SwiftBridgingUtil.getProductModuleName(configuration, target)
 
     override fun getSymbol(): SwiftModuleSymbol? {
         val name = name
-        val file = KonanBridgeVirtualFile(target, name, project, 0)
+        val file = KonanBridgeVirtualFile(AppCodeKonanBridgeTarget(target), name, project, 0)
         val props = SymbolProps(project, file, name, 0, SwiftAttributesInfo.EMPTY, null, null)
         return SwiftSourceModuleSymbol(props, name)
     }
@@ -52,10 +54,10 @@ class KonanSwiftSourceModule(
 
         val target = buildConfig.target ?: return SwiftGlobalSymbols.EMPTY
 
-        val swiftSymbols = SwiftGlobalSymbolsImpl()
+        val swiftSymbols = SwiftGlobalSymbolsImpl(this)
         val processor = SwiftGlobalSymbolsImpl.SymbolProcessor(swiftSymbols)
 
-        val file = KonanBridgeVirtualFile(target, name, project, 0)
+        val file = KonanBridgeVirtualFile(AppCodeKonanBridgeTarget(target), name, project, 0)
         val psiManager = PsiManager.getInstance(project)
         KtFrameworkTranslator(project).translateModule(file).forEach { symbol ->
             when (symbol) {
@@ -75,13 +77,10 @@ class KonanSwiftSourceModule(
         FileSymbolTable.forFile(file, context)?.processFile(processor)
     }
 
-    override fun getLibraryFiles(): List<VirtualFile> = emptyList()
-
     override fun getDependencies(): List<SwiftModule> = emptyList()
 
-    override fun getAllFiles(): Collection<VirtualFile> = getSourceAndDerivedFiles(target) ?: target.sourceFiles
+    override fun getFiles(): Collection<VirtualFile> = getSourceAndDerivedFiles(target) ?: target.sourceFiles
 
     private fun getSourceAndDerivedFiles(target: PBXTarget): List<VirtualFile>? =
         XcodeMetaData.getBuildSettings(configuration)?.getSourceAndDerivedFiles(target, SwiftFileType.INSTANCE)
-
 }

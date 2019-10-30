@@ -12,10 +12,9 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.testFramework.LightVirtualFile
-import com.jetbrains.cidr.xcode.model.PBXTarget
 
 class KonanBridgeVirtualFile(
-    val target: PBXTarget,
+    val target: KonanBridgeTarget,
     name: String,
     val project: Project,
     modificationStamp: Long
@@ -25,12 +24,12 @@ class KonanBridgeVirtualFile(
         managerEx.fileManager.setViewProvider(this, MySingleRootFileViewProvider(managerEx))
     }
 
-    override fun hashCode(): Int = (name.hashCode() * 31 + target.id.hashCode()) * 31 + modificationStamp.toInt()
+    override fun hashCode(): Int = (name.hashCode() * 31 + target.hashCode()) * 31 + modificationStamp.toInt()
 
     override fun equals(other: Any?): Boolean = other is KonanBridgeVirtualFile &&
             modificationStamp == other.modificationStamp &&
             name == other.name &&
-            other.target.id == target.id
+            other.target == target
 
     override fun isWritable(): Boolean = false
 

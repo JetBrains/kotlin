@@ -14,7 +14,8 @@ class KtSwiftExtensionSymbol : KtSwiftTypeSymbol<KtSwiftExtensionSymbol.Extensio
     constructor(stub: ObjCInterface, project: Project, file: VirtualFile) : super(stub, project, file)
     constructor() : super()
 
-    override fun getDeclarationKind(): SwiftDeclarationKind = SwiftDeclarationKind.extensionDeclaration
+    override val declarationKind: SwiftDeclarationKind
+        get() = SwiftDeclarationKind.extensionDeclaration
 
     override val baseType: SwiftType
         get() = state.baseType
@@ -22,7 +23,8 @@ class KtSwiftExtensionSymbol : KtSwiftTypeSymbol<KtSwiftExtensionSymbol.Extensio
     override val docString: String?
         get() = null
 
-    override fun getRawSuperTypes(): List<SwiftClassType> = state.superTypes
+    override val rawSuperTypes: List<SwiftClassType>
+        get() = state.superTypes
 
     override fun computeState(stub: ObjCInterface, project: Project): ExtensionState = ExtensionState(this, stub, project)
 

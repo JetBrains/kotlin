@@ -19,9 +19,8 @@ import com.jetbrains.cidr.lang.OCLanguageKind
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContextUtil
 import com.jetbrains.cidr.lang.psi.OCConfigurationOwner
 import com.jetbrains.cidr.lang.psi.OCParsedLanguageAndConfiguration
-import com.jetbrains.cidr.xcode.model.PBXTarget
 
-class KonanBridgePsiFile(val target: PBXTarget, provider: SingleRootFileViewProvider) :
+class KonanBridgePsiFile(val target: KonanBridgeTarget, provider: SingleRootFileViewProvider) :
     LightPsiFileBase(provider, OCLanguage.getInstance()), PsiFile, OCConfigurationOwner {
 
     override fun clearCaches() {}

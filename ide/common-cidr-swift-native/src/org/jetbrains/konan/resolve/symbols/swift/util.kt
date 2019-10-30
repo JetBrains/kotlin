@@ -9,6 +9,7 @@ import com.jetbrains.swift.psi.types.SwiftTypeFactory
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
 import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
+import com.jetbrains.swift.symbols.swiftoc.SwiftApinotes
 import com.jetbrains.swift.symbols.swiftoc.SwiftGlobalApiNotes
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 

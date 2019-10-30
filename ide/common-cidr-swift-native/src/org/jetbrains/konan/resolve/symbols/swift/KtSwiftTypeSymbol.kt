@@ -22,29 +22,31 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stub : Obj
 
     override fun processMembers(processor: SwiftSymbolProcessor, state: ResolveState): Boolean = processRawMembers(processor, state)
 
-    override fun getInitializers(): List<SwiftInitializerSymbol> = SwiftClassSymbolUtil.getInitializersImpl(state.members)
-
     override fun processRawMembers(processor: SwiftSymbolProcessor, state: ResolveState): Boolean {
         val members = this.state.members ?: return true
         return SwiftClassSymbolUtil.processMembers<SwiftSymbol>(members, processor, state)
     }
 
-    override fun getContext(): SwiftMemberSymbol? = containingTypeSymbol
+    override val context: SwiftMemberSymbol?
+        get() = containingTypeSymbol
 
-    override fun getSwiftType(): SwiftType = SwiftTypeFactory.getInstance().createClassType(this)
+    override val swiftType: SwiftType
+        get() = SwiftTypeFactory.getInstance().createClassType(this)
 
     //todo
     override fun getGenericParametersInfo(): SwiftGenericParametersInfo = SwiftGenericParametersInfo.EMPTY
 
-    override fun getQualifiedName(): String {
-        //todo qualified name!!!
-        return name
-    }
+    override val qualifiedName: String
+        get() {
+            //todo qualified name!!!
+            return name
+        }
 
-    override fun getSuperTypes(): List<SwiftClassType> = rawSuperTypes
+    override val superTypes: List<SwiftClassType>
+        get() = rawSuperTypes
 
-    override fun getRawMembers(): MostlySingularMultiMap<String, SwiftMemberSymbol> =
-        state.members ?: MostlySingularMultiMap.emptyMap()
+    override val rawMembers: MostlySingularMultiMap<String, SwiftMemberSymbol>
+        get() = state.members ?: MostlySingularMultiMap.emptyMap()
 
     override fun getContainingTypeSymbol(): SwiftTypeSymbol? = null
 

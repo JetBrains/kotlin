@@ -54,14 +54,18 @@ abstract class KtSwiftImmediateSymbol : KtImmediateSymbol, SwiftSymbol {
 
     override fun isGlobal(): Boolean = true
 
-    override fun <T : SwiftSymbolAttribute?> getSwiftAttribute(attributeType: SwiftAttributesInfo.AttributeType<T>): T? =
-        swiftAttributes.getAttribute(attributeType)
+    override fun <T : SwiftSymbolAttribute> getSwiftAttribute(type: SwiftAttributesInfo.AttributeType<T>): T? =
+        swiftAttributes.getAttribute(type)
 
-    override fun hasSwiftDeclarationSpecifier(specifier: SwiftDeclarationSpecifiers): Boolean =
-        swiftAttributes.hasDeclarationSpecifier(specifier)
+    override fun hasSwiftDeclarationSpecifier(declarationSpecifier: SwiftDeclarationSpecifiers): Boolean =
+        swiftAttributes.hasDeclarationSpecifier(declarationSpecifier)
 
-    override fun getSwiftAttributes(): SwiftAttributesInfo = SwiftAttributesInfo.EMPTY //todo???
+    override val swiftAttributes: SwiftAttributesInfo
+        get() = SwiftAttributesInfo.EMPTY //todo???
 
-    override fun getShortObjcName(): String? = name //todo???
-    override fun getObjcName(): String? = name //todo???
+    override val shortObjcName: String?
+        get() = name //todo???
+
+    override val objcName: String?
+        get() = name //todo???
 }

@@ -23,6 +23,7 @@ repositories {
 
 dependencies {
     compile(project(":kotlin-ultimate:ide:clion-native"))
+    compile(project(":kotlin-ultimate:ide:common-cidr-swift-native"))
     compile("com.jetbrains.intellij.cidr:cidr-cocoa-common:$clionVersion") { isTransitive = false }
     compile("com.jetbrains.intellij.cidr:cidr-xcode-model-core:$clionVersion") { isTransitive = false }
     compile("com.jetbrains.intellij.cidr:cidr-xctest:$clionVersion") { isTransitive = false }

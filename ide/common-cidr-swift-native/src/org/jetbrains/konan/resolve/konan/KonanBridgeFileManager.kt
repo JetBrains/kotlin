@@ -17,7 +17,6 @@ import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
-import com.jetbrains.cidr.xcode.model.PBXTarget
 import org.jetbrains.konan.resolve.KtModificationCount
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener.Companion.getInsideCodeBlockModificationScope
 import org.jetbrains.kotlin.psi.KtFile
@@ -32,18 +31,18 @@ class KonanBridgeFileManager(
     private val myLock = Object()
 
     private var myStamp: Long = -1
-    private var myActualFiles: MutableMap<PBXTarget, KonanBridgeVirtualFile>? = null
+    private var myActualFiles: MutableMap<KonanBridgeTarget, KonanBridgeVirtualFile>? = null
 
     init {
         (psiManager as? PsiManagerImpl)?.addTreeChangePreprocessor(ModificationListener())
     }
 
-    fun forTarget(target: PBXTarget, name: String): VirtualFile {
+    fun forTarget(target: KonanBridgeTarget, name: String): VirtualFile {
         synchronized(myLock) {
             val modificationStamp = modificationCount.get()
 
             val map = if (myActualFiles == null || myStamp < modificationStamp) {
-                val map = ContainerUtil.newHashMap<PBXTarget, KonanBridgeVirtualFile>()
+                val map = ContainerUtil.newHashMap<KonanBridgeTarget, KonanBridgeVirtualFile>()
                 myActualFiles = map
                 myStamp = modificationStamp
                 map

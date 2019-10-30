@@ -48,7 +48,7 @@ class StubToSwiftSymbolTranslator(val project: Project) {
     ): List<SwiftParameterSymbol> =
         methodStub.parameters.map { parameterStub ->
             KtSwiftParameterSymbol(parameterStub, project, file, functionSymbol).apply {
-                setType(parameterStub.type.convertType(parameter))]
+                setType(parameterStub.type.convertType(this@apply))
             }
         }
 }

@@ -1,5 +1,6 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <id>org.jetbrains.kotlin.native.appcode</id>
   <name>Kotlin/Native for AppCode</name>
@@ -23,11 +24,6 @@
 <!--    <configurationType implementation="org.jetbrains.konan.tests.AppCodeKonanTestRunConfigurationType"/>-->
 
     <lang.documentationProvider language="kotlin" implementationClass="org.jetbrains.konan.documentation.KonanXcodeDocumentationProvider"/>
-    <projectService serviceImplementation="org.jetbrains.konan.resolve.konan.KonanBridgeFileManager"/>
-    <projectService serviceImplementation="org.jetbrains.konan.resolve.KtModificationCount"/>
-
-    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinFunctionOCUsagesSearcher"/>
-    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinOCUsageSearcher"/>
 
   </extensions>
 
@@ -40,16 +36,8 @@
     <sourceModuleProducer implementation="org.jetbrains.konan.resolve.konan.KonanSwiftSourceModuleProvider"/>
   </extensions>
 
-  <extensions defaultExtensionNs="swift">
-    <kotlinNative implementation="org.jetbrains.konan.resolve.konan.KonanSwiftExtensionPoint"/>
-  </extensions>
-
   <extensions defaultExtensionNs="cidr.lang">
-    <symbolTableProvider implementation="org.jetbrains.konan.resolve.konan.KonanBridgeSymbolTableProvider" order="before OCSymbolTableProvider"/>
-    <symbolTableProvider implementation="org.jetbrains.konan.resolve.KtSymbolTableProvider"/>
-    <symbolTableProvider implementation="org.jetbrains.konan.resolve.konan.KonanKNMSymbolTableProvider"/>
     <customHeaderProvider implementation="org.jetbrains.konan.resolve.konan.KonanFrameworkHeaderProvider"/>
-    <serializerProvider implementation="org.jetbrains.konan.resolve.symbols.serialization.KtSerializer"/>
   </extensions>
 
   <application-components>

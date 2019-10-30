@@ -22,5 +22,6 @@ abstract class KtSwiftMemberSymbol : KtSwiftImmediateSymbol, SwiftMemberSymbol {
 
     override fun getContainingTypeSymbol(): SwiftTypeSymbol = containingTypeSymbol
 
-    override fun getContext(): SwiftMemberSymbol? = containingTypeSymbol
+    override val context: SwiftMemberSymbol?
+        get() = containingTypeSymbol
 }

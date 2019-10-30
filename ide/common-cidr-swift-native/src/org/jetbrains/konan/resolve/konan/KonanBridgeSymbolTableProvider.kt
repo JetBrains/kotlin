@@ -5,7 +5,6 @@
 
 package org.jetbrains.konan.resolve.konan
 
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -25,9 +24,12 @@ class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
         return file is KonanBridgePsiFile
     }
 
-    override fun isSource(project: Project, file: VirtualFile, cachedFileType: Lazy<FileType>): Boolean {
-        return file is KonanBridgeVirtualFile
+    override fun isSource(project: Project, virtualFile: VirtualFile): Boolean {
+        return virtualFile is KonanBridgeVirtualFile
     }
+
+    override fun isSource(project: Project, virtualFile: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
+        isSource(project, virtualFile)
 
     override fun onOutOfCodeBlockModification(project: Project, file: PsiFile?) {
         //nothing here
@@ -43,7 +45,7 @@ class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
     override fun calcTable(virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable {
         virtualFile as KonanBridgeVirtualFile
 
-        val signature = ContextSignature(CLanguageKind.OBJ_C, emptyMap(), emptySet(), emptyList(), false)
+        val signature = ContextSignature(CLanguageKind.OBJ_C, emptyMap(), emptySet(), emptyList(), false, null, false)
         val result = FileSymbolTable(virtualFile, signature)
 
         KtFrameworkTranslator(context.project).translateModule(virtualFile).forEach { result.append(it) }

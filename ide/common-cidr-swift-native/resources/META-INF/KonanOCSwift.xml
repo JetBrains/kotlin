@@ -1,0 +1,24 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <depends>org.jetbrains.kotlin.native.clion</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="org.jetbrains.konan.resolve.konan.KonanBridgeFileManager"/>
+    <projectService serviceImplementation="org.jetbrains.konan.resolve.KtModificationCount"/>
+
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinFunctionOCUsagesSearcher"/>
+    <referencesSearch implementation="org.jetbrains.konan.findUsages.KotlinOCUsageSearcher"/>
+
+  </extensions>
+
+  <extensions defaultExtensionNs="swift">
+    <kotlinNative implementation="org.jetbrains.konan.resolve.konan.KonanSwiftExtensionPoint"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.lang">
+    <symbolTableProvider implementation="org.jetbrains.konan.resolve.konan.KonanBridgeSymbolTableProvider" order="before OCSymbolTableProvider"/>
+    <symbolTableProvider implementation="org.jetbrains.konan.resolve.KtSymbolTableProvider"/>
+    <symbolTableProvider implementation="org.jetbrains.konan.resolve.konan.KonanKNMSymbolTableProvider"/>
+    <serializerProvider implementation="org.jetbrains.konan.resolve.symbols.serialization.KtSerializer"/>
+  </extensions>
+
+</idea-plugin>

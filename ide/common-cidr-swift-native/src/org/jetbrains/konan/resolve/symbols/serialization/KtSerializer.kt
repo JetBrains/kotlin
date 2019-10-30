@@ -2,8 +2,8 @@ package org.jetbrains.konan.resolve.symbols.serialization
 
 import com.esotericsoftware.kryo.serializers.DefaultSerializers
 import com.intellij.openapi.diagnostic.Logger
-import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTableSerializer
-import com.jetbrains.cidr.lang.symbols.symtable.SerializerProvider
+import com.jetbrains.cidr.lang.symbols.symtable.serialization.FileSymbolTableSerializer
+import com.jetbrains.cidr.lang.symbols.symtable.serialization.SerializerProvider
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.konan.resolve.symbols.swift.*
 import org.objenesis.instantiator.ObjectInstantiator

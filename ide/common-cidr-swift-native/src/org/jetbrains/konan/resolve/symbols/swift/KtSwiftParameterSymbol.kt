@@ -30,11 +30,14 @@ class KtSwiftParameterSymbol : KtSwiftImmediateSymbol, SwiftParameterSymbol {
 
     constructor() : super()
 
-    override fun getDeclarationKind(): SwiftDeclarationKind = SwiftDeclarationKind.parameter
+    override val declarationKind: SwiftDeclarationKind
+        get() = SwiftDeclarationKind.parameter
 
-    override fun getContext(): SwiftMemberSymbol? = methodSymbol
+    override val context: SwiftMemberSymbol?
+        get() = methodSymbol
 
-    override fun getSwiftType(): SwiftType = type
+    override val swiftType: SwiftType
+        get() = type
 
     override fun isOptional(): Boolean = false
 

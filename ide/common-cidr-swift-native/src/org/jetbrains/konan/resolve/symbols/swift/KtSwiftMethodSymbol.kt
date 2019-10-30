@@ -22,14 +22,16 @@ class KtSwiftMethodSymbol : KtSwiftMemberSymbol, SwiftFunctionSymbol {
 
     constructor() : super()
 
-    override fun getDeclarationKind(): SwiftDeclarationKind = SwiftDeclarationKind.method
+    override val declarationKind: SwiftDeclarationKind
+        get() = SwiftDeclarationKind.method
 
-    override fun getSwiftType(): SwiftFunctionType {
-        val typeFactory = SwiftTypeFactory.getInstance()
-        val domain = typeFactory.createDomainType(parameters)
-        val functionType = typeFactory.createFunctionType(domain, returnType, false)
-        return typeFactory.createImplicitSelfMethodType(functionType)
-    }
+    override val swiftType: SwiftFunctionType
+        get() {
+            val typeFactory = SwiftTypeFactory.getInstance()
+            val domain = typeFactory.createDomainType(parameters)
+            val functionType = typeFactory.createFunctionType(domain, returnType, false)
+            return typeFactory.createImplicitSelfMethodType(functionType)
+        }
 
     override fun getStaticness(): SwiftCanBeStatic.Staticness = SwiftCanBeStatic.Staticness.NOT_STATIC
 

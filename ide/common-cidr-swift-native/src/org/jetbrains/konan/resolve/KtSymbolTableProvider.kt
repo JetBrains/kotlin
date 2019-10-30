@@ -5,7 +5,7 @@
 
 package org.jetbrains.konan.resolve
 
-import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
@@ -24,10 +24,13 @@ import org.jetbrains.kotlin.psi.KtFile
 class KtSymbolTableProvider : SymbolTableProvider() {
     override fun isSource(file: PsiFile): Boolean = file is KtFile
 
-    override fun isSource(project: Project, file: VirtualFile, cachedFileType: Lazy<FileType>): Boolean {
+    override fun isSource(project: Project, file: VirtualFile): Boolean {
         //todo[medvedev] check if the source is from common or ios module
-        return cachedFileType.value == KotlinFileType.INSTANCE
+        return FileTypeManager.getInstance().isFileOfType(file, KotlinFileType.INSTANCE)
     }
+
+    override fun isSource(project: Project, file: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
+        isSource(project, file)
 
     override fun onOutOfCodeBlockModification(project: Project, file: PsiFile?) {
         if (file != null && isSource(file)) {
@@ -46,7 +49,7 @@ class KtSymbolTableProvider : SymbolTableProvider() {
     }
 
     override fun calcTable(virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable {
-        val signature = ContextSignature(CLanguageKind.OBJ_C, emptyMap(), emptySet(), emptyList(), false)
+        val signature = ContextSignature(CLanguageKind.OBJ_C, emptyMap(), emptySet(), emptyList(), false, null, false)
         val table = FileSymbolTable(virtualFile, signature)
         val project = context.project
         val psi = PsiManager.getInstance(project).findFile(virtualFile) as? KtFile ?: return table
