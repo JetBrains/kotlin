@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.File
@@ -162,14 +163,27 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
         }
     }
 
-    override fun buildAll(modelName: String?, project: Project): KotlinGradleModelImpl {
+    override fun buildAll(modelName: String?, project: Project): KotlinGradleModelImpl? {
         val kotlinPluginId = kotlinPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
         val platformPluginId = platformPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
+        val targets = project.getTargets(includeSinglePlatform = true)
+
+        if (kotlinPluginId == null && platformPluginId == null && targets == null) {
+            return null
+        }
 
         val compilerArgumentsBySourceSet = LinkedHashMap<String, ArgsInfo>()
         val extraProperties = HashMap<String, KotlinTaskProperties>()
 
-        project.getAllTasks(false)[project]?.forEach { compileTask ->
+
+        val kotlinCompileTasks = if (targets != null) {
+            targets.flatMap { target -> KotlinMPPGradleModelBuilder.getCompilations(target) ?: emptyList() }
+                .mapNotNull { compilation -> KotlinMPPGradleModelBuilder.getCompileKotlinTaskName(project, compilation) }
+        } else {
+            project.getAllTasks(false)[project]?.filter { it.javaClass.name in kotlinCompileTaskClasses } ?: emptyList()
+        }
+
+        kotlinCompileTasks.forEach { compileTask ->
             if (compileTask.javaClass.name !in kotlinCompileTaskClasses) return@forEach
 
             val sourceSetName = compileTask.getSourceSetName()
