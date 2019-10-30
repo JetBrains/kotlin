@@ -2,6 +2,11 @@ Test key, Issue, State (optional: MUTE or FAIL)
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryClassUsages, KT-34542, FAIL
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassUsages, KT-34542, FAIL
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryObjectUsages, KT-34542, FAIL
+org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testTwoClasses, flaky failure
+org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testValAndClass, flaky failure
+org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testValOrder, flaky failure
+org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Val.testValWithTypeWoInitializer, flaky failure
+org.jetbrains.kotlin.idea.completion.test.KotlinSourceInJavaCompletionTestGenerated.testMultiFileFacadeMembers, KT-34689
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testBuiltinClass, KT-34542
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testJdkClass, KT-34542
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testLightClassForLibrarySource, KT-34542
@@ -14,3 +19,9 @@ org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.t
 org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequireNotNullCall.testUsedAsExpression, KT-34672, FAIL
 org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequireNotNullCall.testUsedAsExpression2, KT-34672, FAIL
 org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequireNotNullCall.testUsedAsExpression3, KT-34672, FAIL
+org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib1.testUseJavaFromLib, KT-34542, FAIL
+org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib2.testUseJavaSAMFromLib, KT-34542, FAIL
+org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib3.testUseJavaSAMFromLib, KT-34542, FAIL
+org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testInLibrarySource, KT-34542, FAIL
+org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToFunParameter, KT-34542, FAIL
+org.jetbrains.kotlin.idea.resolve.ReferenceResolveInLibrarySourcesTestGenerated.testToLocalFun, KT-34542, FAIL

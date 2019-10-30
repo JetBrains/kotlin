@@ -1,0 +1,3 @@
+expected:<Text: (<highlight>[sam: ((number: Int, ss: String!) -> Unit)!</highlight>), Disabled: false, Strikeout: false, Green: false
+Text: (<highlight>sam: ]JavaSAM!</highlight>...> but was:<Text: (<highlight>[((Int, String!) -> Unit)!</highlight>), Disabled: false, Strikeout: false, Green: false
+Text: (<highlight>]JavaSAM!</highlight>...>
