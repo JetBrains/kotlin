@@ -43,20 +43,6 @@ class FramePackageAnalysisHandlerExtension : AnalysisHandlerExtension {
                             ClassDescriptor ?: continue
                     if (!framedDescriptor.hasModelAnnotation()) continue
 
-                    val ktType = framedDescriptor.defaultType
-
-                    // Can only place an @Model on an object that doesn't inherit from another object
-                    val baseTypes = ktType.constructor.supertypes.filter {
-                        !it.isInterface() && !it.isAnyOrNullableAny()
-                    }
-                    if (baseTypes.isNotEmpty())
-                        bindingTrace.reportFromPlugin(
-                            ComposeErrors.UNSUPPORTED_MODEL_INHERITANCE.on(
-                                ktClass.nameIdentifier ?: ktClass
-                            ),
-                            ComposeDefaultErrorMessages
-                        )
-
                     val classFqName = ktClass.fqName!!
                     val recordFqName = classFqName.parent().child(Name.identifier(
                         "${classFqName.shortName()}\$Record")
