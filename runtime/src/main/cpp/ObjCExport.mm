@@ -67,6 +67,7 @@ struct ObjCTypeAdapter {
   const MethodTableRecord* kotlinMethodTable;
   int kotlinMethodTableSize;
 
+  const InterfaceTableRecord* kotlinItable;
   int kotlinItableSize;
 
   const char* objCName;
@@ -634,6 +635,8 @@ static const TypeInfo* createTypeInfo(
   const KStdVector<VTableElement>& vtable,
   const KStdVector<MethodTableRecord>& methodTable,
   const KStdOrderedMap<ClassId, KStdVector<VTableElement>>& interfaceVTables,
+  const InterfaceTableRecord* superItable,
+  int superItableSize,
   bool itableEqualsSuper
 ) {
   TypeInfo* result = (TypeInfo*)konanAllocMemory(sizeof(TypeInfo) + vtable.size() * sizeof(void*));
@@ -669,11 +672,10 @@ static const TypeInfo* createTypeInfo(
 
   result->implementedInterfaces_ = implementedInterfaces_;
   result->implementedInterfacesCount_ = implementedInterfaces.size();
-  const InterfaceTableRecord* superItable = superType->interfaceTable_;
   if (superItable != nullptr) {
     if (itableEqualsSuper) {
-      result->interfaceTableSize_ = superType->interfaceTableSize_;
-      result->interfaceTable_ = superType->interfaceTable_;
+      result->interfaceTableSize_ = superItableSize;
+      result->interfaceTable_ = superItable;
     } else {
       buildITable(result, interfaceVTables);
     }
@@ -803,6 +805,9 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
   const MethodTableRecord* superMethodTable = nullptr;
   int superMethodTableSize = 0;
 
+  InterfaceTableRecord const* superITable = nullptr;
+  int superITableSize = 0;
+
   if (superTypeAdapter != nullptr) {
     // Then super class is Kotlin class.
 
@@ -811,6 +816,8 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
     superVtable = superTypeAdapter->kotlinVtable;
     superMethodTable = superTypeAdapter->kotlinMethodTable;
     superMethodTableSize = superTypeAdapter->kotlinMethodTableSize;
+    superITable = superTypeAdapter->kotlinItable;
+    superITableSize = superTypeAdapter->kotlinItableSize;
   }
 
   if (superVtable == nullptr) superVtable = superType->vtable();
@@ -828,12 +835,14 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
         superMethodTable, superMethodTable + superMethodTableSize
   );
 
-  InterfaceTableRecord const* superITable = superType->interfaceTable_;
+  if (superITable == nullptr) {
+    superITable = superType->interfaceTable_;
+    superITableSize = superType->interfaceTableSize_;
+  }
   KStdOrderedMap<ClassId, KStdVector<VTableElement>> interfaceVTables;
   if (superITable != nullptr) {
-    int superITableSize = superType->interfaceTableSize_;
-    superITableSize = superITableSize >= 0 ? superITableSize + 1 : -superITableSize;
-    for (int i = 0; i < superITableSize; ++i) {
+    int actualItableSize = superITableSize >= 0 ? superITableSize + 1 : -superITableSize;
+    for (int i = 0; i < actualItableSize; ++i) {
       auto& record = superITable[i];
       auto interfaceId = record.id;
       if (interfaceId == kInvalidInterfaceId) continue;
@@ -919,7 +928,8 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType) {
 
   // TODO: consider forbidding the class being abstract.
 
-  const TypeInfo* result = createTypeInfo(superType, addedInterfaces, vtable, methodTable, interfaceVTables, itableEqualsSuper);
+  const TypeInfo* result = createTypeInfo(superType, addedInterfaces, vtable, methodTable,
+                                          interfaceVTables, superITable, superITableSize, itableEqualsSuper);
 
   // TODO: it will probably never be requested, since such a class can't be instantiated in Kotlin.
   result->writableInfo_->objCExport.objCClass = clazz;
