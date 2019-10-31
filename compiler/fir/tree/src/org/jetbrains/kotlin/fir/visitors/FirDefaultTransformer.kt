@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
@@ -89,6 +91,22 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
 
     override fun transformSealedClass(sealedClass: FirSealedClass, data: D): CompositeTransformResult<FirStatement> {
         return transformRegularClass(sealedClass, data)
+    }
+
+    override fun transformErrorExpression(errorExpression: FirErrorExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformExpression(errorExpression, data)
+    }
+
+    override fun transformErrorLoop(errorLoop: FirErrorLoop, data: D): CompositeTransformResult<FirStatement> {
+        return transformLoop(errorLoop, data)
+    }
+
+    override fun transformErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): CompositeTransformResult<FirReference> {
+        return transformNamedReference(errorNamedReference, data)
+    }
+
+    override fun transformErrorFunction(errorFunction: FirErrorFunction, data: D): CompositeTransformResult<FirStatement> {
+        return transformFunction(errorFunction, data)
     }
 }
 

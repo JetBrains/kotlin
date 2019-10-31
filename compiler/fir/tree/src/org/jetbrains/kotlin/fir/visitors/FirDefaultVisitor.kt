@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
@@ -85,6 +87,22 @@ abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
 
     override fun visitSealedClass(sealedClass: FirSealedClass, data: D): R {
         return visitRegularClass(sealedClass, data)
+    }
+
+    override fun visitErrorExpression(errorExpression: FirErrorExpression, data: D): R {
+        return visitExpression(errorExpression, data)
+    }
+
+    override fun visitErrorLoop(errorLoop: FirErrorLoop, data: D): R {
+        return visitLoop(errorLoop, data)
+    }
+
+    override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): R {
+        return visitNamedReference(errorNamedReference, data)
+    }
+
+    override fun visitErrorFunction(errorFunction: FirErrorFunction, data: D): R {
+        return visitFunction(errorFunction, data)
     }
 }
 
