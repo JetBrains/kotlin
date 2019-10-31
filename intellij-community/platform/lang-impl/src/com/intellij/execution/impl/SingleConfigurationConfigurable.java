@@ -407,7 +407,7 @@ public final class SingleConfigurationConfigurable<Config extends RunConfigurati
       componentPanelBuilder.addToPanel(myCbStoreProjectConfigurationPanel,
                                        new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,
                                                               GridBagConstraints.NORTHWEST, GridBagConstraints.BOTH,
-                                                              JBUI.emptyInsets(), 0, 0));
+                                                              JBUI.emptyInsets(), 0, 0), false);
     }
 
     @Nullable
