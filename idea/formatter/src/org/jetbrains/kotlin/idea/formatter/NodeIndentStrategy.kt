@@ -21,7 +21,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
-import java.util.*
+import kotlin.collections.ArrayList
 
 abstract class NodeIndentStrategy {
 
@@ -113,40 +113,12 @@ abstract class NodeIndentStrategy {
         }
 
         override fun getIndent(node: ASTNode, settings: CodeStyleSettings): Indent? {
-            if (!forElement.isEmpty()) {
-                if (!forElement.contains(node.elementType)) {
-                    return null
-                }
-            }
-            if (notForElement.contains(node.elementType)) {
-                return null
-            }
-
-            if (forElementCallback?.invoke(node) == false) {
-                return null
-            }
+            if (!isValidIndent(forElement, notForElement, node, forElementCallback)) return null
 
             val parent = node.treeParent
             if (parent != null) {
-                if (!within.isEmpty()) {
-                    if (!within.contains(parent.elementType)) {
-                        return null
-                    }
-                }
-
-                if (notIn.contains(parent.elementType)) {
-                    return null
-                }
-
-                if (withinCallback?.invoke(parent) == false) {
-                    return null
-                }
-            }
-            else {
-                if (!within.isEmpty()) {
-                    return null
-                }
-            }
+                if (!isValidIndent(within, notIn, parent, withinCallback)) return null
+            } else if (within.isNotEmpty()) return null
 
             return indentCallback(settings)
         }
@@ -154,7 +126,7 @@ abstract class NodeIndentStrategy {
         private fun fillTypes(resultCollection: MutableList<IElementType>, singleType: IElementType, otherTypes: Array<out IElementType>) {
             resultCollection.clear()
             resultCollection.add(singleType)
-            Collections.addAll(resultCollection, *otherTypes)
+            resultCollection.addAll(otherTypes)
         }
     }
 
@@ -167,4 +139,16 @@ abstract class NodeIndentStrategy {
             return PositionStrategy(debugInfo)
         }
     }
+}
+
+private fun isValidIndent(
+    elements: ArrayList<IElementType>,
+    excludeElements: ArrayList<IElementType>,
+    node: ASTNode,
+    callback: ((ASTNode) -> Boolean)?
+): Boolean {
+    if (elements.isNotEmpty() && !elements.contains(node.elementType)) return false
+    if (excludeElements.contains(node.elementType)) return false
+    if (callback?.invoke(node) == false) return false
+    return true
 }
