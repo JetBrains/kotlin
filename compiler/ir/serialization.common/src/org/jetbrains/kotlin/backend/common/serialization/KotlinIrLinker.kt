@@ -434,6 +434,7 @@ abstract class KotlinIrLinker(
                     assert(id.isPublic)
                     moduleDeserializationState.addUniqID(id)
                 }
+                moduleDeserializationState.enqueueFile(fileDeserializer)
             } else if (deserializationStrategy.explicitlyExported) {
                 moduleDeserializationState.enqueueFile(fileDeserializer)
             }
