@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.ParallelDiagnosticsCollector
 import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.components.DeclarationCheckersDiagnosticComponent
+import org.jetbrains.kotlin.fir.resolve.diagnostics.collectors.registerAllComponents
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -38,7 +39,7 @@ abstract class AbstractFirResolveWithDiagnosticsTestCase : AbstractFirResolveTes
     private fun createCollector(): AbstractDiagnosticCollector {
 //        val collector = SimpleDiagnosticsCollector()
         val collector = ParallelDiagnosticsCollector(4)
-        collector.initializeComponents(DeclarationCheckersDiagnosticComponent(collector))
+        collector.registerAllComponents()
         return collector
     }
 

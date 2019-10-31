@@ -15,22 +15,22 @@ class ConeDiagnostic(
     val source: FirSourceElement
 )
 
-inline fun <reified E : PsiElement> DiagnosticFactory0<E>.on(source: FirSourceElement): ConeDiagnostic? {
+inline fun <reified E : PsiElement> DiagnosticFactory0<E>.onSource(source: FirSourceElement): ConeDiagnostic? {
     val psi = source.psi as? E ?: return null
     return ConeDiagnostic(this.on(psi), source)
 }
 
-inline fun <reified E : PsiElement, A> DiagnosticFactory1<E, A>.on(source: FirSourceElement, a: A): ConeDiagnostic? {
+inline fun <reified E : PsiElement, A> DiagnosticFactory1<E, A>.onSource(source: FirSourceElement, a: A): ConeDiagnostic? {
     val psi = source.psi as? E ?: return null
     return ConeDiagnostic(this.on(psi, a), source)
 }
 
-inline fun <reified E : PsiElement, A, B> DiagnosticFactory2<E, A, B>.on(source: FirSourceElement, a: A, b: B): ConeDiagnostic? {
+inline fun <reified E : PsiElement, A, B> DiagnosticFactory2<E, A, B>.onSource(source: FirSourceElement, a: A, b: B): ConeDiagnostic? {
     val psi = source.psi as? E ?: return null
     return ConeDiagnostic(this.on(psi, a, b), source)
 }
 
-inline fun <reified E : PsiElement, A, B, C> DiagnosticFactory3<E, A, B, C>.on(source: FirSourceElement, a: A, b: B, c: C): ConeDiagnostic? {
+inline fun <reified E : PsiElement, A, B, C> DiagnosticFactory3<E, A, B, C>.onSource(source: FirSourceElement, a: A, b: B, c: C): ConeDiagnostic? {
     val psi = source.psi as? E ?: return null
     return ConeDiagnostic(this.on(psi, a, b, c), source)
 }

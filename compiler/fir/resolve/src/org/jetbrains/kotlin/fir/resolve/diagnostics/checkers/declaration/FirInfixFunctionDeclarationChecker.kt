@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isInfix
-import org.jetbrains.kotlin.fir.resolve.diagnostics.on
 import org.jetbrains.kotlin.fir.resolve.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.resolve.diagnostics.onSource
 
 object FirInfixFunctionDeclarationChecker : FirDeclarationChecker<FirMemberDeclaration>() {
     override fun check(declaration: FirMemberDeclaration, reporter: DiagnosticReporter) {
@@ -27,6 +27,6 @@ object FirInfixFunctionDeclarationChecker : FirDeclarationChecker<FirMemberDecla
     }
 
     private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let { report(Errors.INAPPLICABLE_INFIX_MODIFIER.on(it, "Inapplicable infix modifier")) }
+        source?.let { report(Errors.INAPPLICABLE_INFIX_MODIFIER.onSource(it, "Inapplicable infix modifier")) }
     }
 }

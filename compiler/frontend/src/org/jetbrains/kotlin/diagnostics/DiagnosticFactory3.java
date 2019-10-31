@@ -25,10 +25,12 @@ public class DiagnosticFactory3<E extends PsiElement, A, B, C> extends Diagnosti
         super(severity, positioningStrategy);
     }
 
+    @NotNull
     public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity) {
         return create(severity, PositioningStrategies.DEFAULT);
     }
 
+    @NotNull
     public static <T extends PsiElement, A, B, C> DiagnosticFactory3<T, A, B, C> create(Severity severity, PositioningStrategy<? super T> positioningStrategy) {
         return new DiagnosticFactory3<>(severity, positioningStrategy);
     }

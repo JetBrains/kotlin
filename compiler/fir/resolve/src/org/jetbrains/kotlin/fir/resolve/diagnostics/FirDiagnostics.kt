@@ -26,7 +26,7 @@ class FirUnresolvedNameError(val name: Name) : FirDiagnostic() {
 }
 
 class FirInapplicableCandidateError(val applicability: CandidateApplicability, val candidates: Collection<AbstractFirBasedSymbol<*>>) : FirDiagnostic() {
-    override val reason: String get() = "Inapplicable($applicability): $candidates"
+    override val reason: String get() = "Inapplicable($applicability): ${candidates.map { describeSymbol(it) }}"
 }
 
 class FirAmbiguityError(val name: Name, val candidates: Collection<AbstractFirBasedSymbol<*>>) : FirDiagnostic() {
