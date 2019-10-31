@@ -158,10 +158,8 @@ class IrExpressionLambdaImpl(
     // arguments apart from any other scope's. So long as it's unique, any value is fine.
     // This particular string slightly aids in debugging internal compiler errors as it at least
     // points towards the function containing the lambda.
-    override val lambdaClassType: Type = Type.getObjectType(
-        context.getLocalClassInfo(reference)?.internalName
-            ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
-    )
+    override val lambdaClassType: Type =
+        context.getLocalClassType(reference) ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
 
     override val capturedVars: List<CapturedParamDesc> =
         reference.getArgumentsWithIr().map { (param, _) ->

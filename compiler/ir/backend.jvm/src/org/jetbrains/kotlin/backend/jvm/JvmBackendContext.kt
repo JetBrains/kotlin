@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.org.objectweb.asm.Type
 
 class JvmBackendContext(
     val state: GenerationState,
@@ -61,15 +62,13 @@ class JvmBackendContext(
 
     val irIntrinsics = IrIntrinsicMethods(irBuiltIns, ir.symbols)
 
-    internal class LocalClassInfo(val internalName: String)
+    private val localClassType = mutableMapOf<IrAttributeContainer, Type>()
 
-    private val localClassInfo = mutableMapOf<IrAttributeContainer, LocalClassInfo>()
+    internal fun getLocalClassType(container: IrAttributeContainer): Type? =
+        localClassType[container.attributeOwnerId]
 
-    internal fun getLocalClassInfo(container: IrAttributeContainer): LocalClassInfo? =
-        localClassInfo[container.attributeOwnerId]
-
-    internal fun putLocalClassInfo(container: IrAttributeContainer, value: LocalClassInfo) {
-        localClassInfo[container.attributeOwnerId] = value
+    internal fun putLocalClassType(container: IrAttributeContainer, value: Type) {
+        localClassType[container.attributeOwnerId] = value
     }
 
     internal val customEnclosingFunction = mutableMapOf<IrAttributeContainer, IrFunction>()
