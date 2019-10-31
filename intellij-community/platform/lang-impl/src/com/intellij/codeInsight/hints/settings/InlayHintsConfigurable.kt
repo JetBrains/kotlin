@@ -5,6 +5,7 @@ import com.intellij.codeInsight.hints.InlayHintsSettings
 import com.intellij.codeInsight.hints.settings.language.SingleLanguageInlayHintsConfigurable
 import com.intellij.ide.DataManager
 import com.intellij.lang.Language
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.options.ex.Settings
@@ -22,6 +23,10 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
       .toSortedSet(compareBy { it.displayName })
     configurables = allInlayLanguages.map { SingleLanguageInlayHintsConfigurable(project, it) }
     panel = InlayHintsPanel(allInlayLanguages, settings)
+
+    ApplicationManager.getApplication().messageBus.connect().subscribe(
+      InlayHintsSettings.INLAY_SETTINGS_CHANGED,
+      ConfigurationChangeListener(configurables))
   }
 
   override fun getConfigurables(): Array<Configurable> {
@@ -74,6 +79,22 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
       val displayName = language.displayName
       ShowSettingsUtil.getInstance()
         .showSettingsDialog(project, { it.displayName == displayName && it is SingleLanguageInlayHintsConfigurable }, {})
+    }
+  }
+
+  private class ConfigurationChangeListener(val configurables: List<Configurable>) : InlayHintsSettings.SettingsListener {
+    override fun didLanguageStatusChanged() {
+      reset()
+    }
+
+    override fun didGlobalEnabledStatusChanged(newEnabled: Boolean) {
+      reset()
+    }
+
+    private fun reset() {
+      for (configurable in configurables) {
+        configurable.reset()
+      }
     }
   }
 }
