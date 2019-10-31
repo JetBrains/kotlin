@@ -31,6 +31,7 @@ import com.intellij.serviceContainer.PlatformComponentManagerImpl;
 import com.intellij.util.xmlb.annotations.MapAnnotation;
 import com.intellij.util.xmlb.annotations.Property;
 import gnu.trove.THashMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +52,8 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
 
   private final ModuleScopeProvider myModuleScopeProvider;
 
-  ModuleImpl(@NotNull String name, @NotNull Project project, @NotNull String filePath) {
+  @ApiStatus.Internal
+  public ModuleImpl(@NotNull String name, @NotNull Project project, @NotNull String filePath) {
     super(project);
 
     getPicoContainer().registerComponentInstance(Module.class, this);
