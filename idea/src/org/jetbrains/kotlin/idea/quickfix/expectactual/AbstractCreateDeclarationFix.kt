@@ -89,7 +89,8 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
                 val reformatted = CodeStyleManager.getInstance(project).reformat(generatedDeclaration)
                 val shortened = ShortenReferences.DEFAULT.process(reformatted as KtElement)
                 EditorHelper.openInEditor(shortened)?.caretModel?.moveToOffset(
-                    (shortened as? KtNamedDeclaration)?.nameIdentifier?.startOffset ?: shortened.startOffset
+                    (shortened as? KtNamedDeclaration)?.nameIdentifier?.startOffset ?: shortened.startOffset,
+                    true
                 )
             }
         }
