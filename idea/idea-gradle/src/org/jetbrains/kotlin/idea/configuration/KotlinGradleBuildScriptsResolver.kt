@@ -12,6 +12,7 @@ import com.intellij.openapi.util.Pair
 import com.intellij.util.Consumer
 import org.gradle.tooling.model.idea.IdeaProject
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
+import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters.*
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
 import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider
@@ -47,11 +48,16 @@ class KotlinGradleBuildScriptsResolver : AbstractProjectResolverExtension() {
     }
 
     override fun getExtraJvmArgs(): List<Pair<String, String>> {
-        return listOf(Pair("-Dorg.gradle.kotlin.dsl.provider.mode", "strict-classpath"))
+        return listOf(
+            Pair(
+                "-D$PROVIDER_MODE_SYSTEM_PROPERTY_NAME",
+                STRICT_CLASSPATH_MODE_SYSTEM_PROPERTY_VALUE
+            )
+        )
     }
 
     override fun enhanceTaskProcessing(taskNames: MutableList<String>, jvmParametersSetup: String?, initScriptConsumer: Consumer<String>) {
-        initScriptConsumer.consume("startParameter.taskNames += [\"prepareKotlinBuildScriptModel\"]")
+        initScriptConsumer.consume("startParameter.taskNames += [\"${PREPARATION_TASK_NAME}\"]")
     }
 
     override fun getExtraModelProvider(): ProjectImportExtraModelProvider {
