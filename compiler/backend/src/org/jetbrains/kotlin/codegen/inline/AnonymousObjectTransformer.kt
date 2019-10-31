@@ -494,13 +494,27 @@ class AnonymousObjectTransformer(
 
         //For all inlined lambdas add their captured parameters
         //TODO: some of such parameters could be skipped - we should perform additional analysis
-        val capturedLambdasToInline = HashMap<String, LambdaInfo>() //captured var of inlined parameter
         val allRecapturedParameters = ArrayList<CapturedParamDesc>()
-        val addCapturedNotAddOuter =
-            parentFieldRemapper.isRoot || parentFieldRemapper is InlinedLambdaRemapper && parentFieldRemapper.parent!!.isRoot
-        val alreadyAdded = HashMap<String, CapturedParamInfo>()
-        for (info in capturedLambdas) {
-            if (addCapturedNotAddOuter) {
+        if (parentFieldRemapper !is InlinedLambdaRemapper || parentFieldRemapper.parent!!.isRoot) {
+            // Possible cases:
+            //
+            //   1. Top-level object in an inline lambda that is *not* being inlined into another object. In this case, we
+            //      have no choice but to add a separate field for each captured variable. `capturedLambdas` is either empty
+            //      (already have the fields) or contains the parent lambda object (captures used to be read from it, but
+            //      the object will be removed and its contents inlined).
+            //
+            //   2. Top-level object in a named inline function. Again, there's no option but to add separate fields.
+            //      `capturedLambdas` contains all lambdas used by this object and nested objects.
+            //
+            //   3. Nested object, either in an inline lambda or an inline function. This case has two subcases:
+            //      * The object's captures are passed as separate arguments (e.g. KT-28064 style object that used to be in a lambda);
+            //        we could group them into `this$0` now, but choose not to. Lambdas are replaced by their captures.
+            //      * The object's captures are already grouped into `this$0`; this includes captured lambda parameters (for objects in
+            //        inline functions) and a reference to the outer object or lambda (for objects in lambdas), so `capturedLambdas` is
+            //        empty and the choice doesn't matter.
+            //
+            val alreadyAdded = HashMap<String, CapturedParamInfo>()
+            for (info in capturedLambdas) {
                 for (desc in info.capturedVars) {
                     val key = desc.fieldName + "$$$" + desc.type.className
                     val alreadyAddedParam = alreadyAdded[key]
@@ -532,11 +546,10 @@ class AnonymousObjectTransformer(
                     }
                 }
             }
-            capturedLambdasToInline.put(info.lambdaClassType.internalName, info)
-        }
-
-        if (parentFieldRemapper is InlinedLambdaRemapper && !capturedLambdas.isEmpty() && !addCapturedNotAddOuter) {
-            //lambda with non InlinedLambdaRemapper already have outer
+        } else if (capturedLambdas.isNotEmpty()) {
+            // Top-level object in a lambda inlined into another object. As already said above, either `capturedLambdas` is empty
+            // (no captures or captures were generated as loose fields) or it contains a single entry for the parent lambda itself.
+            // Simply replace one `this$0` (of lambda type) with another (of destination object type).
             val parent = parentFieldRemapper.parent as? RegeneratedLambdaFieldRemapper
                 ?: throw AssertionError("Expecting RegeneratedLambdaFieldRemapper, but ${parentFieldRemapper.parent}")
             val ownerType = Type.getObjectType(parent.originalLambdaInternalName)
@@ -550,7 +563,7 @@ class AnonymousObjectTransformer(
         }
 
         transformationInfo.allRecapturedParameters = allRecapturedParameters
-        transformationInfo.capturedLambdasToInline = capturedLambdasToInline
+        transformationInfo.capturedLambdasToInline = capturedLambdas.associateBy { it.lambdaClassType.internalName }
 
         return constructorAdditionalFakeParams
     }
