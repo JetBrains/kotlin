@@ -96,25 +96,24 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSou
     }
 
     private fun addBuildScriptDiagnosticMessage(
-        it: GradleKotlinBuildScriptData.Message,
+        message: GradleKotlinBuildScriptData.Message,
         virtualFile: VirtualFile,
         project: Project
     ) {
-        val notification =
-            NotificationData(
-                "Kotlin Build Script",
-                it.text,
-                when (it.severity) {
-                    GradleKotlinBuildScriptData.Severity.WARNING -> NotificationCategory.WARNING
-                    GradleKotlinBuildScriptData.Severity.ERROR -> NotificationCategory.ERROR
-                },
-                NotificationSource.PROJECT_SYNC
-            )
+        val notification = NotificationData(
+            "Kotlin Build Script",
+            message.text,
+            when (message.severity) {
+                GradleKotlinBuildScriptData.Severity.WARNING -> NotificationCategory.WARNING
+                GradleKotlinBuildScriptData.Severity.ERROR -> NotificationCategory.ERROR
+            },
+            NotificationSource.PROJECT_SYNC
+        )
 
         notification.navigatable = LazyNavigatable(
             virtualFile,
             project,
-            it.position
+            message.position
         )
 
         ExternalSystemNotificationManager.getInstance(project).showNotification(
