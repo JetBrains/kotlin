@@ -296,7 +296,7 @@ public class PostfixLiveTemplate extends CustomLiveTemplateBase {
     Document fileDocument = file.getViewProvider().getDocument();
     if (fileDocument != null && fileDocument.getTextLength() < currentOffset) {
       LOG.error("File document length (" + fileDocument.getTextLength() + ") is less than offset (" + currentOffset + ")",
-                AttachmentFactory.createAttachment(fileDocument));
+                AttachmentFactory.createAttachment(fileDocument), AttachmentFactory.createAttachment(editor.getDocument()));
     }
     Document originalDocument = editor.getDocument();
     OffsetTranslator translator = new OffsetTranslator(originalDocument, file, copyDocument, newOffset, currentOffset, "");
