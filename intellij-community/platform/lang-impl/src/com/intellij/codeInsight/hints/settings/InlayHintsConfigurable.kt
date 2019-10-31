@@ -24,7 +24,7 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
     configurables = allInlayLanguages.map { SingleLanguageInlayHintsConfigurable(project, it) }
     panel = InlayHintsPanel(allInlayLanguages, settings)
 
-    ApplicationManager.getApplication().messageBus.connect().subscribe(
+    ApplicationManager.getApplication().messageBus.connect(project).subscribe(
       InlayHintsSettings.INLAY_SETTINGS_CHANGED,
       ConfigurationChangeListener(configurables))
   }
