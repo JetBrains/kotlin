@@ -18,6 +18,8 @@ public interface NativeDefinitionsTypes {
   IElementType ANDROID = new NativeDefinitionsTokenType("android");
   IElementType ANDROID_ARM32 = new NativeDefinitionsTokenType("android_arm32");
   IElementType ANDROID_ARM64 = new NativeDefinitionsTokenType("android_arm64");
+  IElementType ANDROID_X64 = new NativeDefinitionsTokenType("ANDROID_X64");
+  IElementType ANDROID_X86 = new NativeDefinitionsTokenType("ANDROID_X86");
   IElementType ARM32 = new NativeDefinitionsTokenType("arm32");
   IElementType ARM64 = new NativeDefinitionsTokenType("arm64");
   IElementType CODE_CHARS = new NativeDefinitionsTokenType("CODE_CHARS");
@@ -57,7 +59,6 @@ public interface NativeDefinitionsTypes {
   IElementType NO_STRING_CONVERSION = new NativeDefinitionsTokenType("noStringConversion");
   IElementType OSX = new NativeDefinitionsTokenType("osx");
   IElementType PACKAGE = new NativeDefinitionsTokenType("package");
-  IElementType PLATFORM__26_0 = new NativeDefinitionsTokenType("platform__26_0");
   IElementType SEPARATOR = new NativeDefinitionsTokenType("SEPARATOR");
   IElementType STATIC_LIBRARIES = new NativeDefinitionsTokenType("staticLibraries");
   IElementType STRICT_ENUMS = new NativeDefinitionsTokenType("strictEnums");

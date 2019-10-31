@@ -51,6 +51,8 @@ STRICT_ENUMS="strictEnums"
 
 // known platforms
 ANDROID="android"
+ANDROID_X64="android_x64"
+ANDROID_X86="android_x86"
 ANDROID_ARM32="android_arm32"
 ANDROID_ARM64="android_arm64"
 ARM32="arm32"
@@ -120,6 +122,8 @@ X64="x64"
 
 <WAITING_PLATFORM> {
   [.]{ANDROID} { return ANDROID; }
+  [.]{ANDROID_X64} { return ANDROID_X64; }
+  [.]{ANDROID_X86} { return ANDROID_X86; }
   [.]{ANDROID_ARM32} { return ANDROID_ARM32; }
   [.]{ANDROID_ARM64} { return ANDROID_ARM64; }
   [.]{ARM32} { return ARM32; }
