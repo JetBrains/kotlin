@@ -21,8 +21,7 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
-  public static final ExtensionPointName<DequotingFilter> EP_NAME =
-    ExtensionPointName.create("com.intellij.selectionDequotingFilter");
+  public static final ExtensionPointName<UnquotingFilter> EP_NAME = ExtensionPointName.create("com.intellij.selectionUnquotingFilter");
 
   @NotNull
   @Override
@@ -129,10 +128,7 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
   }
 
   private static boolean shouldSkipReplacementOfQuotesOrBraces(PsiFile psiFile, Editor editor, String selectedText, char c) {
-    for(DequotingFilter filter: EP_NAME.getExtensionList()) {
-      if (filter.skipReplacementQuotesOrBraces(psiFile, editor, selectedText, c)) return true;
-    }
-    return false;
+    return EP_NAME.getExtensionList().stream().anyMatch(filter -> filter.skipReplacementQuotesOrBraces(psiFile, editor, selectedText, c));
   }
 
   private static char getMatchingDelimiter(char c) {
@@ -163,7 +159,7 @@ public class SelectionQuotingTypedHandler extends TypedHandlerDelegate {
     document.replaceString(offset, offset + 1, String.valueOf(newChar));
   }
 
-  public static abstract class DequotingFilter {
+  public static abstract class UnquotingFilter {
     public abstract boolean skipReplacementQuotesOrBraces(@NotNull PsiFile file,
                                                           @NotNull Editor editor,
                                                           @NotNull String selectedText,
