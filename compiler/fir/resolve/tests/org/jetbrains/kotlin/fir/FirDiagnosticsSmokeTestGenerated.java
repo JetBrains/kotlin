@@ -9763,6 +9763,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/inference/functionPlaceholderError.kt");
         }
 
+        @TestMetadata("genericAssignmentOperator.kt")
+        public void testGenericAssignmentOperator() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/genericAssignmentOperator.kt");
+        }
+
         @TestMetadata("hasErrorInConstrainingTypes.kt")
         public void testHasErrorInConstrainingTypes() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/hasErrorInConstrainingTypes.kt");
