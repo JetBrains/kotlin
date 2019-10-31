@@ -83,11 +83,12 @@ sealed class BootstrapOption {
         val kotlinVersion: String,
         val buildNumber: String? = null,
         val projectExtId: String? = null,
-        val onlySuccessBootstrap: Boolean = true
+        val onlySuccessBootstrap: Boolean = true,
+        val teamcityUrl: String = "https://teamcity.jetbrains.com"
     ) : BootstrapOption() {
         override fun applyToProject(project: Project) {
             val query = if (onlySuccessBootstrap) "status:SUCCESS,tag:bootstrap,pinned:true" else "branch:default:any"
-            project.bootstrapKotlinRepo = "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:${projectExtId
+            project.bootstrapKotlinRepo = "$teamcityUrl/guestAuth/app/rest/builds/buildType:(id:${projectExtId
                 ?: "Kotlin_dev_Compiler"}),number:${buildNumber ?: kotlinVersion},$query/artifacts/content/maven/"
             project.bootstrapKotlinVersion = kotlinVersion
         }
