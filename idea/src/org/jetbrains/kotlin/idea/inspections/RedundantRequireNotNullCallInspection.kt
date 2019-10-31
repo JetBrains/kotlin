@@ -71,7 +71,7 @@ private class RemoveRequireNotNullCallFix(private val functionName: String) : Lo
         val callExpression = descriptor.psiElement.getStrictParentOfType<KtCallExpression>() ?: return
         val argument = callExpression.valueArguments.firstOrNull()?.getArgumentExpression() ?: return
         val target = callExpression.getQualifiedExpressionForSelector() ?: callExpression
-        if (callExpression.isUsedAsExpression(callExpression.analyze(BodyResolveMode.PARTIAL))) {
+        if (callExpression.isUsedAsExpression(callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA))) {
             target.replace(argument)            
         } else {
             target.delete()
