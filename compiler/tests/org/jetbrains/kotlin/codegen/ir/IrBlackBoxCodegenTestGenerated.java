@@ -21670,6 +21670,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/reflection/enclosing/lambdaInPackage.kt");
             }
 
+            @TestMetadata("lambdaInPropertyDelegate.kt")
+            public void testLambdaInPropertyDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/enclosing/lambdaInPropertyDelegate.kt");
+            }
+
             @TestMetadata("lambdaInPropertyGetter.kt")
             public void testLambdaInPropertyGetter() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/enclosing/lambdaInPropertyGetter.kt");

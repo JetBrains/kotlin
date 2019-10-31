@@ -218,6 +218,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/kt21775.kt");
     }
 
+    @TestMetadata("metadataForMembersInLocalClassInInitializer.kt")
+    public void testMetadataForMembersInLocalClassInInitializer() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/metadataForMembersInLocalClassInInitializer.kt");
+    }
+
     @TestMetadata("multifileClassInlineFunctionAccessingProperty.kt")
     public void testMultifileClassInlineFunctionAccessingProperty() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/multifileClassInlineFunctionAccessingProperty.kt");

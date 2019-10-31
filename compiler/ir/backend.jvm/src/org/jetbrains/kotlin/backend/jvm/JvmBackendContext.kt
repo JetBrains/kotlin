@@ -27,12 +27,8 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
@@ -65,7 +61,6 @@ class JvmBackendContext(
 
     val irIntrinsics = IrIntrinsicMethods(irBuiltIns, ir.symbols)
 
-    // TODO: also store info for EnclosingMethod
     internal class LocalClassInfo(val internalName: String)
 
     private val localClassInfo = mutableMapOf<IrAttributeContainer, LocalClassInfo>()
@@ -76,6 +71,8 @@ class JvmBackendContext(
     internal fun putLocalClassInfo(container: IrAttributeContainer, value: LocalClassInfo) {
         localClassInfo[container.attributeOwnerId] = value
     }
+
+    internal val customEnclosingFunction = mutableMapOf<IrAttributeContainer, IrFunction>()
 
     // TODO cache these at ClassCodegen level. Currently, sharing this map between classes in a module is required
     //      because IrSourceCompilerForInline constructs a new (Fake)ClassCodegen for every call to

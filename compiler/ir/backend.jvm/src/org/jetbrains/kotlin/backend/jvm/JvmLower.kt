@@ -145,6 +145,12 @@ internal val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
     prerequisite = setOf(callableReferencePhase, sharedVariablesPhase)
 )
 
+private val jvmLocalClassExtractionPhase = makeIrFilePhase(
+    ::JvmLocalClassPopupLowering,
+    name = "JvmLocalClassExtraction",
+    description = "Move local classes from field initializers and anonymous init blocks into the containing class"
+)
+
 private val defaultArgumentStubPhase = makeIrFilePhase(
     ::JvmDefaultArgumentStubGenerator,
     name = "DefaultArgumentsStubGenerator",
@@ -193,7 +199,9 @@ private val initializersPhase = makeIrFilePhase(
                 error("No anonymous initializers should remain at this stage")
             }
         })
-    })
+    }),
+    // Depends on local class extraction, because otherwise local classes in initializers will be copied into each constructor.
+    prerequisite = setOf(jvmLocalClassExtractionPhase)
 )
 
 private val returnableBlocksPhase = makeIrFilePhase(
@@ -248,6 +256,7 @@ private val jvmFilePhases =
         assertionPhase then
         returnableBlocksPhase then
         localDeclarationsPhase then
+        jvmLocalClassExtractionPhase then
 
         jvmOverloadsAnnotationPhase then
         jvmDefaultConstructorPhase then
