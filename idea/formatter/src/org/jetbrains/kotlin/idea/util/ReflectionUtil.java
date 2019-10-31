@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,13 +19,18 @@ import java.util.Set;
 
 public class ReflectionUtil {
     @Retention(RetentionPolicy.RUNTIME)
-    public @interface SkipInEquals {}
+    public @interface SkipInEquals {
+    }
 
     public static boolean comparePublicNonFinalFieldsWithSkip(@NotNull Object first, @NotNull Object second) {
         return comparePublicNonFinalFields(first, second, field -> field.getAnnotation(SkipInEquals.class) == null);
     }
 
-    private static boolean comparePublicNonFinalFields(@NotNull Object first, @NotNull Object second, @Nullable Predicate<Field> acceptPredicate) {
+    private static boolean comparePublicNonFinalFields(
+            @NotNull Object first,
+            @NotNull Object second,
+            @Nullable Predicate<Field> acceptPredicate
+    ) {
         Set<Field> firstFields = ContainerUtil.newHashSet(first.getClass().getFields());
 
         for (Field field : second.getClass().getFields()) {

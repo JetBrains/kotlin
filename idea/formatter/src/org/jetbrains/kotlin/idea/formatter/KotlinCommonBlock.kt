@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -142,7 +142,8 @@ abstract class KotlinCommonBlock(
                 enforceIndentToChildren
             )
             val wrap = if ((settings.kotlinCommonSettings.WRAP_FIRST_METHOD_IN_CALL_CHAIN || isNonFirstChainedCall) &&
-                canWrapCallChain(node))
+                canWrapCallChain(node)
+            )
                 Wrap.createWrap(settings.kotlinCommonSettings.METHOD_CALL_CHAIN_WRAP, true)
             else
                 null
@@ -521,7 +522,8 @@ abstract class KotlinCommonBlock(
             elementType === VALUE_PARAMETER_LIST -> {
                 if (parentElementType === FUN ||
                     parentElementType === PRIMARY_CONSTRUCTOR ||
-                    parentElementType === SECONDARY_CONSTRUCTOR) {
+                    parentElementType === SECONDARY_CONSTRUCTOR
+                ) {
                     val wrap = Wrap.createWrap(commonSettings.METHOD_PARAMETERS_WRAP, false)
                     return { childElement ->
                         if (childElement.elementType === VALUE_PARAMETER && !childElement.startsWithAnnotation())
@@ -541,8 +543,7 @@ abstract class KotlinCommonBlock(
                 return getWrappingStrategyForItemList(commonSettings.ENUM_CONSTANTS_WRAP, ENUM_ENTRY)
 
             elementType === MODIFIER_LIST -> {
-                val parent = node.treeParent.psi
-                when (parent) {
+                when (val parent = node.treeParent.psi) {
                     is KtParameter ->
                         return getWrappingStrategyForItemList(
                             commonSettings.PARAMETER_ANNOTATION_WRAP,
@@ -947,7 +948,8 @@ private fun getWrappingStrategyForItemList(wrapType: Int, itemTypes: TokenSet, w
         val thisType = childElement.elementType
         val prevType = getPrevWithoutWhitespace(childElement)?.elementType
         if (thisType in itemTypes || prevType in itemTypes &&
-            thisType != EOL_COMMENT && prevType != EOL_COMMENT)
+            thisType != EOL_COMMENT && prevType != EOL_COMMENT
+        )
             itemWrap
         else
             null

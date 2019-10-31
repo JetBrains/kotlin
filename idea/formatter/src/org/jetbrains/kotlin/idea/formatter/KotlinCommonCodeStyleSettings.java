@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -69,9 +69,11 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         String customDefaults = tempDeserialize.CODE_STYLE_DEFAULTS;
         if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(customDefaults)) {
             KotlinStyleGuideCodeStyle.Companion.applyToCommonSettings(this, true);
-        } else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(customDefaults)) {
+        }
+        else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(customDefaults)) {
             KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(this, true);
-        } else if (customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle()) {
+        }
+        else if (customDefaults == null && FormatterUtilKt.isDefaultOfficialCodeStyle()) {
             // Temporary load settings against previous defaults
             settingsAgainstPreviousDefaults = createForTempDeserialize();
             KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(settingsAgainstPreviousDefaults, true);
@@ -88,7 +90,8 @@ public class KotlinCommonCodeStyleSettings extends CommonCodeStyleSettings {
         if (defaultSettings != null) {
             if (KotlinStyleGuideCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
                 KotlinStyleGuideCodeStyle.Companion.applyToCommonSettings(defaultSettings, false);
-            } else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
+            }
+            else if (KotlinObsoleteCodeStyle.CODE_STYLE_ID.equals(CODE_STYLE_DEFAULTS)) {
                 KotlinObsoleteCodeStyle.Companion.applyToCommonSettings(defaultSettings, false);
             }
         }
