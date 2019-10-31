@@ -270,8 +270,10 @@ public class FindInProjectUtil {
     do {
       tooManyUsagesStatus.pauseProcessingIfTooManyUsages(); // wait for user out of read action
       before = offsetRef[0];
-      if (!ReadAction.compute(() ->
-         !psiFile.isValid() || addToUsages(document, findModel, psiFile, offsetRef, USAGES_PER_READ_ACTION, consumer))) {
+      boolean success = ReadAction.compute(() ->
+                                             !psiFile.isValid() ||
+                                             processSomeOccurrencesInFile(document, findModel, psiFile, offsetRef, consumer));
+      if (!success) {
         return false;
       }
     }
@@ -279,12 +281,11 @@ public class FindInProjectUtil {
     return true;
   }
 
-  private static boolean addToUsages(@NotNull Document document,
-                                     @NotNull FindModel findModel,
-                                     @NotNull final PsiFile psiFile,
-                                     @NotNull int[] offsetRef,
-                                     int maxUsages,
-                                     @NotNull Processor<? super UsageInfo> consumer) {
+  private static boolean processSomeOccurrencesInFile(@NotNull Document document,
+                                                      @NotNull FindModel findModel,
+                                                      @NotNull final PsiFile psiFile,
+                                                      @NotNull int[] offsetRef,
+                                                      @NotNull Processor<? super UsageInfo> consumer) {
     CharSequence text = document.getCharsSequence();
     int textLength = document.getTextLength();
     int offset = offsetRef[0];
@@ -315,7 +316,7 @@ public class FindInProjectUtil {
       }
       count++;
 
-      if (maxUsages > 0 && count >= maxUsages) {
+      if (count >= USAGES_PER_READ_ACTION) {
         break;
       }
     }
