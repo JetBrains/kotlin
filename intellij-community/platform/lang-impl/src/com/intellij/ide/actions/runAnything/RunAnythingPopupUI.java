@@ -106,6 +106,11 @@ public class RunAnythingPopupUI extends BigPopupUI {
   private final List<RunAnythingContext> myAvailableExecutingContexts = new ArrayList<>();
   private RunAnythingChooseContextAction myChooseContextAction;
 
+  @Nullable
+  public String getUserInputText() {
+    return myResultsList.getSelectedIndex() >= 0 ? myLastInputText : mySearchField.getText();
+  }
+
   private void onMouseClicked(@NotNull MouseEvent event) {
     int clickCount = event.getClickCount();
     if (clickCount > 1 && clickCount % 2 == 0) {

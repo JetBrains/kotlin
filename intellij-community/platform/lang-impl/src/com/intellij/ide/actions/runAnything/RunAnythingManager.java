@@ -63,7 +63,7 @@ public class RunAnythingManager {
       .setRequestFocus(true)
       .setCancelKeyEnabled(false)
       .setCancelCallback(() -> {
-        if (!Objects.equals(myRunAnythingUI.getSearchField().getText(), searchText)) {
+        if (!Objects.equals(myRunAnythingUI.getUserInputText(), searchText)) {
           saveSearchText();
         }
 
@@ -114,7 +114,7 @@ public class RunAnythingManager {
       return;
     }
 
-    mySelectedText = myRunAnythingUI.getSearchField().getText();
+    mySelectedText = myRunAnythingUI.getUserInputText();
   }
 
   private void calcPositionAndShow(Project project, JBPopup balloon) {
