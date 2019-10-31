@@ -633,8 +633,8 @@ task clean {
 task pusher(type: KotlinBuildPusher){
     kotlinVersion = project.kotlinVersion
     konanVersion = KonanVersionGeneratedKt.getCurrentKonanVersion()
-    buildServer = "teamcity.jetbrains.com"
-    compilerConfigurationId = "Kotlin_dev_Compiler"
-    overrideConfigurationId = "Kotlin_dev_DeployMavenArtifacts_OverrideNative"
+    buildServer = "buildserver.labs.intellij.net"
+    compilerConfigurationId = System.getenv("TEAMCITY_COMPILER_ID") ?: "Kotlin_KotlinDev_Compiler"
+    overrideConfigurationId = System.getenv("TEAMCITY_OVERRIDE_NATIVE_ID") ?: "Kotlin_KotlinDev_DeployMavenArtifacts_OverrideNative"
     token = project.findProperty("teamcityBearToken") ?: System.getenv("TEAMCITY_BEAR_TOKEN")
 }
