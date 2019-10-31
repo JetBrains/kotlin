@@ -1,0 +1,13 @@
+<idea-plugin>
+  <id>org.jetbrains.mobile-mpp</id>
+  <name>Mobile Multiplatform</name>
+  <version>0.1</version>
+  <vendor url="http://jetbrains.com">JetBrains</vendor>
+
+  <description>Provides functionality for development of Kotlin MPP applications for mobile targets.</description>
+  <idea-version since-build="192.0"/>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <externalProjectDataService implementation="com.jetbrains.konan.ASKonanProjectDataService"/>
+  </extensions>
+</idea-plugin>
