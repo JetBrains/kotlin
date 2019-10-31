@@ -19,6 +19,7 @@ compilerOpts.linux = -DFOO3=foo3 -DFOO4=foo4
 compilerOpts.macos_x64 = -DFOO1=foo1 -DFOO2=foo2
 
 staticLibraries = libfoo.a
+staticLibraries.android_x86 = libbaz.a
 libraryPaths = /opt/local/lib /usr/local/opt/curl/lib
 
 linker=clang
@@ -33,6 +34,7 @@ strictEnums.android_arm64 = strict enums
 
 modules.osx = baba
 modules.watchos_arm64 = deda
+modules.android_x64 = kolobok
 
 ---
 
