@@ -89,6 +89,7 @@ public abstract class AbstractNavBarUI implements NavBarUI {
       }
     }
 
+    // see: https://github.com/JetBrains/intellij-community/pull/1111
     Map<ImageType, ScaleContext.Cache<BufferedImage>> cache = myCache.computeIfAbsent(item, k -> new HashMap<>());
     ScaleContext.Cache<BufferedImage> imageCache = cache.computeIfAbsent(type, k -> new ScaleContext.Cache<>((ctx) ->
       drawToBuffer(item, ctx, floating, toolbarVisible, selected, navbar)));
