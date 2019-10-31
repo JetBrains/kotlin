@@ -70,7 +70,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     Disposer.register(myProject, myModel);
     myModelFilter = new ServiceModelFilter();
     myGroups = loadGroups();
-    myProject.getMessageBus().connect(myModel).subscribe(ServiceEventListener.TOPIC, e -> myModel.refresh(e).onSuccess(o -> {
+    myProject.getMessageBus().connect(myModel).subscribe(ServiceEventListener.TOPIC, e -> myModel.handle(e).onSuccess(o -> {
       ServiceViewItem eventRoot = ContainerUtil.find(myModel.getRoots(), root -> e.contributorClass.isInstance(root.getRootContributor()));
       if (eventRoot != null) {
         activateToolWindow(e.contributorClass,

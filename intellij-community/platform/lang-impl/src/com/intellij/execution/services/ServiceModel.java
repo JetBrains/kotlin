@@ -1,10 +1,12 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.services;
 
+import com.intellij.diagnostic.PluginException;
 import com.intellij.execution.services.ServiceEventListener.ServiceEvent;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.ide.util.treeView.WeighedItem;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ColoredItem;
@@ -32,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 class ServiceModel implements Disposable, InvokerSupplier {
   private static final ExtensionPointName<ServiceViewContributor<?>> EP_NAME =
     ExtensionPointName.create("com.intellij.serviceViewContributor");
+  private static final Logger LOG = Logger.getInstance(ServiceModel.class);
 
   private final Project myProject;
   private final Invoker myInvoker = new Invoker.Background(this);
@@ -69,10 +72,15 @@ class ServiceModel implements Disposable, InvokerSupplier {
   private List<? extends ServiceViewItem> doGetRoots() {
     List<ServiceViewItem> result = new ArrayList<>();
     for (ServiceViewContributor<?> contributor : getContributors()) {
-      ContributorNode root = new ContributorNode(myProject, contributor);
-      root.loadChildren();
-      if (!root.getChildren().isEmpty()) {
-        result.add(root);
+      try {
+        ContributorNode root = new ContributorNode(myProject, contributor);
+        root.loadChildren();
+        if (!root.getChildren().isEmpty()) {
+          result.add(root);
+        }
+      }
+      catch (Exception e) {
+        PluginException.logPluginError(LOG, "Failed to init service view contributor " + contributor.getClass(), e, contributor.getClass());
       }
     }
     return result;
@@ -124,8 +132,9 @@ class ServiceModel implements Disposable, InvokerSupplier {
   }
 
   @NotNull
-  CancellablePromise<?> refresh(@NotNull ServiceEvent e) {
+  CancellablePromise<?> handle(@NotNull ServiceEvent e) {
     return getInvoker().runOrInvokeLater(() -> {
+      LOG.debug("Handle event: " + e);
       switch (e.type) {
         case SERVICE_ADDED:
           addService(e);
@@ -387,7 +396,8 @@ class ServiceModel implements Disposable, InvokerSupplier {
                                             ServiceViewContributor<T> contributor) {
     //noinspection unchecked
     T typedService = (T)service;
-    Object value = service instanceof ServiceViewProvidingContributor ? ((ServiceViewProvidingContributor<?, ?>)service).asService() : service;
+    Object value =
+      service instanceof ServiceViewProvidingContributor ? ((ServiceViewProvidingContributor<?, ?>)service).asService() : service;
     if (contributor instanceof ServiceViewGroupingContributor) {
       ServiceNode serviceNode =
         addGroupNode((ServiceViewGroupingContributor<T, ?>)contributor, typedService, value, parent, project, children);
