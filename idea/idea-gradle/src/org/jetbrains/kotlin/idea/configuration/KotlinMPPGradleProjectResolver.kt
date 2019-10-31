@@ -910,7 +910,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 sourceSetInfo.gradleModuleId = getModuleId(resolverCtx, gradleModule)
                 sourceSetInfo.actualPlatforms.addSimplePlatforms(listOf(compilation.platform))
                 sourceSetInfo.isTestModule = compilation.isTestModule
-                sourceSetInfo.dependsOn = compilation.sourceSets.flatMap { it.dependsOnSourceSets }.map { gradleModule.name + "_" + it }.distinct().toList()
+                sourceSetInfo.dependsOn = compilation.sourceSets.flatMap { it.dependsOnSourceSets }.map { getModuleId(resolverCtx, gradleModule) + ":" + it }.distinct().toList()
                 sourceSetInfo.compilerArguments =
                     createCompilerArguments(compilation.arguments.currentArguments.toList(), compilation.platform).also {
                         it.multiPlatform = true
