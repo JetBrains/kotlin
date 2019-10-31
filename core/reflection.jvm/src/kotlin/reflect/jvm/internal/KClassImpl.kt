@@ -19,7 +19,6 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -33,10 +32,13 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.utils.compact
-import kotlin.jvm.internal.ClassReference
+import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
+import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 
 internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainerImpl(), KClass<T>, KClassifierImpl {
     inner class Data : KDeclarationContainerImpl.Data() {
@@ -52,6 +54,37 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
 
         val annotations: List<Annotation> by ReflectProperties.lazySoft { descriptor.computeAnnotations() }
+
+        val simpleName: String? by ReflectProperties.lazySoft {
+            if (jClass.isAnonymousClass) return@lazySoft null
+
+            val classId = classId
+            when {
+                classId.isLocal -> calculateLocalClassName(jClass)
+                else -> classId.shortClassName.asString()
+            }
+        }
+
+        val qualifiedName: String? by ReflectProperties.lazySoft {
+            if (jClass.isAnonymousClass) return@lazySoft null
+
+            val classId = classId
+            when {
+                classId.isLocal -> null
+                else -> classId.asSingleFqName().asString()
+            }
+        }
+
+        private fun calculateLocalClassName(jClass: Class<*>): String {
+            val name = jClass.simpleName
+            jClass.enclosingMethod?.let { method ->
+                return name.substringAfter(method.name + "$")
+            }
+            jClass.enclosingConstructor?.let { constructor ->
+                return name.substringAfter(constructor.name + "$")
+            }
+            return name.substringAfter('$')
+        }
 
         @Suppress("UNCHECKED_CAST")
         val constructors: Collection<KFunction<T>> by ReflectProperties.lazySoft {
@@ -147,17 +180,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
     override val annotations: List<Annotation> get() = data().annotations
 
-    private val classId: ClassId
-        get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass).also { result ->
-            if (!jClass.isAnonymousClass && !jClass.isLocalClass) {
-                assert(result.asSingleFqName().asString() == qualifiedName) {
-                    "Incorrect class name computed for class ${jClass.name}. Result: $result. Expected qualified name $qualifiedName"
-                }
-                assert(result.shortClassName.asString() == simpleName) {
-                    "Incorrect class name computed for class ${jClass.name}. Result: $result. Expected simple name $simpleName"
-                }
-            }
-        }
+    private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
     // Note that we load members from the container's default type, which might be confusing. For example, a function declared in a
     // generic class "A<T>" would have "A<T>" as the receiver parameter even if a concrete type like "A<String>" was specified
@@ -205,9 +228,9 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
     }
 
-    override val simpleName: String? get() = ClassReference.getClassSimpleName(jClass)
+    override val simpleName: String? get() = data().simpleName
 
-    override val qualifiedName: String? get() = ClassReference.getClassQualifiedName(jClass)
+    override val qualifiedName: String? get() = data().qualifiedName
 
     override val constructors: Collection<KFunction<T>> get() = data().constructors
 
@@ -215,7 +238,13 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
 
     override val objectInstance: T? get() = data().objectInstance
 
-    override fun isInstance(value: Any?): Boolean = ClassReference.isInstance(value, jClass)
+    override fun isInstance(value: Any?): Boolean {
+        // TODO: use Kotlin semantics for mutable/read-only collections once KT-11754 is supported (see TypeIntrinsics)
+        jClass.functionClassArity?.let { arity ->
+            return TypeIntrinsics.isFunctionOfArity(value, arity)
+        }
+        return (jClass.wrapperByPrimitive ?: jClass).isInstance(value)
+    }
 
     override val typeParameters: List<KTypeParameter> get() = data().typeParameters
 
