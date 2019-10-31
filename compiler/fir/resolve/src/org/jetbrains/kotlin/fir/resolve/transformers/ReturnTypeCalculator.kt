@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -32,7 +33,7 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
         if (declaration.returnTypeRef is FirComputingImplicitTypeRef) {
             declaration.transformReturnTypeRef(
                 TransformImplicitType,
-                FirErrorTypeRefImpl(null, FirSimpleDiagnostic("cycle"))
+                FirErrorTypeRefImpl(null, FirSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes))
             )
             return declaration.returnTypeRef as FirResolvedTypeRef
         }
@@ -69,7 +70,7 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
         }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
 
         if (file == null || outerClasses.any { it == null }) {
-            return FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Cannot calculate return type (local class/object?)"))
+            return FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Cannot calculate return type (local class/object?)", DiagnosticKind.InferenceError))
         }
 
         declaration.transformReturnTypeRef(

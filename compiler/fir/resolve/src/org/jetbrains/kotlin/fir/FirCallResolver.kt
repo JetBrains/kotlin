@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
@@ -366,12 +369,12 @@ class FirCallResolver(
         val source = namedReference.source
         return when {
             candidates.isEmpty() -> FirErrorNamedReferenceImpl(
-                source, FirSimpleDiagnostic("Unresolved name: $name")
+                source, FirUnresolvedNameError(name)
             )
             applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
                 FirErrorNamedReferenceImpl(
                     source,
-                    FirSimpleDiagnostic("Inapplicable($applicability): ${candidates.map { describeSymbol(it.symbol) }}")
+                    FirInapplicableCandidateError(applicability, candidates.map { it.symbol })
                 )
             }
             candidates.size == 1 -> {
@@ -388,17 +391,8 @@ class FirCallResolver(
                 }
             }
             else -> FirErrorNamedReferenceImpl(
-                source, FirSimpleDiagnostic("Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}")
+                source, FirAmbiguityError(name, candidates.map { it.symbol })
             )
-        }
-    }
-
-
-    private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {
-        return when (symbol) {
-            is FirClassLikeSymbol<*> -> symbol.classId.asString()
-            is FirCallableSymbol<*> -> symbol.callableId.toString()
-            else -> "$symbol"
         }
     }
 }

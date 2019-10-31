@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -97,7 +99,7 @@ abstract class AbstractAnnotationDeserializer(
                 FirResolvedTypeRefImpl(
                     null, it.constructType(emptyList(), isNullable = false)
                 )
-            } ?: FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Symbol not found for $classId"))
+            } ?: FirErrorTypeRefImpl(null, FirUnresolvedSymbolError(classId))
         ).apply {
             this.arguments += arguments
         }
@@ -138,7 +140,7 @@ abstract class AbstractAnnotationDeserializer(
                     FirResolvedNamedReferenceImpl(null, entryName, it)
                 } ?: FirErrorNamedReferenceImpl(
                     null,
-                    FirSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName")
+                    FirSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError)
                 )
             }
 //            ARRAY -> {

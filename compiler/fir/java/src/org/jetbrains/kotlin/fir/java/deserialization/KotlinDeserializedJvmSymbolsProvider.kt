@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
@@ -175,7 +176,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             FirResolvedTypeRefImpl(
                 null, it.constructType(emptyList(), isNullable = false)
             )
-        } ?: FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Symbol not found for $classId"))
+        } ?: FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Symbol not found for $classId", DiagnosticKind.Java))
 
     }
 
@@ -227,7 +228,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                         else -> {
                             FirErrorNamedReferenceImpl(
                                 null,
-                                FirSimpleDiagnostic("Strange deserialized enum value: ${this@toEnumEntryReferenceExpression}.$name")
+                                FirSimpleDiagnostic("Strange deserialized enum value: ${this@toEnumEntryReferenceExpression}.$name", DiagnosticKind.Java)
                             )
                         }
                     }

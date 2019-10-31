@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
@@ -337,7 +338,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 val bodyExpectedType = returnTypeRefFromResolvedAtom ?: data
                 af = transformFunction(af, bodyExpectedType).single as FirAnonymousFunction
                 af = af.copy(
-                    returnTypeRef = af.body?.resultType ?: FirErrorTypeRefImpl(af.source, FirSimpleDiagnostic("No result type for lambda"))
+                    returnTypeRef = af.body?.resultType ?: FirErrorTypeRefImpl(af.source, FirSimpleDiagnostic("No result type for lambda", DiagnosticKind.InferenceError))
                 )
                 af.replaceTypeRef(af.constructFunctionalTypeRef(session))
                 af.compose()
@@ -384,7 +385,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                         when (val resultType = initializer.resultType) {
                             is FirImplicitTypeRef -> FirErrorTypeRefImpl(
                                 null,
-                                FirSimpleDiagnostic("No result type for initializer")
+                                FirSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
                             )
                             else -> resultType
                         }
@@ -396,7 +397,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                         when (val resultType = variable.getter?.returnTypeRef) {
                             is FirImplicitTypeRef -> FirErrorTypeRefImpl(
                                 null,
-                                FirSimpleDiagnostic("No result type for getter")
+                                FirSimpleDiagnostic("No result type for getter", DiagnosticKind.InferenceError)
                             )
                             else -> resultType
                         }
@@ -404,7 +405,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                 }
                 else -> {
                     variable.transformReturnTypeRef(
-                        transformer, FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Cannot infer variable type without initializer / getter / delegate"))
+                        transformer, FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Cannot infer variable type without initializer / getter / delegate", DiagnosticKind.InferenceError))
                     )
                 }
             }

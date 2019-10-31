@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
@@ -24,6 +25,8 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirOperatorAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
@@ -56,7 +59,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
 
     override fun transformExpression(expression: FirExpression, data: Any?): CompositeTransformResult<FirStatement> {
         if (expression.resultType is FirImplicitTypeRef && expression !is FirWrappedExpression) {
-            val type = FirErrorTypeRefImpl(expression.source, FirSimpleDiagnostic("Type calculating for ${expression::class} is not supported"))
+            val type = FirErrorTypeRefImpl(expression.source, FirSimpleDiagnostic("Type calculating for ${expression::class} is not supported", DiagnosticKind.InferenceError))
             expression.resultType = type
         }
         return (expression.transformChildren(transformer, data) as FirStatement).compose()
@@ -84,7 +87,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 } else {
                     val superTypeRef = implicitReceiverStack.lastDispatchReceiver()
                         ?.boundSymbol?.phasedFir?.superTypeRefs?.firstOrNull()
-                        ?: FirErrorTypeRefImpl(qualifiedAccessExpression.source, FirSimpleDiagnostic("No super type"))
+                        ?: FirErrorTypeRefImpl(qualifiedAccessExpression.source, FirSimpleDiagnostic("No super type", DiagnosticKind.NoSupertype))
                     qualifiedAccessExpression.resultType = superTypeRef
                     callee.replaceSuperTypeRef(superTypeRef)
                 }
@@ -172,7 +175,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         block.resultType = if (resultExpression == null) {
             FirImplicitUnitTypeRef(block.source)
         } else {
-            (resultExpression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(null, FirSimpleDiagnostic("No type for block"))
+            (resultExpression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(null, FirSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError))
         }
         dataFlowAnalyzer.exitBlock(block)
         return block.compose()
@@ -229,13 +232,13 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     val assignment =
                         FirVariableAssignmentImpl(operatorCall.source, false, resolvedOperatorCall, FirOperation.ASSIGN).apply {
                             lValue = (leftArgument as? FirQualifiedAccess)?.calleeReference
-                                ?: FirErrorNamedReferenceImpl(null, FirSimpleDiagnostic("Unresolved reference"))
+                                ?: FirErrorNamedReferenceImpl(null, FirUnresolvedReferenceError())
                         }
                     assignment.transform(transformer, noExpectedType)
                 }
                 else -> FirErrorExpressionImpl(
                     operatorCall.source,
-                    FirSimpleDiagnostic("Operator overload ambiguity. $assignmentOperatorName and $simpleOperatorName are compatible")
+                    FirOperatorAmbiguityError(listOf(operatorCallReference.resolvedSymbol, assignCallReference.resolvedSymbol))
                 ).compose()
             }
         }

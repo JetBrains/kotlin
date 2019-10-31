@@ -13,5 +13,13 @@ enum class DiagnosticKind {
     UnresolvedLabel,
     IllegalConstExpression,
     ConstructorInObject,
+    DeserializationError,
+    InferenceError,
+    NoSupertype,
+    TypeParameterAsSupertype,
+    EnumAsSupertype,
+    RecursionInSupertypes,
+    RecursionInImplicitTypes,
+    Java,
     Other
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
@@ -261,7 +262,7 @@ private fun JavaAnnotationArgument.toFirExpression(
                     null
                 }
                 this.calleeReference = calleeReference
-                    ?: FirErrorNamedReferenceImpl(null, FirSimpleDiagnostic("Strange Java enum value: $classId.$entryName"))
+                    ?: FirErrorNamedReferenceImpl(null, FirSimpleDiagnostic("Strange Java enum value: $classId.$entryName", DiagnosticKind.Java))
             }
         }
         is JavaClassObjectAnnotationArgument -> FirGetClassCallImpl(null).apply {
@@ -271,7 +272,7 @@ private fun JavaAnnotationArgument.toFirExpression(
             )
         }
         is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotationCall(session, javaTypeParameterStack)
-        else -> FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unknown JavaAnnotationArgument: ${this::class.java}"))
+        else -> FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unknown JavaAnnotationArgument: ${this::class.java}", DiagnosticKind.Java))
     }
 }
 
@@ -305,7 +306,7 @@ internal fun Any?.createConstant(session: FirSession): FirExpression {
         is BooleanArray -> toList().createArrayOfCall(session, IrConstKind.Boolean)
         null -> FirConstExpressionImpl(null, IrConstKind.Null, null)
 
-        else -> FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unknown value in JavaLiteralAnnotationArgument: $this"))
+        else -> FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unknown value in JavaLiteralAnnotationArgument: $this", DiagnosticKind.Java))
     }
 }
 
