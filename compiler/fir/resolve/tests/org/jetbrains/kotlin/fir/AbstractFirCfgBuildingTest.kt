@@ -38,10 +38,10 @@ abstract class AbstractFirCfgBuildingTest : AbstractFirResolveTestCase() {
     override val configurationKind: ConfigurationKind
         get() = ConfigurationKind.ALL
 
-    override fun doTest(path: String) {
-        val firFiles = processInputFile(path)
-        checkFir(path, firFiles)
+    override fun doTest(path: String): List<FirFile> {
+        val firFiles = super.doTest(path)
         checkCfg(path, firFiles)
+        return firFiles
     }
 
     fun checkCfg(path: String, firFiles: List<FirFile>) {

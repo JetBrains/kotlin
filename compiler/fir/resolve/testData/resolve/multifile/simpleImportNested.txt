@@ -1,4 +1,18 @@
-FILE: simpleImportNested.kt
+FILE: A.kt
+    public final class MyClass : R|kotlin/Any| {
+        public constructor(): R|a/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class MyNested : R|kotlin/Any| {
+            public constructor(): R|a/MyClass.MyNested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: B.kt
     public final class YourClass : R|a/MyClass.MyNested| {
         public constructor(): R|b/YourClass| {
             super<R|a/MyClass.MyNested|>()

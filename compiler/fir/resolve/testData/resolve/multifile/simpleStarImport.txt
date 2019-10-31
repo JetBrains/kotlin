@@ -1,4 +1,15 @@
-FILE: simpleStarImport.kt
+FILE: B.kt
+    public abstract expect interface Other : R|kotlin/Any| {
+    }
+    public final expect class Another : R|kotlin/Any| {
+        public constructor(): R|b/d/Another| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun baz(): R|kotlin/Unit| {
+    }
+FILE: A.kt
     public final fun foo(arg: R|b/d/Other|): R|b/d/Another|
     public final fun bar(): R|kotlin/Unit| {
         R|b/d/baz|()

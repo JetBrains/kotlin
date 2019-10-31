@@ -1,4 +1,32 @@
-FILE: NestedSuperType.kt
+FILE: C.kt
+    public open class C : R|kotlin/Any| {
+        public constructor(): R|c/C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class NestedInC : R|kotlin/Any| {
+            public constructor(): R|c/C.NestedInC| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: B.kt
+    public open class B : R|c/C| {
+        public constructor(): R|b/B| {
+            super<R|c/C|>()
+        }
+
+        public open class NestedInB : R|c/C.NestedInC| {
+            public constructor(): R|b/B.NestedInB| {
+                super<R|c/C.NestedInC|>()
+            }
+
+        }
+
+    }
+FILE: A.kt
     public final class A : R|b/B| {
         public constructor(): R|a/A| {
             super<R|b/B|>()

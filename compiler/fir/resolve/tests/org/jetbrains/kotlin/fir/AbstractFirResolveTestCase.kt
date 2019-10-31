@@ -62,38 +62,18 @@ abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCas
         }
     }
 
-    protected fun generateKtFiles(path: String): List<KtFile> {
-        val file = File(path)
-
-        val allFiles = listOf(file) + file.parentFile.listFiles { sibling ->
-            sibling.name.removePrefix(file.nameWithoutExtension).removeSuffix(file.extension).matches("\\.[0-9]+\\.".toRegex())
-        }
-
-        return allFiles.map {
-            val text = KotlinTestUtils.doLoadFile(it)
-            it.name to text
-        }.sortedBy { (_, text) ->
-            KotlinTestUtils.parseDirectives(text)["analyzePriority"]?.toInt()
-        }.map { (name, text) ->
-            KotlinTestUtils.createFile(name, text, project)
-        }
-    }
-
-    protected fun processInputFile(path: String): List<FirFile> {
-        return doCreateAndProcessFir(generateKtFiles(path))
-    }
-
-    open fun doTest(path: String) {
+    open fun doTest(path: String): List<FirFile> {
         val file = File(path)
         val expectedText = KotlinTestUtils.doLoadFile(file)
         val testFiles = createTestFiles(file, expectedText)
         val firFiles = doCreateAndProcessFir(testFiles.mapNotNull { it.ktFile })
         checkDiagnostics(file, testFiles, firFiles)
         checkFir(path, firFiles)
+        return firFiles
     }
 
     fun checkFir(path: String, firFiles: List<FirFile>) {
-        val firFileDump = StringBuilder().also { firFiles.first().accept(FirRenderer(it), null) }.toString()
+        val firFileDump = StringBuilder().apply { firFiles.forEach { it.accept(FirRenderer(this), null) } }.toString()
         val expectedPath = path.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
     }

@@ -1,4 +1,28 @@
-FILE: sealedStarImport.kt
+FILE: test.kt
+    public sealed class Test : R|kotlin/Any| {
+        private constructor(): R|test/Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object O : R|test/Test| {
+            private constructor(): R|test/Test.O| {
+                super<R|test/Test|>()
+            }
+
+        }
+
+        public final class Extra : R|test/Test| {
+            public constructor(x: R|kotlin/Int|): R|test/Test.Extra| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val x: R|kotlin/Int| = R|<local>/x|
+                public get(): R|kotlin/Int|
+
+        }
+
+    }
+FILE: main.kt
     public abstract class Factory : R|kotlin/Any| {
         public constructor(): R|other/Factory| {
             super<R|kotlin/Any|>()

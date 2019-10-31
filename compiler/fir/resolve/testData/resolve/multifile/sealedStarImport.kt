@@ -1,3 +1,15 @@
+// FILE: test.kt
+
+package test
+
+sealed class Test {
+    object O : Test()
+
+    class Extra(val x: Int): Test
+}
+
+// FILE: main.kt
+
 package other
 
 import test.Test.*

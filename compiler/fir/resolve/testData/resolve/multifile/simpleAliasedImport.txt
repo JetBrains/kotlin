@@ -1,4 +1,17 @@
-FILE: simpleAliasedImport.kt
+FILE: B.kt
+    public abstract class MyClass : R|kotlin/Any| {
+        public constructor(): R|b/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+    }
+    public final fun I(): R|kotlin/Unit| {
+    }
+    public abstract interface I : R|kotlin/Any| {
+    }
+FILE: A.kt
     public final class YourClass : R|b/MyClass| {
         public constructor(): R|a/YourClass| {
             super<R|b/MyClass|>()

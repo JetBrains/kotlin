@@ -1,4 +1,62 @@
-FILE: Annotations.kt
+FILE: annotations.kt
+    @R|kotlin/annotation/Target|(Q|kotlin/annotation/AnnotationTarget.FILE|, Q|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final annotation class Simple : R|kotlin/Annotation| {
+        public constructor(): R|annotations/Simple| {
+            super<R|kotlin/Annotation|>()
+        }
+
+    }
+    public final annotation class WithInt : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/Int|): R|annotations/WithInt| {
+            super<R|kotlin/Annotation|>()
+        }
+
+        public final val value: R|kotlin/Int| = R|<local>/value|
+            public get(): R|kotlin/Int|
+
+    }
+    public final annotation class WithString : R|kotlin/Annotation| {
+        public constructor(s: R|kotlin/String|): R|annotations/WithString| {
+            super<R|kotlin/Annotation|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final annotation class Complex : R|kotlin/Annotation| {
+        public constructor(wi: R|annotations/WithInt|, ws: R|annotations/WithString|): R|annotations/Complex| {
+            super<R|kotlin/Annotation|>()
+        }
+
+        public final val wi: R|annotations/WithInt| = R|<local>/wi|
+            public get(): R|annotations/WithInt|
+
+        public final val ws: R|annotations/WithString| = R|<local>/ws|
+            public get(): R|annotations/WithString|
+
+    }
+    public final annotation class VeryComplex : R|kotlin/Annotation| {
+        public constructor(f: R|kotlin/Float|, d: R|kotlin/Double|, b: R|kotlin/Boolean|, l: R|kotlin/Long|, n: R|kotlin/Int?|): R|annotations/VeryComplex| {
+            super<R|kotlin/Annotation|>()
+        }
+
+        public final val f: R|kotlin/Float| = R|<local>/f|
+            public get(): R|kotlin/Float|
+
+        public final val d: R|kotlin/Double| = R|<local>/d|
+            public get(): R|kotlin/Double|
+
+        public final val b: R|kotlin/Boolean| = R|<local>/b|
+            public get(): R|kotlin/Boolean|
+
+        public final val l: R|kotlin/Long| = R|<local>/l|
+            public get(): R|kotlin/Long|
+
+        public final val n: R|kotlin/Int?| = R|<local>/n|
+            public get(): R|kotlin/Int?|
+
+    }
+FILE: main.kt
     @FILE:R|annotations/Simple|()
     @R|annotations/WithInt|(Int(42)) public abstract class First : R|kotlin/Any| {
         public constructor(): R|test/First| {

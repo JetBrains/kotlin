@@ -1,4 +1,14 @@
-FILE: importFromObject.kt
+FILE: a.kt
+    public final object A : R|kotlin/Any| {
+        private constructor(): R|a/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+FILE: b.kt
     public final fun bar(): R|kotlin/Unit| {
         this@R|a/A|.R|a/A.foo|()
     }

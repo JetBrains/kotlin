@@ -1,4 +1,10 @@
-FILE: ByteArray.kt
+FILE: byteArray.kt
+    public abstract interface ByteArray : R|kotlin/Any| {
+        public abstract val array: R|Test/ByteArray|
+            public get(): R|Test/ByteArray|
+
+    }
+FILE: main.kt
     public abstract interface My : R|kotlin/Any| {
         public abstract val array: R|kotlin/ByteArray|
             public get(): R|kotlin/ByteArray|

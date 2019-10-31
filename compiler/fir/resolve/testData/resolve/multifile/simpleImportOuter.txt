@@ -1,4 +1,18 @@
-FILE: simpleImportOuter.kt
+FILE: A.kt
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|a/Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open class Nested : R|kotlin/Any| {
+            public constructor(): R|a/Outer.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: B.kt
     public final class My : R|a/Outer.Nested| {
         public constructor(): R|b/My| {
             super<R|a/Outer.Nested|>()
