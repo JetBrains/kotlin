@@ -33,5 +33,5 @@ repositories {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$buildKotlinVersion"
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }
