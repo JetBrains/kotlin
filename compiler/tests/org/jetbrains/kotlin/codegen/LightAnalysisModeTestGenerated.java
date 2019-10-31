@@ -8469,6 +8469,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tryCatch.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("unitFunReturnsNonUnit.kt")
+            public void testUnitFunReturnsNonUnit() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unitFunReturnsNonUnit.kt");
+            }
+
+            @TestMetadata("unitFunReturnsNonUnitCallSuspend.kt")
+            public void testUnitFunReturnsNonUnitCallSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unitFunReturnsNonUnitCallSuspend.kt");
+            }
+
             @TestMetadata("unreachable.kt")
             public void testUnreachable() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unreachable.kt");
@@ -18889,6 +18899,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class IsInitializedAndDeinitialize extends AbstractLightAnalysisModeTest {
+                @TestMetadata("isInitializedMultiFile.kt")
+                public void ignoreIsInitializedMultiFile() throws Exception {
+                    runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/isInitializedMultiFile.kt");
+                }
+
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
@@ -18910,11 +18925,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("innerSubclass.kt")
                 public void testInnerSubclass() throws Exception {
                     runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/innerSubclass.kt");
-                }
-
-                @TestMetadata("isInitializedMultiFile.kt")
-                public void testIsInitializedMultiFile() throws Exception {
-                    runTest("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize/isInitializedMultiFile.kt");
                 }
 
                 @TestMetadata("nonInlineLambda.kt")

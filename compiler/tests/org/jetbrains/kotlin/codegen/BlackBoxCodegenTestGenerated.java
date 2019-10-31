@@ -8469,6 +8469,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tryCatch.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("unitFunReturnsNonUnit.kt")
+            public void testUnitFunReturnsNonUnit() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unitFunReturnsNonUnit.kt");
+            }
+
+            @TestMetadata("unitFunReturnsNonUnitCallSuspend.kt")
+            public void testUnitFunReturnsNonUnitCallSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unitFunReturnsNonUnitCallSuspend.kt");
+            }
+
             @TestMetadata("unreachable.kt")
             public void testUnreachable() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unreachable.kt");
