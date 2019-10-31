@@ -78,11 +78,11 @@
             implementation="org.jetbrains.kotlin.idea.script.ScriptTemplatesFromDependenciesProvider"/>
 
         <scriptDefinitionContributor id="StandardScriptDefinitionContributor"
-                                 order="last"
-                                 implementation="org.jetbrains.kotlin.idea.core.script.StandardScriptDefinitionContributor"/>
+                                     order="last"
+                                     implementation="org.jetbrains.kotlin.idea.core.script.StandardScriptDefinitionContributor"/>
 
         <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
-                                 implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
+                                     implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
 
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JvmPlatformKindResolution"/>
         <idePlatformKindResolution implementation="org.jetbrains.kotlin.caches.resolve.JsPlatformKindResolution"/>
@@ -93,7 +93,7 @@
 
         <j2kConverterExtension implementation="org.jetbrains.kotlin.idea.j2k.OldJ2kConverterExtension"/>
         <j2kConverterExtension implementation="org.jetbrains.kotlin.nj2k.NewJ2kConverterExtension"/>
-     </extensions>
+    </extensions>
 
     <extensions defaultExtensionNs="com.intellij">
         <registryKey key="kotlin.mpp.editTargetPlatformEnabled"
@@ -103,6 +103,10 @@
         <registryKey key="kotlin.android.import.mpp.all.transitive"
                      description="Add all transitive dependencies on MPP modules when Android project is imported"
                      defaultValue="true"
+                     restartRequired="false"/>
+        <registryKey key="kotlin.gradle.scripts.useIdeaProjectImport"
+                     description="Use IDEA project import mechanics to load Kotlin Gradle scripts configuration"
+                     defaultValue="false"
                      restartRequired="false"/>
         <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
 

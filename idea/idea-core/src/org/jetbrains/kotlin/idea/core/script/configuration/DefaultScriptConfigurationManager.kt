@@ -15,16 +15,15 @@ import com.intellij.ui.EditorNotifications
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.*
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationSnapshot
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCache
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.*
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationFileAttributeCache
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationMemoryCache
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.DefaultScriptChangeListener
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
-import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.*
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
+import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptOutsiderFileConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.BackgroundExecutor
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangesNotifier
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.psi.KtFile
@@ -34,6 +33,7 @@ import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.script.experimental.api.ScriptDiagnostic
+import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 
 /**
  * Standard implementation of scripts configuration loading and caching
@@ -100,10 +100,12 @@ internal class DefaultScriptConfigurationManager(project: Project) :
     private val loaders: List<ScriptConfigurationLoader> = listOf(
         ScriptOutsiderFileConfigurationLoader(project),
         ScriptConfigurationFileAttributeCache(project),
+        GradleScriptConfigurationLoader(project),
         DefaultScriptConfigurationLoader(project)
     )
 
     private val listeners: List<ScriptChangeListener> = listOf(
+        GradleScriptListener(),
         DefaultScriptChangeListener()
     )
 
