@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.ReadActionProcessor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.psi.PsiReference;
@@ -98,8 +97,7 @@ public abstract class FindUsagesHandler {
     final ReadActionProcessor<PsiReference> refProcessor = new ReadActionProcessor<PsiReference>() {
       @Override
       public boolean processInReadAction(final PsiReference ref) {
-        TextRange rangeInElement = ref.getRangeInElement();
-        return processor.process(new UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false));
+        return processor.process(new UsageInfo(ref));
       }
     };
 
