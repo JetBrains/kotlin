@@ -55,6 +55,7 @@ import com.intellij.util.ui.accessibility.AccessibleContextUtil;
 import com.intellij.util.ui.accessibility.ScreenReader;
 import com.intellij.util.ui.update.Activatable;
 import com.intellij.util.ui.update.UiNotifyConnector;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -105,7 +106,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   private boolean myDisposed = false;
   private boolean myHidden = false;
   private boolean mySelectionTouched;
-  private FocusDegree myFocusDegree = FocusDegree.FOCUSED;
+  private LookupFocusDegree myLookupFocusDegree = LookupFocusDegree.FOCUSED;
   private volatile boolean myCalculating;
   private final Advertiser myAdComponent;
   volatile int myLookupTextWidth = 50;
@@ -176,16 +177,33 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
 
   @Override
   public FocusDegree getFocusDegree() {
-    return myFocusDegree;
+    return convertToFocusDegree(myLookupFocusDegree);
   }
 
   @Override
   public boolean isFocused() {
-    return getFocusDegree() == FocusDegree.FOCUSED;
+    return getLookupFocusDegree() == LookupFocusDegree.FOCUSED;
   }
 
+  /**
+   * @deprecated Use {@link #setLookupFocusDegree(LookupFocusDegree)}
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.3")
   public void setFocusDegree(FocusDegree focusDegree) {
-    myFocusDegree = focusDegree;
+    if (focusDegree != null) {
+      setLookupFocusDegree(convertToLookupFocusDegree(focusDegree));
+    }
+  }
+
+  @NotNull
+  @Override
+  public LookupFocusDegree getLookupFocusDegree() {
+    return myLookupFocusDegree;
+  }
+
+  public void setLookupFocusDegree(@NotNull LookupFocusDegree lookupFocusDegree) {
+    myLookupFocusDegree = lookupFocusDegree;
     for (LookupListener listener : myListeners) {
       listener.focusDegreeChanged();
     }
@@ -768,7 +786,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
       delegateActionToEditor(IdeActions.ACTION_EDITOR_TAB, () -> new ChooseItemAction.Replacing(), actionEvent);
       delegateActionToEditor(IdeActions.ACTION_EDITOR_ENTER,
                              /* e.g. rename popup comes initially unfocused */
-                             () -> getFocusDegree() == FocusDegree.UNFOCUSED ? new NextVariableAction() : new ChooseItemAction.FocusedOnly(),
+                             () -> getLookupFocusDegree() == LookupFocusDegree.UNFOCUSED ? new NextVariableAction() : new ChooseItemAction.FocusedOnly(),
                              actionEvent);
       delegateActionToEditor(IdeActions.ACTION_EDITOR_MOVE_CARET_UP, null, actionEvent);
       delegateActionToEditor(IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN, null, actionEvent);
@@ -898,7 +916,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     new ClickListener() {
       @Override
       public boolean onClick(@NotNull MouseEvent e, int clickCount) {
-        setFocusDegree(FocusDegree.FOCUSED);
+        setLookupFocusDegree(LookupFocusDegree.FOCUSED);
         markSelectionTouched();
 
         if (clickCount == 2){
@@ -1290,5 +1308,38 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     return myFontPreferences;
   }
 
+  @NotNull
+  private static LookupFocusDegree convertToLookupFocusDegree(@NotNull FocusDegree focusDegree) {
+    switch (focusDegree) {
+      case FOCUSED:
+        return LookupFocusDegree.FOCUSED;
+      case SEMI_FOCUSED:
+        return LookupFocusDegree.SEMI_FOCUSED;
+      case UNFOCUSED:
+        return LookupFocusDegree.UNFOCUSED;
+      default:
+        throw new IllegalStateException("Unknown focusDegree " + focusDegree);
+    }
+  }
+
+  @NotNull
+  private static FocusDegree convertToFocusDegree(@NotNull LookupFocusDegree lookupFocusDegree) {
+    switch (lookupFocusDegree) {
+      case FOCUSED:
+        return FocusDegree.FOCUSED;
+      case SEMI_FOCUSED:
+        return FocusDegree.SEMI_FOCUSED;
+      case UNFOCUSED:
+        return FocusDegree.UNFOCUSED;
+      default:
+        throw new IllegalStateException("Unknown lookupFocusDegree " + lookupFocusDegree);
+    }
+  }
+
+  /**
+   * @deprecated Use {@link LookupFocusDegree}
+   */
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.3")
   public enum FocusDegree { FOCUSED, SEMI_FOCUSED, UNFOCUSED }
 }

@@ -7,6 +7,7 @@ import com.intellij.codeInsight.completion.CompletionProcess;
 import com.intellij.codeInsight.completion.CompletionService;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.lookup.Lookup;
+import com.intellij.codeInsight.lookup.LookupFocusDegree;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.codeInsight.lookup.impl.LookupImpl;
 import com.intellij.codeInsight.template.impl.*;
@@ -75,7 +76,7 @@ public abstract class ChooseItemAction extends EditorAction implements HintManag
       LookupImpl lookup = (LookupImpl)LookupManager.getActiveLookup(editor);
       if (lookup == null) return false;
       if (!lookup.isAvailableToUser()) return false;
-      if (focusedOnly && lookup.getFocusDegree() == LookupImpl.FocusDegree.UNFOCUSED) return false;
+      if (focusedOnly && lookup.getLookupFocusDegree() == LookupFocusDegree.UNFOCUSED) return false;
       if (finishingChar == Lookup.REPLACE_SELECT_CHAR) {
         return !lookup.getItems().isEmpty();
       }

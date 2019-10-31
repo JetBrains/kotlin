@@ -187,9 +187,9 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   void duringCompletion(CompletionInitializationContext initContext, CompletionParameters parameters) {
     PsiUtilCore.ensureValid(parameters.getPosition());
     if (isAutopopupCompletion() && shouldPreselectFirstSuggestion(parameters)) {
-      myLookup.setFocusDegree(CodeInsightSettings.getInstance().isSelectAutopopupSuggestionsByChars()
-                              ? LookupImpl.FocusDegree.FOCUSED
-                              : LookupImpl.FocusDegree.SEMI_FOCUSED);
+      myLookup.setLookupFocusDegree(CodeInsightSettings.getInstance().isSelectAutopopupSuggestionsByChars()
+                                    ? LookupFocusDegree.FOCUSED
+                                    : LookupFocusDegree.SEMI_FOCUSED);
     }
     addDefaultAdvertisements(parameters);
 
