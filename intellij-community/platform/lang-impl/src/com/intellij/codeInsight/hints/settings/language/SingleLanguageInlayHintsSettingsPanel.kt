@@ -133,13 +133,13 @@ class SingleLanguageInlayHintsSettingsPanel(
   private fun fillRightPanel(): JPanel {
     return withInset(panel {
       row {
+        myWarningContainer(growY)
+      }
+      row {
         withInset(myCurrentProviderCasesPane)()
       }
       row {
         withInset(myCurrentProviderCustomSettingsPane)()
-      }
-      row {
-        myWarningContainer(growY)
       }
     })
   }
@@ -229,8 +229,7 @@ class SingleLanguageInlayHintsSettingsPanel(
   private fun updateWarningPanel() {
     myWarningContainer.removeAll()
     if (!config.hintsEnabled(myLanguage)) {
-      val comment = ComponentPanelBuilder.createCommentComponent("Inlay hints for ${myLanguage.displayName} are disabled.", true)
-      myWarningContainer.add(comment)
+      myWarningContainer.add(JLabel("Inlay hints for ${myLanguage.displayName} are disabled."))
       myWarningContainer.add(LinkLabel.create("Configure settings.") {
         val settings = Settings.KEY.getData(DataManager.getInstance().getDataContext(this))
         if (settings != null) {

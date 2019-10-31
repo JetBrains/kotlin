@@ -3,19 +3,16 @@ package com.intellij.codeInsight.hints.settings
 
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.hints.InlayHintsSettings
-import com.intellij.ide.DataManager
 import com.intellij.lang.Language
-import com.intellij.openapi.options.Configurable
-import com.intellij.openapi.options.ex.Settings
-import com.intellij.ui.components.labels.LinkLabel
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
-class InlayHintsPanel(languages: Iterable<Language>, configurable: Configurable, val settings: InlayHintsSettings) : JPanel() {
+class InlayHintsPanel(languages: Iterable<Language>,
+                      val settings: InlayHintsSettings) : JPanel() {
   private val hintsEnabledGlobally = JCheckBox("Show hints for:", true)
-  private val languagePanels = languages.map { LanguagePanel(it, this, configurable) }
+  private val languagePanels = languages.map { LanguagePanel(it) }
 
   init {
     layout = BorderLayout()
@@ -73,17 +70,12 @@ class InlayHintsPanel(languages: Iterable<Language>, configurable: Configurable,
   }
 }
 
-private class LanguagePanel(val language: Language, parentPanel: JPanel, configurable: Configurable) : JPanel() {
-  val checkBox = JCheckBox()
-  private val label = LinkLabel.create(language.displayName) {
-    val settings = Settings.KEY.getData(DataManager.getInstance().getDataContext(parentPanel))
-    settings?.select(configurable)
-  }
+private class LanguagePanel(val language: Language) : JPanel() {
+  val checkBox = JCheckBox(language.displayName)
 
   init {
     layout = BoxLayout(this, BoxLayout.X_AXIS)
     add(checkBox)
-    add(label)
   }
 
   fun selected() :Boolean {
@@ -96,6 +88,5 @@ private class LanguagePanel(val language: Language, parentPanel: JPanel, configu
 
   fun setCheckBoxEnabled(value: Boolean) {
     checkBox.isEnabled = value
-    label.isEnabled = value
   }
 }
