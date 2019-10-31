@@ -1,0 +1,14 @@
+package
+
+public fun </*0*/ K> create(/*0*/ y: K): Inv<K>
+public fun </*0*/ K> createPrivate(/*0*/ y: K): Inv<K>
+public fun takeInvInt(/*0*/ i: Inv<kotlin.Int>): kotlin.Unit
+public fun </*0*/ S> test(/*0*/ i: kotlin.Int, /*1*/ s: S): kotlin.Unit
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>(/*0*/ x: T?)
+    public final val x: T?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ T : kotlin.Any> bar(/*0*/ resources: kotlin.collections.List<T>): kotlin.Unit
+public fun </*0*/ T> foo(/*0*/ resources: kotlin.collections.List<T>): kotlin.Unit

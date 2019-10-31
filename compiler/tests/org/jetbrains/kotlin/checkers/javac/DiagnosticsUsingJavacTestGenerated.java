@@ -10316,6 +10316,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/constraintOnFunctionLiteral.kt");
                 }
 
+                @TestMetadata("definitelyNotNullTypeInvariantPosition.kt")
+                public void testDefinitelyNotNullTypeInvariantPosition() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/definitelyNotNullTypeInvariantPosition.kt");
+                }
+
                 @TestMetadata("earlyCompletionForCalls.kt")
                 public void testEarlyCompletionForCalls() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/earlyCompletionForCalls.kt");
@@ -10399,6 +10404,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("supertypeConstraintOnNullableType.kt")
                 public void testSupertypeConstraintOnNullableType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/supertypeConstraintOnNullableType.kt");
+                }
+
+                @TestMetadata("wrongApproximationWithDefNotNullTypesAndDelegates.kt")
+                public void testWrongApproximationWithDefNotNullTypesAndDelegates() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/wrongApproximationWithDefNotNullTypesAndDelegates.kt");
                 }
             }
 

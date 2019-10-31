@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewT
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
-import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateCapturedTypes
+import org.jetbrains.kotlin.resolve.calls.inference.substituteAndApproximateTypes
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSafeReceiver
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
@@ -699,15 +699,20 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         @Suppress("UNCHECKED_CAST")
         resultingDescriptor = run {
             val candidateDescriptor = resolvedCallAtom.candidateDescriptor
-            val containsCapturedTypes = resolvedCallAtom.candidateDescriptor.returnType?.contains { it is NewCapturedType } ?: false
-            val containsIntegerLiteralTypes = resolvedCallAtom.candidateDescriptor.returnType?.contains { it.constructor is IntegerLiteralTypeConstructor } ?: false
+            val returnType = resolvedCallAtom.candidateDescriptor.returnType
+            val shouldRunApproximation = returnType?.let { type ->
+                type.contains { it is NewCapturedType } ||
+                        type.contains { it.constructor is IntegerLiteralTypeConstructor } ||
+                        type.contains { it is DefinitelyNotNullType }
+            } ?: false
 
             when {
                 candidateDescriptor is FunctionDescriptor ||
-                        (candidateDescriptor is PropertyDescriptor && (candidateDescriptor.typeParameters.isNotEmpty() || containsCapturedTypes || containsIntegerLiteralTypes)) ->
+                        (candidateDescriptor is PropertyDescriptor &&
+                                (candidateDescriptor.typeParameters.isNotEmpty() || shouldRunApproximation)) ->
                     // this code is very suspicious. Now it is very useful for BE, because they cannot do nothing with captured types,
                     // but it seems like temporary solution.
-                    candidateDescriptor.substitute(resolvedCallAtom.substitutor).substituteAndApproximateCapturedTypes(
+                    candidateDescriptor.substitute(resolvedCallAtom.substitutor).substituteAndApproximateTypes(
                         substitutor ?: FreshVariableNewTypeSubstitutor.Empty, typeApproximator
                     )
                 else ->

@@ -1,0 +1,34 @@
+package
+
+public final class CleanupTestExample {
+    public constructor CleanupTestExample()
+    public final val cleanUpBlocks: kotlin.collections.MutableList<kotlin.Pair<kotlin.Any, (kotlin.Any) -> kotlin.Unit>>
+    public final fun </*0*/ T> cleanup(/*0*/ initialValue: T? = ..., /*1*/ block: (T) -> kotlin.Unit): CleanupTestExample.CleaningDelegate<T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun testWithCleanup(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class CleaningDelegate</*0*/ T> : kotlin.properties.ReadWriteProperty<kotlin.Any?, T> {
+        public constructor CleaningDelegate</*0*/ T>(/*0*/ initialValue: T? = ..., /*1*/ cleanupBlocks: kotlin.collections.MutableList<kotlin.Pair<kotlin.Any, (kotlin.Any) -> kotlin.Unit>>, /*2*/ block: (T) -> kotlin.Unit)
+        public final val block: (T) -> kotlin.Unit
+        public final val cleanupBlocks: kotlin.collections.MutableList<kotlin.Pair<kotlin.Any, (kotlin.Any) -> kotlin.Unit>>
+        private final var value: T?
+        public final fun addCleanupBlock(/*0*/ value: T?): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ fun getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>): T
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        @kotlin.Suppress(names = {"UNCHECKED_CAST"}) public open override /*1*/ fun setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ property: kotlin.reflect.KProperty<*>, /*2*/ value: T): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final data class TestHolder {
+        public constructor TestHolder(/*0*/ num: kotlin.Int)
+        public final val num: kotlin.Int
+        public final operator /*synthesized*/ fun component1(): kotlin.Int
+        public final /*synthesized*/ fun copy(/*0*/ num: kotlin.Int = ...): CleanupTestExample.TestHolder
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+}
