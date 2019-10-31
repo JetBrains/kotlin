@@ -324,10 +324,10 @@ public class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implements Pers
 
     myUpdateRunnableFuture.cancel(false);
 
+    fileStatusMap.allowDirt(canChangeDocument);
     final DaemonProgressIndicator progress = createUpdateProgress(map.keySet());
     myPassExecutorService.submitPasses(map, progress);
     try {
-      fileStatusMap.allowDirt(canChangeDocument);
       long start = System.currentTimeMillis();
       while (progress.isRunning() && System.currentTimeMillis() < start + 10*60*1000) {
         wrap(() -> {
