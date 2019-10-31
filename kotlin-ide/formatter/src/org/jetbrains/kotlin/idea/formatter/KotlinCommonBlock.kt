@@ -327,9 +327,14 @@ abstract class KotlinCommonBlock(
         }
 
         if (newChildIndex > 0) {
-            val prevBlock = mySubBlocks?.get(newChildIndex - 1)
-            if (prevBlock?.node?.elementType == MODIFIER_LIST) {
+            val prevNode = mySubBlocks?.get(newChildIndex - 1)?.node
+            if (prevNode?.elementType == MODIFIER_LIST) {
                 return ChildAttributes(Indent.getNoneIndent(), null)
+            }
+            val property = prevNode?.psi as? KtProperty
+            if (property?.receiverTypeReference != null && property.accessors.isNotEmpty()) {
+                val indent = if (type in CODE_BLOCKS) Indent.getContinuationIndent() else Indent.getNormalIndent()
+                return ChildAttributes(indent, null)
             }
         }
 
