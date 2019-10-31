@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 
-internal class ImportFix(expression: KtSimpleNameExpression): AbstractImportFix(expression) {
+internal class ImportFix(expression: KtSimpleNameExpression): AbstractImportFix(expression, MyFactory) {
     companion object MyFactory : Factory() {
         override fun createImportAction(diagnostic: Diagnostic) =
             (diagnostic.psiElement as? KtSimpleNameExpression)?.let(::ImportFix)
