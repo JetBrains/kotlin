@@ -178,7 +178,7 @@ abstract class AbstractDebugTest : CodegenTestCase() {
         var inBoxMethod = false
         vmLoop@
         while (true) {
-            val eventSet = virtualMachine.eventQueue().remove(100)
+            val eventSet = virtualMachine.eventQueue().remove(1000)
             for (event in eventSet) {
                 when (event) {
                     is VMDeathEvent, is VMDisconnectEvent -> {
