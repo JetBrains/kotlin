@@ -1,5 +1,5 @@
 fun box() : String  {
-    val listStr : ArrayList<String> = ArrayList<String>()
+    val listStr : ArrayList<String> = java.util.ArrayList()
     listStr.add("one")
     listStr.add("two")
     listStr.add("three")

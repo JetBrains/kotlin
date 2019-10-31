@@ -34,11 +34,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         runTest("compiler/testData/decompiler/box/dummy.kt");
     }
 
-    @TestMetadata("typealias_break.kt")
-    public void testTypealias_break() throws Exception {
-        runTest("compiler/testData/decompiler/box/typealias_break.kt");
-    }
-
     @TestMetadata("compiler/testData/decompiler/box/classes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -490,6 +485,84 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         @TestMetadata("upper_bound_fun.kt")
         public void testUpper_bound_fun() throws Exception {
             runTest("compiler/testData/decompiler/box/generics/upper_bound_fun.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/decompiler/box/objects")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Objects extends AbstractIrDecompilerBlackBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInObjects() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/objects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("classCallsProtectedInheritedByCompanion.kt")
+        public void testClassCallsProtectedInheritedByCompanion() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/classCallsProtectedInheritedByCompanion.kt");
+        }
+
+        @TestMetadata("classCompanion.kt")
+        public void testClassCompanion() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/classCompanion.kt");
+        }
+
+        @TestMetadata("kt2398.kt")
+        public void testKt2398() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/kt2398.kt");
+        }
+
+        @TestMetadata("kt2675.kt")
+        public void testKt2675() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/kt2675.kt");
+        }
+
+        @TestMetadata("kt9642.kt")
+        public void testKt9642() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/kt9642.kt");
+        }
+
+        @TestMetadata("methodOnObject.kt")
+        public void testMethodOnObject() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/methodOnObject.kt");
+        }
+
+        @TestMetadata("nestedDerivedClassCallsProtectedFromCompanion.kt")
+        public void testNestedDerivedClassCallsProtectedFromCompanion() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/nestedDerivedClassCallsProtectedFromCompanion.kt");
+        }
+
+        @TestMetadata("nestedObjectWithSuperclass.kt")
+        public void testNestedObjectWithSuperclass() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/nestedObjectWithSuperclass.kt");
+        }
+
+        @TestMetadata("object.kt")
+        public void testObject() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/object.kt");
+        }
+
+        @TestMetadata("objectInitialization_kt5523.kt")
+        public void testObjectInitialization_kt5523() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/objectInitialization_kt5523.kt");
+        }
+
+        @TestMetadata("objectWithSuperclass.kt")
+        public void testObjectWithSuperclass() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/objectWithSuperclass.kt");
+        }
+
+        @TestMetadata("objectWithSuperclassAndTrait.kt")
+        public void testObjectWithSuperclassAndTrait() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/objectWithSuperclassAndTrait.kt");
+        }
+
+        @TestMetadata("simpleObject.kt")
+        public void testSimpleObject() throws Exception {
+            runTest("compiler/testData/decompiler/box/objects/simpleObject.kt");
         }
     }
 

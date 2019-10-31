@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UNNECESSARY_SAFE_CALL")
+
 package org.jetbrains.kotlin.decompiler.util
 
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
@@ -68,7 +70,7 @@ const val SUPER_TOKEN = "super"
 const val THROW_TOKEN = "throw"
 const val CLASS_TOKEN = "class"
 const val INTERFACE_TOKEN = "interface"
-const val COMPANION_TOKEN = "companion object"
+const val COMPANION_TOKEN = "companion"
 const val OBJECT_TOKEN = "object"
 const val INNER_TOKEN = "inner"
 const val INLINE_TOKEN = "inline"
@@ -88,13 +90,13 @@ const val FUN_TOKEN = "fun"
 internal inline fun DecompileIrTreeVisitor.withBracesLn(body: () -> Unit) {
     printer.printlnWithNoIndent(" {")
     indented(body)
-    printer.println("} ")
+    printer.println("}")
 }
 
 internal inline fun DecompileIrTreeVisitor.withBraces(body: () -> Unit) {
     printer.printlnWithNoIndent(" {")
     indented(body)
-    printer.print("} ")
+    printer.print("}")
 }
 
 
@@ -197,6 +199,23 @@ internal fun IrCall.obtainNameWithArgs(): String {
     }
 }
 
+internal fun IrCall.obtainOperatorEqCall(): String {
+    val valueArgument = getValueArgument(0)
+    return when (valueArgument) {
+        is IrMemberAccessExpression -> with(valueArgument as IrMemberAccessExpression) {
+            val leftOperand = if (dispatchReceiver != null) dispatchReceiver else getValueArgument(0)
+            val rightOperand = if (dispatchReceiver != null) getValueArgument(0) else getValueArgument(1)
+            concatenateNonEmptyWithSpace(
+                (leftOperand as IrCall).symbol.owner.decompile(""),
+                OPERATOR_TOKENS[origin],
+                rightOperand?.decompile("")
+            )
+        }
+
+        else -> valueArgument?.decompile("") ?: EMPTY_TOKEN
+    }
+}
+
 
 internal fun IrCall.obtainCall(): String {
     return when (origin) {
@@ -207,7 +226,7 @@ internal fun IrCall.obtainCall(): String {
         EXCLEQ -> obtainNotEqCall()
         GET_PROPERTY -> obtainGetPropertyCall()
         // сюда прилетает только правая часть, левая разбирается в visitSetVariable
-        PLUSEQ, MINUSEQ, MULTEQ, DIVEQ -> getValueArgument(0)?.decompile("") ?: EMPTY_TOKEN
+        PLUSEQ, MINUSEQ, MULTEQ, DIVEQ -> obtainOperatorEqCall()
         // Для присваивания свойстам в конструкторах
         EQ -> obtainEqCall()
         EXCLEXCL -> "${getValueArgument(0)!!.decompile("")}!!"
@@ -216,7 +235,7 @@ internal fun IrCall.obtainCall(): String {
             var result: String? = null
             if (dispatchReceiver != null) {
                 result = if (superQualifierSymbol != null) {
-                    "$SUPER_TOKEN."
+                    "$SUPER_TOKEN<${superQualifierSymbol!!.owner.name()}>."
                 } else {
                     "${dispatchReceiver!!.decompile("")}."
                 }
@@ -238,8 +257,8 @@ internal fun IrCall.obtainGetPropertyCall(): String {
     val regex = """<get-(.+)>""".toRegex()
     val matchResult = regex.find(fullName)
     val propName = matchResult?.groups?.get(1)?.value
-
-    return "${dispatchReceiver?.decompile("")}.$propName"
+    val decompiledReceiver = dispatchReceiver?.decompile("")
+    return "${if (decompiledReceiver != null) "$decompiledReceiver." else EMPTY_TOKEN}$propName"
 }
 
 internal fun IrConstructor.obtainValueParameterTypes(): String =
@@ -317,7 +336,11 @@ internal fun concatenateConditions(branch: IrBranch): String {
 }
 
 internal fun IrClass.obtainDeclarationStr(): String =
-    concatenateNonEmptyWithSpace(obtainVisibility(), obtainModality(), obtainClassFlags(), "${name()}${obtainTypeParameters()}")
+    concatenateNonEmptyWithSpace(
+        obtainVisibility(),
+        obtainModality(),
+        obtainClassFlags(),
+        "${name().takeIf { !isCompanion } ?: EMPTY_TOKEN}${obtainTypeParameters()}")
 
 internal fun IrClass.obtainClassFlags() =
     concatenateNonEmptyWithSpace(

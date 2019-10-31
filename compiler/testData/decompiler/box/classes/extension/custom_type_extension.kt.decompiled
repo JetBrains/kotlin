@@ -5,5 +5,5 @@ fun MyClass.printOk() : String  {
 }
 
 fun box() : String  {
-    return     MyClass().printOk()
+    return MyClass().printOk()
 }

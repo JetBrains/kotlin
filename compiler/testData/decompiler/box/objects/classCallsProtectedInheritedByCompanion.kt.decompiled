@@ -1,0 +1,17 @@
+open  class A() {
+    protected fun foo() : String  {
+        return "OK"
+    }
+
+}
+class B() {
+    companion object: A () {
+    }
+    fun bar() : String  {
+        return B.Companion.foo()
+    }
+
+}
+fun box() : String  {
+    return B().bar()
+}

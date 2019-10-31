@@ -1,5 +1,5 @@
 fun fail(message: String) : Nothing  {
-    throw IllegalArgumentException(message)
+    throw java.lang.IllegalArgumentException(message)
 }
 
 fun box() : String  {

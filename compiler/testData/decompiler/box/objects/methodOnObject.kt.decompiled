@@ -1,0 +1,9 @@
+object A {
+    fun result() : String  {
+        return "OK"
+    }
+
+}
+fun box() : String  {
+    return A.result()
+}

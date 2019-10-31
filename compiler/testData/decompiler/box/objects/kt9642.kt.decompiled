@@ -1,0 +1,15 @@
+class Outer() {
+    class Nested() {
+        fun fn() : String  {
+            Outer.Companion.s = "OK"
+            return Outer.Companion.s
+        }
+
+    }
+    companion object {
+        var s : String = "fail"
+    }
+}
+fun box() : String  {
+    return Outer.Nested().fn()
+}

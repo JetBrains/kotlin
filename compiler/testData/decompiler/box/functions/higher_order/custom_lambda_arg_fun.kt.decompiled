@@ -1,21 +1,21 @@
 typealias summatorType = (Int, Int) -> Int
 fun summator(x: Int, y: Int) : Int  {
-    return     x + y
+    return x + y
 }
 
 fun applier(body: (Int, Int) -> Int) : Int  {
-    return     body.invoke(11, 22)
+    return body.invoke(11, 22)
 }
 
 fun box() : String  {
     if (applier(::summator) == 42) {
-        throw AssertionError()
+        throw java.lang.AssertionError()
     }
     val t : Int = applier{ x, y  -> y - x }
     if (t == 11) {
         return "OK"
     }
     else {
-        throw AssertionError()
+        throw java.lang.AssertionError()
     }
 }

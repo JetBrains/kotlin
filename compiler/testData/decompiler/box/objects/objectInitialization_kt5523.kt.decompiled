@@ -1,0 +1,7 @@
+object A {
+    val a : String = "OK"
+    val b : String = A.a
+}
+fun box() : String  {
+    return A.b
+}

@@ -1,0 +1,23 @@
+class A() {
+    fun ok() : String  {
+        return A.Foo.Bar.bar() + A.Foo.Bar.barv
+    }
+
+    private object Foo {
+        val foov : String = "K"
+        fun foo() : String  {
+            return "O"
+        }
+
+        object Bar {
+            val barv : String = A.Foo.foov
+            fun bar() : String  {
+                return A.Foo.foo()
+            }
+
+        }
+    }
+}
+fun box() : String  {
+    return A().ok()
+}

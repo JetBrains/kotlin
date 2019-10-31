@@ -8,5 +8,5 @@ fun Int.box(other: Int) : String  {
 }
 
 fun box() : String  {
-    return     99.box(9)
+    return 99.box(9)
 }

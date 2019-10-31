@@ -1,0 +1,23 @@
+class C() {
+    object Obj {
+        val o : String = "O"
+        object InnerObj {
+            fun k() : String  {
+                return "K"
+            }
+
+        }
+        class D() {
+            val ko : String = "KO"
+        }
+    }
+}
+fun box() : String  {
+    val res : String = C.Obj.o + C.Obj.InnerObj.k() + C.Obj.D().ko
+    return if (res == "OKKO") {
+    "OK"
+}
+else {
+    "Fail: ${res}"
+}
+}

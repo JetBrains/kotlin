@@ -1,0 +1,17 @@
+var result : String = ""
+class A() {
+    companion object {
+        val prop : String = this.test()
+        fun test() : String  {
+            result += "OK"
+            return result
+        }
+
+    }
+}
+fun box() : String  {
+    if (A.Companion.prop != "OK") {
+        return "fail ${A.Companion.prop}"
+    }
+    return result
+}
