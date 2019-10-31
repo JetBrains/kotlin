@@ -82,8 +82,7 @@ class CoroutineTransformerMethodVisitor(
     override fun performTransformations(methodNode: MethodNode) {
         removeFakeContinuationConstructorCall(methodNode)
 
-        // Remove redundant markers which came from compiled bytecode
-        cleanUpReturnsUnitMarkers(methodNode)
+        replaceReturnsUnitMarkersWithPushingUnitOnStack(methodNode)
 
         replaceFakeContinuationsWithRealOnes(
             methodNode,
@@ -228,8 +227,51 @@ class CoroutineTransformerMethodVisitor(
         )
     }
 
-    private fun cleanUpReturnsUnitMarkers(methodNode: MethodNode) {
-        for (marker in methodNode.instructions.asSequence().filter(::isReturnsUnitMarker)) {
+    /* Put { POP, GETSTATIC Unit } after suspension point if suspension point is a call of suspend function, that returns Unit.
+     *
+     * Otherwise, upon resume, the function would seem to not return Unit, despite being declared as returning Unit.
+     *
+     * This happens when said function is tail-call and its callee does not return Unit.
+     *
+     * Let's have an example
+     *
+     *   suspend fun int(): Int = suspendCoroutine { ...; 1 }
+     *
+     *   suspend fun unit() {
+     *     int()
+     *   }
+     *
+     *   suspend fun main() {
+     *     println(unit())
+     *   }
+     *
+     * So, in order to understand the necessity of { POP, GETSTATIC Unit } inside `main`, we need to consider two different scenarios
+     *
+     *   1. `unit` is not a tail-call function.
+     *   2. `unit` is a tail-call function.
+     *
+     * When `unit` is a not tail-call function, calling `resumeWith` on its continuation will resume `unit`,
+     * it will hit { GETSTATIC Unit; ARETURN } and this Unit will be the result of the suspend call. `unit`'s continuation will then call
+     * `main` continuation's `resumeWith`, passing the Unit instance. The continuation in turn will resume `main` and the Unit will be
+     * the result of `unit()` call. This result will then printed.
+     *
+     * However, when `unit` is a tail-call function, there is no continuation, generated for it. This is the point of tail-call
+     * optimization. Thus, resume call will skip `unit` and land direcly in `main` continuation's `resumeWith`. And its result is not
+     * Unit. Thus, we must ignore this result on call-site and use Unit instead. In other words, POP the result and GETSTATIC Unit
+     * instead.
+     */
+    private fun replaceReturnsUnitMarkersWithPushingUnitOnStack(methodNode: MethodNode) {
+        for (marker in methodNode.instructions.asSequence().filter(::isReturnsUnitMarker).toList()) {
+            assert(marker.next?.next?.let { isAfterSuspendMarker(it) } == true) {
+                "Expected AfterSuspendMarker after ReturnUnitMarker, got ${marker.next?.next}"
+            }
+            methodNode.instructions.insert(
+                marker.next.next,
+                withInstructionAdapter {
+                    pop()
+                    getstatic("kotlin/Unit", "INSTANCE", "Lkotlin/Unit;")
+                }
+            )
             methodNode.instructions.removeAll(listOf(marker.previous, marker))
         }
     }
