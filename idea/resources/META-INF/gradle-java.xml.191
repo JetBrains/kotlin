@@ -1,0 +1,56 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPSourceSetsFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJSBrowserFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJSNodeFrameworkSupportProvider"/>
+        <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinMPPFrameworkSupportProvider"/>
+        <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJavaFrameworkSupportProvider"/>
+        <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider"/>
+        <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"/>
+        <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
+        <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectResolverExtension" order="first"/>
+        <projectResolve implementation="org.jetbrains.kotlin.kapt.idea.KaptProjectResolverExtension" order="last"/>
+        <projectResolve implementation="org.jetbrains.kotlin.allopen.ide.AllOpenProjectResolverExtension" order="last"/>
+        <projectResolve implementation="org.jetbrains.kotlin.noarg.ide.NoArgProjectResolverExtension" order="last"/>
+        <projectResolve implementation="org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverProjectResolverExtension" order="last"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleSourceSetDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleLibraryDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinTargetDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.KotlinJavaMPPSourceSetDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryDataService"/>
+        <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.core.script.ReloadGradleTemplatesOnSync"/>
+
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinJvmTestClassGradleConfigurationProducer"/>
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinMultiplatformJvmTestClassGradleConfigurationProducer"/>
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinJvmTestMethodGradleConfigurationProducer"/>
+        <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinMultiplatformJvmTestMethodGradleConfigurationProducer"/>
+
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.allopen.ide.AllOpenGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.scripting.idea.plugin.ScriptingGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.kapt.idea.KaptGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.noarg.ide.NoArgGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlin.samWithReceiver.ide.SamWithReceiverGradleProjectImportHandler"/>
+        <gradleProjectImportHandler implementation="org.jetbrains.kotlinx.serialization.idea.KotlinSerializationGradleImportHandler"/>
+
+        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleModuleConfigurator"/>
+        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsGradleModuleConfigurator"/>
+        <gradleModelFacade implementation="org.jetbrains.kotlin.idea.inspections.gradle.DefaultGradleModelFacade"/>
+
+        <scriptDefinitionContributor implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptDefinitionsContributor" order="first"/>
+        <scriptAdditionalIdeaDependenciesProvider implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptAdditionalIdeaDependenciesProvider"/>
+
+        <moduleBuilder implementation="org.jetbrains.kotlin.ide.konan.gradle.KotlinGradleNativeMultiplatformModuleBuilder"/>
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleSharedMultiplatformModuleBuilder"/>
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleWebMultiplatformModuleBuilder"/>
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileMultiplatformModuleBuilder"/>
+        <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleMobileSharedMultiplatformModuleBuilder"/>
+    </extensions>
+</idea-plugin>
