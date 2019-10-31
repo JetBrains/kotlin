@@ -7,9 +7,11 @@
 package kotlin.reflect.full
 
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
-import kotlin.coroutines.Continuation
-import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.*
+import kotlin.reflect.KCallable
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
+import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.asKCallableImpl
 
 /**
  * Returns a parameter representing the `this` instance needed to call this callable,
@@ -50,7 +52,13 @@ fun KCallable<*>.findParameterByName(name: String): KParameter? {
 suspend fun <R> KCallable<R>.callSuspend(vararg args: Any?): R {
     if (!this.isSuspend) return call(*args)
     if (this !is KFunction<*>) throw IllegalArgumentException("Cannot callSuspend on a property $this: suspend properties are not supported yet")
-    return suspendCoroutineUninterceptedOrReturn { call(*args, it) }
+    val result = suspendCoroutineUninterceptedOrReturn<R> { call(*args, it) }
+    // If suspend function returns Unit and tail-call, it might appear, that it returns not Unit,
+    // see comment above replaceReturnsUnitMarkersWithPushingUnitOnStack for explanation.
+    // In this case, return Unit manually.
+    @Suppress("UNCHECKED_CAST")
+    if (returnType.classifier == Unit::class && !returnType.isMarkedNullable) return (Unit as R)
+    return result
 }
 
 /**
@@ -62,5 +70,11 @@ suspend fun <R> KCallable<R>.callSuspendBy(args: Map<KParameter, Any?>): R {
     if (!this.isSuspend) return callBy(args)
     if (this !is KFunction<*>) throw IllegalArgumentException("Cannot callSuspendBy on a property $this: suspend properties are not supported yet")
     val kCallable = asKCallableImpl() ?: throw KotlinReflectionInternalError("This callable does not support a default call: $this")
-    return suspendCoroutineUninterceptedOrReturn<R> { kCallable.callDefaultMethod(args, it) }
+    val result = suspendCoroutineUninterceptedOrReturn<R> { kCallable.callDefaultMethod(args, it) }
+    // If suspend function returns Unit and tail-call, it might appear, that it returns not Unit,
+    // see comment above replaceReturnsUnitMarkersWithPushingUnitOnStack for explanation.
+    // In this case, return Unit manually.
+    @Suppress("UNCHECKED_CAST")
+    if (returnType.classifier == Unit::class && !returnType.isMarkedNullable) return (Unit as R)
+    return result
 }
