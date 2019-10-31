@@ -14,5 +14,6 @@
     <orderEntry type="library" scope="TEST" name="commons-codec" level="project" />
     <orderEntry type="module" module-name="intellij.statsCollector.logEvents" scope="TEST" />
     <orderEntry type="module" module-name="intellij.statsCollector" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.statsCollector.completionRanker" scope="TEST" />
   </component>
 </module>
