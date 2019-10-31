@@ -23,6 +23,6 @@ fun test() {
 
     val derived = DerivedLocal()
     derived.gau()
-    derived.baz()
-    derived.foo()
+    derived.<!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>baz<!>()<!>
+    derived.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
 }

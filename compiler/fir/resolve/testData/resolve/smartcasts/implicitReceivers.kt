@@ -9,23 +9,23 @@ fun Any?.test_1() {
         this.foo()
         foo()
     } else {
-        this.foo()
-        foo()
+        this.<!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
+        <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
     }
-    this.foo()
-    foo()
+    this.<!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
+    <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
 }
 
 fun Any?.test_2() {
     if (this !is A) {
-        this.foo()
-        foo()
+        this.<!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
+        <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
     } else {
         this.foo()
         foo()
     }
-    this.foo()
-    foo()
+    this.<!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
+    <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
 }
 
 

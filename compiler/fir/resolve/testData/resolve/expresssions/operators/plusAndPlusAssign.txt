@@ -13,5 +13,5 @@ FILE: plusAndPlusAssign.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lvar f: R|Foo| = R|/Foo.Foo|()
-        ERROR_EXPR(Operator overload ambiguity. plusAssign and plus are compatible)
+        ERROR_EXPR(Operator overload ambiguity. Compatible candidates: [/Foo.plus, /Foo.plusAssign])
     }

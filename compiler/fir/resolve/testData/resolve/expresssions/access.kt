@@ -21,7 +21,7 @@ class Bar {
     }
 
     // NB! abc() here is resolved to member Foo.abc(), and not to extension member of Bar
-    fun Foo.check() = abc() + bar()
+    fun Foo.check() = <!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!>abc() <!INAPPLICABLE_CANDIDATE!>+<!> bar()<!>
 
     // NB! + here is resolved to member String.plus (not to extension member above)
     fun Foo.check2() = "" + bar()
@@ -41,9 +41,9 @@ fun f() {
     val a = 10
     val b = a
     val d = ""
-    val c = c
+    val c = <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>c<!>
 
-    abc()
+    <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>abc<!>()<!>
 
     fun bcd() {}
 
@@ -57,7 +57,7 @@ fun f() {
         dcb()
     }
 
-    dcb()
+    <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>dcb<!>()<!>
 
     abc()
 }

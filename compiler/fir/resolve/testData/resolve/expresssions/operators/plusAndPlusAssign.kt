@@ -5,5 +5,5 @@ class Foo {
 
 fun test() {
     var f = Foo()
-    f += f
+    <!ASSIGN_OPERATOR_AMBIGUITY!>f += f<!>
 }

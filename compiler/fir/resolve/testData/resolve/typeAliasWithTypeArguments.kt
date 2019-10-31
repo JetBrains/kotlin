@@ -42,7 +42,7 @@ fun test_2(inv: Inv2<A, B>) {
 
 fun test_3(inv: Inv3<A, B, C>) {
     inv.k().foo()
-    inv.t().bar()
+    inv.t().<!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>bar<!>()<!>
     inv.t().baz()
 }
 

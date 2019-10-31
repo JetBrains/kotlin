@@ -13,7 +13,7 @@ fun test_2(x: Int?) {
     } else {
         x
     }
-    y.inc()
+    y.<!AMBIGUITY, AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
 }
 
 fun test_3(x: Int?) {

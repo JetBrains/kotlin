@@ -1,8 +1,8 @@
 fun <T, R> T.also(block: () -> R): R {
-    null!!
+    return <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>null!!<!>
 }
 
-fun foo(b: Boolean) {
+fun foo(b: Boolean, a: Int) {
     val x = when (b) {
         true -> a
         else -> null

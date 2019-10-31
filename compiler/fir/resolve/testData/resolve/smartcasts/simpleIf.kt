@@ -2,7 +2,7 @@ fun test_1(x: Any) {
     if (x is String) {
         x.length
     }
-    x.length
+    x.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>length<!>
 }
 
 fun test_2(x: Any) {
@@ -10,7 +10,7 @@ fun test_2(x: Any) {
     if (b) {
         x.length
     }
-    x.length
+    x.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>length<!>
 }
 
 fun test_3(x: Any) {

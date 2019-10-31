@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class FirUnresolvedReferenceError(val name: Name? = null) : FirDiagnostic() {
-    override val reason: String get() = "Unresolved reference" + (name?.asString() ?: "")
+    override val reason: String get() = "Unresolved reference" + if (name != null) ": ${name.asString()}" else ""
 }
 
 class FirUnresolvedSymbolError(val classId: ClassId) : FirDiagnostic() {

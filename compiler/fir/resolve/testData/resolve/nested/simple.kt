@@ -22,8 +22,8 @@ class Owner {
         }
 
         fun err() {
-            foo()
-            this.foo()
+            <!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
+            this.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!>
         }
     }
 }

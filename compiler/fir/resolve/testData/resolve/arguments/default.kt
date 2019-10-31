@@ -8,19 +8,19 @@ fun test() {
     foo(1, 2.0, true)
     foo(1, third = true)
 
-    foo()
-    foo(0, 0.0, false, "")
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>()<!>
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>(0, 0.0, false, "")<!>
 
     bar(1, third = true)
     bar(1, 2.0, true)
     bar(1, 2.0, true, "my")
 
-    bar(1, true)
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>bar<!>(1, true)<!>
 
     baz(1)
     baz(1, "my", "yours")
     baz(1, z = true)
 
-    baz(0, "", false)
+    <!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>baz<!>(0, "", false)<!>
 }
 

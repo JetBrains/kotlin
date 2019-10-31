@@ -7,11 +7,11 @@ fun test() {
     foo(1, "my", "yours")
     foo(1, *arrayOf("my", "yours"))
 
-    foo("")
-    foo(1, 2)
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>("")<!>
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>(1, 2)<!>
 
     bar(1, z = true, y = *arrayOf("my", "yours"))
 
-    bar(0, z = false, y = "", y = "other")
-    bar(0, "", true)
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>bar<!>(0, z = false, y = "", y = "other")<!>
+    <!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>bar<!>(0, "", true)<!>
 }

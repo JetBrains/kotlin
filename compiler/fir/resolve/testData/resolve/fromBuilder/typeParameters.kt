@@ -1,7 +1,7 @@
 interface List<out T : Any> {
     operator fun get(index: Int): T
 
-    infix fun concat(other: List<T>): List<T>
+    <!INAPPLICABLE_INFIX_MODIFIER!>infix fun concat(other: List<T>): List<T><!>
 }
 
 typealias StringList = List<out String>

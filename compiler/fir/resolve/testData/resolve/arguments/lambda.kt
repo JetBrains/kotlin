@@ -8,21 +8,21 @@ fun test() {
     foo() {}
     foo({})
 
-    foo(1) {}
-    foo(f = {}) {}
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>(1) {}<!>
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>(f = {}) {}<!>
 
     bar(1) {}
     bar(x = 1) {}
     bar(1, {})
     bar(x = 1, f = {})
 
-    bar {}
-    bar({})
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>bar<!> {}<!>
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>bar<!>({})<!>
 
     baz(other = false, f = {})
     baz({}, false)
 
-    baz {}
-    baz() {}
-    baz(other = false) {}
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>baz<!> {}<!>
+    <!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>baz<!>() {}<!>
+    <!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>baz<!>(other = false) {}<!>
 }

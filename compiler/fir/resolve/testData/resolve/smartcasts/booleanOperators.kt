@@ -23,8 +23,8 @@ fun test_1(x: Any) {
 fun test_2(x: Any) {
     if (x is B || x is C) {
         x.foo()
-        x.bar()
-        x.baz()
+        x.<!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>bar<!>()<!>
+        x.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>baz<!>()<!>
     }
 }
 
@@ -36,20 +36,20 @@ fun test_3(x: Any) {
 
 fun test_4(x: Any) {
     if (x !is String || x.length == 0) {
-        x.length
+        x.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>length<!>
     }
-    x.length
+    x.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>length<!>
 }
 
 fun test_5(x: A?) {
     if (x != null || false) {
-        x.foo()
+        x.<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>()<!>
     }
 }
 
 fun test_6(x: A?) {
     if (false || x != null) {
-        x.foo()
+        x.<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>()<!>
     }
 }
 

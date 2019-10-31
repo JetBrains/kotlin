@@ -9,17 +9,17 @@ enum class Order {
 enum class Planet(val m: Double, internal val r: Double) {
     MERCURY(1.0, 2.0) {
         override fun sayHello() {
-            println("Hello!!!")
+            <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>println<!>("Hello!!!")<!>
         }
     },
     VENERA(3.0, 4.0) {
         override fun sayHello() {
-            println("Ola!!!")
+            <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>println<!>("Ola!!!")<!>
         }
     },
     EARTH(5.0, 6.0) {
         override fun sayHello() {
-            println("Privet!!!")
+            <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>println<!>("Privet!!!")<!>
         }
     };
 

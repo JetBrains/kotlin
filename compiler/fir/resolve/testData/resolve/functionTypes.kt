@@ -4,7 +4,7 @@ fun <T, R> List<T>.simpleMap(f: (T) -> R): R {
 
 }
 
-fun <T> simpleWith(t: T, f: T.() -> Unit): Unit = t.f()
+fun <T> simpleWith(t: T, f: T.() -> Unit): Unit = t.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>f<!>()<!>
 
 interface KMutableProperty1<T, R> : KProperty1<T, R>, KMutableProperty<R>
 

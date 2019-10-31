@@ -25,7 +25,7 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     }
 
     public void testAllFilesPresentInResolve() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), true, "stdlib", "cfg", "smartcasts", "diagnostics");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve"), Pattern.compile("^([^.]+)\\.kt$"), true, "stdlib", "cfg", "smartcasts");
     }
 
     @TestMetadata("cast.kt")
@@ -261,6 +261,24 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @TestMetadata("lists.kt")
         public void testLists() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/builtins/lists.kt");
+        }
+    }
+
+    @TestMetadata("compiler/fir/resolve/testData/resolve/diagnostics")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Diagnostics extends AbstractFirResolveTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDiagnostics() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/diagnostics"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("infixFunctions.kt")
+        public void testInfixFunctions() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/diagnostics/infixFunctions.kt");
         }
     }
 

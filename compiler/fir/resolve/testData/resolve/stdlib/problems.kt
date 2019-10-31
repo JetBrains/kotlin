@@ -30,5 +30,5 @@ class BC : B, C
 fun C.analyze() {}
 inline fun <reified T> T.analyze() where T : A, T : B {}
 fun testAnalyze() {
-    BC().analyze()
+    BC().<!AMBIGUITY, AMBIGUITY!><!AMBIGUITY!>analyze<!>()<!>
 }
