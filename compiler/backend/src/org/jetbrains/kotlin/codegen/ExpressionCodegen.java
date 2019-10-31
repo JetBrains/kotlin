@@ -2533,6 +2533,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         callGenerator.genCall(callableMethod, resolvedCall, defaultMaskWasGenerated, this);
 
         if (isSuspendNoInlineCall) {
+            addReturnsUnitMarkerIfNecessary(v, resolvedCall);
+
             addSuspendMarker(v, false);
             addInlineMarker(v, false);
         }
