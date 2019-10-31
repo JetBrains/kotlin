@@ -5,4 +5,13 @@
 
 package org.jetbrains.kotlin.fir.diagnostics
 
-class FirSimpleDiagnostic(override val reason: String) : FirDiagnostic()
+class FirSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : FirDiagnostic()
+
+enum class DiagnosticKind {
+    Syntax,
+    ReturnNotAllowed,
+    UnresolvedLabel,
+    IllegalConstExpression,
+    ConstructorInObject,
+    Other
+}

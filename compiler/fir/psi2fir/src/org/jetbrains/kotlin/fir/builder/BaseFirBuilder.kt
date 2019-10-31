@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
-import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -111,7 +111,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                         FirErrorFunctionImpl(
                             source,
                             this@BaseFirBuilder.session,
-                            FirSimpleDiagnostic("Cannot bind unlabeled return to a function"),
+                            FirSimpleDiagnostic("Cannot bind unlabeled return to a function", DiagnosticKind.ReturnNotAllowed),
                             FirErrorFunctionSymbol()
                         )
                     )
@@ -137,7 +137,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                     FirErrorFunctionImpl(
                         source,
                         this@BaseFirBuilder.session,
-                        FirSimpleDiagnostic("Cannot bind label $labelName to a function"),
+                        FirSimpleDiagnostic("Cannot bind label $labelName to a function", DiagnosticKind.UnresolvedLabel),
                         FirErrorFunctionSymbol()
                     )
                 )
@@ -197,7 +197,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             if (lastLoop != null) {
                 target.bind(lastLoop)
             } else {
-                target.bind(FirErrorLoop(expression.getSourceOrNull(), "Cannot bind unlabeled jump to a loop"))
+                target.bind(FirErrorLoop(expression.getSourceOrNull(), FirSimpleDiagnostic("Cannot bind unlabeled jump to a loop", DiagnosticKind.Syntax)))
             }
         } else {
             for (firLoop in context.firLoops.asReversed()) {
@@ -206,7 +206,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                     return this
                 }
             }
-            target.bind(FirErrorLoop(expression.getSourceOrNull(), "Cannot bind label $labelName to a loop"))
+            target.bind(FirErrorLoop(expression.getSourceOrNull(), FirSimpleDiagnostic("Cannot bind label $labelName to a loop", DiagnosticKind.Syntax)))
         }
         return this
     }
@@ -231,29 +231,29 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                             convertedText > Int.MAX_VALUE || convertedText < Int.MIN_VALUE)
                 ) {
                     FirConstExpressionImpl(
-                        expression.getSourceOrNull(), IrConstKind.Long, convertedText, "Incorrect long: $text"
+                        expression.getSourceOrNull(), IrConstKind.Long, convertedText, FirSimpleDiagnostic("Incorrect long: $text", DiagnosticKind.Syntax)
                     )
                 } else if (convertedText is Number) {
                     // TODO: support byte / short
                     FirConstExpressionImpl(
-                        expression.getSourceOrNull(), IrConstKind.Int, convertedText.toInt(), "Incorrect int: $text"
+                        expression.getSourceOrNull(), IrConstKind.Int, convertedText.toInt(), FirSimpleDiagnostic("Incorrect int: $text", DiagnosticKind.Syntax)
                     )
                 } else {
-                    FirErrorExpressionImpl(expression.getSourceOrNull(), diagnostic = FirSimpleDiagnostic("Incorrect constant expression: $text"))
+                    FirErrorExpressionImpl(expression.getSourceOrNull(), FirSimpleDiagnostic("Incorrect constant expression: $text", DiagnosticKind.IllegalConstExpression))
                 }
             FLOAT_CONSTANT ->
                 if (convertedText is Float) {
                     FirConstExpressionImpl(
-                        expression.getSourceOrNull(), IrConstKind.Float, convertedText, "Incorrect float: $text"
+                        expression.getSourceOrNull(), IrConstKind.Float, convertedText, FirSimpleDiagnostic("Incorrect float: $text", DiagnosticKind.Syntax)
                     )
                 } else {
                     FirConstExpressionImpl(
-                        expression.getSourceOrNull(), IrConstKind.Double, convertedText as Double, "Incorrect double: $text"
+                        expression.getSourceOrNull(), IrConstKind.Double, convertedText as Double, FirSimpleDiagnostic("Incorrect double: $text", DiagnosticKind.Syntax)
                     )
                 }
             CHARACTER_CONSTANT ->
                 FirConstExpressionImpl(
-                    expression.getSourceOrNull(), IrConstKind.Char, text.parseCharacter(), "Incorrect character: $text"
+                    expression.getSourceOrNull(), IrConstKind.Char, text.parseCharacter(), FirSimpleDiagnostic("Incorrect character: $text", DiagnosticKind.Syntax)
                 )
             BOOLEAN_CONSTANT ->
                 FirConstExpressionImpl(expression.getSourceOrNull(), IrConstKind.Boolean, convertedText as Boolean)
@@ -291,7 +291,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 else -> {
                     hasExpressions = true
                     FirErrorExpressionImpl(
-                        entry.getSourceOrNull(), FirSimpleDiagnostic("Incorrect template entry: ${entry.asText}")
+                        entry.getSourceOrNull(), FirSimpleDiagnostic("Incorrect template entry: ${entry.asText}", DiagnosticKind.Syntax)
                     )
                 }
             }
@@ -344,7 +344,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         convert: T.() -> FirExpression
     ): FirExpression {
         if (argument == null) {
-            return FirErrorExpressionImpl(argument, FirSimpleDiagnostic("Inc/dec without operand"))
+            return FirErrorExpressionImpl(argument, FirSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax))
         }
         val source = baseExpression?.toFirSourceElement()
         return FirBlockImpl(source).apply {
@@ -411,7 +411,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                         firMemberAccess.calleeReference
                     } else {
                         FirErrorNamedReferenceImpl(
-                            left.getSourceOrNull(), FirSimpleDiagnostic("Unsupported qualified LValue: ${left.asText}")
+                            left.getSourceOrNull(), FirSimpleDiagnostic("Unsupported qualified LValue: ${left.asText}", DiagnosticKind.Syntax)
                         )
                     }
                 }
@@ -420,7 +420,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 }
             }
         }
-        return FirErrorNamedReferenceImpl(left.getSourceOrNull(), FirSimpleDiagnostic("Unsupported LValue: $tokenType"))
+        return FirErrorNamedReferenceImpl(left.getSourceOrNull(), FirSimpleDiagnostic("Unsupported LValue: $tokenType", DiagnosticKind.Syntax))
     }
 
     fun T?.generateAssignment(
@@ -469,7 +469,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 statements += generateTemporaryVariable(
                     this@BaseFirBuilder.session, this@generateAssignment.getSourceOrNull(), name,
                     this@generateAssignment?.convert()
-                        ?: FirErrorExpressionImpl(this.getSourceOrNull(), FirSimpleDiagnostic("No LValue in assignment"))
+                        ?: FirErrorExpressionImpl(this.getSourceOrNull(), FirSimpleDiagnostic("No LValue in assignment", DiagnosticKind.Syntax))
                 )
                 statements += FirVariableAssignmentImpl(source, false, value, operation).apply {
                     lValue = FirSimpleNamedReference(this.getSourceOrNull(), name, null)
@@ -480,7 +480,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         if (operation in FirOperation.ASSIGNMENTS && operation != FirOperation.ASSIGN) {
             return FirOperatorCallImpl(source, operation).apply {
                 // TODO: take good psi
-                arguments += this@generateAssignment?.convert() ?: FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unsupported left value of assignment: ${source?.psi?.text}"))
+                arguments += this@generateAssignment?.convert() ?: FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unsupported left value of assignment: ${source?.psi?.text}", DiagnosticKind.Syntax))
                 arguments += value
             }
         }

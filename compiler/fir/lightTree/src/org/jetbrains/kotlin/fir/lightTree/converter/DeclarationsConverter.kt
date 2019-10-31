@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.builder.generateComponentFunctions
 import org.jetbrains.kotlin.fir.builder.generateCopyFunction
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
@@ -665,7 +666,7 @@ class DeclarationsConverter(
         }
 
         val delegatedSelfTypeRef =
-            if (classWrapper.isObjectLiteral()) FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Constructor in object"))
+            if (classWrapper.isObjectLiteral()) FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Constructor in object", DiagnosticKind.ConstructorInObject))
             else classWrapper.delegatedSelfTypeRef
 
         val status = FirDeclarationStatusImpl(modifiers.getVisibility(), Modality.FINAL).apply {
@@ -715,8 +716,8 @@ class DeclarationsConverter(
         val isThis = (isImplicit && classWrapper.hasPrimaryConstructor) || thisKeywordPresent
         val delegatedType =
             if (classWrapper.isObjectLiteral() || classWrapper.isInterface()) when {
-                isThis -> FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Constructor in object"))
-                else -> FirErrorTypeRefImpl(null, FirSimpleDiagnostic("No super type"))
+                isThis -> FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Constructor in object", , DiagnosticKind.ConstructorInObject))
+                else -> FirErrorTypeRefImpl(null, FirSimpleDiagnostic("No super type", DiagnosticKind.Syntax))
             }
             else when {
                 isThis -> classWrapper.delegatedSelfTypeRef
@@ -870,7 +871,7 @@ class DeclarationsConverter(
     private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         var isVar = false
         val entries = mutableListOf<FirVariable<*>>()
-        var firExpression: FirExpression = FirErrorExpressionImpl(null, FirSimpleDiagnostic("Destructuring declaration without initializer"))
+        var firExpression: FirExpression = FirErrorExpressionImpl(null, FirSimpleDiagnostic("Destructuring declaration without initializer", DiagnosticKind.Syntax))
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
                 VAR_KEYWORD -> isVar = true
@@ -1166,7 +1167,7 @@ class DeclarationsConverter(
      */
     private fun convertExplicitDelegation(explicitDelegation: LighterASTNode): FirDelegatedTypeRef {
         lateinit var firTypeRef: FirTypeRef
-        var firExpression: FirExpression? = FirErrorExpressionImpl(null, FirSimpleDiagnostic("Should have delegate"))
+        var firExpression: FirExpression? = FirErrorExpressionImpl(null, FirSimpleDiagnostic("Should have delegate", DiagnosticKind.Syntax))
         explicitDelegation.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firTypeRef = convertType(it)
@@ -1256,10 +1257,10 @@ class DeclarationsConverter(
      */
     fun convertType(type: LighterASTNode): FirTypeRef {
         if (type.asText.isEmpty()) {
-            return FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Unwrapped type is null"))
+            return FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Unwrapped type is null", DiagnosticKind.Syntax))
         }
         var typeModifiers = TypeModifier() //TODO what with suspend?
-        var firType: FirTypeRef = FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Incomplete code"))
+        var firType: FirTypeRef = FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Incomplete code", DiagnosticKind.Syntax))
         var afterLPar = false
         type.forEachChildren {
             when (it.tokenType) {
@@ -1270,7 +1271,7 @@ class DeclarationsConverter(
                 NULLABLE_TYPE -> firType = convertNullableType(it)
                 FUNCTION_TYPE -> firType = convertFunctionType(it)
                 DYNAMIC_TYPE -> firType = FirDynamicTypeRefImpl(null, false)
-                TokenType.ERROR_ELEMENT -> firType = FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Unwrapped type is null"))
+                TokenType.ERROR_ELEMENT -> firType = FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Unwrapped type is null", DiagnosticKind.Syntax))
             }
         }
 
@@ -1325,7 +1326,7 @@ class DeclarationsConverter(
         }
 
         if (identifier == null)
-            return FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Incomplete user type"))
+            return FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Incomplete user type", DiagnosticKind.Syntax))
 
         val qualifier = FirQualifierPartImpl(
             identifier.nameAsSafeName()

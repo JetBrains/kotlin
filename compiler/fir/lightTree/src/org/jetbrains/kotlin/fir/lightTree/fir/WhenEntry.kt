@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.builder.generateContainsOperation
 import org.jetbrains.kotlin.fir.builder.generateLazyLogicalOperation
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
@@ -52,7 +53,7 @@ data class WhenEntry(
                 }
             }
             else -> {
-                FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unsupported when condition: ${this.javaClass}"))
+                FirErrorExpressionImpl(null, FirSimpleDiagnostic("Unsupported when condition: ${this.javaClass}", DiagnosticKind.Syntax))
             }
         }
     }
@@ -60,7 +61,7 @@ data class WhenEntry(
     fun toFirWhenConditionWithoutSubject(): FirExpression {
         return when (val condition = conditions.first()) {
             is FirOperatorCallImpl -> condition.arguments.first()
-            else -> FirErrorExpressionImpl(null, FirSimpleDiagnostic("No expression in condition with expression"))
+            else -> FirErrorExpressionImpl(null, FirSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax))
         }
     }
 }

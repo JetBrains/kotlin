@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyImpl
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
@@ -36,7 +37,7 @@ class ValueParameter(
         val name = this.firValueParameter.name
         var type = this.firValueParameter.returnTypeRef
         if (type is FirImplicitTypeRef) {
-            type = FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Incomplete code"))
+            type = FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Incomplete code", DiagnosticKind.Syntax))
         }
 
         val status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality()).apply {
