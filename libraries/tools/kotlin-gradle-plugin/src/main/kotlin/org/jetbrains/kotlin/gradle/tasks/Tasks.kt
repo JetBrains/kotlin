@@ -567,6 +567,10 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
             "-Xir-produce-klib-file"
         ).any(freeCompilerArgs::contains)
 
+    // Kotlin/JS can operate in 3 modes:
+    //  1) purely pre-IR backend
+    //  2) purely IR backend
+    //  3) hybrid pre-IR and IR backend. Can only accept libraries with both JS and IR parts.
     private val libraryFilter: (File) -> Boolean
         get() = if (kotlinOptions.isIrBackendEnabled()) {
             if (kotlinOptions.isPreIrBackendDisabled()) {
