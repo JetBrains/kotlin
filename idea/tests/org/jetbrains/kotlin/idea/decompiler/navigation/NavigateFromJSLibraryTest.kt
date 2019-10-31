@@ -10,15 +10,18 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.runTest
 import org.junit.runner.RunWith
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class NavigateFromJSLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() {
     fun testIcon() {
-        TestCase.assertEquals(
-            "Icon.kt",
-            navigationElementForReferenceInLibrarySource("lib.kt", "Icon").containingFile.name
-        )
+        runTest {
+            TestCase.assertEquals(
+                "Icon.kt",
+                navigationElementForReferenceInLibrarySource("lib.kt", "Icon").containingFile.name
+            )
+        }
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {

@@ -20,6 +20,7 @@ import com.intellij.testFramework.registerServiceInstance
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.evaluateString
 import org.jetbrains.uast.toUElementOfType
@@ -32,36 +33,35 @@ class KotlinUastReferencesTest : KotlinLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-
     @Test
     fun `test original getter is visible when reference is under renaming`() {
+        KotlinTestUtils.runTest(this) {
+            registerReferenceProviders(testRootDisposable) {
+                registerUastReferenceProvider(injectionHostUExpression(), uastInjectionHostReferenceProvider { _, psiLanguageInjectionHost ->
+                    arrayOf(GetterReference("KotlinBean", psiLanguageInjectionHost))
+                })
+            }
 
-        registerReferenceProviders(testRootDisposable) {
-            registerUastReferenceProvider(injectionHostUExpression(), uastInjectionHostReferenceProvider { _, psiLanguageInjectionHost ->
-                arrayOf(GetterReference("KotlinBean", psiLanguageInjectionHost))
-            })
-        }
+            myFixture.configureByText(
+                "KotlinBean.kt", """
+                data class KotlinBean(val myF<caret>ield: String)
 
-        myFixture.configureByText(
-            "KotlinBean.kt", """
-            data class KotlinBean(val myF<caret>ield: String)
+                val reference = "myField"
 
-            val reference = "myField"
+                """.trimIndent()
+            )
 
-        """.trimIndent()
-        )
+            myFixture.renameElementAtCaret("myRenamedField")
 
-        myFixture.renameElementAtCaret("myRenamedField")
-
-        myFixture.checkResult(
-            """
+            myFixture.checkResult(
+                """
                 data class KotlinBean(val myRenamedField: String)
 
                 val reference = "myRenamedField"
 
-        """.trimIndent()
-        )
-
+                """.trimIndent()
+            )
+        }
     }
 
 }
