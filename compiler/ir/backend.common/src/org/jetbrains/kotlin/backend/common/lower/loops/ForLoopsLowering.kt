@@ -150,14 +150,13 @@ private class RangeLoopTransformer(
             ?: return null  // If the for-loop cannot be lowered.
         iteratorToLoopHeader[variable.symbol] = forLoopInfo
 
-        // Lower into a composite with additional declarations (e.g., induction variable)
-        // used in the loop condition and body.
+        // Lower into a composite with additional statements (e.g., induction variable) used in the loop condition and body.
         return IrCompositeImpl(
             variable.startOffset,
             variable.endOffset,
             context.irBuiltIns.unitType,
             null,
-            forLoopInfo.declarations
+            forLoopInfo.loopInitStatements
         )
     }
 
@@ -213,26 +212,22 @@ private class RangeLoopTransformer(
         val initializer = variable.initializer as IrCall
         val forLoopInfo = getLoopHeader(initializer)
             ?: return null  // If the for-loop cannot be lowered.
-        forLoopInfo.loopVariable = variable
 
         // The "next" statement (at the top of the loop):
         //
         //   val i = it.next()
         //
-        // ...is lowered into:
+        // ...is lowered into something like:
         //
-        //   val i = initializeLoopVariable() // `inductionVariable` for progressions
-        //                                    // `array[inductionVariable]` for arrays
+        //   val i = inductionVariable  // For progressions, or `array[inductionVariable]` for arrays
         //   inductionVariable = inductionVariable + step
         return with(context.createIrBuilder(getScopeOwnerSymbol(), initializer.startOffset, initializer.endOffset)) {
-            variable.initializer = forLoopInfo.initializeLoopVariable(symbols, this)
-            val increment = forLoopInfo.incrementInductionVariable(this)
             IrCompositeImpl(
                 variable.startOffset,
                 variable.endOffset,
                 context.irBuiltIns.unitType,
                 IrStatementOrigin.FOR_LOOP_NEXT,
-                listOf(variable, increment)
+                forLoopInfo.initializeIteration(variable, symbols, this)
             )
         }
     }

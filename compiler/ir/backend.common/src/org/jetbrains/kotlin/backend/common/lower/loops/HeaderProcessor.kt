@@ -37,28 +37,36 @@ internal data class LoopReplacement(
     val replacementExpression: IrExpression
 )
 
-/** Contains information about variables used in the loop. */
-internal sealed class ForLoopHeader(
+internal interface ForLoopHeader {
+    /** Statements used to initialize the entire loop (e.g., declare induction variable). */
+    val loopInitStatements: List<IrStatement>
+
+    /** Statements used to initialize an iteration of the loop (e.g., assign loop variable). */
+    fun initializeIteration(
+        loopVariable: IrVariable,
+        symbols: Symbols<CommonBackendContext>,
+        builder: DeclarationIrBuilder
+    ): List<IrStatement>
+
+    /** Builds a new loop from the old loop. */
+    fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement
+}
+
+internal abstract class NumericForLoopHeader(
     protected open val headerInfo: HeaderInfo,
     val inductionVariable: IrVariable,
     lastExpression: IrExpression,
     val step: IrVariable,
-    var loopVariable: IrVariable? = null,
     val isLastInclusive: Boolean,
-    val declarations: List<IrVariable>
-) {
+    override val loopInitStatements: List<IrStatement>
+) : ForLoopHeader {
+
     val lastExpression: IrExpression = lastExpression
         // Always copy `lastExpression` is it may be used in multiple conditions.
         get() = field.deepCopyWithSymbols()
 
-    /** Expression used to initialize the loop variable at the beginning of the loop. */
-    abstract fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder): IrExpression
-
-    /** Builds a new loop from the old loop. */
-    abstract fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement
-
     /** Statement used to increment the induction variable. */
-    fun incrementInductionVariable(builder: DeclarationIrBuilder): IrStatement = with(builder) {
+    protected fun incrementInductionVariable(builder: DeclarationIrBuilder): IrStatement = with(builder) {
         // inductionVariable = inductionVariable + step
         val plusFun = inductionVariable.type.getClass()!!.functions.single {
             it.name == OperatorNameConventions.PLUS &&
@@ -133,19 +141,25 @@ internal class ProgressionLoopHeader(
     inductionVariable: IrVariable,
     lastExpression: IrExpression,
     step: IrVariable,
-    declarations: List<IrVariable>
-) : ForLoopHeader(
+    loopInitStatements: List<IrStatement>
+) : NumericForLoopHeader(
     headerInfo, inductionVariable,
     lastExpression = lastExpression,
     step = step,
     isLastInclusive = true,
-    declarations = declarations
+    loopInitStatements = loopInitStatements
 ) {
 
-    override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
-        // loopVariable = inductionVariable
-        irGet(inductionVariable)
-    }
+    private var loopVariable: IrVariable? = null
+
+    override fun initializeIteration(loopVariable: IrVariable, symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) =
+        with(builder) {
+            this@ProgressionLoopHeader.loopVariable = loopVariable
+            // loopVariable = inductionVariable
+            // inductionVariable = inductionVariable + step
+            loopVariable.initializer = irGet(inductionVariable)
+            listOf(loopVariable, incrementInductionVariable(this))
+        }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?) =
         with(builder) {
@@ -198,21 +212,23 @@ internal class IndexedGetLoopHeader(
     inductionVariable: IrVariable,
     lastExpression: IrExpression,
     step: IrVariable,
-    declarations: List<IrVariable>
-) : ForLoopHeader(
+    loopInitStatements: List<IrStatement>
+) : NumericForLoopHeader(
     headerInfo, inductionVariable, lastExpression, step,
     isLastInclusive = false,
-    declarations = declarations
+    loopInitStatements = loopInitStatements
 ) {
 
-    override fun initializeLoopVariable(symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) = with(builder) {
-        // inductionVar = loopVar[inductionVariable]
-        val indexedGetFun = with(headerInfo.expressionHandler) { headerInfo.objectVariable.type.getFunction }
-        irCall(indexedGetFun).apply {
-            dispatchReceiver = irGet(headerInfo.objectVariable)
-            putValueArgument(0, irGet(inductionVariable))
+    override fun initializeIteration(loopVariable: IrVariable, symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) =
+        with(builder) {
+            // loopVariable = objectVariable[inductionVariable]
+            val indexedGetFun = with(headerInfo.expressionHandler) { headerInfo.objectVariable.type.getFunction }
+            loopVariable.initializer = irCall(indexedGetFun).apply {
+                dispatchReceiver = irGet(headerInfo.objectVariable)
+                putValueArgument(0, irGet(inductionVariable))
+            }
+            listOf(loopVariable, incrementInductionVariable(this))
         }
-    }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {
         // Loop is lowered into something like:
