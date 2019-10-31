@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.idea.scratch.getScratchFileFromSelectedEditor
 import javax.swing.Icon
 
 abstract class ScratchAction(message: String, icon: Icon) : AnAction(message, message, icon) {
-    override fun update(e: AnActionEvent) = ApplicationManager.getApplication().invokeLater {
+    override fun update(e: AnActionEvent) {
         val scratchFile = e.getData(CommonDataKeys.EDITOR)
             ?.let { TextEditorProvider.getInstance().getTextEditor(it).getScratchFile() }
             ?: e.project?.let { getScratchFileFromSelectedEditor(it) }
