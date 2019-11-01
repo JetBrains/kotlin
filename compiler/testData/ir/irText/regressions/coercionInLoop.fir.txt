@@ -26,11 +26,11 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
                 STRING_CONCATENATION type=kotlin.String
                   CONST String type=kotlin.String value="Fail "
                   GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
-          VAR name:<unary> type:kotlin.Int [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
             GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
           SET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
             CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.box' type=kotlin.Int origin=null
-          GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.box' type=kotlin.Int origin=null
+              $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.box' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.box' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"

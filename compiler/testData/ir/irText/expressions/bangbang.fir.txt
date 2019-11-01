@@ -4,54 +4,54 @@ FILE fqName:<root> fileName:/bangbang.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.Any?): kotlin.Any declared in <root>'
         BLOCK type=kotlin.Any origin=EXCLEXCL
-          VAR name:<bangbang> type:kotlin.Any? [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
             GET_VAR 'a: kotlin.Any? declared in <root>.test1' type=kotlin.Any? origin=null
           WHEN type=kotlin.Any origin=EXCLEXCL
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val <bangbang>: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
+                arg0: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: THROW type=kotlin.Nothing
                 ERROR_CALL 'Unresolved reference: <Unresolved name: KotlinNullPointerException>#' type=IrErrorType
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: GET_VAR 'val <bangbang>: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any origin=null
+              then: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Int
     VALUE_PARAMETER name:a index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Any?): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=EXCLEXCL
-          VAR name:<bangbang> type:kotlin.Int? [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int? [val]
             CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int? origin=null
               $this: GET_VAR 'a: kotlin.Any? declared in <root>.test2' type=kotlin.Any? origin=null
           WHEN type=kotlin.Int origin=EXCLEXCL
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val <bangbang>: kotlin.Int? [val] declared in <root>.test2' type=kotlin.Int? origin=null
+                arg0: GET_VAR 'val tmp_1: kotlin.Int? [val] declared in <root>.test2' type=kotlin.Int? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: THROW type=kotlin.Nothing
                 ERROR_CALL 'Unresolved reference: <Unresolved name: KotlinNullPointerException>#' type=IrErrorType
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: GET_VAR 'val <bangbang>: kotlin.Int? [val] declared in <root>.test2' type=kotlin.Int origin=null
+              then: GET_VAR 'val tmp_1: kotlin.Int? [val] declared in <root>.test2' type=kotlin.Int origin=null
   FUN name:test3 visibility:public modality:FINAL <X> (a:X of <root>.test3) returnType:kotlin.Any
     TYPE_PARAMETER name:X index:0 variance: superTypes:[]
     VALUE_PARAMETER name:a index:0 type:X of <root>.test3
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 <X> (a: X of <root>.test3): kotlin.Any declared in <root>'
         BLOCK type=kotlin.Any origin=EXCLEXCL
-          VAR name:<bangbang> type:X of <root>.test3 [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:X of <root>.test3 [val]
             GET_VAR 'a: X of <root>.test3 declared in <root>.test3' type=X of <root>.test3 origin=null
           WHEN type=kotlin.Any origin=EXCLEXCL
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val <bangbang>: X of <root>.test3 [val] declared in <root>.test3' type=X of <root>.test3 origin=null
+                arg0: GET_VAR 'val tmp_2: X of <root>.test3 [val] declared in <root>.test3' type=X of <root>.test3 origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: THROW type=kotlin.Nothing
                 ERROR_CALL 'Unresolved reference: <Unresolved name: KotlinNullPointerException>#' type=IrErrorType
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: GET_VAR 'val <bangbang>: X of <root>.test3 [val] declared in <root>.test3' type=kotlin.Any origin=null
+              then: GET_VAR 'val tmp_2: X of <root>.test3 [val] declared in <root>.test3' type=kotlin.Any origin=null
   FUN name:useString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
     VALUE_PARAMETER name:s index:0 type:kotlin.String
     BLOCK_BODY
@@ -64,33 +64,33 @@ FILE fqName:<root> fileName:/bangbang.kt
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
           then: BLOCK type=kotlin.String origin=EXCLEXCL
-            VAR name:<bangbang> type:kotlin.String? [val]
+            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.String? [val]
               GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=kotlin.String? origin=null
             WHEN type=kotlin.String origin=EXCLEXCL
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'val <bangbang>: kotlin.String? [val] declared in <root>.test4' type=kotlin.String? origin=null
+                  arg0: GET_VAR 'val tmp_3: kotlin.String? [val] declared in <root>.test4' type=kotlin.String? origin=null
                   arg1: CONST Null type=kotlin.Nothing? value=null
                 then: THROW type=kotlin.Nothing
                   ERROR_CALL 'Unresolved reference: <Unresolved name: KotlinNullPointerException>#' type=IrErrorType
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
-                then: GET_VAR 'val <bangbang>: kotlin.String? [val] declared in <root>.test4' type=kotlin.String origin=null
+                then: GET_VAR 'val tmp_3: kotlin.String? [val] declared in <root>.test4' type=kotlin.String origin=null
       WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
           then: CALL 'public final fun useString (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
             s: BLOCK type=kotlin.String origin=EXCLEXCL
-              VAR name:<bangbang> type:kotlin.String? [val]
+              VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.String? [val]
                 GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=kotlin.String? origin=null
               WHEN type=kotlin.String origin=EXCLEXCL
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'val <bangbang>: kotlin.String? [val] declared in <root>.test4' type=kotlin.String? origin=null
+                    arg0: GET_VAR 'val tmp_4: kotlin.String? [val] declared in <root>.test4' type=kotlin.String? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
                   then: THROW type=kotlin.Nothing
                     ERROR_CALL 'Unresolved reference: <Unresolved name: KotlinNullPointerException>#' type=IrErrorType
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: GET_VAR 'val <bangbang>: kotlin.String? [val] declared in <root>.test4' type=kotlin.String origin=null
+                  then: GET_VAR 'val tmp_4: kotlin.String? [val] declared in <root>.test4' type=kotlin.String origin=null

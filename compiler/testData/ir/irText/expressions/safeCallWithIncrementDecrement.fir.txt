@@ -48,14 +48,14 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
   FUN name:testProperty visibility:public modality:FINAL <> (nc:test.C?) returnType:kotlin.Unit
     VALUE_PARAMETER name:nc index:0 type:test.C?
     BLOCK_BODY
-      VAR name:<unary> type:kotlin.Int? [val]
+      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int? [val]
         CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int? origin=null
       ERROR_CALL 'Unresolved reference: R|test/p|' type=IrErrorType
-      GET_VAR 'val <unary>: kotlin.Int? [val] declared in test.testProperty' type=kotlin.Int? origin=null
+      GET_VAR 'val tmp_0: kotlin.Int? [val] declared in test.testProperty' type=kotlin.Int? origin=null
   FUN name:testArrayAccess visibility:public modality:FINAL <> (nc:test.C?) returnType:kotlin.Unit
     VALUE_PARAMETER name:nc index:0 type:test.C?
     BLOCK_BODY
-      VAR name:<unary> type:kotlin.Int [val]
+      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
         CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in test' type=kotlin.Int origin=null
           $receiver: CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int? origin=null
           index: CONST Int type=kotlin.Int value=0
@@ -63,5 +63,5 @@ FILE fqName:test fileName:/safeCallWithIncrementDecrement.kt
         $receiver: CALL 'public final fun <get-p> (): kotlin.Int declared in test' type=kotlin.Int? origin=null
         index: CONST Int type=kotlin.Int value=0
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
-      GET_VAR 'val <unary>: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
+      GET_VAR 'val tmp_1: kotlin.Int [val] declared in test.testArrayAccess' type=kotlin.Int origin=null
