@@ -33,8 +33,27 @@ org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.t
 org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequireNotNullCall.testUsedAsExpression, KT-34672, FAIL
 org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequireNotNullCall.testUsedAsExpression2, KT-34672, FAIL
 org.jetbrains.kotlin.idea.inspections.LocalInspectionTestGenerated.RedundantRequireNotNullCall.testUsedAsExpression3, KT-34672, FAIL
-org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInit, Unprocessed
-org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.NestedIfs.testBlockBody, Unprocessed
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testBlankLineBetween, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testLongInit, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testLongInit2, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testPropertyWithAnnotation, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInit, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInit2, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInitWithBackticks, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInitWithBackticks2, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInitWithBackticks3, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInitWithComments, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInitWithComments2, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInitWithSemicolons, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInitWithSemicolons2, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInitWithSemicolons3, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInitWithType, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.DeclarationAndAssignment.testSimpleInitWithType2, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.NestedIfs.testBlockBody, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testFunctionWithOneLineReturn, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testIf, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testNotSingleLineStatement, KT-34408
+org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testWhenEntry, KT-34408
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertFunctionTypeParameterToReceiver.testNonFirstParameterPrimaryConstructor, Flaky failure on ConvertFunctionTypeParameterToReceiver rerun
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertFunctionTypeParameterToReceiver.testNonFirstParameterSecondaryConstructor, Flaky failure on ConvertFunctionTypeParameterToReceiver rerun
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesAndMembers, Enum reorder
