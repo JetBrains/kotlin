@@ -20,18 +20,18 @@ FILE fqName:<root> fileName:/temporaryInInitBlock.kt
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
           value: BLOCK type=kotlin.String? origin=SAFE_CALL
-            VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val]
+            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
               GET_VAR 'x: kotlin.Any? declared in <root>.C.<init>' type=kotlin.Any? origin=null
             WHEN type=kotlin.String? origin=null
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR 'val tmp0_safe_receiver: kotlin.Any? [val] declared in <root>.C' type=kotlin.Any? origin=null
+                  arg0: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.C' type=kotlin.Any? origin=null
                   arg1: CONST Null type=kotlin.Nothing? value=null
                 then: CONST Null type=kotlin.Nothing? value=null
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
-                  $this: GET_VAR 'val tmp0_safe_receiver: kotlin.Any? [val] declared in <root>.C' type=kotlin.Any? origin=null
+                  $this: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.C' type=kotlin.Any? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

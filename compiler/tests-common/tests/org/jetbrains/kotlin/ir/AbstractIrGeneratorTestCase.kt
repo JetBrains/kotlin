@@ -105,17 +105,6 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         internal fun shouldIgnoreErrors(wholeFile: File): Boolean =
             IGNORE_ERRORS_PATTERN.containsMatchIn(wholeFile.readText())
 
-        fun createExpectedTextFile(testFile: TestFile, dir: File, fileName: String): File {
-            val textFile = File(dir, fileName)
-            if (!textFile.exists()) {
-                TestCase.assertTrue("Can't create an expected text containingFile: ${textFile.absolutePath}", textFile.createNewFile())
-                PrintWriter(FileWriter(textFile)).use {
-                    it.println("$fileName: new expected text containingFile for ${testFile.name}")
-                }
-            }
-            return textFile
-        }
-
         fun generateIrModuleWithJsResolve(
             ktFilesToAnalyze: List<KtFile>, environment: KotlinCoreEnvironment, psi2ir: Psi2IrTranslator
         ): IrModuleFragment =

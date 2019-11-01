@@ -346,7 +346,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
               GET_VAR 'other: kotlin.Any? declared in <root>.Test1.equals' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Test1 [val]
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Test1 [val]
           TYPE_OP type=<root>.Test1 origin=CAST typeOperand=<root>.Test1
             GET_VAR 'other: kotlin.Any? declared in <root>.Test1.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -356,7 +356,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stringArray type:kotlin.Array<kotlin.String> visibility:private [final]' type=kotlin.Array<kotlin.String> origin=null
                   receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.equals' type=<root>.Test1 origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stringArray type:kotlin.Array<kotlin.String> visibility:private [final]' type=kotlin.Array<kotlin.String> origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
@@ -366,7 +366,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:charArray type:kotlin.CharArray visibility:private [final]' type=kotlin.CharArray origin=null
                   receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.equals' type=<root>.Test1 origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:charArray type:kotlin.CharArray visibility:private [final]' type=kotlin.CharArray origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
@@ -376,7 +376,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:booleanArray type:kotlin.BooleanArray visibility:private [final]' type=kotlin.BooleanArray origin=null
                   receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.equals' type=<root>.Test1 origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:booleanArray type:kotlin.BooleanArray visibility:private [final]' type=kotlin.BooleanArray origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
@@ -386,7 +386,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:byteArray type:kotlin.ByteArray visibility:private [final]' type=kotlin.ByteArray origin=null
                   receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.equals' type=<root>.Test1 origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:byteArray type:kotlin.ByteArray visibility:private [final]' type=kotlin.ByteArray origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
@@ -396,7 +396,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:shortArray type:kotlin.ShortArray visibility:private [final]' type=kotlin.ShortArray origin=null
                   receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.equals' type=<root>.Test1 origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:shortArray type:kotlin.ShortArray visibility:private [final]' type=kotlin.ShortArray origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
@@ -406,7 +406,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intArray type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
                   receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.equals' type=<root>.Test1 origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intArray type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
@@ -416,7 +416,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longArray type:kotlin.LongArray visibility:private [final]' type=kotlin.LongArray origin=null
                   receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.equals' type=<root>.Test1 origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longArray type:kotlin.LongArray visibility:private [final]' type=kotlin.LongArray origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
@@ -426,7 +426,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:floatArray type:kotlin.FloatArray visibility:private [final]' type=kotlin.FloatArray origin=null
                   receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.equals' type=<root>.Test1 origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:floatArray type:kotlin.FloatArray visibility:private [final]' type=kotlin.FloatArray origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
@@ -436,7 +436,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:doubleArray type:kotlin.DoubleArray visibility:private [final]' type=kotlin.DoubleArray origin=null
                   receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.equals' type=<root>.Test1 origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:doubleArray type:kotlin.DoubleArray visibility:private [final]' type=kotlin.DoubleArray origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
+                  receiver: GET_VAR 'val tmp_0: <root>.Test1 [val] declared in <root>.Test1.equals' type=<root>.Test1 origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test1'
@@ -518,7 +518,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
               GET_VAR 'other: kotlin.Any? declared in <root>.Test2.equals' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test2'
               CONST Boolean type=kotlin.Boolean value=false
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Test2<T of <root>.Test2> [val]
+        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.Test2<T of <root>.Test2> [val]
           TYPE_OP type=<root>.Test2<T of <root>.Test2> origin=CAST typeOperand=<root>.Test2<T of <root>.Test2>
             GET_VAR 'other: kotlin.Any? declared in <root>.Test2.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -528,7 +528,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:genericArray type:kotlin.Array<T of <root>.Test2> visibility:private [final]' type=kotlin.Array<T of <root>.Test2> origin=null
                   receiver: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.equals' type=<root>.Test2<T of <root>.Test2> origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:genericArray type:kotlin.Array<T of <root>.Test2> visibility:private [final]' type=kotlin.Array<T of <root>.Test2> origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test2<T of <root>.Test2> [val] declared in <root>.Test2.equals' type=<root>.Test2<T of <root>.Test2> origin=null
+                  receiver: GET_VAR 'val tmp_1: <root>.Test2<T of <root>.Test2> [val] declared in <root>.Test2.equals' type=<root>.Test2<T of <root>.Test2> origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test2'
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test2'
@@ -617,7 +617,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
               GET_VAR 'other: kotlin.Any? declared in <root>.Test3.equals' type=kotlin.Any? origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test3'
               CONST Boolean type=kotlin.Boolean value=false
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_other_with_cast type:<root>.Test3 [val]
+        VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Test3 [val]
           TYPE_OP type=<root>.Test3 origin=CAST typeOperand=<root>.Test3
             GET_VAR 'other: kotlin.Any? declared in <root>.Test3.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
@@ -627,7 +627,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
                 arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anyArrayN type:kotlin.Array<kotlin.Any>? visibility:private [final]' type=kotlin.Array<kotlin.Any>? origin=null
                   receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.equals' type=<root>.Test3 origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anyArrayN type:kotlin.Array<kotlin.Any>? visibility:private [final]' type=kotlin.Array<kotlin.Any>? origin=null
-                  receiver: GET_VAR 'val tmp0_other_with_cast: <root>.Test3 [val] declared in <root>.Test3.equals' type=<root>.Test3 origin=null
+                  receiver: GET_VAR 'val tmp_2: <root>.Test3 [val] declared in <root>.Test3.equals' type=<root>.Test3 origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test3'
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Test3'
