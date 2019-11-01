@@ -1130,6 +1130,59 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addMissingClassKeyword")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddMissingClassKeyword extends AbstractIntentionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("abstract.kt")
+        public void testAbstract() throws Exception {
+            runTest("idea/testData/intentions/addMissingClassKeyword/abstract.kt");
+        }
+
+        public void testAllFilesPresentInAddMissingClassKeyword() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addMissingClassKeyword"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), true);
+        }
+
+        @TestMetadata("annottion.kt")
+        public void testAnnottion() throws Exception {
+            runTest("idea/testData/intentions/addMissingClassKeyword/annottion.kt");
+        }
+
+        @TestMetadata("data.kt")
+        public void testData() throws Exception {
+            runTest("idea/testData/intentions/addMissingClassKeyword/data.kt");
+        }
+
+        @TestMetadata("dataHasClassKeyword.kt")
+        public void testDataHasClassKeyword() throws Exception {
+            runTest("idea/testData/intentions/addMissingClassKeyword/dataHasClassKeyword.kt");
+        }
+
+        @TestMetadata("enum.kt")
+        public void testEnum() throws Exception {
+            runTest("idea/testData/intentions/addMissingClassKeyword/enum.kt");
+        }
+
+        @TestMetadata("enumHasClassKeyword.kt")
+        public void testEnumHasClassKeyword() throws Exception {
+            runTest("idea/testData/intentions/addMissingClassKeyword/enumHasClassKeyword.kt");
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            runTest("idea/testData/intentions/addMissingClassKeyword/inner.kt");
+        }
+
+        @TestMetadata("sealed.kt")
+        public void testSealed() throws Exception {
+            runTest("idea/testData/intentions/addMissingClassKeyword/sealed.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/addMissingDestructuring")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
