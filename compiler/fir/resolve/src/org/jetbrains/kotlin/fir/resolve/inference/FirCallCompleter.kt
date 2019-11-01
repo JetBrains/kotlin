@@ -108,12 +108,12 @@ class FirCallCompleter(
             stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
         ): Pair<List<FirExpression>, InferenceSession> {
 
-            val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == (if (receiverType != null) 2 else 1)
+            val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
 
             val itParam = when {
                 needItParam -> {
                     val name = Name.identifier("it")
-                    val itType = if (receiverType != null) parameters[1] else parameters.single()
+                    val itType = parameters.single()
                     FirValueParameterImpl(
                         null,
                         session,

@@ -17,10 +17,17 @@ import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+fun FirTypeRef.isExtensionFunctionType(): Boolean {
+    return annotations.any {
+        (it.annotationTypeRef as? FirResolvedTypeRef)?.let {
+            it.type.toString() == "kotlin/ExtensionFunctionType"
+        } == true
+    }
+}
 
 fun Candidate.preprocessLambdaArgument(
     csBuilder: ConstraintSystemBuilder,
@@ -152,11 +159,11 @@ internal fun extractLambdaInfoFromFunctionalType(
     if (expectedType == null) return null
     if (expectedType is ConeFlexibleType) return extractLambdaInfoFromFunctionalType(expectedType.lowerBound, expectedTypeRef, argument)
     if (!expectedType.isBuiltinFunctionalType) return null
-    val parameters = extractLambdaParameters(expectedType, argument)
 
     val argumentAsFunctionExpression = argument//.safeAs<FunctionExpression>()
     val receiverType = argumentAsFunctionExpression.receiverType ?: expectedType.receiverType(expectedTypeRef)
     val returnType = argumentAsFunctionExpression.returnType ?: expectedType.returnType ?: return null
+    val parameters = extractLambdaParameters(expectedType, argument, expectedTypeRef.isExtensionFunctionType())
 
     return ResolvedLambdaAtom(
         argument,
@@ -168,9 +175,9 @@ internal fun extractLambdaInfoFromFunctionalType(
     )
 }
 
-private fun extractLambdaParameters(expectedType: ConeKotlinType, argument: FirAnonymousFunction): List<ConeKotlinType> {
+private fun extractLambdaParameters(expectedType: ConeKotlinType, argument: FirAnonymousFunction, expectedTypeIsExtensionFunctionType: Boolean): List<ConeKotlinType> {
     val parameters = argument.valueParameters
-    val expectedParameters = expectedType.valueParameterTypes
+    val expectedParameters = expectedType.extractParametersForFunctionalType(expectedTypeIsExtensionFunctionType)
 
     val nullableAnyType = StandardClassIds.Any(argument.session.firSymbolProvider).constructType(emptyArray(), true)
 
@@ -184,8 +191,17 @@ private fun extractLambdaParameters(expectedType: ConeKotlinType, argument: FirA
     }
 }
 
-class TypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
+private fun ConeKotlinType.extractParametersForFunctionalType(isExtensionFunctionType: Boolean): List<ConeKotlinType?> {
+    return valueParameterTypes.let {
+        if (isExtensionFunctionType) {
+            it.drop(1)
+        } else {
+            it
+        }
+    }
+}
 
+class TypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
 
 class ResolvedLambdaAtom(
     val atom: FirAnonymousFunction,
