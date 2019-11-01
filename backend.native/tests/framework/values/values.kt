@@ -811,3 +811,19 @@ abstract class AbstractInterfaceBase2 : IAbstractInterface2
 abstract class AbstractInterfaceBase3 : IAbstractInterface {
     abstract override fun foo(): Int
 }
+
+var gh3525BaseInitCount = 0
+
+open class GH3525Base {
+    init {
+        gh3525BaseInitCount++
+    }
+}
+
+var gh3525InitCount = 0
+
+object GH3525 : GH3525Base() {
+    init {
+        gh3525InitCount++
+    }
+}

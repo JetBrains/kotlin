@@ -189,10 +189,10 @@ __attribute__((swift_name("Enumeration")))
 @interface ValuesEnumeration : ValuesKotlinEnum
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) ValuesEnumeration *answer __attribute__((swift_name("answer")));
 @property (class, readonly) ValuesEnumeration *year __attribute__((swift_name("year")));
 @property (class, readonly) ValuesEnumeration *temperature __attribute__((swift_name("temperature")));
-- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 - (int32_t)compareToOther:(ValuesEnumeration *)other __attribute__((swift_name("compareTo(other:)")));
 @property (readonly) int32_t enumValue __attribute__((swift_name("enumValue")));
 @end;
@@ -250,9 +250,9 @@ __attribute__((swift_name("WithCompanionAndObject.Named")))
 @interface ValuesWithCompanionAndObjectNamed : ValuesOpenClassI
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
-+ (instancetype)named __attribute__((swift_name("init()")));
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 + (instancetype)new __attribute__((unavailable));
++ (instancetype)named __attribute__((swift_name("init()")));
 - (NSString *)iFun __attribute__((swift_name("iFun()")));
 @end;
 
@@ -625,11 +625,11 @@ __attribute__((swift_name("TestInvalidIdentifiers.E")))
 @interface ValuesTestInvalidIdentifiersE : ValuesKotlinEnum
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 @property (class, readonly) ValuesTestInvalidIdentifiersE *_4_ __attribute__((swift_name("_4_")));
 @property (class, readonly) ValuesTestInvalidIdentifiersE *_5_ __attribute__((swift_name("_5_")));
 @property (class, readonly) ValuesTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
 @property (class, readonly) ValuesTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
-- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
 - (int32_t)compareToOther:(ValuesTestInvalidIdentifiersE *)other __attribute__((swift_name("compareTo(other:)")));
 @property (readonly) int32_t value __attribute__((swift_name("value")));
 @end;
@@ -1014,6 +1014,22 @@ __attribute__((swift_name("AbstractInterfaceBase3")))
 - (int32_t)foo __attribute__((swift_name("foo()")));
 @end;
 
+__attribute__((swift_name("GH3525Base")))
+@interface ValuesGH3525Base : ValuesBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("GH3525")))
+@interface ValuesGH3525 : ValuesGH3525Base
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
++ (instancetype)new __attribute__((unavailable));
++ (instancetype)gH3525 __attribute__((swift_name("init()")));
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;
@@ -1129,5 +1145,7 @@ __attribute__((swift_name("ValuesKt")))
 @property (class) id _Nullable errorVar __attribute__((swift_name("errorVar"))) __attribute__((unavailable("error")));
 @property (class, readonly) id _Nullable warningVal __attribute__((swift_name("warningVal"))) __attribute__((deprecated("warning")));
 @property (class) id _Nullable warningVar __attribute__((swift_name("warningVar"))) __attribute__((deprecated("warning")));
+@property (class) int32_t gh3525BaseInitCount __attribute__((swift_name("gh3525BaseInitCount")));
+@property (class) int32_t gh3525InitCount __attribute__((swift_name("gh3525InitCount")));
 @end;
 

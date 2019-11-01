@@ -339,6 +339,23 @@ internal class ObjCExportTranslatorImpl(
                 +ObjCMethod(descriptor, false, ObjCInstanceType, listOf("allocWithZone:"), listOf(parameter), listOf("unavailable"))
             }
 
+            // Hide "unimplemented" super constructors:
+            superClass?.constructors
+                    ?.asSequence()
+                    ?.filter { mapper.shouldBeExposed(it) }
+                    ?.forEach {
+                        val selector = getSelector(it)
+                        if (selector !in presentConstructors) {
+                            +buildMethod(it, it, ObjCNoneExportScope, unavailable = true)
+
+                            if (selector == "init") {
+                                +ObjCMethod(null, false, ObjCInstanceType, listOf("new"), emptyList(), listOf("unavailable"))
+                            }
+
+                            // TODO: consider adding exception-throwing impls for these.
+                        }
+                    }
+
             // TODO: consider adding exception-throwing impls for these.
             when (descriptor.kind) {
                 ClassKind.OBJECT -> {
@@ -361,23 +378,6 @@ internal class ObjCExportTranslatorImpl(
                     // Nothing special.
                 }
             }
-
-            // Hide "unimplemented" super constructors:
-            superClass?.constructors
-                    ?.asSequence()
-                    ?.filter { mapper.shouldBeExposed(it) }
-                    ?.forEach {
-                        val selector = getSelector(it)
-                        if (selector !in presentConstructors) {
-                            +buildMethod(it, it, ObjCNoneExportScope, unavailable = true)
-
-                            if (selector == "init") {
-                                +ObjCMethod(null, false, ObjCInstanceType, listOf("new"), emptyList(), listOf("unavailable"))
-                            }
-
-                            // TODO: consider adding exception-throwing impls for these.
-                        }
-                    }
 
             translateClassMembers(descriptor)
         }

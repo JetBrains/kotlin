@@ -1058,6 +1058,25 @@ func testGH3503_3() throws {
     try assertEquals(actual: ValuesKt.testAbstractInterfaceCall(x: AbstractInterface3()), expected: 42)
 }
 
+func testGH3525() throws {
+    try assertEquals(actual: ValuesKt.gh3525BaseInitCount, expected: 0)
+    try assertEquals(actual: ValuesKt.gh3525InitCount, expected: 0)
+
+    let gh3525_1 = GH3525()
+    try assertTrue(gh3525_1 is GH3525)
+
+    try assertEquals(actual: ValuesKt.gh3525BaseInitCount, expected: 1)
+    try assertEquals(actual: ValuesKt.gh3525InitCount, expected: 1)
+
+    let gh3525_2 = GH3525()
+    try assertTrue(gh3525_2 is GH3525)
+
+    try assertEquals(actual: ValuesKt.gh3525BaseInitCount, expected: 1)
+    try assertEquals(actual: ValuesKt.gh3525InitCount, expected: 1)
+
+    try assertTrue(gh3525_1 === gh3525_2)
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : TestProvider {
@@ -1112,6 +1131,9 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestGH3503_1", method: withAutorelease(testGH3503_1)),
             TestCase(name: "TestGH3503_2", method: withAutorelease(testGH3503_2)),
             TestCase(name: "TestGH3503_3", method: withAutorelease(testGH3503_3)),
+            TestCase(name: "TestGH3525", method: withAutorelease(testGH3525)),
+
+            // Stress test, must remain the last one:
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }
