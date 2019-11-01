@@ -16,6 +16,36 @@ org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.t
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testJdkClass, KT-34542
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testLightClassForLibrarySource, KT-34542
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testOurKotlinClass, KT-34542
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testClassObject, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testConstructor, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testEnum, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testExtensionFunction, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testExtensionProperty, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testGenericFunctionWithExplicitlyDeclaredTypeArguments, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testGenericFunctionWithInferredTypeArguments, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testGlobalFunction, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testGlobalProperty, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testNamedObject, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testOverloadedFunWithTypeParam, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testProperty, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testSameNameInDifferentSources, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testTypeAlias, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestGenerated.testTypeWithSameShortName, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testClassObject, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testConstructor, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testEnum, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testExtensionFunction, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testExtensionProperty, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testGenericFunctionWithExplicitlyDeclaredTypeArguments, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testGenericFunctionWithInferredTypeArguments, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testGlobalFunction, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testGlobalProperty, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testNamedObject, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testOverloadedFunWithTypeParam, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testProperty, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testSameNameInDifferentSources, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testTypeAlias, KT-34542, FAIL
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToLibrarySourceTestWithJSGenerated.testTypeWithSameShortName, KT-34542, FAIL
 org.jetbrains.kotlin.idea.editor.MultiLineStringIndentTestGenerated.Spaces.testDontAddMarginCharWhenMultilineWithoutMargins, KT-34566
 org.jetbrains.kotlin.idea.editor.MultiLineStringIndentTestGenerated.Spaces.testDontAddTrimCallWhenAlreadyMultilineFirstLine, KT-34566
 org.jetbrains.kotlin.idea.editor.MultiLineStringIndentTestGenerated.Spaces.testEnterBeforeMarginChar, KT-34566
