@@ -48,13 +48,13 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
       ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
   FUN name:testCall visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR name:<array-set> type:kotlin.IntArray [val]
+      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.IntArray [val]
         CALL 'public final fun foo (): kotlin.IntArray declared in <root>' type=kotlin.IntArray origin=null
       ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
   FUN name:testMember visibility:public modality:FINAL <> (c:<root>.C) returnType:kotlin.Unit
     VALUE_PARAMETER name:c index:0 type:<root>.C
     BLOCK_BODY
-      VAR name:<unary> type:kotlin.Int [val]
+      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
         CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-x> (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=null
             $this: GET_VAR 'c: <root>.C declared in <root>.testMember' type=<root>.C origin=null
@@ -64,5 +64,5 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
           $this: GET_VAR 'c: <root>.C declared in <root>.testMember' type=<root>.C origin=null
         index: CONST Int type=kotlin.Int value=0
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
-      GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
+      GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null

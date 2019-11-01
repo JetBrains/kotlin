@@ -118,54 +118,54 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
     BLOCK_BODY
       VAR name:i type:kotlin.Int [var]
         CONST Int type=kotlin.Int value=0
-      VAR name:<unary> type:kotlin.Int [val]
+      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
         CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.IntArray' type=kotlin.Int origin=null
           $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
           index: BLOCK type=kotlin.Int origin=null
-            VAR name:<unary> type:kotlin.Int [val]
+            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
               GET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
             SET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
               CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
-            GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+                $this: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
       CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=null
         $this: GET_VAR 'a: kotlin.IntArray declared in <root>.test1' type=kotlin.IntArray origin=null
         index: BLOCK type=kotlin.Int origin=null
-          VAR name:<unary> type:kotlin.Int [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
             GET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
           SET_VAR 'var i: kotlin.Int [var] declared in <root>.test1' type=kotlin.Int origin=null
             CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
-          GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+              $this: GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
-      GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+      GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR name:<unary> type:kotlin.Int [val]
+      VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
         CALL 'public final fun <get-x1> (): kotlin.Int declared in <root>.X1' type=kotlin.Int origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:X1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x1 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
         receiver: GET_OBJECT 'CLASS OBJECT name:X1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-      GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-      VAR name:<unary> type:kotlin.Int [val]
+          $this: GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
         CALL 'public final fun <get-x2> (): kotlin.Int declared in <root>.X1.X2' type=kotlin.Int origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:X2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x2 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
         receiver: GET_OBJECT 'CLASS OBJECT name:X2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-      GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-      VAR name:<unary> type:kotlin.Int [val]
+          $this: GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
         CALL 'public final fun <get-x3> (): kotlin.Int declared in <root>.X1.X2.X3' type=kotlin.Int origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:X3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2.X3
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x3 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
         receiver: GET_OBJECT 'CLASS OBJECT name:X3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2.X3
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-      GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> (s:kotlin.Int) returnType:<root>.B [primary]

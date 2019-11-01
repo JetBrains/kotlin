@@ -55,15 +55,15 @@ FILE fqName:<root> fileName:/kt28456b.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testPostfixIncrement (a: <root>.A): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=null
-          VAR name:<unary> type:kotlin.Int [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
             CALL 'public final fun get (i: kotlin.Int, a: kotlin.Int, b: kotlin.Int, c: kotlin.Int, d: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
               $receiver: GET_VAR 'a: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
               i: CONST Int type=kotlin.Int value=1
           ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [/set]>#' type=IrErrorType
             CONST Int type=kotlin.Int value=1
             CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
-          GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
+              $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
   FUN name:testCompoundAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY

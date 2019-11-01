@@ -81,14 +81,14 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun next (): kotlin.Int declared in <root>.IReceiver'
           BLOCK type=kotlin.Int origin=null
-            VAR name:<unary> type:kotlin.Int [val]
+            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
               CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IntCell' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: <root>.IntCell declared in <root>.IntCell' type=<root>.IntCell origin=null
             SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.IntCell declared in <root>.IntCell' type=<root>.IntCell origin=null
               value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.IReceiver.next' type=kotlin.Int origin=null
-            GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.IReceiver.next' type=kotlin.Int origin=null
+                $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.IReceiver.next' type=kotlin.Int origin=null
+            GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.IReceiver.next' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -105,9 +105,9 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
   FUN name:test visibility:public modality:FINAL <> ($receiver:<root>.IReceiver) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.IReceiver
     BLOCK_BODY
-      VAR name:<range> type:<root>.FiveTimes [val]
+      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.FiveTimes [val]
         GET_OBJECT 'CLASS OBJECT name:FiveTimes modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.FiveTimes
-      VAR name:<iterator> type:<root>.IntCell [val]
+      VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.IntCell [val]
         CALL 'public open fun iterator (): <root>.IntCell declared in <root>.IReceiver' type=<root>.IntCell origin=null
           $this: GET_VAR '<this>: <root>.IReceiver declared in <root>.IReceiver' type=<root>.IReceiver origin=null
       WHILE label=null origin=FOR_LOOP_INNER_WHILE

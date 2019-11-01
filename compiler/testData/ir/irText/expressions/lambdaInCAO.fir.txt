@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
   FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      VAR name:<unary> type:kotlin.Int [val]
+      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
         CALL 'public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
           $receiver: GET_VAR 'a: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
           index: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
@@ -44,5 +44,5 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
             BLOCK_BODY
               GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test3' type=kotlin.Int origin=null
-      GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.test3' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test3' type=kotlin.Int origin=null
+      GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test3' type=kotlin.Int origin=null
