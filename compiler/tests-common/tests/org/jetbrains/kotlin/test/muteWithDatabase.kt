@@ -13,7 +13,7 @@ private class MutedTest(
     val issue: String?,
     val hasFailFile: Boolean
 ) {
-    val methodName = key.substringAfterLast(".", "").also {
+    val methodName = key.substringAfterLast(".", "").replace("`", "").also {
         if (it.isEmpty()) throw IllegalArgumentException("Can't get method name")
     }
     val classNameKey = key.substringBeforeLast(".", "").also {
