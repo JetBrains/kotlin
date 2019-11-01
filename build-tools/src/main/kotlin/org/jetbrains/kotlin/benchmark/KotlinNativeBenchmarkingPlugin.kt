@@ -109,6 +109,9 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
         project.configureJVMTarget()
     }
 
+    override fun getCompilerFlags(project: Project, nativeTarget: KotlinNativeTarget) =
+            super.getCompilerFlags(project, nativeTarget) + project.nativeBinary.freeCompilerArgs.map { "\"$it\"" }
+
     override fun NamedDomainObjectContainer<KotlinSourceSet>.configureSources(project: Project) {
         project.benchmark.let {
             commonMain.kotlin.srcDirs(*it.commonSrcDirs.toTypedArray())

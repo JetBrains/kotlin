@@ -100,7 +100,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
 
     override fun getCompilerFlags(project: Project, nativeTarget: KotlinNativeTarget) =
             if (project.benchmark.useCodeSize == CodeSizeEntity.FRAMEWORK) {
-                super.getCompilerFlags(project, nativeTarget)
+                super.getCompilerFlags(project, nativeTarget) + framework.freeCompilerArgs.map { "\"$it\"" }
             } else {
                 listOf("-O", "-wmo")
             }
