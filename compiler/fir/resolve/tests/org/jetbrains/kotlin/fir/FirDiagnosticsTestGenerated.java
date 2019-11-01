@@ -235,6 +235,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/arguments/lambda.kt");
         }
 
+        @TestMetadata("overloadWithDefault.kt")
+        public void testOverloadWithDefault() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/overloadWithDefault.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/simple.kt");
