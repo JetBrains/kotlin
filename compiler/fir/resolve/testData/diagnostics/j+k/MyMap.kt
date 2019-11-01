@@ -10,7 +10,7 @@ fun test(map: MyMap) {
     val otherResult = map.getOrDefault("key", "value")
     val anotherResult = map.replace("key", "value")
     // Java forEach
-    map.forEach { key, value ->
+    map.<!INAPPLICABLE_CANDIDATE!>forEach<!> { key, value ->
         println("$key: $value")
     }
     // Kotlin forEach
@@ -25,7 +25,7 @@ fun test(map: MutableMap<String, String>) {
     val otherResult = map.getOrDefault("key", "value")
     val anotherResult = map.replace("key", "value")
     // Java forEach
-    map.forEach { key, value ->
+    map.<!INAPPLICABLE_CANDIDATE!>forEach<!> { key, value ->
         println("$key: $value")
     }
     // Kotlin forEach
