@@ -5,7 +5,6 @@ plugins {
 
 repositories {
     maven("https://jetbrains.bintray.com/markdown")
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies")
 }
 
 sourceSets {
