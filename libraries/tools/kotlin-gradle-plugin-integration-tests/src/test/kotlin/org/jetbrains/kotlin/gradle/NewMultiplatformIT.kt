@@ -1441,7 +1441,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTasksUpToDate(hostLibraryTasks)
             }
 
-            build(*hostLibraryTasks.toTypedArray(), "-Porg.jetbrains.kotlin.native.version=1.3.60-dev-12430") {
+            build(*hostLibraryTasks.toTypedArray(), "-Porg.jetbrains.kotlin.native.version=1.3.70-dev-13258") {
                 assertSuccessful()
                 assertTasksExecuted(hostLibraryTasks)
             }
