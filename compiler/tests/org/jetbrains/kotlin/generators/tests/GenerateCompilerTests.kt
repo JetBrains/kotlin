@@ -512,20 +512,20 @@ fun main(args: Array<String>) {
     }
 
     testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
-        testClass<AbstractFirResolveTestCase> {
+        testClass<AbstractFirDiagnosticsTest> {
             model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib", "cfg", "smartcasts"))
         }
 
-        testClass<AbstractFirCfgBuildingTest> {
+        testClass<AbstractFirDiagnosticsWithCfgTest> {
             model("resolve/cfg", pattern = KT_WITHOUT_DOTS_IN_NAME)
             model("resolve/smartcasts", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
-        testClass<AbstractFirResolveTestCaseWithStdlib> {
+        testClass<AbstractFirDiagnosticsWithStdlibTest> {
             model("resolve/stdlib", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("contracts"))
         }
 
-        testClass<AbstractFirCfgBuildingWithStdlibTest> {
+        testClass<AbstractFirDiagnosticsWithCfgAndStdlibTest> {
             model("resolve/stdlib/contracts", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
@@ -552,13 +552,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractFirDiagnosticsSmokeTest> {
             model("diagnostics/tests")
-        }
-    }
-
-    testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
-
-        testClass<AbstractFirDiagnosticsTest> {
-            model("diagnostics")
         }
     }
 

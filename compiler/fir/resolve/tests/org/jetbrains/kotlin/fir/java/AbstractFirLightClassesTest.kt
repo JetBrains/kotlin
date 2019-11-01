@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractFirLightClassesTest : AbstractFirDiagnosticsSmokeTest() {
-    override fun checkResultingFirFiles(firFiles: MutableList<FirFile>, testDataFile: File) {
+    override fun checkResultingFirFiles(firFiles: List<FirFile>, testDataFile: File) {
         super.checkResultingFirFiles(firFiles, testDataFile)
 
         val ourFinders =

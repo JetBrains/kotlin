@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
+import java.io.File
 
-abstract class AbstractFirResolveTestCaseWithStdlib : AbstractFirResolveTestCase() {
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return createEnvironmentWithJdk(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
+abstract class AbstractFirDiagnosticsWithStdlibTest : AbstractFirDiagnosticsTest() {
+    override fun getConfigurationKind(): ConfigurationKind {
+        return ConfigurationKind.ALL
+    }
+
+    override fun getTestJdkKind(file: File): TestJdkKind {
+        return TestJdkKind.FULL_JDK
     }
 }

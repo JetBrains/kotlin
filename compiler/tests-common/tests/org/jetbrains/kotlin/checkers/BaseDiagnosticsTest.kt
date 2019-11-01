@@ -139,7 +139,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         textWithMarkers: String,
         val directives: Map<String, String>
     ) {
-        private val diagnosedRanges: MutableList<DiagnosedRange> = mutableListOf()
+        val diagnosedRanges: MutableList<DiagnosedRange> = mutableListOf()
         private val diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>> = mutableMapOf()
         val actualDiagnostics: MutableList<ActualDiagnostic> = mutableListOf()
         val expectedText: String
@@ -196,10 +196,10 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private val extras: String
             get() = "/*extras*/\n$imports/*extras*/\n\n"
 
-        private fun addExtras(text: String): String =
+        fun addExtras(text: String): String =
             addImports(text, extras)
 
-        private fun stripExtras(actualText: StringBuilder) {
+        fun stripExtras(actualText: StringBuilder) {
             val extras = extras
             val start = actualText.indexOf(extras)
             if (start >= 0) {
