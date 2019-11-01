@@ -1,0 +1,18 @@
+package
+
+public fun </*0*/ T> bar(/*0*/ t: T): Inv<T>
+public fun </*0*/ V1> bar1(/*0*/ t: V1): Inv<V1>
+public fun </*0*/ V2> bar2(/*0*/ t: V2): Inv<V2>
+public fun </*0*/ T> fail(/*0*/ t: T?): Inv<out T?>
+public fun </*0*/ F> fail1(/*0*/ t: F?, /*1*/ n: kotlin.Nothing?): Inv<out F?>
+public fun </*0*/ F> fail2(/*0*/ t: F?, /*1*/ n: kotlin.Nothing?): Inv<out F?>
+public fun </*0*/ F> fail3(/*0*/ t: F?): Inv<out F?>
+public fun </*0*/ K> foo(/*0*/ t: K?): Inv<K>
+public fun </*0*/ S> select(/*0*/ x: S, /*1*/ y: S): S
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -10334,6 +10334,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
                 runTest("compiler/testData/diagnostics/tests/inference/constraints/errorUpperBoundConstraint.kt");
             }
 
+            @TestMetadata("fixTypeVariableWithNothingConstraintEarlierThanComplexVariable.kt")
+            public void testFixTypeVariableWithNothingConstraintEarlierThanComplexVariable() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/constraints/fixTypeVariableWithNothingConstraintEarlierThanComplexVariable.kt");
+            }
+
             @TestMetadata("ignoreConstraintFromImplicitInNothing.kt")
             public void testIgnoreConstraintFromImplicitInNothing() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/constraints/ignoreConstraintFromImplicitInNothing.kt");

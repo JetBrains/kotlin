@@ -52,8 +52,8 @@ class VariableFixationFinder(
     private enum class TypeVariableFixationReadiness {
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
-        WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS, // proper trivial constraint from arguments, Nothing <: T
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
+        WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         READY_FOR_FIXATION,
     }
@@ -65,8 +65,8 @@ class VariableFixationFinder(
         !notFixedTypeVariables.contains(variable) ||
                 dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
-        variableHasTrivialOrNonProperConstraints(variable) -> TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
+        variableHasTrivialOrNonProperConstraints(variable) -> TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS
         dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
         else -> TypeVariableFixationReadiness.READY_FOR_FIXATION
     }
