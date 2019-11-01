@@ -10,19 +10,19 @@ FILE fqName:<root> fileName:/nullableAnyAsIntToDouble.kt
               GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
             then: CALL 'public final fun less (arg0: kotlin.Double, arg1: kotlin.Double): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
               arg0: BLOCK type=kotlin.Double? origin=SAFE_CALL
-                VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val]
+                VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Any? [val]
                   GET_VAR 'x: kotlin.Any? declared in <root>.test' type=kotlin.Any? origin=null
                 WHEN type=kotlin.Double? origin=null
                   BRANCH
                     if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                      arg0: GET_VAR 'val tmp0_safe_receiver: kotlin.Any? [val] declared in <root>.test' type=kotlin.Any? origin=null
+                      arg0: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test' type=kotlin.Any? origin=null
                       arg1: CONST Null type=kotlin.Nothing? value=null
                     then: CONST Null type=kotlin.Nothing? value=null
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=null
                       $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
-                        GET_VAR 'val tmp0_safe_receiver: kotlin.Any? [val] declared in <root>.test' type=kotlin.Any? origin=null
+                        GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test' type=kotlin.Any? origin=null
               arg1: GET_VAR 'y: kotlin.Double declared in <root>.test' type=kotlin.Double origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true

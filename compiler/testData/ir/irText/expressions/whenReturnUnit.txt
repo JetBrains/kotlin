@@ -11,18 +11,18 @@ FILE fqName:<root> fileName:/whenReturnUnit.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
                 BLOCK type=kotlin.Unit origin=WHEN
-                  VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.Int [val]
+                  VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
                     GET_VAR 'x: kotlin.Int declared in <root>.branch' type=kotlin.Int origin=null
                   WHEN type=kotlin.Unit origin=WHEN
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp0_subject: kotlin.Int [val] declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
+                        arg0: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
                         arg1: CONST Int type=kotlin.Int value=1
                       then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
                         reason: CONST String type=kotlin.String value="1"
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                        arg0: GET_VAR 'val tmp0_subject: kotlin.Int [val] declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
+                        arg0: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.branch.<anonymous>' type=kotlin.Int origin=null
                         arg1: CONST Int type=kotlin.Int value=2
                       then: CALL 'public final fun TODO (reason: kotlin.String): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
                         reason: CONST String type=kotlin.String value="2"

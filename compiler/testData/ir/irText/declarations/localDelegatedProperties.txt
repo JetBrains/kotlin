@@ -50,12 +50,12 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
         value: CONST Int type=kotlin.Int value=0
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         BLOCK type=kotlin.Int origin=POSTFIX_INCR
-          VAR IR_TEMPORARY_VARIABLE name:tmp0 type:kotlin.Int [val]
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
             CALL 'local final fun <get-x> (): kotlin.Int declared in <root>.test2' type=kotlin.Int origin=POSTFIX_INCR
           CALL 'local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=POSTFIX_INCR
             value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=POSTFIX_INCR
-              $this: GET_VAR 'val tmp0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-          GET_VAR 'val tmp0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+              $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+          GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       CALL 'local final fun <set-x> (value: kotlin.Int): kotlin.Unit declared in <root>.test2' type=kotlin.Unit origin=PLUSEQ
         value: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
           $this: CALL 'local final fun <get-x> (): kotlin.Int declared in <root>.test2' type=kotlin.Int origin=PLUSEQ

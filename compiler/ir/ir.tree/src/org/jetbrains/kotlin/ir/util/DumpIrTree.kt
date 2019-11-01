@@ -27,23 +27,24 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.Printer
 
-fun IrElement.dump(): String =
+fun IrElement.dump(normalizeNames: Boolean = false): String =
     StringBuilder().also { sb ->
-        accept(DumpIrTreeVisitor(sb), "")
+        accept(DumpIrTreeVisitor(sb, normalizeNames), "")
     }.toString()
 
-fun IrFile.dumpTreesFromLineNumber(lineNumber: Int): String {
+fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, normalizeNames: Boolean = false): String {
     val sb = StringBuilder()
-    accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb), null)
+    accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb, normalizeNames), null)
     return sb.toString()
 }
 
 class DumpIrTreeVisitor(
-    out: Appendable
+    out: Appendable,
+    normalizeNames: Boolean = false
 ) : IrElementVisitor<Unit, String> {
 
     private val printer = Printer(out, "  ")
-    private val elementRenderer = RenderIrElementVisitor()
+    private val elementRenderer = RenderIrElementVisitor(normalizeNames)
     private fun IrType.render() = elementRenderer.renderType(this)
 
     override fun visitElement(element: IrElement, data: String) {
@@ -355,9 +356,10 @@ class DumpIrTreeVisitor(
 class DumpTreeFromSourceLineVisitor(
     val fileEntry: SourceManager.FileEntry,
     private val lineNumber: Int,
-    out: Appendable
+    out: Appendable,
+    normalizeNames: Boolean = false
 ) : IrElementVisitorVoid {
-    private val dumper = DumpIrTreeVisitor(out)
+    private val dumper = DumpIrTreeVisitor(out, normalizeNames)
 
     override fun visitElement(element: IrElement) {
         if (fileEntry.getLineNumber(element.startOffset) == lineNumber) {
