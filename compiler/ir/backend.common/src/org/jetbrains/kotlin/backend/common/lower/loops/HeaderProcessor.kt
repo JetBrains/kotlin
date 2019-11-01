@@ -53,7 +53,7 @@ internal interface ForLoopHeader {
 }
 
 internal abstract class NumericForLoopHeader(
-    headerInfo: HeaderInfo,
+    headerInfo: NumericHeaderInfo,
     builder: DeclarationIrBuilder,
     protected val isLastInclusive: Boolean
 ) : ForLoopHeader {
@@ -123,7 +123,7 @@ internal abstract class NumericForLoopHeader(
     // This cannot be declared and initialized directly in the constructor. At the time of the base class (ForLoopHeader) constructor
     // execution, the `headerInfo` property overridden in the derived class (e.g., NumericForLoopHeader) is not yet initialized.
     // Therefore, we must use the `headerInfo` constructor parameter in the "init" block above instead of using the property.
-    protected open val headerInfo: HeaderInfo = headerInfo
+    protected open val headerInfo: NumericHeaderInfo = headerInfo
 
     private fun DeclarationIrBuilder.ensureNotNullable(expression: IrExpression) =
         if (expression.type is IrSimpleType && expression.type.isNullable()) {

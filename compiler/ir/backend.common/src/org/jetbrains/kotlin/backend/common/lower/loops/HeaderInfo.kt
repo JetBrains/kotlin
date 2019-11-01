@@ -67,7 +67,16 @@ internal enum class ProgressionDirection {
 }
 
 /** Information about a loop that is required by [HeaderProcessor] to build a [ForLoopHeader]. */
-internal sealed class HeaderInfo(
+internal sealed class HeaderInfo {
+    /**
+     * Returns a copy of this [HeaderInfo] with the values reversed.
+     * I.e., first and last are swapped, step is negated.
+     * Returns null if the iterable cannot be iterated in reverse.
+     */
+    abstract fun asReversed(): HeaderInfo?
+}
+
+internal sealed class NumericHeaderInfo(
     val progressionType: ProgressionType,
     val first: IrExpression,
     val last: IrExpression,
@@ -76,14 +85,7 @@ internal sealed class HeaderInfo(
     val isReversed: Boolean,
     val direction: ProgressionDirection,
     val additionalNotEmptyCondition: IrExpression?
-) {
-    /**
-     * Returns a copy of this [HeaderInfo] with the values reversed.
-     * I.e., first and last are swapped, step is negated.
-     * Returns null if the iterable cannot be iterated in reverse.
-     */
-    abstract fun asReversed(): HeaderInfo?
-}
+) : HeaderInfo()
 
 /** Information about a for-loop over a progression. */
 internal class ProgressionHeaderInfo(
@@ -96,7 +98,7 @@ internal class ProgressionHeaderInfo(
     direction: ProgressionDirection,
     additionalNotEmptyCondition: IrExpression? = null,
     val additionalVariables: List<IrVariable> = listOf()
-) : HeaderInfo(
+) : NumericHeaderInfo(
     progressionType, first, last, step,
     canCacheLast = true,
     isReversed = isReversed,
@@ -175,7 +177,7 @@ internal class IndexedGetHeaderInfo(
     canCacheLast: Boolean = true,
     val objectVariable: IrVariable,
     val expressionHandler: IndexedGetIterationHandler
-) : HeaderInfo(
+) : NumericHeaderInfo(
     ProgressionType.INT_PROGRESSION,
     first,
     last,
