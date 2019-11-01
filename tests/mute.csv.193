@@ -16,6 +16,13 @@ org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.t
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testJdkClass, KT-34542
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testLightClassForLibrarySource, KT-34542
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateFromLibrarySourcesTest.testOurKotlinClass, KT-34542
+org.jetbrains.kotlin.idea.editor.MultiLineStringIndentTestGenerated.Spaces.testDontAddMarginCharWhenMultilineWithoutMargins, KT-34566
+org.jetbrains.kotlin.idea.editor.MultiLineStringIndentTestGenerated.Spaces.testDontAddTrimCallWhenAlreadyMultilineFirstLine, KT-34566
+org.jetbrains.kotlin.idea.editor.MultiLineStringIndentTestGenerated.Spaces.testEnterBeforeMarginChar, KT-34566
+org.jetbrains.kotlin.idea.editor.MultiLineStringIndentTestGenerated.Spaces.testEnterInsideTextMargin, KT-34566
+org.jetbrains.kotlin.idea.editor.MultiLineStringIndentTestGenerated.Spaces.testInsertCustomMarginInLineStart, KT-34566
+org.jetbrains.kotlin.idea.editor.MultiLineStringIndentTestGenerated.WithTabs.Tabs2.testEnterInsideText, KT-34566
+org.jetbrains.kotlin.idea.editor.MultiLineStringIndentTestGenerated.WithTabs.Tabs4.testEnterInsideText, KT-34566
 org.jetbrains.kotlin.idea.filters.KotlinExceptionFilterTestGenerated.testInlineFunCallInLibrary, Unprocessed
 org.jetbrains.kotlin.idea.filters.KotlinExceptionFilterTestGenerated.testInlineFunInnerClassFromLibrary, Unprocessed
 org.jetbrains.kotlin.idea.inspections.CoroutineNonBlockingContextDetectionTest.testCoroutineContextCheck, KT-34659
