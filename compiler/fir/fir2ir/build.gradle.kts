@@ -31,6 +31,7 @@ dependencies {
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(project(":kotlin-reflect"))
+    testRuntime(project(":core:descriptors.runtime"))
 
     Platform[192].orHigher {
         testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
