@@ -162,7 +162,11 @@ object GenerateSteppedRangesCodegenTestData {
         }
         val fullSubdir = File(TEST_DATA_DIR, fullSubdirPath.toString())
         fullSubdir.mkdirs()
-        PrintWriter(File(fullSubdir, fileName)).use {
+        object : PrintWriter(File(fullSubdir, fileName)) {
+            override fun println() {
+                write('\n'.toInt())
+            }
+        }.use {
             with(it) {
                 println("// $PREAMBLE_MESSAGE")
                 println("// KJS_WITH_FULL_RUNTIME")
