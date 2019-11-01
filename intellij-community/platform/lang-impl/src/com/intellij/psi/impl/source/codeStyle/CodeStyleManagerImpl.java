@@ -768,7 +768,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
       int caretOffset = getCaretOffset();
       int lineStartOffset = getLineStartOffsetByTotalOffset(caretOffset);
       int lineEndOffset = getLineEndOffsetByTotalOffset(caretOffset);
-      boolean shouldFixCaretPosition = rangeHasWhiteSpaceSymbolsOnly(myDocument.getCharsSequence(), lineStartOffset, lineEndOffset);
+      boolean shouldFixCaretPosition = CharArrayUtil.isEmptyOrSpaces(myDocument.getCharsSequence(), lineStartOffset, lineEndOffset);
 
       if (shouldFixCaretPosition) {
         initRestoreInfo(caretOffset);
@@ -841,15 +841,6 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
       myDocument.replaceString(lineToInsertStartOffset, caretLineOffset, myCaretIndentToRestore);
     }
 
-    private static boolean rangeHasWhiteSpaceSymbolsOnly(CharSequence text, int lineStartOffset, int lineEndOffset) {
-      for (int i = lineStartOffset; i < lineEndOffset; i++) {
-        char c = text.charAt(i);
-        if (c != ' ' && c != '\t' && c != '\n') {
-          return false;
-        }
-      }
-      return true;
-    }
 
     private boolean isVirtualSpaceEnabled() {
       return myEditor.getSettings().isVirtualSpace();
@@ -874,7 +865,7 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
     private boolean lineContainsWhiteSpaceSymbolsOnly(int lineNumber) {
       int startOffset = myDocument.getLineStartOffset(lineNumber);
       int endOffset = myDocument.getLineEndOffset(lineNumber);
-      return rangeHasWhiteSpaceSymbolsOnly(myDocument.getCharsSequence(), startOffset, endOffset);
+      return CharArrayUtil.isEmptyOrSpaces(myDocument.getCharsSequence(), startOffset, endOffset);
     }
 
     private int getCurrentCaretLine() {
