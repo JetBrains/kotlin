@@ -49,6 +49,30 @@ open class NativePerformanceReport : DefaultTask() {
         return tasks
     }
 
+    private fun folderSize(directory: File): Long {
+        var length: Long = 0
+        directory.listFiles()?.forEach {
+            length += if (it.isFile) it.length() else folderSize(it)
+        }
+        return length
+    }
+
+    private fun compilerFlagsFromBinary(): List<String> {
+        val result = mutableListOf<String>()
+        if (binary.buildType.optimized) {
+            result.add("-opt")
+        }
+        if (binary.buildType.debuggable) {
+            result.add("-g")
+        }
+        result.addAll(binary.freeCompilerArgs)
+        return result
+    }
+
+    private fun getPerformanceCompilerOptions() =
+        (compilerFlagsFromBinary() + binary.linkTask.compilation.kotlinOptions.freeCompilerArgs)
+            .filter { it in listOf("-g", "-opt", "-Xg0") }.map { "\"$it\"" }
+
     @TaskAction
     fun generate() {
         val compileTasks = if (settings.includeAssociatedTasks)
@@ -61,8 +85,10 @@ open class NativePerformanceReport : DefaultTask() {
             if (outputFile.exists()) {
                 project.delete(outputFile.absolutePath)
             }
-            project.logger.warn("Next compile tasks which are needed for time measurement are upToDate" +
-                                        " and weren't executed:\n${upToDateTasks.joinToString("\n", "- ")}")
+            project.logger.warn(
+                "Next compile tasks which are needed for time measurement are upToDate" +
+                        " and weren't executed:\n${upToDateTasks.joinToString("\n", "- ")}"
+            )
             return
         }
         val successStatus = allExecutedTasks.all { it.state.failure == null }
@@ -70,7 +96,10 @@ open class NativePerformanceReport : DefaultTask() {
         var codeSize: String? = null
         if (TrackableMetric.CODE_SIZE in settings.metrics) {
             codeSize = binary.outputFile.let {
-                if (it.exists()) "CODE_SIZE ${it.length()}" else null
+                if (it.exists()) {
+                    val size = if (it.isDirectory) folderSize(it) else it.length()
+                    "CODE_SIZE $size"
+                } else null
             }
         }
         // Get compile time.
@@ -88,6 +117,7 @@ open class NativePerformanceReport : DefaultTask() {
         }
         val name = settings.binaryNamesForReport[binary]!!
         outputFile.writeText(name)
+        outputFile.appendText("\nOPTIONS ${getPerformanceCompilerOptions()}")
         if (compileTime != null) {
             outputFile.appendText("\n$compileTime")
         }
