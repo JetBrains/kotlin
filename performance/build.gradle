@@ -88,19 +88,29 @@ task registerExternalBenchmarks {
                 return
 
             def lines = reportFile.readLines()
-            if (lines.size < 3) {
-                println("Couldn't use report to register benchmarks. Wrong format.")
+            if (lines.size < 4) {
+                project.logger.warn("Couldn't use report to register benchmarks. Wrong format.")
                 return
             }
             def name = lines[0]
-            def status = lines[1]
-            def compileTime = lines[2]
+            def options = lines[1]
+            if (!options.startsWith("OPTIONS")) {
+                project.logger.warn("Couldn't use report to register benchmarks. Wrong format in options description.")
+                return
+            }
+            def optionsList = options.replace("OPTIONS ", "").replaceAll("\\[|\\]", "").split(",\\s*").toList()
+            def status = lines[2]
+            def compileTime = null
             def codeSize = null
-            if (lines.size > 3) {
-                codeSize = lines[3]
+            lines.drop(3).each {
+                if (it.startsWith("COMPILE_TIME")) {
+                    compileTime = it
+                }
+                if (it.startsWith("CODE_SIZE")) {
+                    codeSize = it
+                }
             }
             // Create benchmarks report.
-            def compileBenchmark = MPPTools.toCompileBenchmark(compileTime, status, name)
             def properties = [
                     "cpu": System.getProperty("os.arch"),
                     "os": System.getProperty("os.name"),
@@ -109,9 +119,12 @@ task registerExternalBenchmarks {
                     "kotlinVersion": kotlinVersion,
                     "type": "native",
                     "compilerVersion": konanVersion,
-                    "flags": ["-g"],
-                    "benchmarks": "[]",
-                    "compileTime": [compileBenchmark]]
+                    "flags": optionsList,
+                    "benchmarks": "[]"]
+            if (compileTime != null) {
+                def compileBenchmark = MPPTools.toCompileBenchmark(compileTime, status, name)
+                properties += ["compileTime": [compileBenchmark]]
+            }
             if (codeSize != null) {
                 properties += ["codeSize": MPPTools.toCodeSizeBenchmark(codeSize, status, name)]
             }
