@@ -716,7 +716,7 @@ class DeclarationsConverter(
         val isThis = (isImplicit && classWrapper.hasPrimaryConstructor) || thisKeywordPresent
         val delegatedType =
             if (classWrapper.isObjectLiteral() || classWrapper.isInterface()) when {
-                isThis -> FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Constructor in object", , DiagnosticKind.ConstructorInObject))
+                isThis -> FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Constructor in object", DiagnosticKind.ConstructorInObject))
                 else -> FirErrorTypeRefImpl(null, FirSimpleDiagnostic("No super type", DiagnosticKind.Syntax))
             }
             else when {
