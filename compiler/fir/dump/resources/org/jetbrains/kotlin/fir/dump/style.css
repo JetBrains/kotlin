@@ -59,3 +59,7 @@ a.ref {
 .line {
     margin-right: 5px;
 }
+
+.error-counter {
+    margin-left: 10px;
+}

@@ -79,3 +79,7 @@ body.dark {
     background-color: #313335;
     border-right: thin solid darkgray;
 }
+
+.dark .error-counter {
+    color: #ff1010;
+}

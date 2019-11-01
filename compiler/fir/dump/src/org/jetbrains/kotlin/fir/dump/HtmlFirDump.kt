@@ -69,13 +69,16 @@ private class PackageInfo(val fqName: FqName, val moduleInfo: ModuleInfo) {
     val packageRoot = fqName.pathSegments().fold(moduleInfo.moduleRoot) { dir, segment -> dir.resolve(segment.asString()) }.also {
         it.mkdirs()
     }
-
+    val errors = mutableMapOf<String, Int>().withDefault { 0 }
 }
 
 private class ModuleInfo(val name: String, outputRoot: File) {
     val packages = mutableMapOf<FqName, PackageInfo>()
     val moduleRoot = outputRoot.resolve(name).also {
         it.mkdirs()
+    }
+    val errors: Map<FqName, Int> by lazy {
+        packages.mapValues { (_, packageInfo) -> packageInfo.errors.values.sum() }.withDefault { 0 }
     }
 }
 
@@ -106,10 +109,17 @@ private class SupplementaryGenerator(val outputRoot: File) {
                             ) {
                                 +packageInfo.fqName.asString()
                             }
+                            addErrors(moduleInfo.errors.getValue(packageInfo.fqName))
                         }
                     }
                 }
             }
+        }
+    }
+
+    fun LI.addErrors(errors: Int) {
+        if (errors > 0) {
+            span(classes = "error-counter") { +(errors.toString()) }
         }
     }
 
@@ -148,6 +158,7 @@ private class SupplementaryGenerator(val outputRoot: File) {
                     for (file in packageInfo.contents) {
                         li {
                             a(href = "./$file.fir.html", classes = "container-ref") { +file }
+                            addErrors(packageInfo.errors.getValue(file))
                         }
                     }
                 }
@@ -170,6 +181,7 @@ private class SupplementaryGenerator(val outputRoot: File) {
                     for (module in modules) {
                         li {
                             a(href = linkToIndex(module, outputRoot), classes = "container-ref") { +module.name }
+                            addErrors(module.errors.values.sum())
                         }
                     }
                 }
@@ -273,6 +285,9 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
         dumper.generate(file, builder)
 
         dumpOutput.writeText(builder.toString())
+        packageForFile(file).apply {
+            errors[file.name] = dumper.errors
+        }
     }
 
 
@@ -368,12 +383,15 @@ class MultiModuleHtmlFirDump(private val outputRoot: File) {
 }
 
 class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver, private val session: FirSession) {
+    var errors: Int = 0
+        private set
 
-
-    fun generate(element: FirFile, builder: StringBuilder) {
+    fun generate(element: FirFile, builder: StringBuilder): Int {
+        errors = 0
         builder.appendHTML().html {
             generate(element)
         }
+        return errors
     }
 
     private fun FlowContent.keyword(text: String) {
@@ -414,6 +432,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.error(block: SPAN.() -> Unit) {
+        errors++
         span(classes = "error") {
             block()
         }

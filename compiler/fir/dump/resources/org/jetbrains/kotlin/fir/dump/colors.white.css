@@ -68,3 +68,7 @@
     background-color: lightgray;
     border-right: thin solid darkgray;
 }
+
+.white .error-counter {
+    color: #f00;
+}
