@@ -372,7 +372,9 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
 
     ServiceViewFilter parentFilter = serviceView.getModel().getFilter();
     ServiceViewModel viewModel = ServiceViewModel.createModel(items, dragBean.getContributor(), myModel, myModelFilter, parentFilter);
-    extract(holder.contentManager, viewModel, new ServiceViewState(), true);
+    ServiceViewState state = new ServiceViewState();
+    serviceView.saveState(state);
+    extract(holder.contentManager, viewModel, state, true);
   }
 
   private void extract(ContentManager contentManager, ServiceViewModel viewModel, ServiceViewState viewState, boolean select) {

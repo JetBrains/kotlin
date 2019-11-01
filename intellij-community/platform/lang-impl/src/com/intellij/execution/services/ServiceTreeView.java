@@ -22,10 +22,12 @@ import com.intellij.ui.tree.RestoreSelectionListener;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StatusText;
 import com.intellij.util.ui.tree.TreeUtil;
+import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.AsyncPromise;
 import org.jetbrains.concurrency.Promise;
@@ -94,7 +96,16 @@ class ServiceTreeView extends ServiceView {
       setEmptyText(myTree, myTree.getEmptyText());
     }
 
-    state.treeState.applyTo(myTree, myTreeModel.getRoot());
+    if (state.expandedPaths.isEmpty()) {
+      state.treeState.applyTo(myTree, myTreeModel.getRoot());
+    }
+    else {
+      Set<ServiceViewItem> roots = new THashSet<>(model.getVisibleRoots());
+      List<TreePath> adjusted = adjustPaths(state.expandedPaths, roots, myTreeModel.getRoot());
+      if (!adjusted.isEmpty()) {
+        TreeUtil.promiseExpand(myTree, new PathExpandVisitor(adjusted));
+      }
+    }
   }
 
   @Override
@@ -108,6 +119,7 @@ class ServiceTreeView extends ServiceView {
     super.saveState(state);
     myUi.saveState(state);
     state.treeState = TreeState.createOn(myTree);
+    state.expandedPaths = TreeUtil.collectExpandedPaths(myTree);
   }
 
   @NotNull
@@ -328,6 +340,24 @@ class ServiceTreeView extends ServiceView {
     }
   }
 
+  private static List<TreePath> adjustPaths(List<TreePath> paths, Collection<? extends ServiceViewItem> roots, Object treeRoot) {
+    List<TreePath> result = new SmartList<>();
+    for (TreePath path : paths) {
+      Object[] items = path.getPath();
+      for (int i = 1; i < items.length; i++) {
+        //noinspection SuspiciousMethodCalls
+        if (roots.contains(items[i])) {
+          Object[] adjustedItems = new Object[items.length - i + 1];
+          adjustedItems[0] = treeRoot;
+          System.arraycopy(items, i, adjustedItems, 1, items.length - i);
+          result.add(new TreePath(adjustedItems));
+          break;
+        }
+      }
+    }
+    return result;
+  }
+
   private class MyViewModelListener implements ServiceViewModel.ServiceViewModelListener {
     @Override
     public void rootsChanged() {
@@ -377,6 +407,28 @@ class ServiceTreeView extends ServiceView {
       if (node.equals(myPath.peek())) {
         myPath.poll();
         return myPath.isEmpty() ? Action.INTERRUPT : Action.CONTINUE;
+      }
+      return Action.SKIP_CHILDREN;
+    }
+  }
+
+  private static class PathExpandVisitor implements TreeVisitor {
+    private final List<TreePath> myPaths;
+
+    PathExpandVisitor(List<TreePath> paths) {
+      myPaths = paths;
+    }
+
+    @NotNull
+    @Override
+    public Action visit(@NotNull TreePath path) {
+      if (path.getParentPath() == null) return Action.CONTINUE;
+
+      for (TreePath treePath : myPaths) {
+        if (treePath.equals(path)) {
+          myPaths.remove(treePath);
+          return myPaths.isEmpty() ? Action.INTERRUPT : Action.CONTINUE;
+        }
       }
       return Action.SKIP_CHILDREN;
     }
