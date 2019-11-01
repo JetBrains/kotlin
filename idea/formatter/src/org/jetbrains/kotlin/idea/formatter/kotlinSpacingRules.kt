@@ -236,6 +236,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings, builderUtil: KotlinSpacing
             beforeInside(CLASS, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
             beforeInside(OBJECT_DECLARATION, TokenSet.create(BODY, CLASS_BODY)).lineBreakInCode()
             beforeInside(PROPERTY, WHEN).spaces(0)
+            beforeInside(PROPERTY, LABELED_EXPRESSION).spacesNoLineBreak(1)
             before(PROPERTY).lineBreakInCode()
 
             after(DOC_COMMENT).lineBreakInCode()

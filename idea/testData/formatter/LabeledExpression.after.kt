@@ -38,3 +38,7 @@ fun test4() {
 
     }
 }
+
+fun test5() {
+    L1@ val x: Int = 42
+}
