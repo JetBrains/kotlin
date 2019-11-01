@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.loader
 
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
@@ -17,6 +18,8 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.LegacyResolverWrapper
 import org.jetbrains.kotlin.scripting.resolve.refineScriptCompilationConfiguration
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.asDiagnostics
 import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 
@@ -39,9 +42,15 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
         debug(file) { "start dependencies loading" }
 
         val inputs = getInputsStamp(file)
-        val scriptingApiResult = refineScriptCompilationConfiguration(
-            KtFileScriptSource(file), scriptDefinition, file.project
-        )
+        val scriptingApiResult = try {
+            refineScriptCompilationConfiguration(
+                KtFileScriptSource(file), scriptDefinition, file.project
+            )
+        } catch (e: Throwable) {
+            if (e is ControlFlowException) throw e
+
+            ResultWithDiagnostics.Failure(listOf(e.asDiagnostics()))
+        }
 
         val result = ScriptConfigurationSnapshot(
             inputs,
