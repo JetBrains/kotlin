@@ -245,6 +245,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/ElvisIndent.after.kt");
         }
 
+        @TestMetadata("ElvisWithOperationReference.after.kt")
+        public void testElvisWithOperationReference() throws Exception {
+            runTest("idea/testData/formatter/ElvisWithOperationReference.after.kt");
+        }
+
         @TestMetadata("ElvisWrap.after.kt")
         public void testElvisWrap() throws Exception {
             runTest("idea/testData/formatter/ElvisWrap.after.kt");
