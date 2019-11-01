@@ -53,17 +53,84 @@ internal interface ForLoopHeader {
 }
 
 internal abstract class NumericForLoopHeader(
-    protected open val headerInfo: HeaderInfo,
-    val inductionVariable: IrVariable,
-    lastExpression: IrExpression,
-    val step: IrVariable,
-    val isLastInclusive: Boolean,
-    override val loopInitStatements: List<IrStatement>
+    headerInfo: HeaderInfo,
+    builder: DeclarationIrBuilder,
+    protected val isLastInclusive: Boolean
 ) : ForLoopHeader {
 
-    val lastExpression: IrExpression = lastExpression
+    protected val inductionVariable: IrVariable
+    protected val lastVariableIfCanCacheLast: IrVariable?
+    protected val stepVariable: IrVariable
+    protected val lastExpression: IrExpression
         // Always copy `lastExpression` is it may be used in multiple conditions.
         get() = field.deepCopyWithSymbols()
+
+    init {
+        with(builder) {
+            // For this loop:
+            //
+            //   for (i in first()..last() step step())
+            //
+            // We need to cast first(), last(). and step() to conform to the progression type so
+            // that operations on the induction variable within the loop are more efficient.
+            //
+            // In the above example, if first() is a Long and last() is an Int, this creates a
+            // LongProgression so last() should be cast to a Long.
+            inductionVariable = scope.createTemporaryVariable(
+                headerInfo.first.castIfNecessary(
+                    headerInfo.progressionType.elementType(context.irBuiltIns),
+                    headerInfo.progressionType.elementCastFunctionName
+                ),
+                nameHint = "inductionVariable",
+                isMutable = true
+            )
+
+            // Due to features of PSI2IR we can obtain nullable arguments here while actually
+            // they are non-nullable (the frontend takes care about this). So we need to cast
+            // them to non-nullable.
+            // TODO: Confirm if casting to non-nullable is still necessary
+            val last = ensureNotNullable(
+                headerInfo.last.castIfNecessary(
+                    headerInfo.progressionType.elementType(context.irBuiltIns),
+                    headerInfo.progressionType.elementCastFunctionName
+                )
+            )
+
+            lastVariableIfCanCacheLast = if (headerInfo.canCacheLast) {
+                scope.createTemporaryVariable(
+                    last,
+                    nameHint = "last"
+                )
+            } else null
+
+            lastExpression = if (headerInfo.canCacheLast) irGet(lastVariableIfCanCacheLast!!) else last
+
+            stepVariable = headerInfo.progressionType.stepType(context.irBuiltIns).let {
+                scope.createTemporaryVariable(
+                    ensureNotNullable(
+                        headerInfo.step.castIfNecessary(
+                            it,
+                            headerInfo.progressionType.stepCastFunctionName
+                        )
+                    ),
+                    nameHint = "step",
+                    irType = it
+                )
+            }
+        }
+    }
+
+    // This cannot be declared and initialized directly in the constructor. At the time of the base class (ForLoopHeader) constructor
+    // execution, the `headerInfo` property overridden in the derived class (e.g., NumericForLoopHeader) is not yet initialized.
+    // Therefore, we must use the `headerInfo` constructor parameter in the "init" block above instead of using the property.
+    protected open val headerInfo: HeaderInfo = headerInfo
+
+    private fun DeclarationIrBuilder.ensureNotNullable(expression: IrExpression) =
+        if (expression.type is IrSimpleType && expression.type.isNullable()) {
+            irImplicitCast(expression, expression.type.makeNotNull())
+        } else {
+            expression
+        }
 
     /** Statement used to increment the induction variable. */
     protected fun incrementInductionVariable(builder: DeclarationIrBuilder): IrStatement = with(builder) {
@@ -71,13 +138,13 @@ internal abstract class NumericForLoopHeader(
         val plusFun = inductionVariable.type.getClass()!!.functions.single {
             it.name == OperatorNameConventions.PLUS &&
                     it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type == step.type
+                    it.valueParameters[0].type == stepVariable.type
         }
         irSetVar(
             inductionVariable.symbol, irCallOp(
                 plusFun.symbol, plusFun.returnType,
                 irGet(inductionVariable),
-                irGet(step)
+                irGet(stepVariable)
             )
         )
     }
@@ -114,7 +181,7 @@ internal abstract class NumericForLoopHeader(
                     context.oror(
                         context.andand(
                             irCall(builtIns.greaterFunByOperandType[stepType.classifierOrFail]!!).apply {
-                                putValueArgument(0, irGet(step))
+                                putValueArgument(0, irGet(stepVariable))
                                 putValueArgument(1, if (isLong) irLong(0) else irInt(0))
                             },
                             irCall(compFun).apply {
@@ -123,7 +190,7 @@ internal abstract class NumericForLoopHeader(
                             }),
                         context.andand(
                             irCall(builtIns.lessFunByOperandType[stepType.classifierOrFail]!!).apply {
-                                putValueArgument(0, irGet(step))
+                                putValueArgument(0, irGet(stepVariable))
                                 putValueArgument(1, if (isLong) irLong(0) else irInt(0))
                             },
                             irCall(compFun).apply {
@@ -138,17 +205,25 @@ internal abstract class NumericForLoopHeader(
 
 internal class ProgressionLoopHeader(
     override val headerInfo: ProgressionHeaderInfo,
-    inductionVariable: IrVariable,
-    lastExpression: IrExpression,
-    step: IrVariable,
-    loopInitStatements: List<IrStatement>
-) : NumericForLoopHeader(
-    headerInfo, inductionVariable,
-    lastExpression = lastExpression,
-    step = step,
-    isLastInclusive = true,
-    loopInitStatements = loopInitStatements
-) {
+    builder: DeclarationIrBuilder
+) : NumericForLoopHeader(headerInfo, builder, isLastInclusive = true) {
+
+    // For this loop:
+    //
+    //   for (i in first()..last() step step())
+    //
+    // ...the functions may have side-effects so we need to call them in the following order: first() (inductionVariable), last(), step().
+    // Additional variables come first as they may be needed to the subsequent variables.
+    //
+    // In the case of a reversed range, the `inductionVariable` and `last` variables are swapped, therefore the declaration order must be
+    // swapped to preserve the correct evaluation order.
+    override val loopInitStatements = headerInfo.additionalVariables + (
+            if (headerInfo.isReversed)
+                listOfNotNull(lastVariableIfCanCacheLast, inductionVariable)
+            else
+                listOfNotNull(inductionVariable, lastVariableIfCanCacheLast)
+            ) +
+            stepVariable
 
     private var loopVariable: IrVariable? = null
 
@@ -209,15 +284,10 @@ internal class ProgressionLoopHeader(
 
 internal class IndexedGetLoopHeader(
     override val headerInfo: IndexedGetHeaderInfo,
-    inductionVariable: IrVariable,
-    lastExpression: IrExpression,
-    step: IrVariable,
-    loopInitStatements: List<IrStatement>
-) : NumericForLoopHeader(
-    headerInfo, inductionVariable, lastExpression, step,
-    isLastInclusive = false,
-    loopInitStatements = loopInitStatements
-) {
+    builder: DeclarationIrBuilder
+) : NumericForLoopHeader(headerInfo, builder, isLastInclusive = false) {
+
+    override val loopInitStatements = listOfNotNull(headerInfo.objectVariable, inductionVariable, lastVariableIfCanCacheLast, stepVariable)
 
     override fun initializeIteration(loopVariable: IrVariable, symbols: Symbols<CommonBackendContext>, builder: DeclarationIrBuilder) =
         with(builder) {
@@ -292,97 +362,9 @@ internal class HeaderProcessor(
             ?: return null  // If the iterable is not supported.
 
         val builder = context.createIrBuilder(scopeOwnerSymbol(), variable.startOffset, variable.endOffset)
-        with(builder) {
-            // For this loop:
-            //
-            //   for (i in first()..last() step step())
-            //
-            // We need to cast first(), last(). and step() to conform to the progression type so
-            // that operations on the induction variable within the loop are more efficient.
-            //
-            // In the above example, if first() is a Long and last() is an Int, this creates a
-            // LongProgression so last() should be cast to a Long.
-            val inductionVariable = scope.createTemporaryVariable(
-                headerInfo.first.castIfNecessary(
-                    headerInfo.progressionType.elementType(context.irBuiltIns),
-                    headerInfo.progressionType.elementCastFunctionName
-                ),
-                nameHint = "inductionVariable",
-                isMutable = true
-            )
-
-            // Due to features of PSI2IR we can obtain nullable arguments here while actually
-            // they are non-nullable (the frontend takes care about this). So we need to cast
-            // them to non-nullable.
-            // TODO: Confirm if casting to non-nullable is still necessary
-            val lastExpression = ensureNotNullable(
-                headerInfo.last.castIfNecessary(
-                    headerInfo.progressionType.elementType(context.irBuiltIns),
-                    headerInfo.progressionType.elementCastFunctionName
-                )
-            )
-
-            val lastVariableIfCanCacheLast = if (headerInfo.canCacheLast) {
-                scope.createTemporaryVariable(
-                    lastExpression,
-                    nameHint = "last"
-                )
-            } else null
-
-            val stepVariable = headerInfo.progressionType.stepType(context.irBuiltIns).let {
-                scope.createTemporaryVariable(
-                    ensureNotNullable(
-                        headerInfo.step.castIfNecessary(
-                            it,
-                            headerInfo.progressionType.stepCastFunctionName
-                        )
-                    ),
-                    nameHint = "step",
-                    irType = it
-                )
-            }
-
-            return when (headerInfo) {
-                is IndexedGetHeaderInfo -> IndexedGetLoopHeader(
-                    headerInfo,
-                    inductionVariable,
-                    if (headerInfo.canCacheLast) irGet(lastVariableIfCanCacheLast!!) else lastExpression,
-                    stepVariable,
-                    listOfNotNull(headerInfo.objectVariable, inductionVariable, lastVariableIfCanCacheLast, stepVariable)
-                )
-                is ProgressionHeaderInfo -> {
-                    // For this loop:
-                    //
-                    //   for (i in first()..last() step step())
-                    //
-                    // ...the functions may have side-effects so we need to call them in the following order: first() (inductionVariable), last(), step().
-                    // Additional variables come first as they may be needed to the subsequent variables.
-                    //
-                    // In the case of a reversed range, the `inductionVariable` and `last` variables are swapped, therefore the declaration order must be
-                    // swapped to preserve the correct evaluation order.
-                    val declarations = headerInfo.additionalVariables + (
-                            if (headerInfo.isReversed)
-                                listOfNotNull(lastVariableIfCanCacheLast, inductionVariable)
-                            else
-                                listOfNotNull(inductionVariable, lastVariableIfCanCacheLast)
-                            ) +
-                            stepVariable
-                    ProgressionLoopHeader(
-                        headerInfo,
-                        inductionVariable,
-                        if (headerInfo.canCacheLast) irGet(lastVariableIfCanCacheLast!!) else lastExpression,
-                        stepVariable,
-                        declarations
-                    )
-                }
-            }
+        return when (headerInfo) {
+            is IndexedGetHeaderInfo -> IndexedGetLoopHeader(headerInfo, builder)
+            is ProgressionHeaderInfo -> ProgressionLoopHeader(headerInfo, builder)
         }
     }
-
-    private fun DeclarationIrBuilder.ensureNotNullable(expression: IrExpression) =
-        if (expression.type is IrSimpleType && expression.type.isNullable()) {
-            irImplicitCast(expression, expression.type.makeNotNull())
-        } else {
-            expression
-        }
 }
