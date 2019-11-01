@@ -21,18 +21,18 @@ fun test_1(x: A?) {
     if (x != null) {
         x.foo()
     } else {
-        x.<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>()<!>
+        x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
     }
-    x.<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>()<!>
+    x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
 }
 
 fun test_2(x: A?) {
     if (x == null) {
-        x.<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>()<!>
+        x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
     } else {
         x.foo()
     }
-    x.<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>foo<!>()<!>
+    x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
 }
 
 fun test_3(x: A?) {
@@ -63,8 +63,8 @@ fun test_6(q: Q?) {
 fun test_7(q: Q?) {
     if (q?.fdata()?.fs()?.inc() != null) {
         q.fdata() // good
-        q.fdata().<!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>fs<!>()<!> // bad
-        q.fdata().<!INAPPLICABLE_CANDIDATE!><!INAPPLICABLE_CANDIDATE!>fs<!>()<!>.<!AMBIGUITY, AMBIGUITY!><!AMBIGUITY!>inc<!>()<!> // bad
+        q.fdata().<!INAPPLICABLE_CANDIDATE!>fs<!>() // bad
+        q.fdata().<!INAPPLICABLE_CANDIDATE!>fs<!>().<!AMBIGUITY!>inc<!>() // bad
     }
 }
 
@@ -78,42 +78,42 @@ fun test_9(a: Int, b: Int?) {
     if (a == b) {
         b.inc()
     }
-    b.<!AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+    b.<!AMBIGUITY!>inc<!>()
 
     if (a === b) {
         b.inc()
     }
-    b.<!AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+    b.<!AMBIGUITY!>inc<!>()
 
     if (b == a) {
         b.inc()
     }
-    b.<!AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+    b.<!AMBIGUITY!>inc<!>()
 
     if (b === a) {
         b.inc()
     }
-    b.<!AMBIGUITY, AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+    b.<!AMBIGUITY!>inc<!>()
 }
 
 fun test_10(a: Int?, b: Int?) {
     if (a == b) {
-        b.<!AMBIGUITY, AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+        b.<!AMBIGUITY!>inc<!>()
     }
-    b.<!AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+    b.<!AMBIGUITY!>inc<!>()
 
     if (a === b) {
-        b.<!AMBIGUITY, AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+        b.<!AMBIGUITY!>inc<!>()
     }
-    b.<!AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+    b.<!AMBIGUITY!>inc<!>()
 
     if (b == a) {
-        b.<!AMBIGUITY, AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+        b.<!AMBIGUITY!>inc<!>()
     }
-    b.<!AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+    b.<!AMBIGUITY!>inc<!>()
 
     if (b === a) {
-        b.<!AMBIGUITY, AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+        b.<!AMBIGUITY!>inc<!>()
     }
-    b.<!AMBIGUITY, AMBIGUITY!><!AMBIGUITY!>inc<!>()<!>
+    b.<!AMBIGUITY!>inc<!>()
 }

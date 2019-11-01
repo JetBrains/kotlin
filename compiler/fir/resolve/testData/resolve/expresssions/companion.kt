@@ -22,5 +22,5 @@ fun test() {
     B.baz()
     val x = A.D
     val y = B.C
-    val z = B.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>D<!>
+    val z = B.<!UNRESOLVED_REFERENCE!>D<!>
 }

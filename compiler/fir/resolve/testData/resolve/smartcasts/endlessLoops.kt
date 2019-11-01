@@ -43,7 +43,7 @@ fun test_4(x: Any, b: Boolean) {
         }
         break
     }
-    x.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>foo<!>()<!> // No smartcast
+    x.<!UNRESOLVED_REFERENCE!>foo<!>() // No smartcast
 }
 
 fun test_5(x: Any, b: Boolean) {

@@ -1,5 +1,5 @@
 fun <T, R> T.also(block: () -> R): R {
-    return <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>null!!<!>
+    return <!UNRESOLVED_REFERENCE!>null!!<!>
 }
 
 fun foo(b: Boolean, a: Int) {

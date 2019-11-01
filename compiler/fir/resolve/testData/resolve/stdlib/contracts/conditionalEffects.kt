@@ -24,9 +24,9 @@ fun test_5(x: Any, b: Boolean) {
         require(x is String)
         x.length
     } else {
-        x.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>length<!>
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
-    x.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>length<!>
+    x.<!UNRESOLVED_REFERENCE!>length<!>
 }
 
 fun test_6(x: Any, b: Boolean) {

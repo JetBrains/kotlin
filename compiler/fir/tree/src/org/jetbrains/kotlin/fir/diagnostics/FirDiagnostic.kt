@@ -8,3 +8,7 @@ package org.jetbrains.kotlin.fir.diagnostics
 abstract class FirDiagnostic {
     abstract val reason: String
 }
+
+object FirEmptyDiagnostic : FirDiagnostic() {
+    override val reason: String get() = "Empty diagnostic"
+}

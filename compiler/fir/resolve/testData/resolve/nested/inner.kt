@@ -23,7 +23,7 @@ class Owner {
             o.foo()
             foo()
             this@Owner.foo()
-            this.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>err<!>()<!>
+            this.<!UNRESOLVED_REFERENCE!>err<!>()
         }
     }
 }
@@ -31,8 +31,8 @@ class Owner {
 fun test() {
     val o = Owner()
     o.foo()
-    val err = Owner.<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>Inner<!>()<!>
-    err.<!UNRESOLVED_REFERENCE!><!UNRESOLVED_REFERENCE!>baz<!>()<!>
+    val err = Owner.<!UNRESOLVED_REFERENCE!>Inner<!>()
+    err.<!UNRESOLVED_REFERENCE!>baz<!>()
     val i = o.Inner()
     i.gau()
 }
