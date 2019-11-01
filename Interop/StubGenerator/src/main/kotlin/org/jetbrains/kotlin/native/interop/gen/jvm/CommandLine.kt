@@ -48,6 +48,8 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             .multiple()
     val repo by argParser.option(ArgType.String, shortName = "r", description = "repository to resolve dependencies")
             .multiple()
+    val mode by argParser.option(ArgType.Choice(listOf(MODE_METADATA, MODE_SOURCECODE)), description = "the way interop library is generated")
+            .default(MODE_SOURCECODE)
     val nodefaultlibs by argParser.option(ArgType.Boolean, NODEFAULTLIBS,
             description = "don't link the libraries from dist/klib automatically").default(false)
     val nodefaultlibsDeprecated by argParser.option(ArgType.Boolean, NODEFAULTLIBS_DEPRECATED,
@@ -59,6 +61,11 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             description = "don't link unused libraries even explicitly specified").default(false)
     val tempDir by argParser.option(ArgType.String, TEMP_DIR,
             description = "save temporary files to the given directory")
+
+    companion object {
+        const val MODE_SOURCECODE = "sourcecode"
+        const val MODE_METADATA = "metadata"
+    }
 }
 
 class CInteropArguments(argParser: ArgParser =

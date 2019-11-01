@@ -148,28 +148,7 @@ class StubIrTextEmitter(
 
         out("// NOTE THIS FILE IS AUTO-GENERATED")
     }
-    fun emit(ktFile: Appendable, cFile: Appendable, entryPoint: String?) {
-
-        withOutput(cFile) {
-            context.libraryForCStubs.preambleLines.forEach {
-                out(it)
-            }
-            out("")
-
-            out("// NOTE THIS FILE IS AUTO-GENERATED")
-            out("")
-
-            nativeBridges.nativeLines.forEach(out)
-
-            if (entryPoint != null) {
-                out("extern int Konan_main(int argc, char** argv);")
-                out("")
-                out("__attribute__((__used__))")
-                out("int $entryPoint(int argc, char** argv)  {")
-                out("  return Konan_main(argc, argv);")
-                out("}")
-            }
-        }
+    fun emit(ktFile: Appendable) {
 
         // Stubs generation may affect imports list so do it before header generation.
         val stubLines = generateKotlinFragmentBy {

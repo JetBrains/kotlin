@@ -19,7 +19,11 @@ import org.jetbrains.kotlin.native.interop.tool.*
 // TODO: this function should eventually be eliminated from 'utilities'. 
 // The interaction of interop and the compiler should be streamlined.
 
-fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
+/**
+ * @return null if there is no need in compiler invocation.
+ * Otherwise returns array of compiler args.
+ */
+fun invokeInterop(flavor: String, args: Array<String>): Array<String>? {
     val arguments = if (flavor == "native") CInteropArguments() else JSInteropArguments()
     arguments.argParser.parse(args)
     val outputFileName = arguments.output
@@ -68,7 +72,9 @@ fun invokeInterop(flavor: String, args: Array<String>): Array<String> {
         additionalProperties.putAll(mapOf("cstubsname" to cstubsName, "import" to imports))
     }
 
+
     val cinteropArgsToCompiler = interop(flavor, args + additionalArgs, additionalProperties)
+            ?: return null // There is no need in compiler invocation if we're generating only metadata.
 
     val nativeStubs = 
         if (flavor == "wasm") 

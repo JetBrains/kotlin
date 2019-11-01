@@ -17,11 +17,11 @@ private fun mainImpl(args: Array<String>, konancMain: (Array<String>) -> Unit) {
             konancMain(utilityArgs)
         "cinterop" -> {
             val konancArgs = invokeInterop("native", utilityArgs)
-            konancMain(konancArgs)
+            konancArgs?.let { konancMain(it) }
         }
         "jsinterop" -> {
             val konancArgs = invokeInterop("wasm", utilityArgs)
-            konancMain(konancArgs)
+            konancArgs?.let { konancMain(it) }
         }
         "klib" ->
             klibMain(utilityArgs)

@@ -34,8 +34,10 @@ fun main(args: Array<String>) {
     processCLib(args)
 }
 
-fun interop(flavor: String, args: Array<String>, additionalArgs: Map<String, Any> = mapOf()) =
-        when(flavor) {
+fun interop(
+        flavor: String, args: Array<String>,
+        additionalArgs: Map<String, Any> = mapOf()
+): Array<String>? = when(flavor) {
             "jvm", "native" -> processCLib(args, additionalArgs)
             "wasm" -> processIdlLib(args, additionalArgs)
             else -> error("Unexpected flavor")
@@ -159,7 +161,7 @@ private fun findFilesByGlobs(roots: List<Path>, globs: List<String>): Map<Path, 
 }
 
 
-private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf()): Array<String> {
+private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf()): Array<String>? {
     val cinteropArguments = CInteropArguments()
     cinteropArguments.argParser.parse(args)
     val ktGenRoot = cinteropArguments.generated
@@ -204,11 +206,7 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
     val fqParts = (cinteropArguments.pkg ?: def.config.packageName)?.split('.')
             ?: defFile!!.name.split('.').reversed().drop(1)
 
-    val outKtFileName = fqParts.last() + ".kt"
-
     val outKtPkg = fqParts.joinToString(".")
-    val outKtFileRelative = (fqParts + outKtFileName).joinToString("/")
-    val outKtFile = File(ktGenRoot, outKtFileRelative)
 
     val libName = (additionalArgs["cstubsname"] as? String)?: fqParts.joinToString("") + "stubs"
 
@@ -240,7 +238,6 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
             target = target
     )
 
-    outKtFile.parentFile.mkdirs()
 
     File(nativeLibsDir).mkdirs()
     val outCFile = tempFiles.create(libName, ".${language.sourceFileExtension}")
@@ -251,9 +248,22 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
         {}
     }
 
+    val mode = parseGenerationMode(cinteropArguments.mode)
+            ?: error ("Unexpected interop generation mode: ${cinteropArguments.mode}")
+
     val stubIrContext = StubIrContext(logger, configuration, nativeIndex, imports, flavor, libName)
-    val stubIrDriver = StubIrDriver(stubIrContext)
-    stubIrDriver.run(outKtFile, File(outCFile.absolutePath), entryPoint)
+    val stubIrOutput = run {
+        val outKtFileCreator = {
+            val outKtFileName = fqParts.last() + ".kt"
+            val outKtFileRelative = (fqParts + outKtFileName).joinToString("/")
+            val file = File(ktGenRoot, outKtFileRelative)
+            file.parentFile.mkdirs()
+            file
+        }
+        val driverOptions = StubIrDriver.DriverOptions(mode, entryPoint, File(outCFile.absolutePath), outKtFileCreator)
+        val stubIrDriver = StubIrDriver(stubIrContext, driverOptions)
+        stubIrDriver.run()
+    }
 
     // TODO: if a library has partially included headers, then it shouldn't be used as a dependency.
     def.manifestAddendProperties["includedHeaders"] = nativeIndex.includedHeaders.joinToString(" ") { it.value }
@@ -270,31 +280,48 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
     manifestAddend?.parentFile?.mkdirs()
     manifestAddend?.let { def.manifestAddendProperties.storeProperties(it) }
 
-    if (flavor == KotlinPlatform.JVM) {
+    val compilerArgs = stubIrContext.libraryForCStubs.compilerArgs.toTypedArray()
+    val nativeOutputPath: String = when (flavor) {
+        KotlinPlatform.JVM -> {
+            val outOFile = tempFiles.create(libName,".o")
+            val compilerCmd = arrayOf(compiler, *compilerArgs,
+                    "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
+            runCmd(compilerCmd, verbose)
 
-        val outOFile = tempFiles.create(libName,".o")
+            val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
+            val linkerCmd = arrayOf(linker,
+                    outOFile.absolutePath, "-shared", "-o", outLib.absolutePath,
+                    *linkerOpts)
+            runCmd(linkerCmd, verbose)
+            outOFile.absolutePath
+        }
+        KotlinPlatform.NATIVE -> {
+            val outLib = File(nativeLibsDir, "$libName.bc")
+            val compilerCmd = arrayOf(compiler, *compilerArgs,
+                    "-emit-llvm", "-c", outCFile.absolutePath, "-o", outLib.absolutePath)
 
-        val compilerCmd = arrayOf(compiler, *stubIrContext.libraryForCStubs.compilerArgs.toTypedArray(),
-                "-c", outCFile.absolutePath, "-o", outOFile.absolutePath)
-
-        runCmd(compilerCmd, verbose)
-
-        val outLib = File(nativeLibsDir, System.mapLibraryName(libName))
-
-        val linkerCmd = arrayOf(linker,
-                outOFile.absolutePath, "-shared", "-o", outLib.absolutePath,
-                *linkerOpts)
-
-        runCmd(linkerCmd, verbose)
-    } else if (flavor == KotlinPlatform.NATIVE) {
-        val outBcName = libName + ".bc"
-        val outLib = File(nativeLibsDir, outBcName)
-        val compilerCmd = arrayOf(compiler, *stubIrContext.libraryForCStubs.compilerArgs.toTypedArray(),
-                "-emit-llvm", "-c", outCFile.absolutePath, "-o", outLib.absolutePath)
-
-        runCmd(compilerCmd, verbose)
+            runCmd(compilerCmd, verbose)
+            outLib.absolutePath
+        }
     }
-    return argsToCompiler(staticLibraries, libraryPaths)
+
+    return when (stubIrOutput) {
+        is StubIrDriver.Result.SourceCode -> {
+            argsToCompiler(staticLibraries, libraryPaths)
+        }
+        is StubIrDriver.Result.Metadata -> {
+            val moduleName = File(cinteropArguments.output).nameWithoutExtension
+            val args = LibraryCreationArguments(
+                    nativeBitcodePath = nativeOutputPath,
+                    target = tool.target,
+                    moduleName = moduleName,
+                    outputPath = cinteropArguments.output,
+                    manifest = def.manifestAddendProperties
+            )
+            createInteropLibrary(args)
+            return null
+        }
+    }
 }
 
 internal fun prepareTool(target: String?, flavor: KotlinPlatform): ToolConfig {

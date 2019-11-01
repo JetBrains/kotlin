@@ -83,7 +83,7 @@ private fun generatePlatformLibraries(target: String, inputDirectory: File, outp
                 "-no-default-libs", "-no-endorsed-libs", "-Xpurge-user-libs",
                 *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.name}") }.toTypedArray())
         println("Processing ${def.name}...")
-        K2Native.mainNoExit(invokeInterop("native", args))
+        invokeInterop("native", args)?.let { K2Native.mainNoExit(it) }
         org.jetbrains.kotlin.cli.klib.main(arrayOf("install", outKlib,
                 "-target", target,
                 "-repository", "${outputDirectory.absolutePath}"
