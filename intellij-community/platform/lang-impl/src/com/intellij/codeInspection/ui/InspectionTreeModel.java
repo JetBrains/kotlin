@@ -87,7 +87,10 @@ public class InspectionTreeModel extends BaseTreeModel<InspectionTreeNode> imple
       InspectionTreeNode p = getParent(n1);
       int idx = getIndexOfChild(p, n1);
       if (idx < 0) return JBIterable.empty();
-      InspectionTreeNode[] arr = p.myChildren.myChildren;
+      assert p != null;
+      InspectionTreeNode.Children children = p.myChildren;
+      if (children == null) return JBIterable.empty();
+      InspectionTreeNode[] arr = children.myChildren;
       List<? extends InspectionTreeNode> sublist;
       if (direction) {
         sublist = Arrays.asList(arr).subList(idx + (n1 == node ? 0 : 1), arr.length);
@@ -97,19 +100,6 @@ public class InspectionTreeModel extends BaseTreeModel<InspectionTreeNode> imple
       }
       return TreeTraversal.PRE_ORDER_DFS.traversal(sublist, (InspectionTreeNode n) -> direction ? getChildren(n) : ContainerUtil.reverse(getChildren(n)));
     });
-  }
-
-  public void removeChild(@NotNull InspectionTreeNode node, int childIndex) {
-    InspectionTreeNode removed = node.myChildren.myChildren[childIndex];
-    remove(removed);
-    treeNodesChanged(null, null, null);
-    treeStructureChanged(null, null, null);
-  }
-
-  public void removeChildren(@NotNull InspectionTreeNode node) {
-    doRemove(node, node);
-    treeNodesChanged(null, null, null);
-    treeStructureChanged(null, null, null);
   }
 
   public void remove(@NotNull InspectionTreeNode node) {
@@ -126,6 +116,7 @@ public class InspectionTreeModel extends BaseTreeModel<InspectionTreeNode> imple
       InspectionTreeNode parent = getParent(node);
       if (parent != null) {
         InspectionTreeNode.Children parentChildren = parent.myChildren;
+        assert parentChildren != null;
         parentChildren.myChildren = ArrayUtil.remove(parentChildren.myChildren, node);
         parentChildren.myUserObject2Node.removeValue(node);
       }
@@ -133,7 +124,10 @@ public class InspectionTreeModel extends BaseTreeModel<InspectionTreeNode> imple
   }
 
   synchronized void clearTree() {
-    myRoot.myChildren.clear();
+    InspectionTreeNode.Children children = myRoot.myChildren;
+    if (children != null) {
+      children.clear();
+    }
   }
 
   @NotNull
@@ -198,11 +192,15 @@ public class InspectionTreeModel extends BaseTreeModel<InspectionTreeNode> imple
       userObject = ObjectUtils.NULL;
     }
     InspectionTreeNode.Children children = parent.myChildren;
+    if (children == null) {
+      parent.myChildren = children = new InspectionTreeNode.Children();
+    }
     InspectionTreeNode node = children.myUserObject2Node.get(userObject);
     if (node == null) {
       node = supplier.get();
       InspectionTreeNode finalNode = node;
-      int idx = ReadAction.compute(() -> Arrays.binarySearch(children.myChildren, finalNode, InspectionResultsViewComparator.INSTANCE));
+      InspectionTreeNode.Children finalChildren = children;
+      int idx = ReadAction.compute(() -> Arrays.binarySearch(finalChildren.myChildren, finalNode, InspectionResultsViewComparator.INSTANCE));
       // it's allowed to have idx >= 0 for example for problem descriptor nodes.
       int insertionPoint = idx >= 0 ? idx : -idx - 1;
       children.myChildren = ArrayUtil.insert(children.myChildren, insertionPoint, node);

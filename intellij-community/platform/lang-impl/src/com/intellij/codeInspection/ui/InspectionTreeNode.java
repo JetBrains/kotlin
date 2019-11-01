@@ -35,8 +35,8 @@ public abstract class InspectionTreeNode implements TreeNode {
   });
 
   protected final ProblemLevels myProblemLevels = new ProblemLevels();
-  @NotNull
-  final Children myChildren = new Children();
+  @Nullable
+  volatile Children myChildren;
   final InspectionTreeNode myParent;
 
   protected InspectionTreeNode(InspectionTreeNode parent) {
@@ -141,7 +141,8 @@ public abstract class InspectionTreeNode implements TreeNode {
 
   @NotNull
   public List<? extends InspectionTreeNode> getChildren() {
-    return ContainerUtil.immutableList(myChildren.myChildren);
+    Children children = myChildren;
+    return children == null ? Collections.emptyList() : ContainerUtil.immutableList(children.myChildren);
   }
 
   @Override
