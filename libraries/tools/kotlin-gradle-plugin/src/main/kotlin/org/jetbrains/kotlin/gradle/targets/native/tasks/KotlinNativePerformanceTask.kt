@@ -60,18 +60,18 @@ open class NativePerformanceReport : DefaultTask() {
     private fun compilerFlagsFromBinary(): List<String> {
         val result = mutableListOf<String>()
         if (binary.buildType.optimized) {
-            result.add("\"-opt\"")
+            result.add("-opt")
         }
         if (binary.buildType.debuggable) {
-            result.add("\"-g\"")
+            result.add("-g")
         }
-        result.addAll(binary.freeCompilerArgs.map { "\"$it\"" })
+        result.addAll(binary.freeCompilerArgs)
         return result
     }
 
     private fun getPerformanceCompilerOptions() =
-        (compilerFlagsFromBinary() + binary.linkTask.compilation.kotlinOptions.freeCompilerArgs.map { "\"$it\"" })
-            .filter { it in listOf("\"-g\"", "\"-opt\"", "\"-Xg0\"") }
+        (compilerFlagsFromBinary() + binary.linkTask.compilation.kotlinOptions.freeCompilerArgs)
+            .filter { it in listOf("-g", "-opt", "-Xg0") }.map { "\"$it\"" }
 
     @TaskAction
     fun generate() {
