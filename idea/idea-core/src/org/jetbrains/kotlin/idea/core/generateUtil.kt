@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.core
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.SmartPointerManager
+import com.intellij.psi.*
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartList
@@ -225,7 +222,8 @@ fun <T : KtDeclaration> insertMembersAfter(
     members.ifEmpty { return emptyList() }
     val project = classOrObject.project
     return runWriteAction {
-        val insertedMembers = SmartList<T>()
+        val insertedMembers = SmartList<SmartPsiElementPointer<T>>()
+        fun insertedMembersElements() = insertedMembers.mapNotNull { it.element }
 
         val (parameters, otherMembers) = members.partition { it is KtParameter }
 
@@ -233,7 +231,7 @@ fun <T : KtDeclaration> insertMembersAfter(
             if (classOrObject !is KtClass) return@mapNotNullTo null
 
             @Suppress("UNCHECKED_CAST")
-            (classOrObject.createPrimaryConstructorParameterListIfAbsent().addParameter(it as KtParameter) as T)
+            SmartPointerManager.createPointer(classOrObject.createPrimaryConstructorParameterListIfAbsent().addParameter(it as KtParameter) as T)
         }
 
         if (otherMembers.isNotEmpty()) {
@@ -260,20 +258,21 @@ fun <T : KtDeclaration> insertMembersAfter(
                 }
 
                 @Suppress("UNCHECKED_CAST")
-                (body.addAfter(it, afterAnchor) as T).apply { afterAnchor = this }
+                SmartPointerManager.createPointer((body.addAfter(it, afterAnchor) as T).apply { afterAnchor = this })
             }
         }
 
-        @Suppress("UNCHECKED_CAST") val resultMembers = ShortenReferences.DEFAULT.process(insertedMembers) as Collection<T>
-        val firstElement = resultMembers.firstOrNull() ?: return@runWriteAction emptyList()
+        ShortenReferences.DEFAULT.process(insertedMembersElements())
+
+        val firstElement = insertedMembersElements().firstOrNull() ?: return@runWriteAction emptyList()
         if (editor != null) {
             moveCaretIntoGeneratedElement(editor, firstElement)
         }
 
         val codeStyleManager = CodeStyleManager.getInstance(project)
-        resultMembers.forEach { codeStyleManager.reformat(it) }
+        insertedMembersElements().forEach { codeStyleManager.reformat(it) }
 
-        resultMembers.toList()
+        insertedMembersElements().toList()
     }
 }
 

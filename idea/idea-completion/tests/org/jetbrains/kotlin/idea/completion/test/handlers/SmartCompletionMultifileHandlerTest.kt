@@ -22,6 +22,8 @@ class SmartCompletionMultifileHandlerTest : KotlinCompletionTestCase() {
 
     fun testAnonymousObjectGenericJava() { doTest() }
 
+    fun testImportAnonymousObject() { doTest() }
+
     fun testNestedSamAdapter() { doTest(lookupString = "Nested") }
 
     override fun setUp() {
