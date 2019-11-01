@@ -338,11 +338,12 @@ internal class NativeSuspendFunctionsLowering(ctx: Context): AbstractSuspendFunc
                         suspendCall = newChildren[2]
                     }
                     expression.isSuspendCall -> {
-                        val lastChild = newChildren.last()
-                        if (lastChild != null) {
+                        val lastChildIndex = newChildren.indexOfLast { it != null }
+                        if (lastChildIndex != -1) {
                             // Save state as late as possible.
+                            val lastChild = newChildren[lastChildIndex]!!
                             calledSaveState = true
-                            newChildren[numberOfChildren - 1] =
+                            newChildren[lastChildIndex] =
                                     irBlock(lastChild) {
                                         if (lastChild.isPure()) {
                                             +irCall(saveState)

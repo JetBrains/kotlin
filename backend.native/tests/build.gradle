@@ -1622,6 +1622,10 @@ task coroutines_correctOrder1(type: KonanLocalTest) {
     source = "codegen/coroutines/correctOrder1.kt"
 }
 
+task coroutines_controlFlow_chain(type: KonanLocalTest) {
+    source = "codegen/coroutines/controlFlow_chain.kt"
+}
+
 task coroutines_controlFlow_if1(type: KonanLocalTest) {
     goldValue = "f1\ns1\nf3\n84\n"
     source = "codegen/coroutines/controlFlow_if1.kt"
