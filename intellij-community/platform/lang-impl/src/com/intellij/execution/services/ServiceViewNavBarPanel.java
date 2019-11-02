@@ -121,7 +121,7 @@ class ServiceViewNavBarPanel extends NavBarPanel {
         if (object instanceof ServiceNode) {
           ServiceNode service = (ServiceNode)object;
           if (service.getProvidingContributor() != null && !service.isChildrenInitialized()) {
-            myViewModel.getInvoker().runOrInvokeLater(() -> {
+            myViewModel.getInvoker().invoke(() -> {
               service.getChildren(); // initialize children on background thread
             });
             return Collections.emptyList();

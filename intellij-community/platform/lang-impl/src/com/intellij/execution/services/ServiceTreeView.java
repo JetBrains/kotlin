@@ -248,7 +248,7 @@ class ServiceTreeView extends ServiceView {
     itemPromise.onSuccess(item -> {
       if (item == null) return;
 
-      getModel().getInvoker().runOrInvokeLater(() -> {
+      getModel().getInvoker().invoke(() -> {
         ServiceViewItem updatedItem = getModel().findItem(item);
         if (updatedItem != null) {
           AppUIUtil.invokeOnEdt(() -> {

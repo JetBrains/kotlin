@@ -278,7 +278,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   public Promise<Void> select(@NotNull Object service, @NotNull Class<?> contributorClass, boolean activate, boolean focus) {
     AsyncPromise<Void> result = new AsyncPromise<>();
     // Ensure model is updated, then iterate over service views on EDT in order to find view with service and select it.
-    myModel.getInvoker().runOrInvokeLater(() -> AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
+    myModel.getInvoker().invoke(() -> AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
       ServiceViewContentHolder holder = getContentHolder(contributorClass);
       if (holder == null) {
         result.setError("Content manager not initialized");
@@ -344,7 +344,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   @NotNull
   Promise<Void> select(@NotNull VirtualFile virtualFile) {
     AsyncPromise<Void> result = new AsyncPromise<>();
-    myModel.getInvoker().runOrInvokeLater(() -> {
+    myModel.getInvoker().invoke(() -> {
       ServiceViewItem fileItem = myModel.findItem(
         item -> {
           ServiceViewDescriptor descriptor = item.getViewDescriptor();

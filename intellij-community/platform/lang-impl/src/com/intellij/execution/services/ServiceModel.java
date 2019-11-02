@@ -61,7 +61,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
   }
 
   CancellablePromise<?> initRoots() {
-    return getInvoker().runOrInvokeLater(() -> {
+    return getInvoker().invoke(() -> {
       if (!myRootsInitialized) {
         myRoots.addAll(doGetRoots());
         myRootsInitialized = true;
@@ -133,7 +133,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
 
   @NotNull
   CancellablePromise<?> handle(@NotNull ServiceEvent e) {
-    return getInvoker().runOrInvokeLater(() -> {
+    return getInvoker().invoke(() -> {
       LOG.debug("Handle event: " + e);
       switch (e.type) {
         case SERVICE_ADDED:

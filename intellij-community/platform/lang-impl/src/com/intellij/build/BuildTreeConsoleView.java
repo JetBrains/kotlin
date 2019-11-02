@@ -605,7 +605,7 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
 
   @Override
   public void onEvent(@NotNull Object buildId, @NotNull BuildEvent event) {
-    myTreeModel.getInvoker().runOrInvokeLater(() -> onEventInternal(buildId, event));
+    myTreeModel.getInvoker().invoke(() -> onEventInternal(buildId, event));
   }
 
   void scheduleUpdate(ExecutionNode executionNode) {
