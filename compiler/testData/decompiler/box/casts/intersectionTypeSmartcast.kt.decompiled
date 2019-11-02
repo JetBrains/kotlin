@@ -1,0 +1,33 @@
+interface A {
+    abstract  fun foo() : Any?
+}
+interface B {
+    abstract  fun foo() : String
+}
+fun bar(x: Any?) : String  {
+    if ((x is A)) {
+        val k : Any? = x.foo()
+if (k != "OK") {
+    return "fail 1"
+}
+    }
+    if ((x is B)) {
+        val k : String = x.foo()
+if (k.length != 2) {
+    return "fail 2"
+}
+    }
+    if (((x is A) && (x is B))) {
+        return x.foo()
+    }
+    return "fail 4"
+}
+
+fun box() : String  {
+    return bar(object: A, B {
+    override fun foo() : String  {
+        return "OK"
+    }
+
+})
+}

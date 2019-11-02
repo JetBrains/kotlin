@@ -19,20 +19,22 @@
 
 ## LATER
 
-- companion object, именованный object, top-level object
-- inner, nested классы.
 - when с множественным условием через запятую
-- return when (varName) - block с WHEN в origin
 
 - расстановка скобок для логических операторов !, &&, ||
 - использовать abbrevation при выводе типа для typealias
 - override fun - проверять overridenSymbols (если visibility и modality не отличаются от родительских, то не пишем их)
 - когда у проперти нет BackingField
 - как обращаться к исключению в теле catch
-- локальные классы
 
 ## DONE
 
+
+
+- локальные классы
+- return when (varName) - block с WHEN в origin
+- companion object, именованный object, top-level object
+- inner, nested классы.
 - nullable типы
 - enum
 - break, continue

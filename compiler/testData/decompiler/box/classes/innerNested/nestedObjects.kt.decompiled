@@ -1,0 +1,10 @@
+object A {
+    object B {
+        object C {
+            val ok : kotlin.String = "OK"
+        }
+    }
+}
+fun box() : kotlin.String  {
+    return A.B.C.ok
+}

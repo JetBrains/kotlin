@@ -1,0 +1,15 @@
+fun foo() {
+}
+
+fun bar() : Int?  {
+    return (foo() as? Int)
+}
+
+fun box() : String  {
+    return if (bar() == null) {
+    "OK"
+}
+else {
+    "fail"
+}
+}

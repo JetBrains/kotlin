@@ -1,0 +1,14 @@
+class Outer {
+    class Nested {
+        fun fn() : kotlin.String  {
+            return Outer.Companion.s
+        }
+
+    }
+    companion object {
+        private val s : kotlin.String = "OK"
+    }
+}
+fun box() : kotlin.String  {
+    return Outer.Nested().fn()
+}

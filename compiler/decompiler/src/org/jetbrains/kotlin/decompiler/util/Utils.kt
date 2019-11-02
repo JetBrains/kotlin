@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("UNNECESSARY_SAFE_CALL")
-
 package org.jetbrains.kotlin.decompiler.util
 
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
@@ -15,49 +13,51 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.*
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.typeUtil.isInterface
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
-val OPERATOR_TOKENS = mutableMapOf<IrStatementOrigin, String>().apply {
-    set(OROR, "||")
-    set(ANDAND, "&&")
-    set(PLUS, "+")
-    set(MINUS, "-")
-    set(UPLUS, "+")
-    set(UMINUS, "-")
-    set(EXCL, "!")
-    set(MUL, "*")
-    set(DIV, "/")
-    set(PERC, "%")
-    set(EQ, "=")
-    set(PLUSEQ, "+=")
-    set(MINUSEQ, "-=")
-    set(MULTEQ, "*=")
-    set(DIVEQ, "/=")
-    set(PERCEQ, "%=")
-    set(EQEQ, "==")
-    set(EQEQEQ, "===")
-    set(EXCLEQ, "!=")
-    set(EXCLEQEQ, "!==")
-    set(GT, ">")
-    set(LT, "<")
-    set(GTEQ, ">=")
-    set(LTEQ, "<=")
-    set(ELVIS, "?:")
-    set(EXCLEXCL, "!!")
-    set(RANGE, "..")
-    set(PREFIX_INCR, "++")
-    set(PREFIX_DECR, "--")
-    set(POSTFIX_INCR, "++")
-    set(POSTFIX_DECR, "--")
-}
+val OPERATOR_TOKENS = mapOf<IrStatementOrigin, String>(
+    OROR to "||",
+    ANDAND to "&&",
+    PLUS to "+",
+    MINUS to "-",
+    UPLUS to "+",
+    UMINUS to "-",
+    EXCL to "!",
+    MUL to "*",
+    DIV to "/",
+    PERC to "%",
+    EQ to "=",
+    PLUSEQ to "+=",
+    MINUSEQ to "-=",
+    MULTEQ to "*=",
+    DIVEQ to "/=",
+    PERCEQ to "%=",
+    EQEQ to "==",
+    EQEQEQ to "===",
+    EXCLEQ to "!=",
+    EXCLEQEQ to "!==",
+    GT to ">",
+    LT to "<",
+    GTEQ to ">=",
+    LTEQ to "<=",
+    ELVIS to "?:",
+    SAFE_CALL to "?.",
+    EXCLEXCL to "!!",
+    RANGE to "..",
+    PREFIX_INCR to "++",
+    PREFIX_DECR to "--",
+    POSTFIX_INCR to "++",
+    POSTFIX_DECR to "--"
+)
 
 val OPERATOR_NAMES = setOf("less", "lessOrEqual", "greater", "greaterOrEqual", "EQEQ", "EQEQEQ")
 
+val TYPE_OPERATOR_TOKENS = mapOf(SAFE_CAST to "as?", CAST to "as", INSTANCEOF to "is", NOT_INSTANCEOF to "!is")
 const val EMPTY_TOKEN = ""
 const val THIS_TOKEN = "this"
 const val TRY_TOKEN = "try"
@@ -167,7 +167,10 @@ internal fun IrCall.obtainNotEqCall(): String =
         dispatchReceiver?.decompile("").orEmpty()
 
 internal fun IrCall.obtainNameWithArgs(): String {
-    val result = symbol.owner.name()
+    val typeArguments = (0 until typeArgumentsCount).map { getTypeArgument(it)?.obtainTypeDescription() }
+        .joinToString(", ", "<", ">")
+        .takeIf { typeArgumentsCount > 0 } ?: EMPTY_TOKEN
+    val result = symbol.owner.name() + typeArguments
     val callArgumentsWithNulls = (0 until valueArgumentsCount).map {
         getValueArgument(it)
     }
@@ -262,17 +265,15 @@ internal fun IrCall.obtainGetPropertyCall(): String {
 }
 
 internal fun IrConstructor.obtainValueParameterTypes(): String =
-    ArrayList<String>().apply {
-        valueParameters.mapTo(this) {
-            concatenateNonEmptyWithSpace(
-                it.obtainValueParameterFlags(),
-                "val".takeIf { isPrimary },
-                "${it.name()}:",
-                (it.varargElementType?.toKotlinType() ?: it.type.obtainTypeDescription()).toString(),
-                if (it.hasDefaultValue()) " = ${it.defaultValue!!.decompile("")}" else EMPTY_TOKEN
-            )
-        }
-    }.joinToString(separator = ", ", prefix = "(", postfix = ")")
+    valueParameters.joinToString(separator = ", ", prefix = "(", postfix = ")") {
+        concatenateNonEmptyWithSpace(
+            it.obtainValueParameterFlags(),
+            "val".takeIf { isPrimary },
+            "${it.name()}:",
+            (it.varargElementType?.toKotlinType() ?: it.type.obtainTypeDescription()).toString(),
+            if (it.hasDefaultValue()) " = ${it.defaultValue!!.decompile("")}" else EMPTY_TOKEN
+        )
+    }.takeIf { valueParameters.size > 0 || parentAsClass.constructors.count() > 1 } ?: EMPTY_TOKEN
 
 
 internal fun IrFunction.obtainValueParameterTypes(): String =
@@ -289,7 +290,7 @@ internal fun IrFunction.obtainValueParameterTypes(): String =
 
 internal inline fun IrDeclarationWithVisibility.obtainVisibility(): String =
     when (visibility) {
-        Visibilities.PUBLIC -> EMPTY_TOKEN
+        Visibilities.PUBLIC, Visibilities.LOCAL -> EMPTY_TOKEN
         else -> visibility.name.toLowerCase()
     }
 
@@ -336,7 +337,8 @@ internal fun concatenateConditions(branch: IrBranch): String {
 }
 
 internal fun IrClass.obtainDeclarationStr(): String =
-    concatenateNonEmptyWithSpace(
+    if (name() == "<no name provided>") "object"
+    else concatenateNonEmptyWithSpace(
         obtainVisibility(),
         obtainModality(),
         obtainClassFlags(),
@@ -387,7 +389,9 @@ internal fun IrType.obtainTypeDescription(): String {
         val arguments = toKotlinType().arguments
         val returnType = arguments.last().type
         val inputTypes = arguments.dropLast(1)
-        "${inputTypes.joinToString(", ", prefix = "(", postfix = ")") { it.type.toString() }} -> $returnType"
+        "${inputTypes.joinToString(", ", prefix = "(", postfix = ")") {
+            it.type.toString() + ("?".takeIf { isNullable() } ?: EMPTY_TOKEN)
+        }} -> $returnType"
     } else {
         toKotlinType().toString()
     }

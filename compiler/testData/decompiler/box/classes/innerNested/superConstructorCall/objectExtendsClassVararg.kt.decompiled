@@ -1,0 +1,10 @@
+open  class SomeClass(val some: Double, val other: Int, vararg val args: String) {
+    fun result() : kotlin.String  {
+        return this.args.get(1)
+    }
+
+}
+fun box() : kotlin.String  {
+    return object: SomeClass (3.14, 42, "No", "OK", "Yes") {
+}.result()
+}

@@ -4,6 +4,8 @@ class MyClass {
 
 typealias MyClassAlias = MyClass
 typealias MyInt = Int
+typealias BodyType = () -> Unit
+typealias BiIntPredicate = (Int, Int) -> Boolean
 
 fun box(): String {
     val myClass = MyClassAlias()

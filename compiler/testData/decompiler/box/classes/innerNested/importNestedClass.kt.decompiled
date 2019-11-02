@@ -1,0 +1,15 @@
+class A {
+    class B {
+        class C {
+        }
+    }
+}
+fun box() : kotlin.String  {
+    val a : A = A()
+    val b : A.B = A.B()
+    val ab : A.B = A.B()
+    val c : A.B.C = A.B.C()
+    val bc : A.B.C = A.B.C()
+    val abc : A.B.C = A.B.C()
+    return "OK"
+}

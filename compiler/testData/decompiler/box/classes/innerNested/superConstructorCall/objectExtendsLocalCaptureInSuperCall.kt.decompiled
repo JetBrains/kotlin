@@ -1,0 +1,10 @@
+open  class A(val s: String) {
+}
+fun box() : kotlin.String  {
+    class B {
+        val result : kotlin.String = "OK"
+        val f : kotlin.String = object: A (this.result) {
+}.s
+    }
+    return B().f
+}

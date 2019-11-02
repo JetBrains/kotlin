@@ -1,0 +1,11 @@
+class Outer {
+    class Nested {
+        fun box() : kotlin.String  {
+            return "OK"
+        }
+
+    }
+}
+fun box() : kotlin.String  {
+    return Outer.Nested().box()
+}

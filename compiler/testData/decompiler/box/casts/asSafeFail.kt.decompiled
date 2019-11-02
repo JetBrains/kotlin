@@ -1,0 +1,32 @@
+class A {
+}
+class B {
+}
+fun box() : String  {
+    val a : A = A()
+    (a as? B)
+    val tmp0_elvis_lhs : B? = (a as? B)
+if (tmp0_elvis_lhs == null) {
+    "fail"
+}
+else {
+    tmp0_elvis_lhs
+}
+    if ((A() as? B) != null) {
+        return "fail1"
+    }
+    if ((a as? B) != null) {
+        return "fail2"
+    }
+    val tmp1_elvis_lhs : B? = (a as? B)
+    val v : Any = if (tmp1_elvis_lhs == null) {
+    "fail"
+}
+else {
+    tmp1_elvis_lhs
+}
+    if (v != "fail") {
+        return "fail4"
+    }
+    return "OK"
+}

@@ -1,0 +1,16 @@
+interface Base {
+    abstract  fun print()
+}
+class BaseImpl(val x: Int): Base {
+    override fun print() {
+        print(this.x)
+    }
+
+}
+class Derived(val b: Base): Base by b {
+}
+fun box() : String  {
+    val b : BaseImpl = BaseImpl(10)
+    Derived(b).print()
+    return "OK"
+}

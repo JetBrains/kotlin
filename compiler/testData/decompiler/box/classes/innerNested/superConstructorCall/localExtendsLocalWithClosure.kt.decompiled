@@ -1,0 +1,17 @@
+fun box() : String  {
+    val result : String = "OK"
+    open  class Local(val ok: Boolean) {
+        fun result() : String  {
+            return if (this.ok) {
+    result
+}
+else {
+    "Fail"
+}
+        }
+
+    }
+    class Derived: Local (true) {
+    }
+    return Derived().result()
+}

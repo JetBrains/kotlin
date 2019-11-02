@@ -1,8 +1,10 @@
-class MyClass() {
+class MyClass {
     val prop : Int = 42
 }
 typealias MyClassAlias = MyClass
 typealias MyInt = Int
+typealias BodyType = () -> Unit
+typealias BiIntPredicate = (Int, Int) -> Boolean
 fun box() : String  {
     val myClass : MyClass = MyClass()
     val tmp : Int = 42

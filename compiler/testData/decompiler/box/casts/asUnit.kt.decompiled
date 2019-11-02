@@ -1,0 +1,8 @@
+fun box() : String  {
+    return if ((4 as? Unit) != null) {
+    "Fail"
+}
+else {
+    "OK"
+}
+}

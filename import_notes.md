@@ -2,11 +2,10 @@
 
 ## График реализации
 
-30.10 - object, companion object, nested class
-31.10 - inner classes, anonymous inner class by `val x = object {...}` (аргумент метода, к-тора)
-01.11 - with, касты as, as?, typeAlias функциональных типов
-02.11 - делегирование, кастомные геттер/сеттер
-03.11 - Собирать декларации
+## Ссылки
+
+* RenderIrElementVisitor.BoundSymbolReferenceRenderer#renderParentOfReferencedDeclaration
+* 
 
 ## Что импортируется в котлине
 

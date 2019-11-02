@@ -1,0 +1,11 @@
+package Package
+
+class Outer {
+    class Nested {
+        val O : kotlin.String = "O"
+        val K : kotlin.String = "K"
+    }
+}
+fun box() : kotlin.String  {
+    return Package.Outer.Nested().O + Package.Outer.Nested().K
+}

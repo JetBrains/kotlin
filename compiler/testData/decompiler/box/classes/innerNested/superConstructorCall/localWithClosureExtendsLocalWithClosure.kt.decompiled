@@ -1,0 +1,23 @@
+fun box() : String  {
+    val three : Int = 3
+    open  class Local(val one: Int) {
+        open  fun value() : String  {
+            return "${three}${this.one}"
+        }
+
+    }
+    val four : Int = 4
+    class Derived(val two: Int): Local (1) {
+        override fun value() : String  {
+            return super<Local>.value() + "${four}${this.two}"
+        }
+
+    }
+    val result : String = Derived(2).value()
+    return if (result == "3142") {
+    "OK"
+}
+else {
+    "Fail: ${result}"
+}
+}
