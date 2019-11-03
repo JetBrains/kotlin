@@ -104,7 +104,7 @@ public class CopyReferencePopup extends DumbAwareAction {
             java.util.List<PsiElement> elements = CopyReferenceUtil.getElementsToCopy(editor, dataContext);
             String qualifiedName = null;
             if (action instanceof CopyPathProvider) {
-              qualifiedName = ((CopyPathProvider)action).getQualifiedName(getProject(), elements, editor);
+              qualifiedName = ((CopyPathProvider)action).getQualifiedName(getProject(), elements, editor, dataContext);
             }
 
             if (qualifiedName != null) {
