@@ -80,7 +80,7 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   public void init(@Nullable Runnable beforeComponentCreation) {
     // do not measure (activityNamePrefix method not overridden by this class)
     // because there are a lot of modules and no need to measure each one
-    registerComponents(PluginManagerCore.getLoadedPlugins());
+    registerComponents(PluginManagerCore.getLoadedPlugins(), false);
     if (beforeComponentCreation != null) {
       beforeComponentCreation.run();
     }
