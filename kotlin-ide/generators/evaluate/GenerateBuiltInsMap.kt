@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.evaluate
 
+import org.jetbrains.kotlin.backend.common.interpreter.builtins.compileTimeAnnotation
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 val DESTINATION = File("compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/interpreter/builtins/IrBuiltInsMapGenerated.kt")
-val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
 
 fun main() {
     DESTINATION.writeText(generateMap())
