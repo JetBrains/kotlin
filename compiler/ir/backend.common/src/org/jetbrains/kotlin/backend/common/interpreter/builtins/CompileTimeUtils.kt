@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter.builtins
 
+import org.jetbrains.kotlin.name.FqName
+
+val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
+
 data class CompileTimeFunction(val methodName: String, val args: List<String>)
 
 @Suppress("UNCHECKED_CAST")

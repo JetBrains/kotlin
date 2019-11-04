@@ -32,6 +32,7 @@ dependencies {
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
     evaluateApi(project(":compiler:ir.serialization.jvm")) // used to get ir builtins
+    evaluateApi(project(":compiler:ir.backend.common"))
 
     testCompile(builtinsSourceSet.output)
     testCompile(evaluateSourceSet.output)
