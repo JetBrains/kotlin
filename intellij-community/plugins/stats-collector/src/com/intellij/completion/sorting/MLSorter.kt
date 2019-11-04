@@ -18,6 +18,7 @@ import com.intellij.stats.personalization.session.SessionFactorsUtils
 import com.intellij.stats.storage.factors.MutableLookupStorage
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 @Suppress("DEPRECATION")
 class MLSorterFactory : CompletionFinalSorter.Factory {
@@ -181,10 +182,7 @@ class MLSorter : CompletionFinalSorter() {
       this.forEachIndexed { position, element ->
         val before = positionsBefore.getValue(element)
         if (before < reordered || position < reordered) {
-          val diff = position - before
-          if (diff != 0) {
-            element.putUserData(ItemsDiffCustomizingContributor.DIFF_KEY, diff)
-          }
+          element.updateDiffValue(position - before)
         }
       }
     }
@@ -213,6 +211,13 @@ class MLSorter : CompletionFinalSorter() {
     cachedScore[element] = info
 
     return info.mlRank
+  }
+
+  private fun LookupElement.updateDiffValue(newValue: Int) {
+    val diff = getUserData(ItemsDiffCustomizingContributor.DIFF_KEY) ?: AtomicInteger()
+      .apply { putUserData(ItemsDiffCustomizingContributor.DIFF_KEY, this) }
+
+    diff.set(newValue)
   }
 
   /*

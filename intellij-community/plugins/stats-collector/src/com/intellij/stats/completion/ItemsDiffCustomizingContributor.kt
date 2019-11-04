@@ -11,10 +11,12 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.ui.JBColor
 import java.awt.Color
+import java.lang.ref.Reference
+import java.util.concurrent.atomic.AtomicInteger
 
 class ItemsDiffCustomizingContributor : CompletionContributor() {
   companion object {
-    val DIFF_KEY = Key.create<Int>("ItemsDiffCustomizerContributor.DIFF_KEY")
+    val DIFF_KEY = Key.create<AtomicInteger>("ItemsDiffCustomizerContributor.DIFF_KEY")
   }
 
   override fun fillCompletionVariants(parameters: CompletionParameters, result: CompletionResultSet) {
@@ -35,8 +37,8 @@ class ItemsDiffCustomizingContributor : CompletionContributor() {
 
     override fun renderElement(presentation: LookupElementPresentation) {
       super.renderElement(presentation)
-      val diff = getUserData(DIFF_KEY)
-      if (diff == null || !presentation.isReal) return
+      val diff = getUserData(DIFF_KEY)?.get()
+      if (diff == null || diff == 0 || !presentation.isReal) return
       val text = if (diff < 0) " ↑${-diff} " else " ↓$diff "
       val color: Color = if (diff < 0) ML_RANK_DIFF_GREEN_COLOR else JBColor.RED
 
