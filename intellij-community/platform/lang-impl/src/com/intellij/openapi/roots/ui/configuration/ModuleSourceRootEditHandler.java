@@ -27,13 +27,8 @@ public abstract class ModuleSourceRootEditHandler<P extends JpsElement> {
 
   @Nullable
   public static <P extends JpsElement> ModuleSourceRootEditHandler<P> getEditHandler(@NotNull JpsModuleSourceRootType<P> type) {
-    for (ModuleSourceRootEditHandler editor : EP_NAME.getExtensions()) {
-      if (editor.getRootType().equals(type)) {
-        //noinspection unchecked
-        return editor;
-      }
-    }
-    return null;
+    //noinspection unchecked
+    return EP_NAME.getExtensionList().stream().filter(editor -> editor.getRootType().equals(type)).findFirst().orElse(null);
   }
 
   public final JpsModuleSourceRootType<P> getRootType() {
