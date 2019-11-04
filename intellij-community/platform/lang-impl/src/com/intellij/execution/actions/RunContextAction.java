@@ -15,6 +15,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
+import com.intellij.util.ThreeState;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -79,6 +80,12 @@ public class RunContextAction extends BaseRunConfigurationAction {
 
     presentation.setEnabled(b.first);
     presentation.setVisible(b.second);
+  }
+
+  @Override
+  protected void approximatePresentationByPreviousAvailability(AnActionEvent event, ThreeState hadAnythingRunnable) {
+    super.approximatePresentationByPreviousAvailability(event, hadAnythingRunnable);
+    event.getPresentation().setText(myExecutor.getStartActionText() + "...");
   }
 
   private Pair<Boolean, Boolean> isEnabledAndVisible(ConfigurationContext context) {

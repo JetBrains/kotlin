@@ -224,7 +224,7 @@ public abstract class BaseRunConfigurationAction extends ActionGroup {
   }
 
   // we assume that presence of anything runnable in a file changes rarely, so using last recorded state is mostly OK 
-  private void approximatePresentationByPreviousAvailability(AnActionEvent event, ThreeState hadAnythingRunnable) {
+  protected void approximatePresentationByPreviousAvailability(AnActionEvent event, ThreeState hadAnythingRunnable) {
     event.getPresentation().copyFrom(getTemplatePresentation());
     event.getPresentation().setEnabledAndVisible(hadAnythingRunnable == ThreeState.YES);
   }
