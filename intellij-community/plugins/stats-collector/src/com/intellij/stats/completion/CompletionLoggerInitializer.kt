@@ -60,8 +60,7 @@ class CompletionLoggerInitializer(private val actionListener: LookupActionsListe
     val application = ApplicationManager.getApplication()
     if (application.isUnitTestMode || experimentHelper.isExperimentOnCurrentIDE()) return true
 
-    if (!CompletionMLRankingSettings.getInstance().isCompletionLogsSendAllowed ||
-        Registry.`is`("completion.stats.show.ml.ranking.diff"))
+    if (!CompletionMLRankingSettings.getInstance().isCompletionLogsSendAllowed)
       return false
 
     val logSessionChance = LOGGED_SESSIONS_RATIO.getOrDefault(language.displayName.toLowerCase(), 1.0)
