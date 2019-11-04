@@ -30,6 +30,7 @@ public class MyLookupExpression extends Expression {
   protected final String myName;
   protected final LookupElement[] myLookupItems;
   private final String myAdvertisementText;
+  private volatile LookupFocusDegree myLookupFocusDegree = LookupFocusDegree.FOCUSED;
 
   public MyLookupExpression(String name,
                             @Nullable LinkedHashSet<String> names,
@@ -113,6 +114,10 @@ public class MyLookupExpression extends Expression {
   @NotNull
   @Override
   public LookupFocusDegree getLookupFocusDegree() {
-    return LookupFocusDegree.UNFOCUSED;
+    return myLookupFocusDegree;
+  }
+
+  public void setLookupFocusDegree(@NotNull LookupFocusDegree lookupFocusDegree) {
+    myLookupFocusDegree = lookupFocusDegree;
   }
 }
