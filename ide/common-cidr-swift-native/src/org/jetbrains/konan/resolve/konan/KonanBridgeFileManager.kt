@@ -31,18 +31,18 @@ class KonanBridgeFileManager(
     private val myLock = Object()
 
     private var myStamp: Long = -1
-    private var myActualFiles: MutableMap<KonanBridgeTarget, KonanBridgeVirtualFile>? = null
+    private var myActualFiles: MutableMap<KonanTarget, KonanBridgeVirtualFile>? = null
 
     init {
         (psiManager as? PsiManagerImpl)?.addTreeChangePreprocessor(ModificationListener())
     }
 
-    fun forTarget(target: KonanBridgeTarget, name: String): VirtualFile {
+    fun forTarget(target: KonanTarget, name: String): VirtualFile {
         synchronized(myLock) {
             val modificationStamp = modificationCount.get()
 
             val map = if (myActualFiles == null || myStamp < modificationStamp) {
-                val map = ContainerUtil.newHashMap<KonanBridgeTarget, KonanBridgeVirtualFile>()
+                val map = ContainerUtil.newHashMap<KonanTarget, KonanBridgeVirtualFile>()
                 myActualFiles = map
                 myStamp = modificationStamp
                 map

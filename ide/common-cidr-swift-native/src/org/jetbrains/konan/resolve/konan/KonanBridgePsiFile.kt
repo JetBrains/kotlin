@@ -20,7 +20,7 @@ import com.jetbrains.cidr.lang.preprocessor.OCInclusionContextUtil
 import com.jetbrains.cidr.lang.psi.OCConfigurationOwner
 import com.jetbrains.cidr.lang.psi.OCParsedLanguageAndConfiguration
 
-class KonanBridgePsiFile(val target: KonanBridgeTarget, provider: SingleRootFileViewProvider) :
+class KonanBridgePsiFile(val target: KonanTarget, provider: SingleRootFileViewProvider) :
     LightPsiFileBase(provider, OCLanguage.getInstance()), PsiFile, OCConfigurationOwner {
 
     override fun clearCaches() {}

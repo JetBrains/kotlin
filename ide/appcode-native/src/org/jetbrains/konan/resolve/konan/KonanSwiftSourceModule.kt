@@ -42,7 +42,7 @@ class KonanSwiftSourceModule(
 
     override fun getSymbol(): SwiftModuleSymbol? {
         val name = name
-        val file = KonanBridgeVirtualFile(AppCodeKonanBridgeTarget(target), name, project, 0)
+        val file = KonanBridgeVirtualFile(AppCodeKonanTarget(target), name, project, 0)
         val props = SymbolProps(project, file, name, 0, SwiftAttributesInfo.EMPTY, null, null)
         return SwiftSourceModuleSymbol(props, name)
     }
@@ -57,7 +57,7 @@ class KonanSwiftSourceModule(
         val swiftSymbols = SwiftGlobalSymbolsImpl(this)
         val processor = SwiftGlobalSymbolsImpl.SymbolProcessor(swiftSymbols)
 
-        val file = KonanBridgeVirtualFile(AppCodeKonanBridgeTarget(target), name, project, 0)
+        val file = KonanBridgeVirtualFile(AppCodeKonanTarget(target), name, project, 0)
         val psiManager = PsiManager.getInstance(project)
         KtFrameworkTranslator(project).translateModule(file).forEach { symbol ->
             when (symbol) {

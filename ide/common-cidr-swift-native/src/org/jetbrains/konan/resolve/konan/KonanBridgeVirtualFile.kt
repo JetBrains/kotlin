@@ -14,7 +14,7 @@ import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.testFramework.LightVirtualFile
 
 class KonanBridgeVirtualFile(
-    val target: KonanBridgeTarget,
+    val target: KonanTarget,
     name: String,
     val project: Project,
     modificationStamp: Long

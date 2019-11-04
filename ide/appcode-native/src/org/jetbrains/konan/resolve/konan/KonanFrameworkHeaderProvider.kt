@@ -49,7 +49,7 @@ class KonanFrameworkHeaderProvider : CustomHeaderProvider() {
         if (!virtualFile.isValid || virtualFile !is KonanBridgeVirtualFile) return null
 
         val target = virtualFile.target
-        if (target !is AppCodeKonanBridgeTarget) return null
+        if (target !is AppCodeKonanTarget) return null
 
         return SerializationHelper.provideSerializationPath(virtualFile, target.target)
     }
@@ -74,12 +74,12 @@ class KonanFrameworkHeaderProvider : CustomHeaderProvider() {
             .flatMap { it.getTargets<PBXTarget>(null).asSequence() }
             .find { it.name == frameworkName }
 
-        return target?.let { KonanBridgeFileManager.getInstance(project).forTarget(AppCodeKonanBridgeTarget(target), adjustedName) }
+        return target?.let { KonanBridgeFileManager.getInstance(project).forTarget(AppCodeKonanTarget(target), adjustedName) }
     }
 
     private object SerializationHelper : CustomTargetHeaderSerializationHelper("KONAN_BRIDGE") {
         override fun produceFile(target: PBXTarget, headerName: String, project: Project): VirtualFile =
-            KonanBridgeFileManager.getInstance(project).forTarget(AppCodeKonanBridgeTarget(target), headerName)
+            KonanBridgeFileManager.getInstance(project).forTarget(AppCodeKonanTarget(target), headerName)
 
         override fun checkTarget(target: PBXTarget, headerName: String): Boolean = target.konanHeader == headerName
 

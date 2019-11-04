@@ -3,6 +3,7 @@
   <xi:include href="/META-INF/CocoaCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <!--suppress XmlPathReference -->
   <xi:include href="/META-INF/SwiftLangPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/KonanOCSwift.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <id>org.jetbrains.kotlin.mobile.plugin</id>
   <name>Mobile for CLion</name>
@@ -73,6 +74,7 @@
 
   <extensions defaultExtensionNs="cidr.lang">
     <moduleMapManagerRequestor implementation="com.jetbrains.cidr.apple.gradle.GradleAppleModuleMapManagerRequestor"/>
+    <customHeaderProvider implementation="org.jetbrains.konan.bridging.MobileKonanFrameworkHeaderProvider"/>
     <!-- swift -->
     <swiftSourceModuleProvider implementation="com.jetbrains.swift.codeinsight.resolve.MobileSwiftSourceModuleProvider"/>
     <customHeaderProvider implementation="com.jetbrains.swift.bridging.MobileSwiftBridgeHeaderProvider"/>

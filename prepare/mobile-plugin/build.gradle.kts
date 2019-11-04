@@ -1,9 +1,11 @@
-
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import org.gradle.jvm.tasks.Jar
 import java.net.URL
 
 plugins {
     kotlin("jvm")
+    id("com.github.jk1.tcdeps") version "1.2"
 }
 
 val cidrPluginTools: Map<String, Any> by rootProject.extensions
@@ -31,6 +33,9 @@ val cidrPlugin: Configuration by configurations.creating
 repositories {
     maven("https://maven.google.com")
     maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
+    teamcityServer {
+        setUrl("https://buildserver.labs.intellij.net")
+    }
 }
 
 dependencies {
@@ -44,6 +49,8 @@ dependencies {
     }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
     runtime("com.jetbrains.intellij.swift:swift:$clionVersion") { isTransitive = false }
+    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:1.3.70-dev-13308:backend.native.jar"))
+    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:1.3.70-dev-13308:konan.serializer.jar")) // required for backend.native
 }
 
 val preparePluginXmlTask: Task = preparePluginXml(
