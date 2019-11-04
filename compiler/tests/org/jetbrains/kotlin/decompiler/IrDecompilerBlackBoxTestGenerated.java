@@ -39,6 +39,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         runTest("compiler/testData/decompiler/box/javaEnum.kt");
     }
 
+    @TestMetadata("valNotValInCtorArgs.kt")
+    public void testValNotValInCtorArgs() throws Exception {
+        runTest("compiler/testData/decompiler/box/valNotValInCtorArgs.kt");
+    }
+
     @TestMetadata("compiler/testData/decompiler/box/casts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -76,16 +81,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/casts/asSafeForConstants.kt");
         }
 
-        @TestMetadata("asSafeForConstants.decompiled.kt")
-        public void testAsSafeForConstants_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/asSafeForConstants.decompiled.kt");
-        }
-
-        @TestMetadata("asSafe.decompiled.kt")
-        public void testAsSafe_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/asSafe.decompiled.kt");
-        }
-
         @TestMetadata("asThrowsNpe_1_4.kt")
         public void testAsThrowsNpe_1_4() throws Exception {
             runTest("compiler/testData/decompiler/box/casts/asThrowsNpe_1_4.kt");
@@ -99,11 +94,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         @TestMetadata("asWithGeneric.kt")
         public void testAsWithGeneric() throws Exception {
             runTest("compiler/testData/decompiler/box/casts/asWithGeneric.kt");
-        }
-
-        @TestMetadata("as.decompiled.kt")
-        public void testAs_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/as.decompiled.kt");
         }
 
         @TestMetadata("castGenericNull.kt")
@@ -121,16 +111,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/casts/intersectionTypeMultipleBoundsImplicitReceiver.kt");
         }
 
-        @TestMetadata("intersectionTypeMultipleBoundsImplicitReceiver.decompiled.kt")
-        public void testIntersectionTypeMultipleBoundsImplicitReceiver_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/intersectionTypeMultipleBoundsImplicitReceiver.decompiled.kt");
-        }
-
-        @TestMetadata("intersectionTypeMultipleBounds.decompiled.kt")
-        public void testIntersectionTypeMultipleBounds_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/intersectionTypeMultipleBounds.decompiled.kt");
-        }
-
         @TestMetadata("intersectionTypeSmartcast.kt")
         public void testIntersectionTypeSmartcast() throws Exception {
             runTest("compiler/testData/decompiler/box/casts/intersectionTypeSmartcast.kt");
@@ -141,19 +121,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/casts/intersectionTypeWithMultipleBoundsAsReceiver.kt");
         }
 
-        @TestMetadata("intersectionTypeWithMultipleBoundsAsReceiver.decompiled.kt")
-        public void testIntersectionTypeWithMultipleBoundsAsReceiver_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/intersectionTypeWithMultipleBoundsAsReceiver.decompiled.kt");
-        }
-
         @TestMetadata("intersectionTypeWithoutGenericsAsReceiver.kt")
         public void testIntersectionTypeWithoutGenericsAsReceiver() throws Exception {
             runTest("compiler/testData/decompiler/box/casts/intersectionTypeWithoutGenericsAsReceiver.kt");
-        }
-
-        @TestMetadata("intersectionTypeWithoutGenericsAsReceiver.decompiled.kt")
-        public void testIntersectionTypeWithoutGenericsAsReceiver_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/intersectionTypeWithoutGenericsAsReceiver.decompiled.kt");
         }
 
         @TestMetadata("is.kt")
@@ -164,16 +134,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         @TestMetadata("isNullablePrimitive.kt")
         public void testIsNullablePrimitive() throws Exception {
             runTest("compiler/testData/decompiler/box/casts/isNullablePrimitive.kt");
-        }
-
-        @TestMetadata("isNullablePrimitive.decompiled.kt")
-        public void testIsNullablePrimitive_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/isNullablePrimitive.decompiled.kt");
-        }
-
-        @TestMetadata("is.decompiled.kt")
-        public void testIs_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/is.decompiled.kt");
         }
 
         @TestMetadata("kt22714.kt")
@@ -191,11 +151,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/casts/notIs.kt");
         }
 
-        @TestMetadata("notIs.decompiled.kt")
-        public void testNotIs_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/notIs.decompiled.kt");
-        }
-
         @TestMetadata("unitAsAny.kt")
         public void testUnitAsAny() throws Exception {
             runTest("compiler/testData/decompiler/box/casts/unitAsAny.kt");
@@ -204,11 +159,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         @TestMetadata("unitAsInt.kt")
         public void testUnitAsInt() throws Exception {
             runTest("compiler/testData/decompiler/box/casts/unitAsInt.kt");
-        }
-
-        @TestMetadata("unitAsInt.decompiled.kt")
-        public void testUnitAsInt_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/casts/unitAsInt.decompiled.kt");
         }
 
         @TestMetadata("unitAsSafeAny.kt")
@@ -268,11 +218,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 runTest("compiler/testData/decompiler/box/casts/functions/reifiedAsFunKSmall.kt");
             }
 
-            @TestMetadata("reifiedAsFunKSmall.decompiled.kt")
-            public void testReifiedAsFunKSmall_decompiled() throws Exception {
-                runTest("compiler/testData/decompiler/box/casts/functions/reifiedAsFunKSmall.decompiled.kt");
-            }
-
             @TestMetadata("reifiedIsFunKBig.kt")
             public void testReifiedIsFunKBig() throws Exception {
                 runTest("compiler/testData/decompiler/box/casts/functions/reifiedIsFunKBig.kt");
@@ -288,19 +233,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 runTest("compiler/testData/decompiler/box/casts/functions/reifiedSafeAsFunKBig.kt");
             }
 
-            @TestMetadata("reifiedSafeAsFunKBig.decompiled.kt")
-            public void testReifiedSafeAsFunKBig_decompiled() throws Exception {
-                runTest("compiler/testData/decompiler/box/casts/functions/reifiedSafeAsFunKBig.decompiled.kt");
-            }
-
             @TestMetadata("reifiedSafeAsFunKSmall.kt")
             public void testReifiedSafeAsFunKSmall() throws Exception {
                 runTest("compiler/testData/decompiler/box/casts/functions/reifiedSafeAsFunKSmall.kt");
-            }
-
-            @TestMetadata("reifiedSafeAsFunKSmall.decompiled.kt")
-            public void testReifiedSafeAsFunKSmall_decompiled() throws Exception {
-                runTest("compiler/testData/decompiler/box/casts/functions/reifiedSafeAsFunKSmall.decompiled.kt");
             }
 
             @TestMetadata("safeAsFunKBig.kt")
@@ -336,11 +271,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/javaBox.kt");
             }
 
-            @TestMetadata("javaBox.decompiled.kt")
-            public void testJavaBox_decompiled() throws Exception {
-                runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/javaBox.decompiled.kt");
-            }
-
             @TestMetadata("labeledExpressionCast.kt")
             public void testLabeledExpressionCast() throws Exception {
                 runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/labeledExpressionCast.kt");
@@ -351,19 +281,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/parenthesizedExpressionCast.kt");
             }
 
-            @TestMetadata("parenthesizedExpressionCast.decompiled.kt")
-            public void testParenthesizedExpressionCast_decompiled() throws Exception {
-                runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/parenthesizedExpressionCast.decompiled.kt");
-            }
-
             @TestMetadata("superConstructor.kt")
             public void testSuperConstructor() throws Exception {
                 runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/superConstructor.kt");
-            }
-
-            @TestMetadata("superConstructor.decompiled.kt")
-            public void testSuperConstructor_decompiled() throws Exception {
-                runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/superConstructor.decompiled.kt");
             }
 
             @TestMetadata("unaryExpressionCast.kt")
@@ -371,19 +291,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/unaryExpressionCast.kt");
             }
 
-            @TestMetadata("unaryExpressionCast.decompiled.kt")
-            public void testUnaryExpressionCast_decompiled() throws Exception {
-                runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/unaryExpressionCast.decompiled.kt");
-            }
-
             @TestMetadata("vararg.kt")
             public void testVararg() throws Exception {
                 runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/vararg.kt");
-            }
-
-            @TestMetadata("vararg.decompiled.kt")
-            public void testVararg_decompiled() throws Exception {
-                runTest("compiler/testData/decompiler/box/casts/literalExpressionAsGenericArgument/vararg.decompiled.kt");
             }
         }
 
@@ -730,9 +640,19 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/deepInnerHierarchy.kt");
                 }
 
+                @TestMetadata("deepInnerHierarchy.decompiled.kt")
+                public void testDeepInnerHierarchy_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/deepInnerHierarchy.decompiled.kt");
+                }
+
                 @TestMetadata("deepLocalHierarchy.kt")
                 public void testDeepLocalHierarchy() throws Exception {
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/deepLocalHierarchy.kt");
+                }
+
+                @TestMetadata("deepLocalHierarchy.decompiled.kt")
+                public void testDeepLocalHierarchy_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/deepLocalHierarchy.decompiled.kt");
                 }
 
                 @TestMetadata("innerExtendsInnerViaSecondaryConstuctor.kt")
@@ -740,9 +660,19 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/innerExtendsInnerViaSecondaryConstuctor.kt");
                 }
 
+                @TestMetadata("innerExtendsInnerViaSecondaryConstuctor.decompiled.kt")
+                public void testInnerExtendsInnerViaSecondaryConstuctor_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/innerExtendsInnerViaSecondaryConstuctor.decompiled.kt");
+                }
+
                 @TestMetadata("innerExtendsInnerWithProperOuterCapture.kt")
                 public void testInnerExtendsInnerWithProperOuterCapture() throws Exception {
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/innerExtendsInnerWithProperOuterCapture.kt");
+                }
+
+                @TestMetadata("innerExtendsInnerWithProperOuterCapture.decompiled.kt")
+                public void testInnerExtendsInnerWithProperOuterCapture_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/innerExtendsInnerWithProperOuterCapture.decompiled.kt");
                 }
 
                 @TestMetadata("innerExtendsOuter.kt")
@@ -750,9 +680,19 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/innerExtendsOuter.kt");
                 }
 
+                @TestMetadata("innerExtendsOuter.decompiled.kt")
+                public void testInnerExtendsOuter_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/innerExtendsOuter.decompiled.kt");
+                }
+
                 @TestMetadata("kt11833_1.kt")
                 public void testKt11833_1() throws Exception {
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/kt11833_1.kt");
+                }
+
+                @TestMetadata("kt11833_1.decompiled.kt")
+                public void testKt11833_1_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/kt11833_1.decompiled.kt");
                 }
 
                 @TestMetadata("kt11833_2.kt")
@@ -760,9 +700,19 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/kt11833_2.kt");
                 }
 
+                @TestMetadata("kt11833_2.decompiled.kt")
+                public void testKt11833_2_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/kt11833_2.decompiled.kt");
+                }
+
                 @TestMetadata("localExtendsInner.kt")
                 public void testLocalExtendsInner() throws Exception {
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/localExtendsInner.kt");
+                }
+
+                @TestMetadata("localExtendsInner.decompiled.kt")
+                public void testLocalExtendsInner_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/localExtendsInner.decompiled.kt");
                 }
 
                 @TestMetadata("localExtendsLocalWithClosure.kt")
@@ -770,9 +720,19 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/localExtendsLocalWithClosure.kt");
                 }
 
+                @TestMetadata("localExtendsLocalWithClosure.decompiled.kt")
+                public void testLocalExtendsLocalWithClosure_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/localExtendsLocalWithClosure.decompiled.kt");
+                }
+
                 @TestMetadata("localWithClosureExtendsLocalWithClosure.kt")
                 public void testLocalWithClosureExtendsLocalWithClosure() throws Exception {
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/localWithClosureExtendsLocalWithClosure.kt");
+                }
+
+                @TestMetadata("localWithClosureExtendsLocalWithClosure.decompiled.kt")
+                public void testLocalWithClosureExtendsLocalWithClosure_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/localWithClosureExtendsLocalWithClosure.decompiled.kt");
                 }
 
                 @TestMetadata("objectExtendsClassDefaultArgument.kt")
@@ -780,9 +740,19 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsClassDefaultArgument.kt");
                 }
 
+                @TestMetadata("objectExtendsClassDefaultArgument.decompiled.kt")
+                public void testObjectExtendsClassDefaultArgument_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsClassDefaultArgument.decompiled.kt");
+                }
+
                 @TestMetadata("objectExtendsClassVararg.kt")
                 public void testObjectExtendsClassVararg() throws Exception {
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsClassVararg.kt");
+                }
+
+                @TestMetadata("objectExtendsClassVararg.decompiled.kt")
+                public void testObjectExtendsClassVararg_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsClassVararg.decompiled.kt");
                 }
 
                 @TestMetadata("objectExtendsInner.kt")
@@ -795,9 +765,19 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsInnerDefaultArgument.kt");
                 }
 
+                @TestMetadata("objectExtendsInnerDefaultArgument.decompiled.kt")
+                public void testObjectExtendsInnerDefaultArgument_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsInnerDefaultArgument.decompiled.kt");
+                }
+
                 @TestMetadata("objectExtendsInnerOfLocalVarargAndDefault.kt")
                 public void testObjectExtendsInnerOfLocalVarargAndDefault() throws Exception {
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsInnerOfLocalVarargAndDefault.kt");
+                }
+
+                @TestMetadata("objectExtendsInnerOfLocalVarargAndDefault.decompiled.kt")
+                public void testObjectExtendsInnerOfLocalVarargAndDefault_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsInnerOfLocalVarargAndDefault.decompiled.kt");
                 }
 
                 @TestMetadata("objectExtendsInnerOfLocalWithCapture.kt")
@@ -805,9 +785,24 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsInnerOfLocalWithCapture.kt");
                 }
 
+                @TestMetadata("objectExtendsInnerOfLocalWithCapture.decompiled.kt")
+                public void testObjectExtendsInnerOfLocalWithCapture_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsInnerOfLocalWithCapture.decompiled.kt");
+                }
+
+                @TestMetadata("objectExtendsInner.decompiled.kt")
+                public void testObjectExtendsInner_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsInner.decompiled.kt");
+                }
+
                 @TestMetadata("objectExtendsLocalCaptureInSuperCall.kt")
                 public void testObjectExtendsLocalCaptureInSuperCall() throws Exception {
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsLocalCaptureInSuperCall.kt");
+                }
+
+                @TestMetadata("objectExtendsLocalCaptureInSuperCall.decompiled.kt")
+                public void testObjectExtendsLocalCaptureInSuperCall_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsLocalCaptureInSuperCall.decompiled.kt");
                 }
 
                 @TestMetadata("objectExtendsLocalWithClosure.kt")
@@ -815,9 +810,19 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsLocalWithClosure.kt");
                 }
 
+                @TestMetadata("objectExtendsLocalWithClosure.decompiled.kt")
+                public void testObjectExtendsLocalWithClosure_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsLocalWithClosure.decompiled.kt");
+                }
+
                 @TestMetadata("objectExtendsLocal_kt16858.kt")
                 public void testObjectExtendsLocal_kt16858() throws Exception {
                     runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsLocal_kt16858.kt");
+                }
+
+                @TestMetadata("objectExtendsLocal_kt16858.decompiled.kt")
+                public void testObjectExtendsLocal_kt16858_decompiled() throws Exception {
+                    runTest("compiler/testData/decompiler/box/classes/innerNested/superConstructorCall/objectExtendsLocal_kt16858.decompiled.kt");
                 }
 
                 @TestMetadata("objectOuterDiffersFromInnerOuter.kt")
@@ -859,93 +864,8 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
-        @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
-        public void testAccessTopLevelDelegatedPropertyInClinit() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/accessTopLevelDelegatedPropertyInClinit.kt");
-        }
-
         public void testAllFilesPresentInDelegatedProperty() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("capturePropertyInClosure.kt")
-        public void testCapturePropertyInClosure() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/capturePropertyInClosure.kt");
-        }
-
-        @TestMetadata("castGetReturnType.kt")
-        public void testCastGetReturnType() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/castGetReturnType.kt");
-        }
-
-        @TestMetadata("castSetParameter.kt")
-        public void testCastSetParameter() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/castSetParameter.kt");
-        }
-
-        @TestMetadata("delegateAsInnerClass.kt")
-        public void testDelegateAsInnerClass() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/delegateAsInnerClass.kt");
-        }
-
-        @TestMetadata("delegateByOtherProperty.kt")
-        public void testDelegateByOtherProperty() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/delegateByOtherProperty.kt");
-        }
-
-        @TestMetadata("delegateByTopLevelFun.kt")
-        public void testDelegateByTopLevelFun() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/delegateByTopLevelFun.kt");
-        }
-
-        @TestMetadata("delegateByTopLevelProperty.kt")
-        public void testDelegateByTopLevelProperty() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/delegateByTopLevelProperty.kt");
-        }
-
-        @TestMetadata("delegateForExtProperty.kt")
-        public void testDelegateForExtProperty() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/delegateForExtProperty.kt");
-        }
-
-        @TestMetadata("delegateForExtPropertyInClass.kt")
-        public void testDelegateForExtPropertyInClass() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/delegateForExtPropertyInClass.kt");
-        }
-
-        @TestMetadata("delegateWithPrivateSet.kt")
-        public void testDelegateWithPrivateSet() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/delegateWithPrivateSet.kt");
-        }
-
-        @TestMetadata("extensionDelegatesWithSameNames.kt")
-        public void testExtensionDelegatesWithSameNames() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/extensionDelegatesWithSameNames.kt");
-        }
-
-        @TestMetadata("extensionPropertyAndExtensionGetValue.kt")
-        public void testExtensionPropertyAndExtensionGetValue() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/extensionPropertyAndExtensionGetValue.kt");
-        }
-
-        @TestMetadata("genericDelegate.kt")
-        public void testGenericDelegate() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/genericDelegate.kt");
-        }
-
-        @TestMetadata("genericDelegateUncheckedCast1.kt")
-        public void testGenericDelegateUncheckedCast1() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/genericDelegateUncheckedCast1.kt");
-        }
-
-        @TestMetadata("genericDelegateUncheckedCast2.kt")
-        public void testGenericDelegateUncheckedCast2() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/genericDelegateUncheckedCast2.kt");
-        }
-
-        @TestMetadata("genericSetValueViaSyntheticAccessor.kt")
-        public void testGenericSetValueViaSyntheticAccessor() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/genericSetValueViaSyntheticAccessor.kt");
         }
 
         @TestMetadata("getAsExtensionFun.kt")
@@ -953,89 +873,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/delegatedProperty/getAsExtensionFun.kt");
         }
 
-        @TestMetadata("getAsExtensionFunInClass.kt")
-        public void testGetAsExtensionFunInClass() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/getAsExtensionFunInClass.kt");
-        }
-
-        @TestMetadata("getDelegateWithoutReflection.kt")
-        public void testGetDelegateWithoutReflection() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/getDelegateWithoutReflection.kt");
-        }
-
         @TestMetadata("inClassVal.kt")
         public void testInClassVal() throws Exception {
             runTest("compiler/testData/decompiler/box/delegatedProperty/inClassVal.kt");
-        }
-
-        @TestMetadata("inClassVar.kt")
-        public void testInClassVar() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/inClassVar.kt");
-        }
-
-        @TestMetadata("inTrait.kt")
-        public void testInTrait() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/inTrait.kt");
-        }
-
-        @TestMetadata("inferredPropertyType.kt")
-        public void testInferredPropertyType() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/inferredPropertyType.kt");
-        }
-
-        @TestMetadata("insideInlinedObjectMultiModule.kt")
-        public void testInsideInlinedObjectMultiModule() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/insideInlinedObjectMultiModule.kt");
-        }
-
-        @TestMetadata("kt4138.kt")
-        public void testKt4138() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/kt4138.kt");
-        }
-
-        @TestMetadata("kt6722.kt")
-        public void testKt6722() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/kt6722.kt");
-        }
-
-        @TestMetadata("kt9712.kt")
-        public void testKt9712() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/kt9712.kt");
-        }
-
-        @TestMetadata("privateSetterKPropertyIsNotMutable.kt")
-        public void testPrivateSetterKPropertyIsNotMutable() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/privateSetterKPropertyIsNotMutable.kt");
-        }
-
-        @TestMetadata("privateVar.kt")
-        public void testPrivateVar() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/privateVar.kt");
-        }
-
-        @TestMetadata("propertyMetadataShouldBeCached.kt")
-        public void testPropertyMetadataShouldBeCached() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/propertyMetadataShouldBeCached.kt");
-        }
-
-        @TestMetadata("protectedVarWithPrivateSet.kt")
-        public void testProtectedVarWithPrivateSet() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/protectedVarWithPrivateSet.kt");
-        }
-
-        @TestMetadata("setAsExtensionFun.kt")
-        public void testSetAsExtensionFun() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/setAsExtensionFun.kt");
-        }
-
-        @TestMetadata("setAsExtensionFunInClass.kt")
-        public void testSetAsExtensionFunInClass() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/setAsExtensionFunInClass.kt");
-        }
-
-        @TestMetadata("stackOverflowOnCallFromGetValue.kt")
-        public void testStackOverflowOnCallFromGetValue() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/stackOverflowOnCallFromGetValue.kt");
         }
 
         @TestMetadata("topLevelVal.kt")
@@ -1043,225 +883,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/delegatedProperty/topLevelVal.kt");
         }
 
-        @TestMetadata("topLevelVar.kt")
-        public void testTopLevelVar() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/topLevelVar.kt");
-        }
-
-        @TestMetadata("twoPropByOneDelegete.kt")
-        public void testTwoPropByOneDelegete() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/twoPropByOneDelegete.kt");
-        }
-
-        @TestMetadata("useKPropertyLater.kt")
-        public void testUseKPropertyLater() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/useKPropertyLater.kt");
-        }
-
-        @TestMetadata("useReflectionOnKProperty.kt")
-        public void testUseReflectionOnKProperty() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/useReflectionOnKProperty.kt");
-        }
-
         @TestMetadata("valInInnerClass.kt")
         public void testValInInnerClass() throws Exception {
             runTest("compiler/testData/decompiler/box/delegatedProperty/valInInnerClass.kt");
-        }
-
-        @TestMetadata("varInInnerClass.kt")
-        public void testVarInInnerClass() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegatedProperty/varInInnerClass.kt");
-        }
-
-        @TestMetadata("compiler/testData/decompiler/box/delegatedProperty/local")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Local extends AbstractIrDecompilerBlackBoxTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInLocal() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/delegatedProperty/local"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("capturedLocalVal.kt")
-            public void testCapturedLocalVal() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/capturedLocalVal.kt");
-            }
-
-            @TestMetadata("capturedLocalValNoInline.kt")
-            public void testCapturedLocalValNoInline() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/capturedLocalValNoInline.kt");
-            }
-
-            @TestMetadata("capturedLocalVar.kt")
-            public void testCapturedLocalVar() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/capturedLocalVar.kt");
-            }
-
-            @TestMetadata("capturedLocalVarNoInline.kt")
-            public void testCapturedLocalVarNoInline() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/capturedLocalVarNoInline.kt");
-            }
-
-            @TestMetadata("inlineGetValue.kt")
-            public void testInlineGetValue() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/inlineGetValue.kt");
-            }
-
-            @TestMetadata("inlineOperators.kt")
-            public void testInlineOperators() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/inlineOperators.kt");
-            }
-
-            @TestMetadata("kt12891.kt")
-            public void testKt12891() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/kt12891.kt");
-            }
-
-            @TestMetadata("kt13557.kt")
-            public void testKt13557() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/kt13557.kt");
-            }
-
-            @TestMetadata("kt16864.kt")
-            public void testKt16864() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/kt16864.kt");
-            }
-
-            @TestMetadata("kt19690.kt")
-            public void testKt19690() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/kt19690.kt");
-            }
-
-            @TestMetadata("kt21085.kt")
-            public void testKt21085() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/kt21085.kt");
-            }
-
-            @TestMetadata("kt23117.kt")
-            public void testKt23117() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/kt23117.kt");
-            }
-
-            @TestMetadata("localVal.kt")
-            public void testLocalVal() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/localVal.kt");
-            }
-
-            @TestMetadata("localValNoExplicitType.kt")
-            public void testLocalValNoExplicitType() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/localValNoExplicitType.kt");
-            }
-
-            @TestMetadata("localVar.kt")
-            public void testLocalVar() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/localVar.kt");
-            }
-
-            @TestMetadata("localVarNoExplicitType.kt")
-            public void testLocalVarNoExplicitType() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/local/localVarNoExplicitType.kt");
-            }
-        }
-
-        @TestMetadata("compiler/testData/decompiler/box/delegatedProperty/provideDelegate")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class ProvideDelegate extends AbstractIrDecompilerBlackBoxTest {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInProvideDelegate() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/delegatedProperty/provideDelegate"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("differentReceivers.kt")
-            public void testDifferentReceivers() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/differentReceivers.kt");
-            }
-
-            @TestMetadata("evaluationOrder.kt")
-            public void testEvaluationOrder() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/evaluationOrder.kt");
-            }
-
-            @TestMetadata("evaluationOrderVar.kt")
-            public void testEvaluationOrderVar() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/evaluationOrderVar.kt");
-            }
-
-            @TestMetadata("extensionDelegated.kt")
-            public void testExtensionDelegated() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/extensionDelegated.kt");
-            }
-
-            @TestMetadata("generic.kt")
-            public void testGeneric() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/generic.kt");
-            }
-
-            @TestMetadata("hostCheck.kt")
-            public void testHostCheck() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/hostCheck.kt");
-            }
-
-            @TestMetadata("inClass.kt")
-            public void testInClass() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/inClass.kt");
-            }
-
-            @TestMetadata("inlineProvideDelegate.kt")
-            public void testInlineProvideDelegate() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/inlineProvideDelegate.kt");
-            }
-
-            @TestMetadata("jvmStaticInObject.kt")
-            public void testJvmStaticInObject() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/jvmStaticInObject.kt");
-            }
-
-            @TestMetadata("kt15437.kt")
-            public void testKt15437() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/kt15437.kt");
-            }
-
-            @TestMetadata("kt16441.kt")
-            public void testKt16441() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/kt16441.kt");
-            }
-
-            @TestMetadata("kt18902.kt")
-            public void testKt18902() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/kt18902.kt");
-            }
-
-            @TestMetadata("local.kt")
-            public void testLocal() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/local.kt");
-            }
-
-            @TestMetadata("localCaptured.kt")
-            public void testLocalCaptured() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/localCaptured.kt");
-            }
-
-            @TestMetadata("localDifferentReceivers.kt")
-            public void testLocalDifferentReceivers() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/localDifferentReceivers.kt");
-            }
-
-            @TestMetadata("memberExtension.kt")
-            public void testMemberExtension() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/memberExtension.kt");
-            }
-
-            @TestMetadata("propertyMetadata.kt")
-            public void testPropertyMetadata() throws Exception {
-                runTest("compiler/testData/decompiler/box/delegatedProperty/provideDelegate/propertyMetadata.kt");
-            }
         }
     }
 
@@ -1282,39 +906,9 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/delegation/byMiddleInterface.kt");
         }
 
-        @TestMetadata("byMiddleInterface.decompiled.kt")
-        public void testByMiddleInterface_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/byMiddleInterface.decompiled.kt");
-        }
-
-        @TestMetadata("defaultOverride.kt")
-        public void testDefaultOverride() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/defaultOverride.kt");
-        }
-
-        @TestMetadata("defaultOverride.decompiled.kt")
-        public void testDefaultOverride_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/defaultOverride.decompiled.kt");
-        }
-
-        @TestMetadata("delegationWithPrivateConstructor.kt")
-        public void testDelegationWithPrivateConstructor() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/delegationWithPrivateConstructor.kt");
-        }
-
-        @TestMetadata("delegationWithPrivateConstructor.decompiled.kt")
-        public void testDelegationWithPrivateConstructor_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/delegationWithPrivateConstructor.decompiled.kt");
-        }
-
         @TestMetadata("diamond.kt")
         public void testDiamond() throws Exception {
             runTest("compiler/testData/decompiler/box/delegation/diamond.kt");
-        }
-
-        @TestMetadata("diamond.decompiled.kt")
-        public void testDiamond_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/diamond.decompiled.kt");
         }
 
         @TestMetadata("fromReference.kt")
@@ -1322,54 +916,14 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             runTest("compiler/testData/decompiler/box/delegation/fromReference.kt");
         }
 
-        @TestMetadata("hiddenSuperOverrideIn1.0.kt")
-        public void testHiddenSuperOverrideIn1_0() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/hiddenSuperOverrideIn1.0.kt");
-        }
-
-        @TestMetadata("hiddenSuperOverrideIn1.0.decompiled.kt")
-        public void testHiddenSuperOverrideIn1_0_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/hiddenSuperOverrideIn1.0.decompiled.kt");
-        }
-
         @TestMetadata("inClassDeclaration.kt")
         public void testInClassDeclaration() throws Exception {
             runTest("compiler/testData/decompiler/box/delegation/inClassDeclaration.kt");
         }
 
-        @TestMetadata("kt8154.kt")
-        public void testKt8154() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/kt8154.kt");
-        }
-
-        @TestMetadata("kt8154.decompiled.kt")
-        public void testKt8154_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/kt8154.decompiled.kt");
-        }
-
-        @TestMetadata("mixed.kt")
-        public void testMixed() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/mixed.kt");
-        }
-
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/decompiler/box/delegation/simple.kt");
-        }
-
-        @TestMetadata("simple.decompiled.kt")
-        public void testSimple_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/simple.decompiled.kt");
-        }
-
-        @TestMetadata("withDefaultParameters.kt")
-        public void testWithDefaultParameters() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/withDefaultParameters.kt");
-        }
-
-        @TestMetadata("withDefaultParameters.decompiled.kt")
-        public void testWithDefaultParameters_decompiled() throws Exception {
-            runTest("compiler/testData/decompiler/box/delegation/withDefaultParameters.decompiled.kt");
         }
     }
 

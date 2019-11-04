@@ -1,0 +1,18 @@
+import kotlin.reflect.KProperty
+class Delegate {
+}
+operator fun Delegate.getValue(t: Any?, p: KProperty<*>) : Int  {
+    return 1
+}
+
+class A {
+    val prop by Delegate()
+}
+fun box() : String  {
+    return if (A().prop == 1) {
+    "OK"
+}
+else {
+    "fail"
+}
+}

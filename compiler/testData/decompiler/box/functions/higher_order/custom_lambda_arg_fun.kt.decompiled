@@ -9,13 +9,13 @@ fun applier(body: (Int, Int) -> Int) : Int  {
 
 fun box() : String  {
     if (applier(::summator) == 42) {
-        throw java.lang.AssertionError()
+        throw AssertionError()
     }
     val t : Int = applier{ x, y  -> y - x }
     if (t == 11) {
         return "OK"
     }
     else {
-        throw java.lang.AssertionError()
+        throw AssertionError()
     }
 }

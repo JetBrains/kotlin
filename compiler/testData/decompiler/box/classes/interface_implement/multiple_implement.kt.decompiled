@@ -4,7 +4,7 @@ interface MyInterface {
 interface AnotherInterface {
     abstract  fun blaBla(bla: Int) : String
 }
-class Implemented(): MyInterface, AnotherInterface {
+class Implemented: MyInterface, AnotherInterface {
     override fun blaBlaBla(bla: Int) : String  {
         return bla.toString()
     }

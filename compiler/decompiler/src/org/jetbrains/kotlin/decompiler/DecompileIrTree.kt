@@ -12,15 +12,13 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.DELEGATED_MEMBER
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.*
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
@@ -117,9 +115,9 @@ class DecompileIrTreeVisitor(
                 }
             }
             else -> {
-                val implStr = declaration.obtainInheritance()
+                val implStr = declaration.obtainInheritanceWithDelegation()
                 if (implStr.isNotEmpty()) {
-                    printer.printWithNoIndent(", $implStr")
+                    printer.printWithNoIndent(": $implStr")
                 }
                 withBracesLn {
                     declaration.declarations
@@ -160,12 +158,12 @@ class DecompileIrTreeVisitor(
         val delegatedMap = mutableMapOf<IrType, IrExpression>()
         declarations.filterIsInstance<IrField>().forEach {
             val delegationFieldInitializer = it.initializer!!.expression
-            delegatedMap.set(delegationFieldInitializer.type, delegationFieldInitializer)
+            delegatedMap[delegationFieldInitializer.type] = delegationFieldInitializer
         }
-        return superTypes.joinToString(", ") {
-            it.obtainTypeDescription() + if (delegatedMap.contains(it))
-                " by ${delegatedMap[it]?.decompile("")}"
-            else EMPTY_TOKEN
+        return superTypes.filterNot { it.isAny() }.joinToString(", ") {
+            val result = it.obtainTypeDescription()
+            val key = delegatedMap.keys.filter { it.isSubtypeOfClass(it.getClass()!!.symbol) }.firstOrNull()
+            result + if (key != null) " by ${delegatedMap[key]?.decompile("")}" else EMPTY_TOKEN
         }
 
     }
@@ -249,17 +247,26 @@ class DecompileIrTreeVisitor(
                         type.obtainTypeDescription()
                     )
                     initializer is IrBlock -> {
-                        val variableDeclarations = (initializer as IrBlock).statements.filterIsInstance<IrVariable>()
-                        variableDeclarations.forEach { it.accept(this@DecompileIrTreeVisitor, data) }
-                        val lastStatement = (initializer as IrBlock).statements.last()
-                        concatenateNonEmptyWithSpace(
-                            obtainVariableFlags(),
-                            name(),
-                            ":",
-                            type.obtainTypeDescription(),
-                            "=",
-                            lastStatement.decompile(data)
-                        )
+                        if ((initializer as IrBlock).origin == OBJECT_LITERAL) {
+                            concatenateNonEmptyWithSpace(
+                                obtainVariableFlags(),
+                                name(),
+                                "=",
+                                initializer?.decompile(data)
+                            )
+                        } else {
+                            val variableDeclarations = (initializer as IrBlock).statements.filterIsInstance<IrVariable>()
+                            variableDeclarations.forEach { it.accept(this@DecompileIrTreeVisitor, data) }
+                            val lastStatement = (initializer as IrBlock).statements.last()
+                            concatenateNonEmptyWithSpace(
+                                obtainVariableFlags(),
+                                name(),
+                                ":",
+                                type.obtainTypeDescription(),
+                                "=",
+                                lastStatement.decompile(data)
+                            )
+                        }
                     }
                     else -> concatenateNonEmptyWithSpace(
                         obtainVariableFlags(),
@@ -282,9 +289,11 @@ class DecompileIrTreeVisitor(
                     result =
                         concatenateNonEmptyWithSpace(
                             result,
-                            backingField!!.name(),
-                            ":",
-                            backingField!!.type.obtainTypeDescription()
+                            declaration.name()
+//                            backingField!!.name()
+                            //TODO заглушил, т.к. для делегированных пропертей информация выводится некорректно (operator getValue)
+//                            ":",
+//                            backingField!!.type.obtainTypeDescription()
                         )
                     if (backingField!!.initializer != null) {
                         if (parent is IrClass && parentAsClass.kind == ClassKind.OBJECT) {
@@ -295,7 +304,10 @@ class DecompileIrTreeVisitor(
                                     backingField!!.initializer!!.decompile(parentAsClass.kind.name)
                                 )
                         } else {
-                            result = concatenateNonEmptyWithSpace(result, "=", backingField!!.initializer!!.decompile(data))
+                            result = concatenateNonEmptyWithSpace(
+                                result,
+                                "by".takeIf { isDelegated } ?: "=",
+                                backingField!!.initializer!!.decompile(data))
                         }
                     }
                 } else {
@@ -307,8 +319,8 @@ class DecompileIrTreeVisitor(
                     )
                 }
                 printer.println(result)
-                getter?.obtainCustomGetter()
-                setter?.obtainCustomSetter()
+//                getter?.obtainCustomGetter()
+//                setter?.obtainCustomSetter()
             }
         }
     }
@@ -484,12 +496,14 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: String) {
-        var result = (expression.dispatchReceiver?.decompile("") ?: EMPTY_TOKEN) + expression.type.obtainTypeDescription()
-        var irConstructor = expression.symbol.owner
-        result += (0 until expression.typeArgumentsCount).mapNotNull {
-            expression.getTypeArgument(it)?.obtainTypeDescription()
-        }
-            .joinToString(", ", "< ", " >").takeIf { expression.typeArgumentsCount > 0 } ?: EMPTY_TOKEN
+        var result = ("${expression.dispatchReceiver?.decompile("")}.".takeIf { expression.dispatchReceiver != null }
+            ?: EMPTY_TOKEN) + expression.type.obtainTypeDescription()
+//        var irConstructor = expression.symbol.owner
+//        result += (0 until expression.typeArgumentsCount).mapNotNull {
+//            expression.getTypeArgument(it)?.obtainTypeDescription()
+//        }
+//            .joinToString(", ")
+//            .takeIf { expression.typeArgumentsCount > 0 } ?: EMPTY_TOKEN
         //TODO добавить проверку наличия defaultValue и именнованных вызовов
         result += (0 until expression.valueArgumentsCount)
             .mapNotNull { expression.getValueArgument(it)?.decompile(data) }
@@ -498,7 +512,8 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitGetField(expression: IrGetField, data: String) {
-        TODO()
+        printer.println("${expression.receiver?.decompile("")}.".takeIf { expression.receiver != null } ?: EMPTY_TOKEN
+        + expression.symbol.owner.name())
     }
 
     override fun visitSetField(expression: IrSetField, data: String) {
@@ -598,6 +613,7 @@ class DecompileIrTreeVisitor(
         if (declaration.fqName != FqName.ROOT) {
             printer.println("package ${declaration.fqName.asString()}\n")
         }
+//        printer.println("import kotlin.reflect.KProperty")
         declaration.acceptChildren(this, data)
     }
 

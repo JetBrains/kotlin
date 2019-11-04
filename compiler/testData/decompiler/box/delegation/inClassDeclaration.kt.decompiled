@@ -1,3 +1,4 @@
+import kotlin.reflect.KProperty
 interface Base {
     abstract  fun getValue() : String
     open  fun test() : String  {

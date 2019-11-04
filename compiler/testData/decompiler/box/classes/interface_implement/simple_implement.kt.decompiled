@@ -1,7 +1,7 @@
 interface MyInterface {
     abstract  fun blaBlaBla(bla: Int) : String
 }
-class Implemented(): MyInterface {
+class Implemented: MyInterface {
     override fun blaBlaBla(bla: Int) : String  {
         var result : String = ""
         val tmp0_iterator : IntIterator = 0.rangeTo(bla).iterator()

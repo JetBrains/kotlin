@@ -1,3 +1,4 @@
+import kotlin.reflect.KProperty
 interface Base {
     abstract  fun getValue() : String
     open  fun test() : String  {
@@ -5,23 +6,20 @@ interface Base {
     }
 
 }
-interface BaseKotlin, Base {
-    override fun getValue() : String  {
-        return "OK"
-    }
-
-    override fun test() : String  {
-        return this.getValue()
-    }
-
+interface BaseKotlin: Base {
 }
-class OK: BaseKotlin {
+class Fail: BaseKotlin {
     override fun getValue() : String  {
-        return "OK"
+        return "Fail"
     }
 
 }
 fun box() : String  {
-    val ok : <no name provided> = <no name provided>()
-    return ok.test()
+    val z = object: BaseKotlin {
+    override fun getValue() : String  {
+        return "OK"
+    }
+
+}
+    return z.test()
 }

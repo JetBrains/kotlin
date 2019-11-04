@@ -1,3 +1,4 @@
+import kotlin.reflect.KProperty
 interface Base {
     abstract  fun getValue() : String
     open  fun test() : String  {
@@ -12,6 +13,11 @@ class Fail: Base {
 
 }
 fun box() : String  {
-    val z : <no name provided> = <no name provided>()
+    val z = object: Base {
+    override fun getValue() : String  {
+        return "OK"
+    }
+
+}
     return z.test()
 }

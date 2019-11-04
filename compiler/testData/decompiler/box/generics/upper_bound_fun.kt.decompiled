@@ -11,7 +11,7 @@ fun <T  : Comparable<T>> max(list: List<T>) : T  {
 }
 
 fun box() : String  {
-    val mx : Int = max(listOf(1, 2, 3, 4))
+    val mx : Int = max<Int>(listOf<Int>(1, 2, 3, 4))
     if (mx == 4) {
         return "OK"
     }

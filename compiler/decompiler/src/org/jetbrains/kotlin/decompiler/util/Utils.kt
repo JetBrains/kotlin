@@ -265,13 +265,22 @@ internal fun IrCall.obtainGetPropertyCall(): String {
 }
 
 internal fun IrConstructor.obtainValueParameterTypes(): String =
-    valueParameters.joinToString(separator = ", ", prefix = "(", postfix = ")") {
+    valueParameters.joinToString(separator = ", ", prefix = "(", postfix = ")") { valueParameter ->
         concatenateNonEmptyWithSpace(
-            it.obtainValueParameterFlags(),
-            "val".takeIf { isPrimary },
-            "${it.name()}:",
-            (it.varargElementType?.toKotlinType() ?: it.type.obtainTypeDescription()).toString(),
-            if (it.hasDefaultValue()) " = ${it.defaultValue!!.decompile("")}" else EMPTY_TOKEN
+            valueParameter.obtainValueParameterFlags(),
+            run {
+                // Если среди пропертей нет с таким именем, то у нас просто x: Int
+                val mappedProp = parentAsClass.declarations.filterIsInstance<IrProperty>()
+                    .filter { irProperty -> irProperty.name() == valueParameter.name() }.firstOrNull()
+                return@run when {
+                    mappedProp == null -> EMPTY_TOKEN
+                    mappedProp.isVar -> "var"
+                    else -> "val"
+                }
+            },
+            "${valueParameter.name()}:",
+            (valueParameter.varargElementType?.toKotlinType() ?: valueParameter.type.obtainTypeDescription()).toString(),
+            if (valueParameter.hasDefaultValue()) " = ${valueParameter.defaultValue!!.decompile("")}" else EMPTY_TOKEN
         )
     }.takeIf { valueParameters.size > 0 || parentAsClass.constructors.count() > 1 } ?: EMPTY_TOKEN
 
@@ -376,7 +385,6 @@ internal fun IrProperty.obtainPropertyFlags() =
         "external".takeIf { isExternal },
         "const".takeIf { isConst },
         "lateinit".takeIf { isLateinit },
-        "delegated".takeIf { isDelegated },
         if (isVar) "var" else "val"
     )
 
@@ -435,6 +443,8 @@ internal fun IrSimpleFunction.isOverriden() =
 
 internal fun IrSimpleFunction.obtainSimpleFunctionFlags(): String =
     concatenateNonEmptyWithSpace(
+        // TODO выпилить при появлении в ноде информации о модификаторе operator
+        "operator".takeIf { descriptor.isOperator },
         "tailrec".takeIf { isTailrec },
         "inline".takeIf { isInline },
         "external".takeIf { isExternal },
