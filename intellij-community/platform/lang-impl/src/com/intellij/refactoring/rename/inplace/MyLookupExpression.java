@@ -5,6 +5,7 @@ import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
+import com.intellij.codeInsight.lookup.LookupFocusDegree;
 import com.intellij.codeInsight.template.Expression;
 import com.intellij.codeInsight.template.ExpressionContext;
 import com.intellij.codeInsight.template.Result;
@@ -107,5 +108,11 @@ public class MyLookupExpression extends Expression {
   @Override
   public String getAdvertisingText() {
     return myAdvertisementText;
+  }
+
+  @NotNull
+  @Override
+  public LookupFocusDegree getLookupFocusDegree() {
+    return LookupFocusDegree.UNFOCUSED;
   }
 }
