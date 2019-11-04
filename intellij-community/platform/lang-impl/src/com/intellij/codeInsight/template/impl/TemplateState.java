@@ -601,7 +601,8 @@ public class TemplateState implements Disposable {
             assert lookupItem != null : expressionNode;
           }
 
-          AsyncEditorLoader.performWhenLoaded(myEditor, () -> runLookup(lookupItems, expressionNode.getAdvertisingText()));
+          AsyncEditorLoader.performWhenLoaded(myEditor, () ->
+            runLookup(lookupItems, expressionNode.getAdvertisingText(), expressionNode.getLookupFocusDegree()));
         }
       }
       else {
@@ -659,7 +660,9 @@ public class TemplateState implements Disposable {
     return myTemplate.getExpressionAt(myCurrentVariableNumber);
   }
 
-  private void runLookup(final List<TemplateExpressionLookupElement> lookupItems, @Nullable String advertisingText) {
+  private void runLookup(final List<TemplateExpressionLookupElement> lookupItems,
+                         @Nullable String advertisingText,
+                         @NotNull LookupFocusDegree lookupFocusDegree) {
     if (isDisposed()) return;
 
     final LookupManager lookupManager = LookupManager.getInstance(myProject);
@@ -680,6 +683,7 @@ public class TemplateState implements Disposable {
       String tabShortcut = KeymapUtil.getFirstKeyboardShortcutText(am.getAction(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE));
       lookup.addAdvertisement("Press " + enterShortcut + " or " + tabShortcut + " to replace", null);
     }
+    lookup.setLookupFocusDegree(lookupFocusDegree);
     lookup.refreshUi(true, true);
     ourLookupShown = true;
     lookup.addLookupListener(new LookupListener() {
