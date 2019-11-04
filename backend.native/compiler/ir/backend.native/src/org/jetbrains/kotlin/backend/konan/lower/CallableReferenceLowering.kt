@@ -309,7 +309,8 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     isExternal = false,
                     isTailrec = false,
                     isSuspend = superFunction.isSuspend,
-                    isExpect = false
+                    isExpect = false,
+                    isFakeOverride = false
             ).apply {
                 it.bind(this)
                 val function = this

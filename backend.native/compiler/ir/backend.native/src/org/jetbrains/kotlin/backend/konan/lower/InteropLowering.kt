@@ -234,7 +234,8 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
                 isExternal = false,
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false
+                isExpect = false,
+                isFakeOverride = false
         ).also { result ->
             resultDescriptor.bind(result)
             result.parent = irClass
@@ -376,7 +377,8 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
                     isExternal = false,
                     isTailrec = false,
                     isSuspend = false,
-                    isExpect = false
+                    isExpect = false,
+                    isFakeOverride = false
             ).apply {
                 it.bind(this)
             }

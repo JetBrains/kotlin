@@ -73,7 +73,8 @@ internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: Ko
             Visibilities.PRIVATE,
             isFinal = true,
             isExternal = false,
-            isStatic = true
+            isStatic = true,
+            isFakeOverride = false
     ).apply {
         descriptor.bind(this)
 
@@ -366,6 +367,7 @@ fun createField(
             type,
             Visibilities.PRIVATE,
             !isMutable,
+            false,
             false,
             false
     ).apply {

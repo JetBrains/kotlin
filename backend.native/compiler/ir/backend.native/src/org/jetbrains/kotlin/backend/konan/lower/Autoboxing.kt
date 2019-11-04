@@ -394,7 +394,8 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                 Visibilities.PRIVATE,
                 isFinal = true,
                 isExternal = false,
-                isStatic = false
+                isStatic = false,
+                isFakeOverride = false
         )
         irField.parent = declaration
 
@@ -502,7 +503,8 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
             isTailrec = false,
             isSuspend = false,
             returnType = irConstructor.returnType,
-            isExpect = false
+            isExpect = false,
+            isFakeOverride = false
     ).apply {
         descriptor.bind(this)
         parent = irConstructor.parent

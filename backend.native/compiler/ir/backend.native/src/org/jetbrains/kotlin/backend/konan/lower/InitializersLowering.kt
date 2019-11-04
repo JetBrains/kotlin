@@ -108,7 +108,8 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                         isSuspend = false,
                         isExternal = false,
                         isTailrec = false,
-                        isExpect = false
+                        isExpect = false,
+                        isFakeOverride = false
                 ).apply {
                     it.bind(this)
                     parent = irClass

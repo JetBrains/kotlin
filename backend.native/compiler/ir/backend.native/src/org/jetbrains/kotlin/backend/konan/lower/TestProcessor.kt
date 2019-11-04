@@ -350,7 +350,8 @@ internal class TestProcessor (val context: Context) {
                 isExternal = false,
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false
+                isExpect = false,
+                isFakeOverride = false
         ).apply {
             descriptor.bind(this)
             parent = owner
@@ -387,7 +388,8 @@ internal class TestProcessor (val context: Context) {
                 isExternal = false,
                 isTailrec = false,
                 isSuspend = false,
-                isExpect = false
+                isExpect = false,
+                isFakeOverride = false
         ).apply {
             descriptor.bind(this)
             parent = owner

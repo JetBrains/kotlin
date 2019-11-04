@@ -76,7 +76,8 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     Visibilities.PRIVATE,
                     isFinal = true,
                     isExternal = false,
-                    isStatic = false
+                    isStatic = false,
+                    isFakeOverride = false
             ).apply {
                 it.bind(this)
                 parent = implObject
@@ -96,7 +97,8 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
                     isExternal = false,
                     isTailrec = false,
                     isSuspend = false,
-                    isExpect = false
+                    isExpect = false,
+                    isFakeOverride = false
             ).apply {
                 it.bind(this)
                 parent = implObject
