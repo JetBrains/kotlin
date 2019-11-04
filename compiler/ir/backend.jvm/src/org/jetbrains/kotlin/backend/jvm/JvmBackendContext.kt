@@ -107,13 +107,6 @@ class JvmBackendContext(
 
     val inlineClassReplacements = MemoizedInlineClassReplacements()
 
-    internal fun getTopLevelClass(fqName: FqName): IrClassSymbol {
-        val descriptor = state.module.getPackage(fqName.parent()).memberScope.getContributedClassifier(
-            fqName.shortName(), NoLookupLocation.FROM_BACKEND
-        ) as ClassDescriptor? ?: error("Class is not found: $fqName")
-        return referenceClass(descriptor)
-    }
-
     internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.referenceClass(descriptor)
 
