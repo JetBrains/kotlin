@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -72,10 +70,18 @@ class JvmSymbols(
     private fun createPackage(fqName: FqName): IrPackageFragment =
         IrExternalPackageFragmentImpl(IrExternalPackageFragmentSymbolImpl(EmptyPackageFragmentDescriptor(context.state.module, fqName)))
 
-    private fun createClass(fqName: FqName, classKind: ClassKind = ClassKind.CLASS, block: (IrClass) -> Unit = {}): IrClassSymbol =
+    private fun createClass(
+        fqName: FqName,
+        classKind: ClassKind = ClassKind.CLASS,
+        classModality: Modality = Modality.FINAL,
+        classIsInline: Boolean = false,
+        block: (IrClass) -> Unit = {}
+    ): IrClassSymbol =
         buildClass {
             name = fqName.shortName()
             kind = classKind
+            modality = classModality
+            isInline = classIsInline
         }.apply {
             parent = when (fqName.parent().asString()) {
                 "kotlin" -> kotlinPackage
@@ -183,11 +189,50 @@ class JvmSymbols(
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.IN_VARIANCE)
         }
 
-    val suspendFunctionInterface: IrClassSymbol = createClass(FqName("kotlin.coroutines.jvm.internal.SuspendFunction"), ClassKind.INTERFACE)
+    private val resultClassStub: IrClassSymbol =
+        createClass(DescriptorUtils.RESULT_FQ_NAME, classIsInline = true) { klass ->
+            klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.OUT_VARIANCE)
+            klass.addConstructor { isPrimary = true }.apply {
+                addValueParameter("value", irBuiltIns.anyNType)
+            }
+        }
+
+    val continuationImplClass: IrClassSymbol =
+        createClass(FqName("kotlin.coroutines.jvm.internal.ContinuationImpl"), classModality = Modality.ABSTRACT) { klass ->
+            val continuationType = continuationClass.typeWith(irBuiltIns.anyNType)
+            klass.superTypes += continuationType
+            klass.addConstructor().apply {
+                addValueParameter("completion", continuationType.makeNullable())
+            }
+            klass.addFunction("invokeSuspend", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
+                addValueParameter("result", resultClassStub.typeWith(irBuiltIns.anyNType))
+            }
+        }
+
+    val suspendFunctionInterface: IrClassSymbol =
+        createClass(FqName("kotlin.coroutines.jvm.internal.SuspendFunction"), ClassKind.INTERFACE)
 
     val lambdaClass: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Lambda")) { klass ->
         klass.addConstructor().apply {
             addValueParameter("arity", irBuiltIns.intType)
+        }
+    }
+
+    val suspendLambdaClass: IrClassSymbol = createClass(FqName("kotlin.coroutines.jvm.internal.SuspendLambda")) { klass ->
+        klass.superTypes += suspendFunctionInterface.typeWith()
+        klass.addConstructor().apply {
+            addValueParameter("arity", irBuiltIns.intType)
+            addValueParameter("completion", continuationClass.typeWith(irBuiltIns.anyNType).makeNullable())
+        }
+        klass.addFunction("invokeSuspend", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
+            addValueParameter("result", resultClassStub.typeWith(irBuiltIns.anyNType))
+        }
+        klass.addFunction("create", continuationClass.typeWith(irBuiltIns.unitType)).apply {
+            addValueParameter("completion", continuationClass.typeWith(irBuiltIns.nothingType))
+        }
+        klass.addFunction("create", continuationClass.typeWith(irBuiltIns.unitType)).apply {
+            addValueParameter("value", irBuiltIns.anyNType)
+            addValueParameter("completion", continuationClass.typeWith(irBuiltIns.nothingType))
         }
     }
 

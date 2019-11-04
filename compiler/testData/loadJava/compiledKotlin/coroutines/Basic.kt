@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
-//ALLOW_AST_ACCESS
+// ALLOW_AST_ACCESS
 
 package test
 class Controller {
