@@ -26,13 +26,11 @@ class MLRankingConfigurable(private val supportedLanguages: List<String>)
             }
           }
         }
-        if (ApplicationManager.getApplication().isInternal) {
-          val registry = Registry.get("completion.stats.show.ml.ranking.diff")
-          row {
-            checkBox(StatsCollectorBundle.message("ml.completion.show.diff"),
-                     { registry.asBoolean() },
-                     { registry.setValue(it) })
-          }
+        val registry = Registry.get("completion.stats.show.ml.ranking.diff")
+        row {
+          checkBox(StatsCollectorBundle.message("ml.completion.show.diff"),
+                   { registry.asBoolean() },
+                   { registry.setValue(it) })
         }
       }
     }
