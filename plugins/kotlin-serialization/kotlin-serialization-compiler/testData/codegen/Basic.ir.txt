@@ -929,27 +929,25 @@ public final class User : java/lang/Object {
           PUTFIELD (firstName, Ljava/lang/String;)
         LABEL (L3)
         LINENUMBER (7)
-          NOP
-        LABEL (L4)
         LINENUMBER (6)
           ICONST_0
           ILOAD (1)
           ICONST_2
           IAND
-          IF_ICMPNE (L5)
+          IF_ICMPNE (L4)
           NEW
           DUP
           LDC (lastName)
           INVOKESPECIAL (kotlinx/serialization/MissingFieldException, <init>, (Ljava/lang/String;)V)
           ATHROW
-        LABEL (L5)
+        LABEL (L4)
           ALOAD (0)
           ALOAD (3)
           PUTFIELD (lastName, Ljava/lang/String;)
-        LABEL (L6)
+        LABEL (L5)
         LINENUMBER (7)
           RETURN
-        LABEL (L7)
+        LABEL (L6)
     }
 
     public final static java.lang.String access$prop$getFirstName$0(User $this)
