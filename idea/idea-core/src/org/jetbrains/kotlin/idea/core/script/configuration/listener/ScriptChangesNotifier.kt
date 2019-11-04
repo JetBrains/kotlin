@@ -17,8 +17,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.Alarm
-import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.isScriptDependenciesUpdaterDisabled
+import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.isNonScript
@@ -76,7 +75,7 @@ internal class ScriptChangesNotifier(
 
         if (
             ApplicationManager.getApplication().isUnitTestMode &&
-            ApplicationManager.getApplication().isScriptDependenciesUpdaterDisabled == true
+            ApplicationManager.getApplication().isScriptChangesNotifierDisabled == true
         ) {
             return null
         }
