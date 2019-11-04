@@ -17,16 +17,18 @@ private fun mainImpl(args: Array<String>, konancMain: (Array<String>) -> Unit) {
             konancMain(utilityArgs)
         "cinterop" -> {
             val konancArgs = invokeInterop("native", utilityArgs)
-            konancArgs?.let { konancMain(it) }
+            konancMain(konancArgs)
         }
         "jsinterop" -> {
             val konancArgs = invokeInterop("wasm", utilityArgs)
-            konancArgs?.let { konancMain(it) }
+            konancMain(konancArgs)
         }
         "klib" ->
             klibMain(utilityArgs)
         "defFileDependencies" ->
             defFileDependencies(utilityArgs)
+        "generatePlatformLibraries" ->
+            generatePlatformLibraries(utilityArgs)
         else ->
             error("Unexpected utility name")
     }

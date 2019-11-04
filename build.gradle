@@ -351,6 +351,15 @@ task distCompiler(type: Copy) {
     }
 }
 
+task distDef(type: Copy) {
+
+    destinationDir distDir
+
+    from(project("platformLibs").file("src/platform")) {
+        into('klib/platformDef')
+    }
+}
+
 task listDist(type: Exec) {
     commandLine 'find', distDir
 }
@@ -472,6 +481,7 @@ task bundle(type: (isWindows()) ? Zip : Tar) {
 }
 
 task bundleRestricted(type: Tar) {
+    dependsOn("distDef")
     def simpleOsName = HostManager.simpleOsName()
     baseName = "kotlin-native-restricted-$simpleOsName-$konanVersionFull"
     from("$project.rootDir/dist") {
