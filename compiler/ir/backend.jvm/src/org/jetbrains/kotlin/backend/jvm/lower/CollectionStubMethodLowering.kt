@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
 
 internal val collectionStubMethodLowering = makeIrFilePhase(
     ::CollectionStubMethodLowering,
@@ -86,12 +85,11 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
             for (parameter in function.valueParameters) {
                 valueParameters.add(parameter.copyWithSubstitution(this, substitutionMap))
             }
-            val exception = context.getTopLevelClass(FqName("java.lang.UnsupportedOperationException"))
             // Function body consist only of throwing UnsupportedOperationException statement
             body = context.createIrBuilder(function.symbol).irBlockBody {
                 +irThrow(
                     irCall(
-                        exception.owner.constructors.single {
+                        this@CollectionStubMethodLowering.context.ir.symbols.unsupportedOperationExceptionClass.owner.constructors.single {
                             it.valueParameters.size == 1 && it.valueParameters.single().type.isNullableString()
                         }
                     ).apply {
