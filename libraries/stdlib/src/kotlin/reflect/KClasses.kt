@@ -8,6 +8,8 @@
 
 package kotlin.reflect
 
+import kotlin.internal.LowPriorityInOverloadResolution
+
 /**
  * Casts the given [value] to the class represented by this [KClass] object.
  * Throws an exception if the value is `null` or if it is not an instance of this class.
@@ -19,6 +21,7 @@ package kotlin.reflect
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
+@LowPriorityInOverloadResolution
 fun <T : Any> KClass<T>.cast(value: Any?): T {
     if (!isInstance(value)) throw ClassCastException("Value cannot be cast to $qualifiedName")
     return value as T
@@ -35,6 +38,7 @@ fun <T : Any> KClass<T>.cast(value: Any?): T {
  */
 @SinceKotlin("1.3")
 @ExperimentalStdlibApi
+@LowPriorityInOverloadResolution
 fun <T : Any> KClass<T>.safeCast(value: Any?): T? {
     return if (isInstance(value)) value as T else null
 }
