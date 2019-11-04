@@ -396,7 +396,7 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     final PsiElement elementAtCaret = file.findElementAt(offset);
     if (elementAtCaret == null) return false;
     final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(elementAtCaret.getLanguage());
-    return namesValidator != null && namesValidator.isKeyword(elementAtCaret.getText(), project);
+    return namesValidator.isKeyword(elementAtCaret.getText(), project);
   }
 
   private static boolean assertNotNullElements(@NotNull PsiElement[] result, Class<?> clazz) {

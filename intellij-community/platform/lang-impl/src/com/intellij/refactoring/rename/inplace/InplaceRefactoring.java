@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.rename.inplace;
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
@@ -14,7 +14,6 @@ import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.Language;
 import com.intellij.lang.LanguageNamesValidation;
 import com.intellij.lang.injection.InjectedLanguageManager;
-import com.intellij.lang.refactoring.NamesValidator;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.Shortcut;
 import com.intellij.openapi.application.ApplicationManager;
@@ -760,8 +759,7 @@ public abstract class InplaceRefactoring {
   }
 
   protected boolean isIdentifier(final String newName, final Language language) {
-    final NamesValidator namesValidator = LanguageNamesValidation.INSTANCE.forLanguage(language);
-    return namesValidator == null || namesValidator.isIdentifier(newName, myProject);
+    return LanguageNamesValidation.isIdentifier(language, newName, myProject);
   }
 
   protected static VirtualFile getTopLevelVirtualFile(final FileViewProvider fileViewProvider) {
