@@ -777,6 +777,16 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/capturedInNoInlneInsideChainOfInlineFuns.kt");
         }
 
+        @TestMetadata("capturedValInLambdaInitializedInside.kt")
+        public void testCapturedValInLambdaInitializedInside() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/capturedValInLambdaInitializedInside.kt");
+        }
+
+        @TestMetadata("capturedValInLambdaInitializedOutside.kt")
+        public void testCapturedValInLambdaInitializedOutside() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/capturedValInLambdaInitializedOutside.kt");
+        }
+
         @TestMetadata("capturedVarsOfSize2.kt")
         public void testCapturedVarsOfSize2() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/capturedVarsOptimization/capturedVarsOfSize2.kt");

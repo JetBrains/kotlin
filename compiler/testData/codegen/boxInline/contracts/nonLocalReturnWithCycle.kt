@@ -1,11 +1,11 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect +ReadDeserializedContracts
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+
 // FILE: 1.kt
+
 package test
 
 import kotlin.contracts.*
@@ -19,6 +19,7 @@ public inline fun <R> myrun(block: () -> R): R {
 }
 
 // FILE: 2.kt
+
 import test.*
 
 fun test(xs: List<String>): String {
@@ -37,7 +38,6 @@ fun test(xs: List<String>): String {
 
     return result
 }
-
 
 fun box(): String {
     return test(listOf("O", "K", "fail"))

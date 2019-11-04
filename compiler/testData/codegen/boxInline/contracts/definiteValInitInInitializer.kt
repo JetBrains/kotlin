@@ -1,10 +1,10 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect +ReadDeserializedContracts
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
 // IGNORE_BACKEND: NATIVE
 // NO_CHECK_LAMBDA_INLINING
+
 // FILE: 1.kt
+
 package test
 
 import kotlin.contracts.*
@@ -17,8 +17,8 @@ public inline fun <R> myrun(block: () -> R): R {
     return block()
 }
 
-
 // FILE: 2.kt
+
 import test.*
 
 class A {

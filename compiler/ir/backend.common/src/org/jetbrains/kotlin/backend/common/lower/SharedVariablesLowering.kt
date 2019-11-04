@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.*
-import java.util.*
 
 val sharedVariablesPhase = makeIrFilePhase(
     ::SharedVariablesLowering,
@@ -77,7 +76,8 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
 
         private fun collectSharedVariables() {
             irDeclaration.accept(object : IrElementVisitor<Unit, IrDeclarationParent?> {
-                val relevantVars = mutableSetOf<IrVariable>()
+                val relevantVars = HashSet<IrVariable>()
+                val relevantVals = HashSet<IrVariable>()
 
                 override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
                     element.acceptChildren(this, data)
@@ -102,6 +102,12 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
 
                     if (declaration.isVar) {
                         relevantVars.add(declaration)
+                    } else if (declaration.initializer == null) {
+                        // A val-variable can be initialized from another container (and thus can require shared variable transformation)
+                        // in case that container is a lambda with a corresponding contract, e.g. with invocation kind EXACTLY_ONCE.
+                        // Here, we collect all val-variables without immediate initializer to relevantVals, and later we copy only those
+                        // variables which are initialized in a foreign container, to sharedVariables.
+                        relevantVals.add(declaration)
                     }
                 }
 
@@ -111,6 +117,15 @@ class SharedVariablesLowering(val context: BackendContext) : FileLoweringPass {
                     val value = expression.symbol.owner
                     if (value in relevantVars && (value as IrVariable).parent != data) {
                         sharedVariables.add(value)
+                    }
+                }
+
+                override fun visitSetVariable(expression: IrSetVariable, data: IrDeclarationParent?) {
+                    super.visitSetVariable(expression, data)
+
+                    val variable = expression.symbol.owner
+                    if (variable.initializer == null && variable.parent != data && variable in relevantVals) {
+                        sharedVariables.add(variable)
                     }
                 }
             }, irDeclaration as? IrDeclarationParent ?: irDeclaration.parent)
