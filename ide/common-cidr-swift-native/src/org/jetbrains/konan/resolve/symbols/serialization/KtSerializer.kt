@@ -31,8 +31,6 @@ class KtSerializer : SerializerProvider {
         serializer.registerFieldSerializer(KtSwiftClassSymbol.ClassState::class.java) { KtSwiftClassSymbol.ClassState() }
         serializer.registerFieldSerializer(KtSwiftProtocolSymbol.ProtocolState::class.java) { KtSwiftProtocolSymbol.ProtocolState() }
         serializer.registerFieldSerializer(KtSwiftExtensionSymbol.ExtensionState::class.java) { KtSwiftExtensionSymbol.ExtensionState() }
-
-        serializer.kryo.register(listOf<Any>().javaClass, DefaultSerializers.CollectionsEmptyListSerializer())
     }
 
     private inline fun <T : KtOCLazySymbol<*, *>> FileSymbolTableSerializer.registerOCLazySymbolSerializer(
