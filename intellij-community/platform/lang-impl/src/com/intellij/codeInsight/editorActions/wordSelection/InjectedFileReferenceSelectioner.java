@@ -10,6 +10,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.PsiLiteralValue;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.text.CharArrayUtil;
+import com.intellij.util.text.CharSequenceSubSequence;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -36,8 +38,7 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
     if (host == null) return Collections.emptyList();
 
     TextRange realRange = ElementManipulators.getValueTextRange(host).shiftRight(host.getTextRange().getStartOffset());
-    realRange = limitToCurrentLine(editorText, cursorOffset, realRange);
-    realRange = stripWhitespaces(editorText, realRange);
+    realRange = limitToCurrentLineAndStripWhiteSpace(editorText, cursorOffset, realRange);
     boolean withinLiteral = host instanceof PsiLiteralValue
                             || SkipAutopopupInStrings.isInStringLiteral(host)
                             || SkipAutopopupInStrings.isInStringLiteral(e);
@@ -117,46 +118,22 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
   }
 
   @NotNull
-  private static TextRange stripWhitespaces(@NotNull CharSequence text, @NotNull TextRange range) {
-    int start = range.getStartOffset();
-    int end = range.getEndOffset();
-    boolean changed = false;
-    while (start < end && Character.isWhitespace(text.charAt(start))) {
-      start++;
-      changed = true;
-    }
-    while (start < end && Character.isWhitespace(text.charAt(end - 1))) {
-      end--;
-      changed = true;
-    }
-    return changed ? new TextRange(start, end) : range;
-  }
+  private static TextRange limitToCurrentLineAndStripWhiteSpace(@NotNull CharSequence text, int cursor, @NotNull TextRange range) {
 
-  @NotNull
-  private static TextRange limitToCurrentLine(@NotNull CharSequence text, int cursor, @NotNull TextRange range) {
-    int start = range.getStartOffset();
-    int end = range.getEndOffset();
-    boolean changed = false;
-    if (start < cursor) {
-      for (int i = cursor - 1; i >= start; i--) {
-        char curChar = text.charAt(i);
-        if (curChar == '\n' || curChar == '\r') {
-          start = i + 1;
-          changed = true;
-          break;
-        }
-      }
-    }
-    if (cursor + 1 < end) {
-      for (int i = cursor; i < end; i++) {
-        char curChar = text.charAt(i);
-        if (curChar == '\n' || curChar == '\r') {
-          end = i;
-          changed = true;
-          break;
-        }
-      }
-    }
-    return changed ? new TextRange(start, end) : range;
+    int subsequenceOffset = range.getStartOffset();
+    CharSequence rangeText = new CharSequenceSubSequence(text, subsequenceOffset, range.getEndOffset());
+
+    //limit to current line
+    int start = CharArrayUtil.shiftBackwardUntil(rangeText, cursor - subsequenceOffset, "\n\r") + 1;
+    int end = CharArrayUtil.shiftForwardUntil(rangeText, cursor-subsequenceOffset, "\n\r");
+
+    //strip whitespace
+    start = CharArrayUtil.shiftForward(rangeText, start, cursor-subsequenceOffset, " \t");
+    end = CharArrayUtil.shiftBackward(rangeText, cursor-subsequenceOffset, end - 1, " \t") + 1;
+
+    return new TextRange(
+      subsequenceOffset + start,
+      subsequenceOffset + end
+    );
   }
 }
