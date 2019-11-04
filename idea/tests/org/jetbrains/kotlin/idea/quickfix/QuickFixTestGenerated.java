@@ -11704,6 +11704,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/replaceWithSafeCall/applyWithImplicitParameterFunctionCall.kt");
         }
 
+        @TestMetadata("argument.kt")
+        public void testArgument() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithSafeCall/argument.kt");
+        }
+
         @TestMetadata("assignment.kt")
         public void testAssignment() throws Exception {
             runTest("idea/testData/quickfix/replaceWithSafeCall/assignment.kt");
@@ -11759,6 +11764,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/replaceWithSafeCall/invokeOperator.kt");
         }
 
+        @TestMetadata("lastStatementOfLambdaAsArgument.kt")
+        public void testLastStatementOfLambdaAsArgument() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithSafeCall/lastStatementOfLambdaAsArgument.kt");
+        }
+
+        @TestMetadata("lastStatementOfLambdaAsLocalVariable.kt")
+        public void testLastStatementOfLambdaAsLocalVariable() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithSafeCall/lastStatementOfLambdaAsLocalVariable.kt");
+        }
+
+        @TestMetadata("lastStatementOfLambdaAsProperty.kt")
+        public void testLastStatementOfLambdaAsProperty() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithSafeCall/lastStatementOfLambdaAsProperty.kt");
+        }
+
         @TestMetadata("let.kt")
         public void testLet() throws Exception {
             runTest("idea/testData/quickfix/replaceWithSafeCall/let.kt");
@@ -11782,6 +11802,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("normal.kt")
         public void testNormal() throws Exception {
             runTest("idea/testData/quickfix/replaceWithSafeCall/normal.kt");
+        }
+
+        @TestMetadata("return.kt")
+        public void testReturn() throws Exception {
+            runTest("idea/testData/quickfix/replaceWithSafeCall/return.kt");
         }
     }
 

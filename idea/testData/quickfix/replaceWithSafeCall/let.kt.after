@@ -2,6 +2,6 @@
 // WITH_RUNTIME
 fun foo(a: String?) {
     a.let {
-        it?.length
+        it?.length ?: <caret>
     }
 }
