@@ -43,9 +43,7 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager
     ) {
-        JvmBackendFacade.doGenerateFilesInternal(
-            state, errorHandler, irModuleFragment, symbolTable, sourceManager, phaseConfig, firMode = true
-        )
+        JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, symbolTable, sourceManager, phaseConfig)
     }
 
     override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): PackageCodegen {

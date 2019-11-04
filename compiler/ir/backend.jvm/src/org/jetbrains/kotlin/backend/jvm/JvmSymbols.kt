@@ -33,8 +33,7 @@ import org.jetbrains.kotlin.types.Variance
 
 class JvmSymbols(
     context: JvmBackendContext,
-    private val symbolTable: ReferenceSymbolTable,
-    firMode: Boolean
+    private val symbolTable: ReferenceSymbolTable
 ) : Symbols<JvmBackendContext>(context, symbolTable) {
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
     private val kotlinPackage: IrPackageFragment = createPackage(FqName("kotlin"))
@@ -123,24 +122,19 @@ class JvmSymbols(
     val intrinsicStringPlus: IrFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "stringPlus" }
 
-    private val firStringBuilder =
-        if (firMode) {
-            createClass(FqName("java.lang.StringBuilder")) { klass ->
-                klass.addConstructor()
-                klass.addFunction("toString", returnType = irBuiltIns.stringType, modality = Modality.OPEN).apply {
-                    dispatchReceiverParameter = any.owner.thisReceiver!!.copyTo(this)
-                    overriddenSymbols += any.functionByName("toString")
-                }
-                klass.addFunction("append", returnType = klass.defaultType).apply {
-                    addValueParameter("value", type = irBuiltIns.anyNType)
-                }
-            }
-        } else {
-            null
+    override val stringBuilder: IrClassSymbol = createClass(FqName("java.lang.StringBuilder")) { klass ->
+        klass.addConstructor()
+        klass.addFunction("toString", irBuiltIns.stringType).apply {
+            overriddenSymbols += any.functionByName("toString")
         }
 
-    override val stringBuilder: IrClassSymbol
-        get() = firStringBuilder ?: context.getTopLevelClass(FqName("java.lang.StringBuilder"))
+        val appendTypes = with(irBuiltIns) { listOf(anyNType, stringType, booleanType, charType, intType, longType, floatType, doubleType) }
+        for (type in appendTypes) {
+            klass.addFunction("append", klass.defaultType).apply {
+                addValueParameter("value", type)
+            }
+        }
+    }
 
     override val defaultConstructorMarker: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.DefaultConstructorMarker"))
@@ -170,16 +164,19 @@ class JvmSymbols(
         get() = TODO("not implemented")
 
     val javaLangClass: IrClassSymbol =
-        if (firMode) createClass(FqName("java.lang.Class")) else context.getTopLevelClass(FqName("java.lang.Class"))
+        createClass(FqName("java.lang.Class")) { klass ->
+            klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.INVARIANT)
+            klass.addFunction("desiredAssertionStatus", irBuiltIns.booleanType)
+        }
 
     private val javaLangAssertionError: IrClassSymbol =
-        if (firMode) createClass(FqName("java.lang.AssertionError")) else context.getTopLevelClass(FqName("java.lang.AssertionError"))
-
-    val assertionErrorConstructor by lazy<IrConstructorSymbol> {
-        javaLangAssertionError.constructors.single {
-            it.owner.valueParameters.size == 1 && it.owner.valueParameters[0].type.isNullableAny()
+        createClass(FqName("java.lang.AssertionError")) { klass ->
+            klass.addConstructor().apply {
+                addValueParameter("detailMessage", irBuiltIns.anyNType)
+            }
         }
-    }
+
+    val assertionErrorConstructor = javaLangAssertionError.constructors.single()
 
     val continuationClass: IrClassSymbol =
         createClass(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE, ClassKind.INTERFACE) { klass ->
@@ -494,14 +491,16 @@ class JvmSymbols(
         }.symbol
 
     private val javaLangString: IrClassSymbol =
-        if (firMode) {
-            createClass(FqName("java.lang.String")) { klass ->
-                klass.addFunction("valueOf", returnType = irBuiltIns.stringType, isStatic = true).apply {
-                    addValueParameter("value", irBuiltIns.anyNType)
+        createClass(FqName("java.lang.String")) { klass ->
+            val valueOfTypes = with(irBuiltIns) {
+                listOf(anyNType, booleanType, charType, intType, longType, floatType, doubleType)
+            }
+
+            for (type in valueOfTypes) {
+                klass.addFunction("valueOf", irBuiltIns.stringType, isStatic = true).apply {
+                    addValueParameter("value", type)
                 }
             }
-        } else {
-            context.getTopLevelClass(FqName("java.lang.String"))
         }
 
     private val defaultValueOfFunction = javaLangString.functions.single {
@@ -509,7 +508,7 @@ class JvmSymbols(
     }
 
     private val valueOfFunctions: Map<IrType, IrSimpleFunctionSymbol?> =
-        (context.irBuiltIns.primitiveIrTypes + context.irBuiltIns.stringType).associateWith { type ->
+        context.irBuiltIns.primitiveIrTypes.associateWith { type ->
             javaLangString.functions.singleOrNull {
                 it.owner.name.asString() == "valueOf" && it.owner.valueParameters.singleOrNull()?.type == type
             }
