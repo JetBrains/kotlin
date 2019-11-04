@@ -29,9 +29,6 @@ public class NonProjectScopeDisablerEP extends AbstractExtensionPointBean {
   public boolean disable = true;
 
   public static boolean isSearchInNonProjectDisabled() {
-    for (NonProjectScopeDisablerEP ep : EP_NAME.getExtensions()) {
-      if (ep.disable) return true;
-    }
-    return false;
+    return EP_NAME.getExtensionList().stream().anyMatch(ep -> ep.disable);
   }
 }
