@@ -2,16 +2,20 @@
 
 package com.intellij.codeInsight.editorActions.wordSelection;
 
+import com.intellij.codeInsight.completion.SkipAutopopupInStrings;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.PsiLiteralValue;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * This selectioner tries to guess location of file segments within a particular literal.
@@ -31,13 +35,12 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
     PsiElement host = PsiTreeUtil.getParentOfType(e, PsiLanguageInjectionHost.class);
     if (host == null) return Collections.emptyList();
 
-    TextRange realRange = stripDelimiters(editorText, host.getTextRange());
+    TextRange realRange = ElementManipulators.getValueTextRange(host).shiftRight(host.getTextRange().getStartOffset());
     realRange = limitToCurrentLine(editorText, cursorOffset, realRange);
-    // Some literals, like CSS contain quotes withing which there is actual file name. Strip the content around quotes.
-    realRange = stripCodeAroundQuotesIfAny(editorText, cursorOffset, realRange);
     realRange = stripWhitespaces(editorText, realRange);
     boolean withinLiteral = host instanceof PsiLiteralValue
-                            || host.getClass().getName().toLowerCase(Locale.US).contains("literal");
+                            || SkipAutopopupInStrings.isInStringLiteral(host)
+                            || SkipAutopopupInStrings.isInStringLiteral(e);
     List<TextRange> segments = buildSegments(editorText, cursorOffset, withinLiteral, realRange);
 
     if (!segments.isEmpty()) {
@@ -114,47 +117,6 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
   }
 
   @NotNull
-  private static TextRange stripDelimiters(@NotNull CharSequence text, @NotNull TextRange range) {
-    int start = range.getStartOffset();
-    int end = range.getEndOffset();
-    boolean changed = false;
-
-
-    if (end - start > 4
-        // Multiline Comments
-        && ((StringUtil.startsWith(text, start, "/*")
-             && StringUtil.endsWith(text, start, end, "*/"))
-            // Groovy literal
-            || (StringUtil.startsWith(text, start, "$/")
-                && StringUtil.endsWith(text, start, end, "/$")))) {
-      end -= 2;
-      start += 2;
-      changed = true;
-    }
-    else {
-      // Literals - quote may be repeated like in Kotlin
-      while (end - start > 2) {
-        char firstChar = text.charAt(start);
-        char lastChar = text.charAt(end - 1);
-        if (firstChar == lastChar
-            && (firstChar == '\'' || firstChar == '"' || firstChar == '`' || firstChar == '/')) {
-          start++;
-          end--;
-          changed = true;
-          // Groovy literal - if quoted with /, unquote it only once
-          if (firstChar == '/') {
-            break;
-          }
-        }
-        else {
-          break;
-        }
-      }
-    }
-    return changed ? new TextRange(start, end) : range;
-  }
-
-  @NotNull
   private static TextRange stripWhitespaces(@NotNull CharSequence text, @NotNull TextRange range) {
     int start = range.getStartOffset();
     int end = range.getEndOffset();
@@ -196,28 +158,5 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
       }
     }
     return changed ? new TextRange(start, end) : range;
-  }
-
-  @NotNull
-  private static TextRange stripCodeAroundQuotesIfAny(@NotNull CharSequence text, int cursor, @NotNull TextRange range) {
-    int start = range.getStartOffset();
-    int end = range.getEndOffset();
-    Character quoteChar = null;
-    for (int i = start; i < cursor; i++) {
-      char ch = text.charAt(i);
-      if (ch == '\'' || ch == '"') {
-        quoteChar = ch;
-        start = i + 1;
-        break;
-      }
-    }
-    if (quoteChar != null) {
-      for (int i = end - 1; i > cursor; i--) {
-        if (text.charAt(i) == quoteChar) {
-          return new TextRange(start, i);
-        }
-      }
-    }
-    return range;
   }
 }
