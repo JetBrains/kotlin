@@ -662,12 +662,9 @@ public class InspectionApplication implements CommandLineInspectionProgressRepor
 
   @Nullable
   private static InspectionsReportConverter getReportConverter(@Nullable final String outputFormat) {
-    for (InspectionsReportConverter converter : InspectionsReportConverter.EP_NAME.getExtensions()) {
-      if (converter.getFormatName().equals(outputFormat)) {
-        return converter;
-      }
-    }
-    return null;
+    return InspectionsReportConverter.EP_NAME.getExtensionList().stream()
+      .filter(converter -> converter.getFormatName().equals(outputFormat))
+      .findFirst().orElse(null);
   }
 
   private ConversionListener createConversionListener() {
