@@ -79,7 +79,7 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
             || Visibilities.isPrivate(implementation.visibility)
             || implementation.isDefinitelyNotDefaultImplsMethod()
             || implementation.isMethodOfAny()
-            || (!context.state.jvmDefaultMode.isCompatibility && implementation.hasJvmDefault())
+            || implementation.hasJvmDefault()
         ) {
             return null
         }
