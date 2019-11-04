@@ -47,8 +47,7 @@ class JvmBackendContext(
     override val irBuiltIns: IrBuiltIns,
     irModuleFragment: IrModuleFragment,
     symbolTable: SymbolTable,
-    val phaseConfig: PhaseConfig,
-    private val firMode: Boolean
+    val phaseConfig: PhaseConfig
 ) : CommonBackendContext {
     override val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
         get() = TODO("not implemented")
@@ -143,7 +142,7 @@ class JvmBackendContext(
         irModuleFragment: IrModuleFragment,
         symbolTable: ReferenceSymbolTable
     ) : Ir<JvmBackendContext>(this, irModuleFragment) {
-        override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable, firMode)
+        override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable)
 
         override fun unfoldInlineClassType(irType: IrType): IrType? {
             return InlineClassAbi.unboxType(irType)
