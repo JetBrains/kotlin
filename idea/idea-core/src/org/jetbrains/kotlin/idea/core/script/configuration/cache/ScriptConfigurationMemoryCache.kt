@@ -17,34 +17,41 @@ class ScriptConfigurationMemoryCache(
         const val MAX_SCRIPTS_CACHED = 50
     }
 
-    private val memoryCache = SLRUMap<VirtualFile, ScriptConfigurationSnapshot>(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED)
+    private val memoryCache = SLRUMap<VirtualFile, ScriptConfigurationState>(MAX_SCRIPTS_CACHED, MAX_SCRIPTS_CACHED)
 
     @Synchronized
-    override operator fun get(file: VirtualFile): ScriptConfigurationSnapshot? {
+    override operator fun get(file: VirtualFile): ScriptConfigurationState? {
         return memoryCache.get(file)
     }
 
-
     @Synchronized
-    override operator fun set(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
-        memoryCache.put(
-            file,
-            configurationSnapshot
-        )
+    override fun setApplied(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
+        val old = memoryCache[file] ?: ScriptConfigurationState()
+        memoryCache.put(file, old.copy(applied = configurationSnapshot))
     }
 
-    override fun markUpToDate(file: VirtualFile, inputs: CachedConfigurationInputs) {
-        val old = memoryCache[file]
-        if (old != null) {
-            memoryCache.put(file, old.copy(inputs = inputs))
-        }
+    @Synchronized
+    override fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
+        val old = memoryCache[file] ?: ScriptConfigurationState()
+        memoryCache.put(file, old.copy(loaded = configurationSnapshot))
+    }
+
+    @Synchronized
+    override fun markOutOfDate(file: VirtualFile) {
+        val old = memoryCache[file] ?: ScriptConfigurationState()
+        memoryCache.put(
+            file, old.copy(
+                applied = old.applied?.copy(inputs = CachedConfigurationInputs.OutOfDate),
+                loaded = old.loaded?.copy(inputs = CachedConfigurationInputs.OutOfDate)
+            )
+        )
     }
 
     @Synchronized
     @Suppress("UNCHECKED_CAST")
-    override fun all() =
-        memoryCache.entrySet().map {
-            if (it.value.configuration == null) null
-            else it.key to it.value.configuration
+    override fun allApplied() =
+        memoryCache.entrySet().mapNotNull {
+            if (it.value.applied?.configuration == null) null
+            else it.key to it.value.applied?.configuration
         } as Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
 }

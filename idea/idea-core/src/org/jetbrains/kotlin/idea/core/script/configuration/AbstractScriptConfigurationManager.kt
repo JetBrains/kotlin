@@ -20,9 +20,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.toVfsRoots
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCache
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
+import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationState
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptConfigurationUpdater
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsCache
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.ScriptClassRootsIndexer
@@ -40,7 +40,7 @@ import kotlin.concurrent.withLock
  * Among this two methods concrete implementation should provide script changes listening (by calling [updater] on some event).
  *
  * Basically all requests routed to [cache]. If there is no entry in [cache] or it is considered out-of-date,
- * then [reloadOutOfDateConfiguration] will be called, which, in turn, should call [saveChangedConfiguration]
+ * then [reloadOutOfDateConfiguration] will be called, which, in turn, should call [setAppliedConfiguration]
  * immediately or in some future  (e.g. after user will click "apply context" or/and configuration will
  * be calculated by some background thread).
  *
@@ -61,7 +61,7 @@ internal abstract class AbstractScriptConfigurationManager(
 
     /**
      * Will be called on [cache] miss or when [file] is changed.
-     * Implementation should initiate loading of [file]'s script configuration and call [saveChangedConfiguration]
+     * Implementation should initiate loading of [file]'s script configuration and call [setAppliedConfiguration]
      * immediately or in some future
      * (e.g. after user will click "apply context" or/and configuration will be calculated by some background thread).
      *
@@ -73,7 +73,7 @@ internal abstract class AbstractScriptConfigurationManager(
      */
     protected abstract fun reloadOutOfDateConfiguration(
         file: KtFile,
-        isFirstLoad: Boolean = getCachedConfiguration(file.originalFile.virtualFile) == null,
+        isFirstLoad: Boolean = getAppliedConfiguration(file.originalFile.virtualFile) == null,
         loadEvenWillNotBeApplied: Boolean = false,
         forceSync: Boolean = false
     )
@@ -87,13 +87,16 @@ internal abstract class AbstractScriptConfigurationManager(
     override fun getScriptClasspath(file: KtFile): List<VirtualFile> =
         toVfsRoots(getConfiguration(file)?.dependenciesClassPath.orEmpty())
 
-    fun getCachedConfiguration(file: VirtualFile?): ScriptConfigurationSnapshot? {
+    fun getCachedConfigurationState(file: VirtualFile?): ScriptConfigurationState? {
         if (file == null) return null
         return cache[file]
     }
 
+    fun getAppliedConfiguration(file: VirtualFile?): ScriptConfigurationSnapshot? =
+        getCachedConfigurationState(file)?.applied
+
     override fun hasConfiguration(file: KtFile): Boolean {
-        return getCachedConfiguration(file.originalFile.virtualFile) != null
+        return getAppliedConfiguration(file.originalFile.virtualFile) != null
     }
 
     override fun getConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper? {
@@ -104,7 +107,7 @@ internal abstract class AbstractScriptConfigurationManager(
         virtualFile: VirtualFile,
         preloadedKtFile: KtFile? = null
     ): ScriptCompilationConfigurationWrapper? {
-        val cached = getCachedConfiguration(virtualFile)
+        val cached = getAppliedConfiguration(virtualFile)
         if (cached != null) return cached.configuration
 
         val ktFile = project.getKtFile(virtualFile, preloadedKtFile) ?: return null
@@ -112,7 +115,7 @@ internal abstract class AbstractScriptConfigurationManager(
             reloadOutOfDateConfiguration(ktFile, isFirstLoad = true)
         }
 
-        return getCachedConfiguration(virtualFile)?.configuration
+        return getAppliedConfiguration(virtualFile)?.configuration
     }
 
     override val updater: ScriptConfigurationUpdater = object : ScriptConfigurationUpdater {
@@ -143,7 +146,7 @@ internal abstract class AbstractScriptConfigurationManager(
                 val virtualFile = file.originalFile.virtualFile
                 if (virtualFile != null) {
                     val state = cache[virtualFile]
-                    if (state == null || !state.inputs.isUpToDate(project, virtualFile, file)) {
+                    if (state == null || !state.isUpToDate(project, virtualFile, file)) {
                         upToDate = false
                         reloadOutOfDateConfiguration(
                             file,
@@ -165,14 +168,14 @@ internal abstract class AbstractScriptConfigurationManager(
         file as? KtFile ?: error("PsiFile $file should be a KtFile, otherwise script dependencies cannot be loaded")
 
         val virtualFile = file.virtualFile
-        if (cache[virtualFile]?.inputs?.isUpToDate(project, virtualFile, file) == true) return
+        if (cache[virtualFile]?.isUpToDate(project, virtualFile, file) == true) return
 
         rootsIndexer.transaction {
             reloadOutOfDateConfiguration(file, isFirstLoad = true, forceSync = true)
         }
     }
 
-    protected open fun saveChangedConfiguration(
+    protected open fun setAppliedConfiguration(
         file: VirtualFile,
         newConfigurationSnapshot: ScriptConfigurationSnapshot?
     ) {
@@ -185,7 +188,7 @@ internal abstract class AbstractScriptConfigurationManager(
                 rootsIndexer.markNewRoot(file, newConfiguration)
             }
 
-            cache[file] = newConfigurationSnapshot
+            cache.setApplied(file, newConfigurationSnapshot)
 
             clearClassRootsCaches()
         }
@@ -193,11 +196,11 @@ internal abstract class AbstractScriptConfigurationManager(
         updateHighlighting(listOf(file))
     }
 
-    protected fun markUpToDate(
+    protected fun setLoadedConfiguration(
         file: VirtualFile,
-        inputs: CachedConfigurationInputs
+        configurationSnapshot: ScriptConfigurationSnapshot
     ) {
-        cache.markUpToDate(file, inputs)
+        cache.setLoaded(file, configurationSnapshot)
     }
 
     private fun hasNotCachedRoots(configuration: ScriptCompilationConfigurationWrapper): Boolean {

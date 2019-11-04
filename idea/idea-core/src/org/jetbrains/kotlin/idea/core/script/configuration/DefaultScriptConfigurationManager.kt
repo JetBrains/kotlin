@@ -141,7 +141,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
      *   and file will be up-to-date checked again. This will happen after current loading,
      *   because only `backgroundExecutor` execute tasks in one thread.
      * - `invalid, waiting for apply`:
-     *   Loading will not be queued, since we are marking file is up to date with
+     *   Loading will not be queued, since we are marking file as up-to-date with
      *   not yet applied configuration.
      *
      * Sync:
@@ -177,8 +177,8 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                 backgroundExecutor.ensureScheduled(virtualFile) {
                     // don't start loading if nothing was changed
                     // (in case we checking for up-to-date and loading concurrently)
-                    val cached = getCachedConfiguration(virtualFile)
-                    if (cached == null || !cached.inputs.isUpToDate(project, virtualFile)) {
+                    val cached = getCachedConfigurationState(virtualFile)
+                    if (cached == null || !cached.isUpToDate(project, virtualFile)) {
                         val actualIsFirstLoad = cached == null
                         async.first { it.loadDependencies(actualIsFirstLoad, virtualFile, scriptDefinition, loadingContext) }
                     }
@@ -202,7 +202,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
 
     private val loadingContext = object : ScriptConfigurationLoadingContext {
         override fun getCachedConfiguration(file: VirtualFile): ScriptConfigurationSnapshot? =
-            this@DefaultScriptConfigurationManager.getCachedConfiguration(file)
+            this@DefaultScriptConfigurationManager.getAppliedConfiguration(file)
 
         override fun suggestNewConfiguration(file: VirtualFile, newResult: ScriptConfigurationSnapshot) {
             suggestOrSaveConfiguration(file, newResult, false)
@@ -221,13 +221,13 @@ internal class DefaultScriptConfigurationManager(project: Project) :
         saveLock.withLock {
             debug(file) { "configuration received = $newResult" }
 
-            markUpToDate(file, newResult.inputs)
+            setLoadedConfiguration(file, newResult)
 
             val newConfiguration = newResult.configuration
             if (newConfiguration == null) {
                 saveReports(file, newResult.reports)
             } else {
-                val oldConfiguration = getCachedConfiguration(file)?.configuration
+                val oldConfiguration = getAppliedConfiguration(file)?.configuration
                 if (oldConfiguration == newConfiguration) {
                     saveReports(file, newResult.reports)
                     file.removeScriptDependenciesNotificationPanel(project)
@@ -242,7 +242,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                             file.removeScriptDependenciesNotificationPanel(project)
                         }
                         saveReports(file, newResult.reports)
-                        saveChangedConfiguration(file, newResult)
+                        setAppliedConfiguration(file, newResult)
                     } else {
                         debug(file) {
                             "configuration changed, notification is shown: old = $oldConfiguration, new = $newConfiguration"
@@ -253,7 +253,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                                 saveReports(file, newResult.reports)
                                 file.removeScriptDependenciesNotificationPanel(project)
                                 rootsIndexer.transaction {
-                                    saveChangedConfiguration(file, newResult)
+                                    setAppliedConfiguration(file, newResult)
                                 }
                             }
                         )

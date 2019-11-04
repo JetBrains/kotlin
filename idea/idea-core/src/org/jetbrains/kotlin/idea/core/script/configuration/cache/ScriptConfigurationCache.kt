@@ -30,6 +30,14 @@ data class ScriptConfigurationSnapshot(
     val configuration: ScriptCompilationConfigurationWrapper?
 )
 
+data class ScriptConfigurationState(
+    val applied: ScriptConfigurationSnapshot? = null,
+    val loaded: ScriptConfigurationSnapshot? = null
+) {
+    fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile? = null): Boolean =
+        (loaded ?: applied)?.inputs?.isUpToDate(project, file, ktFile) ?: false
+}
+
 /**
  * Cached configurations for file's specific snapshot state.
  *
@@ -37,11 +45,11 @@ data class ScriptConfigurationSnapshot(
  * Reader may do up-to-date check for existed entry.
  */
 interface ScriptConfigurationCache {
-    operator fun get(file: VirtualFile): ScriptConfigurationSnapshot?
-    operator fun set(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
+    operator fun get(file: VirtualFile): ScriptConfigurationState?
 
-    fun markUpToDate(file: VirtualFile, inputs: CachedConfigurationInputs)
-    fun markOutOfDate(file: VirtualFile) = markUpToDate(file, CachedConfigurationInputs.OutOfDate)
+    fun setApplied(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
+    fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot)
+    fun markOutOfDate(file: VirtualFile)
 
-    fun all(): Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
+    fun allApplied(): Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
 }

@@ -25,8 +25,8 @@ internal class ScriptClassRootsCache(
     private val project: Project,
     private val cache: ScriptConfigurationCache
 ) {
-    private val all: Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>> get() = cache.all()
-    private fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? = cache[file]?.configuration
+    private val all: Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>> get() = cache.allApplied()
+    private fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? = cache[file]?.applied?.configuration
 
     private fun getScriptSdk(compilationConfiguration: ScriptCompilationConfigurationWrapper?): Sdk? {
         // workaround for mismatched gradle wrapper and plugin version
