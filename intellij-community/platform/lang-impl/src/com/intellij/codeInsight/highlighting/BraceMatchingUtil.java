@@ -12,7 +12,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.FileTypeExtension;
 import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.fileTypes.impl.AbstractFileType;
 import com.intellij.openapi.util.Comparing;
@@ -465,11 +464,9 @@ public class BraceMatchingUtil {
     return BraceMatcherHolder.ourDefaultBraceMatcher;
   }
 
-  private static final FileTypeExtension<BraceMatcher> ourMatchers = new FileTypeExtension<>(BraceMatcher.EP_NAME.getName());
-
   @Nullable
   private static BraceMatcher getBraceMatcherByFileType(@NotNull FileType fileType) {
-    BraceMatcher matcher = ourMatchers.forFileType(fileType);
+    BraceMatcher matcher = FileTypeBraceMather.getInstance().forFileType(fileType);
     if (matcher != null) return matcher;
 
     if (fileType instanceof AbstractFileType) {
