@@ -174,13 +174,13 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
     final Set<PsiFile> outInjected = new THashSet<>();
     final PsiLanguageInjectionHost.InjectedPsiVisitor visitor = (injectedPsi, places) -> {
       synchronized (outInjected) {
+        ProgressManager.checkCanceled();
         outInjected.add(injectedPsi);
       }
     };
     if (!JobLauncher.getInstance().invokeConcurrentlyUnderProgress(new ArrayList<>(hosts), progress, 
                                                                    element -> {
                                                                      ApplicationManager.getApplication().assertReadAccessAllowed();
-                                                                     ProgressManager.checkCanceled();
                                                                      InjectedLanguageManager.getInstance(myFile.getProject()).enumerateEx(
                                                                        element, myFile, false, visitor);
                                                                      return true;
