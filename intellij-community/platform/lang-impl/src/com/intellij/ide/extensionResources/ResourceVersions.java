@@ -88,7 +88,7 @@ class ResourceVersions implements PersistentStateComponent<ResourceVersions.Stat
     @NotNull
     private static String getId(@NotNull IdeaPluginDescriptor plugin) {
       PluginId pluginId = plugin.getPluginId();
-      return pluginId != null ? pluginId.getIdString() : PluginManagerCore.CORE_PLUGIN_ID;
+      return pluginId != null ? pluginId.getIdString() : PluginManagerCore.CORE_ID.getIdString();
     }
 
     @NotNull
