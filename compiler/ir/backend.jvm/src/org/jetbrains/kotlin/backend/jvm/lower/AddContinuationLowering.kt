@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrBlock
 import org.jetbrains.kotlin.backend.jvm.codegen.isInvokeOfSuspendCallableReference
 import org.jetbrains.kotlin.codegen.coroutines.*
-import org.jetbrains.kotlin.config.coroutinesPackageFqName
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -55,16 +54,6 @@ internal val addContinuationPhase = makeIrFilePhase(
 private object CONTINUATION_CLASS : IrDeclarationOriginImpl("CONTINUATION_CLASS")
 
 private class AddContinuationLowering(private val context: JvmBackendContext) : FileLoweringPass {
-    private val continuation by lazy {
-        context.getTopLevelClass(context.state.languageVersionSettings.coroutinesPackageFqName().child(Name.identifier("Continuation")))
-    }
-    private val continuationImpl by lazy {
-        context.getTopLevelClass(context.state.languageVersionSettings.coroutinesJvmInternalPackageFqName().child(Name.identifier("ContinuationImpl")))
-    }
-    private val suspendLambda by lazy {
-        context.getTopLevelClass(context.state.languageVersionSettings.coroutinesJvmInternalPackageFqName().child(Name.identifier("SuspendLambda")))
-    }
-
     override fun lower(irFile: IrFile) {
         val suspendLambdas = markSuspendLambdas(irFile)
         val suspendFunctions = markSuspendFunctions(irFile, suspendLambdas.map { it.function }.toSet())
@@ -104,7 +93,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     }
 
     private fun generateContinuationClassForLambda(info: SuspendLambdaInfo) {
-        val suspendLambda = suspendLambda.owner
+        val suspendLambda = context.ir.symbols.suspendLambdaClass.owner
         suspendLambda.createContinuationClassFor(info.function).apply {
             copyAttributes(info.reference)
             val functionNClass = context.ir.symbols.getJvmFunctionClass(info.arity + 1)
@@ -155,7 +144,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         fields: List<IrField>,
         receiverField: IrField?
     ): IrFunction {
-        val superMethod = suspendLambda.functions.single {
+        val superMethod = context.ir.symbols.suspendLambdaClass.functions.single {
             it.owner.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.owner.valueParameters.size == 1 &&
                     it.owner.valueParameters[0].type.isKotlinResult()
         }.owner
@@ -312,7 +301,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             }
             val completionParameterSymbol = constructor.addCompletionValueParameter()
 
-            val superClassConstructor = suspendLambda.owner.constructors.single {
+            val superClassConstructor = context.ir.symbols.suspendLambdaClass.owner.constructors.single {
                 it.valueParameters.size == 2 && it.valueParameters[0].type.isInt() && it.valueParameters[1].type.isNullableContinuation()
             }
             constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
@@ -349,11 +338,11 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun IrFunction.addCompletionValueParameter(): IrValueParameter =
         addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationType())
 
-    private fun IrFunction.continuationType(): IrSimpleType =
-        continuation.createType(true, listOf(makeTypeProjection(returnType, Variance.INVARIANT)))
+    private fun IrFunction.continuationType(): IrType =
+        context.ir.symbols.continuationClass.typeWith(returnType).makeNullable()
 
     private fun generateContinuationClassForNamedFunction(irFunction: IrFunction) {
-        continuationImpl.owner.createContinuationClassFor(irFunction).apply {
+        context.ir.symbols.continuationImplClass.owner.createContinuationClassFor(irFunction).apply {
             val resultField = addField(
                 context.state.languageVersionSettings.dataFieldName(),
                 context.irBuiltIns.anyType,
@@ -381,7 +370,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         val capturedThisParameter = capturedThisField?.let { constructor.addValueParameter(it.name.asString(), it.type) }
         val completionParameterSymbol = constructor.addCompletionValueParameter()
 
-        val superClassConstructor = continuationImpl.owner.constructors.single { it.valueParameters.size == 1 }
+        val superClassConstructor = context.ir.symbols.continuationImplClass.owner.constructors.single { it.valueParameters.size == 1 }
         constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
             if (capturedThisField != null) {
                 +irSetField(irGet(thisReceiver!!), capturedThisField, irGet(capturedThisParameter!!))
@@ -406,7 +395,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
         capturedThisField: IrField?,
         isStaticSuspendImpl: Boolean
     ) {
-        val invokeSuspend = continuationImpl.owner.functions.single { it.name == Name.identifier(INVOKE_SUSPEND_METHOD_NAME) }
+        val invokeSuspend = context.ir.symbols.continuationImplClass.owner.functions.single { it.name == Name.identifier(INVOKE_SUSPEND_METHOD_NAME) }
         addFunctionOverride(invokeSuspend).also { function ->
             function.body = context.createIrBuilder(function.symbol).irBlockBody {
                 +irSetField(irGet(function.dispatchReceiverParameter!!), resultField, irGet(function.valueParameters[0]))
