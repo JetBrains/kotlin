@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDesignatedBodyResolveTransformer
@@ -84,7 +85,7 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
             scopeSession
         )
 
-        file.transform<FirElement, Any?>(transformer, null)
+        file.transform<FirElement, ResolutionMode>(transformer, ResolutionMode.ContextDependent)
 
 
         val newReturnTypeRef = declaration.returnTypeRef

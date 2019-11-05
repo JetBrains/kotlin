@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.extractLambdaInfoFromFunctionalType
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ControlFlowGraphReferenceTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreType
+import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -36,14 +38,14 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private var primaryConstructorParametersScope: FirLocalScope? = null
 
-    override fun transformDeclaration(declaration: FirDeclaration, data: Any?): CompositeTransformResult<FirDeclaration> {
+    override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         return components.withContainer(declaration) {
             declaration.replaceResolvePhase(transformerPhase)
             transformer.transformElement(declaration, data)
         }
     }
 
-    override fun transformProperty(property: FirProperty, data: Any?): CompositeTransformResult<FirDeclaration> {
+    override fun transformProperty(property: FirProperty, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         if (property.isLocal) return transformLocalVariable(property, data)
         val returnTypeRef = property.returnTypeRef
         if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property.compose()
@@ -75,9 +77,9 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
     }
 
-    private fun transformLocalVariable(variable: FirProperty, data: Any?): CompositeTransformResult<FirDeclaration> {
+    private fun transformLocalVariable(variable: FirProperty, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         assert(variable.isLocal)
-        variable.transformOtherChildren(transformer, variable.returnTypeRef)
+        variable.transformOtherChildren(transformer, withExpectedType(variable.returnTypeRef))
         if (variable.initializer != null) {
             storeVariableReturnType(variable)
         }
@@ -89,8 +91,8 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     private fun FirProperty.transformChildrenWithoutAccessors(returnTypeRef: FirTypeRef): FirProperty {
-        return transformReturnTypeRef(transformer, returnTypeRef).
-            transformOtherChildren(transformer, returnTypeRef)
+        val data = withExpectedType(returnTypeRef)
+        return transformReturnTypeRef(transformer, data).transformOtherChildren(transformer, data)
     }
 
     private fun <F : FirVariable<F>> FirVariable<F>.transformAccessors() {
@@ -114,7 +116,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         owner: FirVariable<*>
     ) {
         if (accessor is FirDefaultPropertyAccessor || accessor.body == null) {
-            transformFunction(accessor, enhancedTypeRef)
+            transformFunction(accessor, withExpectedType(enhancedTypeRef))
         }
         val returnTypeRef = accessor.returnTypeRef
         if (returnTypeRef is FirImplicitTypeRef && enhancedTypeRef !is FirResolvedTypeRef) {
@@ -135,7 +137,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         } as CompositeTransformResult<FirStatement>
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): CompositeTransformResult<FirStatement> {
+    override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         localScopes.lastOrNull()?.storeDeclaration(regularClass)
         val oldConstructorScope = primaryConstructorParametersScope
         primaryConstructorParametersScope = null
@@ -153,7 +155,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         return result as CompositeTransformResult<FirStatement>
     }
 
-    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): CompositeTransformResult<FirStatement> {
+    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         val type = anonymousObject.defaultType()
         anonymousObject.resultType = FirResolvedTypeRefImpl(anonymousObject.source, type)
         val result = withLabelAndReceiverType(null, anonymousObject, type) {
@@ -163,16 +165,16 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     private fun transformAnonymousFunctionWithLambdaResolution(
-        anonymousFunction: FirAnonymousFunction, lambdaResolution: LambdaResolution
+        anonymousFunction: FirAnonymousFunction, lambdaResolution: ResolutionMode.LambdaResolution
     ): FirAnonymousFunction {
         val receiverTypeRef = anonymousFunction.receiverTypeRef
         fun transform(): FirAnonymousFunction {
             val expectedReturnType =
                 lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
-            val result = transformFunction(anonymousFunction, expectedReturnType).single as FirAnonymousFunction
+            val result = transformFunction(anonymousFunction, withExpectedType(expectedReturnType)).single as FirAnonymousFunction
             val body = result.body
             return if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
-                result.transformReturnTypeRef(transformer, body.resultType)
+                result.transformReturnTypeRef(transformer, withExpectedType(body.resultType))
                 result
             } else {
                 result
@@ -189,9 +191,7 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
     }
 
-    data class LambdaResolution(val expectedReturnTypeRef: FirResolvedTypeRef?)
-
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
+    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         val returnTypeRef = simpleFunction.returnTypeRef
         if ((returnTypeRef !is FirImplicitTypeRef) && implicitTypeOnly) {
             return simpleFunction.compose()
@@ -219,17 +219,17 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         if (function is FirSimpleFunction) {
             localScopes.lastOrNull()?.storeDeclaration(function)
         }
-        val result = transformFunction(function, returnTypeRef).single as FirFunction<*>
+        val result = transformFunction(function, withExpectedType(returnTypeRef)).single as FirFunction<*>
         val body = result.body
         return if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
-            result.transformReturnTypeRef(transformer, body.resultType)
+            result.transformReturnTypeRef(transformer, withExpectedType(body.resultType))
             result
         } else {
             result
         }.compose()
     }
 
-    override fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: Any?): CompositeTransformResult<FirStatement> {
+    override fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         return withScopeCleanup(localScopes) {
             localScopes += FirLocalScope()
             dataFlowAnalyzer.enterFunction(function)
@@ -242,14 +242,14 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: Any?): CompositeTransformResult<FirDeclaration> {
+    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         if (implicitTypeOnly) return constructor.compose()
         return transformFunction(constructor, data) as CompositeTransformResult<FirDeclaration>
     }
 
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
-        data: Any?
+        data: ResolutionMode
     ): CompositeTransformResult<FirDeclaration> {
         if (implicitTypeOnly) return anonymousInitializer.compose()
         return withScopeCleanup(localScopes) {
@@ -261,25 +261,25 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
     }
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): CompositeTransformResult<FirStatement> {
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         localScopes.lastOrNull()?.storeDeclaration(valueParameter)
         if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
             valueParameter.replaceResolvePhase(transformerPhase)
             return valueParameter.compose() // TODO
         }
-        return (transformDeclaration(valueParameter, valueParameter.returnTypeRef).single as FirStatement).compose()
+        return (transformDeclaration(valueParameter, withExpectedType(valueParameter.returnTypeRef)).single as FirStatement).compose()
     }
 
-    override fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): CompositeTransformResult<FirStatement> {
+    override fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         return when (data) {
-            null -> {
+            ResolutionMode.ContextDependent -> {
                 anonymousFunction.compose()
             }
-            is LambdaResolution -> {
+            is ResolutionMode.LambdaResolution -> {
                 transformAnonymousFunctionWithLambdaResolution(anonymousFunction, data).compose()
             }
-            is FirTypeRef -> {
-                val resolvedLambdaAtom = (data as? FirResolvedTypeRef)?.let {
+            is ResolutionMode.WithExpectedType -> {
+                val resolvedLambdaAtom = (data.expectedTypeRef as? FirResolvedTypeRef)?.let {
                     extractLambdaInfoFromFunctionalType(
                         it.type, it, anonymousFunction
                     )
@@ -335,15 +335,15 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
                         ?: af.returnTypeRef
                 )
                 af = af.transformValueParameters(ImplicitToErrorTypeTransformer, null)
-                val bodyExpectedType = returnTypeRefFromResolvedAtom ?: data
-                af = transformFunction(af, bodyExpectedType).single as FirAnonymousFunction
+                val bodyExpectedType = returnTypeRefFromResolvedAtom ?: data.expectedTypeRef
+                af = transformFunction(af, withExpectedType(bodyExpectedType)).single as FirAnonymousFunction
                 af = af.copy(
                     returnTypeRef = af.body?.resultType ?: FirErrorTypeRefImpl(af.source, FirSimpleDiagnostic("No result type for lambda", DiagnosticKind.InferenceError))
                 )
                 af.replaceTypeRef(af.constructFunctionalTypeRef(session))
                 af.compose()
             }
-            else -> {
+            is ResolutionMode.ContextIndependent -> {
                 transformFunction(anonymousFunction, data).single.compose()
             }
         }
@@ -380,37 +380,39 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         if (variable.returnTypeRef is FirImplicitTypeRef) {
             when {
                 initializer != null -> {
+                    val expectedType = when (val resultType = initializer.resultType) {
+                        is FirImplicitTypeRef -> FirErrorTypeRefImpl(
+                            null,
+                            FirSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
+                        )
+                        else -> resultType
+                    }
                     variable.transformReturnTypeRef(
                         transformer,
-                        when (val resultType = initializer.resultType) {
-                            is FirImplicitTypeRef -> FirErrorTypeRefImpl(
-                                null,
-                                FirSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
-                            )
-                            else -> resultType
-                        }
+                        withExpectedType(expectedType)
                     )
                 }
                 variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> {
+                    val expectedType = when (val resultType = variable.getter?.returnTypeRef) {
+                        is FirImplicitTypeRef -> FirErrorTypeRefImpl(
+                            null,
+                            FirSimpleDiagnostic("No result type for getter", DiagnosticKind.InferenceError)
+                        )
+                        else -> resultType
+                    }
                     variable.transformReturnTypeRef(
                         transformer,
-                        when (val resultType = variable.getter?.returnTypeRef) {
-                            is FirImplicitTypeRef -> FirErrorTypeRefImpl(
-                                null,
-                                FirSimpleDiagnostic("No result type for getter", DiagnosticKind.InferenceError)
-                            )
-                            else -> resultType
-                        }
+                        withExpectedType(expectedType)
                     )
                 }
                 else -> {
                     variable.transformReturnTypeRef(
-                        transformer, FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Cannot infer variable type without initializer / getter / delegate", DiagnosticKind.InferenceError))
+                        transformer, withExpectedType(FirErrorTypeRefImpl(null, FirSimpleDiagnostic("Cannot infer variable type without initializer / getter / delegate", DiagnosticKind.InferenceError)))
                     )
                 }
             }
             if (variable.getter?.returnTypeRef is FirImplicitTypeRef) {
-                variable.getter?.transformReturnTypeRef(transformer, variable.returnTypeRef)
+                variable.getter?.transformReturnTypeRef(transformer, withExpectedType(variable.returnTypeRef))
             }
         }
     }

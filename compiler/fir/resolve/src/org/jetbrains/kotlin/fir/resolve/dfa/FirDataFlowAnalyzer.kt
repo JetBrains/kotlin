@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStackImpl
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.dfa.Condition.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
@@ -485,7 +486,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         for (conditionalEffect in conditionalEffects) {
             val fir = conditionalEffect.buildContractFir(argumentsMapping) ?: continue
             val effect = conditionalEffect.effect as? ConeReturnsEffectDeclaration ?: continue
-            fir.transformSingle(components.transformer, null)
+            fir.transformSingle(components.transformer, ResolutionMode.ContextDependent)
             val argumentVariable = getOrCreateVariable(fir)
             val lastNode = graphBuilder.lastNode
             when (val value = effect.value) {

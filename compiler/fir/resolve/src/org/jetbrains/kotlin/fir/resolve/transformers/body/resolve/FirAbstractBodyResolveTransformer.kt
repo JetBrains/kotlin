@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 
-abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAbstractPhaseTransformer<Any?>(phase) {
+abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAbstractPhaseTransformer<ResolutionMode>(phase) {
     abstract val components: BodyResolveTransformerComponents
 
     abstract var implicitTypeOnly: Boolean
@@ -77,6 +77,13 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected inline val dataFlowAnalyzer: FirDataFlowAnalyzer get() = components.dataFlowAnalyzer
     protected inline val scopeSession: ScopeSession get() = components.scopeSession
     protected inline val file: FirFile get() = components.file
+
+    val ResolutionMode.expectedType: FirTypeRef?
+        get() = when (this) {
+            is ResolutionMode.WithExpectedType -> expectedTypeRef
+            is ResolutionMode.ContextIndependent -> noExpectedType
+            else -> null
+        }
 
     class BodyResolveTransformerComponents(
         override val session: FirSession,

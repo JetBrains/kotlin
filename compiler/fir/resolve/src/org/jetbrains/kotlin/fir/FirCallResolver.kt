@@ -66,8 +66,8 @@ class FirCallResolver(
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?, file: FirFile): FirFunctionCall {
         qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
-        val functionCall = functionCall.transformExplicitReceiver(transformer, noExpectedType)
-            .transformArguments(transformer, null)
+        val functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
+            .transformArguments(transformer, ResolutionMode.ContextDependent)
 
         val name = functionCall.calleeReference.name
 
@@ -161,7 +161,7 @@ class FirCallResolver(
         qualifiedResolver.initProcessingQualifiedAccess(qualifiedAccess, callee)
 
         @Suppress("NAME_SHADOWING")
-        val qualifiedAccess = qualifiedAccess.transformExplicitReceiver(transformer, noExpectedType)
+        val qualifiedAccess = qualifiedAccess.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
         qualifiedResolver.replacedQualifier(qualifiedAccess)?.let { return it }
 
         val info = CallInfo(

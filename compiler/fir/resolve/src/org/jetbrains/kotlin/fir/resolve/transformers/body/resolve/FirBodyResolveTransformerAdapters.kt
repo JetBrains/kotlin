@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -26,7 +27,7 @@ class FirDesignatedBodyResolveTransformer(
     implicitTypeOnly = implicitTypeOnly,
     scopeSession = scopeSession
 ) {
-    override fun <E : FirElement> transformElement(element: E, data: Any?): CompositeTransformResult<E> {
+    override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): CompositeTransformResult<E> {
         if (designation.hasNext()) {
             designation.next().visitNoTransform(this, data)
             return element.compose()
@@ -34,7 +35,7 @@ class FirDesignatedBodyResolveTransformer(
         return super.transformElement(element, data)
     }
 
-    override fun transformDeclaration(declaration: FirDeclaration, data: Any?): CompositeTransformResult<FirDeclaration> {
+    override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
         return components.withContainer(declaration) {
             declaration.replaceResolvePhase(transformerPhase)
             transformElement(declaration, data)
@@ -58,7 +59,7 @@ class FirImplicitTypeBodyResolveTransformerAdapter : FirTransformer<Nothing?>() 
             implicitTypeOnly = true,
             scopeSession = scopeSession
         )
-        return file.transform(transformer, null)
+        return file.transform(transformer, ResolutionMode.ContextDependent)
     }
 }
 
@@ -79,6 +80,6 @@ class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
             implicitTypeOnly = false,
             scopeSession = scopeSession
         )
-        return file.transform(transformer, null)
+        return file.transform(transformer, ResolutionMode.ContextDependent)
     }
 }

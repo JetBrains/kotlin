@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
@@ -141,7 +142,7 @@ class FirCallCompleter(
             )
 
             replacements[lambdaArgument] =
-                newLambdaExpression.transformSingle(transformer, FirDeclarationsResolveTransformer.LambdaResolution(expectedReturnTypeRef))
+                newLambdaExpression.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
 
             return (newLambdaExpression.body?.returnExpressions() ?: emptyList()) to InferenceSession.default
         }
