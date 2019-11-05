@@ -19,12 +19,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrReturn
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
@@ -126,7 +124,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  */
                 context.state.jvmDefaultMode.isCompatibility -> {
                     val defaultImpl = createDefaultImpl(function)
-                    function.body = IrExpressionBodyImpl(createDelegatingCall(defaultImpl, function))
+                    function.body = createDelegatingCall(defaultImpl, function)
                 }
 
                 // 6) ... otherwise we simply leave the default function implementation on the interface.
@@ -171,11 +169,11 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             newFunction.parentAsClass.declarations.add(newFunction)
         }
 
-    private fun createDelegatingCall(defaultImpls: IrFunction, interfaceMethod: IrFunction): IrCall {
+    private fun createDelegatingCall(defaultImpls: IrFunction, interfaceMethod: IrFunction): IrExpressionBody {
         val startOffset = interfaceMethod.startOffset
         val endOffset = interfaceMethod.endOffset
 
-        return IrCallImpl(startOffset, endOffset, interfaceMethod.returnType, defaultImpls.symbol).apply {
+        return IrExpressionBodyImpl(IrCallImpl(startOffset, endOffset, interfaceMethod.returnType, defaultImpls.symbol).apply {
             passTypeArgumentsFrom(interfaceMethod)
 
             var offset = 0
@@ -188,7 +186,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             interfaceMethod.valueParameters.forEachIndexed { i, it ->
                 putValueArgument(i + offset, IrGetValueImpl(startOffset, endOffset, it.symbol))
             }
-        }
+        })
     }
 
     private fun delegateInheritedDefaultImplementationToDefaultImpls(fakeOverride: IrSimpleFunction, implementation: IrSimpleFunction) {
@@ -197,9 +195,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
 
         irFunction.parentAsClass.declarations.add(irFunction)
         context.createIrBuilder(irFunction.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
-            irFunction.body = irBlockBody {
-                +irReturn(createDelegatingCall(defaultImplFun, irFunction))
-            }
+            irFunction.body = createDelegatingCall(defaultImplFun, irFunction)
         }
     }
 
