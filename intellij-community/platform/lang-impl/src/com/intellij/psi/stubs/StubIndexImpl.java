@@ -12,15 +12,15 @@ import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.impl.ExtensionPointImpl;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.ModificationTracker;
-import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.ManagingFS;
+import com.intellij.openapi.vfs.newvfs.impl.VirtualFileSystemEntry;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -371,6 +371,7 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
                                                                @Nullable IdFilter idFilter,
                                                                @NotNull final Class<Psi> requiredClass,
                                                                @NotNull final Processor<? super Psi> processor) {
+    boolean dumb = DumbService.isDumb(project);
     IdIterator ids = getContainingIds(indexKey, key, project, idFilter, scope);
     UpdatableIndex<Integer, SerializedStubTree, FileContent> stubUpdatingIndex = getStubUpdatingIndex();
     if (stubUpdatingIndex == null) return true;
@@ -383,6 +384,14 @@ public final class StubIndexImpl extends StubIndex implements PersistentStateCom
         VirtualFile file = IndexInfrastructure.findFileByIdIfCached(fs, id);
         if (file == null || (scope != null && !scope.contains(file))) {
           continue;
+        }
+        if (dumb) {
+          if (!(file instanceof VirtualFileSystemEntry) || !((VirtualFileSystemEntry)file).isFileIndexed()) {
+            continue;
+          }
+          if (((FileBasedIndexImpl)FileBasedIndex.getInstance()).getChangedFilesCollector().containsFile(file)) {
+            continue;
+          }
         }
 
         StubIdList list = myCachedStubIds.get(indexKey).getValue().computeIfAbsent(new CompositeKey(key, id), __ -> {
