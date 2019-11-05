@@ -61,7 +61,7 @@ abstract class KtSwiftImmediateSymbol : KtImmediateSymbol, SwiftSymbol {
         swiftAttributes.hasDeclarationSpecifier(declarationSpecifier)
 
     override val swiftAttributes: SwiftAttributesInfo
-        get() = SwiftAttributesInfo.EMPTY //todo???
+        get() = openSwiftAttributes //todo???
 
     override val shortObjcName: String?
         get() = name //todo???

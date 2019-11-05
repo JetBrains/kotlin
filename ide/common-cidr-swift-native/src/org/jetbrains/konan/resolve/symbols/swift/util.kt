@@ -7,11 +7,14 @@ import com.jetbrains.swift.psi.types.SwiftContext
 import com.jetbrains.swift.psi.types.SwiftType
 import com.jetbrains.swift.psi.types.SwiftTypeFactory
 import com.jetbrains.swift.symbols.SwiftAttributesInfo
+import com.jetbrains.swift.symbols.SwiftDeclarationSpecifiers
 import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
+import com.jetbrains.swift.symbols.impl.SwiftAttributesInfoImpl
 import com.jetbrains.swift.symbols.swiftoc.SwiftApinotes
 import com.jetbrains.swift.symbols.swiftoc.SwiftGlobalApiNotes
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import java.util.*
 
 private val typeFactory: SwiftTypeFactory
     get() = SwiftTypeFactory.getInstance()
@@ -114,3 +117,6 @@ val Stub<*>.swiftName: String
 private fun List<String>.extractSwiftName(): String? =
     find { attr -> attr.startsWith("swift_name") }
         ?.let { attr -> attr.substring(12, attr.length - 2) }  //swift_name("...")
+
+internal val openSwiftAttributes: SwiftAttributesInfo =
+    SwiftAttributesInfoImpl.create(emptyList(), EnumSet.of(SwiftDeclarationSpecifiers.OPEN))

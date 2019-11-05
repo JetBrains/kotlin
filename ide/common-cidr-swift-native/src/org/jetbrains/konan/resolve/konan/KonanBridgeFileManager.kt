@@ -37,7 +37,7 @@ class KonanBridgeFileManager(
         (psiManager as? PsiManagerImpl)?.addTreeChangePreprocessor(ModificationListener())
     }
 
-    fun forTarget(target: KonanTarget, name: String): VirtualFile {
+    fun forTarget(target: KonanTarget, name: String): KonanBridgeVirtualFile {
         synchronized(myLock) {
             val modificationStamp = modificationCount.get()
 
