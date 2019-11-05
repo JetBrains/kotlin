@@ -147,7 +147,9 @@ dependencies {
     libraries(intellijDep()) { includeIntellijCoreJarDependencies(project) { it.startsWith("trove4j") } }
     libraries(commonDep("io.ktor", "ktor-network"))
     libraries(kotlinStdlib("jdk8"))
-    libraries(kotlinStdlib("js", "distLibrary"))
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        libraries(kotlinStdlib("js", "distLibrary"))
+    }
 
     distLibraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
