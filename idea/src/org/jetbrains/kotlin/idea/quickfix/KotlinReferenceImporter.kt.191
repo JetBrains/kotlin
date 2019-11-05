@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.actions.createSingleImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings
+import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtExpression
@@ -47,7 +47,7 @@ class KotlinReferenceImporter : ReferenceImporter {
 
         val nameExpression = file.findElementAt(offset)?.parent as? KtSimpleNameExpression ?: return false
 
-        if (!KotlinCodeInsightWorkspaceSettings.getInstance(file.project).addUnambiguousImportsOnTheFly) return false
+        if (!KotlinCodeInsightSettings.getInstance().addUnambiguousImportsOnTheFly) return false
 
         val importFix: ImportFixBase<out KtExpression>? = findImportFixAt(editor, file, offset)
         if (importFix != null && !importFix.isOutdated()) {
@@ -107,7 +107,7 @@ class KotlinReferenceImporter : ReferenceImporter {
         }
 
         private fun KtSimpleNameExpression.autoImport(editor: Editor, file: KtFile): Boolean {
-            if (!KotlinCodeInsightWorkspaceSettings.getInstance(file.project).addUnambiguousImportsOnTheFly) return false
+            if (!KotlinCodeInsightSettings.getInstance().addUnambiguousImportsOnTheFly) return false
             if (!DaemonListeners.canChangeFileSilently(file)) return false
             if (hasUnresolvedImportWhichCanImport(file, getReferencedName())) return false
 

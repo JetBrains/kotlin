@@ -3483,6 +3483,10 @@
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"
                     serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"/>
+
+    <applicationService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings"
+                    serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings"/>
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
     <autoImportOptionsProvider instance="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettingsProvider"/>
 
