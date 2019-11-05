@@ -210,7 +210,7 @@ class JvmSharedVariablesManager(
             getElementFieldSymbol(valueType),
             IrGetValueImpl(initializer.startOffset, initializer.endOffset, sharedVariableDeclaration.symbol),
             initializer,
-            valueType
+            irBuiltIns.unitType
         )
 
         return IrCompositeImpl(
