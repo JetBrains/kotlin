@@ -118,5 +118,5 @@ private fun List<String>.extractSwiftName(): String? =
     find { attr -> attr.startsWith("swift_name") }
         ?.let { attr -> attr.substring(12, attr.length - 2) }  //swift_name("...")
 
-internal val openSwiftAttributes: SwiftAttributesInfo =
-    SwiftAttributesInfoImpl.create(emptyList(), EnumSet.of(SwiftDeclarationSpecifiers.OPEN))
+internal val publicSwiftAttributes: SwiftAttributesInfo =
+    SwiftAttributesInfoImpl.create(emptyList(), EnumSet.of(SwiftDeclarationSpecifiers.PUBLIC))
