@@ -159,7 +159,7 @@ private fun IrFunction.createMultifileDelegateIfNeeded(context: JvmBackendContex
 
     // TODO: perform copy of the signature only, without body
     val function = deepCopyWithSymbols(facadeClass)
-    function.body = context.createIrBuilder(symbol).irBlockBody {
+    function.body = context.createIrBuilder(function.symbol).irBlockBody {
         +irReturn(irCall(this@createMultifileDelegateIfNeeded).also { call ->
             call.passTypeArgumentsFrom(function)
             function.extensionReceiverParameter?.let { parameter ->
