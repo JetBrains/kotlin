@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.actions.createSingleImportAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
-import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings
+import org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightSettings
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.KtFile
@@ -47,7 +47,7 @@ class KotlinReferenceImporter : ReferenceImporter {
         }
 
         fun KtSimpleNameExpression.autoImport(): Boolean {
-            if (!KotlinCodeInsightWorkspaceSettings.getInstance(project).addUnambiguousImportsOnTheFly) return false
+            if (!KotlinCodeInsightSettings.getInstance().addUnambiguousImportsOnTheFly) return false
             if (!DaemonListeners.canChangeFileSilently(file)) return false
             if (hasUnresolvedImportWhichCanImport(getReferencedName())) return false
 

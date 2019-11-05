@@ -33,26 +33,32 @@ public class KotlinCodeInsightWorkspaceSettingsProvider implements AutoImportOpt
         return myPanel;
     }
 
-    private KotlinCodeInsightWorkspaceSettings settings() {
+    private KotlinCodeInsightSettings settings() {
+        return KotlinCodeInsightSettings.Companion.getInstance();
+    }
+
+    private KotlinCodeInsightWorkspaceSettings projectSettings() {
         return KotlinCodeInsightWorkspaceSettings.Companion.getInstance(project);
     }
 
     @Override
     public boolean isModified() {
-        KotlinCodeInsightWorkspaceSettings settings = settings();
-        return settings.optimizeImportsOnTheFly != myOptimizeImportsOnTheFly.isSelected()
+        KotlinCodeInsightSettings settings = settings();
+        KotlinCodeInsightWorkspaceSettings projectSettings = projectSettings();
+        return projectSettings.optimizeImportsOnTheFly != myOptimizeImportsOnTheFly.isSelected()
                || settings.addUnambiguousImportsOnTheFly != myAddUnambiguousImportsOnTheFly.isSelected();
     }
 
     @Override
     public void apply() throws ConfigurationException {
-        KotlinCodeInsightWorkspaceSettings settings = settings();
+        KotlinCodeInsightSettings settings = settings();
+        KotlinCodeInsightWorkspaceSettings projectSettings = projectSettings();
 
-        settings.optimizeImportsOnTheFly = myOptimizeImportsOnTheFly.isSelected();
+        projectSettings.optimizeImportsOnTheFly = myOptimizeImportsOnTheFly.isSelected();
         settings.addUnambiguousImportsOnTheFly = myAddUnambiguousImportsOnTheFly.isSelected();
 
         final Map<String, String> data = new HashMap<>();
-        data.put("optimizeImportsOnTheFly", Boolean.toString(settings.optimizeImportsOnTheFly));
+        data.put("optimizeImportsOnTheFly", Boolean.toString(projectSettings.optimizeImportsOnTheFly));
         data.put("addUnambiguousImportsOnTheFly", Boolean.toString(settings.addUnambiguousImportsOnTheFly));
 
         KotlinFUSLogger.Companion.log(FUSEventGroups.Settings, "KotlinCodeInsightWorkspaceSettings", data);
@@ -60,8 +66,9 @@ public class KotlinCodeInsightWorkspaceSettingsProvider implements AutoImportOpt
 
     @Override
     public void reset() {
-        KotlinCodeInsightWorkspaceSettings settings = settings();
-        myOptimizeImportsOnTheFly.setSelected(settings.optimizeImportsOnTheFly);
+        KotlinCodeInsightSettings settings = settings();
+        KotlinCodeInsightWorkspaceSettings projectSettings = projectSettings();
+        myOptimizeImportsOnTheFly.setSelected(projectSettings.optimizeImportsOnTheFly);
         myAddUnambiguousImportsOnTheFly.setSelected(settings.addUnambiguousImportsOnTheFly);
     }
 }
