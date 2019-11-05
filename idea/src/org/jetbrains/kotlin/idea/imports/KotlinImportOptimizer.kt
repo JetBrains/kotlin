@@ -86,6 +86,8 @@ class KotlinImportOptimizer : ImportOptimizer {
 
         //TODO: keep existing imports? at least aliases (comments)
 
+        ProgressIndicatorProvider.getInstance().progressIndicator?.text = "Collect unused imports for ${file.name}"
+
         val descriptorsToImport = collectDescriptorsToImport(file)
 
         val imports = prepareOptimizedImports(file, descriptorsToImport) ?: return null
@@ -100,6 +102,20 @@ class KotlinImportOptimizer : ImportOptimizer {
     private data class OptimizeInformation(val add: Int, val remove: Int, val imports: List<ImportPath>)
 
     private class CollectUsedDescriptorsVisitor(file: KtFile) : KtVisitorVoid() {
+        private val elementsSize: Int
+
+        init {
+            var size = 0
+            file.accept(object : KtVisitorVoid() {
+                override fun visitElement(element: PsiElement) {
+                    size += 1
+                    element.acceptChildren(this)
+                }
+            })
+            elementsSize = size
+        }
+
+        private var elementProgress: Int = 0
         private val currentPackageName = file.packageFqName
         private val aliases: Map<FqName, List<Name>> = file.importDirectives
             .asSequence()
@@ -116,6 +132,9 @@ class KotlinImportOptimizer : ImportOptimizer {
 
         override fun visitElement(element: PsiElement) {
             ProgressIndicatorProvider.checkCanceled()
+            elementProgress += 1
+            ProgressIndicatorProvider.getInstance().progressIndicator?.fraction = elementProgress / elementsSize.toDouble()
+
             element.acceptChildren(this)
         }
 
