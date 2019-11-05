@@ -118,7 +118,7 @@ fun exportSettings(exportFiles: Set<Path>, out: OutputStream, configPath: String
 data class ExportableItem(val file: Path, val presentableName: String, val roamingType: RoamingType = RoamingType.DEFAULT)
 
 fun exportInstalledPlugins(zip: Compressor) {
-  val plugins = PluginManagerCore.getPlugins().asSequence().filter { !it.isBundled && it.isEnabled }.map { it.pluginId.idString }.toList()
+  val plugins = PluginManagerCore.getPlugins().asSequence().filter { !it.isBundled && it.isEnabled }.map { it.pluginId }.toList()
   if (plugins.isNotEmpty()) {
     val buffer = StringWriter()
     PluginManagerCore.writePluginsList(plugins, buffer)
