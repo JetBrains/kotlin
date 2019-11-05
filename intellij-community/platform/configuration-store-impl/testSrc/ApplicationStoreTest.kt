@@ -16,6 +16,7 @@ import com.intellij.util.io.lastModified
 import com.intellij.util.io.systemIndependentPath
 import com.intellij.util.io.write
 import com.intellij.util.io.writeChild
+import com.intellij.util.pico.DefaultPicoContainer
 import com.intellij.util.xmlb.XmlSerializerUtil
 import com.intellij.util.xmlb.annotations.Attribute
 import gnu.trove.THashMap
@@ -28,7 +29,6 @@ import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
 import org.picocontainer.MutablePicoContainer
-import org.picocontainer.defaults.InstanceComponentAdapter
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -179,7 +179,7 @@ internal class ApplicationStoreTest {
 
     val picoContainer = ApplicationManager.getApplication().picoContainer as MutablePicoContainer
     val componentKey = A::class.java.name
-    picoContainer.registerComponent(InstanceComponentAdapter(componentKey, component))
+    picoContainer.registerComponent(DefaultPicoContainer.InstanceComponentAdapter(componentKey, component))
     try {
       assertThat(getExportableComponentsMap(false, false, storageManager, relativePaths)).containsOnly(
         componentPath.to(listOf(ExportableItem(componentPath, ""))), additionalPath.to(listOf(ExportableItem(additionalPath, " (schemes)"))))
