@@ -6,6 +6,7 @@ import com.intellij.AppTopics;
 import com.intellij.diagnostic.Activity;
 import com.intellij.diagnostic.StartUpMeasurer;
 import com.intellij.history.LocalHistory;
+import com.intellij.ide.AppLifecycleListener;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.startup.ServiceNotReadyException;
 import com.intellij.lang.ASTNode;
@@ -27,6 +28,8 @@ import com.intellij.openapi.fileTypes.impl.FileTypeManagerImpl;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
+import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.CollectingContentIterator;
 import com.intellij.openapi.roots.ContentIterator;
@@ -264,6 +267,20 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
       @Override
       public void unsavedDocumentsDropped() {
         cleanupMemoryStorage(false);
+      }
+    });
+
+    connection.subscribe(AppLifecycleListener.TOPIC, new AppLifecycleListener() {
+      @Override
+      public void appWillBeClosed(boolean isRestart) {
+        if (!myStateFuture.isDone() || !myAllIndicesInitializedFuture.isDone()) {
+          ProgressManager.getInstance().run(new Task.Modal(null, "Preparing Indexes to Shutdown", false) {
+            @Override
+            public void run(@NotNull ProgressIndicator indicator) {
+              waitUntilAllIndicesAreInitialized();
+            }
+          });
+        }
       }
     });
 
