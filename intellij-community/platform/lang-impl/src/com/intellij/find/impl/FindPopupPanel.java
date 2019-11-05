@@ -409,14 +409,8 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   }
 
   private void initComponents() {
-    myTitleLabel = new JBLabel(FindBundle.message("find.in.path.dialog.title"), UIUtil.ComponentStyle.REGULAR) {
-      @Override
-      public void updateUI() {
-        super.updateUI();
-        setFont(JBUI.Fonts.label().asBold());
-      }
-    };
-    //myTitleLabel.setBorder(JBUI.Borders.emptyRight(16));
+    myTitleLabel = new JBLabel(FindBundle.message("find.in.path.dialog.title"), UIUtil.ComponentStyle.REGULAR);
+    RelativeFont.BOLD.install(myTitleLabel);
     myLoadingDecorator = new LoadingDecorator(new JLabel(EmptyIcon.ICON_16), getDisposable(), 250, true, new AsyncProcessIcon("FindInPathLoading"));
     myLoadingDecorator.setLoadingText("");
     myCbCaseSensitive = createCheckBox("find.popup.case.sensitive", "FindPopupPanel$ToggleCaseSensitive");
