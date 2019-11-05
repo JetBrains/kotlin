@@ -401,7 +401,7 @@ class FindInProjectTask {
   private Set<VirtualFile> getFilesForFastWordSearch() {
     String stringToFind = myStringToFindInIndices;
 
-    if (stringToFind.isEmpty() || DumbService.getInstance(myProject).isDumb()) {
+    if (stringToFind.isEmpty() || (DumbService.getInstance(myProject).isDumb() && !FileBasedIndex.indexAccessDuringDumbModeEnabled())) {
       return Collections.emptySet();
     }
 
@@ -426,7 +426,9 @@ class FindInProjectTask {
 
     if (!keys.isEmpty()) {
       final List<VirtualFile> hits = new ArrayList<>();
-      FileBasedIndex.getInstance().getFilesWithKey(TrigramIndex.INDEX_ID, keys, Processors.cancelableCollectProcessor(hits), scope);
+      FileBasedIndex.getInstance().ignoreDumbMode(() -> {
+        FileBasedIndex.getInstance().getFilesWithKey(TrigramIndex.INDEX_ID, keys, Processors.cancelableCollectProcessor(hits), scope);
+      }, myProject);
 
       for (VirtualFile hit : hits) {
         if (myFileMask.value(hit)) {
