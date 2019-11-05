@@ -119,7 +119,9 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
         infix fun String.to(key: TextAttributesKey) = AttributesDescriptor(this, key)
 
         return arrayOf(
-            OptionsBundle.message("options.java.attribute.descriptor.keyword") to KotlinHighlightingColors.KEYWORD,
+            KotlinBundle.message("options.kotlin.attribute.descriptor.builtin.keyword") to KotlinHighlightingColors.KEYWORD,
+            KotlinBundle.message("options.kotlin.attribute.descriptor.builtin.keyword.val") to KotlinHighlightingColors.VAL_KEYWORD,
+            KotlinBundle.message("options.kotlin.attribute.descriptor.builtin.keyword.var") to KotlinHighlightingColors.VAR_KEYWORD,
             KotlinBundle.message("options.kotlin.attribute.descriptor.builtin.annotation") to KotlinHighlightingColors.BUILTIN_ANNOTATION,
             OptionsBundle.message("options.java.attribute.descriptor.number") to KotlinHighlightingColors.NUMBER,
             OptionsBundle.message("options.java.attribute.descriptor.string") to KotlinHighlightingColors.STRING,

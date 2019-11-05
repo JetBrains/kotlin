@@ -26,7 +26,9 @@ import static com.intellij.openapi.editor.colors.TextAttributesKey.createTextAtt
 public class KotlinHighlightingColors {
     // default keys (mostly syntax elements)
     public static final TextAttributesKey KEYWORD = createTextAttributesKey("KOTLIN_KEYWORD", JavaHighlightingColors.KEYWORD);
-    public static final TextAttributesKey BUILTIN_ANNOTATION = createTextAttributesKey("KOTLIN_BUILTIN_ANNOTATION", JavaHighlightingColors.KEYWORD);
+    public static final TextAttributesKey BUILTIN_ANNOTATION = createTextAttributesKey("KOTLIN_BUILTIN_ANNOTATION", KotlinHighlightingColors.KEYWORD);
+    public static final TextAttributesKey VAL_KEYWORD = createTextAttributesKey("KOTLIN_KEYWORD_VAL", KotlinHighlightingColors.KEYWORD);
+    public static final TextAttributesKey VAR_KEYWORD = createTextAttributesKey("KOTLIN_KEYWORD_VAR", KotlinHighlightingColors.KEYWORD);
     public static final TextAttributesKey NUMBER = createTextAttributesKey("KOTLIN_NUMBER", DefaultLanguageHighlighterColors.NUMBER);
     public static final TextAttributesKey STRING = createTextAttributesKey("KOTLIN_STRING", DefaultLanguageHighlighterColors.STRING);
     public static final TextAttributesKey STRING_ESCAPE = createTextAttributesKey("KOTLIN_STRING_ESCAPE", DefaultLanguageHighlighterColors.VALID_STRING_ESCAPE);

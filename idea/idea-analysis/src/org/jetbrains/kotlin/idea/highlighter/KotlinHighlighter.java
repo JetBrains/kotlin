@@ -51,6 +51,8 @@ public class KotlinHighlighter extends SyntaxHighlighterBase {
 
         fillMap(keys1, KtTokens.KEYWORDS, KotlinHighlightingColors.KEYWORD);
 
+        keys1.put(KtTokens.VAL_KEYWORD, KotlinHighlightingColors.VAL_KEYWORD);
+        keys1.put(KtTokens.VAR_KEYWORD, KotlinHighlightingColors.VAR_KEYWORD);
         keys1.put(KtTokens.AS_SAFE, KotlinHighlightingColors.KEYWORD);
         keys1.put(KtTokens.INTEGER_LITERAL, KotlinHighlightingColors.NUMBER);
         keys1.put(KtTokens.FLOAT_LITERAL, KotlinHighlightingColors.NUMBER);
