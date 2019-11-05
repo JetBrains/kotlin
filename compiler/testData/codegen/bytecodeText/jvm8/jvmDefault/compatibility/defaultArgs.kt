@@ -1,5 +1,4 @@
 // !JVM_DEFAULT_MODE: compatibility
-// IGNORE_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 // FULL_JDK
 
@@ -10,7 +9,7 @@ interface KInterface {
     }
 }
 
-// 1 INVOKESTATIC KInterface.access\$test\$jd
+// 1 INVOKESTATIC KInterface.access\$test\$
 // 1 INVOKESTATIC KInterface.test\$default
 
 // from $default

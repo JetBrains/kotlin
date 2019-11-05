@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.intrinsics.receiverAndArgs
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.backend.jvm.ir.isLambda
@@ -187,48 +188,52 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     private fun IrSimpleFunction.makeSimpleFunctionAccessor(expression: IrCall): IrSimpleFunction {
         val source = this
+
+        // Find the right container to insert the accessor. Simply put, when we call a function on a class A,
+        // we also need to put its accessor into A. However, due to the way that calls are implemented in the
+        // IR we generally need to look at the type of the dispatchReceiver *argument* in order to find the
+        // correct class. Consider the following code:
+        //
+        //     fun run(f : () -> Int): Int = f()
+        //
+        //     open class A {
+        //         private fun f() = 0
+        //         fun g() = run { this.f() }
+        //     }
+        //
+        //     class B : A {
+        //         override fun g() = 1
+        //         fun h() = run { super.g() }
+        //     }
+        //
+        // We have calls to the private methods A.f from a generated Lambda subclass for the argument to `run`
+        // in class A and a super call to A.g from a generated Lambda subclass in class B.
+        //
+        // In the first case, we need to produce an accessor in class A to access the private member of A.
+        // Both the parent of the function f and the type of the dispatch receiver point to the correct class.
+        // In the second case we need to call A.g from within class B, since this is the only way to invoke
+        // a method of a superclass on the JVM. However, the IR for the call to super.g points directly to the
+        // function g in class A. Confusingly, the `superQualifier` on this call also points to class A.
+        // The only way to compute the actual enclosing class for the call is by looking at the type of the
+        // dispatch receiver argument, which points to B.
+        //
+        // Beyond this, there can be accessors that are needed because other lowerings produce code calling
+        // private methods (e.g., local functions for lambdas are private and called from generated
+        // SAM wrapper classes). In this case we rely on the parent field of the called function.
+        //
+        // Finally, we need to produce accessors for calls to protected static methods coming from Java,
+        // which we put in the closest enclosing class which has access to the method in question.
+        val dispatchReceiverType = expression.dispatchReceiver?.type
+        val parent = source.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: source.parent)
+
         return buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.accessorName()
             visibility = Visibilities.PUBLIC
+            modality = if (parent is IrClass && parent.isJvmInterface) Modality.OPEN else Modality.FINAL
             isSuspend = source.isSuspend // synthetic accessors of suspend functions are handled in codegen
         }.also { accessor ->
-            // Find the right container to insert the accessor. Simply put, when we call a function on a class A,
-            // we also need to put its accessor into A. However, due to the way that calls are implemented in the
-            // IR we generally need to look at the type of the dispatchReceiver *argument* in order to find the
-            // correct class. Consider the following code:
-            //
-            //     fun run(f : () -> Int): Int = f()
-            //
-            //     open class A {
-            //         private fun f() = 0
-            //         fun g() = run { this.f() }
-            //     }
-            //
-            //     class B : A {
-            //         override fun g() = 1
-            //         fun h() = run { super.g() }
-            //     }
-            //
-            // We have calls to the private methods A.f from a generated Lambda subclass for the argument to `run`
-            // in class A and a super call to A.g from a generated Lambda subclass in class B.
-            //
-            // In the first case, we need to produce an accessor in class A to access the private member of A.
-            // Both the parent of the function f and the type of the dispatch receiver point to the correct class.
-            // In the second case we need to call A.g from within class B, since this is the only way to invoke
-            // a method of a superclass on the JVM. However, the IR for the call to super.g points directly to the
-            // function g in class A. Confusingly, the `superQualifier` on this call also points to class A.
-            // The only way to compute the actual enclosing class for the call is by looking at the type of the
-            // dispatch receiver argument, which points to B.
-            //
-            // Beyond this, there can be accessors that are needed because other lowerings produce code calling
-            // private methods (e.g., local functions for lambdas are private and called from generated
-            // SAM wrapper classes). In this case we rely on the parent field of the called function.
-            //
-            // Finally, we need to produce accessors for calls to protected static methods coming from Java,
-            // which we put in the closest enclosing class which has access to the method in question.
-            val dispatchReceiverType = expression.dispatchReceiver?.type
-            accessor.parent = source.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: source.parent)
+            accessor.parent = parent
             pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)

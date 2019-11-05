@@ -1,5 +1,4 @@
 // !JVM_DEFAULT_MODE: compatibility
-// IGNORE_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 
 interface KInterface {
@@ -14,10 +13,10 @@ interface KInterface2 : KInterface {
 
 }
 
-// 1 INVOKESTATIC KInterface2.access\$getBar\$jd
-// 1 INVOKESTATIC KInterface2.access\$setBar\$jd
-// 1 INVOKESTATIC KInterface.access\$getBar\$jd
-// 1 INVOKESTATIC KInterface.access\$setBar\$jd
+// 1 INVOKESTATIC KInterface2.access\$getBar\$
+// 1 INVOKESTATIC KInterface2.access\$setBar\$
+// 1 INVOKESTATIC KInterface.access\$getBar\$
+// 1 INVOKESTATIC KInterface.access\$setBar\$
 
 // 1 INVOKESPECIAL KInterface2.getBar
 // 1 INVOKESPECIAL KInterface2.setBar
