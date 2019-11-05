@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -164,7 +165,7 @@ internal val interfaceDefaultCallsPhase = makeIrFilePhase(
     description = "Redirect interface calls with default arguments to DefaultImpls"
 )
 
-private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
+private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : IrElementTransformerVoidWithContext(), FileLoweringPass {
     // TODO If there are no default _implementations_ we can avoid generating defaultImpls class entirely by moving default arg dispatchers to the interface class
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(this)
@@ -181,6 +182,12 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
         }
 
         val redirectTarget = context.declarationFactory.getDefaultImplsFunction(callee as IrSimpleFunction)
+
+        // InterfaceLowering bridges from DefaultImpls in compatibility mode -- if that's the case,
+        // this phase will inadvertently cause a recursive loop as the bridge on the DefaultImpls
+        // gets redirected to call itself.
+        if (redirectTarget == currentFunction?.irElement) return super.visitCall(expression)
+
         val newCall = irCall(expression, redirectTarget, receiversAsArguments = true)
 
         return super.visitCall(newCall)
