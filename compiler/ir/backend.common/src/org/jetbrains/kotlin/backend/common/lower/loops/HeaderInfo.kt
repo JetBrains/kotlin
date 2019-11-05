@@ -203,6 +203,15 @@ internal class IndexedGetHeaderInfo(
     override fun asReversed(): HeaderInfo? = null
 }
 
+/**
+ * Information about a for-loop over an iterable returned by `withIndex()`.
+ */
+internal class WithIndexHeaderInfo(val nestedInfo: HeaderInfo) : HeaderInfo() {
+    // We cannot easily reverse `withIndex()` so we do not attempt to handle it. We would have to start from the last value of the index,
+    // easily calculable (or even impossible) in most cases.
+    override fun asReversed(): HeaderInfo? = null
+}
+
 /** Matches an iterable expression and builds a [HeaderInfo] from the expression. */
 internal interface HeaderInfoHandler<E : IrExpression, D> {
     /** Returns true if the handler can build a [HeaderInfo] from the iterable expression. */
@@ -263,7 +272,10 @@ internal class HeaderInfoBuilder(context: CommonBackendContext, private val scop
         StepHandler(context, this)
     )
 
-    private val reversedHandler = ReversedHandler(context, this)
+    private val callHandlers = listOf(
+        ReversedHandler(context, this),
+        WithIndexHandler(context, this)
+    )
 
     // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
     // String is subtype of CharSequence and therefore its handler is more specialized.
@@ -278,10 +290,11 @@ internal class HeaderInfoBuilder(context: CommonBackendContext, private val scop
 
     /** Builds a [HeaderInfo] for iterable expressions that are calls (e.g., `.reversed()`, `.indices`. */
     override fun visitCall(iterable: IrCall, iteratorCall: IrCall?): HeaderInfo? {
-        // Return the HeaderInfo from the first successful match. First, try to match a `reversed()` call.
-        val reversedHeaderInfo = reversedHandler.handle(iterable, iteratorCall, null, scopeOwnerSymbol())
-        if (reversedHeaderInfo != null)
-            return reversedHeaderInfo
+        // Return the HeaderInfo from the first successful match.
+        // First, try to match a `reversed()` or `withIndex()` call.
+        val callHeaderInfo = callHandlers.firstNotNullResult { it.handle(iterable, iteratorCall, null, scopeOwnerSymbol()) }
+        if (callHeaderInfo != null)
+            return callHeaderInfo
 
         // Try to match a call to build a progression (e.g., `.indices`, `downTo`).
         val progressionType = ProgressionType.fromIrType(iterable.type, symbols)

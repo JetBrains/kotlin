@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 val arr = arrayOf("a", "b", "c", "d")
 
 fun box(): String {
@@ -19,3 +18,6 @@ fun box(): String {
 // 0 component1
 // 0 component2
 // 1 ARRAYLENGTH
+
+// The 1st ICONST_0 is for initializing the array. 2nd is for initializing the index in the lowered for-loop.
+// 2 ICONST_0
