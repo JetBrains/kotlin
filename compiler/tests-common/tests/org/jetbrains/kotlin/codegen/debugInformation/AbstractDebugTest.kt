@@ -170,6 +170,9 @@ abstract class AbstractDebugTest : CodegenTestCase() {
 
         val classLoader = createGeneratedClassLoader(classesDir)
         val aClass = getGeneratedClass(classLoader, TEST_CLASS)
+        if (virtualMachine.allThreads().any { it.isSuspended }) {
+            virtualMachine.resume()
+        }
         invokeBoxInSeparateProcess(classLoader, aClass, proxyPort)
 
         val manager = virtualMachine.eventRequestManager()
@@ -178,7 +181,7 @@ abstract class AbstractDebugTest : CodegenTestCase() {
         var inBoxMethod = false
         vmLoop@
         while (true) {
-            val eventSet = virtualMachine.eventQueue().remove(1000)
+            val eventSet = virtualMachine.eventQueue().remove(1000) ?: continue
             for (event in eventSet) {
                 when (event) {
                     is VMDeathEvent, is VMDisconnectEvent -> {
@@ -201,33 +204,31 @@ abstract class AbstractDebugTest : CodegenTestCase() {
                             inBoxMethod = true
                             storeStep(loggedItems, event)
                         }
-                        virtualMachine.resume()
                     }
                     is StepEvent -> {
                         // Handle the case where an Exception causing program to exit without MethodExitEvent.
                         if (inBoxMethod && event.location().method().name() == "run") {
-                            virtualMachine.resume()
+                            manager.stepRequests().map { it.disable() }
                             break@vmLoop
                         }
                         if (inBoxMethod) {
                             storeStep(loggedItems, event)
                         }
-                        virtualMachine.resume()
                     }
                     is MethodExitEvent -> {
                         if (event.location().method().name() == BOX_METHOD) {
                             manager.stepRequests().map { it.disable() }
-                            virtualMachine.resume()
                             break@vmLoop
                         }
-                        virtualMachine.resume()
                     }
                     else -> {
                         throw IllegalStateException("event not handled: $event")
                     }
                 }
             }
+            eventSet.resume()
         }
+        virtualMachine.resume()
         checkResult(wholeFile, loggedItems)
     }
 
