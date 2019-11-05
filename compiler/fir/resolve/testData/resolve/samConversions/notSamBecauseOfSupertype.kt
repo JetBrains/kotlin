@@ -18,12 +18,12 @@ public class JavaUsage {
 fun foo(m: MyRunnable) {}
 
 fun main() {
-    JavaUsage.foo {
+    JavaUsage.<!INAPPLICABLE_CANDIDATE!>foo<!> {
             x ->
         x > 1
     }
 
-    JavaUsage.foo({ <!UNRESOLVED_REFERENCE!>it<!> > 1 })
+    JavaUsage.<!INAPPLICABLE_CANDIDATE!>foo<!>({ it > 1 })
 
     val x = { x: Int -> x > 1 }
 

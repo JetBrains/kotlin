@@ -18,7 +18,7 @@ fun main() {
         x.toInt().toString()
     })
 
-    foo2(MyFunction { x: Int ->
+    <!INAPPLICABLE_CANDIDATE!>foo2<!>(MyFunction { x: Int ->
         x.toString()
     })
 

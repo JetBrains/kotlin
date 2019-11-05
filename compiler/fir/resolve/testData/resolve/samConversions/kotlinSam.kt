@@ -22,7 +22,7 @@ interface Derived : Super {
 fun foo1(m: MyRunnable) {}
 fun foo2(m: WithProperty) {}
 fun foo3(m: TwoAbstract) {}
-fun foo3(m: Derived) {}
+fun foo4(m: Derived) {}
 
 fun main() {
     val f = { t: Int -> t > 1}
@@ -30,13 +30,13 @@ fun main() {
     foo1 { x -> x > 1 }
     foo1(f)
 
-    foo2 { x -> x > 1 }
+    <!INAPPLICABLE_CANDIDATE!>foo2<!> { x -> x > 1 }
     <!INAPPLICABLE_CANDIDATE!>foo2<!>(f)
 
-    <!AMBIGUITY!>foo3<!> { x -> x > 1 }
-    foo3(f)
+    <!INAPPLICABLE_CANDIDATE!>foo3<!> { x -> x > 1 }
+    <!INAPPLICABLE_CANDIDATE!>foo3<!>(f)
 
-    <!UNRESOLVED_REFERENCE!>foo4<!> { x -> x > 1 }
-    <!UNRESOLVED_REFERENCE!>foo4<!>(f)
+    foo4 { x -> x > 1 }
+    foo4(f)
 
 }

@@ -21,7 +21,7 @@ fun main() {
         x.toInt().toString()
     }
 
-    JavaUsage.foo2 { x: Int ->
+    JavaUsage.<!INAPPLICABLE_CANDIDATE!>foo2<!> { x: Int ->
         x.toString()
     }
 
