@@ -27,6 +27,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressIndicatorBase;
@@ -232,8 +233,8 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
       return;
     }
 
-    String enterShortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM);
-    String tabShortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE);
+    String enterShortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM);
+    String tabShortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE);
     addAdvertisement("Press " + enterShortcut + " to insert, " + tabShortcut + " to replace", null);
 
     advertiseTabReplacement(parameters);
@@ -248,7 +249,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   private void advertiseTabReplacement(CompletionParameters parameters) {
     if (CompletionUtil.shouldShowFeature(parameters, CodeCompletionFeatures.EDITING_COMPLETION_REPLACE) &&
       myOffsetMap.getOffset(CompletionInitializationContext.IDENTIFIER_END_OFFSET) != myOffsetMap.getOffset(CompletionInitializationContext.SELECTION_END_OFFSET)) {
-      String shortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE);
+      String shortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE);
       if (StringUtil.isNotEmpty(shortcut)) {
         addAdvertisement("Use " + shortcut + " to overwrite the current identifier with the chosen variant", null);
       }
@@ -258,7 +259,7 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
   private void advertiseCtrlDot() {
     if (FeatureUsageTracker
       .getInstance().isToBeAdvertisedInLookup(CodeCompletionFeatures.EDITING_COMPLETION_FINISH_BY_CONTROL_DOT, getProject())) {
-      String dotShortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_DOT);
+      String dotShortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_DOT);
       if (StringUtil.isNotEmpty(dotShortcut)) {
         addAdvertisement("Press " + dotShortcut + " to choose the selected (or first) suggestion and insert a dot afterwards", null);
       }
@@ -269,8 +270,8 @@ public class CompletionProgressIndicator extends ProgressIndicatorBase implement
     if (!myEditor.isOneLineMode() &&
         FeatureUsageTracker.getInstance()
           .isToBeAdvertisedInLookup(CodeCompletionFeatures.EDITING_COMPLETION_CONTROL_ARROWS, getProject())) {
-      String downShortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_LOOKUP_DOWN);
-      String upShortcut = CompletionUtil.getActionShortcut(IdeActions.ACTION_LOOKUP_UP);
+      String downShortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_LOOKUP_DOWN);
+      String upShortcut = KeymapUtil.getFirstKeyboardShortcutText(IdeActions.ACTION_LOOKUP_UP);
       if (StringUtil.isNotEmpty(downShortcut) && StringUtil.isNotEmpty(upShortcut)) {
         addAdvertisement(downShortcut + " and " + upShortcut + " will move caret down and up in the editor", null);
       }
