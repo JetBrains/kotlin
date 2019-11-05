@@ -54,7 +54,7 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
 
   @ApiStatus.Internal
   public ModuleImpl(@NotNull String name, @NotNull Project project, @NotNull String filePath) {
-    super(project);
+    super((PlatformComponentManagerImpl)project);
 
     getPicoContainer().registerComponentInstance(Module.class, this);
 
@@ -315,7 +315,6 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   }
 
   @Override
-  @SuppressWarnings("HardCodedStringLiteral")
   public String toString() {
     if (myName == null) return "Module (not initialized)";
     return "Module: '" + getName() + "'";
