@@ -32,16 +32,12 @@ import com.intellij.util.containers.putValue
 import com.intellij.util.io.*
 import gnu.trove.THashMap
 import gnu.trove.THashSet
-import org.jetbrains.annotations.ApiStatus
 import java.io.IOException
 import java.io.OutputStream
-import java.io.OutputStreamWriter
 import java.io.StringWriter
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 internal fun isImportExportActionApplicable(): Boolean {
   val app = ApplicationManager.getApplication()
@@ -127,21 +123,6 @@ fun exportInstalledPlugins(zip: Compressor) {
     val buffer = StringWriter()
     PluginManagerCore.writePluginsList(plugins, buffer)
     zip.addFile(PluginManager.INSTALLED_TXT, buffer.toString().toByteArray())
-  }
-}
-
-@Deprecated("Please use `#exportInstalledPlugins(Compressor)` instead.")
-@ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
-fun exportInstalledPlugins(zipOut: ZipOutputStream) {
-  val plugins = PluginManagerCore.getPlugins().mapNotNull { if (!it.isBundled && it.isEnabled) it.pluginId.idString else null }
-  if (plugins.isNotEmpty()) {
-    zipOut.putNextEntry(ZipEntry(PluginManager.INSTALLED_TXT))
-    try {
-      PluginManagerCore.writePluginsList(plugins, OutputStreamWriter(zipOut, Charsets.UTF_8))
-    }
-    finally {
-      zipOut.closeEntry()
-    }
   }
 }
 
