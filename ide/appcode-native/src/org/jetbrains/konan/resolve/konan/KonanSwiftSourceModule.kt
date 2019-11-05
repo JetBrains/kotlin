@@ -25,12 +25,12 @@ import com.jetbrains.swift.symbols.impl.SymbolProps
 import org.jetbrains.konan.resolve.translation.KtFrameworkTranslator
 
 class KonanSwiftSourceModule(
-    private val configuration: OCResolveConfiguration,
+    private val configuration: OCResolveConfiguration?,
     private val target: PBXTarget,
     private val parentConfiguration: OCResolveConfiguration
 ) : SwiftModule, UserDataHolder by UserDataHolderBase() {
 
-    private val project: Project = configuration.project
+    private val project: Project = parentConfiguration.project
 
     override fun getBridgeFile(name: String): VirtualFile? = null
 
@@ -70,7 +70,7 @@ class KonanSwiftSourceModule(
     }
 
     private fun processInclude(symbol: OCIncludeSymbol, psiManager: PsiManager, processor: SwiftGlobalSymbolsImpl.SymbolProcessor) {
-        //todo [medbedev] don't remeber why do we need this
+        //todo [medvedev] don't remember why do we need this
         val file = symbol.targetFile ?: return
         val psiFile = psiManager.findFile(file) ?: return
         val context = OCInclusionContext.empty(SwiftLanguageKind.SWIFT, psiFile)
@@ -79,7 +79,7 @@ class KonanSwiftSourceModule(
 
     override fun getDependencies(): List<SwiftModule> = emptyList()
 
-    override fun getFiles(): Collection<VirtualFile> = getSourceAndDerivedFiles(target) ?: target.sourceFiles
+    override fun getFiles(): List<VirtualFile> = getSourceAndDerivedFiles(target) ?: target.sourceFiles
 
     private fun getSourceAndDerivedFiles(target: PBXTarget): List<VirtualFile>? =
         XcodeMetaData.getBuildSettings(configuration)?.getSourceAndDerivedFiles(target, SwiftFileType.INSTANCE)

@@ -1,6 +1,7 @@
 package org.jetbrains.konan.resolve.konan
 
 import com.jetbrains.cidr.xcode.model.PBXTarget
+import com.jetbrains.cidr.xcode.model.rawBuildSettings
 
 class AppCodeKonanTarget(val target: PBXTarget) : KonanTarget {
     override val name: String
