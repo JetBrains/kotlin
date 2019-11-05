@@ -770,7 +770,7 @@ bool Worker::waitForQueueLocked(KLong timeoutMicroseconds, KLong* remaining) {
         continue;
     }
     if (timeoutMicroseconds >= 0) {
-        closestToRun = timeoutMicroseconds < closestToRun || closestToRun < 0 ? timeoutMicroseconds : closestToRun;
+        closestToRun = (timeoutMicroseconds < closestToRun || closestToRun < 0) ? timeoutMicroseconds : closestToRun;
     }
     if (closestToRun == 0) {
       // Just no wait at all here.
@@ -819,11 +819,7 @@ bool Worker::park(KLong timeoutMicroseconds, bool process) {
       return false;
     }
   }
-  int processed = 0;
-  while (processQueueElement(false) >= JOB_REGULAR) {
-    processed++;
-  }
-  return processed > 0;
+  return processQueueElement(false) >= JOB_REGULAR;
 }
 
 JobKind Worker::processQueueElement(bool blocking) {
