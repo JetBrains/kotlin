@@ -42,7 +42,7 @@ internal fun removeInterfacesFromMockJdkClassfiles(mockJdkRuntimeJar: File) {
     }
 
     FileUtil.copy(copyJar, mockJdkRuntimeJar)
-    tmpdir.delete()
+    tmpdir.deleteRecursively()
 }
 
 private fun transformJar(sourceJar: JarFile, targetJar: JarOutputStream) {
@@ -71,10 +71,7 @@ private fun transformJar(sourceJar: JarFile, targetJar: JarOutputStream) {
 internal class InterfacesFilter(classVisitor: ClassVisitor) : ClassVisitor(Opcodes.API_VERSION, classVisitor) {
     private val mockJdkEntries =
         GenerateMockJdk.getClassFileEntries().mapNotNull { entry ->
-            val classSuffix = ".class"
-            if (entry.endsWith(classSuffix))
-                entry.substring(0 until (entry.length - classSuffix.length))
-            else null
+            entry.substringBeforeLast(".class").takeUnless(String::isEmpty)
         }.toSet()
 
     override fun visit(version: Int, access: Int, name: String?, signature: String?, superName: String?, interfaces: Array<out String>?) {

@@ -1,4 +1,5 @@
 //KT-819 Redeclaration error for extension properties with the same name and different receivers
+// FULL_JDK
 
 import java.io.*
 

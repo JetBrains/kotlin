@@ -9,18 +9,12 @@ import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionOrSuspendFunctionType
 import org.jetbrains.kotlin.contracts.EffectSystem
-import org.jetbrains.kotlin.contracts.description.ContractProviderKey
-import org.jetbrains.kotlin.contracts.description.LazyContractProvider
-import org.jetbrains.kotlin.contracts.parsing.isContractCallDescriptor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isContractDescriptionCallPsiCheck
-import org.jetbrains.kotlin.psi.psiUtil.isFirstStatement
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
@@ -46,10 +40,12 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -80,21 +76,25 @@ class CallCompleter(
             completeAllCandidates(context, results)
         }
 
-        if (resolvedCall != null && context.trace.wantsDiagnostics()) {
-            val calleeExpression = if (resolvedCall is VariableAsFunctionResolvedCall)
-                resolvedCall.variableCall.call.calleeExpression
-            else
-                resolvedCall.call.calleeExpression
-            val reportOn =
-                if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
-                else resolvedCall.call.callElement
+        if (context.trace.wantsDiagnostics()) {
+            if (resolvedCall == null) {
+                checkMissingSupertypes(context, moduleDescriptor)
+            } else {
+                val calleeExpression = if (resolvedCall is VariableAsFunctionResolvedCall)
+                    resolvedCall.variableCall.call.calleeExpression
+                else
+                    resolvedCall.call.calleeExpression
+                val reportOn =
+                    if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
+                    else resolvedCall.call.callElement
 
-            val callCheckerContext = CallCheckerContext(context, deprecationResolver, moduleDescriptor)
-            for (callChecker in callCheckers) {
-                callChecker.check(resolvedCall, reportOn, callCheckerContext)
+                val callCheckerContext = CallCheckerContext(context, deprecationResolver, moduleDescriptor)
+                for (callChecker in callCheckers) {
+                    callChecker.check(resolvedCall, reportOn, callCheckerContext)
 
-                if (resolvedCall is VariableAsFunctionResolvedCall) {
-                    callChecker.check(resolvedCall.variableCall, reportOn, callCheckerContext)
+                    if (resolvedCall is VariableAsFunctionResolvedCall) {
+                        callChecker.check(resolvedCall.variableCall, reportOn, callCheckerContext)
+                    }
                 }
             }
         }
@@ -103,6 +103,15 @@ class CallCompleter(
             return results.changeStatusToSuccess()
         }
         return results
+    }
+
+    private fun checkMissingSupertypes(context: BasicCallResolutionContext, moduleDescriptor: ModuleDescriptor) {
+        val call = context.call
+        val explicitReceiver = call.explicitReceiver.safeAs<ReceiverValue>()
+            ?: return
+        MissingDependencySupertypeChecker.checkSupertypes(
+            explicitReceiver.type, call.callElement, context.trace, moduleDescriptor
+        )
     }
 
     private fun <D : CallableDescriptor> completeAllCandidates(

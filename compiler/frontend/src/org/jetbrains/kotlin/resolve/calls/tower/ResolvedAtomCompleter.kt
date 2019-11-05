@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.psi.KtElement
@@ -31,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyImpl
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
@@ -92,6 +90,7 @@ class ResolvedAtomCompleter(
         val lastCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.functionCall else resolvedCall
         if (ErrorUtils.isError(resolvedCall.candidateDescriptor)) {
             kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
+            checkMissingReceiverSupertypes(resolvedCall, moduleDescriptor, topLevelTrace)
             return resolvedCall
         }
 
@@ -116,6 +115,22 @@ class ResolvedAtomCompleter(
         kotlinToResolvedCallTransformer.reportDiagnostics(topLevelCallContext, topLevelTrace, resolvedCall, diagnostics)
 
         return resolvedCall
+    }
+
+    private fun checkMissingReceiverSupertypes(
+        resolvedCall: ResolvedCall<CallableDescriptor>,
+        moduleDescriptor: ModuleDescriptor,
+        trace: BindingTrace
+    ) {
+        val receiverValue = resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver
+        receiverValue?.type?.let { receiverType ->
+            MissingDependencySupertypeChecker.checkSupertypes(
+                receiverType,
+                resolvedCall.call.callElement,
+                trace,
+                moduleDescriptor
+            )
+        }
     }
 
     private fun clearPartiallyResolvedCall(resolvedCallAtom: ResolvedCallAtom) {
