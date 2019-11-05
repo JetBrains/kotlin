@@ -215,7 +215,7 @@ fun FirFunction<*>.constructFunctionalTypeRef(session: FirSession): FirResolvedT
     }
     val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
 
-    val functionalType = createFunctionalType(parameters, receiverTypeRef?.coneTypeUnsafe(), rawReturnType)
+    val functionalType = createFunctionalType(parameters, receiverTypeRef?.coneTypeSafe(), rawReturnType)
 
     return FirResolvedTypeRefImpl(source, functionalType)
 }

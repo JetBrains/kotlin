@@ -29,5 +29,5 @@ FILE fqName:<root> fileName:/samConstructors.kt
               VALUE_PARAMETER name:a index:0 type:IrErrorType
               VALUE_PARAMETER name:b index:1 type:IrErrorType
               BLOCK_BODY
-                ERROR_CALL 'Unresolved reference: minus#' type=IrErrorType
-                  ERROR_CALL 'Unresolved reference: b#' type=IrErrorType
+                ERROR_CALL 'Unresolved reference: <Unresolved name: minus>#' type=IrErrorType
+                  GET_VAR 'b: IrErrorType declared in <root>.test4.<anonymous>' type=IrErrorType origin=null

@@ -9,7 +9,7 @@ FILE: implicitTypes.kt
         ^bar Int(1)
     }
     public final fun loop1(): <ERROR TYPE REF: Empty diagnostic> {
-        ^loop1 <Inapplicable(INAPPLICABLE): [/use]>#(::loop2#)
+        ^loop1 <Inapplicable(INAPPLICABLE): [/use]>#(::R|/loop2|)
     }
     public final fun loop2(): <ERROR TYPE REF: cycle> {
         ^loop2 R?C|/loop1|()

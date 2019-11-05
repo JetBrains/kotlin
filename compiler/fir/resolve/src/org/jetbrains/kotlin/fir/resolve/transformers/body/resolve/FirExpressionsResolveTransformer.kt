@@ -159,7 +159,11 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                     // name.invoke() case
                     callCompleter.completeCall(resultExplicitReceiver, noExpectedType)
                 }
-                callCompleter.completeCall(resultExpression, expectedTypeRef)
+                val completionResult = callCompleter.completeCall(resultExpression, expectedTypeRef)
+                if (completionResult.typeRef is FirErrorTypeRef) {
+                    completionResult.transformArguments(transformer, ResolutionMode.LambdaResolution(null))
+                }
+                completionResult
             } catch (e: Throwable) {
                 throw RuntimeException("While resolving call ${functionCall.render()}", e)
             }

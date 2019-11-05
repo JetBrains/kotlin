@@ -6,8 +6,8 @@ FILE: test.kt
         )
         lval otherResult: R|kotlin/String| = R|<local>/map|.R|FakeOverride<kotlin/collections/Map.getOrDefault: R|kotlin/String|>|(String(key), String(value))
         lval anotherResult: <ERROR TYPE REF: Empty diagnostic> = R|<local>/map|.<Unresolved name: replace>#(String(key), String(value))
-        R|<local>/map|.<Inapplicable(INAPPLICABLE): [kotlin/collections/forEach]>#(<L> = forEach@fun <implicit>.<anonymous>(key: <implicit>, value: <implicit>): <implicit> {
-            println#(<strcat>(key#, String(: ), value#))
+        R|<local>/map|.<Inapplicable(INAPPLICABLE): [kotlin/collections/forEach]>#(<L> = forEach@fun <implicit>.<anonymous>(key: <ERROR TYPE REF: Unsupported: implicit VP type>, value: <ERROR TYPE REF: Unsupported: implicit VP type>): R|kotlin/Unit| {
+            R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
         }
         )
         R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(<destruct>: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|): R|kotlin/Unit| <kind=UNKNOWN>  {
@@ -24,8 +24,8 @@ FILE: test.kt
         )
         lval otherResult: R|kotlin/String| = R|<local>/map|.R|FakeOverride<kotlin/collections/Map.getOrDefault: R|kotlin/String|>|(String(key), String(value))
         lval anotherResult: <ERROR TYPE REF: Empty diagnostic> = R|<local>/map|.<Unresolved name: replace>#(String(key), String(value))
-        R|<local>/map|.<Inapplicable(INAPPLICABLE): [kotlin/collections/forEach]>#(<L> = forEach@fun <implicit>.<anonymous>(key: <implicit>, value: <implicit>): <implicit> {
-            println#(<strcat>(key#, String(: ), value#))
+        R|<local>/map|.<Inapplicable(INAPPLICABLE): [kotlin/collections/forEach]>#(<L> = forEach@fun <implicit>.<anonymous>(key: <ERROR TYPE REF: Unsupported: implicit VP type>, value: <ERROR TYPE REF: Unsupported: implicit VP type>): R|kotlin/Unit| {
+            R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
         }
         )
         R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(<destruct>: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|): R|kotlin/Unit| <kind=UNKNOWN>  {

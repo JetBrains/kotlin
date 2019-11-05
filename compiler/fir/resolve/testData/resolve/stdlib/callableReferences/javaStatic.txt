@@ -10,5 +10,5 @@ FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
         R|/foo1|(Q|JavaClass|::R|/JavaClass.bar|)
         R|/foo2|(Q|JavaClass|::R|/JavaClass.bar|)
-        <Ambiguity: foo3, [/foo3, /foo3]>#(Q|JavaClass|::bar#)
+        <Ambiguity: foo3, [/foo3, /foo3]>#(Q|JavaClass|::R|/JavaClass.bar|)
     }

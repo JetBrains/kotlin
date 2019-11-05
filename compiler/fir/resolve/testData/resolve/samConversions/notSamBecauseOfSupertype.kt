@@ -23,7 +23,7 @@ fun main() {
         x > 1
     }
 
-    JavaUsage.<!INAPPLICABLE_CANDIDATE!>foo<!>({ it > 1 })
+    JavaUsage.<!INAPPLICABLE_CANDIDATE!>foo<!>({ <!UNRESOLVED_REFERENCE!>it<!> > 1 })
 
     val x = { x: Int -> x > 1 }
 

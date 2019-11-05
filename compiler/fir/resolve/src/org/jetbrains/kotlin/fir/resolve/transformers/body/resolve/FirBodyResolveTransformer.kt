@@ -70,6 +70,13 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformExpression(expression, data)
     }
 
+    override fun transformWrappedArgumentExpression(
+        wrappedArgumentExpression: FirWrappedArgumentExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return (wrappedArgumentExpression.transformChildren(this, data) as FirStatement).compose()
+    }
+
     override fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/samByProjectedType.kt
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/H.bar]>#' type=IrErrorType
         FUN_EXPR type=IrErrorType origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.Any) returnType:IrErrorType
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any
             VALUE_PARAMETER name:x index:0 type:kotlin.Any
             BLOCK_BODY
-              ERROR_CALL 'Unresolved reference: x#' type=IrErrorType
+              GET_VAR 'x: kotlin.Any declared in <root>.test1.<anonymous>' type=kotlin.Any origin=null

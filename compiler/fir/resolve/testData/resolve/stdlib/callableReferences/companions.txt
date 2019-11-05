@@ -52,11 +52,11 @@ FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
         R|/foo1|(Q|KotlinClass|::R|/KotlinClass.Companion.baz|)
         R|/foo2|(Q|KotlinClass|::R|/KotlinClass.baz|)
-        <Ambiguity: foo3, [/foo3, /foo3]>#(Q|KotlinClass|::baz#)
+        <Ambiguity: foo3, [/foo3, /foo3]>#(Q|KotlinClass|::R|/KotlinClass.baz|)
         R|/foo1|(Q|KotlinClass|::R|/JavaClass.bar|)
         R|/foo2|(Q|KotlinClass|::R|/JavaClass.bar|)
-        <Ambiguity: foo3, [/foo3, /foo3]>#(Q|KotlinClass|::bar#)
+        <Ambiguity: foo3, [/foo3, /foo3]>#(Q|KotlinClass|::R|/JavaClass.bar|)
         R|/foo1|(Q|KotlinClass2|::R|/JavaClass.bar|)
-        <Inapplicable(INAPPLICABLE): [/foo2]>#(Q|KotlinClass2|::bar#)
+        <Inapplicable(INAPPLICABLE): [/foo2]>#(Q|KotlinClass2|::R|/JavaClass.bar|)
         R|/foo3|(Q|KotlinClass2|::R|/JavaClass.bar|)
     }

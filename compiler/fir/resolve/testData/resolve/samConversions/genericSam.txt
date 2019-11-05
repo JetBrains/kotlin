@@ -8,8 +8,8 @@ FILE: main.kt
             R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Any.toString|()
         }
         )
-        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo2]>#(<L> = foo2@fun <implicit>.<anonymous>(x: R|kotlin/Int|): <implicit> {
-            x#.toString#()
+        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): [/JavaUsage.foo2]>#(<L> = foo2@fun <implicit>.<anonymous>(x: R|kotlin/Int|): R|kotlin/String| {
+            R|<local>/x|.R|kotlin/Any.toString|()
         }
         )
         Q|JavaUsage|.R|/JavaUsage.foo3|<R|ft<kotlin/Int, kotlin/Int>|, R|ft<kotlin/String, kotlin/String>|>(foo3@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int>|): R|kotlin/Unit| {

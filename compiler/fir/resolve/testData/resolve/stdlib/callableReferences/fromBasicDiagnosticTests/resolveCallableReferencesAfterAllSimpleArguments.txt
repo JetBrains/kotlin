@@ -10,6 +10,6 @@ FILE: resolveCallableReferencesAfterAllSimpleArguments.kt
     public final fun <T> baz(e: R|T|, f: R|kotlin/Function1<T, kotlin/Unit>|): R|kotlin/Unit| {
     }
     public final fun test(a: R|A|, b: R|B|): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): [/baz]>#(R|<local>/a|, ::fooB#)
-        <Inapplicable(INAPPLICABLE): [/bar]>#(::fooB#, R|<local>/a|)
+        <Inapplicable(INAPPLICABLE): [/baz]>#(R|<local>/a|, ::R|/fooB|)
+        <Inapplicable(INAPPLICABLE): [/bar]>#(::R|/fooB|, R|<local>/a|)
     }

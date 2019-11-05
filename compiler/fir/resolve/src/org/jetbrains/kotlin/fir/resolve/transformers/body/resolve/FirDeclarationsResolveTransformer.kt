@@ -289,8 +289,8 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
         }
 
         val label = anonymousFunction.label
-        return if (label != null && receiverTypeRef != null) {
-            withLabelAndReceiverType(Name.identifier(label.name), anonymousFunction, receiverTypeRef.coneTypeUnsafe()) {
+        return if (label != null && receiverTypeRef is FirResolvedTypeRef) {
+            withLabelAndReceiverType(Name.identifier(label.name), anonymousFunction, receiverTypeRef.type) {
                 transform()
             }
         } else {

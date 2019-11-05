@@ -4,7 +4,7 @@ fun fetchPluginReleaseDate(pluginId: PluginId, version: String, channel: String?
 
     val pluginDTOs: Array<PluginDTO> = try {
         <!UNRESOLVED_REFERENCE!>HttpRequests<!>.<!UNRESOLVED_REFERENCE!>request<!>(url).<!UNRESOLVED_REFERENCE!>connect<!> {
-            GsonBuilder().create().fromJson(it.inputStream.reader(), Array<PluginDTO>::class.java)
+            <!UNRESOLVED_REFERENCE!>GsonBuilder<!>().<!UNRESOLVED_REFERENCE!>create<!>().<!UNRESOLVED_REFERENCE!>fromJson<!>(<!UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>inputStream<!>.<!AMBIGUITY!>reader<!>(), <!INAPPLICABLE_CANDIDATE!>Array<!><PluginDTO>::class.<!INAPPLICABLE_CANDIDATE!>java<!>)
         }
     } catch (ioException: JsonIOException) {
         throw <!UNRESOLVED_REFERENCE!>IOException<!>(ioException)
