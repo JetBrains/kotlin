@@ -10,21 +10,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.DescriptorsRemapper
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
-
-/*
-    TODO: Does not preserve getter/setter descriptors as implementations of PropertyAccessorDescriptor.
-    This causes problems for KotlinTypeMapper.mapFunctionName (maybe other places as well)
- */
-
-inline fun <reified T : IrElement> T.deepCopyWithWrappedDescriptors(initialParent: IrDeclarationParent? = null): T =
-    deepCopyWithSymbols(initialParent, DescriptorsToIrRemapper).also {
-        it.acceptVoid(WrappedDescriptorPatcher)
-    }
 
 object DescriptorsToIrRemapper : DescriptorsRemapper {
     override fun remapDeclaredClass(descriptor: ClassDescriptor) =
