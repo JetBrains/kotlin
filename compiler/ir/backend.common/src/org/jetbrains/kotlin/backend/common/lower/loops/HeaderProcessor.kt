@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -348,7 +349,7 @@ internal class IndexedGetLoopHeader(
 }
 
 internal class WithIndexLoopHeader(
-    private val headerInfo: WithIndexHeaderInfo,
+    headerInfo: WithIndexHeaderInfo,
     builder: DeclarationIrBuilder
 ) : ForLoopHeader {
 
@@ -361,8 +362,9 @@ internal class WithIndexLoopHeader(
             // To build the optimized/lowered `for` loop over a `withIndex()` call, we first need the header for the underlying iterable so
             // so that we know how to build the loop for that iterable. More info in comments in initializeIteration().
             nestedLoopHeader = when (val nestedInfo = headerInfo.nestedInfo) {
-                is IndexedGetHeaderInfo -> IndexedGetLoopHeader(nestedInfo, builder)
-                is ProgressionHeaderInfo -> ProgressionLoopHeader(nestedInfo, builder)
+                is IndexedGetHeaderInfo -> IndexedGetLoopHeader(nestedInfo, this@with)
+                is ProgressionHeaderInfo -> ProgressionLoopHeader(nestedInfo, this@with)
+                is IterableHeaderInfo -> IterableLoopHeader(nestedInfo)
                 is WithIndexHeaderInfo -> throw IllegalStateException("Nested WithIndexHeaderInfo not allowed for WithIndexLoopHeader")
             }
 
@@ -424,9 +426,9 @@ internal class WithIndexLoopHeader(
             //   val step = 2
             //   if (inductionVar <= last) {
             //     do {
-            //         val v = inductionVar
-            //         inductionVar += step
-            //         // Loop body
+            //       val v = inductionVar
+            //       inductionVar += step
+            //       // Loop body
             //     } while (inductionVar <= last)
             //   }
             //
@@ -438,12 +440,28 @@ internal class WithIndexLoopHeader(
             //   var index = 0   // ADDED
             //   if (inductionVar <= last) {
             //     do {
-            //         val i = index   // ADDED
-            //         val v = inductionVar
-            //         inductionVar += step
-            //         // Loop body
-            //         checkIndexOverflow(index++)   // ADDED
+            //       val i = index   // ADDED
+            //       val v = inductionVar
+            //       inductionVar += step
+            //       // Loop body
+            //       checkIndexOverflow(index++)   // ADDED
             //     } while (inductionVar <= last)
+            //   }
+            //
+            // As another example, in a for-loop over a call to `Iterable<*>.withIndex()` or `Sequence<*>.withIndex()`, e.g.:
+            //
+            //   for ((i, v) in listOf(2, 3, 5, 7, 11).withIndex()) { /* Loop body */ }
+            //
+            // For-loops over an Iterable are normally not optimized, but when getting the underlying iterable for `withIndex()` (and ONLY
+            // in this case), we use DefaultIterableHandler to match it and IterableLoopHeader to build the underlying loop. The optimized
+            // loop with `withIndex()` looks something like this:
+            //
+            //   val iterator = listOf(2, 3, 5, 7, 11).iterator()
+            //   var index = 0
+            //   while (it.hasNext())
+            //     val i = index
+            //     val v = it.next()
+            //     checkIndexOverflow(index++)
             //   }
             //
             // We "wire" the 1st destructured component to index, and the 2nd to the loop variable value from the underlying iterable.
@@ -480,6 +498,53 @@ internal class WithIndexLoopHeader(
                 }
             }
         }
+}
+
+internal class IterableLoopHeader(
+    private val headerInfo: IterableHeaderInfo
+) : ForLoopHeader {
+    override val loopInitStatements = listOf(headerInfo.iteratorVariable)
+
+    override val consumesLoopVariableComponents = false
+
+    override fun initializeIteration(
+        loopVariable: IrVariable?,
+        loopVariableComponents: Map<Int, IrVariable>,
+        symbols: Symbols<CommonBackendContext>,
+        builder: DeclarationIrBuilder
+    ) =
+        with(builder) {
+            // loopVariable = iteratorVar.next()
+            val iteratorClass = headerInfo.iteratorVariable.type.getClass()!!
+            val next =
+                irCall(iteratorClass.functions.first { it.name == OperatorNameConventions.NEXT && it.valueParameters.isEmpty() }).apply {
+                    dispatchReceiver = irGet(headerInfo.iteratorVariable)
+                }
+            loopVariable?.initializer = next
+            // Even if there is no loop variable, we always want to call `next()` for iterables and sequences.
+            listOf(loopVariable ?: next.coerceToUnitIfNeeded(next.type, context.irBuiltIns))
+        }
+
+    override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {
+        // Loop is lowered into something like:
+        //
+        //   var iteratorVar = someIterable.iterator()
+        //   while (iteratorVar.hasNext()) {
+        //       val loopVar = iteratorVar.next()
+        //       // Loop body
+        //   }
+        val iteratorClass = headerInfo.iteratorVariable.type.getClass()!!
+        val hasNext =
+            irCall(iteratorClass.functions.first { it.name == OperatorNameConventions.HAS_NEXT && it.valueParameters.isEmpty() }).apply {
+                dispatchReceiver = irGet(headerInfo.iteratorVariable)
+            }
+        val newLoop = IrWhileLoopImpl(oldLoop.startOffset, oldLoop.endOffset, oldLoop.type, oldLoop.origin).apply {
+            label = oldLoop.label
+            condition = hasNext
+            body = newBody
+        }
+        LoopReplacement(newLoop, newLoop)
+    }
 }
 
 /**
@@ -529,6 +594,7 @@ internal class HeaderProcessor(
             is IndexedGetHeaderInfo -> IndexedGetLoopHeader(headerInfo, builder)
             is ProgressionHeaderInfo -> ProgressionLoopHeader(headerInfo, builder)
             is WithIndexHeaderInfo -> WithIndexLoopHeader(headerInfo, builder)
+            is IterableHeaderInfo -> IterableLoopHeader(headerInfo)
         }
     }
 }

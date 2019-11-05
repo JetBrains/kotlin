@@ -73,6 +73,8 @@ fun IrType.isNumber(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.numb
 
 fun IrType.isComparable(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.comparable.toUnsafe())
 fun IrType.isCharSequence(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.charSequence)
+fun IrType.isIterable(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.iterable.toUnsafe())
+fun IrType.isSequence(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.sequences.Sequence"))
 
 fun IrType.isBooleanArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.BooleanArray"))
 fun IrType.isCharArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.CharArray"))

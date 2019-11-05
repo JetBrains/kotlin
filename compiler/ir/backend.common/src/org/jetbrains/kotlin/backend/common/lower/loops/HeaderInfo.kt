@@ -212,6 +212,13 @@ internal class WithIndexHeaderInfo(val nestedInfo: HeaderInfo) : HeaderInfo() {
     override fun asReversed(): HeaderInfo? = null
 }
 
+/**
+ * Information about a for-loop over an Iterable or Sequence.
+ */
+internal class IterableHeaderInfo(val iteratorVariable: IrVariable) : HeaderInfo() {
+    override fun asReversed(): HeaderInfo? = null
+}
+
 /** Matches an iterable expression and builds a [HeaderInfo] from the expression. */
 internal interface HeaderInfoHandler<E : IrExpression, D> {
     /** Returns true if the handler can build a [HeaderInfo] from the iterable expression. */
@@ -249,7 +256,7 @@ internal interface HeaderInfoFromCallHandler<D> : HeaderInfoHandler<IrCall, D> {
 
 internal typealias ProgressionHandler = HeaderInfoFromCallHandler<ProgressionType>
 
-internal class HeaderInfoBuilder(context: CommonBackendContext, private val scopeOwnerSymbol: () -> IrSymbol) :
+internal abstract class HeaderInfoBuilder(context: CommonBackendContext, private val scopeOwnerSymbol: () -> IrSymbol) :
     IrElementVisitor<HeaderInfo?, IrCall?> {
 
     private val symbols = context.ir.symbols
@@ -272,19 +279,8 @@ internal class HeaderInfoBuilder(context: CommonBackendContext, private val scop
         StepHandler(context, this)
     )
 
-    private val callHandlers = listOf(
-        ReversedHandler(context, this),
-        WithIndexHandler(context, this)
-    )
-
-    // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
-    // String is subtype of CharSequence and therefore its handler is more specialized.
-    private val expressionHandlers = listOf(
-        ArrayIterationHandler(context),
-        DefaultProgressionHandler(context),
-        StringIterationHandler(context),
-        CharSequenceIterationHandler(context)
-    )
+    protected abstract val callHandlers: List<HeaderInfoFromCallHandler<Nothing?>>
+    protected abstract val expressionHandlers: List<ExpressionHandler>
 
     override fun visitElement(element: IrElement, data: IrCall?): HeaderInfo? = null
 
@@ -309,4 +305,45 @@ internal class HeaderInfoBuilder(context: CommonBackendContext, private val scop
         return expressionHandlers.firstNotNullResult { it.handle(iterable, iteratorCall, null, scopeOwnerSymbol()) }
             ?: super.visitExpression(iterable, iteratorCall)
     }
+}
+
+internal class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :
+    HeaderInfoBuilder(context, scopeOwnerSymbol) {
+    override val callHandlers = listOf(
+        ReversedHandler(context, this),
+        WithIndexHandler(context, NestedHeaderInfoBuilderForWithIndex(context, scopeOwnerSymbol))
+    )
+
+    // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
+    // String is subtype of CharSequence and therefore its handler is more specialized.
+    override val expressionHandlers = listOf(
+        ArrayIterationHandler(context),
+        DefaultProgressionHandler(context),
+        StringIterationHandler(context),
+        CharSequenceIterationHandler(context)
+    )
+}
+
+// WithIndexHandler attempts to retrieve the HeaderInfo from the underlying index, using NestedHeaderInfoBuilderForWithIndex instead of
+// DefaultHeaderInfoBuilder. The differences between the two are that NestedHeaderInfoBuilderForWithIndex:
+//
+//   - Has NO WithIndexHandler. We do not attempt to optimize `*.withIndex().withIndex()`.
+//   - Has DefaultIterableHandler. This allows us to optimize `Iterable<*>.withIndex()` and `Sequence<*>.withIndex()`.
+internal class NestedHeaderInfoBuilderForWithIndex(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :
+    HeaderInfoBuilder(context, scopeOwnerSymbol) {
+    // NOTE: No WithIndexHandler; we cannot lower `iterable.withIndex().withIndex()`.
+    override val callHandlers = listOf(
+        ReversedHandler(context, this)
+    )
+
+    // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
+    // String is subtype of CharSequence and therefore its handler is more specialized.
+    // DefaultIterableHandler must come last as it is handles iterables not handled by more specialized handlers.
+    override val expressionHandlers = listOf(
+        ArrayIterationHandler(context),
+        DefaultProgressionHandler(context),
+        StringIterationHandler(context),
+        CharSequenceIterationHandler(context),
+        DefaultIterableHandler(context)
+    )
 }

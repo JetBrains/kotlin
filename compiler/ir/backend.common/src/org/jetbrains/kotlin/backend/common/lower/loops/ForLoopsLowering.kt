@@ -118,7 +118,7 @@ private class RangeLoopTransformer(
 ) : IrElementTransformerVoidWithContext() {
 
     private val symbols = context.ir.symbols
-    private val headerInfoBuilder = HeaderInfoBuilder(context, this::getScopeOwnerSymbol)
+    private val headerInfoBuilder = DefaultHeaderInfoBuilder(context, this::getScopeOwnerSymbol)
     private val headerProcessor = HeaderProcessor(context, headerInfoBuilder, this::getScopeOwnerSymbol)
 
     fun getScopeOwnerSymbol() = currentScope!!.scope.scopeOwnerSymbol
