@@ -279,6 +279,8 @@ public class SdkConfigurationUtil {
 
   /**
    * Tries to create an SDK identified by path; if successful, add the SDK to the global SDK table.
+   * <p>
+   * Must be called from the EDT (because it uses {@link WriteAction#compute} under the hood).
    *
    * @param path    identifies the SDK
    * @return newly created SDK, or null.
