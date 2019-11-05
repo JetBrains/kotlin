@@ -214,7 +214,7 @@ class ComposableCallTransformer(val context: JvmBackendContext) :
                     +irComposableEmit(transformedComposerCall, transformed, descriptor)
                 }
             }
-            else -> error("dont know what to do")
+            else -> error("dont know what to do with $descriptor")
         }
     }
 
