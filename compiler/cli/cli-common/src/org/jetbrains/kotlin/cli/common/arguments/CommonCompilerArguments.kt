@@ -307,6 +307,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var useFir: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xuse-mixed-named-arguments",
+        description = "Enable Support named arguments in their own position even if the result appears as mixed"
+    )
+    val useMixedNamedArguments: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
 
@@ -367,6 +373,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (properIeee754Comparisons) {
                 put(LanguageFeature.ProperIeee754Comparisons, LanguageFeature.State.ENABLED)
+            }
+
+            if (useMixedNamedArguments) {
+                put(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition, LanguageFeature.State.ENABLED)
             }
 
             if (progressiveMode) {
