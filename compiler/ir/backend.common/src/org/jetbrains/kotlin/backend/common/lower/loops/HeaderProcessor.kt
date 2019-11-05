@@ -329,15 +329,18 @@ internal class HeaderProcessor(
                 )
             } else null
 
-            val stepVariable = scope.createTemporaryVariable(
-                ensureNotNullable(
-                    headerInfo.step.castIfNecessary(
-                        headerInfo.progressionType.stepType(context.irBuiltIns),
-                        headerInfo.progressionType.stepCastFunctionName
-                    )
-                ),
-                nameHint = "step"
-            )
+            val stepVariable = headerInfo.progressionType.stepType(context.irBuiltIns).let {
+                scope.createTemporaryVariable(
+                    ensureNotNullable(
+                        headerInfo.step.castIfNecessary(
+                            it,
+                            headerInfo.progressionType.stepCastFunctionName
+                        )
+                    ),
+                    nameHint = "step",
+                    irType = it
+                )
+            }
 
             return when (headerInfo) {
                 is IndexedGetHeaderInfo -> IndexedGetLoopHeader(

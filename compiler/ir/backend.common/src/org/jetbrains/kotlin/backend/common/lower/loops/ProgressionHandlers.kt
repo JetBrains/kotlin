@@ -261,7 +261,7 @@ internal class StepHandler(
             val stepGreaterFun = context.irBuiltIns.greaterFunByOperandType[stepType.toKotlinType()]!!
             val zeroStep = if (data == ProgressionType.LONG_PROGRESSION) irLong(0) else irInt(0)
             val throwIllegalStepExceptionCall = {
-                irCall(context.irBuiltIns.illegalArgumentExceptionSymbol, stepType).apply {
+                irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
                     val exceptionMessage = irConcat()
                     exceptionMessage.addArgument(irString("Step must be positive, was: "))
                     exceptionMessage.addArgument(stepArgExpression.deepCopyWithSymbols())
