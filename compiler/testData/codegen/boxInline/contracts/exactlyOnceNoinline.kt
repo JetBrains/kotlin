@@ -1,4 +1,3 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect +ReadDeserializedContracts
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: NATIVE
 // NO_CHECK_LAMBDA_INLINING
@@ -9,7 +8,6 @@ package test
 
 import kotlin.contracts.*
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 public inline fun myrun(noinline block: () -> Unit): Unit {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

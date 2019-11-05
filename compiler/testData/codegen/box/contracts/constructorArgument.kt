@@ -1,10 +1,8 @@
-// !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect +ReadDeserializedContracts
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: NATIVE
 
 import kotlin.contracts.*
 
-@ExperimentalContracts
 fun runOnce(action: () -> Unit) {
     contract {
         callsInPlace(action, InvocationKind.EXACTLY_ONCE)
@@ -12,7 +10,6 @@ fun runOnce(action: () -> Unit) {
     action()
 }
 
-@ExperimentalContracts
 class Foo(foo: Boolean) {
     var res = "FAIL"
     init {
@@ -23,7 +20,6 @@ class Foo(foo: Boolean) {
     }
 }
 
-@ExperimentalContracts
 fun box(): String {
     val foo = Foo(true)
     return foo.res
