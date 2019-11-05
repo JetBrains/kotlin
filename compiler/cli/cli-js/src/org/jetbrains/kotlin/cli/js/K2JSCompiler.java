@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArgumentsKt;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
@@ -187,13 +186,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
-        ExitCode exitCode = OK;
-
-        if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments)) {
-            exitCode = getIrCompiler().doExecute(arguments, configuration.copy(), rootDisposable, paths);
-        }
-        if (K2JSCompilerArgumentsKt.isPreIrBackendDisabled(arguments)) {
-            return exitCode;
+        if (arguments.getIrBackend()) {
+            return getIrCompiler().doExecute(arguments, configuration, rootDisposable, paths);
         }
 
         if (arguments.getFreeArgs().isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
@@ -394,10 +388,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull CompilerConfiguration configuration, @NotNull K2JSCompilerArguments arguments,
             @NotNull Services services
     ) {
-        if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments)) {
+        if (arguments.getIrBackend()) {
             getIrCompiler().setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
-        }
-        if (K2JSCompilerArgumentsKt.isPreIrBackendDisabled(arguments)) {
             return;
         }
 

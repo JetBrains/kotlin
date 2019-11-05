@@ -92,7 +92,7 @@ configurations {
 dependencies {
     expectedBy project(":kotlin-stdlib-common")
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
-    testCompile project(':kotlin-test:kotlin-test-js')
+    testCompile project(':kotlin-test:kotlin-test-js-ir')
 }
 
 
@@ -107,8 +107,8 @@ compileKotlin2Js {
         main = "noCall"
         verbose = true
         freeCompilerArgs += [
-            "-Xir-produce-klib-dir",
-            "-Xir-only",
+            "-Xir",
+            "-Xir-produce-only=klib",
             "-Xallow-kotlin-package",
             "-Xallow-result-return-type",
             "-Xuse-experimental=kotlin.Experimental",
@@ -120,7 +120,7 @@ compileKotlin2Js {
 }
 
 def testOutputFile = "${buildDir}/classes/kotlin/test/kotlin-stdlib-js-ir_test.js"
-def kotlinTestTestOutputFile = "${project(':kotlin-test:kotlin-test-js').buildDir}/classes/kotlin/test/kotlin-test-js-ir_test.js"
+def kotlinTestTestOutputFile = "${project(':kotlin-test:kotlin-test-js-ir').buildDir}/classes/kotlin/test/kotlin-test-js-ir_test.js"
 
 compileTestKotlin2Js {
     kotlinOptions {
@@ -128,7 +128,8 @@ compileTestKotlin2Js {
         verbose = true
         outputFile = testOutputFile
         freeCompilerArgs += [
-          "-Xir-produce-js",
+          "-Xir",
+          "-Xir-produce-only=js",
           "-verbose",
           "-Xuse-experimental=kotlin.Experimental",
           "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
@@ -154,6 +155,11 @@ artifacts {
     archives sourcesJar
 }
 
+
+if (project.findProperty("kotlin.stdlib.js.ir.publish")?.toBoolean() == true) {
+    configurePublishing(project)
+}
+
 node {
     download = true
     version = '8.9.4' // The default 6.9.1 has buggy hyperbolic functions implementation
@@ -171,7 +177,7 @@ task installTeamcityReporter(type: NpmTask) {
 task runMocha(type: NodeTask) {
     dependsOn compileTestKotlin2Js
     dependsOn installMocha
-    dependsOn ':kotlin-test:kotlin-test-js:testClasses'
+    dependsOn ':kotlin-test:kotlin-test-js-ir:testClasses'
 
     script = file("${buildDir}/node_modules/mocha/bin/mocha")
 

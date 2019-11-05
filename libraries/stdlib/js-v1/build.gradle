@@ -14,7 +14,6 @@ configurations {
     commonSources
     distSources
     distJs
-    distLibrary
 }
 
 def builtinsSrcDir = "${buildDir}/builtin-sources"
@@ -284,10 +283,9 @@ jar {
     enabled false
 }
 
-task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
+task mergedJar(type: Jar, dependsOn: compileJs) {
     classifier = null
     manifestAttributes(manifest, project, 'Main')
-    destinationDirectory = file("$buildDir/lib/dist")
 
     // TODO: Use standard implementation title after js stdlib detector becomes more flexible (KT-17655)
     Properties properties = new Properties()
@@ -308,22 +306,6 @@ task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
     }
     exclude "${experimentalJsModuleName}.*"
 }
-
-task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
-    def irStdlibJar = tasks.getByPath(":kotlin-stdlib-js-ir:jar")
-    dependsOn(irStdlibJar)
-
-    archiveExtension = "jar"
-    destinationDirectory = file("$buildDir/libs")
-
-    duplicatesStrategy DuplicatesStrategy.FAIL
-
-    from zipTree(libraryJarWithoutIr.archiveFile)
-    from(zipTree(irStdlibJar.archiveFile)) {
-        exclude 'META-INF/*'
-    }
-}
-
 
 task sourcesJar(type: Jar, dependsOn: compileJs) {
     classifier = 'sources'
@@ -370,12 +352,11 @@ task distSourcesJar(type: Jar) {
 
 
 artifacts {
-    runtime libraryJarWithIr
-    archives libraryJarWithIr
+    runtime mergedJar
+    archives mergedJar
     archives sourcesJar
     sources sourcesJar
     distSources distSourcesJar
-    distLibrary libraryJarWithoutIr
 
     compileJs.outputs.files.forEach { artifact ->
         distJs(artifact) { builtBy(compileJs) }

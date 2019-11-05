@@ -175,12 +175,17 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             it.libraryFile.absolutePath in friendAbsolutePaths
         }
 
-        if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
+        val produceKind = produceMap[arguments.irProduceOnly]
+        if (produceKind == null) {
+            messageCollector.report(ERROR, "Unknown produce kind: ${arguments.irProduceOnly}. Valid values are: js, klib")
+        }
+
+        if (produceKind == ProduceKind.KLIB || (produceKind == ProduceKind.DEFAULT && arguments.metaInfo)) {
             val outputKlibPath =
-                if (arguments.irProduceKlibDir)
+                if (arguments.irLegacyGradlePluginCompatibility)
                     File(outputFilePath).parent
                 else
-                    outputFilePath
+                    "$outputFilePath.klib"
 
             generateKLib(
                 project = config.project,
@@ -189,11 +194,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 allDependencies = resolvedLibraries,
                 friendDependencies = friendDependencies,
                 outputKlibPath = outputKlibPath,
-                nopack = arguments.irProduceKlibDir
+                nopack = arguments.irLegacyGradlePluginCompatibility
             )
         }
 
-        if (arguments.irProduceJs) {
+        if (produceKind == ProduceKind.JS || produceKind == ProduceKind.DEFAULT) {
             val phaseConfig = createPhaseConfig(jsPhases, arguments, messageCollector)
 
             val compiledModule = compile(

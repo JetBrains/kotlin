@@ -16,5 +16,4 @@
 
 package foo
 
-@JsExport
 fun bar() = "OK"
