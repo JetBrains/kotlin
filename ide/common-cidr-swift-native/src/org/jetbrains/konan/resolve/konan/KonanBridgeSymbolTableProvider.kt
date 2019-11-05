@@ -35,7 +35,7 @@ class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
         //nothing here
     }
 
-    override fun isOutOfCodeBlockChange(p0: PsiTreeChangeEventImpl): Boolean = false
+    override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean = false
 
     override fun calcTableUsingPSI(file: PsiFile, virtualFile: VirtualFile, context: OCInclusionContext): FileSymbolTable {
         CidrLog.LOG.error("should not be called for this file: " + file.name)

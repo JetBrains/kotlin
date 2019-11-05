@@ -34,11 +34,11 @@ abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> 
     override fun getProject(): Project = project
     override fun getContainingFile(): VirtualFile = file
 
-    override fun <T : SwiftSymbolAttribute> getSwiftAttribute(attributeType: SwiftAttributesInfo.AttributeType<T>): T? =
-        swiftAttributes.getAttribute(attributeType)
+    override fun <T : SwiftSymbolAttribute> getSwiftAttribute(type: SwiftAttributesInfo.AttributeType<T>): T? =
+        swiftAttributes.getAttribute(type)
 
-    override fun hasSwiftDeclarationSpecifier(specifier: SwiftDeclarationSpecifiers): Boolean =
-        swiftAttributes.hasDeclarationSpecifier(specifier)
+    override fun hasSwiftDeclarationSpecifier(declarationSpecifier: SwiftDeclarationSpecifiers): Boolean =
+        swiftAttributes.hasDeclarationSpecifier(declarationSpecifier)
 
     override fun hashCodeExcludingOffset(): Int = (name.hashCode() * 31 + file.hashCode()) * 31 + project.hashCode()
 

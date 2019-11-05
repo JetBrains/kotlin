@@ -9,7 +9,6 @@ import com.jetbrains.swift.psi.types.SwiftClassType
 import com.jetbrains.swift.symbols.SwiftAssociatedTypeSymbol
 import com.jetbrains.swift.symbols.SwiftMemberSymbol
 import com.jetbrains.swift.symbols.SwiftProtocolSymbol
-import com.jetbrains.swift.symbols.SwiftRequirementInfo
 import com.jetbrains.swift.symbols.impl.SwiftAllMemberHolder
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 
@@ -37,8 +36,6 @@ class KtSwiftProtocolSymbol : KtSwiftTypeSymbol<KtSwiftProtocolSymbol.ProtocolSt
         return myCachedMemberHolder!!.allMembers
     }
 
-    override fun getRequirements(): List<SwiftRequirementInfo> = emptyList()
-    
     override val rawSuperTypes: List<SwiftClassType>
         get() = state.superTypes
 

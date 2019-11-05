@@ -1,6 +1,5 @@
 package org.jetbrains.konan.resolve.symbols.serialization
 
-import com.esotericsoftware.kryo.serializers.DefaultSerializers
 import com.intellij.openapi.diagnostic.Logger
 import com.jetbrains.cidr.lang.symbols.symtable.serialization.FileSymbolTableSerializer
 import com.jetbrains.cidr.lang.symbols.symtable.serialization.SerializerProvider
@@ -17,8 +16,8 @@ class KtSerializer : SerializerProvider {
         serializer.registerOCLazySymbolSerializer(KtOCInterfaceSymbol::class.java, ::KtOCInterfaceSymbol)
         serializer.registerOCLazySymbolSerializer(KtOCProtocolSymbol::class.java, ::KtOCProtocolSymbol)
 
-        serializer.registerFieldSerializer(KtOCInterfaceSymbol.InterfaceState::class.java) { KtOCInterfaceSymbol.InterfaceState() }
-        serializer.registerFieldSerializer(KtOCProtocolSymbol.ProtocolState::class.java) { KtOCProtocolSymbol.ProtocolState() }
+        serializer.registerFieldSerializer(KtOCInterfaceSymbol.InterfaceState::class.java, KtOCInterfaceSymbol::InterfaceState)
+        serializer.registerFieldSerializer(KtOCProtocolSymbol.ProtocolState::class.java, KtOCProtocolSymbol::ProtocolState)
 
         serializer.registerProjectAndFileOwnerSerializer(KtSwiftParameterSymbol::class.java, ::KtSwiftParameterSymbol)
         serializer.registerProjectAndFileOwnerSerializer(KtSwiftMethodSymbol::class.java, ::KtSwiftMethodSymbol)
@@ -28,9 +27,9 @@ class KtSerializer : SerializerProvider {
         serializer.registerSwiftLazySymbolSerializer(KtSwiftProtocolSymbol::class.java, ::KtSwiftProtocolSymbol)
         serializer.registerSwiftLazySymbolSerializer(KtSwiftExtensionSymbol::class.java, ::KtSwiftExtensionSymbol)
 
-        serializer.registerFieldSerializer(KtSwiftClassSymbol.ClassState::class.java) { KtSwiftClassSymbol.ClassState() }
-        serializer.registerFieldSerializer(KtSwiftProtocolSymbol.ProtocolState::class.java) { KtSwiftProtocolSymbol.ProtocolState() }
-        serializer.registerFieldSerializer(KtSwiftExtensionSymbol.ExtensionState::class.java) { KtSwiftExtensionSymbol.ExtensionState() }
+        serializer.registerFieldSerializer(KtSwiftClassSymbol.ClassState::class.java, KtSwiftClassSymbol::ClassState)
+        serializer.registerFieldSerializer(KtSwiftProtocolSymbol.ProtocolState::class.java, KtSwiftProtocolSymbol::ProtocolState)
+        serializer.registerFieldSerializer(KtSwiftExtensionSymbol.ExtensionState::class.java, KtSwiftExtensionSymbol::ExtensionState)
     }
 
     private inline fun <T : KtOCLazySymbol<*, *>> FileSymbolTableSerializer.registerOCLazySymbolSerializer(

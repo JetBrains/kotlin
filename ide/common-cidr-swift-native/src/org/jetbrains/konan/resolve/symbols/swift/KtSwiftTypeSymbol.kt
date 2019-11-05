@@ -2,14 +2,12 @@ package org.jetbrains.konan.resolve.symbols.swift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.ResolveState
 import com.intellij.util.containers.MostlySingularMultiMap
-import com.jetbrains.swift.codeinsight.resolve.processor.SwiftSymbolProcessor
-import com.jetbrains.swift.psi.types.SwiftClassType
 import com.jetbrains.swift.psi.types.SwiftType
 import com.jetbrains.swift.psi.types.SwiftTypeFactory
-import com.jetbrains.swift.symbols.*
-import com.jetbrains.swift.symbols.impl.SwiftClassSymbolUtil
+import com.jetbrains.swift.symbols.SwiftGenericParametersInfo
+import com.jetbrains.swift.symbols.SwiftMemberSymbol
+import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import org.jetbrains.konan.resolve.translation.StubToSwiftSymbolTranslator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 
@@ -19,13 +17,6 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stub : Obj
     constructor(stub: Stub, project: Project, file: VirtualFile) : super(stub, project, file)
 
     constructor() : super()
-
-    override fun processMembers(processor: SwiftSymbolProcessor, state: ResolveState): Boolean = processRawMembers(processor, state)
-
-    override fun processRawMembers(processor: SwiftSymbolProcessor, state: ResolveState): Boolean {
-        val members = this.state.members ?: return true
-        return SwiftClassSymbolUtil.processMembers<SwiftSymbol>(members, processor, state)
-    }
 
     override val context: SwiftMemberSymbol?
         get() = containingTypeSymbol
@@ -41,9 +32,6 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stub : Obj
             //todo qualified name!!!
             return name
         }
-
-    override val superTypes: List<SwiftClassType>
-        get() = rawSuperTypes
 
     override val rawMembers: MostlySingularMultiMap<String, SwiftMemberSymbol>
         get() = state.members ?: MostlySingularMultiMap.emptyMap()
