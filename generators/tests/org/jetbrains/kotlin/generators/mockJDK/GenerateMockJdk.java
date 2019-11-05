@@ -276,8 +276,6 @@ public class GenerateMockJdk {
             "META-INF/MANIFEST.MF",
     };
 
-
-
     private static void generateFilteredJar(
             String jdkPath,
             String childName,
@@ -331,7 +329,7 @@ public class GenerateMockJdk {
         return entrySet;
     }
 
-    private static Set<String> getClassFileEntries() {
+    /* package-private */ static Set<String> getClassFileEntries() {
         return new HashSet<>(Arrays.asList(ENTRIES));
     }
 
@@ -360,11 +358,12 @@ public class GenerateMockJdk {
                 }
             }
         }
+        File mockJdkRuntimeJarPath = new File("compiler/testData/mockJDK/jre/lib/rt.jar");
 
         generateFilteredJar(
                 openjdk7Path,
                 "jre/lib/rt.jar",
-                new File("compiler/testData/mockJDK/jre/lib/rt.jar"),
+                mockJdkRuntimeJarPath,
                 getClassFileEntries(),
                 true);
         generateFilteredJar(
@@ -373,6 +372,7 @@ public class GenerateMockJdk {
                 new File("compiler/testData/mockJDK/src.zip"),
                 sourceFileEntries,
                 false);
+        FilterMockJdkKt.removeInterfacesFromMockJdkClassfiles(mockJdkRuntimeJarPath);
     }
 
     private GenerateMockJdk() {
