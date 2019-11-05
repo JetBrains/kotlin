@@ -12,7 +12,7 @@
 
   <change-notes/>
 
-  <depends>com.intellij.modules.clion</depends>
+  <depends>com.intellij.modules.cidr.lang</depends>
   <!--java_plugin_dependency-->
 
   <application-components>

@@ -1,5 +1,4 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <depends>org.jetbrains.kotlin.native.clion</depends>
 
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceImplementation="org.jetbrains.konan.resolve.konan.KonanBridgeFileManager"/>

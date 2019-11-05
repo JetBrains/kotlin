@@ -1,9 +1,18 @@
-import java.util.Locale
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
+import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import org.gradle.jvm.tasks.Jar
 import java.net.URL
+import java.util.*
 
 plugins {
     kotlin("jvm")
+    id("com.github.jk1.tcdeps") version "1.2"
+}
+
+repositories {
+    teamcityServer {
+        setUrl("https://buildserver.labs.intellij.net")
+    }
 }
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
@@ -39,25 +48,31 @@ dependencies {
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     runtime(project(":kotlin-ultimate:ide:common-cidr-swift-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:appcode-native")) { isTransitive = false }
+    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:1.3.70-dev-13308:backend.native.jar"))
+    runtime(tc("Kotlin_KotlinNative_Master_KotlinNativeLinuxBundle:1.3.70-dev-13308:konan.serializer.jar")) // required for backend.native
+}
+
+val copyRuntimeDeps: Task by tasks.creating(Copy::class) {
+    from(configurations.runtime)
+    into(temporaryDir)
 }
 
 val preparePluginXmlTask: Task = preparePluginXml(
-        project,
-        ":kotlin-ultimate:ide:appcode-native",
-        appcodeVersion,
-        appcodeVersionStrict,
-        appcodePluginVersionFull,
-        appcodeUseJavaPlugin
+    project,
+    ":kotlin-ultimate:ide:appcode-native",
+    appcodeVersion,
+    appcodeVersionStrict,
+    appcodePluginVersionFull,
+    appcodeUseJavaPlugin
 )
 
 val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXmlTask))
 
-val additionalJars = if (appcodeUseJavaPlugin)
-    listOf(pluginJarTask, cidrGradleTooling)
-else {
-    val patchedPlatformDepsJar: Task = patchedPlatformDepsJar(project, appcodePlatformDepsOrJavaPluginDir)
-    val otherPlatformDepsJars: Task = otherPlatformDepsJars(project, appcodePlatformDepsOrJavaPluginDir)
-    listOf(pluginJarTask, cidrGradleTooling, patchedPlatformDepsJar, otherPlatformDepsJars)
+val additionalJars: List<Any> = mutableListOf(pluginJarTask, copyRuntimeDeps, cidrGradleTooling).also {
+    if (!appcodeUseJavaPlugin) {
+        it += patchedPlatformDepsJar(project, appcodePlatformDepsOrJavaPluginDir)
+        it += otherPlatformDepsJars(project, appcodePlatformDepsOrJavaPluginDir)
+    }
 }
 
 val appcodePluginTask: Task = packageCidrPlugin(
