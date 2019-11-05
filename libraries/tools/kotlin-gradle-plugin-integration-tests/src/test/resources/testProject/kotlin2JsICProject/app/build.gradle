@@ -4,3 +4,9 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
     compile project(":lib")
 }
+
+def isIrBackend = project.findProperty("kotlin.js.useIrBackend")?.toBoolean() ?: false
+if (isIrBackend) {
+    compileKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-klib-dir", "-Xir-only"]
+    compileTestKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
+}

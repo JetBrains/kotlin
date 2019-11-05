@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager;
 import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
+import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArgumentsKt;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
@@ -45,7 +46,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil;
 import org.jetbrains.kotlin.cli.common.output.OutputUtilsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser;
 import org.jetbrains.kotlin.config.*;
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker;
 import org.jetbrains.kotlin.incremental.components.LookupTracker;
@@ -186,8 +186,13 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
 
-        if (arguments.getIrBackend()) {
-            return getIrCompiler().doExecute(arguments, configuration, rootDisposable, paths);
+        ExitCode exitCode = OK;
+
+        if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments)) {
+            exitCode = getIrCompiler().doExecute(arguments, configuration.copy(), rootDisposable, paths);
+        }
+        if (K2JSCompilerArgumentsKt.isPreIrBackendDisabled(arguments)) {
+            return exitCode;
         }
 
         if (arguments.getFreeArgs().isEmpty() && !IncrementalCompilation.isEnabledForJs()) {
@@ -388,8 +393,10 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull CompilerConfiguration configuration, @NotNull K2JSCompilerArguments arguments,
             @NotNull Services services
     ) {
-        if (arguments.getIrBackend()) {
+        if (K2JSCompilerArgumentsKt.isIrBackendEnabled(arguments)) {
             getIrCompiler().setupPlatformSpecificArgumentsAndServices(configuration, arguments, services);
+        }
+        if (K2JSCompilerArgumentsKt.isPreIrBackendDisabled(arguments)) {
             return;
         }
 

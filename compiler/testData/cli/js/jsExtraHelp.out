@@ -3,10 +3,11 @@ where advanced options include:
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
-  -Xir                       Use IR backend
-  -Xir-legacy-gradle-plugin-compatibility
-                             Make KLIB generation compatible with legacy gradle plugin
-  -Xir-produce-only={ klib, js } Type of output to produce. Overrides -meta-info argument.
+  -Xir-only                  Disables pre-IR backend
+  -Xir-produce-js            Generates JS file using IR backend. Also disables pre-IR backend
+  -Xir-produce-klib-dir      Generate unpacked KLIB into parent directory of output JS file.
+                             In combination with -meta-info generates both IR and pre-IR versions of library.
+  -Xir-produce-klib-file     Generate packed klib into file specified by -output. Disables pre-IR backend
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
