@@ -695,3 +695,34 @@ internal open class CharSequenceIterationHandler(context: CommonBackendContext, 
 internal class StringIterationHandler(context: CommonBackendContext) : CharSequenceIterationHandler(context, canCacheLast = true) {
     override fun matchIterable(expression: IrExpression) = expression.type.isString()
 }
+
+/** Builds a [HeaderInfo] for calls to `withIndex()`. */
+internal class WithIndexHandler(context: CommonBackendContext, private val visitor: HeaderInfoBuilder) :
+    HeaderInfoFromCallHandler<Nothing?> {
+
+    // Use Quantifier.ANY so we can handle all `withIndex()` calls in the same manner.
+    override val matcher = createIrCallMatcher(Quantifier.ANY) {
+        callee {
+            fqName { it == FqName("kotlin.collections.withIndex") }
+            extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() } }
+            parameterCount { it == 0 }
+        }
+        callee {
+            fqName { it == FqName("kotlin.text.withIndex") }
+            extensionReceiver { it != null && it.type.isSubtypeOfClass(context.ir.symbols.charSequence) }
+            parameterCount { it == 0 }
+        }
+
+        // TODO: Handle Iterable.withIndex(), Sequence.withIndex()
+    }
+
+    override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo? {
+        // WithIndexHeaderInfo is a composite that contains the HeaderInfo for the underlying iterable (if any).
+        val nestedInfo = expression.extensionReceiver!!.accept(visitor, null) ?: return null
+
+        // We cannot lower `iterable.withIndex().withIndex()`.
+        if (nestedInfo is WithIndexHeaderInfo) return null
+
+        return WithIndexHeaderInfo(nestedInfo)
+    }
+}
