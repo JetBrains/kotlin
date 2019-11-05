@@ -12,9 +12,9 @@ FILE: moreSpecificAmbiguousExtensions.kt
         lval extFun2: R|kotlin/reflect/KFunction2<IB, IB, kotlin/Unit>| = Q|IB|::R|/extFun|
     }
     public final fun testWithExpectedType(): R|kotlin/Unit| {
-        lval extFun_AB_A: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function2<IA, IB, kotlin/Unit>| = Q|IA|::R|/extFun|
-        lval extFun_AA_B: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function2<IA, IA, kotlin/Unit>| = Q|IB|::R|/extFun|
-        lval extFun_BB_A: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function2<IB, IB, kotlin/Unit>| = Q|IA|::R|/extFun|
-        lval extFun_BA_B: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function2<IB, IA, kotlin/Unit>| = Q|IB|::R|/extFun|
-        lval extFun_BB_B: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function2<IB, IB, kotlin/Unit>| = Q|IB|::R|/extFun|
+        lval extFun_AB_A: @R|kotlin/ExtensionFunctionType|() R|kotlin/reflect/KFunction2<IA, IB, kotlin/Unit>| = Q|IA|::R|/extFun|
+        lval extFun_AA_B: @R|kotlin/ExtensionFunctionType|() R|kotlin/reflect/KFunction2<IA, IA, kotlin/Unit>| = Q|IB|::R|/extFun|
+        lval extFun_BB_A: @R|kotlin/ExtensionFunctionType|() R|kotlin/reflect/KFunction2<IB, IB, kotlin/Unit>| = Q|IA|::R|/extFun|
+        lval extFun_BA_B: @R|kotlin/ExtensionFunctionType|() R|kotlin/reflect/KFunction2<IB, IA, kotlin/Unit>| = Q|IB|::R|/extFun|
+        lval extFun_BB_B: @R|kotlin/ExtensionFunctionType|() R|kotlin/reflect/KFunction2<IB, IB, kotlin/Unit>| = Q|IB|::R|/extFun|
     }
