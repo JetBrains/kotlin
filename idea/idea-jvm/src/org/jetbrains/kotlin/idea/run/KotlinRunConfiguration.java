@@ -295,7 +295,11 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
         if (StringUtil.isEmpty(MAIN_CLASS_NAME)) {
             return null;
         }
-        return MAIN_CLASS_NAME;
+        List<String> parts = StringUtil.split(MAIN_CLASS_NAME, ".");
+        if (parts.isEmpty()) {
+            return MAIN_CLASS_NAME;
+        }
+        return parts.get(parts.size() - 1);
     }
 
     @NotNull
