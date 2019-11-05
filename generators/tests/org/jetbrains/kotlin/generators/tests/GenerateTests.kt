@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightFacadeClassTest
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
 import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
+import org.jetbrains.kotlin.findUsages.AbstractFindUsagesWithDisableComponentSearchTest
 import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
@@ -519,6 +520,10 @@ fun main(args: Array<String>) {
             model("findUsages/kotlin", pattern = """^(.+)\.0\.(kt|kts)$""")
             model("findUsages/java", pattern = """^(.+)\.0\.java$""")
             model("findUsages/propertyFiles", pattern = """^(.+)\.0\.properties$""")
+        }
+
+        testClass<AbstractFindUsagesWithDisableComponentSearchTest> {
+            model("findUsages/kotlin/conventions/components", pattern = """^(.+)\.0\.(kt|kts)$""")
         }
 
         testClass<AbstractKotlinFindUsagesWithLibraryTest> {

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.*
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOptions.Companion.Empty
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
+import org.jetbrains.kotlin.idea.search.usagesSearch.filterDataClassComponentsIfDisabled
 import org.jetbrains.kotlin.idea.search.usagesSearch.getClassNameForCompanionObject
 import org.jetbrains.kotlin.idea.search.usagesSearch.operators.OperatorReferenceSearcher
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
@@ -77,6 +78,7 @@ class KotlinReferencesSearchParameters(
 ) : ReferencesSearch.SearchParameters(elementToSearch, scope, ignoreAccessScope, optimizer)
 
 class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
+
     override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<in PsiReference>) {
         val processor = QueryProcessor(queryParameters, consumer)
         runReadAction { processor.processInReadAction() }
@@ -108,7 +110,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
 
             val effectiveSearchScope = run {
                 val elements = if (elementToSearch is KtDeclaration && !isOnlyKotlinSearch(queryParameters.scopeDeterminedByUser)) {
-                    elementToSearch.toLightElements().nullize()
+                    elementToSearch.toLightElements().filterDataClassComponentsIfDisabled(kotlinOptions).nullize()
                 } else {
                     null
                 } ?: listOf(elementToSearch)
@@ -236,7 +238,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
                     if (element.getStrictParentOfType<KtPrimaryConstructor>() != null) {
                         // Simple parameters without val and var shouldn't be processed here because of local search scope
                         val methods = LightClassUtil.getLightClassPropertyMethods(element)
-                        methods.allDeclarations.forEach { searchNamedElement(it) }
+                        methods.allDeclarations.filterDataClassComponentsIfDisabled(kotlinOptions).forEach { searchNamedElement(it) }
                     }
                 }
 
@@ -264,7 +266,7 @@ class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearc
         }
 
         private fun searchPropertyAccessorMethods(origin: KtParameter) {
-            origin.toLightElements().forEach { searchNamedElement(it) }
+            origin.toLightElements().filterDataClassComponentsIfDisabled(kotlinOptions).forEach { searchNamedElement(it) }
         }
 
         private fun processKtClassOrObject(element: KtClassOrObject) {

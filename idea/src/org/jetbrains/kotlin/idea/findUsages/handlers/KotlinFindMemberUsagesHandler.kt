@@ -21,7 +21,17 @@ import com.intellij.find.FindManager
 import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.find.impl.FindManagerImpl
+import com.intellij.icons.AllIcons.Actions
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.DataContext
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.wm.ToolWindowId
+import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
@@ -29,10 +39,12 @@ import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.*
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
+import org.jetbrains.kotlin.idea.debugger.readAction
 import org.jetbrains.kotlin.idea.findUsages.KotlinCallableFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
@@ -47,11 +59,16 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchOpt
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearchParameters
 import org.jetbrains.kotlin.idea.search.isOnlyKotlinSearch
 import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunction
+import org.jetbrains.kotlin.idea.search.usagesSearch.filterDataClassComponentsIfDisabled
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.source.getPsi
+import javax.swing.event.HyperlinkEvent
+import javax.swing.event.HyperlinkListener
+import com.intellij.openapi.util.Key
+import com.intellij.usageView.UsageViewContentManager
 
 abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected constructor(
     declaration: T,
@@ -81,7 +98,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
             return super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
         }
 
-        override fun createKotlinReferencesSearchOptions(options: FindUsagesOptions): KotlinReferencesSearchOptions {
+        override fun createKotlinReferencesSearchOptions(options: FindUsagesOptions, forHighlight: Boolean): KotlinReferencesSearchOptions {
             val kotlinOptions = options as KotlinFunctionFindUsagesOptions
             return KotlinReferencesSearchOptions(
                 acceptCallableOverrides = true,
@@ -99,10 +116,33 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
     }
 
     private class Property(
-        declaration: KtNamedDeclaration,
+        propertyDeclaration: KtNamedDeclaration,
         elementsToSearch: Collection<PsiElement>,
         factory: KotlinFindUsagesHandlerFactory
-    ) : KotlinFindMemberUsagesHandler<KtNamedDeclaration>(declaration, elementsToSearch, factory) {
+    ) : KotlinFindMemberUsagesHandler<KtNamedDeclaration>(propertyDeclaration, elementsToSearch, factory) {
+
+        override fun processElementUsages(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+
+            if (ApplicationManager.getApplication().isUnitTestMode ||
+                !isPropertyOfDataClass ||
+                psiElement.getDisableComponentAndDestructionSearch(resetSingleFind = false)
+            ) return super.processElementUsages(element, processor, options)
+
+            val indicator = ProgressManager.getInstance().progressIndicator
+
+            val notificationCanceller = scheduleNotificationForDataClassComponent(project, element, indicator)
+            try {
+                return super.processElementUsages(element, processor, options)
+            } finally {
+                Disposer.dispose(notificationCanceller)
+            }
+        }
+
+        private val isPropertyOfDataClass = readAction {
+            propertyDeclaration.parent is KtParameterList &&
+                    propertyDeclaration.parent.parent is KtPrimaryConstructor &&
+                    propertyDeclaration.parent.parent.parent.let { it is KtClass && it.isData() }
+        }
 
         override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions = factory.findPropertyOptions
 
@@ -145,13 +185,36 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
             return result
         }
 
-        override fun createKotlinReferencesSearchOptions(options: FindUsagesOptions): KotlinReferencesSearchOptions {
+        private fun PsiElement.getDisableComponentAndDestructionSearch(resetSingleFind: Boolean): Boolean {
+
+            if (!isPropertyOfDataClass) return false
+
+            if (forceDisableComponentAndDestructionSearch) return true
+
+            if (KotlinFindPropertyUsagesDialog.getDisableComponentAndDestructionSearch(project)) return true
+
+            return if (getUserData(FIND_USAGES_ONES_FOR_DATA_CLASS_KEY) == true) {
+                if (resetSingleFind) {
+                    putUserData(FIND_USAGES_ONES_FOR_DATA_CLASS_KEY, null)
+                }
+                true
+            } else false
+        }
+
+
+        override fun createKotlinReferencesSearchOptions(options: FindUsagesOptions, forHighlight: Boolean): KotlinReferencesSearchOptions {
             val kotlinOptions = options as KotlinPropertyFindUsagesOptions
+
+            val disabledComponentsAndOperatorsSearch =
+                !forHighlight && psiElement.getDisableComponentAndDestructionSearch(resetSingleFind = true)
+
             return KotlinReferencesSearchOptions(
                 acceptCallableOverrides = true,
                 acceptOverloads = false,
                 acceptExtensionsOfDeclarationClass = false,
-                searchForExpectedUsages = kotlinOptions.searchExpected
+                searchForExpectedUsages = kotlinOptions.searchExpected,
+                searchForOperatorConventions = !disabledComponentsAndOperatorsSearch,
+                searchForComponentConventions = !disabledComponentsAndOperatorsSearch
             )
         }
     }
@@ -166,12 +229,12 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
 
         private val kotlinOptions = options as KotlinCallableFindUsagesOptions
 
-        override fun buildTaskList(): Boolean {
+        override fun buildTaskList(forHighlight: Boolean): Boolean {
             val referenceProcessor = createReferenceProcessor(processor)
             val uniqueProcessor = CommonProcessors.UniqueProcessor(processor)
 
             if (options.isUsages) {
-                val kotlinSearchOptions = createKotlinReferencesSearchOptions(options)
+                val kotlinSearchOptions = createKotlinReferencesSearchOptions(options, forHighlight)
                 val searchParameters = KotlinReferencesSearchParameters(element, options.searchScope, kotlinOptions = kotlinSearchOptions)
 
                 addTask { applyQueryFilters(element, options, ReferencesSearch.search(searchParameters)).forEach(referenceProcessor) }
@@ -184,7 +247,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
                         else -> options.searchScope
                     }
 
-                    for (psiMethod in element.toLightMethods()) {
+                    for (psiMethod in element.toLightMethods().filterDataClassComponentsIfDisabled(kotlinSearchOptions)) {
                         addTask {
                             applyQueryFilters(
                                 element,
@@ -210,7 +273,10 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
         }
     }
 
-    protected abstract fun createKotlinReferencesSearchOptions(options: FindUsagesOptions): KotlinReferencesSearchOptions
+    protected abstract fun createKotlinReferencesSearchOptions(
+        options: FindUsagesOptions,
+        forHighlight: Boolean
+    ): KotlinReferencesSearchOptions
 
     protected abstract fun applyQueryFilters(
         element: PsiElement,
@@ -241,6 +307,51 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
     }
 
     companion object {
+
+        @Volatile
+        @get:TestOnly
+        var forceDisableComponentAndDestructionSearch = false
+
+
+        private const val DISABLE_ONCE = "DISABLE_ONCE"
+        private const val DISABLE = "DISABLE"
+        private const val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TEXT =
+            "<p>Find usages for data class components and destruction declarations<br/>could be <a href=\"$DISABLE_ONCE\">disabled once</a> or <a href=\"$DISABLE\">disabled for a project</a>.</p>"
+        private const val DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TIMEOUT = 5000
+
+        private val FIND_USAGES_ONES_FOR_DATA_CLASS_KEY = Key<Boolean>("FIND_USAGES_ONES")
+
+        private fun scheduleNotificationForDataClassComponent(
+            project: Project,
+            element: PsiElement,
+            indicator: ProgressIndicator
+        ): Disposable {
+            val notification = {
+                val listener = HyperlinkListener { event ->
+                    if (event.eventType == HyperlinkEvent.EventType.ACTIVATED) {
+                        indicator.cancel()
+                        if (event.description == DISABLE) {
+                            KotlinFindPropertyUsagesDialog.setDisableComponentAndDestructionSearch(project, /* value = */ true)
+                        } else {
+                            element.putUserData(FIND_USAGES_ONES_FOR_DATA_CLASS_KEY, true)
+                        }
+                        FindManager.getInstance(project).findUsages(element)
+                    }
+                }
+
+                ToolWindowManager.getInstance(project).notifyByBalloon(
+                    ToolWindowId.FIND,
+                    MessageType.INFO,
+                    DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TEXT,
+                    Actions.Find,
+                    listener
+                )
+            }
+
+            return Alarm().also {
+                it.addRequest(notification, DISABLE_COMPONENT_AND_DESTRUCTION_SEARCH_TIMEOUT)
+            }
+        }
 
         fun getInstance(
             declaration: KtNamedDeclaration,
