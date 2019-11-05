@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FULL_JDK
 
 val xsl = arrayListOf("a", "b", "c", "d")
@@ -29,3 +28,6 @@ fun box(): String {
 // 1 next
 // 0 component1
 // 0 component2
+
+// The 1st ICONST_0 is for initializing the list. 2nd is for cmeThrown. 3rd is for initializing the index in the lowered for-loop.
+// 3 ICONST_0
