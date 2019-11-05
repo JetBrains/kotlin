@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.stubs;
 
+import com.intellij.openapi.projectRoots.Sdk;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -38,5 +39,10 @@ public abstract class AbstractMultiFileHighlightingTest extends AbstractMultiHig
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/multiFileHighlighting/";
+    }
+
+    @Override
+    protected Sdk getTestProjectJdk() {
+        return PluginTestCaseBase.mockJdk();
     }
 }

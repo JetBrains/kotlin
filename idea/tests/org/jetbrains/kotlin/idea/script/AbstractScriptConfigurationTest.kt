@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.ProjectJdkTable
+import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
@@ -149,6 +150,10 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         super.tearDown()
     }
 
+    override fun getTestProjectJdk(): Sdk {
+        return PluginTestCaseBase.mockJdk()
+    }
+
     private fun createTestModuleByName(name: String): Module {
         val newModuleDir = runWriteAction { VfsUtil.createDirectoryIfMissing(project.baseDir, name) }
         val newModule = createModuleAt(name, project, JavaModuleType.getModuleType(), newModuleDir.path)
@@ -197,16 +202,14 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             env["template-classes-names"] = listOf("custom.scriptDefinition.Template")
         }
 
-        if (env["javaHome"] != null) {
-            val jdkKind = when ((env["javaHome"] as? List<String>)?.singleOrNull()) {
-                "9" -> TestJdkKind.FULL_JDK_9
-                else -> TestJdkKind.MOCK_JDK
-            }
-            runWriteAction {
-                val jdk = PluginTestCaseBase.jdk(jdkKind)
-                ProjectJdkTable.getInstance().addJdk(jdk, testRootDisposable)
-                env["javaHome"] = File(jdk.homePath)
-            }
+        val jdkKind = when ((env["javaHome"] as? List<String>)?.singleOrNull()) {
+            "9" -> TestJdkKind.FULL_JDK_9
+            else -> TestJdkKind.MOCK_JDK
+        }
+        runWriteAction {
+            val jdk = PluginTestCaseBase.jdk(jdkKind)
+            ProjectJdkTable.getInstance().addJdk(jdk, testRootDisposable)
+            env["javaHome"] = File(jdk.homePath)
         }
 
         env.putAll(defaultEnvironment)
