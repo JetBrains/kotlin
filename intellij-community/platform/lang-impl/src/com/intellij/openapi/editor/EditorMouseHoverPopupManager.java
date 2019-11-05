@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -91,7 +92,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
 
         Editor editor = event.getEditor();
         if (editor == SoftReference.dereference(myCurrentEditor)) {
-          DocumentationManager.getInstance(editor.getProject()).setAllowContentUpdateFromContext(true);
+          DocumentationManager.getInstance(Objects.requireNonNull(editor.getProject())).setAllowContentUpdateFromContext(true);
         }
       }
     }, this);
@@ -372,6 +373,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
                               int offset,
                               boolean requestFocus,
                               boolean showImmediately) {
+    if (editor.getProject() == null) return;
     cancelProcessingAndCloseHint();
     Context context = new Context(offset, info, null) {
       @Override
@@ -448,19 +450,18 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       PsiElement element = getElementForQuickDoc();
       if (element != null) {
         try {
-          Project project = editor.getProject();
-          if (project == null || project.isDisposedOrDisposeInProgress()) {
-            return null;
-          }
-
-          DocumentationManager documentationManager = DocumentationManager.getInstance(project);
-          QuickDocUtil.runInReadActionWithWriteActionPriorityWithRetries(() -> {
-            if (element.isValid()) {
-              targetElementRef.set(documentationManager.findTargetElement(editor, targetOffset, element.getContainingFile(), element));
+          Project project = Objects.requireNonNull(editor.getProject());
+          DocumentationManager documentationManager =
+            ReadAction.compute(() -> project.isDisposed() ? null : DocumentationManager.getInstance(project));
+          if (documentationManager != null) {
+            QuickDocUtil.runInReadActionWithWriteActionPriorityWithRetries(() -> {
+              if (element.isValid()) {
+                targetElementRef.set(documentationManager.findTargetElement(editor, targetOffset, element.getContainingFile(), element));
+              }
+            }, 5000, 100);
+            if (!targetElementRef.isNull()) {
+              quickDocMessage = documentationManager.generateDocumentation(targetElementRef.get(), element, true);
             }
-          }, 5000, 100);
-          if (!targetElementRef.isNull()) {
-            quickDocMessage = documentationManager.generateDocumentation(targetElementRef.get(), element, true);
           }
         }
         catch (IndexNotReadyException ignored) {
