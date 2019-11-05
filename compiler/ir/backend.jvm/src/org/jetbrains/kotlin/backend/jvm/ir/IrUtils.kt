@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 
@@ -148,3 +150,23 @@ fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext) =
     this is IrTypeOperatorCall &&
             operator == IrTypeOperator.IMPLICIT_CAST &&
             !this.argument.type.isSubtypeOf(type.makeNullable(), context.irBuiltIns)
+
+fun IrBody.replaceThisByStaticReference(
+    context: JvmBackendContext,
+    irClass: IrClass,
+    oldThisReceiverParameter: IrValueParameter
+): IrBody =
+    transform(object : IrElementTransformerVoid() {
+        override fun visitGetValue(expression: IrGetValue): IrExpression {
+            if (expression.symbol == oldThisReceiverParameter.symbol) {
+                val instanceField = context.declarationFactory.getPrivateFieldForObjectInstance(irClass)
+                return IrGetFieldImpl(
+                    expression.startOffset,
+                    expression.endOffset,
+                    instanceField.symbol,
+                    irClass.defaultType
+                )
+            }
+            return super.visitGetValue(expression)
+        }
+    }, null)

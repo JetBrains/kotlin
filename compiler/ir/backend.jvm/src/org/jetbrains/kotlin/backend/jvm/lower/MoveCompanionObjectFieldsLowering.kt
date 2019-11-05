@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.lower.replaceThisByStaticReference
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME
@@ -40,7 +41,7 @@ internal val moveOrCopyCompanionObjectFieldsPhase = makeIrFilePhase(
     description = "Move and/or copy companion object fields to static fields of companion's owner"
 )
 
-private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackendContext) : ClassLoweringPass {
+private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val fieldReplacementMap = mutableMapOf<IrFieldSymbol, IrFieldSymbol>()
         if (irClass.isObject && !irClass.isCompanion && irClass.visibility != Visibilities.LOCAL) {
@@ -76,7 +77,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
         // It is an error to annotate only some of the fields of an interface companion with @JvmField.
         val newParent = if (irClass.isJvmInterface && !companion.allFieldsAreJvmField()) companion else irClass
 
-        val newDeclarations = companion.declarations.mapNotNull {
+        val newDeclarations = companion.declarations.map {
             when (it) {
                 is IrProperty ->
                     movePropertyFieldToStaticParent(it, companion, newParent, fieldReplacementMap)
@@ -87,10 +88,16 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
             }
         }
 
-        // Move declarations to parent if required
-        if (newParent !== companion) {
+        if (newParent === companion) {
+            // Keep fields as children of `IrProperty`, but replace anonymous initializers with static ones,
+            // preserving the relative ordering of anonymous initializers and property initializers.
+            for ((i, declaration) in newDeclarations.withIndex())
+                if (declaration is IrAnonymousInitializer)
+                    companion.declarations[i] = declaration
+        } else {
+            // Move all touched declarations to the parent.
             companion.declarations.removeAll { it is IrAnonymousInitializer }
-            newParent.declarations += newDeclarations
+            newDeclarations.filterNotNullTo(newParent.declarations)
         }
     }
 
@@ -153,56 +160,11 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
                 isStatic = true
             ).apply {
                 parent = newParent
-                body = oldInitializer.body.transferToNewParent(oldParent, newParent)
+                body = oldInitializer.body
+                    .replaceThisByStaticReference(context, oldParent, oldParent.thisReceiver!!)
+                    .patchDeclarationParents(newParent) as IrBlockBody
             }
         }
-
-    private fun IrBlockBody.transferToNewParent(oldParent: IrClass, newParent: IrClass): IrBlockBody {
-        val objectInstanceField = context.declarationFactory.getFieldForObjectInstance(oldParent)
-        return transform(
-            data = null,
-            transformer = object : IrElementTransformerVoid() {
-                val variableMap = mutableMapOf<IrVariable, IrVariable>()
-
-                override fun visitVariable(declaration: IrVariable): IrStatement {
-                    if (declaration.parent == oldParent) {
-                        val newDescriptor = WrappedVariableDescriptor(declaration.descriptor.annotations, declaration.descriptor.source)
-                        val newVariable = IrVariableImpl(
-                            declaration.startOffset, declaration.endOffset,
-                            declaration.origin, IrVariableSymbolImpl(newDescriptor),
-                            declaration.name, declaration.type, declaration.isVar, declaration.isConst, declaration.isLateinit
-                        ).apply {
-                            newDescriptor.bind(this)
-                            parent = newParent
-                            initializer = declaration.initializer
-                            annotations.addAll(declaration.annotations)
-                        }
-                        variableMap[declaration] = newVariable
-                        return super.visitVariable(newVariable)
-                    }
-                    return super.visitVariable(declaration)
-                }
-
-                override fun visitGetValue(expression: IrGetValue): IrExpression {
-                    if (expression.symbol.owner == oldParent.thisReceiver) {
-                        return IrGetFieldImpl(
-                            expression.startOffset, expression.endOffset,
-                            objectInstanceField.symbol,
-                            expression.type
-                        )
-                    }
-                    variableMap[expression.symbol.owner]?.let { newVariable ->
-                        return IrGetValueImpl(
-                            expression.startOffset, expression.endOffset,
-                            expression.type,
-                            newVariable.symbol,
-                            expression.origin
-                        )
-                    }
-                    return super.visitGetValue(expression)
-                }
-            }) as IrBlockBody
-    }
 
     private fun createStaticBackingField(oldField: IrField, propertyParent: IrClass, fieldParent: IrClass): IrField {
         val descriptor = WrappedFieldDescriptor(oldField.descriptor.annotations, oldField.descriptor.source)
