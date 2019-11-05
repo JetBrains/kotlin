@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
@@ -36,7 +35,7 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
+open class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
 
     private val nullableFields = context.lateinitNullableFields
     private fun buildOrGetNullableField(originalField: IrField): IrField {
@@ -117,7 +116,7 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
                         context.irBuiltIns.nothingType,
                         irNotEquals(irGet(resultVar), irNull()),
                         irReturn(irGet(resultVar)),
-                        throwUninitializedPropertyAccessException(backingField.name.asString())
+                        throwUninitializedPropertyAccessException(this, backingField.name.asString())
                     )
                     body.statements.add(throwIfNull)
                     getter.body = body
@@ -136,7 +135,7 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
                 return irBuilder.run {
                     irIfThenElse(
                         expression.type, irEqualsNull(irGet(irVar)),
-                        throwUninitializedPropertyAccessException(irVar.name.asString()),
+                        throwUninitializedPropertyAccessException(this, irVar.name.asString()),
                         irGet(irVar)
                     )
                 }
@@ -185,17 +184,9 @@ class LateinitLowering(val context: CommonBackendContext) : FileLoweringPass {
         })
     }
 
-    private fun IrBuilderWithScope.throwUninitializedPropertyAccessException(name: String) =
-        irCall(throwErrorFunction).apply {
-            putValueArgument(
-                0,
-                IrConstImpl.string(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    context.irBuiltIns.stringType,
-                    name
-                )
-            )
+    open fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression =
+        builder.irCall(throwErrorFunction).apply {
+            putValueArgument(0, builder.irString(name))
         }
 
     private val throwErrorFunction by lazy { context.ir.symbols.ThrowUninitializedPropertyAccessException.owner }
