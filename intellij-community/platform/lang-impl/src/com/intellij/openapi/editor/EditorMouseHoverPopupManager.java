@@ -445,8 +445,8 @@ public final class EditorMouseHoverPopupManager implements Disposable {
 
       String quickDocMessage = null;
       Ref<PsiElement> targetElementRef = new Ref<>();
-      if (elementForQuickDoc != null) {
-        PsiElement element = getElementForQuickDoc();
+      PsiElement element = getElementForQuickDoc();
+      if (element != null) {
         try {
           Project project = editor.getProject();
           if (project == null || project.isDisposedOrDisposeInProgress()) {
