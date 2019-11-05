@@ -11241,6 +11241,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/exclExcl/genericNull.kt");
         }
 
+        @TestMetadata("nullExclExcl.kt")
+        public void testNullExclExcl() throws Exception {
+            runTest("compiler/testData/codegen/box/exclExcl/nullExclExcl.kt");
+        }
+
         @TestMetadata("primitive.kt")
         public void testPrimitive() throws Exception {
             runTest("compiler/testData/codegen/box/exclExcl/primitive.kt");
