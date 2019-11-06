@@ -113,6 +113,7 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
         Object element = handler.findElementForParameterInfo(context);
         if (element != null) {
           handler.showParameterInfo(element, context);
+          break;
         }
       }
     }
