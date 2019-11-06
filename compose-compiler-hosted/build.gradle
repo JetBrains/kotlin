@@ -23,12 +23,6 @@ import androidx.build.LibraryGroups
 import androidx.build.LibraryVersions
 import androidx.build.Publish
 
-buildscript {
-    dependencies {
-        classpath 'org.anarres.jarjar:jarjar-gradle:1.0.1'
-    }
-}
-
 plugins {
     id("AndroidXPlugin")
     id("kotlin")
