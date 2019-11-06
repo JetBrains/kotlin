@@ -232,7 +232,8 @@ internal class DefaultScriptConfigurationManager(project: Project) :
             if (newConfiguration == null) {
                 saveReports(file, newResult.reports)
             } else {
-                val oldConfiguration = getAppliedConfiguration(file)?.configuration
+                val old = getCachedConfigurationState(file)
+                val oldConfiguration = old?.applied?.configuration
                 if (oldConfiguration == newConfiguration) {
                     saveReports(file, newResult.reports)
                     file.removeScriptDependenciesNotificationPanel(project)
@@ -252,6 +253,12 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                         debug(file) {
                             "configuration changed, notification is shown: old = $oldConfiguration, new = $newConfiguration"
                         }
+
+                        // restore reports for applied configuration in case of previous error
+                        old?.applied?.reports?.let {
+                            saveReports(file, it)
+                        }
+
                         file.addScriptDependenciesNotificationPanel(
                             newConfiguration, project,
                             onClick = {
