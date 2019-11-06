@@ -82,8 +82,8 @@ class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigura
         }
     }
 
-    override fun getInputsStamp(file: KtFile): CachedConfigurationInputs {
-        return getGradleScriptInputsStamp(project, file.virtualFile, file) ?: super.getInputsStamp(file)
+    override fun getInputsStamp(virtualFile: VirtualFile, file: KtFile): CachedConfigurationInputs {
+        return getGradleScriptInputsStamp(project, virtualFile, file) ?: super.getInputsStamp(virtualFile, file)
     }
 }
 

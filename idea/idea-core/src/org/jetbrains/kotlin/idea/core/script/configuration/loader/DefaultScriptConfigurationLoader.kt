@@ -41,7 +41,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
 
         debug(file) { "start dependencies loading" }
 
-        val inputs = getInputsStamp(file)
+        val inputs = getInputsStamp(virtualFile, file)
         val scriptingApiResult = try {
             refineScriptCompilationConfiguration(
                 KtFileScriptSource(file), scriptDefinition, file.project
@@ -65,6 +65,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
         return true
     }
 
-    protected open fun getInputsStamp(file: KtFile): CachedConfigurationInputs =
-        CachedConfigurationInputs.PsiModificationStamp(file.modificationStamp)
+    protected open fun getInputsStamp(virtualFile: VirtualFile, file: KtFile): CachedConfigurationInputs {
+        return CachedConfigurationInputs.PsiModificationStamp.get(project, virtualFile, file)
+    }
 }

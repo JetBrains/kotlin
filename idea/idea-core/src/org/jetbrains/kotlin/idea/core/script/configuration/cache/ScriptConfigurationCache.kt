@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.cache
 
+import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import kotlin.script.experimental.api.ScriptDiagnostic
@@ -52,8 +55,36 @@ interface CachedConfigurationInputs {
         override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean = false
     }
 
-    data class PsiModificationStamp(val modificationStamp: Long) : CachedConfigurationInputs {
+    data class PsiModificationStamp(
+        val fileModificationStamp: Long,
+        val psiModificationStamp: Long
+    ) : CachedConfigurationInputs {
         override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean =
-            ktFile?.modificationStamp == modificationStamp
+            get(project, file, ktFile) == this
+
+        companion object {
+            fun get(project: Project, file: VirtualFile, ktFile: KtFile?): PsiModificationStamp {
+                val actualKtFile = project.getKtFile(file, ktFile)
+                return PsiModificationStamp(
+                    file.modificationStamp,
+                    actualKtFile?.modificationStamp ?: 0
+                )
+            }
+        }
+    }
+
+    data class SourceContentsStamp(val source: String) : CachedConfigurationInputs {
+        override fun isUpToDate(project: Project, file: VirtualFile, ktFile: KtFile?): Boolean =
+            get(project, file, ktFile) == this
+
+        companion object {
+            fun get(project: Project, file: VirtualFile, ktFile: KtFile?): SourceContentsStamp {
+                val text = runReadAction {
+                    FileDocumentManager.getInstance().getDocument(file)!!.text
+                }
+
+                return SourceContentsStamp(text)
+            }
+        }
     }
 }
