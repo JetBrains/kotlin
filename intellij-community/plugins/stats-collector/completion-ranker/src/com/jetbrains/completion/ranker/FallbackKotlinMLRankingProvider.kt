@@ -2,7 +2,7 @@
 package com.jetbrains.completion.ranker
 
 import com.completion.ranker.model.kotlin.MLWhiteBox
-import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.ide.plugins.PluginManager
 import com.intellij.internal.ml.DecisionFunction
 import com.intellij.internal.ml.ModelMetadata
 import com.intellij.internal.ml.completion.CompletionRankingModelBase
@@ -20,7 +20,7 @@ class FallbackKotlinMLRankingProvider : JarCompletionModelProvider("Kotlin", "ko
   override fun isLanguageSupported(language: Language): Boolean = language.id.compareTo("kotlin", ignoreCase = true) == 0
 
   override fun canBeUsed(): Boolean {
-    return PluginManagerCore.findEnabledPlugin(PluginId.findId(KOTLIN_PLUGIN_ID) ?: return false)?.isEnabled ?: false
+    return PluginManager.getInstance().findEnabledPlugin(PluginId.findId(KOTLIN_PLUGIN_ID) ?: return false)?.isEnabled ?: false
   }
 
   override fun shouldReplace(): Boolean = false
