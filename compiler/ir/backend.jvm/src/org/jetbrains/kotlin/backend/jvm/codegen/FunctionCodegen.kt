@@ -242,19 +242,17 @@ open class FunctionCodegen(
             ?.expression
     }
 
-    private fun IrFrameMap.enterDispatchReceiver(parameter: IrValueParameter) {
-        val type = classCodegen.typeMapper.mapTypeAsDeclaration(parameter.type)
-        enter(parameter, type)
-    }
-
     private fun createFrameMapWithReceivers(): IrFrameMap {
         val frameMap = IrFrameMap()
 
         if (irFunction is IrConstructor) {
-            frameMap.enterDispatchReceiver(irFunction.constructedClass.thisReceiver!!)
-        } else if (irFunction.dispatchReceiverParameter != null) {
-            frameMap.enterDispatchReceiver(irFunction.dispatchReceiverParameter!!)
+            irFunction.constructedClass.thisReceiver
+        } else {
+            irFunction.dispatchReceiverParameter
+        }?.let { dispatchReceiverParameter ->
+            frameMap.enter(dispatchReceiverParameter, classCodegen.typeMapper.mapTypeAsDeclaration(dispatchReceiverParameter.type))
         }
+
         irFunction.extensionReceiverParameter?.let {
             frameMap.enter(it, classCodegen.typeMapper.mapType(it))
         }

@@ -278,7 +278,7 @@ class ExpressionCodegen(
     }
 
     private fun generateNonNullAssertion(param: IrValueParameter) {
-        val asmType = param.type.asmType
+        val asmType = frameMap.typeOf(param.symbol)
         if (!param.type.unboxInlineClass().isNullable() && !isPrimitive(asmType)) {
             mv.load(findLocalIndex(param.symbol), asmType)
             mv.aconst(param.name.asString())
@@ -318,10 +318,9 @@ class ExpressionCodegen(
             param.name.asString()
         }
 
-        val type = typeMapper.mapType(param)
         // NOTE: we expect all value parameters to be present in the frame.
         mv.visitLocalVariable(
-            name, type.descriptor, null, startLabel, endLabel, findLocalIndex(param.symbol)
+            name, frameMap.typeOf(param.symbol).descriptor, null, startLabel, endLabel, findLocalIndex(param.symbol)
         )
     }
 
@@ -599,8 +598,9 @@ class ExpressionCodegen(
 
     fun setVariable(symbol: IrValueSymbol, value: IrExpression, data: BlockInfo) {
         value.markLineNumber(startOffset = true)
-        value.accept(this, data).materializeAt(symbol.owner.type)
-        mv.store(findLocalIndex(symbol), symbol.owner.asmType)
+        val type = frameMap.typeOf(symbol)
+        value.accept(this, data).materializeAt(type, symbol.owner.type)
+        mv.store(findLocalIndex(symbol), type)
     }
 
     override fun <T> visitConst(expression: IrConst<T>, data: BlockInfo): PromisedValue {
