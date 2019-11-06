@@ -3,7 +3,7 @@
 fun foo() {
     val y = listOf("Alpha", "Beta")
     val x = LinkedHashSet<String>().apply {
-        <!AMBIGUITY!>addAll<!>(y)
+        addAll(y)
     }
 
     val z = ArrayList<String>()

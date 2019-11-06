@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteMemberScope
+import org.jetbrains.kotlin.fir.java.scopes.JavaSuperTypeScope
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -109,7 +109,7 @@ class JavaSymbolProvider(
                     }
             JavaClassUseSiteMemberScope(
                 regularClass, useSiteSession,
-                FirSuperTypeScope(useSiteSession, superTypeEnhancementScopes), declaredScope
+                JavaSuperTypeScope(regularClass, useSiteSession, superTypeEnhancementScopes), declaredScope
             )
         }
     }

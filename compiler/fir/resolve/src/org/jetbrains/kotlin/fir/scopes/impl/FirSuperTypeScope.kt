@@ -6,16 +6,18 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
-class FirSuperTypeScope(
+open class FirSuperTypeScope(
     session: FirSession,
+    overrideChecker: FirOverrideChecker,
     val scopes: List<FirScope>
-) : AbstractFirOverrideScope(session) {
+) : AbstractFirOverrideScope(session, overrideChecker) {
 
     private val absentFunctions = mutableSetOf<Name>()
 

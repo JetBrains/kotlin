@@ -17,7 +17,7 @@ class FirClassUseSiteMemberScope(
     session: FirSession,
     superTypesScope: FirSuperTypeScope,
     declaredMemberScope: FirScope
-) : AbstractFirUseSiteMemberScope(session, superTypesScope, declaredMemberScope) {
+) : AbstractFirUseSiteMemberScope(session, FirStandardOverrideChecker(session), superTypesScope, declaredMemberScope) {
 
     override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         val seen = mutableSetOf<FirCallableSymbol<*>>()

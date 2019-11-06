@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassUseSiteMemberScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 
@@ -86,7 +83,11 @@ fun FirClass<*>.buildDefaultUseSiteMemberScope(useSiteSession: FirSession, build
                     null
                 }
             }
-        FirClassUseSiteMemberScope(useSiteSession, FirSuperTypeScope(useSiteSession, scopes), declaredScope)
+        FirClassUseSiteMemberScope(
+            useSiteSession,
+            FirSuperTypeScope(useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes),
+            declaredScope
+        )
     }
 }
 
