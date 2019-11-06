@@ -1,4 +1,4 @@
-fun <T: CharSequence> test(s: T): Int {
+fun <T : CharSequence> test(s: T): Int {
     var result = 0
     for (i in s.indices) {
         result = result * 10 + (i + 1)
@@ -14,6 +14,7 @@ fun <T: CharSequence> test(s: T): Int {
 // 0 getEnd
 // 0 getFirst
 // 0 getLast
+// 1 INVOKEINTERFACE java/lang/CharSequence\.length \(\)I
 
 // JVM_TEMPLATES
 // 0 IF_ICMPGT

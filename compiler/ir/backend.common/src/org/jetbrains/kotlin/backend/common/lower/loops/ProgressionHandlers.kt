@@ -518,8 +518,11 @@ internal class CollectionIndicesHandler(context: CommonBackendContext) : Indices
         parameterCount { it == 0 }
     }
 
+    // The lowering operates on subtypes of Collection. Therefore, the IrType could be
+    // a type parameter bounded by Collection. When that is the case, we cannot get
+    // the class from the type and instead uses the Collection getter.
     override val IrType.sizePropertyGetter
-        get() = getClass()!!.getPropertyGetter("size")!!.owner
+        get() = getClass()?.getPropertyGetter("size")?.owner ?: context.ir.symbols.collection.getPropertyGetter("size")!!.owner
 }
 
 internal class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
