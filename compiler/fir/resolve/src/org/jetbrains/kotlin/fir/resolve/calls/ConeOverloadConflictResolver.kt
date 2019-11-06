@@ -37,7 +37,7 @@ class ConeOverloadConflictResolver(
     ): Set<Candidate> {
         candidates.setIfOneOrEmpty()?.let { return it }
 
-        val candidatesSet = candidates.toSet()
+        val candidatesSet = filterOutEquivalentCalls(candidates)
 
         findMaximallySpecificCall(candidatesSet, false)?.let { return setOf(it) }
 
@@ -48,12 +48,57 @@ class ConeOverloadConflictResolver(
         return candidatesSet
     }
 
+    private fun filterOutEquivalentCalls(candidates: Collection<Candidate>): Set<Candidate> {
+        val result = mutableSetOf<Candidate>()
+        outerLoop@ for (myCandidate in candidates) {
+            val me = myCandidate.symbol.fir
+            if (me is FirCallableMemberDeclaration<*> && me.symbol.callableId.className == null) {
+                for (otherCandidate in result) {
+                    val other = otherCandidate.symbol.fir
+                    if (other is FirCallableMemberDeclaration<*> && other.symbol.callableId.className == null) {
+                        if (areEquivalentTopLevelCallables(me, myCandidate, other, otherCandidate)) {
+                            continue@outerLoop
+                        }
+                    }
+                }
+            }
+            result += myCandidate
+        }
+        return result
+    }
+
+    private fun areEquivalentTopLevelCallables(
+        first: FirCallableMemberDeclaration<*>,
+        firstCandidate: Candidate,
+        second: FirCallableMemberDeclaration<*>,
+        secondCandidate: Candidate
+    ): Boolean {
+        if (first.symbol.callableId != second.symbol.callableId) return false
+        if (first.isExpect != second.isExpect) return false
+        if (first.receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>() != second.receiverTypeRef?.coneTypeUnsafe()) {
+            return false
+        }
+        val firstSignature = createFlatSignature(firstCandidate, first)
+        val secondSignature = createFlatSignature(secondCandidate, second)
+        return compareCallsByUsedArguments(firstSignature, secondSignature, false) &&
+                compareCallsByUsedArguments(secondSignature, firstSignature, false)
+    }
+
     private fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {
         return when (val declaration = call.symbol.fir) {
             is FirSimpleFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
             is FirVariable<*> -> createFlatSignature(call, declaration)
             is FirClass<*> -> createFlatSignature(call, declaration)
+            else -> error("Not supported: $declaration")
+        }
+    }
+
+    private fun createFlatSignature(call: Candidate, declaration: FirCallableMemberDeclaration<*>): FlatSignature<Candidate> {
+        return when (declaration) {
+            is FirSimpleFunction -> createFlatSignature(call, declaration)
+            is FirConstructor -> createFlatSignature(call, declaration)
+            is FirVariable<*> -> createFlatSignature(call, declaration as FirVariable<*>)
             else -> error("Not supported: $declaration")
         }
     }
