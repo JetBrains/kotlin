@@ -22,13 +22,3 @@ class Derived : Base<Int>(10)
 val xx = Derived().x + 1
 
 val t = throw AssertionError("")
-
-interface A
-interface B
-interface C : A
-class BC : B, C
-fun C.analyze() {}
-inline fun <reified T> T.analyze() where T : A, T : B {}
-fun testAnalyze() {
-    BC().<!AMBIGUITY!>analyze<!>()
-}

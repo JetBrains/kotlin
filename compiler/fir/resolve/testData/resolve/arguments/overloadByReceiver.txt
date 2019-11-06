@@ -1,0 +1,21 @@
+FILE: overloadByReceiver.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface B : R|A| {
+    }
+    public abstract interface C : R|kotlin/Any| {
+    }
+    public abstract interface D : R|B|, R|C| {
+    }
+    public final fun R|B|.foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun <T : R|A|, R|C|> R|T|.foo(): R|kotlin/String| {
+        ^foo String()
+    }
+    public final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun test(d: R|D|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = R|<local>/d|.R|/foo|()
+        R|/takeInt|(R|<local>/x|)
+    }

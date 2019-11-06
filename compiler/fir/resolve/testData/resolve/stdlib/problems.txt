@@ -57,22 +57,3 @@ FILE: problems.kt
         public get(): R|kotlin/Int|
     public final val t: R|kotlin/Nothing| = throw R|java/lang/AssertionError.AssertionError|(String())
         public get(): R|kotlin/Nothing|
-    public abstract interface A : R|kotlin/Any| {
-    }
-    public abstract interface B : R|kotlin/Any| {
-    }
-    public abstract interface C : R|A| {
-    }
-    public final class BC : R|B|, R|C| {
-        public constructor(): R|BC| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-    public final fun R|C|.analyze(): R|kotlin/Unit| {
-    }
-    public final inline fun <reified T : R|A|, R|B|> R|T|.analyze(): R|kotlin/Unit| {
-    }
-    public final fun testAnalyze(): R|kotlin/Unit| {
-        R|/BC.BC|().<Ambiguity: analyze, [/analyze, /analyze]>#()
-    }
