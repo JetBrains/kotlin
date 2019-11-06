@@ -1,0 +1,10 @@
+package
+
+package bar {
+    public fun main(/*0*/ args: kotlin.Array<kotlin.String>): kotlin.Unit
+}
+
+package foo {
+    public fun kotlin.Int.foo(): kotlin.Nothing?
+    public operator fun kotlin.Int.invoke(): kotlin.Nothing?
+}
