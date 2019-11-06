@@ -534,7 +534,7 @@ final class PassExecutorService implements Disposable {
   }
 
   private boolean isDisposed() {
-    return isDisposed || myProject.isDisposedOrDisposeInProgress();
+    return isDisposed || myProject.isDisposed();
   }
 
   @NotNull

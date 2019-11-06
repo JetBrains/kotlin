@@ -237,9 +237,9 @@ public final class BuildManager implements Disposable {
             myUnprocessedEvents.addAll(events);
           }
           myAutomakeTrigger.execute(() -> {
-            if (!application.isDisposedOrDisposeInProgress()) {
+            if (!application.isDisposed()) {
               ReadAction.run(()-> {
-                if (application.isDisposedOrDisposeInProgress()) return;
+                if (application.isDisposed()) return;
                 final List<VFileEvent> snapshot;
                 synchronized (myUnprocessedEvents) {
                   if (myUnprocessedEvents.isEmpty()) {

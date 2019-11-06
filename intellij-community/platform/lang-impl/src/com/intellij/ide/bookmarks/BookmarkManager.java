@@ -18,10 +18,7 @@ import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.openapi.util.Trinity;
+import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentListener;
@@ -228,7 +225,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
         if (newList != null) {
           applyNewState(newList, true);
         }
-      }, myProject.getDisposedOrDisposeInProgress());
+      }, myProject.getDisposed());
     });
   }
 

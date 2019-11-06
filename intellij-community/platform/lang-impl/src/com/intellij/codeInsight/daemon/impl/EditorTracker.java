@@ -208,7 +208,7 @@ public final class EditorTracker implements Disposable {
 
   private void editorCreated(@NotNull EditorFactoryEvent event) {
     final Editor editor = event.getEditor();
-    if ((editor.getProject() != null && editor.getProject() != myProject) || myProject.isDisposedOrDisposeInProgress()) {
+    if ((editor.getProject() != null && editor.getProject() != myProject) || myProject.isDisposed()) {
       return;
     }
 

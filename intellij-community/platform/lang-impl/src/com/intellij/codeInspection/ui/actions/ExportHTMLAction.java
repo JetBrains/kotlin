@@ -121,7 +121,7 @@ public final class ExportHTMLAction extends AnAction implements DumbAware {
       if (exportToHTML && exportToHTMLSettings.OPEN_IN_BROWSER) {
         BrowserUtil.browse(outputDir.resolve("index.html").toFile());
       }
-    }, myView.getProject().getDisposedOrDisposeInProgress());
+    }, myView.getProject().getDisposed());
   }
 
   /**

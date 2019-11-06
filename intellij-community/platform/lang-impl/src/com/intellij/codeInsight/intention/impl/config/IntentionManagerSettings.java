@@ -8,10 +8,7 @@ import com.intellij.ide.ui.search.SearchableOptionsRegistrar;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.extensions.ExtensionPointListener;
@@ -180,7 +177,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
     }
 
     ourExecutor.execute(() -> {
-      if (app.isDisposedOrDisposeInProgress()) {
+      if (app.isDisposed()) {
         return;
       }
 
