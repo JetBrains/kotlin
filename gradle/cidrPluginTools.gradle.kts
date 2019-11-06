@@ -122,7 +122,7 @@ fun packageCidrPlugin(
         project: Project,
         predecessorProjectName: String,
         cidrPluginDir: File,
-        jarTasks: List<Task>
+        additionalJars: List<Any>
 ): Copy = with(project) {
     task<Copy>(guessCidrProductNameFromProject(true) + "Plugin") {
         duplicatesStrategy = DuplicatesStrategy.FAIL
@@ -130,9 +130,9 @@ fun packageCidrPlugin(
         into(cidrPluginDir)
 
         into("lib") {
-            for (t in jarTasks) {
-                dependsOn(t)
-                from(t)
+            for (j in additionalJars) {
+                dependsOn(j)
+                from(j)
             }
         }
 
@@ -658,7 +658,7 @@ fun pluginJar(
             put("Implementation-Vendor", "JetBrains")
             put("Implementation-Title", archiveBaseName.get())
         }
-        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
 

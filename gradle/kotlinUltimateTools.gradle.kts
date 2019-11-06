@@ -10,7 +10,8 @@ val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
     ::disableBuildTasks,
 
     ::addCidrDeps,
-    ::addIdeaNativeModuleDeps
+    ::addIdeaNativeModuleDeps,
+    ::addKotlinGradleToolingDeps
 ).map { it.name to it }.toMap()
 
 rootProject.extensions.add("ultimateTools", ultimateTools)
@@ -103,6 +104,7 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
         add("compile", "kotlin.build:gradle:$ideVersion")
     }
 }
+
 fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
     dependencies {
         // contents of Kotlin plugin
@@ -141,6 +143,9 @@ fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
     }
 }
 
+fun addIdeaNativeModuleDeps(project: Project) =
+    if (isStandaloneBuild) addIdeaNativeModuleDepsStandalone(project) else addIdeaNativeModuleDepsComposite(project)
+
 fun addCidrDeps(project: Project) = with(project) {
     dependencies {
         val cidrUnscrambledJarDir: File? by rootProject.extra
@@ -153,5 +158,34 @@ fun addCidrDeps(project: Project) = with(project) {
     }
 }
 
-fun addIdeaNativeModuleDeps(project: Project) =
-        if (isStandaloneBuild) addIdeaNativeModuleDepsStandalone(project) else addIdeaNativeModuleDepsComposite(project)
+fun addKotlinGradleToolingDepsComposite(project: Project) = with(project) {
+    dependencies {
+        add("compileOnly", project(":idea:kotlin-gradle-tooling"))
+
+        val ideVersion = rootProject.extra["versions.intellijSdk"] as String
+        add("compileOnly", "kotlin.build:gradle:$ideVersion")
+    }
+}
+
+fun addKotlinGradleToolingDepsStandalone(project: Project) = with(project) {
+    dependencies {
+        // Kotlin Gradle tooling & Kotlin stdlib
+        val ideaPluginForCidrDir: String by rootProject.extra
+        val kotlinGradleToolingJars = fileTree(ideaPluginForCidrDir) {
+            include("lib/kotlin-gradle-tooling.jar")
+            include("lib/kotlin-stdlib.jar")
+        }
+        add("compileOnly", kotlinGradleToolingJars)
+
+        // Gradle plugin & Gradle API
+        val cidrIdeDir: String by rootProject.extra
+        val gradlePlugin = fileTree(cidrIdeDir) {
+            include("lib/gradle-api*.jar")
+            include("plugins/gradle/lib/*.jar")
+        }
+        add("compileOnly", gradlePlugin)
+    }
+}
+
+fun addKotlinGradleToolingDeps(project: Project) =
+    if (isStandaloneBuild) addKotlinGradleToolingDepsStandalone(project) else addKotlinGradleToolingDepsComposite(project)

@@ -19,6 +19,7 @@ repositories {
 
 dependencies {
     addIdeaNativeModuleDeps(project)
+    compile(project(":kotlin-ultimate:ide:cidr-gradle-tooling"))
     compile(project(":kotlin-ultimate:ide:common-native"))
     compileOnly(fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
     if (!isStandaloneBuild && ijProductBranch(cidrVersion) >= 193) {

@@ -15,7 +15,7 @@ val preparePluginXml: (Project, String, String, Boolean, String, Boolean) -> Cop
 val pluginJar: (Project, Configuration, List<Task>) -> Jar by cidrPluginTools
 val patchedPlatformDepsJar: (Project, File) -> Zip by cidrPluginTools
 val otherPlatformDepsJars: (Project, File) -> Task by cidrPluginTools
-val packageCidrPlugin: (Project, String, File, List<Task>) -> Copy by cidrPluginTools
+val packageCidrPlugin: (Project, String, File, List<Any>) -> Copy by cidrPluginTools
 val zipCidrPlugin: (Project, Task, File) -> Zip by cidrPluginTools
 val cidrUpdatePluginsXml: (Project, Task, String, File, URL, URL?) -> Task by cidrPluginTools
 
@@ -31,9 +31,11 @@ val appcodeUseJavaPlugin: Boolean by rootProject.extra
 val appcodeJavaPluginDownloadUrl: URL? by rootProject.extra
 
 val cidrPlugin: Configuration by configurations.creating
+val cidrGradleTooling: Configuration by configurations.creating
 
 dependencies {
     cidrPlugin(project(":kotlin-ultimate:prepare:cidr-plugin"))
+    cidrGradleTooling(project(":kotlin-ultimate:ide:cidr-gradle-tooling"))
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:appcode-native")) { isTransitive = false }
 }
@@ -49,19 +51,19 @@ val preparePluginXmlTask: Task = preparePluginXml(
 
 val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXmlTask))
 
-val jarTasks = if (appcodeUseJavaPlugin)
-    listOf(pluginJarTask)
+val additionalJars = if (appcodeUseJavaPlugin)
+    listOf(pluginJarTask, cidrGradleTooling)
 else {
     val patchedPlatformDepsJar: Task = patchedPlatformDepsJar(project, appcodePlatformDepsOrJavaPluginDir)
     val otherPlatformDepsJars: Task = otherPlatformDepsJars(project, appcodePlatformDepsOrJavaPluginDir)
-    listOf(pluginJarTask, patchedPlatformDepsJar, otherPlatformDepsJars)
+    listOf(pluginJarTask, cidrGradleTooling, patchedPlatformDepsJar, otherPlatformDepsJars)
 }
 
 val appcodePluginTask: Task = packageCidrPlugin(
         project,
         ":kotlin-ultimate:ide:appcode-native",
         appcodePluginDir,
-        jarTasks
+        additionalJars
 )
 
 val zipAppCodePluginTask: Task = zipCidrPlugin(project, appcodePluginTask, appcodePluginZipPath)
