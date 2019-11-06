@@ -1,4 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -15,20 +14,13 @@ val intellijRepo = "https://www.jetbrains.com/intellij-repository/" + if (isSnap
 
 val pluginName = "applePlugin"
 group = "org.jetbrains.gradle.apple"
-version = "0.1-SNAPSHOT-$intellijVersion"
+version = "$intellijVersion-0.1"
 
 repositories {
     maven(intellijRepo)
     maven("https://repo.labs.intellij.net/intellij-proprietary-modules")
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
     google()
-}
-
-val assemble by tasks
-val jar: Jar by tasks
-val shadow: Configuration by configurations.getting
-val shadowJar by tasks.getting(ShadowJar::class) {
-    archiveClassifier.set(null as String?)
 }
 
 dependencies {
@@ -46,10 +38,10 @@ dependencies {
     compile(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api"))
 }
 
-jar.enabled = false
-assemble.dependsOn(shadowJar)
-
 tasks {
+    shadowJar { classifier = null }
+    jar { enabled = false }
+
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.languageVersion = "1.3"
@@ -80,8 +72,10 @@ publishing {
 
     val applePlugin by publications.registering(MavenPublication::class) {
         artifactId = pluginName
+        pom.withXml {
+            asNode().appendNode("packaging", "pom")
+        }
         project.shadow.component(this)
-        artifacts.single().classifier = null
     }
 
     val applePluginMarker by publications.registering(MavenPublication::class) {

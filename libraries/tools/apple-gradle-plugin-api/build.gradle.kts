@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
 
 group = "org.jetbrains.gradle.apple"
-version = "0.1-SNAPSHOT-$intellijVersion"
+version = "$intellijVersion-0.1"
 
 plugins {
     kotlin("jvm")
