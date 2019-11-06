@@ -12,6 +12,11 @@
         <scriptDiagnosticFixProvider implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDiagnosticFixProvider"/>
     </extensions>
 
+    <extensions defaultExtensionNs="org.jetbrains.kotlin.scripting.idea">
+        <listener implementation="org.jetbrains.kotlin.idea.script.GradleScriptListener"/>
+        <loader implementation="org.jetbrains.kotlin.idea.script.GradleScriptConfigurationLoader"/>
+    </extensions>
+
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
         <orderEnumerationHandlerFactory implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinGradleOrderEnumerationHandler$Factory" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinMPPGradleProjectResolver"/>
