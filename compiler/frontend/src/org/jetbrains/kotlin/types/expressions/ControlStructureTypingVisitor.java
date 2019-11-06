@@ -493,7 +493,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     public KotlinTypeInfo visitTryExpression(@NotNull KtTryExpression expression, ExpressionTypingContext typingContext) {
         expression.getCatchClauses().forEach((catchClause) -> {
             KtParameterList parameters = catchClause.getParameterList();
-            if (parameters != null) {
+            if (parameters != null && parameters.getStub() == null) {
                 TrailingCommaChecker.INSTANCE.check(parameters.getTrailingComma(), typingContext.trace, typingContext.languageVersionSettings);
             }
         });

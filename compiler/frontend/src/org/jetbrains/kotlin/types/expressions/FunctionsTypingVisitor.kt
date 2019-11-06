@@ -143,11 +143,16 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             components.identifierChecker.checkDeclaration(it, context.trace)
             UnderscoreChecker.checkNamed(it, context.trace, components.languageVersionSettings, allowSingleUnderscore = true)
         }
-        TrailingCommaChecker.check(
-            expression.functionLiteral.valueParameterList?.trailingComma,
-            context.trace,
-            context.languageVersionSettings
-        )
+
+        val valueParameterList = expression.functionLiteral.valueParameterList
+        if (valueParameterList?.stub == null) {
+            TrailingCommaChecker.check(
+                valueParameterList?.trailingComma,
+                context.trace,
+                context.languageVersionSettings
+            )
+        }
+
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 

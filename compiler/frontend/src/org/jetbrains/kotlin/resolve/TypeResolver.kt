@@ -290,7 +290,10 @@ class TypeResolver(
                 val returnType = if (returnTypeRef != null) resolveType(c.noBareTypes(), returnTypeRef)
                 else moduleDescriptor.builtIns.unitType
 
-                TrailingCommaChecker.check(type.parameterList?.trailingComma, c.trace, languageVersionSettings)
+                val parameterList = type.parameterList
+                if (parameterList?.stub == null) {
+                    TrailingCommaChecker.check(parameterList?.trailingComma, c.trace, languageVersionSettings)
+                }
 
                 result = type(
                     createFunctionType(
@@ -452,7 +455,7 @@ class TypeResolver(
     ): PossiblyBareType {
         val qualifierParts = qualifierResolutionResult.qualifierParts
 
-        if (element is KtUserType) {
+        if (element is KtUserType && element.stub == null) {
             TrailingCommaChecker.check(element.typeArgumentList?.trailingComma, c.trace, languageVersionSettings)
         }
 
