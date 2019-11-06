@@ -28,6 +28,7 @@ fun run() {
     testInitWithCustomSelector()
     testAllocNoRetain()
     testNSOutputStreamToMemoryConstructor()
+    testExportObjCClass()
 
     assertEquals(2, ForwardDeclaredEnum.TWO.value)
 
@@ -438,6 +439,19 @@ fun testNSOutputStreamToMemoryConstructor() {
     val stream: Any = NSOutputStream(toMemory = Unit)
     assertTrue(stream is NSOutputStream)
 }
+
+private const val TestExportObjCClass1Name = "TestExportObjCClass"
+@ExportObjCClass(TestExportObjCClass1Name) class TestExportObjCClass1 : NSObject()
+
+@ExportObjCClass class TestExportObjCClass2 : NSObject()
+
+fun testExportObjCClass() {
+    assertEquals(TestExportObjCClass1Name, TestExportObjCClass1().objCClassName)
+    assertEquals("TestExportObjCClass2", TestExportObjCClass2().objCClassName)
+}
+
+private val Any.objCClassName: String
+    get() = object_getClassName(this)!!.toKString()
 
 fun nsArrayOf(vararg elements: Any): NSArray = NSMutableArray().apply {
     elements.forEach {
