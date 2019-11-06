@@ -2395,6 +2395,139 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }
     }
 
+    @Test
+    fun testRecomposeScope(): Unit = ensureSetup {
+        compose("""
+             @Model
+            class M { var count = 0 }
+            val m = M()
+
+            @Composable
+            inline fun InlineContainer(children: @Composable() () -> Unit) {
+                children()
+            }
+
+            @Composable
+            fun Container(children: @Composable() () -> Unit) {
+                children()
+            }
+
+            @Composable
+            fun Leaf(v: Int) {}
+
+            @Composable
+            fun Inline() {
+                InlineContainer {
+                    Leaf(v = 1)
+                }
+            }
+
+            @Composable
+            fun Lambda() {
+                val a = 1
+                val b = 2
+                Container {
+                    TextView(text = "value = ${'$'}{m.count}", id = 100)
+                    Leaf(v = 1)
+                    Leaf(v = a)
+                    Leaf(v = b)
+                }
+            }
+            """,
+            noParameters,
+            """
+                Button(id=101, text="model ${'$'}{m.count}", onClick={ m.count++ })
+                Lambda()
+            """
+        ).then { activity ->
+            assertEquals(activity.findViewById<TextView>(100).text, "value = 0")
+            val button = activity.findViewById<Button>(101)
+            button.performClick()
+        }.then { activity ->
+            assertEquals(activity.findViewById<TextView>(100).text, "value = 1")
+        }
+    }
+
+    @Test
+    fun testRecomposeScope_ReceiverScope(): Unit = ensureSetup {
+        compose("""
+            @Model
+            class M { var count = 0 }
+            val m = M()
+
+            class Receiver { var r: Int = 0 }
+
+            @Composable
+            fun Container(children: @Composable() Receiver.() -> Unit) {
+                Receiver().children()
+            }
+
+            @Composable
+            fun Lambda() {
+                Container {
+                    TextView(text = "value = ${'$'}{m.count}", id = 100)
+                }
+            }
+            """,
+            noParameters,
+            """
+                Button(id=101, text="model ${'$'}{m.count}", onClick={ m.count++ })
+                Lambda()
+            """
+        ).then { activity ->
+            assertEquals(activity.findViewById<TextView>(100).text, "value = 0")
+            val button = activity.findViewById<Button>(101)
+            button.performClick()
+        }.then { activity ->
+            assertEquals(activity.findViewById<TextView>(100).text, "value = 1")
+        }
+    }
+
+    @Test
+    fun testRecomposeScope_Method(): Unit = ensureSetup {
+        compose("""
+            @Model
+            class M { var count = 0 }
+            val m = M()
+
+            @Composable
+            fun Leaf() { }
+
+            class SelfCompose {
+                var f1 = 0
+
+                @Composable
+                fun compose(f2: Int) {
+                    TextView(
+                      text = "f1=${'$'}f1, f2=${'$'}f2, m=${'$'}{m.count*f1*f2}",
+                      id = 100
+                    )
+                }
+            }
+
+            @Composable
+            fun InvokeSelfCompose() {
+                val r = +memo() { SelfCompose() }
+                r.f1 = 1
+                r.compose(f2 = 10)
+                Leaf()
+            }
+            """,
+            noParameters,
+            """
+                Button(id=101, text="model ${'$'}{m.count}", onClick={ m.count++ })
+                InvokeSelfCompose()
+            """,
+            dumpClasses = true
+        ).then { activity ->
+            assertEquals(activity.findViewById<TextView>(100).text, "f1=1, f2=10, m=0")
+            val button = activity.findViewById<Button>(101)
+            button.performClick()
+        }.then { activity ->
+            assertEquals(activity.findViewById<TextView>(100).text, "f1=1, f2=10, m=10")
+        }
+    }
+
     override fun setUp() {
         isSetup = true
         super.setUp()
