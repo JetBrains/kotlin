@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class IndentRawStringIntention : SelfTargetingIntention<KtStringTemplateExpression>(
+class IndentRawStringIntention : SelfTargetingOffsetIndependentIntention<KtStringTemplateExpression>(
     KtStringTemplateExpression::class.java, "Indent raw string"
 ) {
 
-    override fun isApplicableTo(element: KtStringTemplateExpression, caretOffset: Int): Boolean {
+    override fun isApplicableTo(element: KtStringTemplateExpression): Boolean {
         if (!element.text.startsWith("\"\"\"")) return false
         if (element.parents.any { it is KtAnnotationEntry || (it as? KtProperty)?.hasModifier(KtTokens.CONST_KEYWORD) == true }) return false
         if (element.getQualifiedExpressionForReceiver() != null) return false
