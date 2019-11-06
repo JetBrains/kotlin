@@ -38,7 +38,7 @@ object ComposeFqNames {
     val StableMarker = ComposeUtils.composeFqName("StableMarker")
     val HiddenAttribute = ComposeUtils.composeFqName("HiddenAttribute")
     val Package = FqName.fromSegments(listOf("androidx", "compose"))
-
+    val Function0 = FqName.fromSegments(listOf("kotlin", "jvm", "functions", "Function0"))
     fun makeComposableAnnotation(module: ModuleDescriptor): AnnotationDescriptor =
         object : AnnotationDescriptor {
             override val type: KotlinType
