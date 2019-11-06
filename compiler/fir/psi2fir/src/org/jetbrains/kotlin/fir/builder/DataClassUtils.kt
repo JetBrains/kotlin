@@ -39,17 +39,7 @@ fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
         val name = Name.identifier("component$componentIndex")
         componentIndex++
         val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
-        val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
-            isExpect = false
-            isActual = false
-            isOverride = false
-            isOperator = false
-            isInfix = false
-            isInline = false
-            isTailRec = false
-            isExternal = false
-            isSuspend = false
-        }
+        val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
         val parameterSource = ktParameter?.toFirSourceElement()
         firClass.addDeclaration(
             FirSimpleFunctionImpl(
@@ -87,17 +77,7 @@ fun List<Pair<KtParameter?, FirProperty>>.generateCopyFunction(
     firPrimaryConstructor: FirConstructor
 ) {
     val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
-    val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
-        isExpect = false
-        isActual = false
-        isOverride = false
-        isOperator = false
-        isInfix = false
-        isInline = false
-        isTailRec = false
-        isExternal = false
-        isSuspend = false
-    }
+    val status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
     firClass.addDeclaration(
         FirSimpleFunctionImpl(
             classOrObject?.toFirSourceElement(),
