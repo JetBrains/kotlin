@@ -38,7 +38,7 @@ abstract class AbstractVisualizer : KotlinMultiFileTestWithJava<Void?, Void?>() 
     }
 
     fun doFirBuilderDataTest(filePath: String) {
-        replacement = "fir\\psi2fir" to "visualizer"
+        replacement = "fir${File.separator}psi2fir" to "visualizer"
         doTest(filePath)
     }
 
