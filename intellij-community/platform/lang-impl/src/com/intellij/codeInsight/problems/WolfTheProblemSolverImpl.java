@@ -58,50 +58,9 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
 
   private final Project myProject;
 
-  private void doRemove(@NotNull VirtualFile problemFile) {
-    ProblemFileInfo old;
-    synchronized (myProblems) {
-      old = myProblems.remove(problemFile);
-    }
-    synchronized (myCheckingQueue) {
-      myCheckingQueue.remove(problemFile);
-    }
-    if (old != null) {
-      // firing outside lock
-      if (hasProblemsFromExternalSources(problemFile)) {
-        fireProblemsChanged(problemFile);
-      }
-      else {
-        fireProblemsDisappeared(problemFile);
-      }
-    }
-  }
-
-  private static class ProblemFileInfo {
-    private final Collection<Problem> problems = new THashSet<>();
-    private boolean hasSyntaxErrors;
-
-    @Override
-    public boolean equals(@Nullable final Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-
-      final ProblemFileInfo that = (ProblemFileInfo)o;
-
-      return hasSyntaxErrors == that.hasSyntaxErrors && problems.equals(that.problems);
-    }
-
-    @Override
-    public int hashCode() {
-      int result = problems.hashCode();
-      result = 31 * result + (hasSyntaxErrors ? 1 : 0);
-      return result;
-    }
-  }
-
-  WolfTheProblemSolverImpl(@NotNull Project project,
-                           @NotNull PsiManager psiManager,
-                           @NotNull MessageBus messageBus) {
+  protected WolfTheProblemSolverImpl(@NotNull Project project,
+                                     @NotNull PsiManager psiManager,
+                                     @NotNull MessageBus messageBus) {
     myProject = project;
     PsiTreeChangeListener changeListener = new PsiTreeChangeAdapter() {
       @Override
@@ -184,6 +143,47 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
         }
       }
     });
+  }
+
+  private void doRemove(@NotNull VirtualFile problemFile) {
+    ProblemFileInfo old;
+    synchronized (myProblems) {
+      old = myProblems.remove(problemFile);
+    }
+    synchronized (myCheckingQueue) {
+      myCheckingQueue.remove(problemFile);
+    }
+    if (old != null) {
+      // firing outside lock
+      if (hasProblemsFromExternalSources(problemFile)) {
+        fireProblemsChanged(problemFile);
+      }
+      else {
+        fireProblemsDisappeared(problemFile);
+      }
+    }
+  }
+
+  private static class ProblemFileInfo {
+    private final Collection<Problem> problems = new THashSet<>();
+    private boolean hasSyntaxErrors;
+
+    @Override
+    public boolean equals(@Nullable final Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      final ProblemFileInfo that = (ProblemFileInfo)o;
+
+      return hasSyntaxErrors == that.hasSyntaxErrors && problems.equals(that.problems);
+    }
+
+    @Override
+    public int hashCode() {
+      int result = problems.hashCode();
+      result = 31 * result + (hasSyntaxErrors ? 1 : 0);
+      return result;
+    }
   }
 
   private void clearInvalidFiles() {
