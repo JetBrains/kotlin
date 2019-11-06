@@ -535,6 +535,10 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     // TODO: equals, hashCode, toString
                 }
 
+                if (classOrObject.hasModifier(ENUM_KEYWORD)) {
+                    firClass.generateValuesFunction(session, context.packageFqName, context.className)
+                }
+
                 firClass
             }
         }

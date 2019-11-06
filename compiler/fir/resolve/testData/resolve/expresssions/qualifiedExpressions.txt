@@ -40,6 +40,9 @@ FILE: qualifiedExpressions.kt
 
         }
 
+        public final static fun values(): R|kotlin/Array<a/b/E>| {
+        }
+
     }
     public final fun foo(): R|kotlin/Unit| {
     }

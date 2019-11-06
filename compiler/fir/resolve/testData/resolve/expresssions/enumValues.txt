@@ -1,0 +1,45 @@
+FILE: enumValues.kt
+    public final enum class MyEnum : R|kotlin/Enum| {
+        private constructor(): R|MyEnum| {
+            super<R|kotlin/Enum|>()
+        }
+
+        public final enum entry FIRST : R|kotlin/Any| {
+            public constructor(): R|MyEnum.FIRST| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final enum entry SECOND : R|kotlin/Any| {
+            public constructor(): R|MyEnum.SECOND| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final enum entry LAST : R|kotlin/Any| {
+            public constructor(): R|MyEnum.LAST| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final fun bar(): R|kotlin/Int| {
+            ^bar Int(42)
+        }
+
+        public final static fun values(): R|kotlin/Array<MyEnum>| {
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval values: R|kotlin/Array<MyEnum>| = Q|MyEnum|.R|/MyEnum.values|()
+        lval <range>: R|kotlin/Array<MyEnum>| = R|<local>/values|
+        lval <iterator>: R|kotlin/collections/Iterator<MyEnum>| = R|<local>/<range>|.R|FakeOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<MyEnum>|>|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval value: R|MyEnum| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|MyEnum|>|()
+            R|<local>/value|.R|/MyEnum.bar|()
+        }
+
+    }

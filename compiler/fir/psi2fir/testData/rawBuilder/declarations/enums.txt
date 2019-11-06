@@ -25,6 +25,9 @@ FILE: enums.kt
 
         }
 
+        public final static fun values(): R|kotlin/Array<Order>| {
+        }
+
     }
     public? final? enum class Planet : R|kotlin/Enum| {
         public? constructor(m: Double, r: Double): R|Planet| {
@@ -83,6 +86,9 @@ FILE: enums.kt
             public? final? const val G: <implicit> = Double(6.67E-11)
                 public? get(): <implicit>
 
+        }
+
+        public final static fun values(): R|kotlin/Array<Planet>| {
         }
 
     }

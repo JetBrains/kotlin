@@ -41,6 +41,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test0'
           x: CONST Int type=kotlin.Int value=0
+    FUN name:values visibility:public modality:FINAL <> ($this:<root>.Test0) returnType:kotlin.Array<<root>.Test0>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test0
+      BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -126,6 +129,10 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
           overridden:
             public final fun <get-x> (): kotlin.Int declared in <root>.Test1
           $this: VALUE_PARAMETER name:<this> type:<root>.Test1.ONE
+      FUN FAKE_OVERRIDE name:values visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Array<<root>.Test1> [fake_override]
+        overridden:
+          public final fun values (): kotlin.Array<<root>.Test1> declared in <root>.Test1
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
         overridden:
           protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -164,6 +171,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
           x: CONST Int type=kotlin.Int value=0
+    FUN name:values visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Array<<root>.Test1>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+      BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -259,6 +269,10 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
           overridden:
             public final fun <get-x> (): kotlin.Int declared in <root>.Test2
           $this: VALUE_PARAMETER name:<this> type:<root>.Test2.ONE
+      FUN FAKE_OVERRIDE name:values visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Array<<root>.Test2> [fake_override]
+        overridden:
+          public final fun values (): kotlin.Array<<root>.Test2> declared in <root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
         overridden:
           protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -299,6 +313,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
           x: CONST Int type=kotlin.Int value=0
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.Test2) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+    FUN name:values visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Array<<root>.Test2>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum

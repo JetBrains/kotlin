@@ -75,6 +75,9 @@ FILE fqName:<root> fileName:/classes.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <none>
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnumClass modality:FINAL visibility:public superTypes:[kotlin.Enum]'
+    FUN name:values visibility:public modality:FINAL <> ($this:<root>.TestEnumClass) returnType:kotlin.Array<<root>.TestEnumClass>
+      $this: VALUE_PARAMETER name:<this> type:<root>.TestEnumClass
+      BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
       overridden:
         protected final fun clone (): kotlin.Any declared in kotlin.Enum

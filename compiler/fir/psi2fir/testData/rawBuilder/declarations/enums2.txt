@@ -45,4 +45,7 @@ FILE: enums2.kt
 
         public? abstract fun check(y: Some): Boolean
 
+        public final static fun values(): R|kotlin/Array<SomeEnum>| {
+        }
+
     }

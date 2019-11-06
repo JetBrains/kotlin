@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NAME_FOR_DEFAULT_VALUE_PARAMETER
-import org.jetbrains.kotlin.fir.builder.Context
-import org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
-import org.jetbrains.kotlin.fir.builder.generateComponentFunctions
-import org.jetbrains.kotlin.fir.builder.generateCopyFunction
+import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -434,6 +431,10 @@ class DeclarationsConverter(
                     session, null, firClass, context.packageFqName, context.className, firPrimaryConstructor
                 )
                 // TODO: equals, hashCode, toString
+            }
+
+            if (modifiers.isEnum()) {
+                firClass.generateValuesFunction(session, context.packageFqName, context.className)
             }
 
             return@withChildClassName firClass
