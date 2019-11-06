@@ -187,9 +187,13 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
 
   @TestOnly
   public void addTestJdk(@NotNull Sdk jdk, @NotNull Disposable parentDisposable) {
-    ApplicationManager.getApplication().assertWriteAccessAllowed();
-    mySdks.add(jdk);
-    Disposer.register(parentDisposable, () -> WriteAction.runAndWait(()-> mySdks.remove(jdk)));
+    WriteAction.runAndWait(()-> mySdks.add(jdk));
+    Disposer.register(parentDisposable, () -> removeTestJdk(jdk));
+  }
+
+  @TestOnly
+  public void removeTestJdk(@NotNull Sdk jdk) {
+    WriteAction.runAndWait(()-> mySdks.remove(jdk));
   }
 
   @Override
