@@ -16,7 +16,6 @@ import org.apache.ivy.core.settings.IvySettings
 import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorWriter
 import org.apache.ivy.plugins.resolver.ChainResolver
 import org.apache.ivy.plugins.resolver.IBiblioResolver
-import org.apache.ivy.plugins.resolver.IBiblioResolver.DEFAULT_M2_ROOT
 import org.apache.ivy.plugins.resolver.URLResolver
 import org.apache.ivy.util.DefaultMessageLogger
 import org.apache.ivy.util.Message
@@ -69,6 +68,7 @@ class IvyResolver : GenericRepositoryWithBridge {
             val resolver =
                 if (ivyResolvers.size == 1) ivyResolvers.first()
                 else ChainResolver().also {
+                    it.name = "chain"
                     for (resolver in ivyResolvers) {
                         it.add(resolver)
                     }
@@ -92,6 +92,7 @@ class IvyResolver : GenericRepositoryWithBridge {
             val depArtifact = DefaultDependencyArtifactDescriptor(depsDescriptor, artifactName, type, type, null, null)
             depsDescriptor.addDependencyArtifact(conf, depArtifact)
         }
+        depsDescriptor.addDependencyConfiguration("default", "*")
         moduleDescriptor.addDependency(depsDescriptor)
 
         val resolveOptions = ResolveOptions().apply {
@@ -117,10 +118,10 @@ class IvyResolver : GenericRepositoryWithBridge {
         val url = repositoryCoordinates.url
         if (url != null) {
             ivyResolvers.add(
-                URLResolver().apply {
+                IBiblioResolver().apply {
                     isM2compatible = true
                     name = repositoryCoordinates.name.takeIf { it.isValidParam() } ?: url.host
-                    addArtifactPattern("${url.toString().let { if (it.endsWith('/')) it else "$it/" }}$DEFAULT_ARTIFACT_PATTERN")
+                    root = url.toExternalForm()
                 }
             )
             return true
@@ -129,8 +130,6 @@ class IvyResolver : GenericRepositoryWithBridge {
     }
 
     companion object {
-        const val DEFAULT_ARTIFACT_PATTERN = "[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"
-
         init {
             Message.setDefaultLogger(DefaultMessageLogger(1))
         }
