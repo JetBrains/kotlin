@@ -108,7 +108,7 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
         moduleInfo.groupId?.let { step.groupId = it }
         step.artifactId = moduleInfo.artifactId
         moduleInfo.version?.let { step.version = it }
-        step.entityName = moduleInfo.root.name
+        step.entityName = moduleInfo.simpleName
         step.location = moduleInfo.root.path
       }
     }
@@ -149,10 +149,12 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
       if (isLast) break
       doNextAction()
       if (currentStep === currentStepObject) {
-        throw RuntimeException("$currentStep is not validated")
+        throw RuntimeException("$currentStepObject is not validated")
       }
     }
-    doFinishAction()
+    if (!doFinishAction()) {
+      throw RuntimeException("$currentStepObject is not validated")
+    }
   }
 
   private fun waitForImportCompletion(project: Project) {

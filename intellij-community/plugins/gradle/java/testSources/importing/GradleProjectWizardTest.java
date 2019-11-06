@@ -171,8 +171,8 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
     File directory;
     Object settings = ContainerUtil.getFirstItem(linkedProjectsSettings);
     if (settings instanceof ExternalProjectSettings) {
-      directory =
-        FileUtil.createTempDirectory(new File(((ExternalProjectSettings)settings).getExternalProjectPath()), getName(), "new", false);
+      directory = new File(((ExternalProjectSettings)settings).getExternalProjectPath());
+      FileUtil.createDirectory(directory);
     }
     else {
       directory = FileUtil.createTempDirectory(getName(), "new", false);

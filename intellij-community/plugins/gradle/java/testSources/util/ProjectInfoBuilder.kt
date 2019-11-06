@@ -25,10 +25,10 @@ class ProjectInfoBuilder private constructor(id: String, private val base: Virtu
     modules.add(builder.create())
   }
 
-  fun moduleInfo(ideName: String, relativeRoot: String, artifactId: String? = null, useKotlinDsl: Boolean? = null) {
+  fun moduleInfo(ideName: String, relativeRoot: String, simpleName: String? = null, useKotlinDsl: Boolean? = null) {
     moduleInfo(ideName, relativeRoot) {
       this.useKotlinDsl = useKotlinDsl
-      this.artifactId = artifactId
+      this.simpleName = simpleName
       modulesPerSourceSet.add("$ideName.main")
       modulesPerSourceSet.add("$ideName.test")
     }
