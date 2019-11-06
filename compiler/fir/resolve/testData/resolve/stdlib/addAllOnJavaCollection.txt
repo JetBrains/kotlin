@@ -1,0 +1,11 @@
+FILE: addAllOnJavaCollection.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lval y: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>(String(Alpha), String(Beta))
+        lval x: R|java/util/LinkedHashSet<kotlin/String>| = R|java/util/LinkedHashSet.LinkedHashSet|<R|kotlin/String|>().R|kotlin/apply|<R|java/util/LinkedHashSet<kotlin/String>|>(<L> = apply@fun R|java/util/LinkedHashSet<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            <Ambiguity: addAll, [java/util/AbstractCollection.addAll, kotlin/collections/MutableSet.addAll]>#(R|<local>/y|)
+        }
+        )
+        lval z: R|java/util/ArrayList<kotlin/String>| = R|java/util/ArrayList.ArrayList|<R|kotlin/String|>()
+        R|<local>/z|.R|FakeOverride<java/util/ArrayList.addAll: R|kotlin/Boolean|>|(R|<local>/y|)
+        R|<local>/z|.R|FakeOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(String(Omega))
+    }

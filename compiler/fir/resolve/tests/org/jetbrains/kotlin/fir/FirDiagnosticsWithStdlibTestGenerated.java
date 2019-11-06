@@ -24,6 +24,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("addAllOnJavaCollection.kt")
+    public void testAddAllOnJavaCollection() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/addAllOnJavaCollection.kt");
+    }
+
     public void testAllFilesPresentInStdlib() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/stdlib"), Pattern.compile("^([^.]+)\\.kt$"), true, "contracts");
     }

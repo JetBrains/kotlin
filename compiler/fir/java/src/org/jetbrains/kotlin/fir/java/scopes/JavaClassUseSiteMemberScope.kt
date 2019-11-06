@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.java.toNotNullConeKotlinType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -38,11 +39,15 @@ class JavaClassUseSiteMemberScope(
     private fun isEqualTypes(a: ConeKotlinType, b: ConeKotlinType, substitutor: ConeSubstitutor): Boolean {
         if (a is ConeFlexibleType) return isEqualTypes(a.lowerBound, b, substitutor)
         if (b is ConeFlexibleType) return isEqualTypes(a, b.lowerBound, substitutor)
-        with(context) {
-            return isEqualTypeConstructors(
-                substitutor.substituteOrSelf(a).typeConstructor(),
-                substitutor.substituteOrSelf(b).typeConstructor()
-            )
+        return if (a is ConeClassType && b is ConeClassType) {
+            a.lookupTag.classId.let { it.readOnlyToMutable() ?: it } == b.lookupTag.classId.let { it.readOnlyToMutable() ?: it }
+        } else {
+            with(context) {
+                isEqualTypeConstructors(
+                    substitutor.substituteOrSelf(a).typeConstructor(),
+                    substitutor.substituteOrSelf(b).typeConstructor()
+                )
+            }
         }
     }
 
