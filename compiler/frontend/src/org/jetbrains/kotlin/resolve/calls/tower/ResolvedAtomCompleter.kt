@@ -311,6 +311,8 @@ class ResolvedAtomCompleter(
             topLevelCallContext.trace,
             callableReferenceExpression
         )
+
+        kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, topLevelCallCheckerContext)
     }
 
     private fun completeCollectionLiteralCalls(collectionLiteralArgument: ResolvedCollectionLiteralAtom) {
