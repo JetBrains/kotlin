@@ -8,7 +8,7 @@
 package org.jetbrains.konan.util
 
 import com.intellij.openapi.project.Project
-import com.jetbrains.konan.forEachKonanProject
+import org.jetbrains.konan.gradle.forEachKonanProject
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 // Returns Kotlin/Native home.

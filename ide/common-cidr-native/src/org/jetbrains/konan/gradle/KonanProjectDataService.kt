@@ -18,9 +18,8 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
 import com.intellij.util.execution.ParametersListUtil
-import com.jetbrains.konan.KONAN_MODEL_KEY
-import com.jetbrains.konan.KonanModel
 import com.jetbrains.konan.filterOutSystemEnvs
+import org.jetbrains.konan.gradle.KonanProjectResolver.Companion.KONAN_MODEL_KEY
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType
 import org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer

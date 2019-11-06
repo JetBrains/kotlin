@@ -5,16 +5,16 @@
 
 package org.jetbrains.konan.gradle
 
-import com.jetbrains.konan.KonanModel
-import com.jetbrains.konan.KonanModel.Companion.NO_KOTLIN_NATIVE_HOME
-import com.jetbrains.konan.KonanModel.Companion.NO_TASK_PATH
-import com.jetbrains.konan.KonanModelImpl
+import org.jetbrains.konan.gradle.KonanModel.Companion.NO_KOTLIN_NATIVE_HOME
+import org.jetbrains.konan.gradle.KonanModel.Companion.NO_TASK_PATH
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
-import org.jetbrains.kotlin.gradle.*
+import org.jetbrains.kotlin.gradle.KonanArtifactModel
+import org.jetbrains.kotlin.gradle.KonanArtifactModelImpl
+import org.jetbrains.kotlin.gradle.KonanRunConfigurationModelImpl
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
 import org.jetbrains.kotlin.gradle.KotlinNativeHomeEvaluator.getKotlinNativeHome
 import org.jetbrains.kotlin.gradle.getMethodOrNull

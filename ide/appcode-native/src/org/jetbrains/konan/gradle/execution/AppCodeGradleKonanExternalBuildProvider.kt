@@ -13,8 +13,8 @@ import com.jetbrains.cidr.execution.BuildConfiguration
 import com.jetbrains.cidr.execution.build.XcodeBuildAction
 import com.jetbrains.cidr.execution.build.XcodeExternalBuildProvider
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames
-import com.jetbrains.konan.forEachKonanProject
 import com.jetbrains.konan.runBuildTasks
+import org.jetbrains.konan.gradle.forEachKonanProject
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 
 

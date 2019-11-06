@@ -19,8 +19,6 @@ import com.intellij.openapi.util.AtomicClearableLazyValue
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.cidr.lang.workspace.OCWorkspaceImpl
 import com.jetbrains.konan.KonanBundle
-import com.jetbrains.konan.KonanModel
-import com.jetbrains.konan.forEachKonanProject
 import org.jetbrains.konan.gradle.CachedBuildableElements.KonanBuildableElements
 import org.jetbrains.konan.gradle.CachedBuildableElements.NoKonanBuildableElements
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration

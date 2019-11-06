@@ -6,11 +6,7 @@
 package com.jetbrains.konan
 
 import com.intellij.AbstractBundle
-import com.intellij.openapi.externalSystem.model.Key
-import com.intellij.openapi.externalSystem.model.ProjectKeys
 import org.jetbrains.annotations.PropertyKey
-
-val KONAN_MODEL_KEY = Key.create(KonanModel::class.java, ProjectKeys.MODULE.processingWeight + 1)
 
 private const val PATH_TO_BUNDLE: String = "KonanBundle"
 

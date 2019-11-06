@@ -22,11 +22,11 @@ import com.intellij.task.ProjectTaskContext
 import com.intellij.task.ProjectTaskNotification
 import com.intellij.task.ProjectTaskRunner
 import org.jetbrains.konan.gradle.GradleKonanWorkspace
-import com.jetbrains.konan.KonanModel
 import com.jetbrains.konan.KonanBundle.message
 import com.jetbrains.konan.runBuildTasks
-import com.jetbrains.konan.forEachKonanProject
+import org.jetbrains.konan.gradle.KonanModel
 import org.jetbrains.konan.gradle.execution.GradleBuildTasksOrigin.*
+import org.jetbrains.konan.gradle.forEachKonanProject
 import org.jetbrains.kotlin.idea.configuration.externalProjectPath
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.platform.konan.isNative

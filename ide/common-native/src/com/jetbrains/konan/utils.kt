@@ -8,15 +8,10 @@ package com.jetbrains.konan
 import com.intellij.build.BuildViewManager
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings
-import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.task.TaskCallback
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
@@ -26,7 +21,6 @@ import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.library.lite.LiteKonanDistributionProvider
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
-
 
 fun runBuildTasks(
     project: Project,
@@ -73,25 +67,6 @@ fun runBuildTasks(
     )
     finished.waitFor()
     return result.get()
-}
-
-fun forEachKonanProject(
-    project: Project,
-    consumer: (konanModel: KonanModel, moduleNode: DataNode<ModuleData>, rootProjectPath: String) -> Unit
-) {
-    for (projectInfo in ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID)) {
-        val projectStructure = projectInfo.externalProjectStructure ?: continue
-        val projectData = projectStructure.data
-        val rootProjectPath = projectData.linkedExternalProjectPath
-        val modulesNodes = ExternalSystemApiUtil.findAll(projectStructure, ProjectKeys.MODULE)
-        for (moduleNode in modulesNodes) {
-            val projectNode = ExternalSystemApiUtil.find(moduleNode, KONAN_MODEL_KEY)
-            if (projectNode != null) {
-                val konanProject = projectNode.data
-                consumer(konanProject, moduleNode, rootProjectPath)
-            }
-        }
-    }
 }
 
 // Returns Kotlin/Native internal version (not the same as Big Kotlin version).
