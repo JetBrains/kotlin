@@ -17,7 +17,7 @@ import java.io.File;
  * @author Alexey Kudravtsev
  */
 public class DeploymentUtilImpl extends DeploymentUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.deployment.MakeUtilImpl");
+  private static final Logger LOG = Logger.getInstance(DeploymentUtilImpl.class);
 
   // OS X is sensitive for that
   private static void checkPathDoNotNavigatesUpFromFile(File file) {

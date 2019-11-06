@@ -30,7 +30,7 @@ import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 
 public class TogglePopupHintsAction extends AnAction {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.actions.TogglePopupHintsAction");
+  private static final Logger LOG = Logger.getInstance(TogglePopupHintsAction.class);
 
   private static PsiFile getTargetFile(@NotNull DataContext dataContext) {
     Project project = CommonDataKeys.PROJECT.getData(dataContext);

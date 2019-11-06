@@ -71,7 +71,7 @@ import java.util.List;
 import java.util.*;
 
 public class SingleInspectionProfilePanel extends JPanel {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInspection.ex.InspectionToolsPanel");
+  private static final Logger LOG = Logger.getInstance(SingleInspectionProfilePanel.class);
   @NonNls private static final String INSPECTION_FILTER_HISTORY = "INSPECTION_FILTER_HISTORY";
   @NonNls private static final String EMPTY_HTML = "<html><body></body></html>";
 

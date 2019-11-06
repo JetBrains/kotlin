@@ -45,7 +45,7 @@ import java.util.List;
  * @author nik
  */
 public class RootDetectionUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.roots.ui.configuration.libraryEditor.RootDetectionUtil");
+  private static final Logger LOG = Logger.getInstance(RootDetectionUtil.class);
 
   private RootDetectionUtil() {
   }

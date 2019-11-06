@@ -58,7 +58,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CompilerTask extends Task.Backgroundable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.progress.CompilerProgressIndicator");
+  private static final Logger LOG = Logger.getInstance(CompilerTask.class);
   private static final Key<Object> CONTENT_ID_KEY = Key.create("CONTENT_ID");
   private static final Key<Object> SESSION_ID_KEY = Key.create("SESSION_ID");
   private static final String APP_ICON_ID = "compiler";

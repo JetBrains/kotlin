@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemProvider {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.util.gotoByName.ChooseByNameIdea");
+  private static final Logger LOG = Logger.getInstance(DefaultChooseByNameItemProvider.class);
   private static final String UNIVERSAL_SEPARATOR = "\u0000";
   private final SmartPsiElementPointer myContext;
 

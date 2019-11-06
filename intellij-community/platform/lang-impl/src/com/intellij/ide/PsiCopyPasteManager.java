@@ -41,7 +41,7 @@ public final class PsiCopyPasteManager {
     return ServiceManager.getService(PsiCopyPasteManager.class);
   }
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.PsiCopyPasteManagerImpl");
+  private static final Logger LOG = Logger.getInstance(PsiCopyPasteManager.class);
 
   private MyData myRecentData;
   private final CopyPasteManagerEx myCopyPasteManager;

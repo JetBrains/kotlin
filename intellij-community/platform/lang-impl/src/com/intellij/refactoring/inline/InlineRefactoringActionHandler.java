@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class InlineRefactoringActionHandler implements RefactoringActionHandler {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.inline.InlineHandler");
+  private static final Logger LOG = Logger.getInstance(InlineRefactoringActionHandler.class);
   private static final String REFACTORING_NAME = RefactoringBundle.message("inline.title");
 
   @Override

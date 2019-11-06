@@ -68,7 +68,7 @@ import java.util.List;
  * @author Konstantin Bulenkov
  */
 public class IntentionHintComponent implements Disposable, ScrollAwareHint {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.intention.impl.IntentionHintComponent.ListPopupRunnable");
+  private static final Logger LOG = Logger.getInstance(IntentionHintComponent.class);
 
   private static final Icon ourInactiveArrowIcon = EmptyIcon.create(AllIcons.General.ArrowDown);
 

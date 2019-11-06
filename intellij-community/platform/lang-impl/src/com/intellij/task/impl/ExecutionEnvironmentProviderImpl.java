@@ -36,7 +36,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class ExecutionEnvironmentProviderImpl implements ExecutionEnvironmentProvider {
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.task.ExecutionEnvironmentProvider");
+  private static final Logger LOG = Logger.getInstance(ExecutionEnvironmentProvider.class);
 
   @Nullable
   @Override

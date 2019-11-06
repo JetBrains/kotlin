@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class TodoItemNode extends BaseToDoNode<SmartTodoItemPointer> implements HighlightedRegionProvider {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.toDo.TodoItemNodeDescriptor");
+  private static final Logger LOG = Logger.getInstance(TodoItem.class);
 
   private final List<HighlightedRegion> myHighlightedRegions;
   private final List<HighlightedRegionProvider> myAdditionalLines;

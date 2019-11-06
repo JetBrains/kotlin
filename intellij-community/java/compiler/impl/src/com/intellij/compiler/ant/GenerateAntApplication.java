@@ -20,7 +20,7 @@ import java.nio.file.Paths;
  * @author max
  */
 public class GenerateAntApplication {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInspection.ex.InspectionApplication");
+  private static final Logger LOG = Logger.getInstance(GenerateAntApplication.class);
 
   public String myProjectPath = null;
   public String myOutPath = null;

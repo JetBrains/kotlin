@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class TextPrintHandler extends PrintActionHandler {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeEditor.printing.PrintManager");
+  private static final Logger LOG = Logger.getInstance(TextPrintHandler.class);
 
   @Override
   public boolean canPrint(@NotNull DataContext dataContext) {
