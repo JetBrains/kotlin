@@ -175,10 +175,15 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                 async.first { it.loadDependencies(isFirstLoad, virtualFile, scriptDefinition, loadingContext) }
             } else {
                 backgroundExecutor.ensureScheduled(virtualFile) {
-                    // don't start loading if nothing was changed
-                    // (in case we checking for up-to-date and loading concurrently)
                     val cached = getCachedConfigurationState(virtualFile)
-                    if (cached == null || !cached.isUpToDate(project, virtualFile)) {
+
+                    val applied = cached?.applied
+                    if (applied != null && applied.inputs.isUpToDate(project, virtualFile)) {
+                        // in case user reverted to applied configuration
+                        suggestOrSaveConfiguration(virtualFile, applied, false)
+                    } else if (cached == null || !cached.isUpToDate(project, virtualFile)) {
+                        // don't start loading if nothing was changed
+                        // (in case we checking for up-to-date and loading concurrently)
                         val actualIsFirstLoad = cached == null
                         async.first { it.loadDependencies(actualIsFirstLoad, virtualFile, scriptDefinition, loadingContext) }
                     }
