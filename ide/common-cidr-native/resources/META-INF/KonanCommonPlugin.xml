@@ -28,9 +28,9 @@
   </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
-    <applicationService
-        serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"
-        serviceImplementation="org.jetbrains.konan.support.NativeOnlyDefaultTargetPlatformKindProvider"/>
+<!--    <applicationService-->
+<!--        serviceInterface="org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider"-->
+<!--        serviceImplementation="org.jetbrains.konan.support.NativeOnlyDefaultTargetPlatformKindProvider"/>-->
     <externalProjectDataService implementation="org.jetbrains.konan.gradle.KonanProjectDataService"/>
   </extensions>
 

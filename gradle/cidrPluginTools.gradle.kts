@@ -529,7 +529,7 @@ fun prepareKotlinPluginXml(project: Project, originalPluginJar: Configuration): 
                     .singleFile
                     .readText()
                     .replace(placeholderRegex, "<depends>com.intellij.modules.cidr.lang</depends>")
-                    .replace(excludeRegex, "")
+//                    .replace(excludeRegex, "")
                     .replace(ideaVersionRegex, "") // IDEA version to be specified in CLion or AppCode plugin.xml file.
                     .replace(versionRegex, "") // Version to be specified in CLion or AppCode plugin.xml file.
                     .also { pluginXmlText ->
@@ -607,8 +607,6 @@ fun Copy.applyCidrVersionRestrictions(
         """
         |
         |  <depends>$javaPluginId</depends>
-        |  <xi:include href="/META-INF/JavaForCIDRCommonActionPatcher.xml" xpointer="xpointer(/idea-plugin/*)"/>
-        |  <xi:include href="/META-INF/JavaForCIDRSpecificActionPatcher.xml" xpointer="xpointer(/idea-plugin/*)"/>
         """.trimMargin().trimStart()
     else
         """
@@ -682,24 +680,24 @@ fun patchedPlatformDepsJar(project: Project, platformDepsDir: File): Zip = with(
         archiveFileName.set("kotlinNative-platformDeps-$productName.jar")
         destinationDirectory.set(file("$buildDir/$name"))
 
-        val platformDepsReplacementsDir = file("resources/platformDeps")
-        val platformDepsReplacements = platformDepsReplacementsDir.walkTopDown()
-                .filter { it.isFile && it.length() > 0 }
-                .map { it.relativeTo(platformDepsReplacementsDir).path }
-                .toList()
+//        val platformDepsReplacementsDir = file("resources/platformDeps")
+//        val platformDepsReplacements = platformDepsReplacementsDir.walkTopDown()
+//                .filter { it.isFile && it.length() > 0 }
+//                .map { it.relativeTo(platformDepsReplacementsDir).path }
+//                .toList()
 
-        inputs.property("${project.name}-$name-platformDepsReplacements-amount", platformDepsReplacements.size)
+//        inputs.property("${project.name}-$name-platformDepsReplacements-amount", platformDepsReplacements.size)
 
-        platformDepsReplacements.forEach {
-            from(platformDepsReplacementsDir) { include(it) }
-        }
+//        platformDepsReplacements.forEach {
+//            from(platformDepsReplacementsDir) { include(it) }
+//        }
 
         from(zipTree(fileTree(platformDepsDir).matching { include(platformDepsJarName) }.singleFile)) {
-            exclude(pluginXmlPath)
-            platformDepsReplacements.forEach { exclude(it) }
+//            exclude(pluginXmlPath)
+//            platformDepsReplacements.forEach { exclude(it) }
         }
 
-        patchJavaXmls()
+//        patchJavaXmls()
     }
 }
 
