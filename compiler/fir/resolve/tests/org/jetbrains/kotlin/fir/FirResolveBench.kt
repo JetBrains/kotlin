@@ -8,8 +8,10 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.diagnostics.FirEmptyDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.types.*
@@ -190,10 +192,15 @@ class FirResolveBench(val withProgress: Boolean) {
 
                     override fun visitFunctionCall(functionCall: FirFunctionCall) {
                         val typeRef = functionCall.typeRef
+                        val callee = functionCall.calleeReference
                         if (typeRef is FirResolvedTypeRef) {
                             val type = typeRef.type
                             if (type is ConeKotlinErrorType) {
                                 errorFunctionCallTypes++
+                                val psi = callee.psi
+                                if (callee is FirErrorNamedReference && psi != null) {
+                                    reportProblem(callee.diagnostic.reason, psi)
+                                }
                             }
                         }
 
@@ -202,10 +209,15 @@ class FirResolveBench(val withProgress: Boolean) {
 
                     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
                         val typeRef = qualifiedAccessExpression.typeRef
+                        val callee = qualifiedAccessExpression.calleeReference
                         if (typeRef is FirResolvedTypeRef) {
                             val type = typeRef.type
                             if (type is ConeKotlinErrorType) {
                                 errorQualifiedAccessTypes++
+                                val psi = callee.psi
+                                if (callee is FirErrorNamedReference && psi != null) {
+                                    reportProblem(callee.diagnostic.reason, psi)
+                                }
                             }
                         }
 
@@ -216,6 +228,9 @@ class FirResolveBench(val withProgress: Boolean) {
                         unresolvedTypes++
 
                         if (typeRef.psi != null) {
+                            if (typeRef is FirErrorTypeRef && typeRef.diagnostic == FirEmptyDiagnostic) {
+                                return
+                            }
                             val psi = typeRef.psi!!
                             val problem = "${typeRef::class.simpleName}: ${typeRef.render()}"
                             reportProblem(problem, psi)
@@ -238,6 +253,9 @@ class FirResolveBench(val withProgress: Boolean) {
                                 implicitTypes++
                             } else {
                                 errorTypes++
+                                if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic == FirEmptyDiagnostic) {
+                                    return
+                                }
                                 val psi = resolvedTypeRef.psi!!
                                 val problem = "${resolvedTypeRef::class.simpleName} -> ${type::class.simpleName}: ${type.render()}"
                                 reportProblem(problem, psi)
