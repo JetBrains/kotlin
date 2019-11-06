@@ -243,7 +243,8 @@ def flags = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 
 if (flags.includeCidrPlugins) {
     logger.info("Including CIDR plugins in settings.gradle")
-    include ":kotlin-ultimate:ide:common-native",
+    include ":kotlin-ultimate:ide:cidr-gradle-tooling",
+            ":kotlin-ultimate:ide:common-native",
             ":kotlin-ultimate:ide:common-cidr-native",
             ":kotlin-ultimate:ide:clion-native",
             ":kotlin-ultimate:ide:appcode-native",
