@@ -3871,12 +3871,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type type = expressionType(exp);
         StackValue argument = pregeneratedExpr != null ? pregeneratedExpr : gen(exp);
 
-        if (kotlinType == null || TypeUtils.isNullableType(kotlinType)) {
+        if (kotlinType == null ||
+            !AsmUtil.isPrimitive(type) && (TypeUtils.isNullableType(kotlinType) || !InlineClassesUtilsKt.isInlineClassType(kotlinType))) {
             return StackValue.compareWithNull(argument, (KtTokens.EQEQ == opToken || KtTokens.EQEQEQ == opToken) ? IFNONNULL : IFNULL);
         } else {
-            // If exp has a non-nullable type, the comparison is vacuous.
-            // For inline classes we cannot necessarily compare with null at all.
-            // In this case the code below is necessary for correctness, not just an optimization.
+            // If exp is an unboxed inline class value the comparison is vacuous
             return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
                 argument.put(type, kotlinType, v);
                 AsmUtil.pop(v, type);

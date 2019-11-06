@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.isNullConst
@@ -45,8 +46,9 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val (a, b) = expression.receiverAndArgs()
         if (a.isNullConst() || b.isNullConst()) {
-            val value = if (a.isNullConst()) b.accept(codegen, data) else a.accept(codegen, data)
-            return if (a.type.isNullable() && b.type.isNullable())
+            val irValue = if (a.isNullConst()) b else a
+            val value = irValue.accept(codegen, data)
+            return if (!isPrimitive(value.type) && (irValue.type.classOrNull?.owner?.isInline != true || irValue.type.isNullable()))
                 BooleanNullCheck(value)
             else
                 BooleanConstantFalseCheck(value)
