@@ -19,7 +19,9 @@ class FallbackKotlinMLRankingProvider : JarCompletionModelProvider("Kotlin", "ko
 
   override fun isLanguageSupported(language: Language): Boolean = language.id.compareTo("kotlin", ignoreCase = true) == 0
 
-  override fun canBeUsed(): Boolean = PluginManagerCore.getPlugin(PluginId.findId(KOTLIN_PLUGIN_ID))?.isEnabled ?: false
+  override fun canBeUsed(): Boolean {
+    return PluginManagerCore.findEnabledPlugin(PluginId.findId(KOTLIN_PLUGIN_ID) ?: return false)?.isEnabled ?: false
+  }
 
   override fun shouldReplace(): Boolean = false
 

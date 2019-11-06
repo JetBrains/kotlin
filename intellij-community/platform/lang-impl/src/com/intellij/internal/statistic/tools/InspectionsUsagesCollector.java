@@ -4,6 +4,7 @@ package com.intellij.internal.statistic.tools;
 import com.intellij.codeInspection.InspectionEP;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.ScopeToolState;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.internal.statistic.beans.MetricEvent;
 import com.intellij.internal.statistic.beans.MetricEventFactoryKt;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
@@ -14,6 +15,7 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesColle
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.lang.Language;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
@@ -65,8 +67,10 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
     if (StringUtil.isNotEmpty(language)) {
       data.addLanguage(Language.findLanguageByID(language));
     }
-    final InspectionEP extension = tool.getExtension();
-    final PluginInfo info = extension != null ? PluginInfoDetectorKt.getPluginInfoById(extension.getPluginDescriptor().getPluginId()) : null;
+
+    InspectionEP extension = tool.getExtension();
+    PluginDescriptor pluginDescriptor = extension == null ? null : extension.getPluginDescriptor();
+    PluginInfo info = pluginDescriptor instanceof IdeaPluginDescriptor ? PluginInfoDetectorKt.getPluginInfoByDescriptor((IdeaPluginDescriptor)pluginDescriptor) : null;
     if (info != null) {
       data.addPluginInfo(info);
     }
