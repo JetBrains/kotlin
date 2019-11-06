@@ -1,0 +1,76 @@
+FILE: first.kt
+    private final fun foo(): R|kotlin/Unit| {
+    }
+    private final class Private : R|kotlin/Any| {
+        public constructor(): R|Private| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final fun bar(): R|kotlin/Unit| {
+        }
+
+        public final fun baz(): R|kotlin/Unit| {
+            this@R|/Private|.R|/Private.bar|()
+            R|/Private.Nested.Nested|()
+        }
+
+        public final inner class Inner : R|kotlin/Any| {
+            public constructor(): R|Private.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+                this@R|/Private|.R|/Private.bar|()
+            }
+
+        }
+
+        private final class Nested : R|kotlin/Any| {
+            public constructor(): R|Private.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun withLocals(): R|kotlin/Unit| {
+        local final class Local : R|kotlin/Any| {
+            public constructor(): R|Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final fun bar(): R|kotlin/Unit|
+
+            public final fun baz(): R|kotlin/Unit| {
+                R|/Local.bar|()
+                R|/Local.Inner.Inner|()
+            }
+
+            local final inner class Inner : R|kotlin/Any| {
+                public constructor(): R|Local.Inner| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final fun foo(): R|kotlin/Unit| {
+                    R|/Local.bar|()
+                }
+
+            }
+
+        }
+
+        R|/Local.Local|().R|/Local.baz|()
+        R|/Local.Local|().<Inapplicable(HIDDEN): [/Local.bar]>#()
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo|()
+        R|/Private.Private|().R|/Private.baz|()
+        R|/Private.Private|().R|/Private.Inner.Inner|()
+        R|/Private.Private|().<Inapplicable(HIDDEN): [/Private.bar]>#()
+        Q|Private|.<Inapplicable(HIDDEN): [/Private.Nested.Nested]>#()
+    }
+FILE: second.kt
+    public final fun secondTest(): R|kotlin/Unit| {
+        <Inapplicable(HIDDEN): [/foo]>#()
+        <Inapplicable(HIDDEN): [/Private.Private]>#()
+    }

@@ -85,6 +85,7 @@ class FirCallResolver(
             typeArguments,
             session,
             file,
+            transformer.components.implicitReceiverStack,
             transformer.components.container
         ) { it.resultType }
         towerResolver.reset()
@@ -143,6 +144,7 @@ class FirCallResolver(
             emptyList(),
             session,
             file,
+            transformer.components.implicitReceiverStack,
             transformer.components.container
         ) { it.resultType }
         towerResolver.reset()
@@ -322,6 +324,7 @@ class FirCallResolver(
             emptyList(),
             session,
             file,
+            transformer.components.implicitReceiverStack,
             transformer.components.container,
             expectedType,
             outerConstraintSystemBuilder,

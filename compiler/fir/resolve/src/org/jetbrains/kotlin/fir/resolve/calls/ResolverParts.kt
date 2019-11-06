@@ -9,19 +9,18 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
-import org.jetbrains.kotlin.fir.resolve.createFunctionalType
-import org.jetbrains.kotlin.fir.resolve.createKPropertyType
-import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -275,81 +274,115 @@ internal object CheckVisibility : CheckerStage() {
         }
     }
 
+    private fun ImplicitReceiverStack.canSeePrivateMemberOf(ownerId: ClassId): Boolean {
+        for (implicitReceiverValue in receiversAsReversed()) {
+            if (implicitReceiverValue !is ImplicitDispatchReceiverValue) continue
+            if (implicitReceiverValue.boundSymbol.classId == ownerId) return true
+        }
+        return false
+    }
+
+    private fun ClassId.asLocal(): ClassId = ClassId(packageFqName, relativeClassName, true)
+
+    private suspend fun checkVisibility(
+        declaration: FirMemberDeclaration,
+        symbol: AbstractFirBasedSymbol<*>,
+        sink: CheckerSink,
+        callInfo: CallInfo
+    ): Boolean {
+        val useSiteFile = callInfo.containingFile
+        val implicitReceiverStack = callInfo.implicitReceiverStack
+        val visible = when (declaration.visibility) {
+            JavaVisibilities.PACKAGE_VISIBILITY -> {
+                symbol.packageFqName() == useSiteFile.packageFqName
+            }
+            Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
+                if (declaration.session == callInfo.session) {
+                    val provider = callInfo.session.firProvider
+                    when (symbol) {
+                        is FirClassLikeSymbol<*> -> {
+                            val classId = symbol.classId
+                            val ownerId = classId.outerClassId
+                            when {
+                                classId.isLocal -> {
+                                    // Normally should not be here
+                                    implicitReceiverStack.canSeePrivateMemberOf(ownerId?.asLocal() ?: classId)
+                                }
+                                ownerId == null -> {
+                                    // Top-level: visible in file
+                                    provider.getFirClassifierContainerFile(classId) == useSiteFile
+                                }
+                                else -> {
+                                    // Member: visible inside parent class, including all its member classes
+                                    implicitReceiverStack.canSeePrivateMemberOf(ownerId)
+                                }
+                            }
+                        }
+                        is FirCallableSymbol<*> -> {
+                            val candidateFile = provider.getFirCallableContainerFile(symbol)
+                            val ownerId = symbol.callableId.classId
+                            when {
+                                candidateFile == null -> {
+                                    // Local
+                                    ownerId != null && implicitReceiverStack.canSeePrivateMemberOf(ownerId.asLocal())
+                                }
+                                ownerId == null -> {
+                                    // Top-level: visible in file
+                                    candidateFile == useSiteFile
+                                }
+                                else -> {
+                                    // Member: visible inside parent class, including all its member classes
+                                    implicitReceiverStack.canSeePrivateMemberOf(ownerId)
+                                }
+                            }
+                        }
+                        else -> {
+                            throw AssertionError("Unsupported visibility check for ${declaration.javaClass}: ${declaration.render()}")
+                        }
+                    }
+                } else {
+                    false
+                }
+            }
+            Visibilities.INTERNAL -> {
+                declaration.session == callInfo.session
+            }
+            Visibilities.PROTECTED -> {
+                true // TODO: Support protected visibility
+            }
+            JavaVisibilities.PROTECTED_AND_PACKAGE -> {
+                if (symbol.packageFqName() == useSiteFile.packageFqName) {
+                    true
+                } else {
+                    true // TODO: Support protected visibility
+                }
+            }
+            else -> true
+        }
+
+        if (!visible) {
+            sink.yieldApplicability(CandidateApplicability.HIDDEN)
+            return false
+        }
+        return true
+    }
+
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol
         val declaration = symbol.fir
         if (declaration is FirMemberDeclaration) {
-            val useSiteFile = callInfo.containingFile
-            val visible = when (declaration.visibility) {
-                JavaVisibilities.PACKAGE_VISIBILITY -> {
-                    symbol.packageFqName() == useSiteFile.packageFqName
-                }
-                Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
-                    if (declaration.session == callInfo.session) {
-                        val provider = callInfo.session.firProvider
-                        when (symbol) {
-                            is FirClassLikeSymbol<*> -> {
-                                val classId = symbol.classId
-                                when {
-                                    classId.isLocal -> {
-                                        // Normally should not be here
-                                        TODO()
-                                    }
-                                    !classId.isNestedClass -> {
-                                        // Top-level: visible in file
-                                        provider.getFirClassifierContainerFile(classId) == useSiteFile
-                                    }
-                                    else -> {
-                                        // Member: visible inside parent class, including all its member classes
-                                        TODO()
-                                    }
-                                }
-                            }
-                            is FirCallableSymbol<*> -> {
-                                val candidateFile = provider.getFirCallableContainerFile(symbol)
-                                when {
-                                    candidateFile == null -> {
-                                        // Local
-                                        TODO()
-                                    }
-                                    symbol.callableId.classId == null -> {
-                                        // Top-level: visible in file
-                                        candidateFile == useSiteFile
-                                    }
-                                    else -> {
-                                        // Member: visible inside parent class, including all its member classes
-                                        TODO()
-                                    }
-                                }
-                            }
-                            else -> {
-                                throw AssertionError("Unsupported visibility check for ${declaration.javaClass}: ${declaration.render()}")
-                            }
-                        }
-                    } else {
-                        false
-                    }
-                }
-                Visibilities.INTERNAL -> {
-                    declaration.session == callInfo.session
-                }
-                Visibilities.PROTECTED -> {
-                    // Support protected visibility...
-                    TODO()
-                }
-                JavaVisibilities.PROTECTED_AND_PACKAGE -> {
-                    if (symbol.packageFqName() == useSiteFile.packageFqName) {
-                        true
-                    } else {
-                        // Support protected visibility...
-                        TODO()
-                    }
-                }
-                else -> true
+            if (!checkVisibility(declaration, symbol, sink, callInfo)) {
+                return
             }
+        }
 
-            if (!visible) {
-                sink.yieldApplicability(CandidateApplicability.HIDDEN)
+        if (declaration is FirConstructor) {
+            val ownerClassId = declaration.symbol.callableId.classId!!
+            val provider = declaration.session.firSymbolProvider
+            val classSymbol = provider.getClassLikeSymbolByFqName(ownerClassId)
+
+            if (classSymbol is FirRegularClassSymbol) {
+                checkVisibility(classSymbol.fir, classSymbol, sink, callInfo)
             }
         }
     }
