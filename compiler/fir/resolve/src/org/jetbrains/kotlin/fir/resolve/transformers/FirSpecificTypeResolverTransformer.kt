@@ -21,7 +21,7 @@ class FirSpecificTypeResolverTransformer(
 ) : FirAbstractTreeTransformer<Nothing?>(phase = FirResolvePhase.SUPER_TYPES) {
     override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
         val typeResolver = FirTypeResolver.getInstance(session)
-        typeRef.transformChildren(FirSpecificTypeResolverTransformer(towerScope, session), null)
+        typeRef.transformChildren(this, null)
         return transformType(typeRef, typeResolver.resolveType(typeRef, towerScope))
     }
 
