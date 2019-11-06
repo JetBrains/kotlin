@@ -67,7 +67,7 @@
     <callTypeCalculator implementation="org.jetbrains.plugins.gradle.service.resolve.GradleArtifactCallTypeCalculator"/>
     <delegatesToProvider implementation="org.jetbrains.plugins.gradle.service.resolve.GradleTaskDeclarationClosureDelegateProvider"/>
     <delegatesToProvider implementation="org.jetbrains.plugins.gradle.service.resolve.GradleDelegatesToProvider"/>
-    <expressionFilter implementation="org.jetbrains.plugins.gradle.service.resolve.GradleTaskDeclarationExpressionFilter"/>
+    <elementFilter implementation="org.jetbrains.plugins.gradle.service.resolve.GradleTaskDeclarationElementFilter"/>
     <typeCalculator forClass="org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.GrReferenceExpression"
                     implementationClass="org.jetbrains.plugins.gradle.service.resolve.GradleTaskDeclarationTypeCalculator"/>
     <unresolvedHighlightFilter implementation="org.jetbrains.plugins.gradle.service.resolve.GradleUnresolvedReferenceFilter"/>
