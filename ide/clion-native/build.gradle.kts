@@ -4,7 +4,7 @@ plugins {
 
 val clionUnscrambledJarDir: File by rootProject.extra
 
-val isStandaloneBuild: Boolean = rootProject.findProject(":idea") == null
+val isStandaloneBuild: Boolean by rootProject.extra
 val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
 if (!isStandaloneBuild) {

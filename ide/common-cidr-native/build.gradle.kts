@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
 }
 
-val isStandaloneBuild: Boolean = rootProject.findProject(":idea") == null
+val isStandaloneBuild: Boolean by rootProject.extra
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val ijProductBranch: (String) -> Int by ultimateTools
