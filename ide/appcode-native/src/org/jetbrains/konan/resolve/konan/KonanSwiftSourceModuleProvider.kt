@@ -13,7 +13,7 @@ class KonanSwiftSourceModuleProvider : AppcodeSourceModuleProducer {
                         configuration: OCResolveConfiguration?
     ): SwiftModule? {
         if (target.isKotlinTarget(parentConfiguration.project)) {
-            return KonanSwiftSourceModule(configuration, target, parentConfiguration)
+            return AppCodeKonanSourceModule(configuration, target, parentConfiguration)
         }
 
         return null

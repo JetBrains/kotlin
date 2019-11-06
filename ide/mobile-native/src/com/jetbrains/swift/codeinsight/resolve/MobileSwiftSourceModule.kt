@@ -24,7 +24,7 @@ import com.jetbrains.swift.symbols.SwiftModuleSymbol
 import com.jetbrains.swift.symbols.impl.SwiftSourceModuleSymbol
 import com.jetbrains.swift.symbols.impl.SymbolProps
 import org.jetbrains.konan.bridging.MobileKonanSwiftModule
-import java.util.*
+import org.jetbrains.konan.resolve.konan.KonanSwiftModule
 
 class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : SwiftModule, UserDataHolderBase() {
     private val project: Project
@@ -82,7 +82,7 @@ class MobileSwiftSourceModule(private val config: OCResolveConfiguration) : Swif
     }
 
     override fun getDependencies(): List<SwiftModule> =
-        MobileKonanSwiftModule.getAllKonanTargets(project).map { MobileKonanSwiftModule(MobileKonanTarget(it), config) }
+        KonanSwiftModule.getAllKonanTargets(project).map { MobileKonanSwiftModule(MobileKonanTarget(it), config) }
 
     override fun getFiles(): List<VirtualFile> = config.sources.let { sources: Collection<VirtualFile> ->
         sources as? List<VirtualFile> ?: sources.toList()
