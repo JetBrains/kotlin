@@ -19,4 +19,4 @@ fun box(): String {
 // 0 component1
 // 0 component2
 // 1 length
-// 0 charAt
+// 1 charAt

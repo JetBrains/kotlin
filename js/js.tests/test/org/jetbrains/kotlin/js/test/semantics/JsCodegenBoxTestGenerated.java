@@ -4499,6 +4499,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInCharSequenceWithIndex.kt");
             }
 
+            @TestMetadata("forInCharSequenceWithIndexCheckSideEffects.kt")
+            public void testForInCharSequenceWithIndexCheckSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInCharSequenceWithIndexCheckSideEffects.kt");
+            }
+
+            @TestMetadata("forInCharSequenceWithIndexNoElementVarCheckSideEffects.kt")
+            public void testForInCharSequenceWithIndexNoElementVarCheckSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInCharSequenceWithIndexNoElementVarCheckSideEffects.kt");
+            }
+
+            @TestMetadata("forInCharSequenceWithIndexNoIndexVarCheckSideEffects.kt")
+            public void testForInCharSequenceWithIndexNoIndexVarCheckSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInCharSequenceWithIndexNoIndexVarCheckSideEffects.kt");
+            }
+
             @TestMetadata("forInEmptyStringWithIndex.kt")
             public void testForInEmptyStringWithIndex() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex/forInEmptyStringWithIndex.kt");
@@ -4540,6 +4555,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("forInEmptyListWithIndex.kt")
             public void testForInEmptyListWithIndex() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex/forInEmptyListWithIndex.kt");
+            }
+
+            @TestMetadata("forInIterableWithIndexCheckSideEffects.kt")
+            public void testForInIterableWithIndexCheckSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex/forInIterableWithIndexCheckSideEffects.kt");
+            }
+
+            @TestMetadata("forInIterableWithIndexNoElementVarCheckSideEffects.kt")
+            public void testForInIterableWithIndexNoElementVarCheckSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex/forInIterableWithIndexNoElementVarCheckSideEffects.kt");
+            }
+
+            @TestMetadata("forInIterableWithIndexNoIndexVarCheckSideEffects.kt")
+            public void testForInIterableWithIndexNoIndexVarCheckSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex/forInIterableWithIndexNoIndexVarCheckSideEffects.kt");
             }
 
             @TestMetadata("forInListWithIndex.kt")
@@ -4585,14 +4615,29 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex/forInSequenceWithIndex.kt");
             }
 
+            @TestMetadata("forInSequenceWithIndexCheckSideEffects.kt")
+            public void testForInSequenceWithIndexCheckSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex/forInSequenceWithIndexCheckSideEffects.kt");
+            }
+
             @TestMetadata("forInSequenceWithIndexNoElementVar.kt")
             public void testForInSequenceWithIndexNoElementVar() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex/forInSequenceWithIndexNoElementVar.kt");
             }
 
+            @TestMetadata("forInSequenceWithIndexNoElementVarCheckSideEffects.kt")
+            public void testForInSequenceWithIndexNoElementVarCheckSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex/forInSequenceWithIndexNoElementVarCheckSideEffects.kt");
+            }
+
             @TestMetadata("forInSequenceWithIndexNoIndexVar.kt")
             public void testForInSequenceWithIndexNoIndexVar() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex/forInSequenceWithIndexNoIndexVar.kt");
+            }
+
+            @TestMetadata("forInSequenceWithIndexNoIndexVarCheckSideEffects.kt")
+            public void testForInSequenceWithIndexNoIndexVarCheckSideEffects() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex/forInSequenceWithIndexNoIndexVarCheckSideEffects.kt");
             }
 
             @TestMetadata("forInSequenceWithIndexWithExplicitlyTypedIndexVariable.kt")
