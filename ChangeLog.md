@@ -1,13 +1,12 @@
 # CHANGELOG
 
-## 1.3.60 EAP 2
+## 1.3.60 EAP 3
 
 ### Compiler
 
 - [`KT-18541`](https://youtrack.jetbrains.com/issue/KT-18541) Prohibit "tailrec" modifier on open functions
 - [`KT-19844`](https://youtrack.jetbrains.com/issue/KT-19844) Do not render type annotations on symbols rendered in diagnostic messages
 - [`KT-24913`](https://youtrack.jetbrains.com/issue/KT-24913) KotlinFrontEndException with local class in init of generic class
-- [`KT-28940`](https://youtrack.jetbrains.com/issue/KT-28940) Concurrency issue for lazy values with the post-computation phase
 - [`KT-31540`](https://youtrack.jetbrains.com/issue/KT-31540) Change initialization order of default values for tail recursive optimized functions
 
 ### IDE
@@ -81,4 +80,4 @@
 Related [Kotlin Native changelog](https://github.com/JetBrains/kotlin-native/blob/master/CHANGELOG.md#v1360-oct-2019) can be found separately.
 
 ## Previous releases
-This release also includes the fixes and improvements from the [previous EAP release](https://github.com/JetBrains/kotlin/releases/tag/v1.3.60-eap-23).
+This release also includes the fixes and improvements from the [previous EAP release](https://github.com/JetBrains/kotlin/releases/tag/v1.3.60-eap-76).
