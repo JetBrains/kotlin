@@ -901,7 +901,7 @@ class MethodInliner(
 
             var cur: AbstractInsnNode? = node.instructions.first
             while (cur != null) {
-                if (cur is VarInsnNode && cur.opcode == Opcodes.ALOAD && map.contains(cur.`var`)) {
+                if (cur is VarInsnNode && cur.opcode in Opcodes.ILOAD..Opcodes.ALOAD && map.contains(cur.`var`)) {
                     val varIndex = cur.`var`
                     val capturedParamDesc = map[varIndex]!!
 
