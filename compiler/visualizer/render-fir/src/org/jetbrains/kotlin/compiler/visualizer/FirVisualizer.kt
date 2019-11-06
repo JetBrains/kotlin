@@ -334,6 +334,10 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitProperty(property: FirProperty, data: StringBuilder) {
+            if (property.isLocal) {
+                visitVariable(property, data)
+                return
+            }
             data.append(property.returnTypeRef.render())
         }
 
@@ -505,6 +509,16 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 id = id.substring(1)
             }
 
+            fun renderVariable(variable: FirVariable<*>) {
+                if (variable !is FirValueParameter) {
+                    if (variable.isVar) data.append("var ") else if (variable.isVal) data.append("val ")
+                }
+                data.append(id)
+
+                data.append(": ")
+                variable.returnTypeRef.accept(this, data)
+            }
+
             when (symbol) {
                 is FirNamedFunctionSymbol -> {
                     val callableName = symbol.callableId.callableName
@@ -520,28 +534,26 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                     }
                 }
                 is FirPropertySymbol -> {
-                    data.append(if (symbol.fir.isVar) "var" else "val").append(" ")
-                    renderListInTriangles(symbol.fir.typeParameters, data, withSpace = true)
+                    if (symbol.fir.isLocal) {
+                        renderVariable(symbol.fir)
+                    } else {
+                        data.append(if (symbol.fir.isVar) "var" else "val").append(" ")
+                        renderListInTriangles(symbol.fir.typeParameters, data, withSpace = true)
 
-                    val receiver = symbol.fir.receiverTypeRef?.render()
-                    if (receiver != null) {
-                        data.append(receiver).append(".")
-                    } else if (id != symbol.callableId.callableName.asString()) {
-                        data.append("($id)").append(".")
+                        val receiver = symbol.fir.receiverTypeRef?.render()
+                        if (receiver != null) {
+                            data.append(receiver).append(".")
+                        } else if (id != symbol.callableId.callableName.asString()) {
+                            data.append("($id)").append(".")
+                        }
+
+                        data.append(symbol.callableId.callableName).append(": ")
+                        symbol.fir.returnTypeRef.accept(this, data)
                     }
 
-                    data.append(symbol.callableId.callableName).append(": ")
-                    symbol.fir.returnTypeRef.accept(this, data)
                 }
                 is FirVariableSymbol<*> -> {
-                    if (symbol.fir !is FirValueParameter) {
-                        if (symbol.fir.isVar) data.append("var ") else if (symbol.fir.isVal) data.append("val ")
-                    }
-                    data.append(id)
-
-                    data.append(": ")
-                    symbol.fir.returnTypeRef.accept(this, data)
-                }
+                    renderVariable(symbol.fir)                }
                 is FirConstructorSymbol -> {
                     data.append("constructor ")
                     val packageName = symbol.callableId.className
