@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.task.ui;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.ide.util.treeView.NodeDescriptor;
@@ -41,7 +42,6 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.SwingHelper;
-import icons.ExternalSystemIcons;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -476,7 +476,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
     @Override
     protected void update(@NotNull PresentationData presentation) {
       super.update(presentation);
-      presentation.setIcon(ExternalSystemIcons.TaskGroup);
+      presentation.setIcon(AllIcons.Nodes.ConfigFolder);
     }
 
     @Override
@@ -506,7 +506,7 @@ public class ConfigureTasksActivationDialog extends DialogWrapper {
     @Override
     protected void update(@NotNull PresentationData presentation) {
       super.update(presentation);
-      presentation.setIcon(ExternalSystemIcons.TaskGroup);
+      presentation.setIcon(AllIcons.Nodes.ConfigFolder);
     }
 
     @Override

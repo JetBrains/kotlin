@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.view;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.task.TaskData;
@@ -8,7 +9,6 @@ import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.MultiMap;
-import icons.ExternalSystemIcons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class TasksNode extends ExternalSystemNode<Object> {
   @Override
   protected void update(@NotNull PresentationData presentation) {
     super.update(presentation);
-    presentation.setIcon(ExternalSystemIcons.TaskGroup);
+    presentation.setIcon(AllIcons.Nodes.ConfigFolder);
   }
 
   @Override
@@ -67,7 +67,7 @@ public class TasksNode extends ExternalSystemNode<Object> {
           @Override
           protected void update(@NotNull PresentationData presentation) {
             super.update(presentation);
-            presentation.setIcon(ExternalSystemIcons.TaskGroup);
+            presentation.setIcon(AllIcons.Nodes.ConfigFolder);
           }
 
           @Override

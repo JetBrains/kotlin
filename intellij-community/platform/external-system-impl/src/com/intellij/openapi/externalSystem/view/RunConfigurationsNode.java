@@ -3,6 +3,7 @@ package com.intellij.openapi.externalSystem.view;
 
 import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
+import com.intellij.icons.AllIcons;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.openapi.externalSystem.model.project.ModuleData;
 import com.intellij.openapi.externalSystem.service.execution.AbstractExternalSystemTaskConfigurationType;
@@ -11,7 +12,6 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.util.PathUtil;
 import gnu.trove.THashSet;
-import icons.ExternalSystemIcons;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class RunConfigurationsNode extends ExternalSystemNode<Void> {
   @Override
   protected void update(@NotNull PresentationData presentation) {
     super.update(presentation);
-    presentation.setIcon(ExternalSystemIcons.TaskGroup);
+    presentation.setIcon(AllIcons.Nodes.ConfigFolder);
   }
 
   @Override
