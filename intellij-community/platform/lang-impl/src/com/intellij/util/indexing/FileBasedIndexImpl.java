@@ -7,7 +7,6 @@ import com.intellij.diagnostic.Activity;
 import com.intellij.diagnostic.StartUpMeasurer;
 import com.intellij.history.LocalHistory;
 import com.intellij.ide.AppLifecycleListener;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.startup.ServiceNotReadyException;
 import com.intellij.lang.ASTNode;
 import com.intellij.notification.NotificationDisplayType;
@@ -29,7 +28,6 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
-import com.intellij.openapi.progress.util.ProgressIndicatorUtils;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.CollectingContentIterator;
 import com.intellij.openapi.roots.ContentIterator;
@@ -103,6 +101,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import static com.intellij.serviceContainer.PlatformComponentManagerImplKt.handleComponentError;
 
 /**
  * @author Eugene Zhuravlev
@@ -2489,7 +2489,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
             throw io;
           }
           catch (Throwable t) {
-            PluginManager.handleComponentError(t, extension.getClass().getName(), null);
+            handleComponentError(t, extension.getClass().getName(), null);
           }
         });
       }
