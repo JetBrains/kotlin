@@ -5,14 +5,14 @@
 
 package org.jetbrains.konan.resolve
 
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SimpleModificationTracker
 
 class KtModificationCount {
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): KtModificationCount = ServiceManager.getService(project, KtModificationCount::class.java)
+        fun getInstance(project: Project): KtModificationCount = project.service()
     }
 
     private val myOutOfCodeBlockModificationTracker = SimpleModificationTracker()

@@ -6,7 +6,7 @@
 package org.jetbrains.konan.resolve.konan
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
@@ -14,35 +14,27 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.psi.impl.PsiTreeChangeEventImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
-import com.intellij.util.containers.ContainerUtil
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTablesCache
 import org.jetbrains.konan.resolve.KtModificationCount
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener.Companion.getInsideCodeBlockModificationScope
 import org.jetbrains.kotlin.psi.KtFile
 
-class KonanBridgeFileManager(
-    private val modificationCount: KtModificationCount,
-    private val project: Project,
-    private val fileSymbolTablesCache: FileSymbolTablesCache,
-    psiManager: PsiManager
-) {
-
+class KonanBridgeFileManager(private val project: Project) {
     private val myLock = Object()
 
     private var myStamp: Long = -1
     private var myActualFiles: MutableMap<KonanTarget, KonanBridgeVirtualFile>? = null
 
     init {
-        (psiManager as? PsiManagerImpl)?.addTreeChangePreprocessor(ModificationListener())
+        (PsiManager.getInstance(project) as? PsiManagerImpl)?.addTreeChangePreprocessor(ModificationListener())
     }
 
     fun forTarget(target: KonanTarget, name: String): KonanBridgeVirtualFile {
+        val modificationStamp = KtModificationCount.getInstance(project).get()
         synchronized(myLock) {
-            val modificationStamp = modificationCount.get()
-
             val map = if (myActualFiles == null || myStamp < modificationStamp) {
-                val map = ContainerUtil.newHashMap<KonanTarget, KonanBridgeVirtualFile>()
+                val map = hashMapOf<KonanTarget, KonanBridgeVirtualFile>()
                 myActualFiles = map
                 myStamp = modificationStamp
                 map
@@ -60,9 +52,7 @@ class KonanBridgeFileManager(
 
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): KonanBridgeFileManager {
-            return ServiceManager.getService(project, KonanBridgeFileManager::class.java)
-        }
+        fun getInstance(project: Project): KonanBridgeFileManager = project.service()
     }
 
     inner class ModificationListener : PsiTreeChangePreprocessor {
@@ -117,10 +107,10 @@ class KonanBridgeFileManager(
 
         private fun processChange(parent: PsiElement?) {
             ApplicationManager.getApplication().assertIsDispatchThread()
-            if (isOutOfCodeBlockChange(parent)) {
-                val dirtyFiles = myActualFiles?.values as? Collection<VirtualFile> ?: return
-                fileSymbolTablesCache.invalidateDirtyIncludeFiles(dirtyFiles)
-            }
+            if (!isOutOfCodeBlockChange(parent)) return
+
+            val dirtyFiles = synchronized(myLock) { myActualFiles?.values } ?: return
+            FileSymbolTablesCache.getInstance(project).invalidateDirtyIncludeFiles(dirtyFiles as Collection<VirtualFile>)
         }
 
         private fun isOutOfCodeBlockChange(parent: PsiElement?): Boolean =

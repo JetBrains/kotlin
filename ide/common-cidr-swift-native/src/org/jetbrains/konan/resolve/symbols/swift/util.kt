@@ -11,7 +11,6 @@ import com.jetbrains.swift.symbols.SwiftDeclarationSpecifiers
 import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import com.jetbrains.swift.symbols.impl.SwiftAttributesInfoImpl
-import com.jetbrains.swift.symbols.swiftoc.SwiftApinotes
 import com.jetbrains.swift.symbols.swiftoc.SwiftGlobalApiNotes
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import java.util.*
