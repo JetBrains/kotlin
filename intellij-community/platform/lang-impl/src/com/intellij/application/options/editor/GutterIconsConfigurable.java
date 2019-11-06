@@ -2,7 +2,6 @@
 package com.intellij.application.options.editor;
 
 import com.intellij.codeInsight.daemon.*;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.lang.LanguageExtensionPoint;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -173,7 +172,7 @@ public class GutterIconsConfigurable implements SearchableConfigurable, Configur
   }
 
   private static String getPluginDisplayName(PluginDescriptor pluginDescriptor) {
-    final String name = ((IdeaPluginDescriptor)pluginDescriptor).getName();
+    final String name = pluginDescriptor.getName();
     return "IDEA CORE".equals(name) ? "Common" : name;
   }
 
@@ -199,7 +198,7 @@ public class GutterIconsConfigurable implements SearchableConfigurable, Configur
         checkBox.setBorder(null);
 
         PluginDescriptor pluginDescriptor = myFirstDescriptors.get(descriptor);
-        if (pluginDescriptor instanceof IdeaPluginDescriptor) {
+        if (pluginDescriptor != null) {
           SeparatorWithText separator = new SeparatorWithText();
           String name = getPluginDisplayName(pluginDescriptor);
           separator.setCaption(name);

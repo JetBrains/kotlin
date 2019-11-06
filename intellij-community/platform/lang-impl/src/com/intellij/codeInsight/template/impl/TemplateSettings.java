@@ -4,18 +4,14 @@ package com.intellij.codeInsight.template.impl;
 import com.intellij.AbstractBundle;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ex.DecodeDefaultsUtil;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.extensions.ExtensionPointListener;
-import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.options.BaseSchemeProcessor;
 import com.intellij.openapi.options.SchemeManager;
 import com.intellij.openapi.options.SchemeManagerFactory;
@@ -479,7 +475,7 @@ public final class TemplateSettings implements PersistentStateComponent<Template
         if (file == null) continue;
         ClassLoader pluginClassLoader = ep.getPluginDescriptor().getPluginClassLoader();
         readDefTemplate(pluginClassLoader, file, !ep.getHidden(), pluginClassLoader,
-                        PluginInfoDetectorKt.getPluginInfoByDescriptor((IdeaPluginDescriptor)ep.getPluginDescriptor()));
+                        PluginInfoDetectorKt.getPluginInfoByDescriptor(ep.getPluginDescriptor()));
       }
     }
     catch (ProcessCanceledException e) {

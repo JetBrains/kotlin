@@ -8,7 +8,6 @@ import com.intellij.configurationStore.schemeManager.SchemeManagerFactoryBase
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.ImportSettingsFilenameFilter
 import com.intellij.ide.actions.RevealFileAction
-import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
 import com.intellij.openapi.actionSystem.AnAction
@@ -267,7 +266,7 @@ private fun getComponentPresentableName(state: State, aClass: Class<*>, pluginDe
   }
 
   var resourceBundleName: String?
-  if (pluginDescriptor is IdeaPluginDescriptor && PluginManagerCore.CORE_ID != pluginDescriptor.pluginId) {
+  if (pluginDescriptor != null && PluginManagerCore.CORE_ID != pluginDescriptor.pluginId) {
     resourceBundleName = pluginDescriptor.resourceBundleBaseName
     if (resourceBundleName == null) {
       if (pluginDescriptor.vendor == "JetBrains") {

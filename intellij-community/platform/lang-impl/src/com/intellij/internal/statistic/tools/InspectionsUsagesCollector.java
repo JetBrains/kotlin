@@ -4,7 +4,6 @@ package com.intellij.internal.statistic.tools;
 import com.intellij.codeInspection.InspectionEP;
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.codeInspection.ex.ScopeToolState;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.internal.statistic.beans.MetricEvent;
 import com.intellij.internal.statistic.beans.MetricEventFactoryKt;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
@@ -61,7 +60,7 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
 
   @NotNull
   private static MetricEvent create(@NotNull ScopeToolState state, boolean enabled) {
-    final InspectionToolWrapper tool = state.getTool();
+    InspectionToolWrapper<?, ?> tool = state.getTool();
     final FeatureUsageData data = new FeatureUsageData().addData("enabled", enabled);
     final String language = tool.getLanguage();
     if (StringUtil.isNotEmpty(language)) {
@@ -70,7 +69,7 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
 
     InspectionEP extension = tool.getExtension();
     PluginDescriptor pluginDescriptor = extension == null ? null : extension.getPluginDescriptor();
-    PluginInfo info = pluginDescriptor instanceof IdeaPluginDescriptor ? PluginInfoDetectorKt.getPluginInfoByDescriptor((IdeaPluginDescriptor)pluginDescriptor) : null;
+    PluginInfo info = pluginDescriptor != null ? PluginInfoDetectorKt.getPluginInfoByDescriptor(pluginDescriptor) : null;
     if (info != null) {
       data.addPluginInfo(info);
     }
