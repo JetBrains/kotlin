@@ -33,6 +33,7 @@ void Kotlin_io_Console_print(KString message) {
   // TODO: system stdout must be aware about UTF-8.
   const KChar* utf16 = CharArrayAddressOfElementAt(message, 0);
   KStdString utf8;
+  utf8.reserve(message->count_);
   // Replace incorrect sequences with a default codepoint (see utf8::with_replacement::default_replacement)
   utf8::with_replacement::utf16to8(utf16, utf16 + message->count_, back_inserter(utf8));
   konan::consoleWriteUtf8(utf8.c_str(), utf8.size());

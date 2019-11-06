@@ -53,6 +53,7 @@ OBJ_GETTER(unsafeUtf16ToUtf8Impl, KString thiz, KInt start, KInt size) {
   RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
   const KChar* utf16 = CharArrayAddressOfElementAt(thiz, start);
   KStdString utf8;
+  utf8.reserve(size);
   conversion(utf16, utf16 + size, back_inserter(utf8));
   ArrayHeader* result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size(), OBJ_RESULT)->array();
   ::memcpy(ByteArrayAddressOfElementAt(result, 0), utf8.c_str(), utf8.size());
@@ -714,6 +715,7 @@ char* CreateCStringFromString(KConstRef kref) {
   KString kstring = kref->array();
   const KChar* utf16 = CharArrayAddressOfElementAt(kstring, 0);
   KStdString utf8;
+  utf8.reserve(kstring->count_);
   utf8::unchecked::utf16to8(utf16, utf16 + kstring->count_, back_inserter(utf8));
   char* result = reinterpret_cast<char*>(konan::calloc(1, utf8.size() + 1));
   ::memcpy(result, utf8.c_str(), utf8.size());
