@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.utils
 
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.application.Application
 
-interface BackgroundExecutor {
-    fun ensureScheduled(key: VirtualFile, actions: () -> Unit)
-}
+var testScriptConfigurationNotification: Boolean = false
+
+val Application.isUnitTestModeWithoutScriptLoadingNotification: Boolean
+    get() = isUnitTestMode && !testScriptConfigurationNotification

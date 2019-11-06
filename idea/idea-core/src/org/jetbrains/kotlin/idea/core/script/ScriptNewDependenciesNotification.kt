@@ -14,13 +14,10 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.HyperlinkLabel
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
-import java.awt.event.ComponentListener
-import javax.swing.JPanel
 
 fun VirtualFile.removeScriptDependenciesNotificationPanel(project: Project) {
     withSelectedEditor(project) { manager ->
@@ -53,6 +50,20 @@ fun VirtualFile.addScriptDependenciesNotificationPanel(
     }
 }
 
+@TestOnly
+fun VirtualFile.hasSuggestedScriptConfiguration(project: Project): Boolean {
+    return FileEditorManager.getInstance(project).getSelectedEditor(this)?.notificationPanel != null
+}
+
+@TestOnly
+fun VirtualFile.applySuggestedScriptConfiguration(project: Project): Boolean {
+    val notificationPanel = FileEditorManager.getInstance(project).getSelectedEditor(this)?.notificationPanel
+        ?: return false
+    notificationPanel.onClick.invoke()
+
+    return true
+}
+
 private fun VirtualFile.withSelectedEditor(project: Project, f: FileEditor.(FileEditorManager) -> Unit) {
     ApplicationManager.getApplication().invokeLater {
         if (project.isDisposed) return@invokeLater
@@ -67,7 +78,7 @@ private fun VirtualFile.withSelectedEditor(project: Project, f: FileEditor.(File
 private var FileEditor.notificationPanel: NewScriptDependenciesNotificationPanel? by UserDataProperty<FileEditor, NewScriptDependenciesNotificationPanel>(Key.create("script.dependencies.panel"))
 
 private class NewScriptDependenciesNotificationPanel(
-    onClick: () -> Unit,
+    val onClick: () -> Unit,
     val compilationConfigurationResult: ScriptCompilationConfigurationWrapper,
     project: Project
 ) : EditorNotificationPanel() {

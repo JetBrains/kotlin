@@ -265,6 +265,10 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         if (script == null) error("Test file with script couldn't be found in test project")
 
         configureByExistingFile(script)
+        loadScriptConfigurationSynchronously(script)
+    }
+
+    protected open fun loadScriptConfigurationSynchronously(script: VirtualFile) {
         updateScriptDependenciesSynchronously(myFile, project)
 
         VfsUtil.markDirtyAndRefresh(false, true, true, project.baseDir)

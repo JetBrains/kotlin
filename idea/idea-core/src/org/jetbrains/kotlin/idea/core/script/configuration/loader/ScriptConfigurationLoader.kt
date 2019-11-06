@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
  *
  * @see [org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManager] for more details.
  */
-internal interface ScriptConfigurationLoader {
+interface ScriptConfigurationLoader {
     fun shouldRunInBackground(scriptDefinition: ScriptDefinition): Boolean = false
 
     /**
