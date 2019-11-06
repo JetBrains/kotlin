@@ -550,7 +550,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
             LLVMBuildExtractValue(builder, aggregate, index, name)!!
 
     fun gxxLandingpad(numClauses: Int, name: String = ""): LLVMValueRef {
-        val personalityFunction = LLVMConstBitCast(context.llvm.gxxPersonalityFunction, int8TypePtr)
+        val personalityFunction = context.llvm.gxxPersonalityFunction
 
         // Type of `landingpad` instruction result (depends on personality function):
         val landingpadType = structType(int8TypePtr, int32Type)
