@@ -63,8 +63,8 @@ internal sealed class ForLoopHeader(
     /** Statement used to increment the induction variable. */
     fun incrementInductionVariable(builder: DeclarationIrBuilder): IrStatement = with(builder) {
         // inductionVariable = inductionVariable + step
-        val plusFun = inductionVariable.type.getClass()!!.functions.first {
-            it.name.asString() == "plus" &&
+        val plusFun = inductionVariable.type.getClass()!!.functions.single {
+            it.name == OperatorNameConventions.PLUS &&
                     it.valueParameters.size == 1 &&
                     it.valueParameters[0].type == step.type
         }

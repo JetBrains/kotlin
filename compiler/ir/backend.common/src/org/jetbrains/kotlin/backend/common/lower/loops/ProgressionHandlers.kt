@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.absoluteValue
 
 /** Builds a [HeaderInfo] for progressions built using the `rangeTo` function. */
@@ -31,7 +32,7 @@ internal class RangeToHandler(private val context: CommonBackendContext, private
 
     override val matcher = SimpleCalleeMatcher {
         dispatchReceiver { it != null && it.type in progressionElementTypes }
-        fqName { it.pathSegments().last() == Name.identifier("rangeTo") }
+        fqName { it.pathSegments().last() == OperatorNameConventions.RANGE_TO }
         parameterCount { it == 1 }
         parameter(0) { it.type in progressionElementTypes }
     }
@@ -649,7 +650,11 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
         get() = getClass()!!.getPropertyGetter("size")!!.owner
 
     override val IrType.getFunction
-        get() = getClass()!!.functions.first { it.name.asString() == "get" }
+        get() = getClass()!!.functions.single {
+            it.name == OperatorNameConventions.GET &&
+                    it.valueParameters.size == 1 &&
+                    it.valueParameters[0].type.isInt()
+        }
 }
 
 /** Builds a [HeaderInfo] for iteration over characters in a [String]. */
@@ -660,7 +665,11 @@ internal class StringIterationHandler(context: CommonBackendContext) : IndexedGe
         get() = getClass()!!.getPropertyGetter("length")!!.owner
 
     override val IrType.getFunction
-        get() = getClass()!!.functions.first { it.name.asString() == "get" }
+        get() = getClass()!!.functions.single {
+            it.name == OperatorNameConventions.GET &&
+                    it.valueParameters.size == 1 &&
+                    it.valueParameters[0].type.isInt()
+        }
 }
 
 /**
@@ -679,6 +688,9 @@ internal class CharSequenceIterationHandler(context: CommonBackendContext) : Ind
         get() = getClass()?.getPropertyGetter("length")?.owner ?: context.ir.symbols.charSequence.getPropertyGetter("length")!!.owner
 
     override val IrType.getFunction
-        get() = getClass()?.functions?.first { it.name.asString() == "get" }
-            ?: context.ir.symbols.charSequence.getSimpleFunction("get")!!.owner
+        get() = getClass()?.functions?.single {
+            it.name == OperatorNameConventions.GET &&
+                    it.valueParameters.size == 1 &&
+                    it.valueParameters[0].type.isInt()
+        } ?: context.ir.symbols.charSequence.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
 }

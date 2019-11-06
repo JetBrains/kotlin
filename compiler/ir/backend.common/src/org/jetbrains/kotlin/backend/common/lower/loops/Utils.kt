@@ -25,7 +25,7 @@ internal fun IrExpression.castIfNecessary(targetType: IrType, numberCastFunction
     return if (type == targetType || type.isNothing()) {
         this
     } else {
-        val castFun = type.getClass()!!.functions.first { it.name == numberCastFunctionName }
+        val castFun = type.getClass()!!.functions.single { it.name == numberCastFunctionName && it.valueParameters.isEmpty() }
         IrCallImpl(startOffset, endOffset, castFun.returnType, castFun.symbol)
             .apply { dispatchReceiver = this@castIfNecessary }
     }
@@ -40,7 +40,10 @@ internal fun IrExpression.negate(): IrExpression {
             // This expression's type could be Nothing from an exception throw, in which case the unary minus function will not exist.
             if (type.isNothing()) return this
 
-            val unaryMinusFun = type.getClass()!!.functions.first { it.name == OperatorNameConventions.UNARY_MINUS }
+            val unaryMinusFun = type.getClass()!!.functions.single {
+                it.name == OperatorNameConventions.UNARY_MINUS &&
+                        it.valueParameters.isEmpty()
+            }
             IrCallImpl(startOffset, endOffset, type, unaryMinusFun.symbol, unaryMinusFun.descriptor).apply {
                 dispatchReceiver = this@negate
             }
@@ -55,7 +58,10 @@ internal fun IrExpression.decrement(): IrExpression {
         is Long -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, thisValue - 1)
         is Char -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, thisValue - 1)
         else -> {
-            val decFun = type.getClass()!!.functions.first { it.name == OperatorNameConventions.DEC }
+            val decFun = type.getClass()!!.functions.single {
+                it.name == OperatorNameConventions.DEC &&
+                        it.valueParameters.isEmpty()
+            }
             IrCallImpl(startOffset, endOffset, type, decFun.symbol, decFun.descriptor).apply {
                 dispatchReceiver = this@decrement
             }
