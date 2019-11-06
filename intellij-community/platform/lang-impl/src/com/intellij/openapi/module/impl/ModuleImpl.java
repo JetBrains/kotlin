@@ -145,10 +145,6 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
     }
   }
 
-  public void updatePath(@NotNull String newPath) {
-    System.out.println("here");
-  }
-
   @Override
   @NotNull
   public String getModuleFilePath() {
