@@ -1,3 +1,5 @@
+// FIR_IGNORE
+
 interface Any
 
 //                                            T?
