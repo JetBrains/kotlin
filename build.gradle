@@ -55,6 +55,10 @@ defaultTasks 'clean', 'dist'
 
 convention.plugins.platformInfo = PlatformInfo
 
+if (isMac()) {
+    checkXcodeVersion(project)
+}
+
 ext {
     distDir = file('dist')
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot

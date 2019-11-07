@@ -220,6 +220,9 @@ class DependencyProcessor(dependenciesRoot: File,
 
         val defaultDependencyCacheDir: File
             get() = localKonanDir.resolve("cache")
+
+        val isInternalSeverAvailable: Boolean
+            get() = InternalServer.isAvailable
     }
 
     private val resolvedDependencies = dependencyToCandidates.map { (dependency, candidates) ->
@@ -278,7 +281,7 @@ class DependencyProcessor(dependenciesRoot: File,
 
 internal object InternalServer {
     private val host = "repo.labs.intellij.net"
-    val url = "http://$host/kotlin-native"
+    val url = "https://$host/kotlin-native"
 
     private val internalDomain = "labs.intellij.net"
 
