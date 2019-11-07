@@ -1,11 +1,11 @@
 FILE: lambda.kt
-    public final fun foo(block: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun foo(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun bar(block: R|kotlin/Function0<kotlin/String>|): R|kotlin/Unit| {
+    public final fun bar(block: R|() -> kotlin/String|): R|kotlin/Unit| {
     }
-    public final fun itIs(block: R|kotlin/Function1<kotlin/String, kotlin/String>|): R|kotlin/Unit| {
+    public final fun itIs(block: R|(kotlin/String) -> kotlin/String|): R|kotlin/Unit| {
     }
-    public final fun multipleArgs(block: R|kotlin/Function2<kotlin/String, kotlin/String, kotlin/String>|): R|kotlin/Unit| {
+    public final fun multipleArgs(block: R|(kotlin/String, kotlin/String) -> kotlin/String|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {

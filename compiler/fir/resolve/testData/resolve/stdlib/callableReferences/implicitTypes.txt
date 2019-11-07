@@ -1,8 +1,8 @@
 FILE: implicitTypes.kt
-    public final fun <T, R> use(x: R|kotlin/Function1<T, R>|): R|kotlin/Function1<T, R>| {
+    public final fun <T, R> use(x: R|(T) -> R|): R|(T) -> R| {
         ^use R|<local>/x|
     }
-    public final fun foo(): R|kotlin/Function1<kotlin/String, kotlin/Int>| {
+    public final fun foo(): R|(kotlin/String) -> kotlin/Int| {
         ^foo R|/use|<R|kotlin/String|, R|kotlin/Int|>(::R|/bar|)
     }
     public final fun bar(x: R|kotlin/String|): R|kotlin/Int| {

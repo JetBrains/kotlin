@@ -1,9 +1,9 @@
 FILE: lambda.kt
-    public final fun foo(f: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun foo(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun bar(x: R|kotlin/Int|, f: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun bar(x: R|kotlin/Int|, f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
     }
-    public final fun baz(f: R|kotlin/Function0<kotlin/Unit>|, other: R|kotlin/Boolean| = Boolean(true)): R|kotlin/Unit| {
+    public final fun baz(f: R|() -> kotlin/Unit|, other: R|kotlin/Boolean| = Boolean(true)): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
         R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {

@@ -21,14 +21,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-fun FirTypeRef.isExtensionFunctionType(): Boolean {
-    return annotations.any {
-        (it.annotationTypeRef as? FirResolvedTypeRef)?.let {
-            it.type.toString() == "kotlin/ExtensionFunctionType"
-        } == true
-    }
-}
-
 fun Candidate.preprocessLambdaArgument(
     csBuilder: ConstraintSystemBuilder,
     argument: FirAnonymousFunction,
@@ -88,17 +80,11 @@ private val ConeKotlinType.isSuspendFunctionType: Boolean
     }
 
 private fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef): ConeKotlinType? {
-    if (isFunctionalTypeWithReceiver(expectedTypeRef)) {
+    if (expectedTypeRef.isExtensionFunctionType()) {
         return (this.typeArguments.first() as ConeTypedProjection).type
     }
     return null
 }
-
-private fun isFunctionalTypeWithReceiver(typeRef: FirTypeRef) =
-    typeRef.annotations.any {
-        val coneTypeSafe = it.annotationTypeRef.coneTypeSafe<ConeClassType>() ?: return@any false
-        coneTypeSafe.lookupTag.classId.asString() == "kotlin/ExtensionFunctionType"
-    }
 
 val ConeKotlinType.returnType: ConeKotlinType?
     get() {

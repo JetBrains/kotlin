@@ -41,13 +41,13 @@ FILE: main.kt
         }
 
     }
-    public final fun foo1(x: R|kotlin/Function1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo1(x: R|(kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
     }
-    public final fun foo2(x: R|kotlin/Function2<KotlinClass, kotlin/CharSequence, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo2(x: R|(KotlinClass, kotlin/CharSequence) -> kotlin/Int|): R|kotlin/Unit| {
     }
-    public final fun foo3(x: R|kotlin/Function2<KotlinClass, kotlin/CharSequence, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo3(x: R|(KotlinClass, kotlin/CharSequence) -> kotlin/Int|): R|kotlin/Unit| {
     }
-    public final fun foo3(x: R|kotlin/Function1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo3(x: R|(kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo1|(Q|KotlinClass|::R|/KotlinClass.Companion.baz|)

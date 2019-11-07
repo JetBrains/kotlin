@@ -12,7 +12,7 @@ FILE: applicableCallableReferenceFromDistantScope.kt
         public final fun foo(b: R|kotlin/Boolean|): R|kotlin/Unit| {
         }
 
-        public final fun <T> bar(f: R|kotlin/Function1<T, kotlin/Unit>|): R|T| {
+        public final fun <T> bar(f: R|(T) -> kotlin/Unit|): R|T| {
             ^bar R|kotlin/TODO|()
         }
 

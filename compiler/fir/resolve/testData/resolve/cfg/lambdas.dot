@@ -110,7 +110,7 @@ digraph lambdas_kt {
         subgraph cluster_13 {
           color=blue
           36 [label="Enter block"];
-          37 [label="Variable declaration: lval lambda: R|kotlin/Function0<kotlin/Int>|"];
+          37 [label="Variable declaration: lval lambda: R|() -> kotlin/Int|"];
           38 [label="Exit block"];
         }
         39 [label="Exit when branch result"];

@@ -3,23 +3,23 @@ FILE: cast.kt
         public get(): R|kotlin/Int|
     public final val y: R|kotlin/Any| = (Int(2) as R|kotlin/Any|)
         public get(): R|kotlin/Any|
-    public final val f: R|kotlin/Function0<kotlin/Any>| = fun <anonymous>(): R|kotlin/Any| {
+    public final val f: R|() -> kotlin/Any| = fun <anonymous>(): R|kotlin/Any| {
         ^ (Int(3) as R|kotlin/Any|)
     }
 
-        public get(): R|kotlin/Function0<kotlin/Any>|
-    public final val g: R|kotlin/Function0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| {
+        public get(): R|() -> kotlin/Any|
+    public final val g: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| {
         Unit
     }
 
-        public get(): R|kotlin/Function0<kotlin/Unit>|
-    public final val h: R|kotlin/Function1<kotlin/String, kotlin/Boolean>| = fun <anonymous>(_: R|kotlin/String|): R|kotlin/Boolean| {
+        public get(): R|() -> kotlin/Unit|
+    public final val h: R|(kotlin/String) -> kotlin/Boolean| = fun <anonymous>(_: R|kotlin/String|): R|kotlin/Boolean| {
         Boolean(false)
     }
 
-        public get(): R|kotlin/Function1<kotlin/String, kotlin/Boolean>|
-    public final val hError: R|kotlin/Function1<class error: No type for parameter, kotlin/Boolean>| = fun <anonymous>(_: R|class error: No type for parameter|): R|kotlin/Boolean| {
+        public get(): R|(kotlin/String) -> kotlin/Boolean|
+    public final val hError: R|(class error: No type for parameter) -> kotlin/Boolean| = fun <anonymous>(_: R|class error: No type for parameter|): R|kotlin/Boolean| {
         Boolean(true)
     }
 
-        public get(): R|kotlin/Function1<class error: No type for parameter, kotlin/Boolean>|
+        public get(): R|(class error: No type for parameter) -> kotlin/Boolean|

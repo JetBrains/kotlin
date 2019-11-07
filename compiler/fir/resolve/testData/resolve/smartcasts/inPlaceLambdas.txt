@@ -7,7 +7,7 @@ FILE: inPlaceLambdas.kt
         public abstract fun bar(): R|kotlin/Unit|
 
     }
-    public final inline fun run(block: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+    public final inline fun run(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun test_1(x: R|kotlin/Any?|): R|kotlin/Unit| {

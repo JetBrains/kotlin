@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -736,12 +738,26 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-        resolvedTypeRef.annotations.renderAnnotations()
+        val kind = resolvedTypeRef.functionTypeKind
+        val annotations = if (kind.withPrettyRender()) {
+            resolvedTypeRef.annotations.dropExtensionFunctionAnnotation()
+        } else {
+            resolvedTypeRef.annotations
+        }
+        annotations.renderAnnotations()
         print("R|")
         val coneType = resolvedTypeRef.type
-        print(coneType.render())
+        print(coneType.renderFunctionType(kind, resolvedTypeRef.isExtensionFunctionType()))
         print("|")
     }
+
+    private val FirResolvedTypeRef.functionTypeKind: FunctionClassDescriptor.Kind?
+        get() {
+            val classId = (type as? ConeClassLikeType)?.lookupTag?.classId ?: return null
+            return BuiltInFictitiousFunctionClassFactory.getFunctionalClassKind(
+                classId.shortClassName.asString(), classId.packageFqName
+            )
+        }
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {
         userTypeRef.annotations.renderAnnotations()

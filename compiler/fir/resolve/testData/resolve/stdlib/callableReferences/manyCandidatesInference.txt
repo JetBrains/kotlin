@@ -1,5 +1,5 @@
 FILE: manyCandidatesInference.kt
-    public final fun <T> foo(x: R|kotlin/Function0<T>|, y: R|kotlin/Int|): R|kotlin/Unit| {
+    public final fun <T> foo(x: R|() -> T|, y: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun <E> bar(x: R|E|): R|kotlin/Int| {
         ^bar Int(1)
@@ -9,7 +9,7 @@ FILE: manyCandidatesInference.kt
             ^bar Int(1)
         }
 
-        local final fun foo(x: R|kotlin/Function1<kotlin/String, kotlin/Int>|, y: R|kotlin/String|): R|kotlin/Unit| {
+        local final fun foo(x: R|(kotlin/String) -> kotlin/Int|, y: R|kotlin/String|): R|kotlin/Unit| {
         }
 
         R|/foo|<R|kotlin/Int|>(::R|<local>/bar|, Int(1))

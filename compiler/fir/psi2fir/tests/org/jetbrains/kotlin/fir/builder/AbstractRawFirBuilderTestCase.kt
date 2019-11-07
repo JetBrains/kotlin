@@ -172,10 +172,5 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 
 }
 
-private val FirElement.isExtensionFunctionAnnotationCall: Boolean get() = (this as? FirAnnotationCall)?.let {
-    (it.annotationTypeRef as? FirResolvedTypeRef)?.let {
-        (it.type as? ConeClassLikeType)?.let {
-            it.lookupTag.classId.asString() == "kotlin/ExtensionFunctionType"
-        }
-    }
-} == true
+private val FirElement.isExtensionFunctionAnnotationCall: Boolean
+    get() = (this as? FirAnnotationCall)?.isExtensionFunctionAnnotationCall == true

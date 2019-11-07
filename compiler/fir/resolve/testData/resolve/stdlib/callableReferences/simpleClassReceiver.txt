@@ -8,7 +8,7 @@ FILE: simpleClassReceiver.kt
         }
 
     }
-    public final fun foo(x: R|kotlin/Function2<A, kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo(x: R|(A, kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
         R|/foo|(Q|A|::R|/A.bar|)

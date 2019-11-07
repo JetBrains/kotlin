@@ -33,7 +33,7 @@ FILE: callsInPlace.kt
         }
         )
     }
-    public final inline fun myRun(block1: R|kotlin/Function0<kotlin/Unit>|, block2: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+    public final inline fun myRun(block1: R|() -> kotlin/Unit|, block2: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         R|<local>/block1|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         R|<local>/block2|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
@@ -55,7 +55,7 @@ FILE: callsInPlace.kt
         }
         )
     }
-    public final fun myDummyRun(block: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun myDummyRun(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun test_8(): R|kotlin/Unit| {

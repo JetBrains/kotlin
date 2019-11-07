@@ -1,7 +1,7 @@
 FILE: inferenceFromExpectedType.kt
-    public final fun foo(x: R|kotlin/Function1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo(x: R|(kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
     }
-    public final fun foo2(x: R|kotlin/Function2<A, kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    public final fun foo2(x: R|(A, kotlin/String) -> kotlin/Int|): R|kotlin/Unit| {
     }
     public final class A : R|kotlin/Any| {
         public constructor(): R|A| {

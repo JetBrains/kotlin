@@ -1,6 +1,6 @@
 FILE: propertyFromParameter.kt
     public final class Bar : R|kotlin/Any| {
-        public constructor(name: R|kotlin/Function0<kotlin/String>|): R|Bar| {
+        public constructor(name: R|() -> kotlin/String|): R|Bar| {
             super<R|kotlin/Any|>()
         }
 

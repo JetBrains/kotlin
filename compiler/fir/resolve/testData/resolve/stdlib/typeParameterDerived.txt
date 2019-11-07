@@ -1,5 +1,5 @@
 FILE: typeParameterDerived.kt
-    public final inline fun <K, V, VA : R|V|> R|kotlin/collections/MutableMap<K, V>|.getOrPut(key: R|K|, defaultValue: R|kotlin/Function1<K, VA>|, postCompute: R|kotlin/Function1<VA, kotlin/Unit>|): R|V| {
+    public final inline fun <K, V, VA : R|V|> R|kotlin/collections/MutableMap<K, V>|.getOrPut(key: R|K|, defaultValue: R|(K) -> VA|, postCompute: R|(VA) -> kotlin/Unit|): R|V| {
         lval value: R|V| = this@R|kotlin/collections/Map|.R|FakeOverride<kotlin/collections/Map.get: R|V|>|(R|<local>/key|)
         ^getOrPut when () {
             ==(R|<local>/value|, Null(null)) ->  {

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.impl.FirLabelImpl
 import org.jetbrains.kotlin.fir.references.impl.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.EXTENSION_FUNCTION_ANNOTATION
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -1376,7 +1377,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         FirResolvedTypeRefImpl(
             null,
             ConeClassTypeImpl(
-                ConeClassLikeLookupTagImpl(ClassId.fromString("kotlin/ExtensionFunctionType")),
+                ConeClassLikeLookupTagImpl(ClassId.fromString(EXTENSION_FUNCTION_ANNOTATION)),
                 emptyArray(),
                 false
             )

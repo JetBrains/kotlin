@@ -8,7 +8,7 @@ FILE: implicitReceivers.kt
         }
 
     }
-    public final fun <T> R|T|.with(block: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function1<T, kotlin/Unit>|): R|kotlin/Unit| {
+    public final fun <T> R|T|.with(block: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun R|kotlin/Any?|.test_1(): R|kotlin/Unit| {
         when () {

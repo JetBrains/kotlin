@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeProjectionModifier
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.FirDelegatedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -1463,7 +1460,7 @@ class DeclarationsConverter(
         FirResolvedTypeRefImpl(
             null,
             ConeClassTypeImpl(
-                ConeClassLikeLookupTagImpl(ClassId.fromString("kotlin/ExtensionFunctionType")),
+                ConeClassLikeLookupTagImpl(ClassId.fromString(EXTENSION_FUNCTION_ANNOTATION)),
                 emptyArray(),
                 false
             )

@@ -7,10 +7,10 @@ FILE: postponedResolveOfManyCallableReference.kt
     }
     public final fun foo(b: R|B|): R|kotlin/Unit| {
     }
-    public final fun <T> bar1(f: R|kotlin/Function1<T, kotlin/Unit>|): R|T| {
+    public final fun <T> bar1(f: R|(T) -> kotlin/Unit|): R|T| {
         ^bar1 R|kotlin/TODO|()
     }
-    public final fun <T> bar2(f: R|kotlin/Function1<T, kotlin/Unit>|, e: R|T|): R|kotlin/Unit| {
+    public final fun <T> bar2(f: R|(T) -> kotlin/Unit|, e: R|T|): R|kotlin/Unit| {
     }
     public final fun test(a: R|A|, b: R|B|): R|kotlin/Unit| {
         lval expectedType1: R|A| = R|/bar1|<R|A|>(::R|/foo|)
