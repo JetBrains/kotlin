@@ -3,21 +3,22 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.idea.editor
 
 import com.intellij.application.options.CodeStyle
 import com.intellij.testFramework.EditorTestUtil
-import com.intellij.testFramework.LightCodeInsightTestCase
-import com.intellij.testFramework.LightPlatformCodeInsightTestCase
-import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ktCodeStyleSettings
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 
+@Suppress("DEPRECATION")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class TypedHandlerTest : LightCodeInsightTestCase() {
+class TypedHandlerTest : KotlinLightCodeInsightTestCase() {
     private val dollar = '$'
 
     fun testTypeStringTemplateStart() = doTypeTest(
@@ -907,7 +908,7 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
             |fun test() =
             |    <caret>
             """,
-            ENABLE_KOTLIN_OFFICIAL_CODE_STYLE
+            enableKotlinOfficialCodeStyle
         )
     }
 
@@ -925,7 +926,7 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
             |        <caret>
             |}
             """,
-            ENABLE_KOTLIN_OFFICIAL_CODE_STYLE
+            enableKotlinOfficialCodeStyle
         )
     }
 
@@ -939,14 +940,14 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
             |val test =
             |    <caret>
             """,
-            ENABLE_KOTLIN_OFFICIAL_CODE_STYLE
+            enableKotlinOfficialCodeStyle
         )
     }
 
     fun testMoveThroughGT() {
-        LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
-        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')
-        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '>')
+        configureFromFileText("a.kt", "val a: List<Set<Int<caret>>>")
+        EditorTestUtil.performTypingAction(editor_, '>')
+        EditorTestUtil.performTypingAction(editor_, '>')
         checkResultByText("val a: List<Set<Int>><caret>")
     }
 
@@ -955,8 +956,7 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
     }
 
     private fun enableSmartEnterWithTabs(): () -> Unit = {
-        val project = LightPlatformTestCase.getProject()
-        val indentOptions = CodeStyle.getSettings(project).getIndentOptions(KotlinFileType.INSTANCE)
+        val indentOptions = CodeStyle.getSettings(project_).getIndentOptions(KotlinFileType.INSTANCE)
         indentOptions.USE_TAB_CHARACTER = true
         indentOptions.SMART_TABS = true
     }
@@ -971,15 +971,14 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
                 settingsModifier()
             }
 
-            LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", beforeText.trimMargin())
+            configureFromFileText("a.kt", beforeText.trimMargin())
             for (ch in text) {
-                EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), ch)
+                EditorTestUtil.performTypingAction(editor_, ch)
             }
             checkResultByText(afterText.trimMargin())
         } finally {
             if (settingsModifier != null) {
-                val project = LightPlatformTestCase.getProject()
-                CodeStyle.getSettings(project).clearCodeStyleSettings()
+                CodeStyle.getSettings(project_).clearCodeStyleSettings()
             }
         }
     }
@@ -1001,12 +1000,12 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
     }
 
     private fun doLtGtTest(initText: String, shouldCloseBeInsert: Boolean) {
-        LightPlatformCodeInsightTestCase.configureFromFileText("a.kt", initText)
+        configureFromFileText("a.kt", initText)
 
-        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), '<')
+        EditorTestUtil.performTypingAction(editor_, '<')
         checkResultByText(if (shouldCloseBeInsert) initText.replace("<caret>", "<<caret>>") else initText.replace("<caret>", "<<caret>"))
 
-        EditorTestUtil.performTypingAction(LightPlatformCodeInsightTestCase.getEditor(), EditorTestUtil.BACKSPACE_FAKE_CHAR)
+        EditorTestUtil.performTypingAction(editor_, EditorTestUtil.BACKSPACE_FAKE_CHAR)
         checkResultByText(initText)
     }
 
@@ -1014,10 +1013,8 @@ class TypedHandlerTest : LightCodeInsightTestCase() {
         doLtGtTest(initText, true)
     }
 
-    companion object {
-        private val ENABLE_KOTLIN_OFFICIAL_CODE_STYLE: () -> Unit = {
-            val settings = ktCodeStyleSettings(LightPlatformTestCase.getProject())?.all ?: error("No Settings")
-            KotlinStyleGuideCodeStyle.apply(settings)
-        }
+    private val enableKotlinOfficialCodeStyle: () -> Unit = {
+        val settings = ktCodeStyleSettings(project_)?.all ?: error("No Settings")
+        KotlinStyleGuideCodeStyle.apply(settings)
     }
 }
