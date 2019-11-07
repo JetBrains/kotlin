@@ -88,7 +88,7 @@ class JvmBackendContext(
 
     internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     internal val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
-    internal val multifileFacadeMemberToPartMember = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+    internal val multifileFacadeMemberToPartMember = mutableMapOf<IrFunction, IrFunction>()
 
     override var inVerbosePhase: Boolean = false
 

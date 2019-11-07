@@ -112,8 +112,8 @@ class IrSourceCompilerForInline(
         }
 
         if (parent.fileParent.fileEntry is MultifileFacadeFileEntry) {
-            return (codegen.context.multifileFacadeMemberToPartMember[callee.symbol]
-                ?: error("Function from a multi-file facade without the link to the function in the part: ${callee.render()}")).owner
+            return codegen.context.multifileFacadeMemberToPartMember[callee]
+                ?: error("Function from a multi-file facade without the link to the function in the part: ${callee.render()}")
         }
 
         return callee
