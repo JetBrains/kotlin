@@ -448,7 +448,7 @@ class ExpressionsConverter(
             this.calleeReference = when {
                 name != null -> FirSimpleNamedReference(null, name.nameAsSafeName(), null)
                 additionalArgument != null -> {
-                    arguments += additionalArgument!!
+                    explicitReceiver = additionalArgument!!
                     FirSimpleNamedReference(null, OperatorNameConventions.INVOKE, null)
                 }
                 else -> FirErrorNamedReferenceImpl(null, FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax))

@@ -30,7 +30,7 @@ FILE: calls.kt
 
     }
     public? final? fun testInvoke(): Int {
-        ^testInvoke invoke#(My#(Int(13)))
+        ^testInvoke My#(Int(13)).invoke#()
     }
     public? final? fun testQualified(first: My, second: My?): R|kotlin/Unit| {
         println#(first#.x#)

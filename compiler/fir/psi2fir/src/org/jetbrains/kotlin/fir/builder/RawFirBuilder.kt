@@ -1242,7 +1242,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                         null, FirSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
                     )
                     else -> {
-                        arguments += calleeExpression.toFirExpression("Incorrect invoke receiver")
+                        explicitReceiver = calleeExpression.toFirExpression("Incorrect invoke receiver")
                         FirSimpleNamedReference(
                             source, OperatorNameConventions.INVOKE, null
                         )

@@ -1,0 +1,25 @@
+FILE: invoke.kt
+    public final class My : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final operator fun invoke(): R|kotlin/Int| {
+            ^invoke this@R|/My|.R|/My.x|
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+        public final fun copy(): R|My| {
+            ^copy R|/My.My|(this@R|/My|.R|/My.x|)
+        }
+
+    }
+    public final fun testInvoke(): R|kotlin/Int| {
+        ^testInvoke R|/My.My|(Int(13)).R|/My.invoke|()
+    }
