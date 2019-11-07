@@ -60,7 +60,7 @@ import static org.junit.Assume.assumeThat;
 @RunWith(value = Parameterized.class)
 public abstract class AbstractModelBuilderTest {
 
-    public static final Object[][] SUPPORTED_GRADLE_VERSIONS = {{"3.5"}, {"4.9"}};
+    public static final Object[][] SUPPORTED_GRADLE_VERSIONS = {{"4.9"}};
 
     private static final Pattern TEST_METHOD_NAME_PATTERN = Pattern.compile("(.*)\\[(\\d*: with Gradle-.*)\\]");
 

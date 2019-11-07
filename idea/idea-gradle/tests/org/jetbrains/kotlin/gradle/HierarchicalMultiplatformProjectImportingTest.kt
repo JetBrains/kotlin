@@ -20,10 +20,6 @@ import org.junit.Test
 class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
     private fun kotlinVersion() = if (gradleKotlinPluginVersion == MINIMAL_SUPPORTED_VERSION) "1.3.50" else gradleKotlinPluginVersion
 
-    override fun isApplicableTest(): Boolean {
-        return !gradleVersion.startsWith("3.")
-    }
-
     @Before
     fun saveSdksBeforeTest() {
         val kotlinSdks = sdkCreationChecker?.getKotlinSdks() ?: emptyList()

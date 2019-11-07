@@ -36,11 +36,6 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         }
     }
 
-    override fun isApplicableTest(): Boolean {
-        return shouldRunTest(gradleKotlinPluginVersion, gradleVersion)
-    }
-
-
     @Test
     fun testProjectDependency() {
         configureByFiles()

@@ -355,26 +355,6 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("3.5")
-    @Test
-    fun testAddLibraryGSKWithKotlinVersion() {
-        val files = importProjectFromTestData()
-
-        runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
-                val stdLibVersion = KotlinWithGradleConfigurator.getKotlinStdlibVersion(myTestFixture.module)
-                KotlinWithGradleConfigurator.addKotlinLibraryToModule(
-                    myTestFixture.module,
-                    DependencyScope.COMPILE,
-                    object : ExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect", stdLibVersion, stdLibVersion) {
-                        override fun getLibraryClassesRoots() = emptyList<String>()
-                    })
-            }
-
-            checkFiles(files)
-        }
-    }
-
     @Test
     fun testAddTestLibraryGSK() {
         val files = importProjectFromTestData()
@@ -446,20 +426,6 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
 
     @Test
     fun testChangeCoroutinesSupport() {
-        val files = importProjectFromTestData()
-
-        runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
-                KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
-            }
-
-            checkFiles(files)
-        }
-    }
-
-    @TargetVersions("3.5")
-    @Test
-    fun testChangeCoroutinesSupportGSK() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
