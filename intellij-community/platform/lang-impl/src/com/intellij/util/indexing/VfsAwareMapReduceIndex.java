@@ -277,12 +277,14 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   @NotNull
   @Override
   public Map<Key, Value> getIndexedFileData(int fileId) throws StorageException {
-    try {
-      return Collections.unmodifiableMap(ContainerUtil.notNullize(getNullableIndexedData(fileId)));
-    }
-    catch (IOException e) {
-      throw new StorageException(e);
-    }
+    return ConcurrencyUtil.withLock(getReadLock(), () -> {
+      try {
+        return Collections.unmodifiableMap(ContainerUtil.notNullize(getNullableIndexedData(fileId)));
+      }
+      catch (IOException e) {
+        throw new StorageException(e);
+      }
+    });
   }
 
   @Nullable
