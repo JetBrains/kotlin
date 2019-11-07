@@ -115,8 +115,11 @@ public abstract class TemplateLanguageErrorFilter extends HighlightErrorFilter {
     InjectedLanguageManager injectedLanguageManager = InjectedLanguageManager.getInstance(file.getProject());
     PsiElement host = injectedLanguageManager.getInjectionHost(file);
     if (host != null) {
-      TextRange hostRange = injectedLanguageManager.injectedToHost(file, TextRange.create(start, end));
-      return isNearTemplateExpressions(host.getContainingFile(), hostRange.getStartOffset(), hostRange.getEndOffset());
+      start = injectedLanguageManager.injectedToHost(file, start);
+      end = injectedLanguageManager.injectedToHost(file, end);
+      if (start <= end) {
+        return isNearTemplateExpressions(host.getContainingFile(), start, end);
+      }
     }
 
     return false;
