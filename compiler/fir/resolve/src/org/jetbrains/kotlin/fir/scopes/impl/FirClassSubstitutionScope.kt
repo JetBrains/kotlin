@@ -68,6 +68,10 @@ class FirClassSubstitutionScope(
         }
     }
 
+    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> ProcessorAction): ProcessorAction {
+        return useSiteMemberScope.processClassifiersByName(name, processor)
+    }
+
     private val typeCalculator by lazy { ReturnTypeCalculatorWithJump(session, scopeSession) }
 
     private fun ConeKotlinType.substitute(): ConeKotlinType? {

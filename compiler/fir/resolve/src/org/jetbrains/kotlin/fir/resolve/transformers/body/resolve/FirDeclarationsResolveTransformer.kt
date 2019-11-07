@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayT
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirComputingImplicitTypeRef
@@ -229,11 +228,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             if (regularClass.symbol.classId.isLocal) {
                 prepareLocalClassForBodyResolve(regularClass)
             }
-            val companionObject = regularClass.companionObject
-            if (companionObject != null) {
-                topLevelScopes += nestedClassifierScope(companionObject)
-            }
-            topLevelScopes += nestedClassifierScope(regularClass)
 
             val oldConstructorScope = primaryConstructorParametersScope
             val oldContainingClass = containingClass
@@ -258,8 +252,6 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         prepareLocalClassForBodyResolve(anonymousObject)
         return withScopeCleanup(topLevelScopes) {
-            topLevelScopes += nestedClassifierScope(anonymousObject)
-
             val type = anonymousObject.defaultType()
             anonymousObject.resultType = FirResolvedTypeRefImpl(anonymousObject.source, type)
             val result = withLabelAndReceiverType(null, anonymousObject, type) {

@@ -1,0 +1,45 @@
+FILE: companionUsesNested.kt
+    public abstract class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class BaseNested : R|kotlin/Any| {
+            public constructor(): R|Base.BaseNested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public final class DerivedNested : R|kotlin/Any| {
+            public constructor(): R|Derived.DerivedNested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Derived.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val b: R|Base.BaseNested| = R|/Base.BaseNested.BaseNested|()
+                public get(): R|Base.BaseNested|
+
+            public final val d: R|Derived.DerivedNested| = R|/Derived.DerivedNested.DerivedNested|()
+                public get(): R|Derived.DerivedNested|
+
+            public final fun foo(): R|kotlin/Unit| {
+                lval bb: R|Base.BaseNested| = R|/Base.BaseNested.BaseNested|()
+                lval dd: R|Derived.DerivedNested| = R|/Derived.DerivedNested.DerivedNested|()
+            }
+
+        }
+
+    }

@@ -72,6 +72,10 @@ class JavaClassEnhancementScope(
         return super.processFunctionsByName(name, processor)
     }
 
+    override fun processClassifiersByName(name: Name, processor: (FirClassifierSymbol<*>) -> ProcessorAction): ProcessorAction {
+        return useSiteMemberScope.processClassifiersByName(name, processor)
+    }
+
     private fun enhance(
         original: FirCallableSymbol<*>,
         name: Name

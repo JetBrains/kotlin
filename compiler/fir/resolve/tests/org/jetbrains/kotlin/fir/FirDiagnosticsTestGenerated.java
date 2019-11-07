@@ -38,6 +38,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/companion.kt");
     }
 
+    @TestMetadata("companionUsesNested.kt")
+    public void testCompanionUsesNested() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/companionUsesNested.kt");
+    }
+
     @TestMetadata("copy.kt")
     public void testCopy() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/copy.kt");

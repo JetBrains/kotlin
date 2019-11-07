@@ -53,6 +53,7 @@ class ConeOverloadConflictResolver(
             is FirSimpleFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
             is FirVariable<*> -> createFlatSignature(call, declaration)
+            is FirClass<*> -> createFlatSignature(call, declaration)
             else -> error("Not supported: $declaration")
         }
     }
@@ -109,6 +110,19 @@ class ConeOverloadConflictResolver(
             0,
             (variable as? FirProperty)?.isExpect == true,
             false // TODO
+        )
+    }
+
+    private fun createFlatSignature(call: Candidate, klass: FirClass<*>): FlatSignature<Candidate> {
+        return FlatSignature(
+            call,
+            (klass as? FirRegularClass)?.typeParameters?.map { it.symbol }.orEmpty(),
+            valueParameterTypes = emptyList(),
+            hasExtensionReceiver = false,
+            hasVarargs = false,
+            numDefaults = 0,
+            isExpect = (klass as? FirRegularClass)?.isExpect == true,
+            isSyntheticMember = false
         )
     }
 

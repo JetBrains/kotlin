@@ -117,7 +117,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             qualifiedResolver
         )
         val typeResolverTransformer = FirSpecificTypeResolverTransformer(
-            FirTypeResolveScopeForBodyResolve(topLevelScopes, localScopes), session
+            FirTypeResolveScopeForBodyResolve(topLevelScopes, implicitReceiverStack, localScopes), session
         )
         val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
         val dataFlowAnalyzer: FirDataFlowAnalyzer = FirDataFlowAnalyzer(this)
