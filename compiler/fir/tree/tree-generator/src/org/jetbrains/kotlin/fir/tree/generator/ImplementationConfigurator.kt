@@ -383,7 +383,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(variableAssignment) {
             parents += modifiableQualifiedAccess
-            isMutable("operation")
             lateinit("calleeReference")
             defaultNoReceivers()
 

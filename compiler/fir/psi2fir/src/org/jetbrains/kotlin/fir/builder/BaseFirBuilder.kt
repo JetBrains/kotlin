@@ -471,8 +471,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 arguments += value
             }
         }
-
-        return FirVariableAssignmentImpl(source, false, value, operation).apply {
+        require(operation == FirOperation.ASSIGN)
+        return FirVariableAssignmentImpl(source, false, value).apply {
             lValue = initializeLValue(this@generateAssignment) { convert() as? FirQualifiedAccess }
         }
     }

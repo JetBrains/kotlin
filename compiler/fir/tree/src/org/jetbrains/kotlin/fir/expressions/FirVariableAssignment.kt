@@ -25,7 +25,6 @@ abstract class FirVariableAssignment : FirPureAbstractElement(), FirQualifiedAcc
     abstract override val calleeReference: FirReference
     abstract val lValue: FirReference
     abstract val rValue: FirExpression
-    abstract val operation: FirOperation
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitVariableAssignment(this, data)
 

@@ -445,7 +445,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: StringBuilder) {
-            data.append("qualified access: \"${variableAssignment.operation}\"")
+            data.append("variable assignment")
         }
 
         override fun visitStarProjection(starProjection: FirStarProjection, data: StringBuilder) {

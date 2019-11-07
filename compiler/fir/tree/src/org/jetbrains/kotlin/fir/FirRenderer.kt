@@ -928,7 +928,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         visitQualifiedAccess(variableAssignment)
         variableAssignment.lValue.accept(this)
         print(" ")
-        visitAssignment(variableAssignment.operation, variableAssignment.rValue)
+        visitAssignment(FirOperation.ASSIGN, variableAssignment.rValue)
     }
 
     override fun visitArraySetCall(arraySetCall: FirArraySetCall) {

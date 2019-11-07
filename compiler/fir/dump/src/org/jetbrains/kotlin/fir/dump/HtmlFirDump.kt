@@ -639,9 +639,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(variableAssignment: FirVariableAssignment) {
         generateReceiver(variableAssignment)
         generate(variableAssignment.lValue)
-        +" "
-        +variableAssignment.operation.operator
-        +" "
+        +" = "
         generate(variableAssignment.rValue)
     }
 

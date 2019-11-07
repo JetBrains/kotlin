@@ -439,7 +439,6 @@ object NodeConfigurator : AbstractFieldConfigurator() {
         variableAssignment.configure {
             +field("lValue", reference)
             +field("rValue", expression).withTransform()
-            +field("operation", operationType)
         }
 
         whenSubjectExpression.configure {

@@ -246,7 +246,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
                 operatorCallReference == null || (!lhsIsVar && !assignIsError) -> resolvedAssignCall.compose()
                 assignCallReference == null -> {
                     val assignment =
-                        FirVariableAssignmentImpl(operatorCall.source, false, resolvedOperatorCall, FirOperation.ASSIGN).apply {
+                        FirVariableAssignmentImpl(operatorCall.source, false, resolvedOperatorCall).apply {
                             lValue = if (lhsIsVar)
                                 lhsReference!!
                             else

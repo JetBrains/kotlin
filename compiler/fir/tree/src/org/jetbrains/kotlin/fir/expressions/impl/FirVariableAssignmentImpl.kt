@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.impl.FirAbstractAnnotatedElement
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -22,8 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirVariableAssignmentImpl(
     override val source: FirSourceElement?,
     override var safe: Boolean,
-    override var rValue: FirExpression,
-    override var operation: FirOperation
+    override var rValue: FirExpression
 ) : FirVariableAssignment(), FirModifiableQualifiedAccess, FirAbstractAnnotatedElement {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var explicitReceiver: FirExpression? = null
