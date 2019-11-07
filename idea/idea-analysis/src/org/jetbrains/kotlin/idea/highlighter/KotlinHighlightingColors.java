@@ -75,6 +75,8 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey SYNTHETIC_EXTENSION_PROPERTY = createTextAttributesKey("KOTLIN_SYNTHETIC_EXTENSION_PROPERTY", EXTENSION_PROPERTY);
     public static final TextAttributesKey DYNAMIC_PROPERTY_CALL = createTextAttributesKey("KOTLIN_DYNAMIC_PROPERTY_CALL");
     public static final TextAttributesKey ANDROID_EXTENSIONS_PROPERTY_CALL = createTextAttributesKey("KOTLIN_ANDROID_EXTENSIONS_PROPERTY_CALL");
+    public static final TextAttributesKey INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION = createTextAttributesKey("KOTLIN_INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION", INSTANCE_PROPERTY);
+    public static final TextAttributesKey PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION = createTextAttributesKey("KOTLIN_PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION", PACKAGE_PROPERTY);
 
     // functions
     public static final TextAttributesKey FUNCTION_LITERAL_DEFAULT_PARAMETER = createTextAttributesKey("KOTLIN_CLOSURE_DEFAULT_PARAMETER");

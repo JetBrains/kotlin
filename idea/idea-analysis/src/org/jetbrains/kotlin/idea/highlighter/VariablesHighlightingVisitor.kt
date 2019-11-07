@@ -20,6 +20,7 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.MultipleSmartCasts
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -165,6 +167,15 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
 
             if (descriptor is ValueParameterDescriptor) {
                 highlightName(elementToHighlight, PARAMETER)
+            }
+
+            if (descriptor is PropertyDescriptor && KotlinHighlightingUtil.hasCustomPropertyDeclaration(descriptor)) {
+                val isStaticDeclaration = DescriptorUtils.isStaticDeclaration(descriptor)
+                highlightName(elementToHighlight,
+                              if (isStaticDeclaration)
+                                  PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION
+                              else
+                                  INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION)
             }
         }
     }

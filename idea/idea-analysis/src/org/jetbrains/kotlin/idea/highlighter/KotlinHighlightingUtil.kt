@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
@@ -78,5 +80,18 @@ object KotlinHighlightingUtil {
         if (!ScriptDefinitionsManager.getInstance(ktFile.project).isReady()) return false
 
         return ProjectRootsUtil.isInProjectSource(ktFile, includeScriptsOutsideSourceRoots = true)
+    }
+
+    fun hasCustomPropertyDeclaration(descriptor: PropertyDescriptor): Boolean {
+        var hasCustomPropertyDeclaration = false
+        if (!hasExtensionReceiverParameter(descriptor)) {
+            if (descriptor.getter?.isDefault == false || descriptor.setter?.isDefault == false)
+                hasCustomPropertyDeclaration = true
+        }
+        return hasCustomPropertyDeclaration
+    }
+
+    fun hasExtensionReceiverParameter(descriptor: PropertyDescriptor): Boolean {
+        return descriptor.extensionReceiverParameter != null
     }
 }

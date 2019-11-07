@@ -143,6 +143,11 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         runTest("idea/testData/highlighter/VariablesAsFunctions.kt");
     }
 
+    @TestMetadata("PropertiesWithPropertyDeclarations.kt")
+    public void testPropertiesWithPropertyDeclarations() throws Exception {
+        runTest("idea/testData/highlighter/PropertiesWithPropertyDeclarations.kt");
+    }
+
     @TestMetadata("idea/testData/highlighter/deprecated")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

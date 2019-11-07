@@ -78,10 +78,14 @@ fun Int?.bar() {
     }
 }
 
-var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAGE_PROPERTY> : Int = <NUMBER>5</NUMBER>
-    <KEYWORD>get</KEYWORD> = <LOCAL_VARIABLE><MUTABLE_VARIABLE><BACKING_FIELD_VARIABLE>field</BACKING_FIELD_VARIABLE></MUTABLE_VARIABLE></LOCAL_VARIABLE>
+var <PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION> : Int = <NUMBER>5</NUMBER>
+    <KEYWORD>get</KEYWORD>() = <LOCAL_VARIABLE><MUTABLE_VARIABLE><BACKING_FIELD_VARIABLE>field</BACKING_FIELD_VARIABLE></MUTABLE_VARIABLE></LOCAL_VARIABLE>
 
 <KEYWORD>abstract</KEYWORD> class <ABSTRACT_CLASS>Abstract</ABSTRACT_CLASS> {
+    val <INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION>bar</INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION> <KEYWORD>get</KEYWORD>() = 1
+    fun <FUNCTION_DECLARATION>test</FUNCTION_DECLARATION>() {
+        <INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION>bar</INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION>
+    }
 }
 
 <KEYWORD>object</KEYWORD> <OBJECT>Obj</OBJECT>
@@ -159,6 +163,8 @@ var <PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAG
             OptionsBundle.message("options.java.attribute.descriptor.parameter") to KotlinHighlightingColors.PARAMETER,
             KotlinBundle.message("options.kotlin.attribute.descriptor.captured.variable") to KotlinHighlightingColors.WRAPPED_INTO_REF,
             KotlinBundle.message("options.kotlin.attribute.descriptor.instance.property") to KotlinHighlightingColors.INSTANCE_PROPERTY,
+            KotlinBundle.message("options.kotlin.attribute.descriptor.instance.property.custom.property.declaration") to KotlinHighlightingColors.INSTANCE_PROPERTY_CUSTOM_PROPERTY_DECLARATION,
+            KotlinBundle.message("options.kotlin.attribute.descriptor.package.property.custom.property.declaration") to KotlinHighlightingColors.PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION,
             KotlinBundle.message("options.kotlin.attribute.descriptor.package.property") to KotlinHighlightingColors.PACKAGE_PROPERTY,
             KotlinBundle.message("options.kotlin.attribute.descriptor.field") to KotlinHighlightingColors.BACKING_FIELD_VARIABLE,
             KotlinBundle.message("options.kotlin.attribute.descriptor.extension.property") to KotlinHighlightingColors.EXTENSION_PROPERTY,
