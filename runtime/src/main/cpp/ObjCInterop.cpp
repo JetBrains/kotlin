@@ -26,7 +26,18 @@
 #include "MemoryPrivate.hpp"
 
 #include "Natives.h"
+#include "ObjCInterop.h"
+#include "Types.h"
 #include "Utils.h"
+
+// Replaced in ObjCExportCodeGenerator.
+__attribute__((weak)) const char* Kotlin_ObjCInterop_uniquePrefix = nullptr;
+
+const char* Kotlin_ObjCInterop_getUniquePrefix() {
+  auto result = Kotlin_ObjCInterop_uniquePrefix;
+  RuntimeCheck(result != nullptr, "unique prefix is not initialized");
+  return result;
+}
 
 extern "C" {
 
@@ -99,6 +110,7 @@ struct ObjCMethodDescription {
 
 struct KotlinObjCClassInfo {
   const char* name;
+  int exported;
 
   const char* superclassName;
   const char** protocolNames;
@@ -129,6 +141,34 @@ static void AddMethods(Class clazz, const struct ObjCMethodDescription* methods,
 static SimpleMutex classCreationMutex;
 static int anonymousClassNextId = 0;
 
+static Class allocateClass(const KotlinObjCClassInfo* info) {
+  Class superclass = Kotlin_Interop_getObjCClass(info->superclassName);
+  size_t extraBytes = sizeof(struct KotlinClassData);
+
+  if (info->exported) {
+    RuntimeCheck(info->name != nullptr, "exported Objective-C class must have a name");
+    Class result = objc_allocateClassPair(superclass, info->name, extraBytes);
+    if (result != nullptr) return result;
+    // Similar to how Objective-C runtime handles this:
+    fprintf(stderr, "Class %s has multiple implementations. Which one will be used is undefined.\n", info->name);
+  }
+
+  KStdString className = Kotlin_ObjCInterop_getUniquePrefix();
+
+  if (info->name != nullptr) {
+    className += info->name;
+  } else {
+    className += "_kobjc";
+  }
+
+  int classId = anonymousClassNextId++;
+  className += std::to_string(classId);
+
+  Class result = objc_allocateClassPair(superclass, className.c_str(), extraBytes);
+  RuntimeCheck(result != nullptr, "Failed to allocate Objective-C class");
+  return result;
+}
+
 void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
   LockGuard<SimpleMutex> lockGuard(classCreationMutex);
 
@@ -137,15 +177,8 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
     return createdClass;
   }
 
-  char classNameBuffer[64];
-  const char* className = info->name;
-  if (className == nullptr) {
-    snprintf(classNameBuffer, sizeof(classNameBuffer), "kobjc%d", anonymousClassNextId++);
-    className = classNameBuffer;
-  }
+  Class newClass = allocateClass(info);
 
-  Class superclass = Kotlin_Interop_getObjCClass(info->superclassName);
-  Class newClass = objc_allocateClassPair(superclass, className, sizeof(struct KotlinClassData));
   RuntimeAssert(newClass != nullptr, "Failed to allocate Objective-C class");
 
   Class newMetaclass = object_getClass(reinterpret_cast<id>(newClass));

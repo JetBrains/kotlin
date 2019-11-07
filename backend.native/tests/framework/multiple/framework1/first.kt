@@ -15,6 +15,17 @@ class I1Impl : I1 {
     override fun getFortyTwo(): Int = 42
 }
 
+fun getI1() = object : I1 {
+    override fun getFortyTwo(): Int = 42
+}
+
 class C
 
 fun getUnit(): Unit? = Unit
+
+/*
+// Disabled for now to avoid depending on platform libs.
+fun getAnonymousObject() = object : platform.darwin.NSObject() {}
+class NamedObject : platform.darwin.NSObject()
+fun getNamedObject() = NamedObject()
+ */

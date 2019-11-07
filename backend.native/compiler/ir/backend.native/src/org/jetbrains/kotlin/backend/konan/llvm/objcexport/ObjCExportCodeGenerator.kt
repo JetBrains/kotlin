@@ -253,6 +253,13 @@ internal class ObjCExportCodeGenerator(
 
         emitTypeAdapters()
 
+        // Replace runtime global with weak linkage:
+        replaceExternalWeakOrCommonGlobal(
+                "Kotlin_ObjCInterop_uniquePrefix",
+                codegen.staticData.cStringLiteral(namer.topLevelNamePrefix),
+                context.standardLlvmSymbolsOrigin
+        )
+
         emitSelectorsHolder()
 
         emitStaticInitializers()

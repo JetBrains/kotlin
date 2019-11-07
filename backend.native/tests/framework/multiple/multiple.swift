@@ -25,7 +25,7 @@ func testInteraction() throws {
     try assertEquals(actual: SecondKt.getFortyTwoFrom(i2: I1Impl()), expected: 42)
 }
 
-func testIsolation() throws {
+func testIsolation1() throws {
     try assertFalse(SecondKt.isUnit(obj: FirstKt.getUnit()))
 
     // Ensure frameworks don't share the same runtime (state):
@@ -36,6 +36,20 @@ func testIsolation() throws {
     try assertTrue(Second.RuntimeState().consumeChange())
 }
 
+func testIsolation2() throws {
+    try assertEquals(actual: FirstKt.getI1().getFortyTwo(), expected: 42)
+    try assertEquals(actual: SecondKt.getI2().getFortyTwo(), expected: 42)
+}
+
+func testIsolation3() throws {
+#if false // Disabled for now to avoid depending on platform libs.
+    FirstKt.getAnonymousObject()
+    SecondKt.getAnonymousObject()
+    FirstKt.getNamedObject()
+    SecondKt.getNamedObject()
+#endif
+}
+
 class MultipleFrameworksTests : TestProvider {
     var tests: [TestCase] = []
 
@@ -43,7 +57,9 @@ class MultipleFrameworksTests : TestProvider {
         tests = [
             TestCase(name: "TestClashingNames", method: withAutorelease(testClashingNames)),
             TestCase(name: "TestInteraction", method: withAutorelease(testInteraction)),
-            TestCase(name: "TestIsolation", method: withAutorelease(testIsolation)),
+            TestCase(name: "TestIsolation1", method: withAutorelease(testIsolation1)),
+            TestCase(name: "TestIsolation2", method: withAutorelease(testIsolation2)),
+            TestCase(name: "TestIsolation3", method: withAutorelease(testIsolation3)),
         ]
         providers.append(self)
     }

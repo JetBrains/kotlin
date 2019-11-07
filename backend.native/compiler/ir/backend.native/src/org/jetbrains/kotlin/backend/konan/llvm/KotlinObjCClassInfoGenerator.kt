@@ -42,10 +42,13 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         val bodySize =
                 LLVMStoreSizeOfType(llvmTargetData, context.llvmDeclarations.forClass(irClass).bodyType).toInt()
 
-        val className = selectClassName(irClass)?.let { staticData.cStringLiteral(it) } ?: NullPointer(int8Type)
+        val exportedClassName = selectExportedClassName(irClass)
+        val className = exportedClassName ?: selectInternalClassName(irClass)
 
+        val classNameLiteral = className?.let { staticData.cStringLiteral(it) } ?: NullPointer(int8Type)
         val info = Struct(runtime.kotlinObjCClassInfo,
-                className,
+                classNameLiteral,
+                Int32(if (exportedClassName != null) 1 else 0),
 
                 staticData.cStringLiteral(superclassName),
                 staticData.placeGlobalConstArray("", int8TypePtr,
@@ -91,16 +94,18 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         }
     }
 
-    private fun selectClassName(irClass: IrClass): String? {
+    private fun selectExportedClassName(irClass: IrClass): String? {
         val exportObjCClassAnnotation = context.interopBuiltIns.exportObjCClass.fqNameSafe
-        return irClass.getAnnotationArgumentValue(exportObjCClassAnnotation, "name")
-            ?: if (irClass.annotations.hasAnnotation(exportObjCClassAnnotation))
-                irClass.name.asString()
-            else if (irClass.isExported()) {
-                irClass.fqNameForIrSerialization.asString()
-            } else {
-                null // Generate as anonymous.
-            }
+        val explicitName = irClass.getAnnotationArgumentValue<String>(exportObjCClassAnnotation, "name")
+        if (explicitName != null) return explicitName
+
+        return if (irClass.annotations.hasAnnotation(exportObjCClassAnnotation)) irClass.name.asString() else null
+    }
+
+    private fun selectInternalClassName(irClass: IrClass): String? = if (irClass.isExported()) {
+        irClass.fqNameForIrSerialization.asString()
+    } else {
+        null // Generate as anonymous.
     }
 
     private val impType = pointerType(functionType(int8TypePtr, true, int8TypePtr, int8TypePtr))

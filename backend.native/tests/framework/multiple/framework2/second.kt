@@ -13,6 +13,17 @@ interface I2 {
 
 fun getFortyTwoFrom(i2: I2): Int = i2.getFortyTwo()
 
+fun getI2() = object : I2 {
+    override fun getFortyTwo(): Int = 42
+}
+
 class C
 
 fun isUnit(obj: Any?): Boolean = (obj === Unit)
+
+/*
+// Disabled for now to avoid depending on platform libs.
+fun getAnonymousObject() = object : platform.darwin.NSObject() {}
+class NamedObject : platform.darwin.NSObject()
+fun getNamedObject() = NamedObject()
+ */

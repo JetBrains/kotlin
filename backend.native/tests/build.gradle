@@ -3540,7 +3540,8 @@ interopTest("interop_objc_smoke") {
             "5\n" +
             "String macro\n" +
             "CFString macro\n" +
-            "Deallocated\nDeallocated\n"
+            "Deallocated\nDeallocated\n" +
+            "Class TestExportObjCClass34 has multiple implementations. Which one will be used is undefined.\n"
 
     source = "interop/objc/smoke.kt"
     interop = 'objcSmoke'
