@@ -98,9 +98,11 @@ internal class DefaultScriptConfigurationManager(project: Project) :
     AbstractScriptConfigurationManager(project) {
     private val backgroundExecutor = BackgroundExecutor(project, rootsIndexer)
 
+    private val fileAttributeCache = ScriptConfigurationFileAttributeCache(project)
+
     private val loaders: List<ScriptConfigurationLoader> = listOf(
         ScriptOutsiderFileConfigurationLoader(project),
-        ScriptConfigurationFileAttributeCache(project),
+        fileAttributeCache,
         GradleScriptConfigurationLoader(project),
         DefaultScriptConfigurationLoader(project)
     )
@@ -114,7 +116,12 @@ internal class DefaultScriptConfigurationManager(project: Project) :
 
     private val saveLock = ReentrantLock()
 
-    override fun createCache() = ScriptConfigurationMemoryCache(project)
+    override fun createCache() = object : ScriptConfigurationMemoryCache(project) {
+        override fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
+            super.setLoaded(file, configurationSnapshot)
+            fileAttributeCache.save(file, configurationSnapshot.configuration)
+        }
+    }
 
     /**
      * Will be called on [cache] miss to initiate loading of [file]'s script configuration.

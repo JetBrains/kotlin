@@ -10,7 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.containers.SLRUMap
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
-class ScriptConfigurationMemoryCache(
+open class ScriptConfigurationMemoryCache(
     val project: Project
 ) : ScriptConfigurationCache {
     companion object {
