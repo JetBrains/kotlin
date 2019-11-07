@@ -231,8 +231,8 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
             if (regularClass.symbol.classId.isLocal) {
                 prepareLocalClassForBodyResolve(regularClass)
             }
-            val companionObjects = regularClass.declarations.filterIsInstance<FirRegularClass>().filter { it.isCompanion }
-            for (companionObject in companionObjects) {
+            val companionObject = regularClass.companionObject
+            if (companionObject != null) {
                 topLevelScopes += nestedClassifierScope(companionObject)
             }
             topLevelScopes += nestedClassifierScope(regularClass)
