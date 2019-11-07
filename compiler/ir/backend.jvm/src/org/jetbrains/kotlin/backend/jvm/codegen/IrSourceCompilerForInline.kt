@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -112,8 +113,17 @@ class IrSourceCompilerForInline(
         }
 
         if (parent.fileParent.fileEntry is MultifileFacadeFileEntry) {
-            return codegen.context.multifileFacadeMemberToPartMember[callee]
-                ?: error("Function from a multi-file facade without the link to the function in the part: ${callee.render()}")
+            codegen.context.multifileFacadeMemberToPartMember[callee]?.let { return it }
+
+            if (callee.isSuspend) {
+                codegen.context.suspendFunctionViewToOriginal[callee]?.let { facadeMemberOriginal ->
+                    codegen.context.multifileFacadeMemberToPartMember[facadeMemberOriginal]?.let { partMemberOriginal ->
+                        return partMemberOriginal.getOrCreateSuspendFunctionViewIfNeeded(codegen.context)
+                    }
+                }
+            }
+
+            error("Function from a multi-file facade without the link to the function in the part: ${callee.render()}")
         }
 
         return callee

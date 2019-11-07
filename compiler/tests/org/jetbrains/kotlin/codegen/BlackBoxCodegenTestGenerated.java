@@ -6064,6 +6064,26 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunInGenericClass.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("inlineFunctionInMultifileClassUnoptimized.kt")
+        public void testInlineFunctionInMultifileClassUnoptimized_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunctionInMultifileClassUnoptimized.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("inlineFunctionInMultifileClassUnoptimized.kt")
+        public void testInlineFunctionInMultifileClassUnoptimized_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunctionInMultifileClassUnoptimized.kt", "kotlin.coroutines");
+        }
+
+        @TestMetadata("inlineFunctionInMultifileClass.kt")
+        public void testInlineFunctionInMultifileClass_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunctionInMultifileClass.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("inlineFunctionInMultifileClass.kt")
+        public void testInlineFunctionInMultifileClass_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunctionInMultifileClass.kt", "kotlin.coroutines");
+        }
+
         @TestMetadata("inlineGenericFunCalledFromSubclass.kt")
         public void testInlineGenericFunCalledFromSubclass_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineGenericFunCalledFromSubclass.kt", "kotlin.coroutines.experimental");
