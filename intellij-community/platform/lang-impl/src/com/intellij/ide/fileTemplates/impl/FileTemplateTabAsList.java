@@ -40,10 +40,9 @@ abstract class FileTemplateTabAsList extends FileTemplateTab {
     super(title);
     myList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     myList.setCellRenderer(SimpleListCellRenderer.create((label, value, index) -> {
-      boolean internalTemplate = AllFileTemplatesConfigurable.isInternalTemplate(value.getName(), getTitle());
       label.setIcon(FileTemplateUtil.getIcon(value));
       label.setText(value.getName());
-      label.setFont(label.getFont().deriveFont(internalTemplate ? Font.BOLD : Font.PLAIN));
+      label.setFont(label.getFont().deriveFont(Font.PLAIN));
       if (!value.isDefault() && myList.getSelectedIndex() != index) {
         label.setForeground(MODIFIED_FOREGROUND);
       }

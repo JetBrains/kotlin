@@ -439,7 +439,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     return myScheme != null && myScheme != FileTemplatesScheme.DEFAULT && !myScheme.getProject().isDefault();
   }
 
-  // internal template could not be removed and should be rendered bold
+  // internal template could not be removed
   static boolean isInternalTemplate(String templateName, String templateTabTitle) {
     if (templateName == null) {
       return false;
