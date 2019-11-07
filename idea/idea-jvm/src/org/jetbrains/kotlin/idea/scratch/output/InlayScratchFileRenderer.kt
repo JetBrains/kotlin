@@ -7,13 +7,10 @@ package org.jetbrains.kotlin.idea.scratch.output
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorCustomElementRenderer
+import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.impl.ComplementaryFontsRegistry
 import com.intellij.openapi.editor.impl.FontInfo
 import com.intellij.openapi.editor.markup.TextAttributes
-import com.intellij.ui.Colors
-import com.intellij.ui.JBColor
-import java.awt.Color
-import java.awt.Font
 import java.awt.Graphics
 import java.awt.Rectangle
 
@@ -28,19 +25,19 @@ class InlayScratchFileRenderer(val text: String, private val outputType: Scratch
         )
     }
 
-    override fun calcWidthInPixels(editor: Editor): Int {
-        val fontInfo = getFontInfo(editor)
+    override fun calcWidthInPixels(inlay: Inlay<*>): Int {
+        val fontInfo = getFontInfo(inlay.editor)
         return fontInfo.fontMetrics().stringWidth(text)
     }
 
-    override fun paint(editor: Editor, g: Graphics, r: Rectangle, textAttributes: TextAttributes) {
+    override fun paint(inlay: Inlay<*>, g: Graphics, targetRegion: Rectangle, textAttributes: TextAttributes) {
         val attributes = getAttributesForOutputType(outputType)
         val fgColor = attributes.foregroundColor ?: return
         g.color = fgColor
-        val fontInfo = getFontInfo(editor)
+        val fontInfo = getFontInfo(inlay.editor)
         g.font = fontInfo.font
         val metrics = fontInfo.fontMetrics()
-        g.drawString(text, r.x, r.y + metrics.ascent)
+        g.drawString(text, targetRegion.x, targetRegion.y + metrics.ascent)
     }
 
     override fun toString(): String {
