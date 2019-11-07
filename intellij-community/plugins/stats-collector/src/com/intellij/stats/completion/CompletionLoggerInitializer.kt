@@ -6,7 +6,6 @@ import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.internal.statistic.utils.StatisticsUploadAssistant
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.reporting.isUnitTestMode
 import com.intellij.stats.experiment.WebServiceStatus
 import com.intellij.stats.storage.factors.MutableLookupStorage
@@ -22,7 +21,8 @@ class CompletionLoggerInitializer(private val actionListener: LookupActionsListe
       "scala" to 0.3,
       "php" to 0.2,
       "kotlin" to 0.2,
-      "java" to 0.1
+      "java" to 0.1,
+      "ecmascript 6" to 0.2
     )
   }
 
