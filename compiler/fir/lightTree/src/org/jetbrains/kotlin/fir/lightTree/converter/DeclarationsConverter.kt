@@ -435,6 +435,7 @@ class DeclarationsConverter(
 
             if (modifiers.isEnum()) {
                 firClass.generateValuesFunction(session, context.packageFqName, context.className)
+                firClass.generateValueOfFunction(session, context.packageFqName, context.className)
             }
 
             return@withChildClassName firClass

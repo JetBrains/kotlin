@@ -28,6 +28,9 @@ FILE: enums.kt
         public final static fun values(): R|kotlin/Array<Order>| {
         }
 
+        public final static fun valueOf(value: R|kotlin/String|): R|Order| {
+        }
+
     }
     public? final? enum class Planet : R|kotlin/Enum| {
         public? constructor(m: Double, r: Double): R|Planet| {
@@ -89,6 +92,9 @@ FILE: enums.kt
         }
 
         public final static fun values(): R|kotlin/Array<Planet>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Planet| {
         }
 
     }

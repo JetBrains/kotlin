@@ -537,6 +537,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
                 if (classOrObject.hasModifier(ENUM_KEYWORD)) {
                     firClass.generateValuesFunction(session, context.packageFqName, context.className)
+                    firClass.generateValueOfFunction(session, context.packageFqName, context.className)
                 }
 
                 firClass

@@ -45,6 +45,11 @@ FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
         overridden:
           public final fun values (): kotlin.Array<<root>.En> declared in <root>.En
         $this: VALUE_PARAMETER name:<this> type:<root>.En
+      FUN FAKE_OVERRIDE name:valueOf visibility:public modality:FINAL <> ($this:<root>.En, value:kotlin.String) returnType:<root>.En [fake_override]
+        overridden:
+          public final fun valueOf (value: kotlin.String): <root>.En declared in <root>.En
+        $this: VALUE_PARAMETER name:<this> type:<root>.En
+        VALUE_PARAMETER name:value index:0 type:kotlin.String
       FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
         overridden:
           protected final fun clone (): kotlin.Any declared in kotlin.Enum
@@ -81,6 +86,10 @@ FILE fqName:<root> fileName:/temporaryInEnumEntryInitializer.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.En.ENTRY
     FUN name:values visibility:public modality:FINAL <> ($this:<root>.En) returnType:kotlin.Array<<root>.En>
       $this: VALUE_PARAMETER name:<this> type:<root>.En
+      BLOCK_BODY
+    FUN name:valueOf visibility:public modality:FINAL <> ($this:<root>.En, value:kotlin.String) returnType:<root>.En
+      $this: VALUE_PARAMETER name:<this> type:<root>.En
+      VALUE_PARAMETER name:value index:0 type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum) returnType:kotlin.Any [fake_override]
       overridden:

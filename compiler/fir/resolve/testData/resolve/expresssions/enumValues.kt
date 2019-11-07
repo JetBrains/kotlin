@@ -12,4 +12,7 @@ fun foo() {
     for (value in values) {
         value.bar()
     }
+
+    val first = MyEnum.valueOf("FIRST")
+    val last = MyEnum.valueOf("LAST")
 }

@@ -32,6 +32,9 @@ FILE: enumValues.kt
         public final static fun values(): R|kotlin/Array<MyEnum>| {
         }
 
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum| {
+        }
+
     }
     public final fun foo(): R|kotlin/Unit| {
         lval values: R|kotlin/Array<MyEnum>| = Q|MyEnum|.R|/MyEnum.values|()
@@ -42,4 +45,6 @@ FILE: enumValues.kt
             R|<local>/value|.R|/MyEnum.bar|()
         }
 
+        lval first: R|MyEnum| = Q|MyEnum|.R|/MyEnum.valueOf|(String(FIRST))
+        lval last: R|MyEnum| = Q|MyEnum|.R|/MyEnum.valueOf|(String(LAST))
     }
