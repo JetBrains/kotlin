@@ -6,7 +6,8 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin
 
-import com.android.build.gradle.*
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.*
 import com.android.build.gradle.tasks.MergeResources
 import com.android.builder.model.SourceProvider
@@ -28,24 +29,6 @@ import java.util.concurrent.Callable
 class Android25ProjectHandler(
     kotlinConfigurationTools: KotlinConfigurationTools
 ) : AbstractAndroidProjectHandler(kotlinConfigurationTools) {
-
-    override fun forEachVariant(project: Project, action: (BaseVariant) -> Unit) {
-        val androidExtension = project.extensions.getByName("android")
-        when (androidExtension) {
-            is AppExtension -> androidExtension.applicationVariants.all(action)
-            is LibraryExtension -> {
-                androidExtension.libraryVariants.all(action)
-                if (androidExtension is FeatureExtension) {
-                    androidExtension.featureVariants.all(action)
-                }
-            }
-            is TestExtension -> androidExtension.applicationVariants.all(action)
-        }
-        if (androidExtension is TestedExtension) {
-            androidExtension.testVariants.all(action)
-            androidExtension.unitTestVariants.all(action)
-        }
-    }
 
     override fun wireKotlinTasks(
         project: Project,

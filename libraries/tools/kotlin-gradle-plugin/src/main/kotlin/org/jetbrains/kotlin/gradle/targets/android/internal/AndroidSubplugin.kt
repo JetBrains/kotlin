@@ -208,7 +208,7 @@ class AndroidSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
         val resDirectoriesForAllVariants = mutableListOf<FileCollection>()
 
-        androidProjectHandler.forEachVariant(project) { variant ->
+        project.forEachVariant { variant ->
             if (getTestedVariantData(variant) != null) return@forEachVariant
             resDirectoriesForAllVariants += androidProjectHandler.getResDirectories(variant)
         }
