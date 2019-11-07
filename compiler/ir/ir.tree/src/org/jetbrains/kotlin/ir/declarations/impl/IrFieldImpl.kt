@@ -82,13 +82,6 @@ class IrFieldImpl(
 
     override var initializer: IrExpressionBody? = null
 
-    @Suppress("OverridingDeprecatedMember")
-    override var correspondingProperty: IrProperty?
-        get() = correspondingPropertySymbol?.owner
-        set(value) {
-            correspondingPropertySymbol = value?.symbol
-        }
-
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
     override val overriddenSymbols: MutableList<IrFieldSymbol> = mutableListOf()

@@ -64,7 +64,7 @@ open class DescriptorReferenceSerializer(
         val (packageFqName, classFqName) = extractPackageAndClassFqns(descriptor) ?: return null
 
         val isAccessor = declaration.isAccessor
-        val isBackingField = declaration is IrField && declaration.correspondingProperty != null
+        val isBackingField = declaration is IrField && declaration.correspondingPropertySymbol != null
         val isFakeOverride = declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE
         val isDefaultConstructor = descriptor is ClassConstructorDescriptor && containingDeclaration is ClassDescriptor && (containingDeclaration.kind == ClassKind.OBJECT)
         val isEnumEntry = descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY
@@ -90,7 +90,7 @@ open class DescriptorReferenceSerializer(
         val discoverableDescriptorsDeclaration: IrDeclaration? = if (isAccessor) {
             (realDeclaration as IrSimpleFunction).correspondingPropertySymbol!!.owner
         } else if (isBackingField) {
-            (realDeclaration as IrField).correspondingProperty!!
+            (realDeclaration as IrField).correspondingPropertySymbol!!.owner
         } else if (isDefaultConstructor || isEnumEntry) {
             null
         } else {

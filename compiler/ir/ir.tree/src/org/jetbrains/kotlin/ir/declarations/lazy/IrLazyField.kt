@@ -89,13 +89,6 @@ class IrLazyField(
         }
     }
 
-    @Suppress("OverridingDeprecatedMember")
-    override var correspondingProperty: IrProperty?
-        get() = correspondingPropertySymbol?.owner
-        set(value) {
-            correspondingPropertySymbol = value?.symbol
-        }
-
     override var correspondingPropertySymbol: IrPropertySymbol? by lazyVar {
         stubGenerator.generatePropertyStub(descriptor).symbol
     }
