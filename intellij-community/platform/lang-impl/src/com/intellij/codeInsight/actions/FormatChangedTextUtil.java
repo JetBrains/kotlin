@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 public class FormatChangedTextUtil {
   public static final Key<CharSequence> TEST_REVISION_CONTENT = Key.create("test.revision.content");
-  protected static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.actions.FormatChangedTextUtil");
+  protected static final Logger LOG = Logger.getInstance(FormatChangedTextUtil.class);
 
   protected FormatChangedTextUtil() {
   }

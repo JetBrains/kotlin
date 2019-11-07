@@ -47,7 +47,7 @@ import java.util.*;
  * @author Maxim.Medvedev
  */
 public abstract class ChangeSignatureProcessorBase extends BaseRefactoringProcessor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.changeSignature.ChangeSignatureProcessorBase");
+  private static final Logger LOG = Logger.getInstance(ChangeSignatureProcessorBase.class);
   protected static final String REFACTORING_ID = "refactoring.changeSignature";
 
   protected final ChangeInfo myChangeInfo;

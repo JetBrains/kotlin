@@ -27,7 +27,7 @@ import java.util.ArrayList;
  * @author peter
  */
 public final class CompletionServiceImpl extends CompletionService {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.completion.impl.CompletionServiceImpl");
+  private static final Logger LOG = Logger.getInstance(CompletionServiceImpl.class);
   private static volatile CompletionPhase ourPhase = CompletionPhase.NoCompletion;
   private static Throwable ourPhaseTrace;
 

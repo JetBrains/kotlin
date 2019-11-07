@@ -86,7 +86,7 @@ import static com.intellij.openapi.wm.IdeFocusManager.getGlobalInstance;
 public class PsiViewerDialog extends DialogWrapper implements DataProvider, Disposable {
   private static final String REFS_CACHE = "References Resolve Cache";
   public static final Color BOX_COLOR = new JBColor(new Color(0xFC6C00), new Color(0xDE6C01));
-  public static final Logger LOG = Logger.getInstance("#com.intellij.internal.psiView.PsiViewerDialog");
+  public static final Logger LOG = Logger.getInstance(PsiViewerDialog.class);
   private final Project myProject;
 
 

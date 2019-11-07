@@ -27,7 +27,7 @@ import java.util.List;
  * @author nik
  */
 public class ArtifactPackagingElement extends ComplexPackagingElement<ArtifactPackagingElement.ArtifactPackagingElementState> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.packaging.impl.elements.ArtifactPackagingElement");
+  private static final Logger LOG = Logger.getInstance(ArtifactPackagingElement.class);
   private final Project myProject;
   private ArtifactPointer myArtifactPointer;
   @NonNls public static final String ARTIFACT_NAME_ATTRIBUTE = "artifact-name";

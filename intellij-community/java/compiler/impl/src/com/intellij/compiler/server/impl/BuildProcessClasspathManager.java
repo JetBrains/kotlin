@@ -26,7 +26,7 @@ import java.util.jar.JarFile;
  * @author nik
  */
 public class BuildProcessClasspathManager {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.server.impl.BuildProcessClasspathManager");
+  private static final Logger LOG = Logger.getInstance(BuildProcessClasspathManager.class);
 
   private List<String> myCompileServerPluginsClasspath;
 

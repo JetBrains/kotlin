@@ -26,7 +26,7 @@ import java.util.List;
  * @author nik
  */
 public class ImportModuleFromImlFileAction extends AnAction {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.projectView.actions.ImportModuleFromImlFileAction");
+  private static final Logger LOG = Logger.getInstance(ImportModuleFromImlFileAction.class);
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {

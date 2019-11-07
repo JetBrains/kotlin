@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class VariableInplaceRenameHandler implements RenameHandler {
   private static final ThreadLocal<String> ourPreventInlineRenameFlag = new ThreadLocal<>();
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler");
+  private static final Logger LOG = Logger.getInstance(VariableInplaceRenameHandler.class);
 
   @Override
   public final boolean isAvailableOnDataContext(@NotNull DataContext dataContext) {

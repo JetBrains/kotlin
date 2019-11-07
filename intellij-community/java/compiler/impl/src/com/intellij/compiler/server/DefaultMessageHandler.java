@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * @author Eugene Zhuravlev
  */
 public abstract class DefaultMessageHandler implements BuilderMessageHandler {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.server.DefaultMessageHandler");
+  private static final Logger LOG = Logger.getInstance(DefaultMessageHandler.class);
   private final Project myProject;
   private final ExecutorService myTaskExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor(
     "DefaultMessageHandler Pool");

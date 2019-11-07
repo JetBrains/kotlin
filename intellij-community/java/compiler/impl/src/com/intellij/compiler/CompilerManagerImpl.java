@@ -55,7 +55,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 public class CompilerManagerImpl extends CompilerManager {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.CompilerManagerImpl");
+  private static final Logger LOG = Logger.getInstance(CompilerManagerImpl.class);
 
   private final Project myProject;
 

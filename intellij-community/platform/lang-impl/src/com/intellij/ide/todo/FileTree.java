@@ -26,7 +26,7 @@ import java.util.*;
  * @author Vladimir Kondratyev
  */
 final class FileTree {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.todo.FileTree");
+  private static final Logger LOG = Logger.getInstance(FileTree.class);
 
   private final Map<VirtualFile, List<VirtualFile>> myDirectory2Children;
   private final Set<VirtualFile> myFiles;

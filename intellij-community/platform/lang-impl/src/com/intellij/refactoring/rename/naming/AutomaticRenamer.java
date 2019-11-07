@@ -18,7 +18,7 @@ import java.util.*;
  * @author dsl
  */
 public abstract class AutomaticRenamer {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.rename.naming.AutomaticRenamer");
+  private static final Logger LOG = Logger.getInstance(AutomaticRenamer.class);
 
   private final LinkedHashMap<PsiNamedElement, String> myRenames = new LinkedHashMap<>();
   protected final List<PsiNamedElement> myElements;

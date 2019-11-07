@@ -111,7 +111,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   private static final ThreadLocal<VirtualFile> ourIndexedFile = new ThreadLocal<>();
   private static final ThreadLocal<VirtualFile> ourFileToBeIndexed = new ThreadLocal<>();
   private static final ThreadLocal<Boolean> ourDumbModeIgnored = new ThreadLocal<>();
-  static final Logger LOG = Logger.getInstance("#com.intellij.util.indexing.FileBasedIndexImpl");
+  static final Logger LOG = Logger.getInstance(FileBasedIndexImpl.class);
   private static final String CORRUPTION_MARKER_NAME = "corruption.marker";
   private static final NotificationGroup NOTIFICATIONS = new NotificationGroup("Indexing", NotificationDisplayType.BALLOON, false);
 

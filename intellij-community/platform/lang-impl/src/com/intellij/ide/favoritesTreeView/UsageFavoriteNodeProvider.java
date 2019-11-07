@@ -46,7 +46,7 @@ import java.util.*;
 public class UsageFavoriteNodeProvider extends FavoriteNodeProvider {
   private static final Map<String, TreeSet<WorkingSetSerializable>> ourSerializables = new HashMap<>();
   private static final Comparator<VirtualFile> VIRTUAL_FILE_COMPARATOR = Comparator.comparing(VirtualFile::getPath);
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.favoritesTreeView.UsageFavoriteNodeProvider");
+  private static final Logger LOG = Logger.getInstance(UsageFavoriteNodeProvider.class);
 
   static {
     final TreeSet<WorkingSetSerializable> usageSet = createSet();

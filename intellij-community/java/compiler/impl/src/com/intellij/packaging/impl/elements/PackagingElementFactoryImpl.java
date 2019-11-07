@@ -34,7 +34,7 @@ import java.util.List;
  * @author nik
  */
 public class PackagingElementFactoryImpl extends PackagingElementFactory {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.packaging.impl.elements.PackagingElementFactoryImpl");
+  private static final Logger LOG = Logger.getInstance(PackagingElementFactoryImpl.class);
   public static final PackagingElementType<DirectoryPackagingElement> DIRECTORY_ELEMENT_TYPE = new DirectoryElementType();
   public static final PackagingElementType<ArchivePackagingElement> ARCHIVE_ELEMENT_TYPE = new ArchiveElementType();
   public static final PackagingElementType<FileCopyPackagingElement> FILE_COPY_ELEMENT_TYPE = new FileCopyElementType();

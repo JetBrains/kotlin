@@ -48,7 +48,7 @@ import java.util.regex.PatternSyntaxException;
 public class IncrementalSearchHandler {
   private static final Key<PerEditorSearchData> SEARCH_DATA_IN_EDITOR_VIEW_KEY = Key.create("IncrementalSearchHandler.SEARCH_DATA_IN_EDITOR_VIEW_KEY");
   private static final Key<PerHintSearchData> SEARCH_DATA_IN_HINT_KEY = Key.create("IncrementalSearchHandler.SEARCH_DATA_IN_HINT_KEY");
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.navigation.IncrementalSearchHandler");
+  private static final Logger LOG = Logger.getInstance(IncrementalSearchHandler.class);
 
   private static boolean ourActionsRegistered = false;
 

@@ -80,7 +80,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableConsoleView, DataProvider, OccurenceNavigator {
   @NonNls private static final String CONSOLE_VIEW_POPUP_MENU = "ConsoleView.PopupMenu";
-  private static final Logger LOG = Logger.getInstance("#com.intellij.execution.impl.ConsoleViewImpl");
+  private static final Logger LOG = Logger.getInstance(ConsoleViewImpl.class);
 
   private static final int DEFAULT_FLUSH_DELAY = SystemProperties.getIntProperty("console.flush.delay.ms", 200);
 

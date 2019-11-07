@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 
 public class RenameViewDescriptor implements UsageViewDescriptor{
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.rename.RenameViewDescriptor");
+  private static final Logger LOG = Logger.getInstance(RenameViewDescriptor.class);
   private final String myProcessedElementsHeader;
   private final String myCodeReferencesText;
   private final PsiElement[] myElements;

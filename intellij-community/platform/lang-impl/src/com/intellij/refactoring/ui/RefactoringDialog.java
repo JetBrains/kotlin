@@ -27,7 +27,7 @@ import java.util.List;
  * Author: msk
  */
 public abstract class RefactoringDialog extends DialogWrapper {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.ui.RefactoringDialog");
+  private static final Logger LOG = Logger.getInstance(RefactoringDialog.class);
 
   private Action myRefactorAction;
   private Action myPreviewAction;

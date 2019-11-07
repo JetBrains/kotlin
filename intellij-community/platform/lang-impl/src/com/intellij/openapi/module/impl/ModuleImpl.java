@@ -42,7 +42,7 @@ import java.util.Map;
  * @author max
  */
 public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.module.impl.ModuleImpl");
+  private static final Logger LOG = Logger.getInstance(ModuleImpl.class);
 
   @NotNull private final Project myProject;
   private final VirtualFilePointer myImlFilePointer;

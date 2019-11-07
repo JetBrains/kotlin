@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  * @author MYakovlev
  */
 public class FileTemplateUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.fileTemplates.FileTemplateUtil");
+  private static final Logger LOG = Logger.getInstance(FileTemplateUtil.class);
   private static final CreateFromTemplateHandler DEFAULT_HANDLER = new DefaultCreateFromTemplateHandler();
 
   @NotNull

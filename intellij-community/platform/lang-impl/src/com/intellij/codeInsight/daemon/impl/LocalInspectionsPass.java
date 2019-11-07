@@ -60,7 +60,7 @@ import java.util.function.Function;
  * @author max
  */
 public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.daemon.impl.LocalInspectionsPass");
+  private static final Logger LOG = Logger.getInstance(LocalInspectionsPass.class);
   public static final TextRange EMPTY_PRIORITY_RANGE = TextRange.EMPTY_RANGE;
   private static final Condition<PsiFile> SHOULD_INSPECT_FILTER = file -> HighlightingLevelManager.getInstance(file.getProject()).shouldInspect(file);
   private final TextRange myPriorityRange;

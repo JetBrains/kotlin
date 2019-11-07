@@ -25,7 +25,7 @@ import java.util.*;
  * @author dsl
  */
 public final class ModuleCompilerUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.ModuleCompilerUtil");
+  private static final Logger LOG = Logger.getInstance(ModuleCompilerUtil.class);
   private ModuleCompilerUtil() { }
 
   @NotNull

@@ -35,7 +35,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<T>> implements DeferredIcon, RetrievableIcon {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ui.DeferredIconImpl");
+  private static final Logger LOG = Logger.getInstance(DeferredIconImpl.class);
   private static final int MIN_AUTO_UPDATE_MILLIS = 950;
   private static final RepaintScheduler ourRepaintScheduler = new RepaintScheduler();
   @NotNull

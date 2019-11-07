@@ -62,7 +62,7 @@ import java.util.List;
 import java.util.Set;
 
 public class LossyEncodingInspection extends LocalInspectionTool {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInspection.LossyEncodingInspection");
+  private static final Logger LOG = Logger.getInstance(LossyEncodingInspection.class);
 
   @Override
   @Nls

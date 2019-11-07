@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 * @author cdr
 */
 public class IntentionListStep implements ListPopupStep<IntentionActionWithTextCaching>, SpeedSearchFilter<IntentionActionWithTextCaching> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.intention.impl.IntentionListStep");
+  private static final Logger LOG = Logger.getInstance(IntentionListStep.class);
 
   private final CachedIntentions myCachedIntentions;
   @Nullable

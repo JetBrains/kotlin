@@ -33,7 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FileReferenceContextUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.move.FileReferenceContextUtil");
+  private static final Logger LOG = Logger.getInstance(FileReferenceContextUtil.class);
   private static final Key<Pair<PsiFileSystemItem, Integer>> REF_FILE_SYSTEM_ITEM_KEY = Key.create("REF_FILE_SYSTEM_ITEM_KEY");
 
   private FileReferenceContextUtil() {

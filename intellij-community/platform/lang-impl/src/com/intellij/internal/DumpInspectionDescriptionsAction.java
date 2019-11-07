@@ -30,7 +30,7 @@ import java.util.TreeSet;
  * @author stathik
  */
 public class DumpInspectionDescriptionsAction extends AnAction implements DumbAware {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.internal.DumpInspectionDescriptionsAction");
+  private static final Logger LOG = Logger.getInstance(DumpInspectionDescriptionsAction.class);
 
   public DumpInspectionDescriptionsAction() {
     super("Dump inspection descriptions");

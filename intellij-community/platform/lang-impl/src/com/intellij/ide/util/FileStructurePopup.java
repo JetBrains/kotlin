@@ -92,7 +92,7 @@ import java.util.function.BiPredicate;
  * @author Konstantin Bulenkov
  */
 public class FileStructurePopup implements Disposable, TreeActionsOwner {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.util.FileStructurePopup");
+  private static final Logger LOG = Logger.getInstance(FileStructurePopup.class);
   private static final String NARROW_DOWN_PROPERTY_KEY = "FileStructurePopup.narrowDown";
 
   private final Project myProject;

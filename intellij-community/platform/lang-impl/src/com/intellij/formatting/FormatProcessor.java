@@ -29,7 +29,7 @@ import java.util.List;
 import static com.intellij.formatting.InitialInfoBuilder.prepareToBuildBlocksSequentially;
 
 public class FormatProcessor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.formatting.FormatProcessor");
+  private static final Logger LOG = Logger.getInstance(FormatProcessor.class);
   
   private final WrapBlocksState myWrapState;
   private final boolean myReformatContext;

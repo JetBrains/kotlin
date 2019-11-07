@@ -52,7 +52,7 @@ import javax.swing.event.HyperlinkListener;
 import java.util.*;
 
 public class RenameProcessor extends BaseRefactoringProcessor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.rename.RenameProcessor");
+  private static final Logger LOG = Logger.getInstance(RenameProcessor.class);
 
   protected final LinkedHashMap<PsiElement, String> myAllRenames = new LinkedHashMap<>();
 

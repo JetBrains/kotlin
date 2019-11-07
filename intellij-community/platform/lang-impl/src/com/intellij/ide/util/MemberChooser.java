@@ -40,7 +40,7 @@ import static com.intellij.openapi.keymap.KeymapUtil.getActiveKeymapShortcuts;
 import static com.intellij.ui.tree.TreePathUtil.toTreePathArray;
 
 public class MemberChooser<T extends ClassMember> extends DialogWrapper implements TypeSafeDataProvider {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.util.MemberChooser");
+  private static final Logger LOG = Logger.getInstance(MemberChooser.class);
   protected Tree myTree;
   private DefaultTreeModel myTreeModel;
   protected JComponent[] myOptionControls;

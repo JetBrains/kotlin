@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Set;
 
 public class DoNotShowInspectionIntentionMenuContributor implements IntentionMenuContributor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.daemon.impl.DoNotShowInspectionIntentionMenuContributor");
+  private static final Logger LOG = Logger.getInstance(DoNotShowInspectionIntentionMenuContributor.class);
 
   @Override
   public void collectActions(@NotNull Editor hostEditor,

@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 public class FileBasedIndexProjectHandler implements IndexableFileSet, Disposable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.util.indexing.FileBasedIndexProjectHandler");
+  private static final Logger LOG = Logger.getInstance(FileBasedIndexProjectHandler.class);
 
   private final FileBasedIndex myIndex;
   private final FileBasedIndexScanRunnableCollector myCollector;

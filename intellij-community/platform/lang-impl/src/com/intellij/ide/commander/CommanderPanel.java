@@ -54,7 +54,7 @@ import java.util.List;
  * @author Eugene Belyaev
  */
 public class CommanderPanel extends JPanel {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.commander.CommanderPanel");
+  private static final Logger LOG = Logger.getInstance(CommanderPanel.class);
 
   private static final Color DARK_BLUE = new Color(55, 85, 134);
   private static final Color DARK_BLUE_BRIGHTER = new Color(58, 92, 149);

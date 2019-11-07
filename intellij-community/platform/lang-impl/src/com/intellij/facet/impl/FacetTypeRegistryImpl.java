@@ -14,7 +14,7 @@ import java.util.*;
  * @author nik
  */
 public class FacetTypeRegistryImpl extends FacetTypeRegistry {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.facet.impl.FacetTypeRegistryImpl");
+  private static final Logger LOG = Logger.getInstance(FacetTypeRegistryImpl.class);
   private static final Comparator<FacetType> FACET_TYPE_COMPARATOR =
     (o1, o2) -> o1.getPresentableName().compareToIgnoreCase(o2.getPresentableName());
   private final Map<String, FacetTypeId> myTypeIds = new HashMap<>();

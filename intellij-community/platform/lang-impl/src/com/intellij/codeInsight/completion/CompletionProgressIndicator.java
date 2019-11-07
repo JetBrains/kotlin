@@ -74,7 +74,7 @@ import java.util.function.Supplier;
  */
 @ApiStatus.Internal
 public class CompletionProgressIndicator extends ProgressIndicatorBase implements CompletionProcessEx, Disposable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.completion.CompletionProgressIndicator");
+  private static final Logger LOG = Logger.getInstance(CompletionProgressIndicator.class);
   private final Editor myEditor;
   @NotNull
   private final Caret myCaret;

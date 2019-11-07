@@ -36,7 +36,7 @@ import java.util.List;
 
 public class PsiBasedFormattingModel implements FormattingModelEx {
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.psi.formatter.PsiBasedFormattingModel");
+  private static final Logger LOG = Logger.getInstance(PsiBasedFormattingModel.class);
 
   private final Project myProject;
   private final ASTNode myASTNode;

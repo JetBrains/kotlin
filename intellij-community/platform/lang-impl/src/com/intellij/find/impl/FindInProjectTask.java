@@ -67,7 +67,7 @@ class FindInProjectTask {
     Comparator.comparing((VirtualFile f) -> f instanceof VirtualFileWithId ? ((VirtualFileWithId)f).getId() : 0)
       .thenComparing(VirtualFile::getName) // in case files without id are also searched
       .thenComparing(VirtualFile::getPath);
-  private static final Logger LOG = Logger.getInstance("#com.intellij.find.impl.FindInProjectTask");
+  private static final Logger LOG = Logger.getInstance(FindInProjectTask.class);
   private static final int FILES_SIZE_LIMIT = 70 * 1024 * 1024; // megabytes.
   private final FindModel myFindModel;
   private final Project myProject;

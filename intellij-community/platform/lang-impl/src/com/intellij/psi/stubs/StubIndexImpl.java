@@ -56,7 +56,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 })
 public final class StubIndexImpl extends StubIndex implements PersistentStateComponent<StubIndexState> {
   private static final AtomicReference<Boolean> ourForcedClean = new AtomicReference<>(null);
-  private static final Logger LOG = Logger.getInstance("#com.intellij.psi.stubs.StubIndexImpl");
+  private static final Logger LOG = Logger.getInstance(StubIndexImpl.class);
 
   private static class AsyncState {
     private final Map<StubIndexKey<?, ?>, UpdatableIndex<?, Void, FileContent>> myIndices = new THashMap<>();

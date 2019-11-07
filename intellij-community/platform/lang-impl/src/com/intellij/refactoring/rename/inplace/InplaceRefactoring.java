@@ -78,7 +78,7 @@ import java.util.List;
 import java.util.*;
 
 public abstract class InplaceRefactoring {
-  protected static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.rename.inplace.VariableInplaceRenamer");
+  protected static final Logger LOG = Logger.getInstance(VariableInplaceRenamer.class);
   @NonNls protected static final String PRIMARY_VARIABLE_NAME = "PrimaryVariable";
   @NonNls protected static final String OTHER_VARIABLE_NAME = "OtherVariable";
   protected static final Stack<InplaceRefactoring> ourRenamersStack = new Stack<>();

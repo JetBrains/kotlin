@@ -28,7 +28,7 @@ import javax.swing.*;
 import java.util.*;
 
 public class RedundantSuppressInspection extends GlobalSimpleInspectionTool {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInspection.RedundantSuppressInspection");
+  private static final Logger LOG = Logger.getInstance(RedundantSuppressInspection.class);
   public static final String SHORT_NAME = "RedundantSuppression";
   public boolean IGNORE_ALL;
   private BidirectionalMap<String, QuickFix> myQuickFixes;

@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 @State(name = "CompilerWorkspaceConfiguration", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public class CompilerWorkspaceConfiguration implements PersistentStateComponent<CompilerWorkspaceConfiguration> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.CompilerWorkspaceConfiguration");
+  private static final Logger LOG = Logger.getInstance(CompilerWorkspaceConfiguration.class);
 
   static {
     LOG.info("Available processors: " + Runtime.getRuntime().availableProcessors());

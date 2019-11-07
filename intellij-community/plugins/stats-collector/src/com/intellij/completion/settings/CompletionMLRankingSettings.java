@@ -16,7 +16,7 @@ import java.util.*;
 
 @State(name = "CompletionMLRankingSettings", storages = @Storage("completionMLRanking.xml"))
 public class CompletionMLRankingSettings implements PersistentStateComponent<CompletionMLRankingSettings.State> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.completion.settings.CompletionMLRankingSettings");
+  private static final Logger LOG = Logger.getInstance(CompletionMLRankingSettings.class);
 
   private static final Collection<String> ENABLE_RANKING_BY_DEFAULT = Collections.emptyList();
   private final State myState = new State();

@@ -55,7 +55,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.LockSupport;
 
 public class ParameterInfoController extends UserDataHolderBase implements VisibleAreaListener, Disposable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.hint.ParameterInfoController");
+  private static final Logger LOG = Logger.getInstance(ParameterInfoController.class);
   private static final String WHITESPACE = " \t";
   private final Project myProject;
   @NotNull private final Editor myEditor;

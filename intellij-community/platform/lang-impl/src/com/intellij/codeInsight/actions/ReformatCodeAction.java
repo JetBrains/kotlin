@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
 public class ReformatCodeAction extends AnAction implements DumbAware {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.actions.ReformatCodeAction");
+  private static final Logger LOG = Logger.getInstance(ReformatCodeAction.class);
 
   protected static ReformatFilesOptions myTestOptions;
 

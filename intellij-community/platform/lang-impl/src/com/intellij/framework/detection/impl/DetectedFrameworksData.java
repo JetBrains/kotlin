@@ -43,7 +43,7 @@ import java.util.Set;
  * @author nik
  */
 public class DetectedFrameworksData {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.framework.detection.impl.DetectedFrameworksData");
+  private static final Logger LOG = Logger.getInstance(DetectedFrameworksData.class);
   private PersistentHashMap<Integer,TIntHashSet> myExistentFrameworkFiles;
   private final TIntObjectHashMap<TIntHashSet> myNewFiles;
   private final MultiMap<Integer, DetectedFrameworkDescription> myDetectedFrameworks;

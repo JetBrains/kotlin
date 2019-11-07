@@ -29,7 +29,7 @@ import java.io.File;
  * @author nik
  */
 class FrameworkDirectoryNode extends DetectedFrameworkTreeNodeBase {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.framework.detection.impl.ui.FrameworkDirectoryNode");
+  private static final Logger LOG = Logger.getInstance(FrameworkDirectoryNode.class);
   private final VirtualFile myDirectory;
 
   FrameworkDirectoryNode(VirtualFile directory) {

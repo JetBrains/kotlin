@@ -27,7 +27,7 @@ import java.util.Map;
  * @author Eugene.Kudelevsky
  */
 public abstract class CreateFromTemplateAction<T extends PsiElement> extends AnAction implements WriteActionAware {
-  protected static final Logger LOG = Logger.getInstance("#com.intellij.ide.actions.CreateFromTemplateAction");
+  protected static final Logger LOG = Logger.getInstance(CreateFromTemplateAction.class);
 
   public CreateFromTemplateAction(@Nls(capitalization = Nls.Capitalization.Title) String text,
                                   @Nls(capitalization = Nls.Capitalization.Sentence) String description, Icon icon) {

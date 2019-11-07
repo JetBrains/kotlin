@@ -41,7 +41,7 @@ import java.util.*;
  */
 @State(name = ArtifactManagerImpl.COMPONENT_NAME, storages = @Storage(value = "artifacts", stateSplitter = ArtifactManagerStateSplitter.class))
 public class ArtifactManagerImpl extends ArtifactManager implements PersistentStateComponent<ArtifactManagerState>, Disposable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.packaging.impl.artifacts.ArtifactManagerImpl");
+  private static final Logger LOG = Logger.getInstance(ArtifactManagerImpl.class);
   @NonNls public static final String COMPONENT_NAME = "ArtifactManager";
   @NonNls public static final String PACKAGING_ELEMENT_NAME = "element";
   @NonNls public static final String TYPE_ID_ATTRIBUTE = "id";

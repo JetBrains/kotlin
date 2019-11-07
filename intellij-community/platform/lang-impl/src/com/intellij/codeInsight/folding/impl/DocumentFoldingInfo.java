@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 class DocumentFoldingInfo implements CodeFoldingState {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.folding.impl.DocumentFoldingInfo");
+  private static final Logger LOG = Logger.getInstance(DocumentFoldingInfo.class);
   private static final Key<FoldingInfo> FOLDING_INFO_KEY = Key.create("FOLDING_INFO");
 
   @NotNull private final Project myProject;

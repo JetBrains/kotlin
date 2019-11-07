@@ -32,7 +32,7 @@ import java.io.Writer;
 import java.util.*;
 
 public class HTMLTextPainter {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeEditor.printing.HTMLTextPainter");
+  private static final Logger LOG = Logger.getInstance(HTMLTextPainter.class);
 
   private int myOffset = 0;
   private final EditorHighlighter myHighlighter;

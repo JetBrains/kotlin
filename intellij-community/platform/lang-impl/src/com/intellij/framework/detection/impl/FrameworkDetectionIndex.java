@@ -35,7 +35,7 @@ import java.util.*;
  * @author nik
  */
 public class FrameworkDetectionIndex extends ScalarIndexExtension<Integer> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.framework.detection.impl.FrameworkDetectionIndex");
+  private static final Logger LOG = Logger.getInstance(FrameworkDetectionIndex.class);
   public static final ID<Integer,Void> NAME = ID.create("FrameworkDetectionIndex");
 
   private final EventDispatcher<FrameworkDetectionIndexListener> myDispatcher = EventDispatcher.create(FrameworkDetectionIndexListener.class);

@@ -72,7 +72,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 public class LookupImpl extends LightweightHint implements LookupEx, Disposable, LookupElementListPresenter {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.lookup.impl.LookupImpl");
+  private static final Logger LOG = Logger.getInstance(LookupImpl.class);
   private static final Key<Font> CUSTOM_FONT_KEY = Key.create("CustomLookupElementFont");
 
   private final LookupOffsets myOffsets;

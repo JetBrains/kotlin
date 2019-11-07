@@ -36,7 +36,7 @@ import java.util.*;
  * @author nik
  */
 public class FrameworkDetectorRegistryImpl extends FrameworkDetectorRegistry {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.framework.detection.impl.FrameworkDetectorRegistryImpl");
+  private static final Logger LOG = Logger.getInstance(FrameworkDetectorRegistryImpl.class);
   private static final int REGISTRY_VERSION = 0;
   private TObjectIntHashMap<String> myDetectorIds;
   private TIntObjectHashMap<FrameworkDetector> myDetectorById;

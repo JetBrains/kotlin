@@ -47,7 +47,7 @@ public class FrameworkDetectionProcessor {
 
   public static final Set<String> SKIPPED_DIRECTORIES = ContainerUtil.newHashSet("node_modules");
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.framework.detection.impl.FrameworkDetectionProcessor");
+  private static final Logger LOG = Logger.getInstance(FrameworkDetectionProcessor.class);
   private final ProgressIndicator myProgressIndicator;
   private final MultiMap<FileType, FrameworkDetectorData> myDetectorsByFileType;
   private Set<VirtualFile> myProcessedFiles;

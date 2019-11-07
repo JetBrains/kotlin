@@ -22,7 +22,7 @@ import java.util.Set;
 
 
 public abstract class BeforeAfterActionMetaData implements BeforeAfterMetaData {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.intention.impl.config.BeforeAfterActionMetaData");
+  private static final Logger LOG = Logger.getInstance(BeforeAfterActionMetaData.class);
 
   protected static final TextDescriptor[] EMPTY_EXAMPLE = new TextDescriptor[0];
   protected static final TextDescriptor EMPTY_DESCRIPTION = new PlainTextDescriptor("", "");

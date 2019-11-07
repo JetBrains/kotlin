@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
 
 public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesUpdater {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater");
+  private static final Logger LOG = Logger.getInstance(PushedFilePropertiesUpdater.class);
 
   private final Project myProject;
 

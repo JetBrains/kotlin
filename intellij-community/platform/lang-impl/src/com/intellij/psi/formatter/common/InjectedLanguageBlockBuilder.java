@@ -37,7 +37,7 @@ import java.util.List;
  * @author nik
  */
 public abstract class InjectedLanguageBlockBuilder {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.psi.formatter.xml.XmlInjectedLanguageBlockBuilder");
+  private static final Logger LOG = Logger.getInstance(InjectedLanguageBlockBuilder.class);
 
   @NotNull
   public Block createInjectedBlock(@NotNull ASTNode node,

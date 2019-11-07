@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentMap;
  * Contributor-based goto model
  */
 public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelEx, PossiblyDumbAware {
-  public static final Logger LOG = Logger.getInstance("#com.intellij.ide.util.gotoByName.ContributorsBasedGotoByModel");
+  public static final Logger LOG = Logger.getInstance(ContributorsBasedGotoByModel.class);
 
   protected final Project myProject;
   private final List<ChooseByNameContributor> myContributors;

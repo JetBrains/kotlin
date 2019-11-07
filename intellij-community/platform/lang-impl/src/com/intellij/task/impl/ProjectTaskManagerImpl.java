@@ -51,7 +51,7 @@ import static java.util.stream.Collectors.groupingBy;
 @SuppressWarnings("deprecation")
 public class ProjectTaskManagerImpl extends ProjectTaskManager {
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.task.ProjectTaskManager");
+  private static final Logger LOG = Logger.getInstance(ProjectTaskManager.class);
   private final ProjectTaskRunner myDummyTaskRunner = new DummyTaskRunner();
   private final ProjectTaskListener myEventPublisher;
   private final List<ProjectTaskManagerListener> myListeners = new CopyOnWriteArrayList<>();

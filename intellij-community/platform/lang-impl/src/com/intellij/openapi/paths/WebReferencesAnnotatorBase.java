@@ -27,7 +27,7 @@ import java.util.Map;
  * @author Eugene.Kudelevsky
  */
 public abstract class WebReferencesAnnotatorBase extends ExternalAnnotator<WebReferencesAnnotatorBase.MyInfo[], WebReferencesAnnotatorBase.MyInfo[]> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.paths.WebReferencesAnnotatorBase");
+  private static final Logger LOG = Logger.getInstance(WebReferencesAnnotatorBase.class);
 
   private final Map<String, MyFetchCacheEntry> myFetchCache = new HashMap<>();
   private final Object myFetchCacheLock = new Object();

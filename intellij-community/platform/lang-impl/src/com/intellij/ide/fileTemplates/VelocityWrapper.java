@@ -31,7 +31,7 @@ import java.io.*;
  * @author peter
  */
 class VelocityWrapper {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.fileTemplates.VelocityWrapper");
+  private static final Logger LOG = Logger.getInstance(VelocityWrapper.class);
 
   static {
     try{

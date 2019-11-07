@@ -59,7 +59,7 @@ import java.util.jar.Manifest;
  * @author nik
  */
 public class ManifestFileUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.roots.ui.configuration.artifacts.ArtifactEditorContextImpl");
+  private static final Logger LOG = Logger.getInstance(ManifestFileUtil.class);
   public static final String MANIFEST_PATH = JarFile.MANIFEST_NAME;
   public static final String MANIFEST_FILE_NAME = PathUtil.getFileName(MANIFEST_PATH);
   public static final String MANIFEST_DIR_NAME = PathUtil.getParentPath(MANIFEST_PATH);

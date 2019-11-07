@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  * @author Eugene Zhuravlev
  */
 public class ResourcePatterns {
-  private static final Logger LOG = Logger.getInstance("#org.jetbrains.jps.model.java.impl.compiler.ResourcePatterns");
+  private static final Logger LOG = Logger.getInstance(ResourcePatterns.class);
 
   private final List<CompiledPattern> myCompiledPatterns = new ArrayList<>();
   private final List<CompiledPattern> myNegatedCompiledPatterns = new ArrayList<>();

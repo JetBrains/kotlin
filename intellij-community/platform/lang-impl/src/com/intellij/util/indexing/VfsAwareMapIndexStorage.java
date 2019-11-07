@@ -44,7 +44,7 @@ import java.io.*;
  * @author Eugene Zhuravlev
  */
 public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<Key, Value> implements VfsAwareIndexStorage<Key, Value> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.util.indexing.impl.MapIndexStorage");
+  private static final Logger LOG = Logger.getInstance(MapIndexStorage.class);
   private static final boolean ENABLE_CACHED_HASH_IDS = SystemProperties.getBooleanProperty("idea.index.no.cashed.hashids", true);
   private final boolean myBuildKeyHashToVirtualFileMapping;
   private AppendableStorageBackedByResizableMappedFile myKeyHashToVirtualFileMapping;

@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * @author Eugene Zhuravlev
  */
 public class FilePathActionJavac extends JavacParserAction {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.impl.javaCompiler.javac.FilePathActionJavac");
+  private static final Logger LOG = Logger.getInstance(FilePathActionJavac.class);
   private final Matcher myJdk7FormatMatcher;
 
   public FilePathActionJavac(final Matcher matcher) {

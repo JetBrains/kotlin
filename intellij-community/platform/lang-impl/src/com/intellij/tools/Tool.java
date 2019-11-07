@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class Tool implements SchemeElement {
-  private static final Logger LOG = Logger.getInstance("#" + Tool.class.getPackage().getName());
+  private static final Logger LOG = Logger.getInstance(Tool.class);
 
   @NonNls public static final String ACTION_ID_PREFIX = "Tool_";
 

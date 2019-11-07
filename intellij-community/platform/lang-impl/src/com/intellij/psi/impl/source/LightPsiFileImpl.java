@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class LightPsiFileImpl extends PsiElementBase implements PsiFileEx {
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.source.LightPsiFileImpl");
+  private static final Logger LOG = Logger.getInstance(LightPsiFileImpl.class);
   private PsiFile myOriginalFile = null;
   private boolean myExplicitlySetAsValid = false;
   private boolean myInvalidated = false;

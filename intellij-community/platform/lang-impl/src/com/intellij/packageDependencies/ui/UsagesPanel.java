@@ -37,7 +37,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public abstract class UsagesPanel extends JPanel implements Disposable, DataProvider {
-  protected static final Logger LOG = Logger.getInstance("#com.intellij.packageDependencies.ui.UsagesPanel");
+  protected static final Logger LOG = Logger.getInstance(UsagesPanel.class);
 
   private final Project myProject;
   ProgressIndicator myCurrentProgress;

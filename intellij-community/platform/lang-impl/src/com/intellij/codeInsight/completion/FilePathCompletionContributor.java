@@ -50,7 +50,7 @@ import static com.intellij.patterns.PlatformPatterns.psiElement;
  * @author spleaner
  */
 public class FilePathCompletionContributor extends CompletionContributor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.completion.FilePathCompletionContributor");
+  private static final Logger LOG = Logger.getInstance(FilePathCompletionContributor.class);
 
   public FilePathCompletionContributor() {
     extend(CompletionType.BASIC, psiElement(), new CompletionProvider<CompletionParameters>() {

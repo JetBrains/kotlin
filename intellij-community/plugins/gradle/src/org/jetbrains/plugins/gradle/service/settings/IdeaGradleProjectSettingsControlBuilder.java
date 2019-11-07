@@ -77,7 +77,7 @@ import static com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil.INSE
  */
 @SuppressWarnings("FieldCanBeLocal") // Used implicitly by reflection at disposeUIResources() and showUi()
 public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSettingsControlBuilder {
-  private static final Logger LOG = Logger.getInstance("#" + IdeaGradleProjectSettingsControlBuilder.class.getPackage().getName());
+  private static final Logger LOG = Logger.getInstance(IdeaGradleProjectSettingsControlBuilder.class);
 
   private static final long BALLOON_DELAY_MILLIS = TimeUnit.SECONDS.toMillis(1);
   private static final String HIDDEN_KEY = "hidden";

@@ -29,7 +29,7 @@ import java.util.*;
 @State(name = ProjectFacetManagerImpl.COMPONENT_NAME)
 public class ProjectFacetManagerImpl extends ProjectFacetManagerEx implements PersistentStateComponent<ProjectFacetManagerImpl.ProjectFacetManagerState> {
   @NonNls public static final String COMPONENT_NAME = "ProjectFacetManager";
-  private static final Logger LOG = Logger.getInstance("#com.intellij.facet.impl.ProjectFacetManagerImpl");
+  private static final Logger LOG = Logger.getInstance(ProjectFacetManagerImpl.class);
   private ProjectFacetManagerState myState = new ProjectFacetManagerState();
   private final Project myProject;
   private volatile MultiMap<FacetTypeId<?>, Module> myIndex;

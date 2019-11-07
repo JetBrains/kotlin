@@ -105,7 +105,7 @@ import static com.intellij.ui.tree.TreePathUtil.toTreePathArray;
   @Storage(value = StoragePathMacros.WORKSPACE_FILE, deprecated = true)
 })
 public class ProjectViewImpl extends ProjectView implements PersistentStateComponent<Element>, Disposable, QuickActionProvider, BusyObject {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.projectView.impl.ProjectViewImpl");
+  private static final Logger LOG = Logger.getInstance(ProjectViewImpl.class);
   private static final Key<String> ID_KEY = Key.create("pane-id");
   private static final Key<String> SUB_ID_KEY = Key.create("pane-sub-id");
   private final CopyPasteDelegator myCopyPasteDelegator;

@@ -55,7 +55,7 @@ import java.util.List;
  * @author nik
  */
 public class PackageFileWorker {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.packaging.impl.ui.actions.PackageFileWorker");
+  private static final Logger LOG = Logger.getInstance(PackageFileWorker.class);
   private final File myFile;
   private final String myRelativeOutputPath;
   private final boolean myPackIntoArchives;

@@ -33,7 +33,7 @@ import java.util.Set;
  * @author Eugene Zhuravlev
  */
 public class ExistingModuleLoader extends ModuleBuilder {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.util.projectWizard.ExistingModuleLoader");
+  private static final Logger LOG = Logger.getInstance(ExistingModuleLoader.class);
 
   public static ExistingModuleLoader setUpLoader(final String moduleFilePath) {
     final ExistingModuleLoader moduleLoader = new ExistingModuleLoader();

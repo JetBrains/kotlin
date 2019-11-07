@@ -45,7 +45,7 @@ import java.io.IOException;
 
 public class PlaybackDebugger implements UiDebuggerExtension, PlaybackRunner.StatusCallback {
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ui.debugger.extensions.PlaybackDebugger");
+  private static final Logger LOG = Logger.getInstance(PlaybackDebugger.class);
 
   private static final Color ERROR_COLOR = JBColor.RED;
   private static final Color MESSAGE_COLOR = Color.BLACK;

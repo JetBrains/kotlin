@@ -37,7 +37,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
   @Storage(value = "editor.codeinsight.xml", deprecated = true),
 })
 public class CodeInsightSettings implements PersistentStateComponent<Element>, Cloneable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.CodeInsightSettings");
+  private static final Logger LOG = Logger.getInstance(CodeInsightSettings.class);
   private final List<PropertyChangeListener> myListeners = new CopyOnWriteArrayList<>();
 
   public static CodeInsightSettings getInstance() {

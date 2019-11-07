@@ -41,7 +41,7 @@ import java.util.List;
 import static com.intellij.codeInsight.editorActions.JoinLinesHandlerDelegate.CANNOT_JOIN;
 
 public class JoinLinesHandler extends EditorActionHandler {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.editorActions.JoinLinesHandler");
+  private static final Logger LOG = Logger.getInstance(JoinLinesHandler.class);
   private final EditorActionHandler myOriginalHandler;
 
   public JoinLinesHandler(EditorActionHandler originalHandler) {

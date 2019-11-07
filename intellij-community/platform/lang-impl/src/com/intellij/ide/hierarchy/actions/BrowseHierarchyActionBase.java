@@ -34,7 +34,7 @@ import java.util.List;
  * @author yole
  */
 public abstract class BrowseHierarchyActionBase extends AnAction {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.hierarchy.actions.BrowseHierarchyActionBase");
+  private static final Logger LOG = Logger.getInstance(BrowseHierarchyActionBase.class);
   private final LanguageExtension<HierarchyProvider> myExtension;
 
   protected BrowseHierarchyActionBase(@NotNull LanguageExtension<HierarchyProvider> extension) {

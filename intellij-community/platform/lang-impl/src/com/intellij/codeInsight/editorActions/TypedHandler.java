@@ -55,7 +55,7 @@ public class TypedHandler extends TypedActionHandlerBase {
   private static final Set<Character> COMPLEX_CHARS =
     ContainerUtil.set('\n', '\t', '(', ')', '<', '>', '[', ']', '{', '}', '"', '\'');
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.editorActions.TypedHandler");
+  private static final Logger LOG = Logger.getInstance(TypedHandler.class);
 
   private static final KeyedExtensionCollector<QuoteHandler, String> quoteHandlers = new KeyedExtensionCollector<>(QuoteHandlerEP.EP_NAME);
 

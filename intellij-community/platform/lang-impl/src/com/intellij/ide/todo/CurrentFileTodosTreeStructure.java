@@ -27,7 +27,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 
 public final class CurrentFileTodosTreeStructure extends TodoTreeStructure{
-  private static final Logger LOG=Logger.getInstance("#com.intellij.ide.todo.CurrentFileTodosTreeStructure");
+  private static final Logger LOG = Logger.getInstance(CurrentFileTodosTreeStructure.class);
   private static final Object[] ourEmptyArray=new Object[]{};
 
   /**

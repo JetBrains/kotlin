@@ -47,7 +47,7 @@ import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class EnterAfterUnmatchedBraceHandler extends EnterHandlerDelegateAdapter {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.editorActions.enter.EnterAfterUnmatchedBraceHandler");
+  private static final Logger LOG = Logger.getInstance(EnterAfterUnmatchedBraceHandler.class);
 
   @Override
   public Result preprocessEnter(@NotNull final PsiFile file,

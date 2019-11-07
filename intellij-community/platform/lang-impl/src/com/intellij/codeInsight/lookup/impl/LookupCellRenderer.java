@@ -48,7 +48,7 @@ import static com.intellij.codeInsight.documentation.DocumentationComponent.COLO
  * @author Konstantin Bulenkov
  */
 public class LookupCellRenderer implements ListCellRenderer<LookupElement> {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.lookup.impl.LookupCellRenderer");
+  private static final Logger LOG = Logger.getInstance(LookupCellRenderer.class);
 
   private Icon myEmptyIcon = EmptyIcon.ICON_0;
   private final Font myNormalFont;

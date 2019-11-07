@@ -44,7 +44,7 @@ import java.util.ArrayList;
 
 public class FocusDebugger implements UiDebuggerExtension, PropertyChangeListener, ListSelectionListener  {
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ui.debugger.extensions.FocusDebugger");
+  private static final Logger LOG = Logger.getInstance(FocusDebugger.class);
 
   private JComponent myComponent;
 

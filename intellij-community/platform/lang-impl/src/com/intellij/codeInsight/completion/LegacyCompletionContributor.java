@@ -36,7 +36,7 @@ import java.util.Set;
  * @author peter
  */
 public class LegacyCompletionContributor extends CompletionContributor {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.completion.LegacyCompletionContributor");
+  private static final Logger LOG = Logger.getInstance(LegacyCompletionContributor.class);
 
   @Override
   public void fillCompletionVariants(@NotNull CompletionParameters parameters, @NotNull CompletionResultSet _result) {

@@ -78,7 +78,7 @@ import java.util.concurrent.locks.LockSupport;
  */
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class InspectionApplication implements CommandLineInspectionProgressReporter {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInspection.InspectionApplication");
+  private static final Logger LOG = Logger.getInstance(InspectionApplication.class);
 
   public InspectionToolCmdlineOptionHelpProvider myHelpProvider;
   public String myProjectPath;

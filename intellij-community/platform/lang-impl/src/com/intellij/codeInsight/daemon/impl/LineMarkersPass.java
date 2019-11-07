@@ -44,7 +44,7 @@ import javax.swing.*;
 import java.util.*;
 
 public class LineMarkersPass extends TextEditorHighlightingPass {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.daemon.impl.LineMarkersPass");
+  private static final Logger LOG = Logger.getInstance(LineMarkersPass.class);
 
   private volatile List<LineMarkerInfo<PsiElement>> myMarkers = Collections.emptyList();
 

@@ -43,7 +43,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PsiVFSListener implements BulkFileListener {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.psi.impl.file.impl.PsiVFSListener");
+  private static final Logger LOG = Logger.getInstance(PsiVFSListener.class);
 
   private final FileTypeManager myFileTypeManager;
   private final ProjectRootManager myProjectRootManager;

@@ -115,7 +115,7 @@ public final class BuildManager implements Disposable {
   private static final Key<CharSequence> STDERR_OUTPUT = Key.create("_process_launch_errors_");
   private static final SimpleDateFormat USAGE_STAMP_DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.server.BuildManager");
+  private static final Logger LOG = Logger.getInstance(BuildManager.class);
   private static final String COMPILER_PROCESS_JDK_PROPERTY = "compiler.process.jdk";
   public static final String SYSTEM_ROOT = "compile-server";
   public static final String TEMP_DIR_NAME = "_temp_";

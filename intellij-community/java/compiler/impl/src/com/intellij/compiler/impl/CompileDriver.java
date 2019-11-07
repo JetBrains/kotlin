@@ -62,7 +62,7 @@ import java.util.concurrent.TimeUnit;
 import static org.jetbrains.jps.api.CmdlineRemoteProto.Message.ControllerMessage.ParametersMessage.TargetTypeBuildScope;
 
 public class CompileDriver {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.impl.CompileDriver");
+  private static final Logger LOG = Logger.getInstance(CompileDriver.class);
 
   private static final Key<Boolean> COMPILATION_STARTED_AUTOMATICALLY = Key.create("compilation_started_automatically");
   private static final Key<ExitStatus> COMPILE_SERVER_BUILD_STATUS = Key.create("COMPILE_SERVER_BUILD_STATUS");

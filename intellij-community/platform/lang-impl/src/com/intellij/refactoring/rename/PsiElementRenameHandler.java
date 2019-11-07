@@ -39,7 +39,7 @@ import java.util.Arrays;
  * @author Jeka, dsl
  */
 public class PsiElementRenameHandler implements RenameHandler {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.rename.PsiElementRenameHandler");
+  private static final Logger LOG = Logger.getInstance(PsiElementRenameHandler.class);
   private static final ExtensionPointName<Condition<? super PsiElement>> VETO_RENAME_CONDITION_EP = ExtensionPointName.create("com.intellij.vetoRenameCondition");
 
   public static final DataKey<String> DEFAULT_NAME = DataKey.create("DEFAULT_NAME");

@@ -32,7 +32,7 @@ import java.util.Set;
  * @author nik
  */
 public class ConvertProjectDialog extends DialogWrapper {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.conversion.impl.ui.ConvertProjectDialog");
+  private static final Logger LOG = Logger.getInstance(ConvertProjectDialog.class);
   private JPanel myMainPanel;
   private JTextPane myTextPane;
   private boolean myConverted;

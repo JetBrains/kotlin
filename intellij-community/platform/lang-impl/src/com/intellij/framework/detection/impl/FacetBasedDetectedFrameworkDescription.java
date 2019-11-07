@@ -35,7 +35,7 @@ import java.util.Set;
  * @author nik
  */
 public abstract class FacetBasedDetectedFrameworkDescription<F extends Facet, C extends FacetConfiguration> extends DetectedFrameworkDescription {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.framework.detection.impl.FacetBasedDetectedFrameworkDescription");
+  private static final Logger LOG = Logger.getInstance(FacetBasedDetectedFrameworkDescription.class);
   private final FacetBasedFrameworkDetector<F, C> myDetector;
   private final C myConfiguration;
   private final Set<VirtualFile> myRelatedFiles;

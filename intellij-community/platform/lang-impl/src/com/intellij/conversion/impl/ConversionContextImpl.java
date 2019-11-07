@@ -52,7 +52,7 @@ import java.util.concurrent.Executor;
  * @author nik
  */
 public final class ConversionContextImpl implements ConversionContext {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.conversion.impl.ConversionContextImpl");
+  private static final Logger LOG = Logger.getInstance(ConversionContextImpl.class);
   private static final String PROJECT_FILE_VERSION_COMPONENT_NAME = "ProjectFileVersion";
 
   private final Map<Path, SettingsXmlFile> mySettingsFiles = new HashMap<>();

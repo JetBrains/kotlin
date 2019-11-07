@@ -30,7 +30,7 @@ import java.util.Date;
  * @author yole
  */
 public class CurrentDateMacro extends SimpleMacro {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.template.macro.CurrentDateMacro");
+  private static final Logger LOG = Logger.getInstance(CurrentDateMacro.class);
   protected CurrentDateMacro() {
     super("date");
   }

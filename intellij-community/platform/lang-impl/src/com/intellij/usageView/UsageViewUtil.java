@@ -45,7 +45,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class UsageViewUtil {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.usageView.UsageViewUtil");
+  private static final Logger LOG = Logger.getInstance(UsageViewUtil.class);
 
   private UsageViewUtil() { }
 

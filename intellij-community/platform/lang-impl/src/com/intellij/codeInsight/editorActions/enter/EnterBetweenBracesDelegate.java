@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class EnterBetweenBracesDelegate {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.editorActions.enter.EnterBetweenBracesDelegate");
+  private static final Logger LOG = Logger.getInstance(EnterBetweenBracesDelegate.class);
   static final LanguageExtension<EnterBetweenBracesDelegate> EP_NAME = new LanguageExtension<>("com.intellij.enterBetweenBracesDelegate");
 
   public boolean bracesAreInTheSameElement(@NotNull PsiFile file, @NotNull Editor editor, int lBraceOffset, int rBraceOffset) {

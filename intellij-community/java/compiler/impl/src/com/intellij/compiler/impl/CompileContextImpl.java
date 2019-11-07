@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public class CompileContextImpl extends UserDataHolderBase implements CompileContextEx {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.impl.CompileContextImpl");
+  private static final Logger LOG = Logger.getInstance(CompileContextImpl.class);
   private final Project myProject;
   private final CompilerTask myBuildSession;
   private final MessagesContainer myMessages;

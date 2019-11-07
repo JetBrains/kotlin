@@ -29,7 +29,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
  * @author Vladislav.Soroka
  */
 public class ToggleOfflineAction extends ExternalSystemToggleAction {
-  private static final Logger LOG = Logger.getInstance("#" + ToggleOfflineAction.class.getPackage().getName());
+  private static final Logger LOG = Logger.getInstance(ToggleOfflineAction.class);
 
   @Override
   public void update(@NotNull AnActionEvent e) {

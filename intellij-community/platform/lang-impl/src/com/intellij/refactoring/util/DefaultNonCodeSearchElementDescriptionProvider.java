@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
  * @author yole
  */
 class DefaultNonCodeSearchElementDescriptionProvider implements ElementDescriptionProvider {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.util.DefaultNonCodeSearchElementDescriptionProvider");
+  private static final Logger LOG = Logger.getInstance(DefaultNonCodeSearchElementDescriptionProvider.class);
 
   static final DefaultNonCodeSearchElementDescriptionProvider INSTANCE = new DefaultNonCodeSearchElementDescriptionProvider();
 

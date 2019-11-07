@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class MoveFilesOrDirectoriesHandler extends MoveHandlerDelegate {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler");
+  private static final Logger LOG = Logger.getInstance(MoveFilesOrDirectoriesHandler.class);
 
   @Override
   public boolean canMove(final PsiElement[] elements, final PsiElement targetContainer, @Nullable PsiReference reference) {

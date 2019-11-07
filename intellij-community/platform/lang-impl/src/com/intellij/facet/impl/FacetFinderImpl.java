@@ -39,7 +39,7 @@ import java.util.*;
  * @author nik
  */
 public class FacetFinderImpl extends FacetFinder {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.facet.impl.FacetFinderImpl");
+  private static final Logger LOG = Logger.getInstance(FacetFinderImpl.class);
   private final Map<FacetTypeId, AllFacetsOfTypeModificationTracker> myAllFacetTrackers = new HashMap<>();
   private final Map<FacetTypeId, CachedValue<Map<VirtualFile, List<Facet>>>> myCachedMaps =
     new HashMap<>();

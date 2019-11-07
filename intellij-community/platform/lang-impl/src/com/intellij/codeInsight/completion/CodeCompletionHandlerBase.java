@@ -57,7 +57,7 @@ import java.util.concurrent.Future;
 
 @SuppressWarnings("deprecation")
 public class CodeCompletionHandlerBase {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.completion.CodeCompletionHandlerBase");
+  private static final Logger LOG = Logger.getInstance(CodeCompletionHandlerBase.class);
   private static final Key<Boolean> CARET_PROCESSED = Key.create("CodeCompletionHandlerBase.caretProcessed");
 
   /**

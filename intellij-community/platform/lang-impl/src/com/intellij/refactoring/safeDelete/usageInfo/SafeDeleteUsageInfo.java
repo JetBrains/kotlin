@@ -25,8 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * @author dsl
  */
 public class SafeDeleteUsageInfo extends UsageInfo {
-  private static final Logger LOG = Logger.getInstance(
-    "#com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo");
+  private static final Logger LOG = Logger.getInstance(SafeDeleteUsageInfo.class);
   private final PsiElement myReferencedElement;
 
   public SafeDeleteUsageInfo(@NotNull PsiElement element, PsiElement referencedElement) {

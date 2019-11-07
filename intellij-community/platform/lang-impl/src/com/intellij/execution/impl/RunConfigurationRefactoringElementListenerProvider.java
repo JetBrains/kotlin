@@ -29,7 +29,7 @@ import com.intellij.refactoring.listeners.RefactoringElementListenerProvider;
  * @author spleaner
 */
 public class RunConfigurationRefactoringElementListenerProvider implements RefactoringElementListenerProvider {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.execution.impl.RunConfigurationRefactoringElementListenerProvider");
+  private static final Logger LOG = Logger.getInstance(RunConfigurationRefactoringElementListenerProvider.class);
 
   @Override
   public RefactoringElementListener getListener(final PsiElement element) {

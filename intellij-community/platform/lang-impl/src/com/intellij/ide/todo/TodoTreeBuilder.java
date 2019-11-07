@@ -47,7 +47,7 @@ import java.util.*;
  * @author Vladimir Kondratyev
  */
 public abstract class TodoTreeBuilder implements Disposable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.todo.TodoTreeBuilder");
+  private static final Logger LOG = Logger.getInstance(TodoTreeBuilder.class);
   public static final Comparator<NodeDescriptor> NODE_DESCRIPTOR_COMPARATOR =
       Comparator.<NodeDescriptor>comparingInt(NodeDescriptor::getWeight).thenComparingInt(NodeDescriptor::getIndex);  
   protected final Project myProject;

@@ -33,7 +33,7 @@ import java.util.Collection;
  * @author nik
  */
 class DetectedFrameworkNode extends DetectedFrameworkTreeNodeBase {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.framework.detection.impl.ui.DetectedFrameworkNode");
+  private static final Logger LOG = Logger.getInstance(DetectedFrameworkNode.class);
   private final DetectedFrameworkDescription myDescription;
   private final FrameworkDetectionContext myContext;
 

@@ -60,7 +60,7 @@ public abstract class CodeStyleAbstractPanel implements Disposable, ComponentHig
 
   private static final long TIME_TO_HIGHLIGHT_PREVIEW_CHANGES_IN_MILLIS = TimeUnit.SECONDS.toMillis(3);
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.application.options.CodeStyleXmlPanel");
+  private static final Logger LOG = Logger.getInstance(CodeStyleAbstractPanel.class);
 
   private final List<TextRange>       myPreviewRangesToHighlight = new ArrayList<>();
 

@@ -31,7 +31,7 @@ import java.util.List;
  * @author Eugene Zhuravlev
  */
 public class UnindexedFilesUpdater extends DumbModeTask {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.util.indexing.UnindexedFilesUpdater");
+  private static final Logger LOG = Logger.getInstance(UnindexedFilesUpdater.class);
 
   private final FileBasedIndexImpl myIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
   private final Project myProject;

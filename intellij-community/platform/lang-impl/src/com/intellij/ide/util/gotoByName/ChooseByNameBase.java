@@ -86,7 +86,7 @@ import java.util.*;
 public abstract class ChooseByNameBase implements ChooseByNameViewModel {
   public static final String TEMPORARILY_FOCUSABLE_COMPONENT_KEY = "ChooseByNameBase.TemporarilyFocusableComponent";
 
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.util.gotoByName.ChooseByNameBase");
+  private static final Logger LOG = Logger.getInstance(ChooseByNameBase.class);
 
   @Nullable
   protected final Project myProject;

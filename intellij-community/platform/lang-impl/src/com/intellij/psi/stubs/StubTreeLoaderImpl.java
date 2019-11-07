@@ -45,7 +45,7 @@ import java.util.Map;
  * @author yole
  */
 public class StubTreeLoaderImpl extends StubTreeLoader {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.psi.stubs.StubTreeLoaderImpl");
+  private static final Logger LOG = Logger.getInstance(StubTreeLoaderImpl.class);
   private static volatile boolean ourStubReloadingProhibited;
 
   @Override

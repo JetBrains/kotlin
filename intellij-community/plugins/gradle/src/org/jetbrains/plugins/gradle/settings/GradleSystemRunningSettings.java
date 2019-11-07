@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 @Deprecated
 @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
 public class GradleSystemRunningSettings {
-  private static final Logger LOG = Logger.getInstance("#" + GradleSystemRunningSettings.class.getPackage().getName());
+  private static final Logger LOG = Logger.getInstance(GradleSystemRunningSettings.class);
   private static boolean alreadyLogged = false;
 
   @NotNull

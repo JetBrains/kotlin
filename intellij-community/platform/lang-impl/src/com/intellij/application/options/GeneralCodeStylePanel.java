@@ -63,7 +63,7 @@ import java.util.regex.PatternSyntaxException;
 
 public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
   @SuppressWarnings("UnusedDeclaration")
-  private static final Logger LOG = Logger.getInstance("#com.intellij.application.options.GeneralCodeStylePanel");
+  private static final Logger LOG = Logger.getInstance(GeneralCodeStylePanel.class);
 
   private static final String SYSTEM_DEPENDANT_STRING = ApplicationBundle.message("combobox.crlf.system.dependent");
   private static final String UNIX_STRING = ApplicationBundle.message("combobox.crlf.unix");

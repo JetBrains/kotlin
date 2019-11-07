@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  * @author cdr
  */
 final class PassExecutorService implements Disposable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.daemon.impl.PassExecutorService");
+  private static final Logger LOG = Logger.getInstance(PassExecutorService.class);
   private static final boolean CHECK_CONSISTENCY = ApplicationManager.getApplication().isUnitTestMode();
 
   private final Map<ScheduledPass, Job<Void>> mySubmittedPasses = new ConcurrentHashMap<>();

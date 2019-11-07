@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ModuleTypeManagerImpl extends ModuleTypeManager {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.module.impl.ModuleTypeManagerImpl");
+  private static final Logger LOG = Logger.getInstance(ModuleTypeManagerImpl.class);
 
   private final LinkedHashMap<ModuleType<?>, Boolean> myModuleTypes = new LinkedHashMap<>();
 

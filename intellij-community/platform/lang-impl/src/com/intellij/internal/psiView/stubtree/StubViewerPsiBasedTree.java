@@ -1,6 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.internal.psiView.stubtree;
 
+import com.intellij.internal.psiView.PsiViewerDialog;
 import com.intellij.internal.psiView.ViewerPsiBasedTree;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.Disposable;
@@ -49,7 +50,7 @@ import static com.intellij.internal.psiView.PsiViewerDialog.initTree;
 
 public class StubViewerPsiBasedTree implements ViewerPsiBasedTree {
 
-  public static final Logger LOG = Logger.getInstance("#com.intellij.internal.psiView.PsiViewerDialog");
+  public static final Logger LOG = Logger.getInstance(PsiViewerDialog.class);
 
   @Nullable
   private AbstractTreeModel myTreeModel;

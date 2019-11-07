@@ -29,8 +29,8 @@ import java.util.concurrent.FutureTask;
 public class ReformatCodeProcessor extends AbstractLayoutCodeProcessor {
   
   public static final String COMMAND_NAME = CodeInsightBundle.message("process.reformat.code");
-  
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.actions.ReformatCodeProcessor");
+
+  private static final Logger LOG = Logger.getInstance(ReformatCodeProcessor.class);
 
   private static final String PROGRESS_TEXT = CodeInsightBundle.message("reformat.progress.common.text");
   private final Collection<TextRange> myRanges = new ArrayList<>();

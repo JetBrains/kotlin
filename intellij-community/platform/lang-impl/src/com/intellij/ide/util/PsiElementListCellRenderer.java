@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 import static com.intellij.openapi.vfs.newvfs.VfsPresentationUtil.getFileBackgroundColor;
 
 public abstract class PsiElementListCellRenderer<T extends PsiElement> extends JPanel implements ListCellRenderer {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.ide.util.PsiElementListCellRenderer");
+  private static final Logger LOG = Logger.getInstance(PsiElementListCellRenderer.class);
   private static final String LEFT = BorderLayout.WEST;
   private static final Pattern CONTAINER_PATTERN = Pattern.compile("(\\(in |\\()?([^)]*)(\\))?");
 

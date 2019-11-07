@@ -42,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class EnterHandler extends BaseEnterHandler {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.editorActions.EnterHandler");
+  private static final Logger LOG = Logger.getInstance(EnterHandler.class);
 
   private final EditorActionHandler myOriginalHandler;
   private final static Key<Language> CONTEXT_LANGUAGE = Key.create("EnterHandler.Language");

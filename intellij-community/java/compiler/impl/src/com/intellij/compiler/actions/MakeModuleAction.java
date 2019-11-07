@@ -24,7 +24,7 @@ import com.intellij.task.ProjectTaskManager;
 import org.jetbrains.annotations.NotNull;
 
 public class MakeModuleAction extends CompileActionBase {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.compiler.actions.MakeModuleAction");
+  private static final Logger LOG = Logger.getInstance(MakeModuleAction.class);
 
   @Override
   protected void doAction(DataContext dataContext, Project project) {

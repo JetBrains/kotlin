@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FoldingUpdate {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.folding.impl.FoldingUpdate");
+  private static final Logger LOG = Logger.getInstance(FoldingUpdate.class);
 
   private static final Key<CachedValue<Runnable>> CODE_FOLDING_KEY = Key.create("code folding");
 

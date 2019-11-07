@@ -34,7 +34,7 @@ import java.util.*;
  * @author nik
  */
 public class FacetModelImpl extends FacetModelBase implements ModifiableFacetModel {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.facet.impl.FacetModelImpl");
+  private static final Logger LOG = Logger.getInstance(FacetModelImpl.class);
   private final List<Facet> myFacets = new ArrayList<>();
   private final Map<Facet, String> myFacet2NewName = new HashMap<>();
   private final FacetManagerImpl myManager;

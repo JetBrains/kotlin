@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 class ExportToHTMLManager {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.codeEditor.printing.ExportToHTMLManager");
+  private static final Logger LOG = Logger.getInstance(ExportToHTMLManager.class);
   private static FileNotFoundException myLastException;
 
   private ExportToHTMLManager() {
