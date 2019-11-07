@@ -355,7 +355,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
                 item.getViewDescriptor() instanceof ServiceViewLocatableDescriptor
       );
       if (fileItem != null) {
-        Promise<Void> promise = select(fileItem.getValue(), fileItem.getRootContributor().getClass(), true, true);
+        Promise<Void> promise = select(fileItem.getValue(), fileItem.getRootContributor().getClass(), true, false);
         promise.onSuccess(o -> result.setResult(null)).onError(result::setError);
       }
     });
