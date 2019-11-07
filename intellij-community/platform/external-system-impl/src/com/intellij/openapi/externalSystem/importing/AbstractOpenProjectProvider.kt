@@ -30,7 +30,7 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
 
   override fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
     LOG.debug("Open project from $projectFile")
-    val projectDirectory = getProjectDirectory(projectFile) ?: return null
+    val projectDirectory = getProjectDirectory(projectFile)
     if (focusOnOpenedSameProject(projectDirectory.path)) return null
     if (canOpenPlatformProject(projectDirectory)) {
       return openPlatformProject(projectDirectory, projectToClose, forceOpenInNewFrame)
@@ -43,11 +43,10 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
     return project
   }
 
-  override fun linkToExistingProject(projectFile: VirtualFile, project: Project): Boolean {
+  override fun linkToExistingProject(projectFile: VirtualFile, project: Project) {
     LOG.debug("Import project from $projectFile")
-    val projectDirectory = getProjectDirectory(projectFile) ?: return false
+    val projectDirectory = getProjectDirectory(projectFile)
     linkAndRefreshProject(projectDirectory.path, project)
-    return true
   }
 
   private fun canOpenPlatformProject(projectDirectory: VirtualFile): Boolean {
@@ -83,8 +82,7 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
     return project
   }
 
-  private fun getProjectDirectory(file: VirtualFile): VirtualFile? {
-    if (!canOpenProject(file)) return null
+  private fun getProjectDirectory(file: VirtualFile): VirtualFile {
     if (!file.isDirectory) return file.parent
     return file
   }
