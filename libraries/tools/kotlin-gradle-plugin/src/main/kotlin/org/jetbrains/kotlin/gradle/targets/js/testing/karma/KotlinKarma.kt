@@ -254,7 +254,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
-        nodeJsArgs: MutableList<String>
+        nodeJsArgs: MutableList<String>,
+        debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
         if (config.browsers.isEmpty()) {
             error("No browsers configured for $task")

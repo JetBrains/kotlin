@@ -40,7 +40,8 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
         forkOptions: ProcessForkOptions,
-        nodeJsArgs: MutableList<String>
+        nodeJsArgs: MutableList<String>,
+        debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
@@ -59,20 +60,21 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         createAdapterJs(task)
 
-        val nodeModules = listOf(
-            "mocha/bin/mocha",
-            "./$ADAPTER_NODEJS"
-        )
+        val mocha = npmProject.require("mocha/bin/mocha")
+        val adapter = npmProject.require("./$ADAPTER_NODEJS")
 
-        val args = nodeJsArgs +
-                nodeModules.map {
-                    npmProject.require(it)
-                } + cliArgs.toList() +
-                cliArg("--reporter", "kotlin-test-js-runner/mocha-kotlin-reporter.js") +
-                cliArg("--timeout", timeout) +
+        val args = mutableListOf(mocha).apply {
+            addAll(cliArg("--inspect-brk", debug))
+            add(adapter)
+            addAll(cliArgs.toList())
+            addAll(cliArg("--reporter", "kotlin-test-js-runner/mocha-kotlin-reporter.js"))
+            addAll(cliArg("--timeout", timeout))
+            addAll(
                 cliArg(
                     "-r", "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js"
                 )
+            )
+        }
 
         return TCServiceMessagesTestExecutionSpec(
             forkOptions,
@@ -80,6 +82,10 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             false,
             clientSettings
         )
+    }
+
+    private fun cliArg(cli: String, value: Boolean): List<String> {
+        return if (value) listOf(cli) else emptyList()
     }
 
     private fun cliArg(cli: String, value: String?): List<String> {
