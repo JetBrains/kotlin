@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirCallResolver
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -26,13 +28,14 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirOperatorAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedReferenceError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirVariableExpectedError
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -200,13 +203,13 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
     }
 
     override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        val result = if (operatorCall.operation in FirOperation.BOOLEANS) {
-            (operatorCall.transformChildren(transformer, ResolutionMode.ContextIndependent) as FirOperatorCall).also {
+        if (operatorCall.operation in FirOperation.BOOLEANS) {
+            val result = (operatorCall.transformChildren(transformer, ResolutionMode.ContextIndependent) as FirOperatorCall).also {
                 it.resultType = builtinTypes.booleanType
             }
-        } else {
-            transformExpression(operatorCall, data).single
-        } as FirOperatorCall
+            dataFlowAnalyzer.exitOperatorCall(result)
+            return result.compose()
+        }
 
         if (operatorCall.operation in FirOperation.ASSIGNMENTS) {
             require(operatorCall.operation != FirOperation.ASSIGN)
@@ -230,20 +233,24 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             val assignOperatorCall = createFunctionCall(assignmentOperatorName)
             val resolvedAssignCall = assignOperatorCall.transformSingle(this, ResolutionMode.ContextIndependent)
             val assignCallReference = resolvedAssignCall.toResolvedCallableReference()
-            // x + y
+            val assignIsError = resolvedAssignCall.typeRef is FirErrorTypeRef
+            // x = x + y
             val simpleOperatorName = FirOperationNameConventions.ASSIGNMENTS_TO_SIMPLE_OPERATOR.getValue(operatorCall.operation)
             val simpleOperatorCall = createFunctionCall(simpleOperatorName)
             val resolvedOperatorCall = simpleOperatorCall.transformSingle(this, ResolutionMode.ContextIndependent)
             val operatorCallReference = resolvedOperatorCall.toResolvedCallableReference()
 
-            val property = (leftArgument.toResolvedCallableSymbol() as? FirPropertySymbol)?.fir
+            val lhsReference = leftArgument.toResolvedCallableReference()
+            val lhsIsVar = (lhsReference?.resolvedSymbol as? FirVariableSymbol<*>)?.fir?.isVar == true
             return when {
-                operatorCallReference == null || property?.isVal == true -> resolvedAssignCall.compose()
+                operatorCallReference == null || (!lhsIsVar && !assignIsError) -> resolvedAssignCall.compose()
                 assignCallReference == null -> {
                     val assignment =
                         FirVariableAssignmentImpl(operatorCall.source, false, resolvedOperatorCall, FirOperation.ASSIGN).apply {
-                            lValue = (leftArgument as? FirQualifiedAccess)?.calleeReference
-                                ?: FirErrorNamedReferenceImpl(null, FirUnresolvedReferenceError())
+                            lValue = if (lhsIsVar)
+                                lhsReference!!
+                            else
+                                FirErrorNamedReferenceImpl(operatorCall.arguments.first().source, FirVariableExpectedError())
                         }
                     assignment.transform(transformer, ResolutionMode.ContextIndependent)
                 }
@@ -254,8 +261,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             }
         }
 
-        dataFlowAnalyzer.exitOperatorCall(result)
-        return result.compose()
+        throw IllegalArgumentException(operatorCall.render())
     }
 
     override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {

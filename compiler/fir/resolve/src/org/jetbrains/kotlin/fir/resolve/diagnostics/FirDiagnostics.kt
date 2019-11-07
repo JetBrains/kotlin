@@ -37,6 +37,10 @@ class FirOperatorAmbiguityError(val candidates: Collection<AbstractFirBasedSymbo
     override val reason: String get() = "Operator overload ambiguity. Compatible candidates: ${candidates.map { describeSymbol(it) }}"
 }
 
+class FirVariableExpectedError : FirDiagnostic() {
+    override val reason: String get() = "Variable expected"
+}
+
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()

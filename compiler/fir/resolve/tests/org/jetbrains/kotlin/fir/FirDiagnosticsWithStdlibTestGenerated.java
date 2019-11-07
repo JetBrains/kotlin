@@ -98,6 +98,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/resolve/testData/resolve/stdlib/implicitReceiverOrder.kt");
     }
 
+    @TestMetadata("listPlusAssign.kt")
+    public void testListPlusAssign() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/listPlusAssign.kt");
+    }
+
     @TestMetadata("mapList.kt")
     public void testMapList() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/mapList.kt");

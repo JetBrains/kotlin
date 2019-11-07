@@ -230,6 +230,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/arguments/default.kt");
         }
 
+        @TestMetadata("fieldPlusAssign.kt")
+        public void testFieldPlusAssign() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/fieldPlusAssign.kt");
+        }
+
         @TestMetadata("invoke.kt")
         public void testInvoke() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/invoke.kt");

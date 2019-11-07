@@ -40,15 +40,13 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
         x: CONST Int type=kotlin.Int value=1
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Host [val]
-        CALL 'public final fun foo (): <root>.Host declared in <root>' type=<root>.Host origin=null
-      SET_VAR 'val tmp_0: <root>.Host [val] declared in <root>.test3' type=<root>.Host origin=null
-        CONST Int type=<root>.Host value=1
+      CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+        $this: CALL 'public final fun foo (): <root>.Host declared in <root>' type=<root>.Host origin=null
+        x: CONST Int type=kotlin.Int value=1
   FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<<root>.Host>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<<root>.Host>
     BLOCK_BODY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.Host [val]
-        CALL 'public abstract fun invoke (): <root>.Host declared in kotlin.Function0' type=<root>.Host origin=null
+      CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+        $this: CALL 'public abstract fun invoke (): <root>.Host declared in kotlin.Function0' type=<root>.Host origin=null
           $this: GET_VAR 'a: kotlin.Function0<<root>.Host> declared in <root>.test4' type=kotlin.Function0<<root>.Host> origin=null
-      SET_VAR 'val tmp_1: <root>.Host [val] declared in <root>.test4' type=<root>.Host origin=null
-        CONST Int type=<root>.Host value=1
+        x: CONST Int type=kotlin.Int value=1

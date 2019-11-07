@@ -11,6 +11,5 @@ FILE: modifications.kt
         +=(this#, String(Omega))
     }
     public? final? fun Any.modify(): R|kotlin/Unit| {
-        lval <complex-set>: <implicit> = (this# as List<Int>)
-        <complex-set># += Int(42)
+        +=((this# as List<Int>), Int(42))
     }

@@ -1,0 +1,17 @@
+FILE: listPlusAssign.kt
+    public final fun R|kotlin/collections/List<kotlin/String>|.modify(): R|kotlin/Unit| {
+        <Variable expected># = this@R|/modify|.R|kotlin/collections/plus|<R|kotlin/String|>(String(Alpha))
+        <Variable expected># = this@R|/modify|.R|kotlin/collections/plus|<R|kotlin/String|>(String(Omega))
+    }
+    public final fun R|kotlin/Any|.modify(): R|kotlin/Unit| {
+        <Variable expected># = (this@R|/modify| as R|kotlin/collections/List<kotlin/Int>|).R|kotlin/collections/plus|<R|kotlin/Int|>(Int(42))
+    }
+    public final operator fun <T> R|kotlin/collections/Set<T>|.plusAssign(x: R|T|): R|kotlin/Unit| {
+    }
+    public final fun R|kotlin/collections/Set<kotlin/String>|.modify(): R|kotlin/Unit| {
+        this@R|/modify|.R|/plusAssign|<R|kotlin/String|>(String(Alpha))
+        this@R|/modify|.R|/plusAssign|<R|kotlin/String|>(String(Omega))
+    }
+    public final fun R|kotlin/Any|.modifySet(): R|kotlin/Unit| {
+        (this@R|/modifySet| as R|kotlin/collections/Set<kotlin/Int>|).R|/plusAssign|<R|kotlin/Int|>(Int(42))
+    }

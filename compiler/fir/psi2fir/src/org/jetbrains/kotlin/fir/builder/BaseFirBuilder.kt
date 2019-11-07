@@ -463,22 +463,6 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 statements += arraySet.apply { lValue = FirSimpleNamedReference(psiArrayExpression?.toFirSourceElement(), name, null) }
             }
         }
-        if (operation != FirOperation.ASSIGN &&
-            tokenType != REFERENCE_EXPRESSION && tokenType != THIS_EXPRESSION &&
-            ((tokenType != DOT_QUALIFIED_EXPRESSION && tokenType != SAFE_ACCESS_EXPRESSION) || this.selectorExpression?.elementType != REFERENCE_EXPRESSION)
-        ) {
-            return FirBlockImpl(this.getSourceOrNull()).apply {
-                val name = Name.special("<complex-set>")
-                statements += generateTemporaryVariable(
-                    this@BaseFirBuilder.session, this@generateAssignment.getSourceOrNull(), name,
-                    this@generateAssignment?.convert()
-                        ?: FirErrorExpressionImpl(this.getSourceOrNull(), FirSimpleDiagnostic("No LValue in assignment", DiagnosticKind.Syntax))
-                )
-                statements += FirVariableAssignmentImpl(source, false, value, operation).apply {
-                    lValue = FirSimpleNamedReference(this.getSourceOrNull(), name, null)
-                }
-            }
-        }
 
         if (operation in FirOperation.ASSIGNMENTS && operation != FirOperation.ASSIGN) {
             return FirOperatorCallImpl(source, operation).apply {

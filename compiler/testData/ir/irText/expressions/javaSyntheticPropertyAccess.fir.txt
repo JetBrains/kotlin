@@ -10,4 +10,4 @@ FILE fqName:<root> fileName:/javaSyntheticPropertyAccess.kt
           $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
       ERROR_CALL 'Unresolved reference: R|/J.foo|' type=IrErrorType
       GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null
-      ERROR_CALL 'Unresolved reference: R|/J.foo|' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Variable expected>#' type=IrErrorType
