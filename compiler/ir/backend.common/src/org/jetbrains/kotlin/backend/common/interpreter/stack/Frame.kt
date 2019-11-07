@@ -20,7 +20,7 @@ class InterpreterFrame(val pool: MutableList<State> = mutableListOf()) : Frame {
     }
 
     override fun getVar(descriptor: DeclarationDescriptor): State {
-        return pool.firstOrNull { it.getDescriptor() == descriptor }
+        return pool.firstOrNull { it.isTypeOf(descriptor) }
             ?: throw NoSuchElementException("Frame pool doesn't contains variable with descriptor $descriptor")
     }
 
