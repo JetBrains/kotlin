@@ -360,7 +360,8 @@ task distDef(type: Copy) {
     destinationDir distDir
 
     from(project("platformLibs").file("src/platform")) {
-        into('klib/platformDef')
+        into('konan/platformDef')
+        include '**/*.def'
     }
 }
 
@@ -465,6 +466,7 @@ task crossDist {
 }
 
 task bundle(type: (isWindows()) ? Zip : Tar) {
+    dependsOn("distDef")
     if (isMac()) {
       dependsOn('bundleRestricted')
     }
