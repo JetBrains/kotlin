@@ -64,7 +64,7 @@ open class KotlinAndroidTarget(
     private fun checkPublishLibraryVariantsExist() {
         fun AbstractAndroidProjectHandler.getLibraryVariantNames() =
             mutableSetOf<String>().apply {
-                forEachVariant(project) {
+                project.forEachVariant {
                     if (getLibraryOutputTask(it) != null)
                         add(getVariantName(it))
                 }
@@ -94,7 +94,7 @@ open class KotlinAndroidTarget(
 
     private fun AbstractAndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
         val publishableVariants = mutableListOf<BaseVariant>()
-            .apply { forEachVariant(project) { add(it) } }
+            .apply { project.forEachVariant { add(it) } }
             .toList() // Defensive copy against unlikely modification by the lambda that captures the list above in forEachVariant { }
             .filter { getLibraryOutputTask(it) != null && publishLibraryVariants?.contains(getVariantName(it)) ?: true }
 

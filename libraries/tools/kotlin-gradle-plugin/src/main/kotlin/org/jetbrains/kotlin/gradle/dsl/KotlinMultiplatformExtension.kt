@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.internal.LoggerWrapper
 import com.android.build.gradle.internal.SdkLocationSourceSet
 import com.android.build.gradle.internal.SdkLocator
@@ -27,7 +28,6 @@ import org.gradle.internal.component.external.model.DefaultModuleComponentIdenti
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
@@ -82,24 +82,27 @@ open class KotlinMultiplatformExtension :
     }
 
     fun getAndroidSourceSetDependencies(project: Project): Map<String, List<File>?> {
-        val ext = project.extensions.getByName("android") as BaseExtension
+        data class SourceSetConfigs(val implConfig: Configuration, val compileConfig: Configuration)
+
         val androidSdkJar = getAndroidSdkJar(project) ?: return emptyMap()
+        val sourceSet2Impl = HashMap<String, SourceSetConfigs>()
+        val allImplConfigs = HashSet<Configuration>()
 
-        val sourceSet2Impl = ext.sourceSets.map {
-            lowerCamelCaseName("android", it.name) to project.configurations.getByName(it.implementationConfigurationName)
-        }.toMap()
-
-        val allImplConfigs = sourceSet2Impl.values.toSet()
-        val impl2CompileClasspath = mapImplementationToCompileClasspathConfiguration(project, allImplConfigs)
+        project.forEachVariant { variant ->
+            val compileConfig = variant.compileConfiguration
+            variant.sourceSets.filterIsInstance(AndroidSourceSet::class.java).map {
+                val implConfig = project.configurations.getByName(it.implementationConfigurationName)
+                allImplConfigs.add(implConfig)
+                sourceSet2Impl[lowerCamelCaseName("android", it.name)] = SourceSetConfigs(implConfig, compileConfig)
+            }
+        }
 
         return sourceSet2Impl.mapValues { entry ->
-            val compileClasspathConf = impl2CompileClasspath[entry.value] ?: return@mapValues null
-
-            val dependencies = findDependencies(allImplConfigs, entry.value)
+            val dependencies = findDependencies(allImplConfigs, entry.value.implConfig)
 
             val selfResolved = dependencies.filterIsInstance<SelfResolvingDependency>().flatMap { it.resolve() }
             val resolvedExternal = dependencies.filterIsInstance<DefaultExternalModuleDependency>()
-                .flatMap { collectDependencies(it.module, compileClasspathConf) }
+                .flatMap { collectDependencies(it.module, entry.value.compileConfig) }
 
             val result = (selfResolved + resolvedExternal + androidSdkJar).toMutableList()
 
@@ -161,34 +164,6 @@ open class KotlinMultiplatformExtension :
         if (configs.isEmpty()) return
         result.addAll(configs.flatMap { it.dependencies })
         doFindDependencies(implConfigs, configs.flatMap { it.extendsFrom }.filter { it !in implConfigs && visited.add(it) }, result)
-    }
-
-    private fun mapImplementationToCompileClasspathConfiguration(
-        project: Project,
-        allImplConfigs: Set<Configuration>
-    ): Map<Configuration, Configuration> {
-        val compileClasspathConfigurations = project.configurations.filter { it.name.endsWith("CompileClasspath", true) }
-        return compileClasspathConfigurations.flatMap { ccConf ->
-            findImplementationConfigurations(allImplConfigs, ccConf).map { it to ccConf }
-        }.toMap()
-    }
-
-    private fun findImplementationConfigurations(
-        allImplConfigs: Set<Configuration>,
-        compileClasspathConf: Configuration
-    ): Set<Configuration> {
-        return HashSet<Configuration>().also { doFindImplementationConfigurations(allImplConfigs, listOf(compileClasspathConf), it) }
-    }
-
-    private tailrec fun doFindImplementationConfigurations(
-        allImplConfigs: Set<Configuration>,
-        conf: List<Configuration>,
-        result: MutableSet<Configuration>,
-        visited: MutableSet<Configuration> = HashSet()
-    ) {
-        if (conf.isEmpty()) return
-        result.addAll(conf.flatMap { it.extendsFrom.filter { newConf -> allImplConfigs.contains(newConf) } })
-        doFindImplementationConfigurations(allImplConfigs, conf.flatMap { it.extendsFrom }.filter { visited.add(it) }, result)
     }
 }
 
