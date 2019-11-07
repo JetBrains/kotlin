@@ -11,36 +11,54 @@ package org.jetbrains.kotlin.idea.codeInsight.gradle
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import org.junit.Rule
 import org.junit.runners.Parameterized
 import java.util.*
 
 abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTestCase() {
+    @Rule
+    @JvmField
+    var pluginVersionMatchingRule = PluginTargetVersionsRule()
+
     val project: Project
         get() = myProject
 
+
+    override fun isApplicableTest(): Boolean {
+        return pluginVersionMatchingRule.matches(
+            gradleVersion, gradleKotlinPluginVersion,
+            gradleKotlinPluginVersionType == LATEST_SUPPORTED_VERSION
+        )
+    }
+
     @JvmField
     @Parameterized.Parameter(1)
-    var gradleKotlinPluginVersion: String = MINIMAL_SUPPORTED_VERSION
+    var gradleKotlinPluginVersionType: String = MINIMAL_SUPPORTED_VERSION
+
+    val gradleKotlinPluginVersion: String
+        get() = KOTLIN_GRADLE_PLUGIN_VERSION_DESCRIPTION_TO_VERSION[gradleKotlinPluginVersionType] ?: gradleKotlinPluginVersion
 
     companion object {
         const val MINIMAL_SUPPORTED_VERSION = "minimal"// minimal supported version
-        private val KOTLIN_GRADLE_PLUGIN_VERSIONS = listOf(MINIMAL_SUPPORTED_VERSION, "1.3.50")
+        const val LATEST_STABLE_VERSUON = "latest stable"
+        const val LATEST_SUPPORTED_VERSION = "master"// gradle plugin from current build
+        private val KOTLIN_GRADLE_PLUGIN_VERSIONS = listOf(MINIMAL_SUPPORTED_VERSION, LATEST_STABLE_VERSUON, LATEST_SUPPORTED_VERSION)
+        private val KOTLIN_GRADLE_PLUGIN_VERSION_DESCRIPTION_TO_VERSION = mapOf(
+            MINIMAL_SUPPORTED_VERSION to MINIMAL_SUPPORTED_GRADLE_PLUGIN_VERSION,
+            LATEST_STABLE_VERSUON to LATEST_STABLE_GRADLE_PLUGIN_VERSION,
+            LATEST_SUPPORTED_VERSION to "master"
+        )
 
         @JvmStatic
         @Parameterized.Parameters(name = "{index}: Gradle-{0}, KotlinGradlePlugin-{1}")
         fun data(): Collection<Array<Any>> {
             return AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS.flatMap { gradleVersion ->
-                if ((gradleVersion[0] as String).startsWith("3.")) {
-                    listOf(arrayOf<Any>(gradleVersion[0], MINIMAL_SUPPORTED_VERSION))
-                } else {
-                    KOTLIN_GRADLE_PLUGIN_VERSIONS.map { kotlinVersion ->
-                        arrayOf<Any>(
-                            gradleVersion[0],
-                            kotlinVersion
-                        )
-                    }
+                KOTLIN_GRADLE_PLUGIN_VERSIONS.map { kotlinVersion ->
+                    arrayOf<Any>(
+                        gradleVersion[0],
+                        kotlinVersion
+                    )
                 }
-
             }.toList()
         }
     }
