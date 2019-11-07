@@ -621,7 +621,7 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
       throw e;
     }
     catch (Throwable e) {
-      LOG.error("In file: " + file.getName(), e);
+      LOG.error("In file: " + file.getViewProvider().getVirtualFile().getPath(), e);
     }
     finally {
       InjectedLanguageManager.getInstance(getProject()).dropFileCaches(file);
