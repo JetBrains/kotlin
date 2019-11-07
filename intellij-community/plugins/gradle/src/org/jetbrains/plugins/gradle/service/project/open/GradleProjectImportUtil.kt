@@ -14,11 +14,9 @@ import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 
-@ApiStatus.Experimental
 fun canOpenGradleProject(file: VirtualFile): Boolean =
   GradleOpenProjectProvider().canOpenProject(file)
 
-@ApiStatus.Experimental
 fun openGradleProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? =
   GradleOpenProjectProvider().openProject(projectFile, projectToClose, forceOpenInNewFrame)
 
@@ -36,7 +34,6 @@ fun canLinkAndRefreshGradleProject(projectFilePath: String, project: Project, sh
   return false
 }
 
-@ApiStatus.Experimental
 fun linkAndRefreshGradleProject(projectFilePath: String, project: Project) {
   val localFileSystem = LocalFileSystem.getInstance()
   val projectFile = localFileSystem.refreshAndFindFileByPath(projectFilePath)
@@ -44,7 +41,6 @@ fun linkAndRefreshGradleProject(projectFilePath: String, project: Project) {
   GradleOpenProjectProvider().linkToExistingProject(projectFile, project)
 }
 
-@ApiStatus.Experimental
 fun setupGradleSettings(settings: GradleProjectSettings, projectDirectory: String, project: Project, projectSdk: Sdk? = null) =
   GradleOpenProjectProvider().setupGradleSettings(settings, projectDirectory, project, projectSdk)
 
