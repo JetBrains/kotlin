@@ -220,6 +220,11 @@ public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringI
             runTest("idea/testData/editor/enterHandler/multilineString/spaces/noTrimIndentInAnnotations.kt");
         }
 
+        @TestMetadata("noTrimIndentInConst.kt")
+        public void testNoTrimIndentInConst() throws Exception {
+            runTest("idea/testData/editor/enterHandler/multilineString/spaces/noTrimIndentInConst.kt");
+        }
+
         @TestMetadata("restoreIndentFromEmptyLine.kt")
         public void testRestoreIndentFromEmptyLine() throws Exception {
             runTest("idea/testData/editor/enterHandler/multilineString/spaces/restoreIndentFromEmptyLine.kt");

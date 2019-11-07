@@ -358,7 +358,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
 
         fun insertTrimCall(document: Document, literal: KtStringTemplateExpression, marginChar: Char?) {
             if (hasTrimIndentCallInChain(literal) || getMarginCharFromTrimMarginCallsInChain(literal) != null) return
-            if (literal.parents.any { it is KtAnnotationEntry }) return
+            if (literal.parents.any { it is KtAnnotationEntry || (it as? KtProperty)?.hasModifier(KtTokens.CONST_KEYWORD) == true }) return
 
             if (marginChar == null) {
                 document.insertString(literal.textRange.endOffset, ".$TRIM_INDENT_CALL()")
