@@ -7,6 +7,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.process.ScriptRunnerUtil;
 import com.intellij.ide.GeneralSettings;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.Task;
@@ -26,6 +27,7 @@ import java.util.Objects;
 
 public abstract class BaseContentCloseListener extends ContentManagerAdapter implements VetoableProjectManagerListener {
   private static final Key<Boolean> PROJECT_DISPOSING = Key.create("Project disposing is in progress");
+  private static final Logger LOG = Logger.getInstance(BaseContentCloseListener.class);
 
   private Content myContent;
   private final Project myProject;
@@ -106,6 +108,14 @@ public abstract class BaseContentCloseListener extends ContentManagerAdapter imp
   }
 
   protected boolean askUserAndWait(@NotNull ProcessHandler processHandler, @NotNull String sessionName, @NotNull WaitForProcessTask task) {
+    if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
+      // This might happens from Application.exit(force=true, ...) call.
+      // Do not show any UI, destroy the process silently, do not wait for process termination.
+      processHandler.destroyProcess();
+      LOG.info("Destroying process under write action (name: " + sessionName + ", "
+               + processHandler.getClass() + ", " + processHandler.toString() + ")");
+      return true;
+    }
     GeneralSettings.ProcessCloseConfirmation rc = TerminateRemoteProcessDialog.show(myProject, sessionName, processHandler);
     if (rc == null) { // cancel
       return false;
