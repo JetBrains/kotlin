@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.isIrBackendEnabled
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.config.IncrementalCompilation
@@ -79,7 +80,7 @@ class IncrementalJsCompilerRunner(
         IncrementalCompilation.isEnabledForJs()
 
     override fun createCacheManager(args: K2JSCompilerArguments): IncrementalJsCachesManager {
-        val serializerProtocol = if (!args.irBackend) JsSerializerProtocol else KlibMetadataSerializerProtocol
+        val serializerProtocol = if (!args.isIrBackendEnabled()) JsSerializerProtocol else KlibMetadataSerializerProtocol
         return IncrementalJsCachesManager(cacheDirectory, reporter, serializerProtocol)
     }
 
