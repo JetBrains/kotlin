@@ -101,7 +101,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             "-Xmx256m -XX:MaxPermSize=64m"
         else ->
             // 128M should be enough for gradle 5.0+ (leak is fixed), and <4.0 (amount of tests is less)
-            "-Xmx128m -XX:MaxPermSize=64m"
+            "-Xms128M -Xmx128m -XX:MaxPermSize=64m"
     }
 
     override fun setUp() {
@@ -233,7 +233,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         return File(baseDir, getTestName(true).substringBefore("_"))
     }
 
-    protected open fun configureByFiles(): List<VirtualFile> {
+    protected open fun configureByFiles(properties: Map<String, String>? = null): List<VirtualFile> {
         val rootDir = testDataDirectory()
         assert(rootDir.exists()) { "Directory ${rootDir.path} doesn't exist" }
 
@@ -241,7 +241,11 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             when {
                 it.isDirectory -> null
                 !it.name.endsWith(SUFFIX) -> {
-                    createProjectSubFile(it.path.substringAfter(rootDir.path + File.separator), it.readText())
+                    var text = it.readText()
+                    properties?.forEach { key, value ->
+                        text = text.replace("{{${key}}}", value)
+                    }
+                    createProjectSubFile(it.path.substringAfter(rootDir.path + File.separator), text)
                 }
                 else -> null
             }
