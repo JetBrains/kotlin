@@ -29,6 +29,7 @@ import org.gradle.language.nativeplatform.internal.Names
 import org.gradle.process.internal.ExecActionFactory
 import java.io.*
 import javax.inject.Inject
+import javax.swing.SwingUtilities
 
 private class AppleSourceSetFactory(private val project: Project) : NamedDomainObjectFactory<AppleSourceSet> {
     override fun create(name: String): AppleSourceSet = DefaultAppleSourceSet(name, project.objects).apply {
@@ -190,7 +191,9 @@ private open class AppleBuildTask @Inject constructor(
             }
         }
 
-        pbxProjectFile.save()
+        SwingUtilities.invokeAndWait {
+            pbxProjectFile.save()
+        }
 
         println("RUNNING XCODEBUILD")
 
