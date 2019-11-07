@@ -14,7 +14,7 @@ val newInferenceEnabled: Boolean by rootProject.extra
 
 configureFreeCompilerArg(effectSystemEnabled, "-Xeffect-system")
 configureFreeCompilerArg(newInferenceEnabled, "-Xnew-inference")
-configureFreeCompilerArg(true, "-XXLanguage:+MixedNamedArgumentsInTheirOwnPosition")
+configureFreeCompilerArg(true, "-Xuse-mixed-named-arguments")
 
 fun configureFreeCompilerArg(isEnabled: Boolean, compilerArgument: String) {
     if (isEnabled) {
