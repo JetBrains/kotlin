@@ -1,9 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.importing
 
-import com.intellij.ide.GeneralSettings
 import com.intellij.ide.highlighter.ProjectFileType
-import com.intellij.ide.impl.ProjectUtil
+import com.intellij.ide.impl.ProjectUtil.*
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.project.Project
@@ -38,7 +37,7 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
     }
     val project = createProject(projectDirectory) ?: return null
     linkAndRefreshProject(projectDirectory.path, project)
-    ProjectUtil.updateLastProjectLocation(projectDirectory.path)
+    updateLastProjectLocation(projectDirectory.path)
     if (!forceOpenInNewFrame) closePreviousProject(projectToClose)
     ProjectManagerEx.getInstanceEx().openProject(project)
     return project
@@ -69,8 +68,8 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
 
   private fun focusOnOpenedSameProject(projectDirectory: String): Boolean {
     for (project in ProjectManager.getInstance().openProjects) {
-      if (ProjectUtil.isSameProject(projectDirectory, project)) {
-        ProjectUtil.focusProjectWindow(project, false)
+      if (isSameProject(projectDirectory, project)) {
+        focusProjectWindow(project, false)
         return true
       }
     }
@@ -82,16 +81,6 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
     val project = openProcessor.doOpenProject(projectDirectory, projectToClose, forceOpenInNewFrame)
     if (project == null) return null
     return project
-  }
-
-  private fun closePreviousProject(projectToClose: Project?) {
-    val openProjects = ProjectManager.getInstance().openProjects
-    if (openProjects.isNotEmpty()) {
-      val exitCode = ProjectUtil.confirmOpenNewProject(true)
-      if (exitCode == GeneralSettings.OPEN_PROJECT_SAME_WINDOW) {
-        ProjectUtil.closeAndDispose(projectToClose ?: openProjects[openProjects.size - 1])
-      }
-    }
   }
 
   private fun getProjectDirectory(file: VirtualFile): VirtualFile? {
