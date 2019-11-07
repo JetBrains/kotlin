@@ -176,7 +176,7 @@ class DefaultStatementConverter : JavaElementVisitor(), StatementConverter {
 
         val resourceList = tryStatement.resourceList
         if (resourceList != null) {
-            val variables = resourceList.resourceVariables
+            val variables = resourceList.filterIsInstance<PsiResourceVariable>()
             if (variables.isNotEmpty()) {
                 result = convertTryWithResources(tryBlock, variables, catchesConverted, finallyConverted)
                 return
