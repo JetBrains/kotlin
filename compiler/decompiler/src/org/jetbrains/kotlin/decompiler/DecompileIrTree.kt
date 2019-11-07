@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.DELEGATED_MEMBER
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.*
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.*
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.IMPLICIT_CAST
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -160,7 +160,8 @@ class DecompileIrTreeVisitor(
             val delegationFieldInitializer = it.initializer!!.expression
             delegatedMap[delegationFieldInitializer.type] = delegationFieldInitializer
         }
-        return superTypes.filterNot { it.isAny() }.joinToString(", ") {
+        // Для енамов в суперах лежит Enum<MyType>, который почему-то не isEnum(
+        return superTypes.filterNot { it.isAny() || it.toKotlinType().toString().startsWith("Enum") }.joinToString(", ") {
             val result = it.obtainTypeDescription()
             val key = delegatedMap.keys.filter { it.isSubtypeOfClass(it.getClass()!!.symbol) }.firstOrNull()
             result + if (key != null) " by ${delegatedMap[key]?.decompile("")}" else EMPTY_TOKEN
@@ -404,12 +405,12 @@ class DecompileIrTreeVisitor(
             withBracesLn {
                 expression.branches.forEach {
                     if (it is IrElseBranch) {
-                        printer.print("else ->")
+                        printer.print("else -> ")
                     } else {
                         printer.print(" (${it.condition.decompile(data)}) ->")
                     }
                     withBracesLn {
-                        it.result.accept(this, data)
+                        printer.println(it.decompile(data))
                     }
                 }
             }
@@ -423,9 +424,9 @@ class DecompileIrTreeVisitor(
     private fun collectCommaArguments(condition: IrExpression): String = TODO()
 
     override fun visitElseBranch(branch: IrElseBranch, data: String) {
-        printer.print("$ELSE_TOKEN ->")
+        printer.print("$ELSE_TOKEN -> ")
         withBracesLn {
-            branch.result.accept(this, data)
+            printer.println(branch.result.decompile(data))
         }
 
     }
@@ -606,15 +607,27 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: String) {
-        declaration.acceptChildren(this, data)
+        printer.println(
+            declaration.files.joinToString("\n") {
+                "// FILE: ${it.path.substring(1)}\n\n${it.decompile("")}"
+            }
+        )
     }
 
     override fun visitFile(declaration: IrFile, data: String) {
-        if (declaration.fqName != FqName.ROOT) {
-            printer.println("package ${declaration.fqName.asString()}\n")
+        with(declaration) {
+            if (fqName != FqName.ROOT) {
+                printer.println("package ${fqName.asString()}\n")
+            }
+            val importResolveVisitor = ImportResolveVisitor()
+            accept(importResolveVisitor, fqName.asString().takeIf { declaration.fqName != FqName.ROOT } ?: EMPTY_TOKEN)
+            printer.println(
+                importResolveVisitor.importDirectivesSet.map { "import $it" }
+                    .sorted()
+                    .joinToString(separator = "\n", postfix = "\n")
+            )
+            declaration.acceptChildren(this@DecompileIrTreeVisitor, data)
         }
-//        printer.println("import kotlin.reflect.KProperty")
-        declaration.acceptChildren(this, data)
     }
 
     override fun visitComposite(expression: IrComposite, data: String) {

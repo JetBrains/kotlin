@@ -1,4 +1,8 @@
-// FILE: enum_test.kt
+// FILE: EnumClassDeclarations.kt
+
+package ru.spbau.mit
+
+
 
 enum class En {
     N, A, B, C;
@@ -12,6 +16,19 @@ class Z2(val z: Z1) {
 }
 class ZN(val z: Z1?) {
 }
+// FILE: EnumClassInvocations.kt
+
+package ru.spbau.mit
+
+import ru.spbau.mit.Color
+import ru.spbau.mit.Color.BLUE
+import ru.spbau.mit.En
+import ru.spbau.mit.En.A
+import ru.spbau.mit.En.N
+import ru.spbau.mit.Z1
+import ru.spbau.mit.Z2
+import ru.spbau.mit.ZN
+
 fun wrap1(x: En) : Z1?  {
     return if (x.ordinal == 0) {
     null

@@ -14,7 +14,7 @@
 - делегирование (https://kotlinlang.org/docs/reference/delegation.html, https://kotlinlang.org/docs/reference/delegated-properties.html)
 - typealias со стрелкой (для функций высших порядков)
 - кастомные геттер и сеттер
-- продолжить дженерики (https://kotlinlang.org/docs/reference/generics.html)
+- продолжить дженерики (https://kotlinlang.org/docs/reference/generics.htm  l)
 - обход дерева и сбор импортов через full qualified names
 
 ## LATER
