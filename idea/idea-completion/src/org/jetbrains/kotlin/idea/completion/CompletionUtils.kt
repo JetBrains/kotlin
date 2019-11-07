@@ -185,46 +185,50 @@ fun thisExpressionItems(
 }
 
 fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): Collection<LookupElement> {
-    val result = ArrayList<LookupElement>()
-    for (parent in position.parentsWithSelf) {
-        if (parent is KtDeclarationWithBody) {
-            val returnType = parent.returnType(bindingContext)
-            val isUnit = returnType == null || KotlinBuiltIns.isUnit(returnType)
-            if (parent is KtFunctionLiteral) {
-                val (label, call) = parent.findLabelAndCall()
-                if (label != null) {
-                    result.add(createKeywordElementWithSpace("return", tail = label.labelNameToTail(), addSpaceAfter = !isUnit))
-                }
+    val result = mutableListOf<LookupElement>()
 
-                // check if the current function literal is inlined and stop processing outer declarations if it's not
-                val callee = call?.calleeExpression as? KtReferenceExpression ?: break // not inlined
-                if (!InlineUtil.isInline(bindingContext[BindingContext.REFERENCE_TARGET, callee])) break // not inlined
-            } else {
-                if (parent.hasBlockBody()) {
-                    result.add(createKeywordElementWithSpace("return", addSpaceAfter = !isUnit))
+    for (parent in position.parentsWithSelf.filterIsInstance<KtDeclarationWithBody>()) {
+        val returnType = parent.returnType(bindingContext)
+        val isUnit = returnType == null || KotlinBuiltIns.isUnit(returnType)
+        if (parent is KtFunctionLiteral) {
+            val (label, call) = parent.findLabelAndCall()
+            if (label != null) {
+                result.add(createKeywordElementWithSpace("return", tail = label.labelNameToTail(), addSpaceAfter = !isUnit))
+            }
 
-                    if (returnType != null) {
-                        if (returnType.nullability() == TypeNullability.NULLABLE) {
-                            result.add(createKeywordElement("return null"))
-                        }
+            // check if the current function literal is inlined and stop processing outer declarations if it's not
+            val callee = call?.calleeExpression as? KtReferenceExpression ?: break // not inlined
+            if (!InlineUtil.isInline(bindingContext[BindingContext.REFERENCE_TARGET, callee])) break // not inlined
+        } else {
+            if (parent.hasBlockBody()) {
+                val blockBodyReturns = mutableListOf<LookupElement>()
+                blockBodyReturns.add(createKeywordElementWithSpace("return", addSpaceAfter = !isUnit))
 
-                        if (KotlinBuiltIns.isBooleanOrNullableBoolean(returnType)) {
-                            result.add(createKeywordElement("return true"))
-                            result.add(createKeywordElement("return false"))
-                        } else if (KotlinBuiltIns.isCollectionOrNullableCollection(returnType) || KotlinBuiltIns.isListOrNullableList(
-                                returnType
-                            ) || KotlinBuiltIns.isIterableOrNullableIterable(returnType)
-                        ) {
-                            result.add(createKeywordElement("return", tail = " emptyList()"))
-                        } else if (KotlinBuiltIns.isSetOrNullableSet(returnType)) {
-                            result.add(createKeywordElement("return", tail = " emptySet()"))
-                        }
+                if (returnType != null) {
+                    if (returnType.nullability() == TypeNullability.NULLABLE) {
+                        blockBodyReturns.add(createKeywordElement("return null"))
+                    }
+
+                    fun emptyListShouldBeSuggested(): Boolean = KotlinBuiltIns.isCollectionOrNullableCollection(returnType)
+                            || KotlinBuiltIns.isListOrNullableList(returnType)
+                            || KotlinBuiltIns.isIterableOrNullableIterable(returnType)
+
+                    if (KotlinBuiltIns.isBooleanOrNullableBoolean(returnType)) {
+                        blockBodyReturns.add(createKeywordElement("return true"))
+                        blockBodyReturns.add(createKeywordElement("return false"))
+                    } else if (emptyListShouldBeSuggested()) {
+                        blockBodyReturns.add(createKeywordElement("return", tail = " emptyList()"))
+                    } else if (KotlinBuiltIns.isSetOrNullableSet(returnType)) {
+                        blockBodyReturns.add(createKeywordElement("return", tail = " emptySet()"))
                     }
                 }
-                break
+
+                result.addAll(blockBodyReturns)
             }
+            break
         }
     }
+
     return result
 }
 
