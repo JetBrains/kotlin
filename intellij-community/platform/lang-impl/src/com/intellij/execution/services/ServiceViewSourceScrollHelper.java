@@ -105,7 +105,7 @@ class ServiceViewSourceScrollHelper {
     private final ServiceViewAutoScrollFromSourceHandler myScrollFromHandler;
 
     ScrollFromEditorAction(ServiceViewAutoScrollFromSourceHandler scrollFromHandler) {
-      super("Scroll from Source", "Select node open in the active editor", AllIcons.General.Locate);
+      super("Select Opened Service", "Select the service open in the active editor", AllIcons.General.Locate);
       myScrollFromHandler = scrollFromHandler;
     }
 
