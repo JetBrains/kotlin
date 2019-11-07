@@ -94,7 +94,11 @@ open class ShowTypeDefinitionAction : ShowImplementationsAction() {
       private fun searchTypeDefinitions(element: PsiElement): List<PsiImplementationViewElement> {
         val search = ThrowableComputable<List<PsiElement>, Exception> {
           TypeDeclarationProvider.EP_NAME.extensions().asSequence()
-            .mapNotNull { provider -> ReadAction.compute<Array<PsiElement>?, Throwable> { provider.getSymbolTypeDeclarations(element) } }
+            .mapNotNull { provider ->
+              ReadAction.compute<List<PsiElement>?, Throwable> {
+                provider.getSymbolTypeDeclarations(element)?.mapNotNull { it.navigationElement }
+              }
+            }
             .firstOrNull()
           ?: emptyList()
         }
