@@ -144,7 +144,7 @@
     </action>
     <action id="Gradle.ToggleOfflineAction" class="org.jetbrains.plugins.gradle.action.ToggleOfflineAction"
             text="Toggle Offline Mode" description="Toggle offline mode for Gradle builds"
-            icon="GradleIcons.OfflineMode"/>
+            icon="AllIcons.Actions.OfflineMode"/>
     <action id="Gradle.OpenProjectCompositeConfiguration" class="org.jetbrains.plugins.gradle.action.GradleOpenProjectCompositeConfigurationAction"
             text="Composite Build Configuration"/>
 
