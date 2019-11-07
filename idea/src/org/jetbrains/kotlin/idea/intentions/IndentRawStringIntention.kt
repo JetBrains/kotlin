@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class IndentRawStringIntention : SelfTargetingIntention<KtStringTemplateExpression>(
@@ -19,6 +23,7 @@ class IndentRawStringIntention : SelfTargetingIntention<KtStringTemplateExpressi
 
     override fun isApplicableTo(element: KtStringTemplateExpression, caretOffset: Int): Boolean {
         if (!element.text.startsWith("\"\"\"")) return false
+        if (element.parents.any { it is KtAnnotationEntry || (it as? KtProperty)?.hasModifier(KtTokens.CONST_KEYWORD) == true }) return false
         if (element.getQualifiedExpressionForReceiver() != null) return false
         val entries = element.entries
         if (entries.size <= 1 || entries.any { it.text.startsWith(" ") || it.text.startsWith("\t") }) return false

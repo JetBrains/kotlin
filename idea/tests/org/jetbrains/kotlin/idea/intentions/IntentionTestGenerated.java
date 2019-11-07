@@ -8712,6 +8712,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/indentRawString"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), true);
         }
 
+        @TestMetadata("annotationEntry.kt")
+        public void testAnnotationEntry() throws Exception {
+            runTest("idea/testData/intentions/indentRawString/annotationEntry.kt");
+        }
+
+        @TestMetadata("const.kt")
+        public void testConst() throws Exception {
+            runTest("idea/testData/intentions/indentRawString/const.kt");
+        }
+
         @TestMetadata("hasIndent.kt")
         public void testHasIndent() throws Exception {
             runTest("idea/testData/intentions/indentRawString/hasIndent.kt");
