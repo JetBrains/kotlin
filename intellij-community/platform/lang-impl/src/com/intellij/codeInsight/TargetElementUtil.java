@@ -41,8 +41,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-@SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")
-public class TargetElementUtil extends TargetElementUtilBase {
+public class TargetElementUtil  {
   /**
    * A flag used in {@link #findTargetElement(Editor, int, int)} indicating that if a reference is found at the specified offset,
    * it should be resolved and the result returned.
@@ -65,7 +64,6 @@ public class TargetElementUtil extends TargetElementUtilBase {
     return ServiceManager.getService(TargetElementUtil.class);
   }
 
-  @Override
   public int getAllAccepted() {
     int result = REFERENCED_ELEMENT_ACCEPTED | ELEMENT_NAME_ACCEPTED | LOOKUP_ITEM_ACCEPTED;
     for (TargetElementUtilExtender each : TargetElementUtilExtender.EP_NAME.getExtensionList()) {
@@ -74,7 +72,6 @@ public class TargetElementUtil extends TargetElementUtilBase {
     return result;
   }
 
-  @Override
   public int getDefinitionSearchFlags() {
     int result = getAllAccepted();
     for (TargetElementUtilExtender each : TargetElementUtilExtender.EP_NAME.getExtensionList()) {
@@ -83,7 +80,6 @@ public class TargetElementUtil extends TargetElementUtilBase {
     return result;
   }
 
-  @Override
   public int getReferenceSearchFlags() {
     int result = getAllAccepted();
     for (TargetElementUtilExtender each : TargetElementUtilExtender.EP_NAME.getExtensionList()) {
@@ -203,7 +199,6 @@ public class TargetElementUtil extends TargetElementUtilBase {
    * depending on the flags passed.
    * @see #findTargetElement(Editor, int)
    */
-  @Override
   @Nullable
   public PsiElement findTargetElement(@NotNull Editor editor, int flags, int offset) {
     PsiElement result = doFindTargetElement(editor, flags, offset);
@@ -297,7 +292,6 @@ public class TargetElementUtil extends TargetElementUtilBase {
     return evaluator != null ? evaluator.adjustReference(ref) : null;
   }
 
-  @Override
   @Nullable
   public PsiElement getNamedElement(@Nullable final PsiElement element, final int offsetInElement) {
     if (element == null) return null;
@@ -387,7 +381,6 @@ public class TargetElementUtil extends TargetElementUtilBase {
     return ref.resolve();
   }
 
-  @Override
   @NotNull
   public Collection<PsiElement> getTargetCandidates(@NotNull PsiReference reference) {
     PsiElement refElement = reference.getElement();
@@ -423,7 +416,6 @@ public class TargetElementUtil extends TargetElementUtilBase {
     return EditSourceUtil.canNavigate(element) || element instanceof Navigatable && ((Navigatable)element).canNavigateToSource();
   }
 
-  @Override
   public PsiElement getGotoDeclarationTarget(final PsiElement element, final PsiElement navElement) {
     TargetElementEvaluatorEx2 evaluator = element != null ? getElementEvaluatorsEx2(element.getLanguage()) : null;
     if (evaluator != null) {
@@ -433,7 +425,6 @@ public class TargetElementUtil extends TargetElementUtilBase {
     return navElement;
   }
 
-  @Override
   public boolean includeSelfInGotoImplementation(@NotNull final PsiElement element) {
     TargetElementEvaluator evaluator = TARGET_ELEMENT_EVALUATOR.forLanguage(element.getLanguage());
     return evaluator == null || evaluator.includeSelfInGotoImplementation(element);
@@ -444,7 +435,6 @@ public class TargetElementUtil extends TargetElementUtilBase {
     return evaluator == null || evaluator.acceptImplementationForReference(reference, element);
   }
 
-  @Override
   @NotNull
   public SearchScope getSearchScope(Editor editor, @NotNull PsiElement element) {
     TargetElementEvaluatorEx2 evaluator = getElementEvaluatorsEx2(element.getLanguage());
