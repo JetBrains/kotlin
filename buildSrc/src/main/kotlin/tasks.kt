@@ -25,7 +25,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
-import org.gradle.kotlin.dsl.task
 import java.io.File
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
@@ -39,7 +38,7 @@ fun Project.projectTest(
     body: Test.() -> Unit = {}
 ): TaskProvider<Test> = getOrCreateTask(taskName) {
     doFirst {
-        val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: emptySet()
+        val commandLineIncludePatterns = (filter as? DefaultTestFilter)?.commandLineIncludePatterns ?: mutableSetOf()
         val patterns = filter.includePatterns + commandLineIncludePatterns
         if (patterns.isEmpty() || patterns.any { '*' in it }) return@doFirst
         patterns.forEach { pattern ->
