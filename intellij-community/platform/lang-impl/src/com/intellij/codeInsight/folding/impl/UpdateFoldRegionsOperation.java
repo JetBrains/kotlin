@@ -271,11 +271,11 @@ class UpdateFoldRegionsOperation implements Runnable {
         FoldingDescriptor descriptor = regionInfo.descriptor;
         TextRange range = descriptor.getRange();
         if (TextRange.areSegmentsEqual(region, range)) {
-          if (!region.getPlaceholderText().equals(descriptor.getPlaceholderText()) || range.getLength() < 2) {
+          if (storedCollapsedByDefault != null && storedCollapsedByDefault != regionInfo.collapsedByDefault) {
+            rangeToExpandStatusMap.put(range, !regionInfo.collapsedByDefault);
             return true;
           }
-          else if (storedCollapsedByDefault != null && storedCollapsedByDefault != regionInfo.collapsedByDefault) {
-            rangeToExpandStatusMap.put(range, !regionInfo.collapsedByDefault);
+          else if (!region.getPlaceholderText().equals(descriptor.getPlaceholderText()) || range.getLength() < 2) {
             return true;
           }
           else {
