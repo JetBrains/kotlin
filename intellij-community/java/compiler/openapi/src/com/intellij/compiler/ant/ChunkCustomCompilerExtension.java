@@ -3,7 +3,6 @@ package com.intellij.compiler.ant;
 
 import com.intellij.compiler.ant.taskdefs.PatternSetRef;
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 
 import java.util.Arrays;
@@ -81,7 +80,7 @@ public abstract class ChunkCustomCompilerExtension {
    * @return a list of custom compilators
    */
   public static ChunkCustomCompilerExtension[] getCustomCompile(ModuleChunk chunk) {
-    final ChunkCustomCompilerExtension[] extensions = Extensions.getRootArea().getExtensionPoint(EP_NAME).getExtensions();
+    final ChunkCustomCompilerExtension[] extensions = EP_NAME.getExtensions();
     return Arrays.stream(extensions)
       .filter(extension -> extension.hasCustomCompile(chunk))
       .sorted(COMPARATOR).toArray(ChunkCustomCompilerExtension[]::new);

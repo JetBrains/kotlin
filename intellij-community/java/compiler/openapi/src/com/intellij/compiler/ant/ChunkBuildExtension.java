@@ -3,7 +3,6 @@
 package com.intellij.compiler.ant;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Couple;
 import com.intellij.packaging.artifacts.Artifact;
@@ -55,7 +54,7 @@ public abstract class ChunkBuildExtension {
 
   public static String[] getAllTargets(ModuleChunk chunk) {
     List<String> allTargets = new ArrayList<>();
-    final ChunkBuildExtension[] extensions = Extensions.getRootArea().getExtensionPoint(EP_NAME).getExtensions();
+    final ChunkBuildExtension[] extensions = EP_NAME.getExtensions();
     for (ChunkBuildExtension extension : extensions) {
       ContainerUtil.addAll(allTargets, extension.getTargets(chunk));
     }
@@ -67,7 +66,7 @@ public abstract class ChunkBuildExtension {
 
   public static void process(CompositeGenerator generator, ModuleChunk chunk, GenerationOptions genOptions) {
     final Project project = chunk.getProject();
-    final ChunkBuildExtension[] extensions = Extensions.getRootArea().getExtensionPoint(EP_NAME).getExtensions();
+    final ChunkBuildExtension[] extensions = EP_NAME.getExtensions();
     for (ChunkBuildExtension extension : extensions) {
       extension.process(project, chunk, genOptions, generator);
     }
@@ -76,7 +75,7 @@ public abstract class ChunkBuildExtension {
   public static void generateAllProperties(final PropertyFileGenerator propertyFileGenerator,
                                            final Project project,
                                            final GenerationOptions genOptions) {
-    ChunkBuildExtension[] extensions = Extensions.getRootArea().getExtensionPoint(EP_NAME).getExtensions();
+    ChunkBuildExtension[] extensions = EP_NAME.getExtensions();
     for (ChunkBuildExtension extension : extensions) {
       extension.generateProperties(propertyFileGenerator, project, genOptions);
     }
