@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -112,7 +113,10 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 if (fileClassInfo.withJvmMultifileClass) AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.facadeClassFqName)
                 else null
             context.state.factory.packagePartRegistry.addPart(irFile.fqName, partClassType.internalName, facadeClassType?.internalName)
-            context.classNameOverride[this] = JvmClassName.byInternalName(partClassType.internalName)
+
+            if (fileClassInfo.fileClassFqName != fqNameWhenAvailable) {
+                context.classNameOverride[this] = JvmClassName.byInternalName(partClassType.internalName)
+            }
 
             if (facadeClassType != null) {
                 val jvmClassName = JvmClassName.byInternalName(facadeClassType.internalName)

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -100,14 +101,27 @@ private fun generateMultifileFacades(
     functionDelegates: MutableMap<IrFunctionSymbol, IrFunctionSymbol>
 ): List<IrFile> =
     context.multifileFacadesToAdd.map { (jvmClassName, partClasses) ->
+        val kotlinPackageFqName = partClasses.first().fqNameWhenAvailable!!.parent()
+        if (!partClasses.all { it.fqNameWhenAvailable!!.parent() == kotlinPackageFqName }) {
+            throw UnsupportedOperationException(
+                "Multi-file parts of a facade with JvmPackageName should all lie in the same Kotlin package:\n  " +
+                        partClasses.joinToString("\n  ") { klass ->
+                            "Class ${klass.fqNameWhenAvailable}, JVM name ${context.classNameOverride[klass]}"
+                        }
+            )
+        }
+
         val fileEntry = MultifileFacadeFileEntry(jvmClassName, partClasses.map(IrClass::fileParent))
-        val file = IrFileImpl(fileEntry, EmptyPackageFragmentDescriptor(module, jvmClassName.packageFqName))
+        val file = IrFileImpl(fileEntry, EmptyPackageFragmentDescriptor(module, kotlinPackageFqName))
 
         val facadeClass = buildClass {
             name = jvmClassName.fqNameForTopLevelClassMaybeWithDollars.shortName()
         }.apply {
             parent = file
             createImplicitParameterDeclarationWithWrappedDescriptor()
+            if (jvmClassName.packageFqName != kotlinPackageFqName) {
+                context.classNameOverride[this] = jvmClassName
+            }
         }
         file.declarations.add(facadeClass)
 

@@ -214,6 +214,10 @@ open class ClassCodegen protected constructor(
                 writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.CLASS, 0) {
                     AsmUtil.writeAnnotationData(it, serializer, classProto)
                 }
+
+                assert(irClass !in context.classNameOverride) {
+                    "JvmPackageName is not supported for classes: ${irClass.render()}"
+                }
             }
             is MetadataSource.File -> {
                 val packageFqName = irClass.getPackageFragment()!!.fqName
@@ -230,7 +234,9 @@ open class ClassCodegen protected constructor(
                         av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassName.internalName)
                     }
 
-                    // TODO: JvmPackageName
+                    if (irClass in context.classNameOverride) {
+                        av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, irClass.fqNameWhenAvailable!!.parent().asString())
+                    }
                 }
             }
             else -> {
