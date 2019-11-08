@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -24,8 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
@@ -265,30 +262,17 @@ internal class HeaderProcessor(
         // Get the iterable expression, e.g., `someIterable` in the following loop variable declaration:
         //
         //   val it = someIterable.iterator()
-        //
-        // If the `iterator` method is an extension method, make sure that we are calling a known extension
-        // method in the library such as `kotlin.text.StringsKt.iterator` with no value arguments. Other
-        // extension methods could return user-defined iterators.
-        val iterable = (variable.initializer as? IrCall)?.let {
-            val extensionReceiver = it.extensionReceiver
+        val iteratorCall = variable.initializer as? IrCall
+        val iterable = iteratorCall?.run {
             if (extensionReceiver != null) {
-                val function = it.symbol.owner
-                if (it.valueArgumentsCount == 0
-                    && function.isTopLevel
-                    && function.getPackageFragment()?.fqName == FqName("kotlin.text")
-                    && function.name == OperatorNameConventions.ITERATOR
-                ) {
-                    extensionReceiver
-                } else {
-                    null
-                }
+                extensionReceiver
             } else {
-                it.dispatchReceiver
+                dispatchReceiver
             }
         }
 
         // Collect loop information from the iterable expression.
-        val headerInfo = iterable?.accept(headerInfoBuilder, null)
+        val headerInfo = iterable?.accept(headerInfoBuilder, iteratorCall)
             ?: return null  // If the iterable is not supported.
 
         val builder = context.createIrBuilder(scopeOwnerSymbol(), variable.startOffset, variable.endOffset)

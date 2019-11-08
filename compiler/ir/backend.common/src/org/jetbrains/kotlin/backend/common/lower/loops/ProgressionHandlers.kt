@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.absoluteValue
 
@@ -224,7 +222,7 @@ internal class UntilHandler(private val context: CommonBackendContext, private v
 /** Builds a [HeaderInfo] for progressions built using the `step` extension function. */
 internal class StepHandler(
     private val context: CommonBackendContext,
-    private val visitor: IrElementVisitor<HeaderInfo?, Nothing?>
+    private val visitor: HeaderInfoBuilder
 ) : ProgressionHandler {
 
     private val symbols = context.ir.symbols
@@ -529,7 +527,7 @@ internal class CollectionIndicesHandler(context: CommonBackendContext) : Indices
 internal class CharSequenceIndicesHandler(context: CommonBackendContext) : IndicesHandler(context) {
 
     override val matcher = SimpleCalleeMatcher {
-        extensionReceiver { it != null && it.type.run { isSubtypeOfClass(context.ir.symbols.charSequence) } }
+        extensionReceiver { it != null && it.type.run { isCharSequence() } }
         fqName { it == FqName("kotlin.text.<get-indices>") }
         parameterCount { it == 0 }
     }
@@ -542,7 +540,7 @@ internal class CharSequenceIndicesHandler(context: CommonBackendContext) : Indic
 }
 
 /** Builds a [HeaderInfo] for calls to reverse an iterable. */
-internal class ReversedHandler(context: CommonBackendContext, private val visitor: IrElementVisitor<HeaderInfo?, Nothing?>) :
+internal class ReversedHandler(context: CommonBackendContext, private val visitor: HeaderInfoBuilder) :
     HeaderInfoFromCallHandler<Nothing?> {
 
     private val symbols = context.ir.symbols
@@ -569,7 +567,7 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
 
     private val symbols = context.ir.symbols
 
-    override fun match(expression: IrExpression) = ProgressionType.fromIrType(expression.type, symbols) != null
+    override fun matchIterable(expression: IrExpression) = ProgressionType.fromIrType(expression.type, symbols) != null
 
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
@@ -599,9 +597,8 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
 
 internal abstract class IndexedGetIterationHandler(
     protected val context: CommonBackendContext,
-    val canCacheLast: Boolean = true
-) :
-    ExpressionHandler {
+    private val canCacheLast: Boolean
+) : ExpressionHandler {
     override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Consider the case like:
@@ -643,26 +640,11 @@ internal abstract class IndexedGetIterationHandler(
 }
 
 /** Builds a [HeaderInfo] for arrays. */
-internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context) {
-    override fun match(expression: IrExpression) = expression.type.run { isArray() || isPrimitiveArray() }
+internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = true) {
+    override fun matchIterable(expression: IrExpression) = expression.type.run { isArray() || isPrimitiveArray() }
 
     override val IrType.sizePropertyGetter
         get() = getClass()!!.getPropertyGetter("size")!!.owner
-
-    override val IrType.getFunction
-        get() = getClass()!!.functions.single {
-            it.name == OperatorNameConventions.GET &&
-                    it.valueParameters.size == 1 &&
-                    it.valueParameters[0].type.isInt()
-        }
-}
-
-/** Builds a [HeaderInfo] for iteration over characters in a [String]. */
-internal class StringIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context) {
-    override fun match(expression: IrExpression) = expression.type.isString()
-
-    override val IrType.sizePropertyGetter
-        get() = getClass()!!.getPropertyGetter("length")!!.owner
 
     override val IrType.getFunction
         get() = getClass()!!.functions.single {
@@ -678,8 +660,18 @@ internal class StringIterationHandler(context: CommonBackendContext) : IndexedGe
  * Note: The value for "last" can NOT be cached (i.e., stored in a variable) because the size/length can change within the loop. This means
  * that "last" is re-evaluated with each iteration of the loop.
  */
-internal class CharSequenceIterationHandler(context: CommonBackendContext) : IndexedGetIterationHandler(context, canCacheLast = false) {
-    override fun match(expression: IrExpression) = expression.type.isSubtypeOfClass(context.ir.symbols.charSequence)
+internal open class CharSequenceIterationHandler(context: CommonBackendContext, canCacheLast: Boolean = false) :
+    IndexedGetIterationHandler(context, canCacheLast) {
+    override fun matchIterable(expression: IrExpression) = expression.type.isSubtypeOfClass(context.ir.symbols.charSequence)
+
+    // We only want to handle the known extension function for CharSequence in the standard library (top level `kotlin.text.iterator`).
+    // The behavior of this iterator is well-defined and can be lowered. CharSequences can have their own iterators, either as a member or
+    // extension function, and the behavior of those custom iterators is unknown.
+    override val iteratorCallMatcher = SimpleCalleeMatcher {
+        extensionReceiver { it != null && it.type.run { isCharSequence() } }
+        fqName { it == FqName("kotlin.text.${OperatorNameConventions.ITERATOR}") }
+        parameterCount { it == 0 }
+    }
 
     // The lowering operates on subtypes of CharSequence. Therefore, the IrType could be
     // a type parameter bounded by CharSequence. When that is the case, we cannot get
@@ -693,4 +685,13 @@ internal class CharSequenceIterationHandler(context: CommonBackendContext) : Ind
                     it.valueParameters.size == 1 &&
                     it.valueParameters[0].type.isInt()
         } ?: context.ir.symbols.charSequence.getSimpleFunction(OperatorNameConventions.GET.asString())!!.owner
+}
+
+/**
+ * Builds a [HeaderInfo] for iteration over characters in a [String].
+ *
+ * Note: The value for "last" CAN be cached for Strings as they are immutable and the size/length cannot change.
+ */
+internal class StringIterationHandler(context: CommonBackendContext) : CharSequenceIterationHandler(context, canCacheLast = true) {
+    override fun matchIterable(expression: IrExpression) = expression.type.isString()
 }
