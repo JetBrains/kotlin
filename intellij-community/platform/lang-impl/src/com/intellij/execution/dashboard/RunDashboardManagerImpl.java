@@ -222,19 +222,21 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     myState.excludedTypes.removeAll(myTypes);
 
     syncConfigurations();
-    moveRemovedTypesContent(removed);
-    moveAddedTypesContent(added);
+    if (!removed.isEmpty()) {
+      moveRemovedContent(settings -> removed.contains(settings.getType().getId()));
+    }
+    if (!added.isEmpty()) {
+      moveAddedContent(settings -> added.contains(settings.getType().getId()));
+    }
     updateDashboard(true);
   }
 
-  private void moveRemovedTypesContent(Set<String> removedTypes) {
-    if (removedTypes.isEmpty()) return;
-
+  private void moveRemovedContent(Condition<? super RunnerAndConfigurationSettings> condition) {
     ExecutionManagerImpl executionManager = (ExecutionManagerImpl)ExecutionManager.getInstance(myProject);
     RunContentManagerImpl runContentManager = (RunContentManagerImpl)executionManager.getContentManager();
     for (RunDashboardService service : getRunConfigurations()) {
       Content content = service.getContent();
-      if (content == null || !removedTypes.contains(service.getSettings().getType().getId())) continue;
+      if (content == null || !condition.value(service.getSettings())) continue;
 
       RunContentDescriptor descriptor = RunContentManagerImpl.getRunContentDescriptorByContent(content);
       if (descriptor == null) continue;
@@ -248,13 +250,10 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
     }
   }
 
-  private void moveAddedTypesContent(Set<String> addedTypes) {
-    if (addedTypes.isEmpty()) return;
-
+  private void moveAddedContent(Condition<? super RunnerAndConfigurationSettings> condition) {
     ExecutionManagerImpl executionManager = (ExecutionManagerImpl)ExecutionManager.getInstance(myProject);
     RunContentManagerImpl runContentManager = (RunContentManagerImpl)executionManager.getContentManager();
-    List<RunContentDescriptor> descriptors =
-      executionManager.getRunningDescriptors(settings -> addedTypes.contains(settings.getType().getId()));
+    List<RunContentDescriptor> descriptors = executionManager.getRunningDescriptors(condition);
     for (RunContentDescriptor descriptor : descriptors) {
       Content content = descriptor.getAttachedContent();
       if (content == null) continue;
@@ -274,12 +273,18 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   public void hideConfigurations(Collection<RunConfiguration> configurations) {
     myHiddenConfigurations.addAll(configurations);
     syncConfigurations();
+    if (!configurations.isEmpty()) {
+      moveRemovedContent(settings -> configurations.contains(settings.getConfiguration()));
+    }
     updateDashboard(true);
   }
 
   public void restoreConfigurations(Collection<RunConfiguration> configurations) {
     myHiddenConfigurations.removeAll(configurations);
     syncConfigurations();
+    if (!configurations.isEmpty()) {
+      moveAddedContent(settings -> configurations.contains(settings.getConfiguration()));
+    }
     updateDashboard(true);
   }
 
