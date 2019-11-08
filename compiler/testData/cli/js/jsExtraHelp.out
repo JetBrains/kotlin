@@ -3,6 +3,7 @@ where advanced options include:
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
+  -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
   -Xir-only                  Disables pre-IR backend
   -Xir-produce-js            Generates JS file using IR backend. Also disables pre-IR backend
   -Xir-produce-klib-dir      Generate unpacked KLIB into parent directory of output JS file.

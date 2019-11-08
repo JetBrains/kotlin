@@ -13,7 +13,21 @@ import java.util.zip.ZipFile
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true)
+class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
+    @Test
+    fun generateDts() {
+        val project = Project("kotlin2JsIrDtsGeneration")
+        project.build("build") {
+            assertSuccessful()
+            checkIrCompilationMessage()
+
+            assertFileExists("build/kotlin2js/main/lib.js")
+            val dts = fileInWorkingDir("build/kotlin2js/main/lib.d.ts")
+            assert(dts.exists())
+            assert(dts.readText().contains("function bar(): string"))
+        }
+    }
+}
 
 class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
     @Test
@@ -119,7 +133,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(jsIrBackend = irBackend)
 
-    private fun CompiledProject.checkIrCompilationMessage() {
+    protected fun CompiledProject.checkIrCompilationMessage() {
         if (irBackend) {
             assertContains(USING_JS_IR_BACKEND_MESSAGE)
         } else {

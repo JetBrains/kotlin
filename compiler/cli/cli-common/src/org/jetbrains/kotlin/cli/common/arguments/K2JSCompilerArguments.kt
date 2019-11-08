@@ -125,6 +125,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-only", description = "Disables pre-IR backend")
     var irOnly: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xgenerate-dts",
+        description = "Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only."
+    )
+    var generateDts: Boolean by FreezableVar(false)
+
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays to JS typed arrays")
     var typedArrays: Boolean by FreezableVar(true)
