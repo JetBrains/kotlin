@@ -86,7 +86,7 @@ public final class BooleanArray : R|kotlin/Any| {
     public final val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Boolean>|): R|kotlin/BooleanArray|
+    public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Boolean|): R|kotlin/BooleanArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/BooleanArray|
 
@@ -238,7 +238,7 @@ public final class ByteArray : R|kotlin/Any| {
     public final val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Byte>|): R|kotlin/ByteArray|
+    public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Byte|): R|kotlin/ByteArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/ByteArray|
 
@@ -322,7 +322,7 @@ public final class CharArray : R|kotlin/Any| {
     public final val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Char>|): R|kotlin/CharArray|
+    public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Char|): R|kotlin/CharArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/CharArray|
 
@@ -517,7 +517,7 @@ public final class DoubleArray : R|kotlin/Any| {
     public final val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Double>|): R|kotlin/DoubleArray|
+    public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Double|): R|kotlin/DoubleArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/DoubleArray|
 
@@ -700,7 +700,7 @@ public final class FloatArray : R|kotlin/Any| {
     public final val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Float>|): R|kotlin/FloatArray|
+    public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Float|): R|kotlin/FloatArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/FloatArray|
 
@@ -869,7 +869,7 @@ public final class IntArray : R|kotlin/Any| {
     public final val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Int>|): R|kotlin/IntArray|
+    public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/IntArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/IntArray|
 
@@ -1035,7 +1035,7 @@ public final class LongArray : R|kotlin/Any| {
     public final val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Long>|): R|kotlin/LongArray|
+    public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Long|): R|kotlin/LongArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/LongArray|
 
@@ -1235,7 +1235,7 @@ public final class ShortArray : R|kotlin/Any| {
     public final val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, kotlin/Short>|): R|kotlin/ShortArray|
+    public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Short|): R|kotlin/ShortArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/ShortArray|
 
