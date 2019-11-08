@@ -697,28 +697,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         }
 
         @Suppress("UNCHECKED_CAST")
-        resultingDescriptor = run {
-            val candidateDescriptor = resolvedCallAtom.candidateDescriptor
-            val returnType = resolvedCallAtom.candidateDescriptor.returnType
-            val shouldRunApproximation = returnType?.let { type ->
-                type.contains { it is NewCapturedType } ||
-                        type.contains { it.constructor is IntegerLiteralTypeConstructor } ||
-                        type.contains { it is DefinitelyNotNullType }
-            } ?: false
-
-            when {
-                candidateDescriptor is FunctionDescriptor ||
-                        (candidateDescriptor is PropertyDescriptor &&
-                                (candidateDescriptor.typeParameters.isNotEmpty() || shouldRunApproximation)) ->
-                    // this code is very suspicious. Now it is very useful for BE, because they cannot do nothing with captured types,
-                    // but it seems like temporary solution.
-                    candidateDescriptor.substitute(resolvedCallAtom.freshVariablesSubstitutor).substituteAndApproximateTypes(
-                        substitutor ?: FreshVariableNewTypeSubstitutor.Empty, typeApproximator
-                    )
-                else ->
-                    candidateDescriptor
-            }
-        } as D
+        resultingDescriptor = substitutedResultingDescriptor(substitutor) as D
 
         typeArguments = resolvedCallAtom.freshVariablesSubstitutor.freshVariables.map {
             val substituted = (substitutor ?: FreshVariableNewTypeSubstitutor.Empty).safeSubstitute(it.defaultType)
@@ -728,6 +707,31 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
         }
 
         calculateExpectedTypeForSamConvertedArgumentMap(substitutor)
+    }
+
+    private fun substitutedResultingDescriptor(substitutor: NewTypeSubstitutor?) =
+        when (val candidateDescriptor = resolvedCallAtom.candidateDescriptor) {
+            is FunctionDescriptor -> candidateDescriptor.substituteInferredVariablesAndApproximate(substitutor)
+            is PropertyDescriptor -> {
+                val shouldRunApproximation = candidateDescriptor.returnType?.let { type ->
+                    type.contains { it is NewCapturedType } ||
+                            type.contains { it.constructor is IntegerLiteralTypeConstructor } ||
+                            type.contains { it is DefinitelyNotNullType }
+                } ?: false
+
+                if (candidateDescriptor.typeParameters.isNotEmpty() || shouldRunApproximation)
+                    candidateDescriptor.substituteInferredVariablesAndApproximate(substitutor)
+                else
+                    candidateDescriptor
+            }
+            else -> candidateDescriptor
+        }
+
+    private fun CallableDescriptor.substituteInferredVariablesAndApproximate(substitutor: NewTypeSubstitutor?): CallableDescriptor {
+        return substitute(resolvedCallAtom.freshVariablesSubstitutor)
+            .substituteAndApproximateTypes(
+                substitutor ?: FreshVariableNewTypeSubstitutor.Empty, typeApproximator
+            )
     }
 
     fun getExpectedTypeForSamConvertedArgument(valueArgument: ValueArgument): UnwrappedType? =
