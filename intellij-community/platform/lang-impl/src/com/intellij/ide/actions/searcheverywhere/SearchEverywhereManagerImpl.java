@@ -17,6 +17,7 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.ScreenUtil;
 import com.intellij.ui.SearchTextField;
 import com.intellij.ui.awt.RelativePoint;
+import com.intellij.util.SystemProperties;
 import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +56,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
   @Override
   public void show(@NotNull String contributorID, @Nullable String searchText, @NotNull AnActionEvent initEvent) {
     if (isShown()) {
-      throw new IllegalStateException("Method should cannot be called whe popup is shown");
+      throw new IllegalStateException("Method should cannot be called when popup is shown");
     }
 
     Project project = initEvent.getProject();
@@ -77,7 +78,7 @@ public class SearchEverywhereManagerImpl implements SearchEverywhereManager {
 
     myHistoryIterator = myHistoryList.getIterator(contributorID);
     //history could be suppressed by user for some reasons (creating promo video, conference demo etc.)
-    boolean suppressHistory = "true".equals(System.getProperty("idea.searchEverywhere.noHistory", "false"));
+    boolean suppressHistory = SystemProperties.getBooleanProperty("idea.searchEverywhere.noHistory", false);
     //or could be suppressed just for All tab in registry
     suppressHistory = suppressHistory ||
                       (ALL_CONTRIBUTORS_GROUP_ID.equals(contributorID) &&

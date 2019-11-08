@@ -328,10 +328,6 @@ public abstract class GotoActionBase extends AnAction {
     }.registerCustomShortcutSet(SearchTextField.SHOW_HISTORY_SHORTCUT, editor);
   }
 
-  protected void showInSearchEverywherePopup(String searchProviderID, AnActionEvent event, boolean useEditorSelection) {
-    showInSearchEverywherePopup(searchProviderID, event, useEditorSelection, false);
-  }
-
   protected void showInSearchEverywherePopup(@NotNull String searchProviderID,
                                              @NotNull AnActionEvent event,
                                              boolean useEditorSelection,
