@@ -9,7 +9,12 @@ import com.intellij.ProjectTopics
 import com.intellij.notification.*
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.components.ProjectComponent
+import com.intellij.openapi.progress.EmptyProgressIndicator
+import com.intellij.openapi.progress.ProgressIndicator
+import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.ModuleRootEvent
@@ -59,10 +64,21 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
         if (ApplicationManager.getApplication().isUnitTestMode || project.isDisposed)
             return
 
-        val librariesToNotify = getLibrariesToNotifyAbout()
-        val notifications = prepareNotifications(librariesToNotify)
+        ProgressManager.getInstance().runProcessWithProgressAsynchronously(
+            object : Task.Backgroundable(project, BG_TASK_NAME) {
+                override fun run(indicator: ProgressIndicator) {
+                    val librariesToNotify = getLibrariesToNotifyAbout()
+                    val notifications = prepareNotifications(librariesToNotify)
 
-        notifications.forEach { it.notify(project) }
+                    notifications.forEach {
+                        runInEdt {
+                            it.notify(project)
+                        }
+                    }
+                }
+            },
+            EmptyProgressIndicator()
+        )
     }
 
     private fun getLibrariesToNotifyAbout(): Map<String, NativeLibraryInfo> = synchronized(this) {
@@ -214,5 +230,7 @@ class KotlinNativeABICompatibilityChecker(private val project: Project) : Projec
 
         private const val NOTIFICATION_TITLE = "Incompatible Kotlin/Native libraries"
         private const val NOTIFICATION_GROUP_ID = NOTIFICATION_TITLE
+
+        private const val BG_TASK_NAME = "Finding incompatible Kotlin/Native libraries"
     }
 }
