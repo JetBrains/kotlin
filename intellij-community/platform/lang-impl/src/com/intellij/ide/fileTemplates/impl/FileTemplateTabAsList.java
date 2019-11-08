@@ -25,7 +25,6 @@ import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +41,6 @@ abstract class FileTemplateTabAsList extends FileTemplateTab {
     myList.setCellRenderer(SimpleListCellRenderer.create((label, value, index) -> {
       label.setIcon(FileTemplateUtil.getIcon(value));
       label.setText(value.getName());
-      label.setFont(label.getFont().deriveFont(Font.PLAIN));
       if (!value.isDefault() && myList.getSelectedIndex() != index) {
         label.setForeground(MODIFIED_FOREGROUND);
       }
