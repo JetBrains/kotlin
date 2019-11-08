@@ -33,6 +33,11 @@ public class PerformanceHighlightingTestGenerated extends AbstractPerformanceHig
         runTest("idea/testData/highlighter/Annotations.kt");
     }
 
+    @TestMetadata("AutoCreatedItParameter.kt")
+    public void testAutoCreatedItParameter() throws Exception {
+        runTest("idea/testData/highlighter/AutoCreatedItParameter.kt");
+    }
+
     @TestMetadata("Destructuring.kt")
     public void testDestructuring() throws Exception {
         runTest("idea/testData/highlighter/Destructuring.kt");

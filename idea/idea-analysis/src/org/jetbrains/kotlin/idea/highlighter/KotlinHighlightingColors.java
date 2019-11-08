@@ -79,7 +79,7 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION = createTextAttributesKey("KOTLIN_PACKAGE_PROPERTY_CUSTOM_PROPERTY_DECLARATION", PACKAGE_PROPERTY);
 
     // functions
-    public static final TextAttributesKey FUNCTION_LITERAL_DEFAULT_PARAMETER = createTextAttributesKey("KOTLIN_CLOSURE_DEFAULT_PARAMETER");
+    public static final TextAttributesKey FUNCTION_LITERAL_DEFAULT_PARAMETER = createTextAttributesKey("KOTLIN_CLOSURE_DEFAULT_PARAMETER", PARAMETER);
     public static final TextAttributesKey FUNCTION_DECLARATION = createTextAttributesKey("KOTLIN_FUNCTION_DECLARATION", DefaultLanguageHighlighterColors.FUNCTION_DECLARATION);
     public static final TextAttributesKey FUNCTION_CALL = createTextAttributesKey("KOTLIN_FUNCTION_CALL", DefaultLanguageHighlighterColors.FUNCTION_CALL);
     public static final TextAttributesKey PACKAGE_FUNCTION_CALL = createTextAttributesKey("KOTLIN_PACKAGE_FUNCTION_CALL", DefaultLanguageHighlighterColors.STATIC_METHOD);
