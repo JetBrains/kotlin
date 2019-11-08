@@ -37,7 +37,11 @@ class DecompileIrTreeVisitor(
     internal val printer = Printer(out, "    ")
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: String) {
-        printer.printWithNoIndent(expression.type.obtainTypeDescription())
+        with(expression) {
+            val owner = symbol.owner
+            if (owner.isCompanion) printer.printWithNoIndent(owner.parentAsClass.name())
+            else printer.printWithNoIndent(expression.type.obtainTypeDescription())
+        }
     }
 
 
@@ -609,7 +613,7 @@ class DecompileIrTreeVisitor(
     override fun visitModuleFragment(declaration: IrModuleFragment, data: String) {
         printer.println(
             declaration.files.joinToString("\n") {
-                "// FILE: ${it.path.substring(1)}\n\n${it.decompile("")}"
+                "// FILE: ${it.path.substring(1)}\n${it.decompile("")}"
             }
         )
     }

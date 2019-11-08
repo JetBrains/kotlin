@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -44,7 +45,7 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
 
     override fun visitFile(declaration: IrFile, data: String) {
         with(declaration) {
-            val packageName = "${fqName.asString()}.".takeIf { fqName.asString().isNotEmpty() } ?: EMPTY_TOKEN
+            val packageName = fqName.asString().takeIf { fqName.asString().isNotEmpty() } ?: EMPTY_TOKEN
             declarations
                 .forEach { it.accept(this@ImportResolveVisitor, packageName) }
 
@@ -62,7 +63,7 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
      */
     override fun visitClass(declaration: IrClass, data: String) {
         with(declaration) {
-            val declarationNameWithPrefix = "$data${this.name.identifier}"
+            val declarationNameWithPrefix = "${data + (".".takeIf { data.isNotEmpty() } ?: EMPTY_TOKEN)}${this.name.identifier}"
             declaredNamesSet.add(declarationNameWithPrefix)
             // Для енамов в суперах лежит Enum<MyType>, который почему-то не isEnum
             // Добавляем
@@ -82,7 +83,7 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
     override fun visitProperty(declaration: IrProperty, data: String) {
         with(declaration) {
             val declarationNameWithPrefix = "$data.${name()}"
-            if (parent is IrFile) {
+            if (parent is IrFile || parentAsClass.isCompanion || parentAsClass.isObject) {
                 declaredNamesSet.add(declarationNameWithPrefix)
             }
             backingField?.initializer?.accept(this@ImportResolveVisitor, declarationNameWithPrefix)
@@ -168,6 +169,7 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
     override fun visitCall(expression: IrCall, data: String) {
         //TODO Здесь может быть больше всего проблем (extension и dispatcher receivers, superQualifier)
         with(expression) {
+            dispatchReceiver?.accept(this@ImportResolveVisitor, data)
             (0 until typeArgumentsCount).forEach { calledNamesSet.add(getTypeArgument(it)?.asImportStr()) }
             (0 until valueArgumentsCount).forEach { getValueArgument(it)?.accept(this@ImportResolveVisitor, data) }
 
@@ -181,6 +183,17 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
             initializer?.accept(this@ImportResolveVisitor, data)
         }
     }
+
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: String) {
+        with(expression) {
+            val owner = symbol.owner
+            if (!owner.isCompanion || owner.name() != "Companion") {
+                //Здесь нужно учитывать локальные классы/методы?
+                calledNamesSet.add(owner.asImportStr())
+            }
+        }
+    }
+
 
     override fun visitElement(element: IrElement, data: String) {
         run { }

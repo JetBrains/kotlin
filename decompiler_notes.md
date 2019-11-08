@@ -29,8 +29,6 @@
 
 ## DONE
 
-
-
 - локальные классы
 - return when (varName) - block с WHEN в origin
 - companion object, именованный object, top-level object

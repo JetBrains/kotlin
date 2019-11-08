@@ -1123,6 +1123,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         public void testEnumEntries_classes() throws Exception {
             runTest("compiler/testData/decompiler/box/imports/enumEntries_classes.kt");
         }
+
+        @TestMetadata("inner_nested.kt")
+        public void testInner_nested() throws Exception {
+            runTest("compiler/testData/decompiler/box/imports/inner_nested.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/decompiler/box/objects")
