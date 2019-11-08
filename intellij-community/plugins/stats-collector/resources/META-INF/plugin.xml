@@ -61,6 +61,7 @@
     <projectService serviceImplementation="com.intellij.stats.personalization.impl.ProjectUserFactorStorage"/>
 
     <completion.ml.model implementation="com.jetbrains.completion.ranker.FallbackKotlinMLRankingProvider"/>
+    <completion.ml.model implementation="com.jetbrains.completion.ranker.FallbackScalaMLRankingProvider"/>
 <!--    <completion.ml.model implementation="com.jetbrains.completion.ranker.PythonMLRankingProvider"/>-->
     <weigher key="completion" id="ml_weigh" implementationClass="com.intellij.completion.ml.MLCompletionWeigher" order="last"/>
     <completion.contributor language="any" order="first" id="ml_context"

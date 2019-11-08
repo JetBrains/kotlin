@@ -2,6 +2,7 @@
 package com.jetbrains.completion.ranker.metadata
 
 import com.jetbrains.completion.ranker.FallbackKotlinMLRankingProvider
+import com.jetbrains.completion.ranker.FallbackScalaMLRankingProvider
 import com.jetbrains.completion.ranker.PythonMLRankingProvider
 import org.junit.Test
 
@@ -11,4 +12,7 @@ class MetadataConsistencyTest {
 
   @Test
   fun testPythonMetadata() = PythonMLRankingProvider().assertModelMetadataConsistent()
+
+  @Test
+  fun testScalaMetadata() = FallbackScalaMLRankingProvider().assertModelMetadataConsistent()
 }
