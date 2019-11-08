@@ -827,3 +827,7 @@ object GH3525 : GH3525Base() {
         gh3525InitCount++
     }
 }
+
+class TestStringConversion {
+    lateinit var str: Any
+}

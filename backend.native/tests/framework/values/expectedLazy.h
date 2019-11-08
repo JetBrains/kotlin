@@ -1030,6 +1030,14 @@ __attribute__((swift_name("GH3525")))
 + (instancetype)gH3525 __attribute__((swift_name("init()")));
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestStringConversion")))
+@interface ValuesTestStringConversion : ValuesBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property id str __attribute__((swift_name("str")));
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;
