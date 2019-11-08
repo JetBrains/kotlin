@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FULL_JDK
+// SKIP_JDK6
 // FILE: test.kt
 // Test that SAM wrappers with type parameters are cached properly.
 class A {
