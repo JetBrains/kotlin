@@ -23637,6 +23637,34 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/visibility")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Visibility extends AbstractDiagnosticsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("abstractInvisibleMemberFromJava.kt")
+            public void testAbstractInvisibleMemberFromJava() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/abstractInvisibleMemberFromJava.kt");
+            }
+
+            @TestMetadata("abstractInvisibleMemberFromKotlin.kt")
+            public void testAbstractInvisibleMemberFromKotlin() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/abstractInvisibleMemberFromKotlin.kt");
+            }
+
+            @TestMetadata("abstractInvisibleMemberFromKotlinWarning.kt")
+            public void testAbstractInvisibleMemberFromKotlinWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/abstractInvisibleMemberFromKotlinWarning.kt");
+            }
+
+            public void testAllFilesPresentInVisibility() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/visibility"), Pattern.compile("^(.*)\\.kts?$"), true);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/when")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
