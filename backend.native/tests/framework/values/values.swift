@@ -1078,16 +1078,41 @@ func testGH3525() throws {
 }
 
 func testStringConversion() throws {
-    let test = TestStringConversion()
+    func test1() throws {
+        let test = TestStringConversion()
 
-    let buffer = NSMutableString()
-    buffer.append("a")
-    test.str = buffer
-    buffer.append("b")
+        let buffer = NSMutableString()
+        buffer.append("a")
+        test.str = buffer
+        buffer.append("b")
 
-    try assertEquals(actual: buffer, expected: "ab")
-    // Ensure test.str isn't affected by buffer mutation:
-    try assertEquals(actual: test.str as! NSString, expected: "a")
+        try assertEquals(actual: buffer, expected: "ab")
+        // Ensure test.str isn't affected by buffer mutation:
+        try assertEquals(actual: test.str as! NSString, expected: "a")
+    }
+
+    func ensureNoCopy(nsStr: NSString) throws {
+        let test = TestStringConversion()
+
+        test.str = nsStr
+        let nsStr2 = test.str as! NSString
+
+        // Ensure no additional NSString created on both conversions:
+        try assertTrue(nsStr === nsStr2)
+    }
+
+    func test2() throws {
+        var str = "a"
+        str += NSObject().description
+        try ensureNoCopy(nsStr: str as NSString)
+
+        try ensureNoCopy(nsStr: NSString("abc"))
+
+        try ensureNoCopy(nsStr: NSString(format: "%d%d%d", 3, 2, 1))
+    }
+
+    try test1()
+    try test2()
 }
 
 // -------- Execution of the test --------

@@ -29,6 +29,8 @@ fun run() {
     testAllocNoRetain()
     testNSOutputStreamToMemoryConstructor()
     testExportObjCClass()
+    testCustomString()
+    testLocalizedStrings()
 
     assertEquals(2, ForwardDeclaredEnum.TWO.value)
 
@@ -455,6 +457,28 @@ fun testExportObjCClass() {
 
     assertTrue((TestExportObjCClass3().objCClassName == TestExportObjCClass34Name)
             xor (TestExportObjCClass4().objCClassName == TestExportObjCClass34Name))
+}
+
+fun testCustomString() {
+    assertFalse(customStringDeallocated)
+
+    fun test() = autoreleasepool {
+        val str: String = createCustomString(321)
+        assertEquals("321", str)
+        assertEquals("CustomString", str.objCClassName)
+        assertEquals(321, getCustomStringValue(str))
+    }
+
+    test()
+    kotlin.native.internal.GC.collect()
+    assertTrue(customStringDeallocated)
+}
+
+fun testLocalizedStrings() {
+    val key = "screen_main_plural_string"
+    val localizedString = NSBundle.mainBundle.localizedStringForKey(key, value = "", table = "Localizable")
+    val string = NSString.localizedStringWithFormat(localizedString, 5)
+    assertEquals("Plural: 5 apples", string)
 }
 
 private val Any.objCClassName: String

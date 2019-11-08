@@ -3565,6 +3565,11 @@ interopTest("interop_objc_smoke") {
         if (project.target instanceof KonanTarget.IOS_X64) {
             UtilsKt.codesign(project, "$buildDir/libobjcsmoke.dylib")
         }
+
+        copy {
+            from("interop/objc/Localizable.stringsdict")
+            into("$testOutputLocal/$name/$target/en.lproj/")
+        }
     }
 }
 
