@@ -171,7 +171,7 @@ internal abstract class AbstractScriptConfigurationManager(
         if (cache[virtualFile]?.isUpToDate(project, virtualFile, file) == true) return
 
         rootsIndexer.transaction {
-            reloadOutOfDateConfiguration(file, isFirstLoad = true, forceSync = true)
+            reloadOutOfDateConfiguration(file, forceSync = true, loadEvenWillNotBeApplied = true)
         }
     }
 
