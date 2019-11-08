@@ -59,9 +59,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.*;
 
 import javax.swing.*;
-import javax.swing.plaf.TreeUI;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.List;
@@ -683,7 +681,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
   }
 
   private static Tree initTree(@NotNull AsyncTreeModel model) {
-    Tree tree = new MyTree(model);
+    Tree tree = new Tree(model);
+    tree.setLargeModel(true);
     UIUtil.putClientProperty(tree, ANIMATION_IN_RENDERER_ALLOWED, true);
     tree.setRootVisible(false);
     EditSourceOnDoubleClickHandler.install(tree);
@@ -951,11 +950,8 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
     private final ConsoleViewHandler myConsoleViewHandler;
 
     ScrollEditorToTheEndAction(@NotNull ConsoleViewHandler handler) {
+      super(ActionsBundle.message("action.EditorConsoleScrollToTheEnd.text"), null, AllIcons.RunConfigurations.Scroll_down);
       myConsoleViewHandler = handler;
-      final String message = ActionsBundle.message("action.EditorConsoleScrollToTheEnd.text");
-      getTemplatePresentation().setDescription(message);
-      getTemplatePresentation().setText(message);
-      getTemplatePresentation().setIcon(AllIcons.RunConfigurations.Scroll_down);
     }
 
     @Override
@@ -979,18 +975,6 @@ public class BuildTreeConsoleView implements ConsoleView, DataProvider, BuildCon
         LogicalPosition position = new LogicalPosition(Math.max(0, Math.min(currentPosition.line, lastLine - 1)), currentPosition.column);
         editor.getCaretModel().moveToLogicalPosition(position);
       }
-    }
-  }
-
-  private static class MyTree extends Tree {
-    private MyTree(TreeModel treemodel) {
-      super(treemodel);
-    }
-
-    @Override
-    public void setUI(final TreeUI ui) {
-      super.setUI(ui instanceof DefaultTreeUI ? ui : DefaultTreeUI.createUI(this));
-      setLargeModel(true);
     }
   }
 
