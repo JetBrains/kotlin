@@ -16,15 +16,8 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
+import org.jetbrains.kotlin.test.TestJdkKind
 
-abstract class AbstractLoadJavaWithFastClassReadingTest : AbstractLoadJavaTest() {
-    override fun useFastClassFilesReading() = true
-
-    override fun getExpectedFile(expectedFileName: String): File {
-        val differentResultFile = KotlinTestUtils.replaceExtension(File(expectedFileName), "fast.txt")
-        if (differentResultFile.exists()) return differentResultFile
-        return super.getExpectedFile(expectedFileName)
-    }
+abstract class AbstractLoadJava8WithPsiClassReadingTest : AbstractLoadJavaWithPsiClassReadingTest() {
+    override fun getJdkKind() = TestJdkKind.FULL_JDK
 }

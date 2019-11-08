@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/foreignAnnotations/tests")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGenerated extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+public class ForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGenerated extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
@@ -86,7 +86,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
     @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Jsr305 extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+    public static class Jsr305 extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -118,7 +118,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
         @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/ignore")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Ignore extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+        public static class Ignore extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -136,7 +136,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
         @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class NullabilityWarnings extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+        public static class NullabilityWarnings extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -183,7 +183,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
             @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/fromPlatformTypes")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class FromPlatformTypes extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+            public static class FromPlatformTypes extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
@@ -296,7 +296,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
             @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/nullabilityWarnings/typeQualifierDefault")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+            public static class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
@@ -350,7 +350,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
         @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305/typeQualifierDefault")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+        public static class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -409,7 +409,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
     @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Jsr305NullabilityWarnings extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+    public static class Jsr305NullabilityWarnings extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -421,7 +421,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
         @TestMetadata("compiler/testData/foreignAnnotations/tests/jsr305NullabilityWarnings/migration")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Migration extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+        public static class Migration extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
@@ -480,7 +480,7 @@ public class ForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTestGe
     @TestMetadata("compiler/testData/foreignAnnotations/tests/typeQualifierDefault")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+    public static class TypeQualifierDefault extends AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }

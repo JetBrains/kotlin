@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/loadJava8/compiledJava")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class LoadJava8WithFastClassReadingTestGenerated extends AbstractLoadJava8WithFastClassReadingTest {
+public class LoadJava8WithPsiClassReadingTestGenerated extends AbstractLoadJava8WithPsiClassReadingTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
     }

@@ -127,7 +127,7 @@ fun main(args: Array<String>) {
             model("foreignAnnotations/tests")
         }
 
-        testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithFastClassReadingTest> {
+        testClass<AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest> {
             model("foreignAnnotations/tests")
         }
 
@@ -278,7 +278,7 @@ fun main(args: Array<String>) {
             model("loadJava/compiledKotlin")
         }
 
-        testClass<AbstractLoadJavaWithFastClassReadingTest> {
+        testClass<AbstractLoadJavaWithPsiClassReadingTest> {
             model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
         }
 

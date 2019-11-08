@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jvm.compiler
+package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 
-abstract class AbstractLoadJava8WithFastClassReadingTest : AbstractLoadJavaWithFastClassReadingTest() {
-    override fun getJdkKind() = TestJdkKind.FULL_JDK
+abstract class AbstractForeignAnnotationsNoAnnotationInClasspathWithPsiClassReadingTest :
+    AbstractForeignAnnotationsNoAnnotationInClasspathTest() {
+    override fun performCustomConfiguration(configuration: CompilerConfiguration) {
+        super.performCustomConfiguration(configuration)
+        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
+    }
 }

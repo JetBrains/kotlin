@@ -72,8 +72,6 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
                 )
         }
 
-        configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, true)
-
         System.getProperty("fir.bench.oldfe.jvm_target")?.let {
             configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.fromString(it) ?: error("Unknown JvmTarget"))
         }

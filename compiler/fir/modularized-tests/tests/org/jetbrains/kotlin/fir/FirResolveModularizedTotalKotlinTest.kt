@@ -105,7 +105,6 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val configuration =
             KotlinTestUtils.newConfiguration(configurationKind, testJdkKind, moduleData.classpath, moduleData.javaSourceRoots)
 
-        configuration.put(JVMConfigurationKeys.USE_FAST_CLASS_FILES_READING, true)
         configuration.addAll(
             CONTENT_ROOTS,
             moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })

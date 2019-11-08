@@ -8,7 +8,7 @@ public open class InnerClassTypeAnnotation {
     }
 
     public open inner class Inner {
-        public constructor Inner(/*0*/ p0: @test.InnerClassTypeAnnotation.Foo kotlin.String!)
-        public open fun bar(/*0*/ p0: kotlin.String!, /*1*/ p1: @test.InnerClassTypeAnnotation.Foo kotlin.String!): @test.InnerClassTypeAnnotation.Foo kotlin.String!
+        public constructor Inner(/*0*/ @test.InnerClassTypeAnnotation.Foo p0: @test.InnerClassTypeAnnotation.Foo kotlin.String!)
+        @test.InnerClassTypeAnnotation.Foo public open fun bar(/*0*/ p0: kotlin.String!, /*1*/ @test.InnerClassTypeAnnotation.Foo p1: @test.InnerClassTypeAnnotation.Foo kotlin.String!): @test.InnerClassTypeAnnotation.Foo kotlin.String!
     }
 }

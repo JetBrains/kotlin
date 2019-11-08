@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/loadJava/compiledJava")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaWithFastClassReadingTest {
+public class LoadJavaWithPsiClassReadingTestGenerated extends AbstractLoadJavaWithPsiClassReadingTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
     }
@@ -256,7 +256,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Annotations extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class Annotations extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -459,7 +459,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/constructor")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Constructor extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class Constructor extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -487,7 +487,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/enum")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Enum extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class Enum extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -515,7 +515,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/javaBean")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class JavaBean extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class JavaBean extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -558,7 +558,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class KotlinSignature extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class KotlinSignature extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -650,7 +650,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
         @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/error")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Error extends AbstractLoadJavaWithFastClassReadingTest {
+        public static class Error extends AbstractLoadJavaWithPsiClassReadingTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
             }
@@ -683,7 +683,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
         @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Propagation extends AbstractLoadJavaWithFastClassReadingTest {
+        public static class Propagation extends AbstractLoadJavaWithPsiClassReadingTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
             }
@@ -700,7 +700,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
             @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/parameter")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Parameter extends AbstractLoadJavaWithFastClassReadingTest {
+            public static class Parameter extends AbstractLoadJavaWithPsiClassReadingTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
                 }
@@ -823,7 +823,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
             @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/return")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Return extends AbstractLoadJavaWithFastClassReadingTest {
+            public static class Return extends AbstractLoadJavaWithPsiClassReadingTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
                 }
@@ -1006,7 +1006,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
             @TestMetadata("compiler/testData/loadJava/compiledJava/kotlinSignature/propagation/typeParameter")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class TypeParameter extends AbstractLoadJavaWithFastClassReadingTest {
+            public static class TypeParameter extends AbstractLoadJavaWithPsiClassReadingTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
                 }
@@ -1056,7 +1056,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/library")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Library extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class Library extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1084,7 +1084,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/modality")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Modality extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class Modality extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1102,7 +1102,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/mutability")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Mutability extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class Mutability extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1140,7 +1140,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/notNull")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class NotNull extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class NotNull extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1178,7 +1178,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/protectedPackage")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ProtectedPackage extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class ProtectedPackage extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1206,7 +1206,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/protectedStatic")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ProtectedStatic extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class ProtectedStatic extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1224,7 +1224,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/rendering")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Rendering extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class Rendering extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1242,7 +1242,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/sam")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Sam extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class Sam extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1334,7 +1334,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
         @TestMetadata("compiler/testData/loadJava/compiledJava/sam/adapters")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Adapters extends AbstractLoadJavaWithFastClassReadingTest {
+        public static class Adapters extends AbstractLoadJavaWithPsiClassReadingTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
             }
@@ -1416,7 +1416,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
             @TestMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/inheritance")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Inheritance extends AbstractLoadJavaWithFastClassReadingTest {
+            public static class Inheritance extends AbstractLoadJavaWithPsiClassReadingTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
                 }
@@ -1481,7 +1481,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/signatureAnnotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SignatureAnnotations extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class SignatureAnnotations extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1499,7 +1499,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/signaturePropagation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SignaturePropagation extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class SignaturePropagation extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1557,7 +1557,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/static")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Static extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class Static extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }
@@ -1625,7 +1625,7 @@ public class LoadJavaWithFastClassReadingTestGenerated extends AbstractLoadJavaW
     @TestMetadata("compiler/testData/loadJava/compiledJava/vararg")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Vararg extends AbstractLoadJavaWithFastClassReadingTest {
+    public static class Vararg extends AbstractLoadJavaWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
         }

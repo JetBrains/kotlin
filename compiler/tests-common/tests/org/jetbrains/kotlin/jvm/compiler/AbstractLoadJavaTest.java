@@ -180,7 +180,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         }
     }
 
-    protected boolean useFastClassFilesReading() {
+    protected boolean usePsiClassFilesReading() {
         return false;
     }
 
@@ -310,7 +310,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     ) throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir);
         return loadTestPackageAndBindingContextFromJavaRoot(outDir, myTestRootDisposable, getJdkKind(), configurationKind, true,
-                                                            useFastClassFilesReading(), useJavacWrapper(), null,
+                                                            usePsiClassFilesReading(), useJavacWrapper(), null,
                                                             getExtraClasspath(), this::configureEnvironment);
     }
 

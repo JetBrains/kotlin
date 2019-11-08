@@ -2,5 +2,5 @@ package test
 
 public open class `TopLevel$Class` {
     public constructor `TopLevel$Class`()
-    public open fun foo(/*0*/ p0: test.`TopLevel$Class`!): kotlin.Unit
+    public open fun foo(/*0*/ p0: test.TopLevel.Class!): kotlin.Unit
 }

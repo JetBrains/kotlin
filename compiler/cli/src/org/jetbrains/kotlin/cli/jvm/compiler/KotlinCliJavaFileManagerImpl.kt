@@ -52,18 +52,18 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private lateinit var packagePartProviders: List<JvmPackagePartProvider>
     private val topLevelClassesCache: MutableMap<FqName, VirtualFile?> = THashMap()
     private val allScope = GlobalSearchScope.allScope(myPsiManager.project)
-    private var useFastClassFilesReading = false
+    private var usePsiClassFilesReading = false
 
     fun initialize(
         index: JvmDependenciesIndex,
         packagePartProviders: List<JvmPackagePartProvider>,
         singleJavaFileRootsIndex: SingleJavaFileRootsIndex,
-        useFastClassFilesReading: Boolean
+        usePsiClassFilesReading: Boolean
     ) {
         this.index = index
         this.packagePartProviders = packagePartProviders
         this.singleJavaFileRootsIndex = singleJavaFileRootsIndex
-        this.useFastClassFilesReading = useFastClassFilesReading
+        this.usePsiClassFilesReading = usePsiClassFilesReading
     }
 
     private fun findPsiClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? = perfCounter.time {
@@ -88,7 +88,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         val (classId, classFileContentFromRequest, outerClassFromRequest) = request
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
 
-        if (useFastClassFilesReading && virtualFile.extension == "class") {
+        if (!usePsiClassFilesReading && virtualFile.extension == "class") {
             // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class
             return binaryCache.getOrPut(classId) {
                 // Note that currently we implicitly suppose that searchScope for binary classes is constant and we do not use it

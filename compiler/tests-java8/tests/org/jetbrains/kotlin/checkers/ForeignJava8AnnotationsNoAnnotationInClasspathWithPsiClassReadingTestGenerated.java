@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class ForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingTestGenerated extends AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+public class ForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClassReadingTestGenerated extends AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
@@ -46,7 +46,7 @@ public class ForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingT
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Jsr305 extends AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+    public static class Jsr305 extends AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -84,7 +84,7 @@ public class ForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingT
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/typeEnhancement")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeEnhancement extends AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithFastClassReadingTest {
+    public static class TypeEnhancement extends AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClassReadingTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }

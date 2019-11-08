@@ -19,9 +19,9 @@ FILE fqName:<root> fileName:/coercionToUnit.kt
         element: CONST String type=kotlin.String value=""
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit? origin=null
+      CALL 'public open fun println (p0: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit? origin=null
         $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:java.io.PrintStream? visibility:public [final,static]' type=java.io.PrintStream? origin=GET_PROPERTY
-        x: CONST String type=kotlin.String value="Hello,"
-      CALL 'public open fun println (x: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit? origin=null
+        p0: CONST String type=kotlin.String value="Hello,"
+      CALL 'public open fun println (p0: kotlin.String?): kotlin.Unit declared in java.io.PrintStream' type=kotlin.Unit? origin=null
         $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:out type:java.io.PrintStream? visibility:public [final,static]' type=java.io.PrintStream? origin=GET_PROPERTY
-        x: CONST String type=kotlin.String value="world!"
+        p0: CONST String type=kotlin.String value="world!"
