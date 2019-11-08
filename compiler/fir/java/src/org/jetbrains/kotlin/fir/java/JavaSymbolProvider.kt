@@ -57,6 +57,7 @@ class JavaSymbolProvider(
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
         emptyList()
 
+    // NB: looks like it's better not to use this function at all...
     override fun getClassDeclaredMemberScope(classId: ClassId): FirScope? {
         val classSymbol = getClassLikeSymbolByFqName(classId) ?: return null
         return declaredMemberScope(classSymbol.fir)
@@ -92,7 +93,7 @@ class JavaSymbolProvider(
         visitedSymbols: MutableSet<FirClassLikeSymbol<*>>
     ): JavaClassUseSiteMemberScope {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
-            val declaredScope = declaredMemberScope(regularClass)
+            val declaredScope = declaredMemberScope(regularClass, useLazyNestedClassifierScope = regularClass is FirJavaClass)
             val superTypeEnhancementScopes =
                 lookupSuperTypes(regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession)
                     .mapNotNull { useSiteSuperType ->

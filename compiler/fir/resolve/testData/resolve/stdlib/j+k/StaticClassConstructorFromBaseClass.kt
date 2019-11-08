@@ -10,10 +10,10 @@ public abstract class AbstractClass {
 
 class User : AbstractClass() {
     fun foo() {
-        val sc = <!UNRESOLVED_REFERENCE!>StaticClass<!>()
+        val sc = StaticClass()
     }
 }
 
 fun test() {
-    AbstractClass.<!UNRESOLVED_REFERENCE!>StaticClass<!>()
+    AbstractClass.StaticClass()
 }

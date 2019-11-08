@@ -19,9 +19,9 @@ class FirMemberScopeProvider : FirSessionComponent {
     private val nestedClassifierCache = mutableMapOf<FirClass<*>, FirNestedClassifierScope>()
     private val selfImportingCache = mutableMapOf<FqName, FirSelfImportingScope>()
 
-    fun declaredMemberScope(klass: FirClass<*>): FirClassDeclaredMemberScope {
+    fun declaredMemberScope(klass: FirClass<*>, useLazyNestedClassifierScope: Boolean): FirClassDeclaredMemberScope {
         return declaredMemberCache.getOrPut(klass) {
-            FirClassDeclaredMemberScope(klass)
+            FirClassDeclaredMemberScope(klass, useLazyNestedClassifierScope)
         }
     }
 
@@ -39,11 +39,11 @@ class FirMemberScopeProvider : FirSessionComponent {
     }
 }
 
-fun declaredMemberScope(klass: FirClass<*>): FirClassDeclaredMemberScope {
+fun declaredMemberScope(klass: FirClass<*>, useLazyNestedClassifierScope: Boolean = false): FirClassDeclaredMemberScope {
     return klass
         .session
         .memberScopeProvider
-        .declaredMemberScope(klass)
+        .declaredMemberScope(klass, useLazyNestedClassifierScope)
 }
 
 fun nestedClassifierScope(klass: FirClass<*>): FirNestedClassifierScope {
