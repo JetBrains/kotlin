@@ -135,7 +135,7 @@ public class WolfTheProblemSolverImpl extends WolfTheProblemSolver {
 
     messageBus.connect(project).subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
       @Override
-      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
         // Ensure we don't have any leftover problems referring to classes from plugin being unloaded
         Set<VirtualFile> allFiles = new HashSet<>(myProblems.keySet());
         for (VirtualFile file : allFiles) {

@@ -82,7 +82,7 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
 
     project.getMessageBus().connect(this).subscribe(DynamicPluginListener.TOPIC, new DynamicPluginListener() {
       @Override
-      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
         // When a language plugin is unloaded, make sure we don't have references to any injection host PSI from this language
         // in the injector cache
         clearInjectorCache();

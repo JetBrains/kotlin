@@ -369,7 +369,7 @@ public final class DaemonListeners implements Disposable {
       }
 
       @Override
-      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor) {
+      public void beforePluginUnload(@NotNull IdeaPluginDescriptor pluginDescriptor, boolean isUpdate) {
         ((PsiModificationTrackerImpl)PsiManager.getInstance(myProject).getModificationTracker()).incCounter();
         stopDaemonAndRestartAllFiles("Plugin will be uninstalled");
         removeQuickFixesContributedByPlugin(pluginDescriptor);
