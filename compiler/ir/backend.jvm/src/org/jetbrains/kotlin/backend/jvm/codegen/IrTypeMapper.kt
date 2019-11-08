@@ -51,6 +51,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
 
     fun classInternalName(irClass: IrClass): String {
         context.getLocalClassInfo(irClass)?.internalName?.let { return it }
+        context.classNameOverride[irClass]?.let { return it.internalName }
         val className = SpecialNames.safeIdentifier(irClass.name).identifier
         val internalName = when (val parent = irClass.parent) {
             is IrPackageFragment -> {

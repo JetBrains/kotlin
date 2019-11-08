@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -86,6 +85,10 @@ class JvmBackendContext(
     internal val regeneratedObjectNameGenerators = mutableMapOf<Pair<IrClass, Name>, NameGenerator>()
 
     internal val localDelegatedProperties = mutableMapOf<IrClass, List<IrLocalDelegatedPropertySymbol>>()
+
+    // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
+    // annotated with @JvmPackageName, the correct name is recorded here.
+    internal lateinit var classNameOverride: MutableMap<IrClass, JvmClassName>
 
     internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     internal val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
