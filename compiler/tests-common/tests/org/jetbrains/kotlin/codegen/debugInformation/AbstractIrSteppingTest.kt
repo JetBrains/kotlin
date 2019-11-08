@@ -5,13 +5,8 @@
 
 package org.jetbrains.kotlin.codegen.debugInformation
 
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrSteppingTest : AbstractSteppingTest() {
-
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        super.updateConfiguration(configuration)
-        configuration.put(JVMConfigurationKeys.IR, true)
-    }
+    override fun getBackend(): TargetBackend = TargetBackend.JVM_IR
 }

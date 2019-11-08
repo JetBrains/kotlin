@@ -5,18 +5,16 @@
 
 package org.jetbrains.kotlin.codegen.ir;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.AbstractGenerateNotNullAssertionsTest;
-import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
+import org.jetbrains.kotlin.test.TargetBackend;
 
 public class IrGenerateNotNullAssertionsTest extends AbstractGenerateNotNullAssertionsTest {
-    @Override
-    public void updateConfiguration(@NotNull CompilerConfiguration configuration) {
-        configuration.put(JVMConfigurationKeys.IR, true);
-    }
-
     public void testNoAssertionsForKotlinFromBinary() {
         doTestNoAssertionsForKotlinFromBinary("noAssertionsForKotlin.kt", "noAssertionsForKotlinMain.kt");
+    }
+
+    @Override
+    protected TargetBackend getBackend() {
+        return TargetBackend.JVM_IR;
     }
 }
