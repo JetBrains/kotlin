@@ -42,7 +42,7 @@ class InlaySettingsTest : LightPlatformTestCase() {
 
   fun testGlobalSwitch() {
     val settings = InlayHintsSettings()
-    val language = object: Language("foobar2") {}
+    val language = Language.ANY
     assertTrue(settings.hintsEnabled(language)) // hints enabled by default
     settings.setEnabledGlobally(false)
     assertTrue(settings.hintsEnabled(language))
@@ -51,7 +51,7 @@ class InlaySettingsTest : LightPlatformTestCase() {
 
   fun testLanguageSwitch() {
     val settings = InlayHintsSettings()
-    val language = object: Language("foobar3") {}
+    val language = Language.ANY
     val key = SettingsKey<Any>("foo")
     assertTrue(settings.hintsEnabled(key, language))
     settings.setHintsEnabledForLanguage(language, false)
