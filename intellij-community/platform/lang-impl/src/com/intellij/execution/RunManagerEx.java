@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution;
 
 import com.intellij.execution.configurations.RunConfiguration;
@@ -38,6 +38,9 @@ public abstract class RunManagerEx extends RunManager {
 
   public abstract void setBeforeRunTasks(@NotNull RunConfiguration configuration, @NotNull List<BeforeRunTask> tasks);
 
+  /**
+   * @deprecated use {@link #setBeforeRunTasks(RunConfiguration, List)}
+   */
   @Deprecated
   public final void setBeforeRunTasks(@NotNull RunConfiguration configuration, @NotNull List<BeforeRunTask> tasks, @SuppressWarnings("unused") boolean addEnabledTemplateTasksIfAbsent) {
     setBeforeRunTasks(configuration, tasks);
