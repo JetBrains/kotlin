@@ -1,6 +1,6 @@
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
-final class InlineWithoutStateMachine_irKt$$complexSuspend$Continuation {
+final class InlineWithoutStateMachineKt$$complexSuspend$Continuation {
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     field label: int
@@ -11,7 +11,7 @@ final class InlineWithoutStateMachine_irKt$$complexSuspend$Continuation {
 
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
-final class InlineWithoutStateMachine_irKt$$suspendHere$Continuation {
+final class InlineWithoutStateMachineKt$$suspendHere$Continuation {
     field L$0: java.lang.Object
     field label: int
     @org.jetbrains.annotations.NotNull field result: java.lang.Object
@@ -21,12 +21,12 @@ final class InlineWithoutStateMachine_irKt$$suspendHere$Continuation {
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
-final class InlineWithoutStateMachine_irKt$box$1 {
+final class InlineWithoutStateMachineKt$box$1 {
     private field $result: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     private field label: int
-    inner class InlineWithoutStateMachine_irKt$box$1
+    inner class InlineWithoutStateMachineKt$box$1
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.internal.Ref$ObjectRef): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.internal.Ref$ObjectRef, @org.jetbrains.annotations.Nullable p1: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -35,8 +35,8 @@ final class InlineWithoutStateMachine_irKt$box$1 {
 }
 
 @kotlin.Metadata
-public final class InlineWithoutStateMachine_irKt {
-    inner class InlineWithoutStateMachine_irKt$box$1
+public final class InlineWithoutStateMachineKt {
+    inner class InlineWithoutStateMachineKt$box$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method complexSuspend(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object

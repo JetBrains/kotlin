@@ -6653,21 +6653,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Bridges extends AbstractLightAnalysisModeTest {
-            @TestMetadata("lambdaWithLongReceiver_ir.kt")
-            public void ignoreLambdaWithLongReceiver_ir() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver_ir.kt");
-            }
-
-            @TestMetadata("lambdaWithMultipleParameters_ir.kt")
-            public void ignoreLambdaWithMultipleParameters_ir_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters_ir.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("lambdaWithMultipleParameters_ir.kt")
-            public void ignoreLambdaWithMultipleParameters_ir_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters_ir.kt", "kotlin.coroutines");
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -8342,11 +8327,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TailCallOptimizations extends AbstractLightAnalysisModeTest {
-            @TestMetadata("inlineWithoutStateMachine_ir.kt")
-            public void ignoreInlineWithoutStateMachine_ir() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/inlineWithoutStateMachine_ir.kt");
-            }
-
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }

@@ -6675,11 +6675,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver.kt", "kotlin.coroutines");
             }
 
-            @TestMetadata("lambdaWithLongReceiver_ir.kt")
-            public void testLambdaWithLongReceiver_ir() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver_ir.kt");
-            }
-
             @TestMetadata("lambdaWithMultipleParameters.kt")
             public void testLambdaWithMultipleParameters_1_2() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters.kt", "kotlin.coroutines.experimental");
@@ -6688,16 +6683,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("lambdaWithMultipleParameters.kt")
             public void testLambdaWithMultipleParameters_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("lambdaWithMultipleParameters_ir.kt")
-            public void testLambdaWithMultipleParameters_ir_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters_ir.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("lambdaWithMultipleParameters_ir.kt")
-            public void testLambdaWithMultipleParameters_ir_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters_ir.kt", "kotlin.coroutines");
             }
         }
 
@@ -8382,11 +8367,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("inlineWithoutStateMachine.kt")
             public void testInlineWithoutStateMachine_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/inlineWithoutStateMachine.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineWithoutStateMachine_ir.kt")
-            public void testInlineWithoutStateMachine_ir() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/inlineWithoutStateMachine_ir.kt");
             }
 
             @TestMetadata("innerObjectRetransformation.kt")
