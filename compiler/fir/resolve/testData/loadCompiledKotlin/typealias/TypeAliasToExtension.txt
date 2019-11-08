@@ -1,4 +1,4 @@
-public final fun <P> foo(x: @R|kotlin/ExtensionFunctionType|() R|kotlin/Function1<test/Foo<P>, kotlin/Unit>|): R|kotlin/Unit|
+public final fun <P> foo(x: R|test/Foo<P>.() -> kotlin/Unit|): R|kotlin/Unit|
 
 public final class Foo<T> : R|kotlin/Any| {
     public constructor<T>(): R|test/Foo<T>|

@@ -1,5 +1,5 @@
 public open class MethodWithFunctionTypes : R|kotlin/Any| {
-    public open fun foo(f: R|kotlin/Function1<kotlin/String?, kotlin/String>|): @R|kotlin/ExtensionFunctionType|() R|kotlin/Function1<kotlin/String, kotlin/String?>?|
+    public open fun foo(f: R|(kotlin/String?) -> kotlin/String|): R|kotlin/String.() -> kotlin/String?|
 
     public constructor(): R|test/MethodWithFunctionTypes|
 

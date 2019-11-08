@@ -52,7 +52,7 @@ public final class Array<T> : R|kotlin/Any| {
     public final val size: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor<T>(size: R|kotlin/Int|, init: R|kotlin/Function1<kotlin/Int, T>|): R|kotlin/Array<T>|
+    public constructor<T>(size: R|kotlin/Int|, init: R|(kotlin/Int) -> T|): R|kotlin/Array<T>|
 
 }
 
