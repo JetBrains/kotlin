@@ -33,7 +33,11 @@ import java.util.function.Consumer;
 public class CommonProgramParametersPanel extends JPanel implements PanelWithAnchor {
   protected LabeledComponent<RawCommandLineEditor> myProgramParametersComponent;
   protected LabeledComponent<JComponent> myWorkingDirectoryComponent;
+  /**
+   * @deprecated use {@code myWorkingDirectoryComboBox} instead
+   */
   @Deprecated
+  @SuppressWarnings("DeprecatedIsStillUsed") // because of backward compatibility
   protected TextFieldWithBrowseButton myWorkingDirectoryField;
   protected MacroComboBoxWithBrowseButton myWorkingDirectoryComboBox;
   protected EnvironmentVariablesComponent myEnvVariablesComponent;
