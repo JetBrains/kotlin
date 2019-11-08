@@ -52,6 +52,9 @@ import org.apache.log4j.Level;
 // part of com.intellij.openapi.externalSystem.test.ExternalSystemImportingTestCase
 public abstract class ExternalSystemImportingTestCase extends ExternalSystemTestCase {
 
+    public static final String MINIMAL_SUPPORTED_GRADLE_PLUGIN_VERSION = "1.3.0";
+    public static final String LATEST_STABLE_GRADLE_PLUGIN_VERSION = "1.3.50";
+
     private Logger logger;
 
     @Override
