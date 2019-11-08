@@ -70,6 +70,8 @@ __FACTORY = {}
 
 # Cache type info pointer to [ChildMetaInfo]
 SYNTHETIC_OBJECT_LAYOUT_CACHE = {}
+TO_STRING_DEPTH = 5
+ARRAY_TO_STRING_LIMIT = 20
 
 def kotlin_object_type_summary(lldb_val, internal_dict = []):
     """Hook that is run by lldb to display a Kotlin object."""
@@ -258,6 +260,8 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
             log(lambda : "TIP: {:#x} HIT".format(tip))
         self._children = SYNTHETIC_OBJECT_LAYOUT_CACHE[tip]
         self._values = [self._read_value(index) for index in range(self._children_count)]
+        self._internal_dict = internal_dict
+        self._to_string_depth = TO_STRING_DEPTH if "to_string_depth" not in self._internal_dict.keys() else  self._internal_dict["to_string_depth"]
 
 
     def _field_name(self, index):
@@ -335,7 +339,7 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         return result
 
     def to_string(self):
-        return [self._deref_or_obj_summary(i) for i in range(self._children_count)]
+        return [self._deref_or_obj_summary(i, self._internal_dict.copy()) for i in range(min(ARRAY_TO_STRING_LIMIT, self._children_count))]
 
 
 class KonanProxyTypeProvider:
