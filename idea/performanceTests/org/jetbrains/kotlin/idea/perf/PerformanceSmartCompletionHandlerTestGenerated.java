@@ -809,11 +809,11 @@ public class PerformanceSmartCompletionHandlerTestGenerated extends AbstractPerf
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SuspendLambdaSignature extends AbstractPerformanceSmartCompletionHandlerTest {
         private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doPerfTest, TargetBackend.ANY, testDataFilePath);
+            KotlinTestUtils.runTest(this::doPerfTest, this, testDataFilePath);
         }
 
         public void testAllFilesPresentInSuspendLambdaSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/suspendLambdaSignature"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/smart/suspendLambdaSignature"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("NoAdditionalSpace.kt")
