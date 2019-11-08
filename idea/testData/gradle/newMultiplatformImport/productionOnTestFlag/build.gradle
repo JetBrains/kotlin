@@ -1,16 +1,14 @@
 subprojects {
     buildscript {
         repositories {
-            mavenLocal()
-            mavenCentral()
+            {{kotlin_plugin_repositories}}
         }
         dependencies {
-            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.21"
+            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}"
         }
     }
  
     repositories {
-        mavenLocal()
-        mavenCentral()
+        {{kotlin_plugin_repositories}}
     }
 }

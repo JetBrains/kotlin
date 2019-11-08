@@ -36,13 +36,13 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
     var gradleKotlinPluginVersionType: String = MINIMAL_SUPPORTED_VERSION
 
     val gradleKotlinPluginVersion: String
-        get() = KOTLIN_GRADLE_PLUGIN_VERSION_DESCRIPTION_TO_VERSION[gradleKotlinPluginVersionType] ?: gradleKotlinPluginVersion
+        get() = KOTLIN_GRADLE_PLUGIN_VERSION_DESCRIPTION_TO_VERSION[gradleKotlinPluginVersionType] ?: gradleKotlinPluginVersionType
 
     companion object {
         const val MINIMAL_SUPPORTED_VERSION = "minimal"// minimal supported version
         const val LATEST_STABLE_VERSUON = "latest stable"
         const val LATEST_SUPPORTED_VERSION = "master"// gradle plugin from current build
-        private val KOTLIN_GRADLE_PLUGIN_VERSIONS = listOf(MINIMAL_SUPPORTED_VERSION, LATEST_STABLE_VERSUON, LATEST_SUPPORTED_VERSION)
+        private val KOTLIN_GRADLE_PLUGIN_VERSIONS = listOf(MINIMAL_SUPPORTED_VERSION, LATEST_STABLE_VERSUON/*, LATEST_SUPPORTED_VERSION*/)
         private val KOTLIN_GRADLE_PLUGIN_VERSION_DESCRIPTION_TO_VERSION = mapOf(
             MINIMAL_SUPPORTED_VERSION to MINIMAL_SUPPORTED_GRADLE_PLUGIN_VERSION,
             LATEST_STABLE_VERSUON to LATEST_STABLE_GRADLE_PLUGIN_VERSION,
@@ -63,21 +63,18 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
         }
     }
 
-    override fun configureByFiles(): List<VirtualFile> {
-        val result = ArrayList(super.configureByFiles())
-        result.add(
-            createProjectSubFile(
-                "include.gradle", """
-String gradleKotlinPluginVersion(String defaultVersion) {
-    return ${if (gradleKotlinPluginVersion.isEmpty() || MINIMAL_SUPPORTED_VERSION == gradleKotlinPluginVersion) "defaultVersion;" else "\"$gradleKotlinPluginVersion\""}
-}
-ext {
-    gradleKotlinPluginVersion = this.&gradleKotlinPluginVersion
-}
-"""
-            )
-        )
-        return result
+    override fun configureByFiles(properties: Map<String, String>?): List<VirtualFile> {
+        val unitedProperties = HashMap(properties ?: emptyMap())
+        unitedProperties["kotlin_plugin_version"] = gradleKotlinPluginVersion
+        unitedProperties["kotlin_plugin_repositories"] = """
+            google()
+            jcenter()
+            maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+            maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
+        	mavenLocal()
+            //maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+        """.trimIndent()
+        return super.configureByFiles(unitedProperties)
     }
 }
 

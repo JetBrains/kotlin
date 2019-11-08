@@ -1,10 +1,7 @@
 pluginManagement {
     repositories {
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
-
-        mavenCentral()
-
-        maven { url 'https://plugins.gradle.org/m2/' }
+        {{kotlin_plugin_repositories}}
     }
 }
+
 include ':app'

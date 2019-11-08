@@ -1,8 +1,6 @@
 buildscript {
     repositories {
-        mavenLocal()
-        jcenter()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        {{kotlin_plugin_repositories}}
     }
 
     dependencies {
@@ -13,9 +11,7 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
-        jcenter()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        {{kotlin_plugin_repositories}}
     }
 }
 

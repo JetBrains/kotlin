@@ -1,14 +1,10 @@
 buildscript {
-    apply from: "include.gradle"
-    def kotlinVersion = gradleKotlinPluginVersion('1.3.21')
+    def kotlinVersion = "{{kotlin_plugin_version}}"
 
 
     ext.kotlin_version = "$kotlinVersion"
     repositories {
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-
-        google()
-        jcenter()
+        {{kotlin_plugin_repositories}}
     }
 
     dependencies {
@@ -19,11 +15,7 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-
-        google()
-        jcenter()
-        
+        {{kotlin_plugin_repositories}}
     }
 }
 

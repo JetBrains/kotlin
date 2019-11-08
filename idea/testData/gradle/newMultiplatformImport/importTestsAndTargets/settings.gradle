@@ -1,15 +1,6 @@
 pluginManagement {
     repositories {
-
-        mavenLocal()
-
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-
-        mavenCentral()
-
-        maven { url 'https://plugins.gradle.org/m2/' }
-
-
+        {{kotlin_plugin_repositories}}
     }
 }
 rootProject.name = 'project'

@@ -1,10 +1,8 @@
 buildscript {
-    ext.kotlin_version = '1.3.41'
+    ext.kotlin_version = '{{kotlin_plugin_version}}'
 
     repositories {
-        mavenLocal()
-        jcenter()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        {{kotlin_plugin_repositories}}
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -13,8 +11,6 @@ buildscript {
 
 subprojects {
     repositories {
-        mavenLocal()
-        jcenter()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        {{kotlin_plugin_repositories}}
     }
 }

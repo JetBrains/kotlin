@@ -11,16 +11,12 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
     }
     repositories {
-        mavenLocal()
-        jcenter()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        {{kotlin_plugin_repositories}}
     }
 }
 
 repositories {
-    mavenLocal()
-    jcenter()
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    {{kotlin_plugin_repositories}}
 }
 
 kotlin {

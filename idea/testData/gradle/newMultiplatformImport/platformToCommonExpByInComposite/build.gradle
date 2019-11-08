@@ -1,13 +1,10 @@
 buildscript {
     repositories {
-        mavenCentral()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+        {{kotlin_plugin_repositories}}
     }
 
     dependencies {
-        apply from: "include.gradle"
-        def kotlinVersion = gradleKotlinPluginVersion('1.3.20')
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}")
     }
 }
 
@@ -15,6 +12,5 @@ apply plugin: 'kotlin-multiplatform'
 
 
 repositories {
-    mavenCentral()
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    {{kotlin_plugin_repositories}}
 }

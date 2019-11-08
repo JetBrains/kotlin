@@ -1,11 +1,8 @@
 plugins {
-    id 'org.jetbrains.kotlin.multiplatform' version '1.3.50'
+    id 'org.jetbrains.kotlin.multiplatform' version '{{kotlin_plugin_version}}'
 }
 repositories {
-    mavenLocal()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-    mavenCentral()
-
+    {{kotlin_plugin_repositories}}
 }
 
 

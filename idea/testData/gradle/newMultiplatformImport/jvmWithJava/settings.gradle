@@ -1,14 +1,6 @@
 pluginManagement {
     repositories {
-        maven { url 'http://dl.bintray.com/kotlin/kotlin-dev' }
-        maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
-
-        mavenCentral()
-        mavenLocal()
-        jcenter()
-
-        maven { url 'https://dl.bintray.com/qwwdfsad/kotlinx' }
-        maven { url 'https://plugins.gradle.org/m2/' }
+        {{kotlin_plugin_repositories}}
     }
 }
 rootProject.name = 'jvm-on-mpp'
