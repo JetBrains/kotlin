@@ -494,10 +494,10 @@ task bundleRestricted(type: Tar) {
         include '**'
         exclude 'dependencies'
         exclude 'klib/testLibrary'
-        exclude 'klib/platform/macos_x64'
-        exclude 'klib/platform/ios_x64'
-        exclude 'klib/platform/ios_arm64'
-        exclude 'klib/platform/ios_arm32'
+        platformManager.targetValues.each { target ->
+            if (PlatformInfo.isAppleTarget(target))
+                exclude 'klib/platform/${target.name}'
+        }
         into baseName
     }
 
