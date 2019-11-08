@@ -178,7 +178,7 @@ class MutableResolvedCallAtom(
 ) : ResolvedCallAtom() {
     override lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
-    override lateinit var substitutor: FreshVariableNewTypeSubstitutor
+    override lateinit var freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor
     lateinit var argumentToCandidateParameter: Map<KotlinCallArgument, ValueParameterDescriptor>
     private var samAdapterMap: HashMap<KotlinCallArgument, SamConversionDescription>? = null
 

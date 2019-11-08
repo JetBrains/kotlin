@@ -125,11 +125,11 @@ internal object NoArguments : ResolutionPart() {
 internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         if (candidateDescriptor.typeParameters.isEmpty()) {
-            resolvedCall.substitutor = FreshVariableNewTypeSubstitutor.Empty
+            resolvedCall.freshVariablesSubstitutor = FreshVariableNewTypeSubstitutor.Empty
             return
         }
         val toFreshVariables = createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, csBuilder)
-        resolvedCall.substitutor = toFreshVariables
+        resolvedCall.freshVariablesSubstitutor = toFreshVariables
 
         // bad function -- error on declaration side
         if (csBuilder.hasContradiction) return
@@ -232,7 +232,7 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
             if (!callComponents.statelessCallbacks.isCoroutineCall(argument, parameter)) continue
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
 
-            for (freshVariable in resolvedCall.substitutor.freshVariables) {
+            for (freshVariable in resolvedCall.freshVariablesSubstitutor.freshVariables) {
                 if (resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(freshVariable.originalTypeParameter) is SimpleTypeArgument)
                     continue
 
@@ -284,7 +284,7 @@ private fun KotlinResolutionCandidate.prepareExpectedType(
         callComponents.languageVersionSettings
     )
     val resultType = knownTypeParametersResultingSubstitutor?.substitute(argumentType) ?: argumentType
-    return resolvedCall.substitutor.safeSubstitute(resultType)
+    return resolvedCall.freshVariablesSubstitutor.safeSubstitute(resultType)
 }
 
 private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
@@ -414,7 +414,7 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
         }
         resolvedCall.typeArgumentMappingByOriginal = TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
         resolvedCall.argumentMappingByOriginal = emptyMap()
-        resolvedCall.substitutor = FreshVariableNewTypeSubstitutor.Empty
+        resolvedCall.freshVariablesSubstitutor = FreshVariableNewTypeSubstitutor.Empty
         resolvedCall.argumentToCandidateParameter = emptyMap()
 
         kotlinCall.explicitReceiver?.safeAs<SimpleKotlinCallArgument>()?.let {

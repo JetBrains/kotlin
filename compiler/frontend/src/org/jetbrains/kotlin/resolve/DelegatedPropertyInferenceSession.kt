@@ -53,14 +53,14 @@ class DelegatedPropertyInferenceSession(
                 ?: builtIns.nullableNothingType
 
         val valueParameterForThis = descriptor.valueParameters.getOrNull(0) ?: return
-        val substitutedType = substitutor.safeSubstitute(valueParameterForThis.type.unwrap())
+        val substitutedType = freshVariablesSubstitutor.safeSubstitute(valueParameterForThis.type.unwrap())
         commonSystem.addSubtypeConstraint(typeOfThis.unwrap(), substitutedType, DelegatedPropertyConstraintPosition(atom))
     }
 
     private fun ResolvedCallAtom.addConstraintsForGetValueMethod(commonSystem: ConstraintSystemBuilder) {
         if (expectedType != null) {
             val unsubstitutedReturnType = candidateDescriptor.returnType?.unwrap() ?: return
-            val substitutedReturnType = substitutor.safeSubstitute(unsubstitutedReturnType)
+            val substitutedReturnType = freshVariablesSubstitutor.safeSubstitute(unsubstitutedReturnType)
 
             commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType, DelegatedPropertyConstraintPosition(atom))
         }
@@ -71,7 +71,7 @@ class DelegatedPropertyInferenceSession(
     private fun ResolvedCallAtom.addConstraintsForSetValueMethod(commonSystem: ConstraintSystemBuilder) {
         if (expectedType != null) {
             val unsubstitutedParameterType = candidateDescriptor.valueParameters.getOrNull(2)?.type?.unwrap() ?: return
-            val substitutedParameterType = substitutor.safeSubstitute(unsubstitutedParameterType)
+            val substitutedParameterType = freshVariablesSubstitutor.safeSubstitute(unsubstitutedParameterType)
 
             commonSystem.addSubtypeConstraint(expectedType, substitutedParameterType, DelegatedPropertyConstraintPosition(atom))
         }
