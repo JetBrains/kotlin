@@ -72,7 +72,7 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
   @Override
   public Rectangle layout(JComponent c, Rectangle bounds) {
     if (c instanceof Toolbar) {
-      bounds.height -= 5;
+      bounds.height -= getSeparatorWidth();
       return super.layout(c, bounds);
     }
     return super.layout(c, bounds);
