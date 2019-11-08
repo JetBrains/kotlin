@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.createKPropertyType
@@ -270,32 +271,80 @@ internal object CheckVisibility : CheckerStage() {
         return when (this) {
             is FirClassLikeSymbol<*> -> classId.packageFqName
             is FirCallableSymbol<*> -> callableId.packageName
-            else -> error("No package fq name for ${this}")
+            else -> error("No package fq name for $this")
         }
     }
 
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol
         val declaration = symbol.fir
-        if (declaration is FirMemberDeclaration && !declaration.visibility.isPublicAPI) {
+        if (declaration is FirMemberDeclaration) {
+            val useSiteFile = callInfo.containingFile
             val visible = when (declaration.visibility) {
-                JavaVisibilities.PACKAGE_VISIBILITY ->
-                    symbol.packageFqName() == callInfo.containingFile.packageFqName
+                JavaVisibilities.PACKAGE_VISIBILITY -> {
+                    symbol.packageFqName() == useSiteFile.packageFqName
+                }
                 Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
                     if (declaration.session == callInfo.session) {
                         val provider = callInfo.session.firProvider
-                        val candidateFile = when (symbol) {
-                            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
-                            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFile(symbol.classId)
-                            else -> null
+                        when (symbol) {
+                            is FirClassLikeSymbol<*> -> {
+                                val classId = symbol.classId
+                                when {
+                                    classId.isLocal -> {
+                                        // Normally should not be here
+                                        TODO()
+                                    }
+                                    !classId.isNestedClass -> {
+                                        // Top-level: visible in file
+                                        provider.getFirClassifierContainerFile(classId) == useSiteFile
+                                    }
+                                    else -> {
+                                        // Member: visible inside parent class, including all its member classes
+                                        TODO()
+                                    }
+                                }
+                            }
+                            is FirCallableSymbol<*> -> {
+                                val candidateFile = provider.getFirCallableContainerFile(symbol)
+                                when {
+                                    candidateFile == null -> {
+                                        // Local
+                                        TODO()
+                                    }
+                                    symbol.callableId.classId == null -> {
+                                        // Top-level: visible in file
+                                        candidateFile == useSiteFile
+                                    }
+                                    else -> {
+                                        // Member: visible inside parent class, including all its member classes
+                                        TODO()
+                                    }
+                                }
+                            }
+                            else -> {
+                                throw AssertionError("Unsupported visibility check for ${declaration.javaClass}: ${declaration.render()}")
+                            }
                         }
-                        candidateFile == callInfo.containingFile
                     } else {
                         false
                     }
                 }
-                Visibilities.INTERNAL ->
+                Visibilities.INTERNAL -> {
                     declaration.session == callInfo.session
+                }
+                Visibilities.PROTECTED -> {
+                    // Support protected visibility...
+                    TODO()
+                }
+                JavaVisibilities.PROTECTED_AND_PACKAGE -> {
+                    if (symbol.packageFqName() == useSiteFile.packageFqName) {
+                        true
+                    } else {
+                        // Support protected visibility...
+                        TODO()
+                    }
+                }
                 else -> true
             }
 
