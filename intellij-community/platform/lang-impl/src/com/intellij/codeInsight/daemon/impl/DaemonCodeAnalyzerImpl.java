@@ -12,6 +12,8 @@ import com.intellij.codeInsight.intention.impl.IntentionHintComponent;
 import com.intellij.codeInspection.ex.GlobalInspectionContextBase;
 import com.intellij.diagnostic.ThreadDumper;
 import com.intellij.ide.PowerSaveMode;
+import com.intellij.ide.plugins.DynamicPluginListener;
+import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.lang.annotation.HighlightSeverity;
 import com.intellij.openapi.Disposable;
@@ -93,7 +95,6 @@ public class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implements Pers
 
   private final FileStatusMap myFileStatusMap;
   private DaemonCodeAnalyzerSettings myLastSettings;
-  private final Runnable myPluginsListener = () -> restart();
 
   private volatile boolean myDisposed;     // the only possible transition: false -> true
   private volatile boolean myInitialized;  // the only possible transition: false -> true
@@ -126,12 +127,10 @@ public class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implements Pers
     myDisposed = false;
     myFileStatusMap.markAllFilesDirty("DCAI init");
     myUpdateRunnable = new UpdateRunnable(myProject);
-    PluginManager.getInstance().addDisablePluginListener(myPluginsListener);
     Disposer.register(this, () -> {
       assert myInitialized : "Disposing not initialized component";
       assert !myDisposed : "Double dispose";
       myUpdateRunnable.clearFieldsOnDispose();
-      PluginManager.getInstance().removeDisablePluginListener(myPluginsListener);
 
       stopProcess(false, "Dispose");
 
