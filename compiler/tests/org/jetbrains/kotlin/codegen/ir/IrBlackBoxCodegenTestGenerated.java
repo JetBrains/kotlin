@@ -16485,6 +16485,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/platformTypes/unsafeNullCheck.kt");
         }
 
+        @TestMetadata("unsafeNullCheckWithPrimitive.kt")
+        public void testUnsafeNullCheckWithPrimitive() throws Exception {
+            runTest("compiler/testData/codegen/box/platformTypes/unsafeNullCheckWithPrimitive.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -3871,8 +3871,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         Type type = expressionType(exp);
         StackValue argument = pregeneratedExpr != null ? pregeneratedExpr : gen(exp);
 
-        if (kotlinType == null ||
-            !AsmUtil.isPrimitive(type) && (TypeUtils.isNullableType(kotlinType) || !InlineClassesUtilsKt.isInlineClassType(kotlinType))) {
+        if (kotlinType == null || TypeUtils.isNullableType(kotlinType) || !InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
             return StackValue.compareWithNull(argument, (KtTokens.EQEQ == opToken || KtTokens.EQEQEQ == opToken) ? IFNONNULL : IFNULL);
         } else {
             // If exp is an unboxed inline class value the comparison is vacuous
