@@ -70,10 +70,6 @@ internal class InteropBuiltIns(builtIns: KonanBuiltIns) {
 
     val typeOf = packageScope.getContributedFunctions("typeOf").single()
 
-    val concurrentPackageScope = builtIns.builtInsModule.getPackage(FqName("kotlin.native.concurrent")).memberScope
-
-    val executeImplFunction = concurrentPackageScope.getContributedFunctions("executeImpl").single()
-
     private fun KonanBuiltIns.getUnsignedClass(unsignedType: UnsignedType): ClassDescriptor =
             this.builtInsModule.findClassAcrossModuleDependencies(unsignedType.classId)!!
 

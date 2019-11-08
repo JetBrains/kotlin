@@ -80,7 +80,8 @@ internal class KonanLibraryProperResolver(
     distributionKlib,
     localKonanDir,
     skipCurrentDir,
-    logger
+    logger,
+    emptyList()
 ),  SearchPathResolverWithTarget<KonanLibrary>
 {
     override fun libraryBuilder(file: File, isDefault: Boolean) = createKonanLibrary(file, target, isDefault)

@@ -127,7 +127,7 @@ internal class EnumUsageLowering(val context: Context)
         val ordinal = loweredEnum.entriesMap[name]!!
         return IrCallImpl(
                 startOffset, endOffset, enumClass.defaultType,
-                loweredEnum.itemGetterSymbol.owner.symbol, loweredEnum.itemGetterSymbol.descriptor,
+                loweredEnum.itemGetterSymbol.owner.symbol,
                 typeArgumentsCount = 0
         ).apply {
             dispatchReceiver = IrCallImpl(startOffset, endOffset, loweredEnum.valuesGetter.returnType, loweredEnum.valuesGetter.symbol)

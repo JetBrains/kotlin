@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -1312,7 +1310,6 @@ internal object Devirtualization {
                     callSite.startOffset, callSite.endOffset,
                     actualType,
                     actualCallee.symbol,
-                    actualCallee.descriptor,
                     actualCallee.typeParameters.size,
                     actualCallee.valueParameters.size,
                     callSite.origin,
@@ -1369,8 +1366,8 @@ internal object Devirtualization {
                         || possibleCallees.any { it.receiverType is DataFlowIR.Type.External })
                     return expression
 
-                val descriptor = expression.descriptor
-                val owner = (descriptor.containingDeclaration as ClassDescriptor)
+                val callee = expression.symbol.owner
+                val owner = callee.parentAsClass
                 // TODO: Think how to evaluate different unfold factors (in terms of both execution speed and code size).
                 val classMaxUnfoldFactor = 3
                 val interfaceMaxUnfoldFactor = 3
@@ -1383,7 +1380,7 @@ internal object Devirtualization {
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
                 val function = expression.symbol.owner
-                val type = if (descriptor.isSuspend)
+                val type = if (callee.isSuspend)
                                context.irBuiltIns.anyNType
                            else function.returnType
                 val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
@@ -1492,7 +1489,7 @@ internal object Devirtualization {
                                     typeOperand, typeOperandClassifier, expression)
                         }
                 with (coercion) {
-                    return IrCallImpl(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, origin).apply {
+                    return IrCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, origin).apply {
                         putValueArgument(0, castedExpression)
                     }
                 }

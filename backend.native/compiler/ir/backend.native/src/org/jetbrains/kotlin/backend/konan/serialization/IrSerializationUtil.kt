@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
  */
 internal fun IrSimpleFunction.resolveFakeOverrideMaybeAbstract() = this.resolveFakeOverride(allowAbstract = true)
 
-internal fun IrProperty.resolveFakeOverrideMaybeAbstract() = this.getter!!.resolveFakeOverrideMaybeAbstract().correspondingProperty!!
+internal fun IrProperty.resolveFakeOverrideMaybeAbstract() =
+        this.getter!!.resolveFakeOverrideMaybeAbstract().correspondingPropertySymbol!!.owner
 
-internal fun IrField.resolveFakeOverrideMaybeAbstract() = this.correspondingProperty!!.getter!!.resolveFakeOverrideMaybeAbstract().correspondingProperty!!.backingField
+internal fun IrField.resolveFakeOverrideMaybeAbstract() =
+        this.correspondingPropertySymbol!!.owner.resolveFakeOverrideMaybeAbstract().backingField
 
 /**
  * Implementation of given method.

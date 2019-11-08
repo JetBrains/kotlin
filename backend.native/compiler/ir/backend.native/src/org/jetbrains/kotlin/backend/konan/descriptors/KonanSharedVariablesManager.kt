@@ -8,14 +8,11 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -37,14 +34,6 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
 
     private fun refType(elementType: KotlinType): KotlinType {
         return refClass.descriptor.defaultType.replace(listOf(TypeProjectionImpl(elementType)))
-    }
-
-    private fun getElementPropertyDescriptor(sharedVariableDescriptor: VariableDescriptor): PropertyDescriptor {
-        return sharedVariableDescriptor.type.memberScope.getContributedDescriptors()
-                .filterIsInstance<PropertyDescriptor>()
-                .single {
-                    it.name.asString() == "element"
-                }
     }
 
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
@@ -76,12 +65,9 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
     override fun defineSharedValue(originalDeclaration: IrVariable, sharedVariableDeclaration: IrVariable): IrStatement {
         val initializer = originalDeclaration.initializer ?: return sharedVariableDeclaration
 
-        val elementPropertyDescriptor = getElementPropertyDescriptor(sharedVariableDeclaration.descriptor)
-
         val sharedVariableInitialization =
                 IrCallImpl(initializer.startOffset, initializer.endOffset,
-                        context.irBuiltIns.unitType, elementProperty.setter!!.symbol,
-                        elementPropertyDescriptor.setter!!)
+                        context.irBuiltIns.unitType, elementProperty.setter!!.symbol)
 
         sharedVariableInitialization.dispatchReceiver =
                 IrGetValueImpl(initializer.startOffset, initializer.endOffset,
@@ -95,31 +81,23 @@ internal class KonanSharedVariablesManager(val context: KonanBackendContext) : S
         )
     }
 
-    override fun getSharedValue(sharedVariableSymbol: IrVariableSymbol, originalGet: IrGetValue): IrExpression {
+    override fun getSharedValue(sharedVariableSymbol: IrVariableSymbol, originalGet: IrGetValue) =
+            IrCallImpl(originalGet.startOffset, originalGet.endOffset,
+                    originalGet.type, elementProperty.getter!!.symbol).apply {
+                dispatchReceiver = IrGetValueImpl(
+                        originalGet.startOffset, originalGet.endOffset,
+                        sharedVariableSymbol.owner.type, sharedVariableSymbol
+                )
+            }
 
-        val elementPropertyDescriptor = getElementPropertyDescriptor(sharedVariableSymbol.descriptor)
-
-        return IrCallImpl(originalGet.startOffset, originalGet.endOffset,
-                originalGet.type, elementProperty.getter!!.symbol,
-                elementPropertyDescriptor.getter!!).apply {
-            dispatchReceiver = IrGetValueImpl(
-                    originalGet.startOffset, originalGet.endOffset,
-                    sharedVariableSymbol.owner.type, sharedVariableSymbol
-            )
-        }
-    }
-
-    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetVariable): IrExpression {
-        val elementPropertyDescriptor = getElementPropertyDescriptor(sharedVariableSymbol.descriptor)
-
-        return IrCallImpl(originalSet.startOffset, originalSet.endOffset, context.irBuiltIns.unitType,
-                elementProperty.setter!!.symbol, elementPropertyDescriptor.setter!!).apply {
-            dispatchReceiver = IrGetValueImpl(
-                    originalSet.startOffset, originalSet.endOffset,
-                    sharedVariableSymbol.owner.type, sharedVariableSymbol
-            )
-            putValueArgument(0, originalSet.value)
-        }
-    }
+    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetVariable) =
+            IrCallImpl(originalSet.startOffset, originalSet.endOffset, context.irBuiltIns.unitType,
+                    elementProperty.setter!!.symbol).apply {
+                dispatchReceiver = IrGetValueImpl(
+                        originalSet.startOffset, originalSet.endOffset,
+                        sharedVariableSymbol.owner.type, sharedVariableSymbol
+                )
+                putValueArgument(0, originalSet.value)
+            }
 
 }

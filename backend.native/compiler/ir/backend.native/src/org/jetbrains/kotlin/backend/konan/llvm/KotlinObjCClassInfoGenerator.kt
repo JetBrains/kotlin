@@ -9,7 +9,7 @@ import llvm.LLVMStoreSizeOfType
 import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.getStringValue
+import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -127,8 +127,8 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                                 return@mapNotNull null
 
                 ObjCMethodDesc(
-                        annotation.getStringValue("selector"),
-                        annotation.getStringValue("encoding"),
+                        annotation.getAnnotationStringValue("selector"),
+                        annotation.getAnnotationStringValue("encoding"),
                         it.llvmFunction
                 )
             }

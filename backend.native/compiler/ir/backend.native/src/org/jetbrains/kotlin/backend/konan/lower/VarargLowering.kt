@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -65,12 +64,13 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
             val transformer = this
 
             private fun replaceEmptyParameterWithEmptyArray(expression: IrFunctionAccessExpression) {
-                log { "call of: ${expression.descriptor}" }
+                val callee = expression.symbol.owner
+                log { "call of: ${callee.fqNameForIrSerialization}" }
                 context.createIrBuilder(owner, expression.startOffset, expression.endOffset).apply {
-                    expression.descriptor.valueParameters.forEach {
-                        log { "varargElementType: ${it.varargElementType} expr: ${ir2string(expression.getValueArgument(it))}" }
+                    callee.valueParameters.forEach {
+                        log { "varargElementType: ${it.varargElementType} expr: ${ir2string(expression.getValueArgument(it.index))}" }
                     }
-                    expression.symbol.owner.valueParameters
+                    callee.valueParameters
                         .filter { it.varargElementType != null && expression.getValueArgument(it.index) == null }
                         .forEach {
                             expression.putValueArgument(

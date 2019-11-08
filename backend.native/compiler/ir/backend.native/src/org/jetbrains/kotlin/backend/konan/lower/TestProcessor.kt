@@ -106,7 +106,6 @@ internal class TestProcessor (val context: Context) {
                             it.function.endOffset,
                             registerTestCase.valueParameters[1].type,
                             it.function.symbol,
-                            it.function.descriptor,
                             typeArgumentsCount = 0,
                             valueArgumentsCount = 0))
                     putValueArgument(2, irBoolean(it.ignored))
@@ -127,7 +126,6 @@ internal class TestProcessor (val context: Context) {
                             it.function.endOffset,
                             registerFunction.valueParameters[1].type,
                             it.function.symbol,
-                            it.function.descriptor,
                             typeArgumentsCount = 0,
                             valueArgumentsCount = 0))
                 }

@@ -37,9 +37,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 
 internal class WorkersBridgesBuilding(val context: Context) : DeclarationContainerLoweringPass, IrElementTransformerVoid() {
 
-    val interop = context.interopBuiltIns
     val symbols = context.ir.symbols
-    val nullableAnyType = context.builtIns.nullableAnyType
     lateinit var runtimeJobFunction: IrSimpleFunction
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
@@ -59,8 +57,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val descriptor = expression.descriptor.original
-                if (descriptor != interop.executeImplFunction)
+                if (expression.symbol != symbols.executeImpl)
                     return expression
 
                 val job = expression.getValueArgument(3) as IrFunctionReference
@@ -118,7 +115,6 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                         endOffset     = job.endOffset,
                         type          = job.type,
                         symbol        = bridge.symbol,
-                        descriptor    = bridge.descriptor,
                         typeArgumentsCount = 0)
                 )
                 return expression
@@ -238,7 +234,6 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
                 endOffset,
                 targetSymbol.owner.returnType,
                 targetSymbol,
-                targetSymbol.descriptor,
                 superQualifierSymbol = superQualifierSymbol /* Call non-virtually */
         ).apply {
             bridge.dispatchReceiverParameter?.let {

@@ -8,6 +8,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 
 class KonanGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(KonanMangler) {
     init {
-        loadKnownBuiltins(builtIns, 0)
+        loadKnownBuiltins(builtIns)
     }
 }

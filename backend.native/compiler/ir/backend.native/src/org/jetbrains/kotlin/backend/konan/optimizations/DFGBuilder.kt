@@ -644,7 +644,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                         error("Constructor call should be done with IrConstructorCall")
                                     } else {
                                         callee as IrSimpleFunction
-                                        if (callee.isOverridable && value.superQualifier == null) {
+                                        if (callee.isOverridable && value.superQualifierSymbol == null) {
                                             val owner = callee.parentAsClass
                                             val actualReceiverType = value.dispatchReceiver!!.type
                                             val actualReceiverClassifier = actualReceiverType.classifierOrFail

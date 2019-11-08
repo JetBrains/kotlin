@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.error
-import org.jetbrains.kotlin.backend.konan.ir.typeWithoutArguments
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -74,11 +73,11 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                 // Function inlining is changing function symbol at callsite
                 // and unbound symbol replacement is happening later.
                 // So we compare descriptors for now.
-                if (expression.descriptor == context.immutableBlobOf) {
+                if (expression.symbol == symbols.immutableBlobOf) {
                     // Convert arguments of the binary blob to special IrConst<String> structure, so that
                     // vararg lowering will not affect it.
                     val args = expression.getValueArgument(0) as? IrVararg
-                    if (args == null) throw Error("varargs shall not be lowered yet")
+                            ?: throw Error("varargs shall not be lowered yet")
                     if (args.elements.any { it is IrSpreadElement }) {
                         context.reportCompilationError("no spread elements allowed here", irFile, args)
                     }

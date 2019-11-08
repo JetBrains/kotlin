@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isAbstract
 import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.llvm.KonanMangler.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMangler.symbolName
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
@@ -30,8 +29,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.ConstantValue
-import org.jetbrains.kotlin.resolve.constants.IntValue
+import org.jetbrains.kotlin.backend.konan.descriptors.isBuiltInOperator
 
 internal object DataFlowIR {
 
@@ -599,7 +597,7 @@ internal object DataFlowIR {
                 attributes = attributes or FunctionAttributes.EXPLICITLY_EXPORTED
             }
             val symbol = when {
-                it.isExternal || (it.symbol in context.irBuiltIns.irBuiltInsSymbols) -> {
+                it.isExternal || it.isBuiltInOperator -> {
                     val escapesAnnotation = it.annotations.findAnnotation(FQ_NAME_ESCAPES)
                     val pointsToAnnotation = it.annotations.findAnnotation(FQ_NAME_POINTS_TO)
                     @Suppress("UNCHECKED_CAST")

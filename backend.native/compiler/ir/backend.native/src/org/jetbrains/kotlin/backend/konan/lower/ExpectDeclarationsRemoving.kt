@@ -134,7 +134,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                 symbol.descriptor.isExpect -> symbol.owner.findActualForExpected().symbol
 
                 symbol.descriptor.propertyIfAccessor.isExpect -> {
-                    val property = symbol.owner.correspondingProperty!!
+                    val property = symbol.owner.correspondingPropertySymbol!!.owner
                     val actualPropertyDescriptor = property.descriptor.findActualForExpect()
                     val accessorDescriptor = when (symbol.owner) {
                         property.getter -> actualPropertyDescriptor.getter!!

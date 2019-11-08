@@ -9,13 +9,12 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isString
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 internal class CompileTimeEvaluateLowering(val context: Context): FileLoweringPass {
 
@@ -24,9 +23,9 @@ internal class CompileTimeEvaluateLowering(val context: Context): FileLoweringPa
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
 
-                val descriptor = expression.descriptor.original
+                val callee = expression.symbol.owner
                 // TODO
-                if (descriptor.fqNameSafe.asString() != "kotlin.collections.listOf" || descriptor.valueParameters.size != 1)
+                if (callee.fqNameForIrSerialization.asString() != "kotlin.collections.listOf" || callee.valueParameters.size != 1)
                     return expression
                 val elementsArr = expression.getValueArgument(0) as? IrVararg
                     ?: return expression

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
@@ -208,7 +207,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         override fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, superClass: IrClass?) =
                 evaluateSimpleFunctionCall(function, args, resultLifetime, superClass)
 
-        override fun evaluateExplicitArgs(expression: IrMemberAccessExpression): List<LLVMValueRef> =
+        override fun evaluateExplicitArgs(expression: IrFunctionAccessExpression): List<LLVMValueRef> =
                 this@CodeGeneratorVisitor.evaluateExplicitArgs(expression)
 
         override fun evaluateExpression(value: IrExpression): LLVMValueRef =
@@ -1481,17 +1480,17 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         if (!value.symbol.owner.isStatic) {
             val thisPtr = evaluateExpression(value.receiver!!)
             return functionGenerationContext.loadSlot(
-                    fieldPtrOfClass(thisPtr, value.symbol.owner), value.descriptor.isVar())
+                    fieldPtrOfClass(thisPtr, value.symbol.owner), !value.symbol.owner.isFinal)
         } else {
             assert(value.receiver == null)
-            return if (value.symbol.owner.correspondingProperty?.isConst == true) {
+            return if (value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true) {
                  evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>)
             } else {
                 if (context.config.threadsAreAllowed && value.symbol.owner.isMainOnlyNonPrimitive) {
                     functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
                 }
                 val ptr = context.llvmDeclarations.forStaticField(value.symbol.owner).storage
-                functionGenerationContext.loadSlot(ptr, value.descriptor.isVar())
+                functionGenerationContext.loadSlot(ptr, !value.symbol.owner.isFinal)
             }
         }
     }
@@ -1941,12 +1940,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
      * Returns results in the same order as LLVM function expects, assuming that all explicit arguments
      * exactly correspond to a tail of LLVM parameters.
      */
-    private fun evaluateExplicitArgs(expression: IrMemberAccessExpression): List<LLVMValueRef> {
-        val evaluatedArgs = expression.getArguments().map { (param, argExpr) ->
+    private fun evaluateExplicitArgs(expression: IrFunctionAccessExpression): List<LLVMValueRef> {
+        val evaluatedArgs = expression.getArgumentsWithIr().map { (param, argExpr) ->
             param to evaluateExpression(argExpr)
         }.toMap()
 
-        val allValueParameters = expression.descriptor.allParameters
+        val allValueParameters = expression.symbol.owner.allParameters
 
         return allValueParameters.dropWhile { it !in evaluatedArgs }.map {
             evaluatedArgs[it]!!
@@ -2051,7 +2050,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                            else args
         return when {
             function.isTypedIntrinsic -> intrinsicGenerator.evaluateCall(callee, args)
-            function.symbol in context.irBuiltIns.irBuiltInsSymbols -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
+            function.isBuiltInOperator -> evaluateOperatorCall(callee, argsWithContinuationIfNeeded)
             else -> evaluateSimpleFunctionCall(function, argsWithContinuationIfNeeded, resultLifetime, callee.superQualifierSymbol?.owner)
         }
     }
@@ -2133,7 +2132,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         assert(irClass.isExternalObjCClass())
 
         val annotation = irClass.annotations.findAnnotation(externalObjCClassFqName)!!
-        val protocolGetterName = annotation.getStringValue("protocolGetter")
+        val protocolGetterName = annotation.getAnnotationStringValue("protocolGetter")
         val protocolGetter = context.llvm.externalFunction(
                 protocolGetterName,
                 functionType(int8TypePtr, false),
