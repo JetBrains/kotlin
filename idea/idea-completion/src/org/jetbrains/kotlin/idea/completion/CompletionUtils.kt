@@ -14,22 +14,23 @@ import com.intellij.openapi.util.Key
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.completion.smart.isProbableKeyword
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -223,6 +224,22 @@ fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): 
                     }
                 }
 
+                val isOnTopLevelInUnitFunction = isUnit && position.parent?.parent === parent
+
+                val isInsideLambda = position.getNonStrictParentOfType<KtFunctionLiteral>()?.let { parent.isAncestor(it) } == true
+
+                fun returnIsProbableInPosition(): Boolean = when {
+                    isInsideLambda -> false // for now we do not want to alter completion inside lambda bodies
+                    position.inReturnExpression() -> false
+                    position.isRightOperandInElvis() -> true
+                    position.isLastOrSingleStatement() && !position.isDirectlyInLoopBody() && !isOnTopLevelInUnitFunction -> true
+                    else -> false
+                }
+
+                if (returnIsProbableInPosition()) {
+                    blockBodyReturns.forEach { it.isProbableKeyword = true }
+                }
+
                 result.addAll(blockBodyReturns)
             }
             break
@@ -231,6 +248,56 @@ fun returnExpressionItems(bindingContext: BindingContext, position: KtElement): 
 
     return result
 }
+
+private fun KtElement.isDirectlyInLoopBody(): Boolean {
+    val possibleLoop = when (parent) {
+        is KtBlockExpression -> parent.parent?.parent
+        is KtContainerNodeForControlStructureBody -> parent.parent
+        else -> null
+    }
+
+    return possibleLoop is KtLoopExpression
+}
+
+fun KtElement.isRightOperandInElvis(): Boolean {
+    val elvisParent = parent as? KtBinaryExpression ?: return false
+    return elvisParent.operationToken == KtTokens.ELVIS && elvisParent.right === this
+}
+
+/**
+ * Checks if expression is either last expression in a block, or a single expression in position where single
+ * expressions are allowed (`when` entries, `for` and `while` loops, and `if`s).
+ */
+private fun PsiElement.isLastOrSingleStatement(): Boolean =
+    when (val containingExpression = parent) {
+        is KtBlockExpression -> containingExpression.statements.lastOrNull() === this
+        is KtWhenEntry, is KtContainerNodeForControlStructureBody -> true
+        else -> false
+    }
+
+private fun KtElement.inReturnExpression(): Boolean = findReturnExpression(this) != null
+
+/**
+ * If [expression] is directly relates to the return expression already, this return expression will be found.
+ *
+ * Examples:
+ *
+ * ```kotlin
+ * return 10                                        // 10 is in return
+ * return if (true) 10 else 20                      // 10 and 20 are in return
+ * return 10 ?: 20                                  // 10 and 20 are in return
+ * return when { true -> 10 ; else -> { 20; 30 } }  // 10 and 30 are in return, but 20 is not
+ * ```
+ */
+private tailrec fun findReturnExpression(expression: PsiElement?): KtReturnExpression? =
+    when (val parent = expression?.parent) {
+        is KtReturnExpression -> parent
+        is KtBinaryExpression -> findReturnExpression(parent.takeIf { it.operationToken == KtTokens.ELVIS })
+        is KtContainerNodeForControlStructureBody, is KtIfExpression -> findReturnExpression(parent)
+        is KtBlockExpression -> findReturnExpression(parent.takeIf { expression.isLastOrSingleStatement() })
+        is KtWhenEntry -> findReturnExpression(parent.parent)
+        else -> null
+    }
 
 private fun KtDeclarationWithBody.returnType(bindingContext: BindingContext): KotlinType? {
     val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? CallableDescriptor ?: return null
