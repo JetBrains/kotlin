@@ -65,14 +65,12 @@ class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) 
     }
 
     private fun prepareSignatureForBodyResolve(callableMember: FirCallableMemberDeclaration<*>) {
-        withScopeCleanup(topLevelScopes) {
-            callableMember.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-            callableMember.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
-            if (callableMember is FirFunction<*>) {
-                callableMember.valueParameters.forEach {
-                    it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
-                    it.transformVarargTypeToArrayType()
-                }
+        callableMember.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+        callableMember.transformReceiverTypeRef(transformer, ResolutionMode.ContextIndependent)
+        if (callableMember is FirFunction<*>) {
+            callableMember.valueParameters.forEach {
+                it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+                it.transformVarargTypeToArrayType()
             }
         }
     }
