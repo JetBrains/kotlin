@@ -112,6 +112,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 if (fileClassInfo.withJvmMultifileClass) AsmUtil.asmTypeByFqNameWithoutInnerClasses(fileClassInfo.facadeClassFqName)
                 else null
             context.state.factory.packagePartRegistry.addPart(irFile.fqName, partClassType.internalName, facadeClassType?.internalName)
+            context.classNameOverride[this] = JvmClassName.byInternalName(partClassType.internalName)
 
             if (facadeClassType != null) {
                 val jvmClassName = JvmClassName.byInternalName(facadeClassType.internalName)

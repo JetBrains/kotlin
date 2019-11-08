@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -35,22 +35,12 @@ object JvmBackendFacade {
         errorHandler: CompilationErrorHandler,
         phaseConfig: PhaseConfig
     ) {
-        val psi2ir = Psi2IrTranslator(state.languageVersionSettings, facadeClassGenerator = ::facadeClassGenerator)
+        val facadeGenerator = FacadeClassGenerator()
+        val psi2ir = Psi2IrTranslator(state.languageVersionSettings, facadeClassGenerator = facadeGenerator::generate)
         val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = JvmGeneratorExtensions)
         val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
-
-        doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext, phaseConfig)
-    }
-
-    internal fun doGenerateFilesInternal(
-        state: GenerationState,
-        errorHandler: CompilationErrorHandler,
-        irModuleFragment: IrModuleFragment,
-        psi2irContext: GeneratorContext,
-        phaseConfig: PhaseConfig
-    ) {
         doGenerateFilesInternal(
-            state, errorHandler, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig
+            state, errorHandler, irModuleFragment, psi2irContext.symbolTable, psi2irContext.sourceManager, phaseConfig, facadeGenerator
         )
     }
 
@@ -60,7 +50,8 @@ object JvmBackendFacade {
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         sourceManager: PsiSourceManager,
-        phaseConfig: PhaseConfig
+        phaseConfig: PhaseConfig,
+        facadeGenerator: FacadeClassGenerator = FacadeClassGenerator()
     ) {
         val context = JvmBackendContext(
             state, sourceManager, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig
@@ -77,8 +68,9 @@ object JvmBackendFacade {
             symbolTable,
             irModuleFragment.irBuiltins,
             JvmGeneratorExtensions.externalDeclarationOrigin,
-            facadeClassGenerator = ::facadeClassGenerator
+            facadeClassGenerator = facadeGenerator::generate
         ).generateUnboundSymbolsAsDependencies()
+        context.classNameOverride = facadeGenerator.classNameOverride
 
         for (irFile in irModuleFragment.files) {
             for (extension in IrGenerationExtension.getInstances(context.state.project)) {
@@ -116,14 +108,19 @@ object JvmBackendFacade {
         }
     }
 
-    internal fun facadeClassGenerator(source: DeserializedContainerSource): IrClass? {
-        val jvmPackagePartSource = source.safeAs<JvmPackagePartSource>() ?: return null
-        val facadeName = jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
-        return buildClass {
-            origin = IrDeclarationOrigin.FILE_CLASS
-            name = facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName()
-        }.also {
-            it.createParameterDeclarations()
+    internal class FacadeClassGenerator {
+        val classNameOverride = mutableMapOf<IrClass, JvmClassName>()
+
+        fun generate(source: DeserializedContainerSource): IrClass? {
+            val jvmPackagePartSource = source.safeAs<JvmPackagePartSource>() ?: return null
+            val facadeName = jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
+            return buildClass {
+                origin = IrDeclarationOrigin.FILE_CLASS
+                name = facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName()
+            }.also {
+                it.createParameterDeclarations()
+                classNameOverride[it] = facadeName
+            }
         }
     }
 }
