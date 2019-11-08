@@ -12,6 +12,7 @@ abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncremental
             sourceMap = true
             // Don't zip klib content since date on files affect the md5 checksum we compute to check whether output files identical
             irProduceKlibDir = true
+            irOnly = true
         }
 
     override val buildLogFinder: BuildLogFinder
