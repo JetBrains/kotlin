@@ -3737,14 +3737,23 @@ if (isAppleTarget(project)) {
         final File lazyHeader = file("$dir/$target-lazy.h")
 
         doLast {
-            final File expectedLazyHeader = file("framework/values/expectedLazy.h")
+            final String expectedLazyHeaderName = "expectedLazy.h"
+            final String expectedLazyHeaderDir = file("framework/values/")
+            final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
 
             if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
                 exec {
                     commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
                     ignoreExitValue = true
                 }
-                throw new Error("$expectedLazyHeader and $lazyHeader files differ")
+
+                copy {
+                    from(lazyHeader)
+                    into(expectedLazyHeaderDir)
+                    rename { expectedLazyHeaderName }
+                }
+
+                throw new Error("$expectedLazyHeader file patched;\nre-run the test and don't forget to commit the patch")
             }
 
         }
