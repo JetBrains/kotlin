@@ -12,6 +12,7 @@ import com.intellij.ui.SideBorder;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -81,11 +82,11 @@ class ServiceViewTreeUi implements ServiceViewUi {
 
   @Override
   public void setMasterComponent(@NotNull JComponent component, @NotNull ServiceViewActionProvider actionProvider) {
-    myMasterPanel.add(ScrollPaneFactory.createScrollPane(component, SideBorder.NONE), BorderLayout.CENTER);
+    myMasterPanel.add(ScrollPaneFactory.createScrollPane(component, SideBorder.TOP), BorderLayout.CENTER);
 
     myMasterActionToolbar = actionProvider.createMasterComponentToolbar(component);
     JComponent toolbarComponent = myMasterActionToolbar.getComponent();
-    toolbarComponent.setBorder(IdeBorderFactory.createBorder(SideBorder.BOTTOM));
+    toolbarComponent.setBorder(JBUI.Borders.empty(1, 0, 2, 0));
     myMasterPanel.add(toolbarComponent, BorderLayout.NORTH);
 
     actionProvider.installPopupHandler(component);
