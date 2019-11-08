@@ -1,0 +1,31 @@
+package
+
+public final class Derived : TestType<kotlin.Long> {
+    public constructor Derived()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class DerivedInner : TestType<kotlin.Long>.Inner {
+        public constructor DerivedInner(/*0*/ item: kotlin.Long)
+        public final override /*1*/ /*fake_override*/ val item: kotlin.Long
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public abstract class TestType</*0*/ V : kotlin.Any> {
+    public constructor TestType</*0*/ V : kotlin.Any>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public open inner class Inner /*captured type parameters: /*0*/ V : kotlin.Any*/ {
+        public constructor Inner(/*0*/ item: V)
+        public final val item: V
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

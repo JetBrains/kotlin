@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
@@ -190,7 +190,22 @@ class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromC
     }
 }
 
-fun UnwrappedType.substituteTypeVariable(typeVariable: NewTypeVariable, value: UnwrappedType): UnwrappedType {
-    val substitutor = NewTypeSubstitutorByConstructorMap(mapOf(typeVariable.freshTypeConstructor to value))
-    return substitutor.safeSubstitute(this)
+fun createCompositeSubstitutor(appliedFirst: NewTypeSubstitutor, appliedLast: TypeSubstitutor): NewTypeSubstitutor {
+    if (appliedLast.isEmpty) return appliedFirst
+
+    return object : NewTypeSubstitutor {
+        override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
+            val substitutedOnce = appliedFirst.substituteNotNullTypeWithConstructor(constructor)
+
+            return if (substitutedOnce != null) {
+                appliedLast.substitute(substitutedOnce.unwrap())
+            } else {
+                constructor.declarationDescriptor?.defaultType?.let {
+                    appliedLast.substitute(it)
+                }
+            }
+        }
+    }
 }
+
+fun NewTypeSubstitutor.composeWith(appliedAfter: TypeSubstitutor) = createCompositeSubstitutor(this, appliedAfter)

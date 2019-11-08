@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.unCapture
@@ -64,7 +65,7 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
     abstract val typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     abstract val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     abstract val freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor
-
+    abstract val knownParametersSubstitutor: TypeSubstitutor
     abstract val argumentsWithConversion: Map<KotlinCallArgument, SamConversionDescription>
 }
 

@@ -9823,6 +9823,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/inference/invokeLambdaAsFunction.kt");
         }
 
+        @TestMetadata("knownTypeParameters.kt")
+        public void testKnownTypeParameters() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/knownTypeParameters.kt");
+        }
+
         @TestMetadata("kt11963.kt")
         public void testKt11963() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/kt11963.kt");
@@ -9856,6 +9861,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
         @TestMetadata("kt3184.kt")
         public void testKt3184() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/kt3184.kt");
+        }
+
+        @TestMetadata("kt32415.kt")
+        public void testKt32415() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/kt32415.kt");
         }
 
         @TestMetadata("kt32434.kt")

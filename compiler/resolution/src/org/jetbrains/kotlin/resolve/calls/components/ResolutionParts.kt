@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorMo
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -124,6 +125,8 @@ internal object NoArguments : ResolutionPart() {
 
 internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        resolvedCall.knownParametersSubstitutor = knownTypeParametersResultingSubstitutor ?: TypeSubstitutor.EMPTY
+
         if (candidateDescriptor.typeParameters.isEmpty()) {
             resolvedCall.freshVariablesSubstitutor = FreshVariableNewTypeSubstitutor.Empty
             return
@@ -415,6 +418,7 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
         resolvedCall.typeArgumentMappingByOriginal = TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
         resolvedCall.argumentMappingByOriginal = emptyMap()
         resolvedCall.freshVariablesSubstitutor = FreshVariableNewTypeSubstitutor.Empty
+        resolvedCall.knownParametersSubstitutor = TypeSubstitutor.EMPTY
         resolvedCall.argumentToCandidateParameter = emptyMap()
 
         kotlinCall.explicitReceiver?.safeAs<SimpleKotlinCallArgument>()?.let {
