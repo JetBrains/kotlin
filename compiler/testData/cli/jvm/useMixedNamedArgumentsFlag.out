@@ -1,0 +1,12 @@
+warning: some JAR files in the classpath have the Kotlin Runtime library bundled into them. This may cause difficult to debug problems if there's a different version of the Kotlin Runtime library in the classpath. Consider removing these libraries from the classpath
+dist/kotlinc/lib/kotlin-reflect.jar: warning: library has Kotlin runtime bundled into it
+compiler/testData/cli/jvm/useMixedNamedArgumentsFlag.kt:1:9: warning: parameter 'x' is never used
+fun foo(x: Int, y: Int, z: Int) {}
+        ^
+compiler/testData/cli/jvm/useMixedNamedArgumentsFlag.kt:1:17: warning: parameter 'y' is never used
+fun foo(x: Int, y: Int, z: Int) {}
+                ^
+compiler/testData/cli/jvm/useMixedNamedArgumentsFlag.kt:1:25: warning: parameter 'z' is never used
+fun foo(x: Int, y: Int, z: Int) {}
+                        ^
+OK

@@ -311,7 +311,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         value = "-Xuse-mixed-named-arguments",
         description = "Enable Support named arguments in their own position even if the result appears as mixed"
     )
-    val useMixedNamedArguments: Boolean by FreezableVar(false)
+    var useMixedNamedArguments: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xdisable-default-scripting-plugin", description = "Do not enable scripting plugin by default")
     var disableDefaultScriptingPlugin: Boolean by FreezableVar(false)
