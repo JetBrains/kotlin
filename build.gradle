@@ -496,7 +496,7 @@ task bundleRestricted(type: Tar) {
         exclude 'klib/testLibrary'
         platformManager.targetValues.each { target ->
             if (PlatformInfo.isAppleTarget(target))
-                exclude 'klib/platform/${target.name}'
+                exclude "klib/platform/${target.name}"
         }
         into baseName
     }
