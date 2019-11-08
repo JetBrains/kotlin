@@ -28,7 +28,14 @@ NULL = 'null'
 
 def log(msg):
     if False:
-        print(msg)
+        print(msg())
+
+def exelog(stmt):
+    if False:
+        f = open(os.getenv('HOME', '') + "/lldbexelog.txt", "a")
+        f.write(stmt())
+        f.write("\n")
+        f.close()
 
 def lldb_val_to_ptr(lldb_val):
     addr = lldb_val.GetValueAsUnsigned()
@@ -37,7 +44,9 @@ def lldb_val_to_ptr(lldb_val):
 
 def evaluate(expr):
     result = lldb.debugger.GetSelectedTarget().EvaluateExpression(expr, lldb.SBExpressionOptions())
-    log("{} => {}".format(expr, result))
+    evallog = lambda : "{} => {}".format(expr, result)
+    log(evallog)
+    exelog(evallog)
     return result
 
 def is_instance_of(addr, typeinfo):
@@ -76,7 +85,7 @@ SYNTHETIC_OBJECT_LAYOUT_CACHE = {}
 
 def kotlin_object_type_summary(lldb_val, internal_dict):
     """Hook that is run by lldb to display a Kotlin object."""
-    log("kotlin_object_type_summary({:#x})".format(lldb_val.unsigned))
+    log(lambda: "kotlin_object_type_summary({:#x})".format(lldb_val.unsigned))
     fallback = lldb_val.GetValue()
     if str(lldb_val.type) != "struct ObjHeader *":
         return fallback
@@ -151,13 +160,13 @@ class KonanHelperProvider(lldb.SBSyntheticValueProvider):
 
     def _read_type(self, index):
         type = self._types[self._children[index].type()]
-        log("type:{0} of {1:#x} of {2:#x}".format(type, self._valobj.unsigned, self._valobj.unsigned + self._children[index].offset()))
+        log(lambda: "type:{0} of {1:#x} of {2:#x}".format(type, self._valobj.unsigned, self._valobj.unsigned + self._children[index].offset()))
         return type
 
     def _deref_or_obj_summary(self, index):
         value = self._values[index]
         if not value:
-            log("_deref_or_obj_summary: value none, index:{}, type:{}".format(index, self._children[index].type()))
+            log(lambda : "_deref_or_obj_summary: value none, index:{}, type:{}".format(index, self._children[index].type()))
             return None
         if check_type_info(value):
             return kotlin_object_type_summary(value, None)
@@ -237,9 +246,9 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
             SYNTHETIC_OBJECT_LAYOUT_CACHE[tip] = [
                 MemberLayout(self._field_name(i), self._field_type(i), self._field_address(i) - self._valobj.unsigned)
                 for i in range(self._children_count)]
-            log("TIP: {:#x} MISSED".format(tip))
+            log(lambda : "TIP: {:#x} MISSED".format(tip))
         else:
-            log("TIP: {:#x} HIT".format(tip))
+            log(lambda : "TIP: {:#x} HIT".format(tip))
         self._children = SYNTHETIC_OBJECT_LAYOUT_CACHE[tip]
         self._values = [self._read_value(index) for index in range(self._children_count)]
 
@@ -305,7 +314,7 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
 
 class KonanProxyTypeProvider:
     def __init__(self, valobj, _):
-        log("proxy: {:#x}".format(valobj.unsigned))
+        log(lambda : "proxy: {:#x}".format(valobj.unsigned))
         if not check_type_info(valobj):
             return
         self._proxy = select_provider(valobj)
