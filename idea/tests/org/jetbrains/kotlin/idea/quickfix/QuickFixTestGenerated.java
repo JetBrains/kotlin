@@ -1113,9 +1113,29 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/basic.kt");
         }
 
+        @TestMetadata("dotExpressionAndCallExpression.kt")
+        public void testDotExpressionAndCallExpression() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/dotExpressionAndCallExpression.kt");
+        }
+
+        @TestMetadata("multipleCalls.kt")
+        public void testMultipleCalls() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/multipleCalls.kt");
+        }
+
         @TestMetadata("multipleLambdas.kt")
         public void testMultipleLambdas() throws Exception {
             runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/multipleLambdas.kt");
+        }
+
+        @TestMetadata("onlyDotBefore.kt")
+        public void testOnlyDotBefore() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/onlyDotBefore.kt");
+        }
+
+        @TestMetadata("twoLambdasTwoInvokes.kt")
+        public void testTwoLambdasTwoInvokes() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/twoLambdasTwoInvokes.kt");
         }
 
         @TestMetadata("withComments.kt")

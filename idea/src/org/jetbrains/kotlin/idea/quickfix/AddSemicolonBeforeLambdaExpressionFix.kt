@@ -21,46 +21,127 @@ class AddSemicolonBeforeLambdaExpressionFix(element: KtLambdaExpression) : Kotli
     override fun getFamilyName(): String = text
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val lambdaExpressionArgument = element?.parent?.safeAs<KtLambdaArgument>()
-            ?: return
-        val callExpression = lambdaExpressionArgument.parent.safeAs<KtCallExpression>()
-            ?: return
-        val desiredEndOfCallExpression =
-            PsiTreeUtil.findSiblingBackward(
-                lambdaExpressionArgument,
-                KtNodeTypes.LAMBDA_ARGUMENT,
-                null
-            ) ?: PsiTreeUtil.findSiblingBackward(
-                lambdaExpressionArgument,
-                KtNodeTypes.VALUE_ARGUMENT_LIST,
-                null
-            )
+        val lambdaExpressionArgument = element?.parent?.safeAs<KtLambdaArgument>() ?: return
+        val callExpression = lambdaExpressionArgument.parent.safeAs<KtCallExpression>() ?: return
+
+        val desiredEndOfCallExpression = lambdaExpressionArgument.findCorrectEndOfCall()
+
         desiredEndOfCallExpression?.let { endOfCall ->
-            makeNewExpressionsFromFollowingLambdas(callExpression, endOfCall)
-            val semicolon = callExpression.parent.addAfter(
-                KtPsiFactory(project).createSemicolon(),
-                callExpression
-            )
-            editor?.caretModel?.moveToOffset(semicolon.startOffset)
+            val psiFactory = KtPsiFactory(project)
+
+            val addedSemicolon = when (val parent = callExpression.parent) {
+                // Parent call is the call to the right, we want to give it this call's last lambda argument as a new receiver
+                is KtCallExpression -> liftTrailingNodesAndRelocateLastLambda(
+                    psiFactory, callExpression, endOfCall,
+                    lastLambdaAcceptor = parent,
+                    nodeBeforeSemicolon = callExpression
+                )
+                // Incorrect call is a part of dot-qualified expression before it
+                is KtDotQualifiedExpression -> {
+                    val grandparent = parent.parent
+                    if (grandparent.isCallOrDotExpression) {
+                        // Similar to call expression parent, but here correct lambda receiver is one level higher,
+                        // since our parent is the dot expression to the left
+                        liftTrailingNodesAndRelocateLastLambda(
+                            psiFactory, callExpression, endOfCall,
+                            lastLambdaAcceptor = grandparent,
+                            nodeBeforeSemicolon = parent
+                        )
+                    } else {
+                        // Extract trailing lambdas (and possible formatting) two levels higher,
+                        // before dot-qualified expression to the left of this call expression
+                        liftTrailingNodes(
+                            psiFactory, callExpression, endOfCall,
+                            addNodesAfter = parent
+                        )
+                    }
+                }
+                // Simple case: extract all trailing nodes right after call - it is a standalone call expression
+                else -> liftTrailingNodes(
+                    psiFactory, callExpression, endOfCall,
+                    addNodesAfter = callExpression
+                )
+            }
+            editor?.caretModel?.moveToOffset(addedSemicolon.startOffset)
         }
     }
 
-    private fun makeNewExpressionsFromFollowingLambdas(
+    private fun KtLambdaArgument.findCorrectEndOfCall() =
+        PsiTreeUtil.findSiblingBackward(this, KtNodeTypes.LAMBDA_ARGUMENT, null)
+            ?: PsiTreeUtil.findSiblingBackward(this, KtNodeTypes.VALUE_ARGUMENT_LIST, null)
+
+    private fun liftTrailingNodesAndRelocateLastLambda(
+        psiFactory: KtPsiFactory,
+        callExpression: KtCallExpression,
+        endOfCall: PsiElement,
+        lastLambdaAcceptor: PsiElement,
+        nodeBeforeSemicolon: PsiElement
+    ): PsiElement {
+        val (topCall, callHolder) = topLevelHolder(callExpression)
+        val semicolon = callHolder.addBefore(psiFactory.createSemicolon(), topCall)
+
+        makeNewExpressionsFromTrailingLambdas(callExpression, endOfCall, addNodesAfter = semicolon) { lastLambdaExpression ->
+            lastLambdaAcceptor.addAfter(lastLambdaExpression, nodeBeforeSemicolon)
+        }
+
+        callHolder.addBefore(nodeBeforeSemicolon, semicolon)
+        nodeBeforeSemicolon.delete()
+
+        return semicolon
+    }
+
+    private fun liftTrailingNodes(
+        psiFactory: KtPsiFactory,
+        callExpression: KtCallExpression,
+        endOfCall: PsiElement,
+        addNodesAfter: PsiElement
+    ): PsiElement {
+        makeNewExpressionsFromTrailingLambdas(callExpression, endOfCall, addNodesAfter)
+        return addNodesAfter.parent.addAfter(
+            psiFactory.createSemicolon(),
+            addNodesAfter
+        )
+    }
+
+    private val PsiElement.isCallOrDotExpression
+        get() = this is KtCallExpression || this is KtDotQualifiedExpression
+
+    data class TopExpressionAndHolder(val top: PsiElement, val holder: PsiElement)
+
+    private fun topLevelHolder(callExpression: KtCallExpression): TopExpressionAndHolder {
+        var me: PsiElement = callExpression
+        var parent: PsiElement = callExpression.parent
+        while (parent.isCallOrDotExpression) {
+            me = parent
+            parent = parent.parent
+        }
+        return TopExpressionAndHolder(me, parent)
+    }
+
+    private fun makeNewExpressionsFromTrailingLambdas(
         oldCallExpression: KtCallExpression,
-        endOfArguments: PsiElement
+        endOfArguments: PsiElement,
+        addNodesAfter: PsiElement,
+        lastLambdaHandler: ((PsiElement) -> Unit)? = null
     ) {
         var lastSibling = oldCallExpression.lastChild
-        val parentForCallExpression = oldCallExpression.parent
+        var lastLambdaWasProcessed = false
 
         while (lastSibling != endOfArguments) {
             when (lastSibling) {
-                is KtLambdaArgument -> parentForCallExpression.addAfter(
-                    lastSibling.getLambdaExpression() ?: lastSibling,
-                    oldCallExpression
-                )
-                else -> parentForCallExpression.addAfter(
+                is KtLambdaArgument -> {
+                    val lambdaExpression: PsiElement = lastSibling.getLambdaExpression() ?: lastSibling
+
+                    if (lastLambdaHandler != null && !lastLambdaWasProcessed) {
+                        lastLambdaWasProcessed = true
+                        lastLambdaHandler(lambdaExpression)
+                    } else {
+                        addNodesAfter.parent.addAfter(lambdaExpression, addNodesAfter)
+                    }
+                }
+                else -> addNodesAfter.parent.addAfter(
                     lastSibling,
-                    oldCallExpression
+                    addNodesAfter
                 )
             }
             lastSibling = lastSibling.prevSibling

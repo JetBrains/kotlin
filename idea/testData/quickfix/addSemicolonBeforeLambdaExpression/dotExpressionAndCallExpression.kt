@@ -1,0 +1,10 @@
+// "Terminate preceding call with semicolon" "true"
+
+fun doSomething() {}
+fun Any.foo() {}
+
+fun test() {
+    doSomething().foo()
+    // comment and formatting
+    { doSomething()<caret> }()
+}
