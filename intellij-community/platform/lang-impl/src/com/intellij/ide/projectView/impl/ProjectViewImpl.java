@@ -1077,7 +1077,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       }
     }, getComponent());
     collapseAllAction.getTemplatePresentation().setIcon(AllIcons.General.CollapseAll);
-    collapseAllAction.getTemplatePresentation().setHoveredIcon(AllIcons.General.CollapseAllHover);
     titleActions.add(collapseAllAction);
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.favoritesTreeView;
 
@@ -554,7 +554,6 @@ public class FavoritesTreeViewPanel extends JPanel implements DataProvider, Dock
   public void setupToolWindow(ToolWindowEx window) {
     final CollapseAllAction collapseAction = new CollapseAllAction(myTree);
     collapseAction.getTemplatePresentation().setIcon(AllIcons.General.CollapseAll);
-    collapseAction.getTemplatePresentation().setHoveredIcon(AllIcons.General.CollapseAllHover);
     window.setTitleActions(collapseAction);
 
     final DefaultActionGroup group = new DefaultActionGroup();

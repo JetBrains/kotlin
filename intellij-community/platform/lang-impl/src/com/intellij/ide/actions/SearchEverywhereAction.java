@@ -692,7 +692,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
     JPanel controls = new JPanel(new BorderLayout());
     controls.setOpaque(false);
 
-    JLabel settings = new JLabel(AllIcons.General.SearchEverywhereGear);
+    JLabel settings = new JLabel(AllIcons.General.GearPlain);
     new ClickListener(){
       @Override
       public boolean onClick(@NotNull MouseEvent event, int clickCount) {
