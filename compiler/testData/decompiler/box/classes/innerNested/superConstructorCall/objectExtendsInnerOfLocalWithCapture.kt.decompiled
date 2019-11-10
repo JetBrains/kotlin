@@ -1,0 +1,21 @@
+// FILE: /objectExtendsInnerOfLocalWithCapture.kt
+
+
+fun box() : String  {
+    class Local {
+        open  inner class Inner(val s: String) {
+            open  fun result() : String  {
+                return "Fail"
+            }
+
+        }
+        val realResult = "OK"
+        val obj = object : Inner(this.realResult) {
+    override fun result() : String  {
+        return this.s
+    }
+
+}
+    }
+    return Local().obj.result()
+}

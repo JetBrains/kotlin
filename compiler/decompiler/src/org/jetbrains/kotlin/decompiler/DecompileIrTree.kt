@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.decompiler
 
+import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.decompiler.util.*
 import org.jetbrains.kotlin.decompiler.util.name
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -38,6 +39,33 @@ class DecompileIrTreeVisitor(
 
     companion object {
         val irFileNamesToImportedDeclarationsMap = mutableMapOf<String, Set<String>>()
+        //TODO резолвить конфликты имен типов возвращаемых значений.
+        // Конфликт - если более 2 записей, заканчивающихся на этот тип
+        internal fun IrType.obtainTypeDescription(): String {
+            if ((this as? IrSimpleType)?.abbreviation != null) {
+                with(abbreviation!!.typeAlias.owner) {
+                    return name() + this@obtainTypeDescription.arguments.joinToString(", ", "<", ">") { it.obtain() }
+                }
+            }
+            return if (toKotlinType().isFunctionTypeOrSubtype) {
+                val arguments = toKotlinType().arguments
+                val returnType = arguments.last().type
+                val inputTypes = arguments.dropLast(1)
+                "${inputTypes.joinToString(", ", prefix = "(", postfix = ")") {
+                    it.type.toString() + ("?".takeIf { isNullable() } ?: EMPTY_TOKEN)
+                }} -> $returnType"
+            } else {
+                if (getClass()?.isLocalClass() ?: false) {
+                    //Если локальный класс, то оставляем только его имя
+                    getClass()!!.name()
+//                    toKotlinType().toString().substring(startIndex = toKotlinType().toString().indexOfLast { it == '.' })
+                } else {
+                    //Пока так, но нужно резолвить через importStr и сравнение постфиксов
+                    toKotlinType().toString()
+                }
+            }
+        }
+
     }
 
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: String) {
@@ -78,29 +106,20 @@ class DecompileIrTreeVisitor(
             ClassKind.CLASS, ClassKind.OBJECT -> {
                 declaration.obtainPrimaryCtorWithInheritance()
                 withBracesLn {
-                    declaration.declarations
-                        .filterIsInstance<IrProperty>()
-                        .filterNot {
-                            it.origin in setOf(
-                                IrDeclarationOrigin.FAKE_OVERRIDE,
-                                IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER
-                            )
-                        }
-                        .decompileElements(data)
-
                     val secondaryCtors = declaration.constructors.filterNot { it.isPrimary }
                     secondaryCtors.forEach {
                         it.obtainSecondaryCtor()
                     }
+
                     declaration.declarations
-                        .filterNot { it is IrConstructor || it is IrProperty || it is IrField }
+                        .filterNot { it is IrConstructor || it is IrField }
                         .filterNot {
                             it.origin in setOf(
                                 IrDeclarationOrigin.FAKE_OVERRIDE,
                                 IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER
                             )
                         }
-                        .decompileElements(data)
+                        .forEach { it.accept(this, data) }
                 }
             }
             ClassKind.ANNOTATION_CLASS -> {
@@ -150,6 +169,8 @@ class DecompileIrTreeVisitor(
             }
             with(primaryConstructor!!) {
                 val delegatingCtorCall = body!!.statements.filterIsInstance<IrDelegatingConstructorCall>().firstOrNull()
+                //TODO чтобы не дублировался вызов ктора и перечисления через запятую (делегирование)
+                superTypes.remove(delegatingCtorCall?.symbol?.owner?.constructedClassType)
                 val implStr = parentAsClass.obtainInheritanceWithDelegation()
                 val delegatingCtorCallStr = delegatingCtorCall?.decompile("") ?: ""
                 if (delegatingCtorCallStr.isEmpty()) {
@@ -169,11 +190,14 @@ class DecompileIrTreeVisitor(
             delegatedMap[delegationFieldInitializer.type] = delegationFieldInitializer
         }
         // Для енамов в суперах лежит Enum<MyType>, который почему-то не isEnum(
-        return superTypes.filterNot { it.isAny() || it.toKotlinType().toString().startsWith("Enum") }.joinToString(", ") {
-            val result = it.obtainTypeDescription()
-            val key = delegatedMap.keys.filter { it.isSubtypeOfClass(it.getClass()!!.symbol) }.firstOrNull()
-            result + if (key != null) " by ${delegatedMap[key]?.decompile("")}" else EMPTY_TOKEN
-        }
+        return superTypes
+            .filterNot { it.isAny() || it.toKotlinType().toString().startsWith("Enum") }
+            .filterNot { primaryConstructor?.constructedClass?.symbol?.let { it1 -> it.isSubtypeOfClass(it1) } ?: false }
+            .joinToString(", ") {
+                val result = it.obtainTypeDescription()
+                val key = delegatedMap.keys.filter { it.isSubtypeOfClass(it.getClass()!!.symbol) }.firstOrNull()
+                result + if (key != null) " by ${delegatedMap[key]?.decompile("")}" else EMPTY_TOKEN
+            }
 
     }
 
@@ -349,14 +373,12 @@ class DecompileIrTreeVisitor(
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: String) {
-        var result = ""
         if (!expression.symbol.owner.returnType.isAny()) {
-            result = concatenateNonEmptyWithSpace(":", expression.symbol.owner.returnType.obtainTypeDescription(),
-                                                  ((0 until expression.valueArgumentsCount)
-                                                      .mapNotNull { expression.getValueArgument(it)?.decompile(data) }
-                                                      .joinToString(", ", "(", ")")))
+            printer.println(listOf(" : ", expression.symbol.owner.returnType.obtainTypeDescription(),
+                                   ((0 until expression.valueArgumentsCount)
+                                       .mapNotNull { expression.getValueArgument(it)?.decompile(data) }
+                                       .joinToString(", ", "(", ")"))).joinToString(""))
         }
-        printer.println(result)
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: String) {
@@ -620,26 +642,26 @@ class DecompileIrTreeVisitor(
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: String) {
         declaration.files.forEach {
-            printer.println("// FILE: ${it.path}")
+            printer.printlnWithNoIndent("// FILE: ${it.path}")
             // Чтобы соблюсти очередность package -> imports -> declarations вынуждено вытащил это из visitFile
             if (it.fqName != FqName.ROOT) {
                 printer.println("package ${it.fqName.asString()}\n")
             }
 
             val fileSources = it.decompile("")
-            printer.println(irFileNamesToImportedDeclarationsMap[it.path]?.joinToString("\n") { "import $it" })
+            printer.println(irFileNamesToImportedDeclarationsMap[it.path]?.joinToString(separator = "\n", postfix = "\n") { "import $it" })
             printer.println(fileSources)
+            printer.println()
         }
     }
 
     override fun visitFile(declaration: IrFile, data: String) {
         with(declaration) {
             val importResolveVisitor = ImportResolveVisitor()
-            accept(importResolveVisitor, fqName.asString().takeIf { declaration.fqName != FqName.ROOT } ?: EMPTY_TOKEN)
+            val filePackage = fqName.asString().takeIf { declaration.fqName != FqName.ROOT } ?: EMPTY_TOKEN
+            accept(importResolveVisitor, filePackage)
             irFileNamesToImportedDeclarationsMap[path] = importResolveVisitor.importDirectivesSet
-            declaration.declarations.forEach {
-                printer.printlnWithNoIndent("${it.decompile(data)}\n")
-            }
+            printer.println(declaration.declarations.joinToString(separator = "\n", postfix = "\n") { it.decompile(filePackage) })
         }
     }
 

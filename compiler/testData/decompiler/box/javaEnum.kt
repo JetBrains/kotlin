@@ -2,7 +2,7 @@
 
 package a
 
-fun foo() {}
+fun foo() = "OK"
 
 // FILE: B.kt
 
@@ -10,6 +10,5 @@ package b
 
 import a.foo
 
-fun test() {
-    foo()
-}
+fun box() = foo()
+

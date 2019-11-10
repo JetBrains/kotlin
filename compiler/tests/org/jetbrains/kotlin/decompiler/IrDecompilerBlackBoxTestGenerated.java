@@ -1109,6 +1109,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/imports"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("anon_and_local.kt")
+        public void testAnon_and_local() throws Exception {
+            runTest("compiler/testData/decompiler/box/imports/anon_and_local.kt");
+        }
+
         @TestMetadata("deep_nesting.kt")
         public void testDeep_nesting() throws Exception {
             runTest("compiler/testData/decompiler/box/imports/deep_nesting.kt");

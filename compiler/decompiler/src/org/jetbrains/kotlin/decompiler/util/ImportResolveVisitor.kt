@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.decompiler.util
 
+import org.jetbrains.kotlin.decompiler.decompile
 import org.jetbrains.kotlin.decompiler.util.name
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -60,7 +61,7 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
      */
     override fun visitClass(declaration: IrClass, data: String) {
         with(declaration) {
-            val declarationNameWithPrefix = "${("$data.").takeIf { data.isNotEmpty() } ?: EMPTY_TOKEN}${this.name.identifier}"
+            val declarationNameWithPrefix = "${("$data.").takeIf { data.isNotEmpty() } ?: EMPTY_TOKEN}${this.name()}"
             declaredNamesSet.add(declarationNameWithPrefix)
             // Для енамов в суперах лежит Enum<MyType>, который почему-то не isEnum
             // Добавляем
@@ -89,7 +90,6 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
 
     override fun visitConstructor(declaration: IrConstructor, data: String) {
         with(declaration) {
-            calledNamesSet.add(parentAsClass.asImportStr())
             typeParameters.forEach { it.accept(this@ImportResolveVisitor, data) }
             valueParameters.forEach { it.accept(this@ImportResolveVisitor, data) }
             body?.accept(this@ImportResolveVisitor, data)
@@ -97,13 +97,28 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
         run { }
     }
 
-    override fun visitConstructorCall(expression: IrConstructorCall, data: String) {
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: String) {
+        //TODO Здесь может быть больше всего проблем (extension и dispatcher receivers, superQualifier)
         with(expression) {
-            calledNamesSet.add(symbol.owner.parentAsClass.asImportStr())
+            when (origin) {
+                null -> {
+                    dispatchReceiver?.accept(this@ImportResolveVisitor, data)
+                    calledNamesSet.add(if (symbol.owner.parent is IrFile) symbol.owner.fqNameWhenAvailable?.asString() else symbol.owner.parentAsClass.asImportStr())
+                }
+                IrStatementOrigin.GET_PROPERTY -> {
+                    val fullName = symbol.owner.fqNameWhenAvailable?.asString() ?: EMPTY_TOKEN
+                    val ownerDataPrefix = fullName.substring(0, fullName.indexOfLast { it == '.' })
+                    val regex = """<get-(.+)>""".toRegex()
+                    val matchResult = regex.find(fullName)
+                    val propName = matchResult?.groups?.get(1)?.value
+                    calledNamesSet.add("$ownerDataPrefix.$propName")
+                }
+            }
             (0 until typeArgumentsCount).forEach { calledNamesSet.add(getTypeArgument(it)?.asImportStr()) }
             (0 until valueArgumentsCount).forEach { getValueArgument(it)?.accept(this@ImportResolveVisitor, data) }
         }
     }
+
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: String) {
         calledNamesSet.add(expression.symbol.owner.parentAsClass.asImportStr())
@@ -142,6 +157,7 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
 
     override fun visitFunction(declaration: IrFunction, data: String) {
         with(declaration) {
+            declaredNamesSet.add(if (parent is IrFile) fqNameWhenAvailable?.asString() else parentAsClass.asImportStr())
             typeParameters.forEach { it.accept(this@ImportResolveVisitor, data) }
             valueParameters.forEach { it.accept(this@ImportResolveVisitor, data) }
             body?.accept(this@ImportResolveVisitor, data)
@@ -160,16 +176,6 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
         with(branch) {
             condition.accept(this@ImportResolveVisitor, data)
             result.accept(this@ImportResolveVisitor, data)
-        }
-    }
-
-    override fun visitCall(expression: IrCall, data: String) {
-        //TODO Здесь может быть больше всего проблем (extension и dispatcher receivers, superQualifier)
-        with(expression) {
-            dispatchReceiver?.accept(this@ImportResolveVisitor, data)
-            (0 until typeArgumentsCount).forEach { calledNamesSet.add(getTypeArgument(it)?.asImportStr()) }
-            (0 until valueArgumentsCount).forEach { getValueArgument(it)?.accept(this@ImportResolveVisitor, data) }
-
         }
     }
 
@@ -196,6 +202,18 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: String) {
         declaredNamesSet.add("$data.${declaration.name()}")
+    }
+
+    override fun visitClassReference(expression: IrClassReference, data: String) {
+        calledNamesSet.add(expression.classType.asImportStr())
+    }
+
+    override fun visitBlock(expression: IrBlock, data: String) {
+        expression.acceptChildren(this, data)
+    }
+
+    override fun visitBlockBody(body: IrBlockBody, data: String) {
+        body.acceptChildren(this, data)
     }
 
     override fun visitElement(element: IrElement, data: String) {

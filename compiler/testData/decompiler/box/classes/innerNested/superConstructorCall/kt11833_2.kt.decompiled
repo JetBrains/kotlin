@@ -1,12 +1,15 @@
+// FILE: /kt11833_2.kt
+
+
 abstract  class Father {
     abstract  inner class InClass {
-        abstract  fun work() : kotlin.String
+        abstract  fun work() : String
     }
 }
-class Child: Father () {
-    fun test() : Father.InClass  {
-        return object: Father.InClass () {
-    override fun work() : kotlin.String  {
+class Child : Father() {
+    fun test() : InClass  {
+        return object : InClass() {
+    override fun work() : String  {
         return "OK"
     }
 
@@ -14,6 +17,6 @@ class Child: Father () {
     }
 
 }
-fun box() : kotlin.String  {
+fun box() : String  {
     return Child().test().work()
 }

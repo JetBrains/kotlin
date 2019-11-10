@@ -1,0 +1,17 @@
+// FILE: /A.kt
+package a
+
+
+
+fun foo() : String  {
+    return "OK"
+}
+
+// FILE: /B.kt
+package b
+
+import a.foo
+
+fun box() : String  {
+    return foo()
+}

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.decompiler.util
 
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.decompiler.DecompileIrTreeVisitor
+import org.jetbrains.kotlin.decompiler.DecompileIrTreeVisitor.Companion.obtainTypeDescription
 import org.jetbrains.kotlin.decompiler.decompile
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -387,25 +388,7 @@ internal fun IrProperty.obtainPropertyFlags() =
         "lateinit".takeIf { isLateinit },
         if (isVar) "var" else "val"
     )
-
-internal fun IrType.obtainTypeDescription(): String {
-    //TODO разобраться с проблемой
-    if ((this as? IrSimpleType)?.abbreviation != null) {
-        with(abbreviation!!.typeAlias.owner) {
-            return name() + this@obtainTypeDescription.arguments.joinToString(", ", "<", ">") { it.obtain() }
-        }
-    }
-    return if (toKotlinType().isFunctionTypeOrSubtype) {
-        val arguments = toKotlinType().arguments
-        val returnType = arguments.last().type
-        val inputTypes = arguments.dropLast(1)
-        "${inputTypes.joinToString(", ", prefix = "(", postfix = ")") {
-            it.type.toString() + ("?".takeIf { isNullable() } ?: EMPTY_TOKEN)
-        }} -> $returnType"
-    } else {
-        toKotlinType().toString()
-    }
-}
+// По идее эта штука должна быть в companion object визитора и резолвить конфликты имен
 
 internal fun IrValueParameter.obtainValueParameterFlags(): String =
     concatenateNonEmptyWithSpace(

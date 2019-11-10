@@ -1,4 +1,4 @@
-// FILE: innerGeneric.kt
+// FILE: /innerGeneric.kt
 
 
 class Outer {
@@ -10,7 +10,7 @@ class Outer {
     }
 }
 fun box() : String  {
-    if (Outer().Inner<String>("OK").box() != "OK") {
+    if  (Outer().Inner<String>("OK").box() != "OK") {
             return "Fail"
         }
     val x = Outer().Inner<String>("OK")

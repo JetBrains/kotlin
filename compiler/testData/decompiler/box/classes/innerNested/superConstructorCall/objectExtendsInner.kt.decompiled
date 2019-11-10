@@ -1,0 +1,20 @@
+// FILE: /objectExtendsInner.kt
+
+
+class A {
+    open  inner class Inner(val result: String) {
+    }
+    fun box() : String  {
+        val o = object : Inner("OK") {
+    fun ok() : String  {
+        return this.result
+    }
+
+}
+        return o.ok()
+    }
+
+}
+fun box() : String  {
+    return A().box()
+}
