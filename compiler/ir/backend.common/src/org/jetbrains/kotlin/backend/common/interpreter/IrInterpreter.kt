@@ -5,26 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common.interpreter
 
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.CompileTimeFunction
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.binaryFunctions
-import org.jetbrains.kotlin.backend.common.interpreter.builtins.unaryFunctions
 import org.jetbrains.kotlin.backend.common.interpreter.stack.*
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.types.TypeUtils
 
 class IrInterpreter : IrElementVisitor<State, Frame> {
     private val builtIns = DefaultBuiltIns.Instance
@@ -39,57 +29,6 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
         return when (this) {
             is Primitive<*> -> this.getIrConst()
             else -> TODO("not supported")
-        }
-    }
-    //todo move out util methods
-    private fun IrElement?.getState(descriptor: DeclarationDescriptor, data: Frame): State? {
-        val arg = this?.accept(this@IrInterpreter, data) ?: return null
-        return arg.setDescriptor(descriptor)
-    }
-
-    private fun IrMemberAccessExpression.convertValueParameters(data: Frame): MutableList<State> {
-        val state = mutableListOf<State>()
-        for (i in 0 until this.valueArgumentsCount) {
-            this.getValueArgument(i).getState((this.symbol.descriptor as FunctionDescriptor).valueParameters[i], data)?.let { state += it }
-        }
-        return state
-    }
-
-    private fun calculateOverridden(symbol: IrFunctionSymbol, data: Frame): State {
-        val owner = symbol.owner as IrFunctionImpl
-        val overridden = owner.overriddenSymbols.first()
-        val overriddenReceiver = data.getVar(symbol.getThisAsReceiver()).getState(overridden.getThisAsReceiver())
-        val valueParameters = symbol.owner.valueParameters.zip(overridden.owner.valueParameters)
-            .map { data.getVar(it.first.descriptor).setDescriptor(it.second.descriptor) }
-        val newStates = InterpreterFrame((valueParameters + overriddenReceiver).toMutableList())
-
-        return if (overridden.owner.body != null) {
-            overridden.owner.body!!.accept(this@IrInterpreter, newStates)
-        } else {
-            calculateOverridden(overridden.owner.symbol, newStates)
-        }
-    }
-
-    private fun calculateBuiltIns(descriptor: FunctionDescriptor, frame: Frame): Any {
-        val methodName = descriptor.name.asString()
-        val receiverType = descriptor.dispatchReceiverParameter?.type ?: descriptor.extensionReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + descriptor.valueParameters.map { TypeUtils.makeNotNullable(it.original.type) }
-        val argsValues = frame.getAll()
-            .map { it as? Primitive<*> ?: throw IllegalArgumentException("Builtin functions accept only const args") }
-            .map { it.getIrConst().value }
-        val signature = CompileTimeFunction(methodName, argsType.map { it.toString() })
-        return when (argsType.size) {
-            1 -> {
-                val function = unaryFunctions[signature]
-                    ?: throw NoSuchMethodException("For given function $signature there is no entry in unary map")
-                function.invoke(argsValues.first())
-            }
-            2 -> {
-                val function = binaryFunctions[signature]
-                    ?: throw NoSuchMethodException("For given function $signature there is no entry in binary map")
-                function.invoke(argsValues[1], argsValues[0])
-            }
-            else -> throw UnsupportedOperationException("Unsupported number of arguments")
         }
     }
 
@@ -108,7 +47,7 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
     }
 
     override fun visitCall(expression: IrCall, data: Frame): State {
-        val newFrame = InterpreterFrame(expression.convertValueParameters(data))
+        val newFrame = InterpreterFrame(convertValueParameters(expression, data))
         if (expression.symbol.owner.isFakeOverride) {
             expression.dispatchReceiver?.accept(this, data)?.let { newFrame.addVar(it) }
             return calculateOverridden(expression.symbol, newFrame)
@@ -132,7 +71,7 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
     }
 
     private fun visitConstructor(constructor: IrFunctionAccessExpression, data: Frame): State {
-        val newFrame = InterpreterFrame(constructor.convertValueParameters(data))
+        val newFrame = InterpreterFrame(convertValueParameters(constructor, data))
         val obj = Complex((constructor.symbol.descriptor.containingDeclaration as ClassDescriptor).thisAsReceiverParameter, mutableListOf())
         constructor.getBody()?.statements?.forEach {
             when (it) {
