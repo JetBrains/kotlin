@@ -3577,6 +3577,15 @@
                      language="kotlin"
     />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantElvisReturnNullInspection"
+                     displayName="Redundant '?: return null'"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+    />
+
     <projectService serviceInterface="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"
                     serviceImplementation="org.jetbrains.kotlin.idea.codeInsight.KotlinCodeInsightWorkspaceSettings"/>
 

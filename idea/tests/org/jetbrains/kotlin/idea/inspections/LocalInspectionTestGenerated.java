@@ -7144,6 +7144,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/redundantElvisReturnNull")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantElvisReturnNull extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRedundantElvisReturnNull() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/redundantElvisReturnNull"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), true);
+        }
+
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantElvisReturnNull/basic.kt");
+        }
+
+        @TestMetadata("notInReturn.kt")
+        public void testNotInReturn() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantElvisReturnNull/notInReturn.kt");
+        }
+
+        @TestMetadata("notReturnNull.kt")
+        public void testNotReturnNull() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantElvisReturnNull/notReturnNull.kt");
+        }
+
+        @TestMetadata("uselessElvis.kt")
+        public void testUselessElvis() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantElvisReturnNull/uselessElvis.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/redundantEmptyInitializerBlock")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
