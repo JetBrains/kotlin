@@ -42,6 +42,7 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
             is IrSetField -> visitSetField(element, data)
             is IrGetField -> visitGetField(element, data)
             is IrGetValue -> visitGetValue(element, data)
+            is IrConst<*> -> visitConst(element, data)
             else -> TODO("${element.javaClass} not supported")
         }
     }
@@ -56,7 +57,7 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
         val dispatchReceiver = expression.dispatchReceiver?.accept(this, data)
             ?.setDescriptor(expression.symbol.descriptor.dispatchReceiverParameter!!)
         val extensionReceiver = expression.extensionReceiver?.accept(this, data)
-            ?.setDescriptor(expression.symbol.descriptor.extensionReceiverParameter?.containingDeclaration!!)
+            ?.setDescriptor(expression.symbol.descriptor.extensionReceiverParameter!!)
         (dispatchReceiver ?: extensionReceiver)?.also { newFrame.addVar(it) }
 
         return if (expression.getBody() == null) {
@@ -120,7 +121,8 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
     }
 
     override fun visitGetField(expression: IrGetField, data: Frame): State {
-        val receiver = (expression.receiver as IrDeclarationReference).symbol.descriptor
+        val receiver = (expression.receiver as? IrDeclarationReference)?.symbol?.descriptor // receiver is null, for example, for top level fields
+            ?: return expression.symbol.owner.initializer!!.expression.accept(this, data)
         return data.getVar(receiver).getState(expression.symbol.descriptor).copy()
     }
 
