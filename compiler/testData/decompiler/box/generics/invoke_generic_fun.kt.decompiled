@@ -1,5 +1,8 @@
+// FILE: invoke_generic_fun.kt
+import java.util.ArrayList
+
 fun box() : String  {
-    val listStr : ArrayList<String> = java.util.ArrayList()
+    val listStr : ArrayList<String> = ArrayList<String>()
     listStr.add("one")
     listStr.add("two")
     listStr.add("three")

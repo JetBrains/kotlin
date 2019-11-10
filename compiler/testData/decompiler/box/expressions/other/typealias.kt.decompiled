@@ -1,19 +1,22 @@
+// FILE: /typealias.kt
+import MyClassAlias
+import MyInt
 class MyClass {
-    val prop : Int = 42
+    val prop = 42
 }
 typealias MyClassAlias = MyClass
 typealias MyInt = Int
 typealias BodyType = () -> Unit
 typealias BiIntPredicate = (Int, Int) -> Boolean
 fun box() : String  {
-    val myClass : MyClass = MyClass()
-    val tmp : Int = 42
+    val myClass : MyClassAlias = MyClass()
+    val tmp : MyInt = 42
     val tmp0_subject : Int = myClass.prop
     when {
          (tmp0_subject == tmp) -> {
             return "OK"
         }
-        else -> {
+        else ->  {
             return "FAIL"
         }
     }

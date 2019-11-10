@@ -1,6 +1,8 @@
-var result : String = ""
+// FILE: /object.kt
+
+var result = ""
 object A {
-    val prop : String = this.test()
+    val prop = this.test()
     fun test() : String  {
         result += "OK"
         return result
@@ -8,8 +10,8 @@ object A {
 
 }
 fun box() : String  {
-    if (A.prop != "OK") {
-        return "fail ${A.prop}"
-    }
+    if  (A.prop != "OK") {
+            return "fail ${A.prop}"
+        }
     return result
 }

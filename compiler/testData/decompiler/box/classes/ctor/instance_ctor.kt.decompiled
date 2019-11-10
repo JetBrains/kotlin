@@ -1,4 +1,6 @@
-class TestClass() {
+// FILE: /instance_ctor.kt
+
+class TestClass {
     fun fn_true() : Boolean  {
         return true
     }
@@ -6,10 +8,9 @@ class TestClass() {
 }
 fun box() : String  {
     val testClass : TestClass = TestClass()
-    if (testClass.fn_true()) {
-        return "OK"
-    }
-    else {
-        return "FAIL"
-    }
+    if  (testClass.fn_true()) {
+            return "OK"
+        } else {
+            return "FAIL"
+        }
 }

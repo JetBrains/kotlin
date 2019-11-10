@@ -1,7 +1,9 @@
-var result : String = ""
-class A() {
+// FILE: /classCompanion.kt
+
+var result = ""
+class A {
     companion object {
-        val prop : String = this.test()
+        val prop = this.test()
         fun test() : String  {
             result += "OK"
             return result
@@ -10,8 +12,8 @@ class A() {
     }
 }
 fun box() : String  {
-    if (A.Companion.prop != "OK") {
-        return "fail ${A.Companion.prop}"
-    }
+    if  (A.prop != "OK") {
+            return "fail ${A.prop}"
+        }
     return result
 }

@@ -1,0 +1,18 @@
+// FILE: innerGeneric.kt
+
+
+class Outer {
+    inner class Inner<T>(val t: T) {
+        fun box() : T  {
+            return this.t
+        }
+
+    }
+}
+fun box() : String  {
+    if (Outer().Inner<String>("OK").box() != "OK") {
+            return "Fail"
+        }
+    val x = Outer().Inner<String>("OK")
+    return x.box()
+}

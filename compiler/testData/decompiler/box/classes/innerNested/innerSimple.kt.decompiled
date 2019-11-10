@@ -1,0 +1,13 @@
+// FILE: /innerSimple.kt
+
+class Outer {
+    inner class Inner {
+        fun box() : String  {
+            return "OK"
+        }
+
+    }
+}
+fun box() : String  {
+    return Outer().Inner().box()
+}

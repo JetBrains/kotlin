@@ -1,3 +1,5 @@
+// FILE: /valNotValInCtorArgs.kt
+
 class WithValArg(val valA: Int) {
 }
 class WithVarArg(var varA: Int) {

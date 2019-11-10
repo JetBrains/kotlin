@@ -1,3 +1,5 @@
+// FILE: /castGenericNull.kt
+
 fun <T> castToString(t: T) {
     (t as String)
 }

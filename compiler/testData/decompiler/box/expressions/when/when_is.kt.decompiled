@@ -1,3 +1,5 @@
+// FILE: /when_is.kt
+
 fun bar() : Int  {
     return 666
 }
@@ -12,7 +14,7 @@ fun box() : String  {
          ((tmp0_subject is Int)) -> {
             return "OK"
         }
-        else -> {
+        else ->  {
             return "FAIL"
         }
     }

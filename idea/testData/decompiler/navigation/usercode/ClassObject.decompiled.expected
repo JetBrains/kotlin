@@ -1,3 +1,0 @@
-WithInnerAndObject.class
-    public companion <1>object {
-        public final fun <2>foo(): kotlin.Unit { /* compiled code */ }

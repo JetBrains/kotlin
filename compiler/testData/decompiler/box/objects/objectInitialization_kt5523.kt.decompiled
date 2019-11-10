@@ -1,6 +1,8 @@
+// FILE: /objectInitialization_kt5523.kt
+
 object A {
-    val a : String = "OK"
-    val b : String = A.a
+    val a = "OK"
+    val b = A.a
 }
 fun box() : String  {
     return A.b

@@ -1,3 +1,5 @@
+// FILE: /unitNullableCast.kt
+
 fun foo() {
 }
 
@@ -6,10 +8,9 @@ fun bar() : Int?  {
 }
 
 fun box() : String  {
-    return if (bar() == null) {
-    "OK"
-}
-else {
-    "fail"
-}
+    return if  (bar() == null) {
+        "OK"
+    } else {
+        "fail"
+    }
 }

@@ -1,3 +1,5 @@
+// FILE: /methodOnObject.kt
+
 object A {
     fun result() : String  {
         return "OK"

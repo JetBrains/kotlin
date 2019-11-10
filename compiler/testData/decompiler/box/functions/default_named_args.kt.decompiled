@@ -1,3 +1,5 @@
+// FILE: /default_named_args.kt
+
 fun topLevelWithDefault(def: String  = "DEFAULT") : Int  {
     return def.length
 }
@@ -24,18 +26,18 @@ fun box() : String  {
     val var1 : Int = topLevelWithDefault()
     val var2 : Int = topLevelWithDefault("ANOTHER")
     val var3 : Int = topLevelWithDefault("ANOTHER")
-    if (var1 != var2 || var2 != var3) {
-        return "FAIL"
-    }
+    if  (var1 != var2 || var2 != var3) {
+            return "FAIL"
+        }
     val onlyNonDefNamed : Boolean = topLevelMixed(nonDef = 7)
     val bothNonamed : Boolean = topLevelMixed("SOME", 4)
     val bothNamed : Boolean = topLevelMixed("NAMED", 5)
     val tmp0_nonDef : Int = 6
     val tmp1_def : String = "ANSWER"
     val bothNamedReordered : Boolean = topLevelMixed(tmp1_def, tmp0_nonDef)
-    if (!(((onlyNonDefNamed && bothNamed) && bothNonamed) && bothNamedReordered)) {
-        return "FAIL"
-    }
+    if  (!(((onlyNonDefNamed && bothNamed) && bothNonamed) && bothNamedReordered)) {
+            return "FAIL"
+        }
     val mixed21 : Boolean = topLevel2Mixed(nonDef = 0)
     val mixed22 : Boolean = topLevel2Mixed(def1 = "NONDEF1", nonDef = 0)
     val tmp2_nonDef : Int = 0
@@ -45,9 +47,9 @@ fun box() : String  {
     val tmp5_def2 : String = "NONDEF2"
     val tmp6_def1 : String = "NONDEF1"
     val mixed24 : Boolean = topLevel2Mixed(tmp6_def1, tmp5_def2, tmp4_nonDef)
-    if (!(((mixed21 && mixed22) && mixed23) && mixed24)) {
-        return "FAIL"
-    }
+    if  (!(((mixed21 && mixed22) && mixed23) && mixed24)) {
+            return "FAIL"
+        }
     val withDefaultArgsMethodInstance : ClassWithDefaultArgsMethod = ClassWithDefaultArgsMethod("DEF")
     val boolDef : Boolean = withDefaultArgsMethodInstance.withDefaultCtorArg()
     val boolDefChanged : Boolean = !withDefaultArgsMethodInstance.withDefaultCtorArg("NONE")
@@ -55,8 +57,8 @@ fun box() : String  {
     val boolNamed : Boolean = withDefaultArgsMethodInstance.withDefaultArgMixed("NONE", "DEF")
     val boolNonDefNamed : Boolean = withDefaultArgsMethodInstance.withDefaultArgMixed(nonDefArg = "DEF")
     val boolBothNonamed : Boolean = withDefaultArgsMethodInstance.withDefaultArgMixed("NONE", "DEF")
-    if (!(((((boolDef && boolDefChanged) && boolDefChanged2) && boolNamed) && boolNonDefNamed) && boolBothNonamed)) {
-        return "FAIL"
-    }
+    if  (!(((((boolDef && boolDefChanged) && boolDefChanged2) && boolNamed) && boolNonDefNamed) && boolBothNonamed)) {
+            return "FAIL"
+        }
     return "OK"
 }

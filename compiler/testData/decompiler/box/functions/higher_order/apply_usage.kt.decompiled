@@ -1,5 +1,8 @@
+// FILE: apply_usage.kt
+import java.util.ArrayList
+
 fun box() : String  {
-    val t : ArrayList<Int> = ArrayList<Int>().apply {
+    val t : ArrayList<Int> = ArrayList<Int>().apply<ArrayList<Int>> {
         this.add(1)
         this.add(2)
         this.add(3)

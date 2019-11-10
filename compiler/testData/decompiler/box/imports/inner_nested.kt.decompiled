@@ -1,5 +1,5 @@
-// FILE: InnerNestedDeclarations.kt
-package ru.spbau.mit
+// FILE: /InnerNestedDeclarations.kt
+package ru.spbau.mit.declaration
 
 
 object TopLevelObject {
@@ -34,15 +34,15 @@ class WithNamedCompanion {
 
     }
 }
-// FILE: InnerNestedInvocations.kt
-package ru.spbau.mit
+// FILE: /InnerNestedInvocations.kt
+package ru.spbau.mit.invocation
 
-import ru.spbau.mit.Outer
-import ru.spbau.mit.Outer.Inner
-import ru.spbau.mit.Outer.NamedObject
-import ru.spbau.mit.Outer.Nested
-import ru.spbau.mit.TopLevelObject
-
+import ru.spbau.mit.declaration.Outer
+import ru.spbau.mit.declaration.Outer.Nested
+import ru.spbau.mit.declaration.Outer.Inner
+import ru.spbau.mit.declaration.TopLevelObject
+import ru.spbau.mit.declaration.WithNamedCompanion
+import ru.spbau.mit.declaration.Outer.NamedObject
 fun box() : String  {
     val outer : Outer = Outer()
     val nested : Nested = Nested()

@@ -1,3 +1,5 @@
+// FILE: /loops.kt
+
 fun box() : String  {
     var i : Int = 10
     while (i > 0) {

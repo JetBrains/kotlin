@@ -1,3 +1,5 @@
+// FILE: /simpleOperators.kt
+
 fun test1(a: Int, b: Int) : Int  {
     return a + b
 }
@@ -44,7 +46,7 @@ fun box() : String  {
          (tmp0_subject == 3) -> {
             return "OK"
         }
-        else -> {
+        else ->  {
             return "FAIL"
         }
     }

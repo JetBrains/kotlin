@@ -1,3 +1,4 @@
+// FILE: /valInInnerClass.kt
 import kotlin.reflect.KProperty
 class Delegate {
     operator fun getValue(t: Any?, p: KProperty<*>) : Int  {
@@ -11,10 +12,9 @@ class A {
     }
 }
 fun box() : String  {
-    return if (A().B().prop == 1) {
-    "OK"
-}
-else {
-    "fail"
-}
+    return if  (A().B().prop == 1) {
+        "OK"
+    } else {
+        "fail"
+    }
 }

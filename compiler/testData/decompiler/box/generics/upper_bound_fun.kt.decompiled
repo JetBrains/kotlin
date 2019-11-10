@@ -1,19 +1,21 @@
+// FILE: /upper_bound_fun.kt
+
 fun <T  : Comparable<T>> max(list: List<T>) : T  {
     var max : T = list.get(0)
     val tmp0_iterator : Iterator<T> = list.iterator()
     while (tmp0_iterator.hasNext()) {
         val i : T = tmp0_iterator.next()
-        if (i.compareTo(max) > 0) {
-            max  =  i
-        }
+        if  (i.compareTo(max) > 0) {
+                max  =  i
+            }
     }
     return max
 }
 
 fun box() : String  {
     val mx : Int = max<Int>(listOf<Int>(1, 2, 3, 4))
-    if (mx == 4) {
-        return "OK"
-    }
+    if  (mx == 4) {
+            return "OK"
+        }
     return "FAIL"
 }

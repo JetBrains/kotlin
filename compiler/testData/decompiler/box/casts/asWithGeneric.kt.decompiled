@@ -1,3 +1,5 @@
+// FILE: /asWithGeneric.kt
+
 fun <T> test1() : T  {
     return (null as T)
 }
@@ -12,12 +14,12 @@ fun <T  : Any> test3() : T  {
 }
 
 fun box() : String  {
-    if (test1<Int?>() != null) {
-        return "fail: test1"
-    }
-    if (test2<Int?>() != null) {
-        return "fail: test2"
-    }
+    if  (test1<Int?>() != null) {
+            return "fail: test1"
+        }
+    if  (test2<Int?>() != null) {
+            return "fail: test2"
+        }
     var result3 : String = "fail"
     try {
     test3<Int>()
@@ -25,8 +27,8 @@ fun box() : String  {
 catch (e : TypeCastException)  {
     result3  =  "OK"
 }
-    if (result3 != "OK") {
-        return "fail: test3"
-    }
+    if  (result3 != "OK") {
+            return "fail: test3"
+        }
     return "OK"
 }

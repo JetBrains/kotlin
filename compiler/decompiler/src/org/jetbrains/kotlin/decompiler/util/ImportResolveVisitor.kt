@@ -5,17 +5,12 @@
 
 package org.jetbrains.kotlin.decompiler.util
 
+import org.jetbrains.kotlin.decompiler.util.name
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isAny
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 private val defaultImportRegex = setOf(
@@ -38,9 +33,11 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
             if (nullable != null) add(nullable)
         }
 
-        fun IrType.asImportStr() = getClass()?.fqNameWhenAvailable?.asString()
-        fun IrClass.asImportStr() = fqNameWhenAvailable?.asString()
+        fun IrType.asImportStr() =
+            (this as? IrSimpleType)?.abbreviation?.typeAlias?.owner?.fqNameWhenAvailable?.asString()
+                ?: getClass()?.asImportStr()
 
+        fun IrClass.asImportStr() = fqNameWhenAvailable?.asString()?.takeIf { !isLocalClass() }
     }
 
     override fun visitFile(declaration: IrFile, data: String) {
@@ -63,7 +60,7 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
      */
     override fun visitClass(declaration: IrClass, data: String) {
         with(declaration) {
-            val declarationNameWithPrefix = "${data + (".".takeIf { data.isNotEmpty() } ?: EMPTY_TOKEN)}${this.name.identifier}"
+            val declarationNameWithPrefix = "${("$data.").takeIf { data.isNotEmpty() } ?: EMPTY_TOKEN}${this.name.identifier}"
             declaredNamesSet.add(declarationNameWithPrefix)
             // Для енамов в суперах лежит Enum<MyType>, который почему-то не isEnum
             // Добавляем
@@ -190,10 +187,16 @@ class ImportResolveVisitor(val importDirectivesSet: MutableSet<String> = mutable
             if (!owner.isCompanion || owner.name() != "Companion") {
                 //Здесь нужно учитывать локальные классы/методы?
                 calledNamesSet.add(owner.asImportStr())
+            } else {
+                //Здесь проблема, если у companion object могут быть вложенные (но вроде не может)
+                calledNamesSet.add(owner.parentAsClass.asImportStr())
             }
         }
     }
 
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: String) {
+        declaredNamesSet.add("$data.${declaration.name()}")
+    }
 
     override fun visitElement(element: IrElement, data: String) {
         run { }

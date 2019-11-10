@@ -390,9 +390,11 @@ internal fun IrProperty.obtainPropertyFlags() =
 
 internal fun IrType.obtainTypeDescription(): String {
     //TODO разобраться с проблемой
-//    if ((this as? IrSimpleTypeImpl)?.abbreviation != null) {
-//        return this.abbreviation!!.typeAlias.owner.expandedType.obtainTypeDescription()
-//    }
+    if ((this as? IrSimpleType)?.abbreviation != null) {
+        with(abbreviation!!.typeAlias.owner) {
+            return name() + this@obtainTypeDescription.arguments.joinToString(", ", "<", ">") { it.obtain() }
+        }
+    }
     return if (toKotlinType().isFunctionTypeOrSubtype) {
         val arguments = toKotlinType().arguments
         val returnType = arguments.last().type

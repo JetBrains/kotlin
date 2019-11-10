@@ -1,3 +1,5 @@
+// FILE: /multiple_implement.kt
+
 interface MyInterface {
     abstract  fun blaBlaBla(bla: Int) : String
 }
@@ -22,7 +24,7 @@ fun box() : String  {
          (tmp0_subject == "-42") -> {
             return "OK"
         }
-        else -> {
+        else ->  {
             return "FAIL"
         }
     }

@@ -1,0 +1,89 @@
+// FILE: /DeepNestingHeader.kt
+package ru.spbau.mit.declaration
+
+
+typealias BiIntPredicate = (Int, Int) -> Boolean
+object TopLevelObject {
+    val topLevelObjectProp = 1
+    class NestedInsideTopLevelObject {
+    }
+    object ObjectInsideTopLevelObject {
+        val objectInsideTopLevelObjectProp = 42
+    }
+    fun topLevelObjectFoo() {
+    }
+
+}
+class Outer {
+    inner class InnerInsideOuter {
+        inner class InnerInsideInner {
+        }
+    }
+    class NestedInsideOuter {
+        class NestedInsideNested {
+        }
+        inner class InnerInsideNested {
+        }
+        object ObjectInsideNested {
+            val objectInsideNestedProp = 42
+        }
+        companion object {
+            val namedCompanionObjectInsideNestedProp = 42
+        }
+    }
+    companion object {
+        val companionProp = 1
+        class NestedInsideOuterNonameCompanion {
+        }
+        object ObjectInsideOuterNonameCompanion {
+            val objectOuterNonameCompanionProp = 42
+        }
+        fun companionNonameFoo() {
+        }
+
+    }
+    object NamedObjectInsideOuter {
+        val namedObjectProp = 1
+        class NestedInsideOuterObject {
+        }
+        object ObjectInsideOuterNamedObject {
+            val objectInsideOuterNamedObjectProp = 42
+        }
+        fun namedObjectFoo() {
+        }
+
+    }
+}
+// FILE: /DeepNestingUsage.kt
+package ru.spbau.mit
+
+import ru.spbau.mit.declaration.BiIntPredicate
+import ru.spbau.mit.declaration.TopLevelObject
+import ru.spbau.mit.declaration.TopLevelObject.ObjectInsideTopLevelObject
+import ru.spbau.mit.declaration.TopLevelObject.NestedInsideTopLevelObject
+import ru.spbau.mit.declaration.Outer
+import ru.spbau.mit.declaration.Outer.InnerInsideOuter
+import ru.spbau.mit.declaration.Outer.InnerInsideOuter.InnerInsideInner
+import ru.spbau.mit.declaration.Outer.NestedInsideOuter
+import ru.spbau.mit.declaration.Outer.NestedInsideOuter.ObjectInsideNested
+import ru.spbau.mit.declaration.Outer.NestedInsideOuter.NestedInsideNested
+fun aliasArgApplier(body: BiIntPredicate) : Boolean  {
+    return body.invoke(4, 4)
+}
+
+fun box() : String  {
+    val topLevelObjectProp1 : Int = TopLevelObject.topLevelObjectProp
+    val objectInsideTopLevelObjectProp1 : Int = ObjectInsideTopLevelObject.objectInsideTopLevelObjectProp
+    val nestedInsideTopLevelObject : NestedInsideTopLevelObject = NestedInsideTopLevelObject()
+    val outer : Outer = Outer()
+    val innerInsideOuter : InnerInsideOuter = outer.InnerInsideOuter()
+    val innerInsideInner : InnerInsideInner = innerInsideOuter.InnerInsideInner()
+    val nestedInsideOuter : NestedInsideOuter = NestedInsideOuter()
+    val objectInsideNestedProp : Int = ObjectInsideNested.objectInsideNestedProp
+    val nestedInsideNested : NestedInsideNested = NestedInsideNested()
+    return if  (aliasArgApplier { i, i2  -> i == i2 }) {
+        "OK"
+    } else {
+        "Fail"
+    }
+}

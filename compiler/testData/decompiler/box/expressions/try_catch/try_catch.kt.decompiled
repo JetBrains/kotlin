@@ -1,3 +1,5 @@
+// FILE: /try_catch.kt
+
 fun fail(message: String) : Nothing  {
     throw IllegalArgumentException(message)
 }

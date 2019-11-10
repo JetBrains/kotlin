@@ -1,4 +1,6 @@
-class TestClass() {
+// FILE: /classes_simple.kt
+
+class TestClass {
     fun foo() {
     }
 

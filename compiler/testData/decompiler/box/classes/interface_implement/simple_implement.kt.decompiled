@@ -1,3 +1,5 @@
+// FILE: /simple_implement.kt
+
 interface MyInterface {
     abstract  fun blaBlaBla(bla: Int) : String
 }
@@ -21,7 +23,7 @@ fun box() : String  {
          (tmp0_subject == "_0_1_2_3_4_5") -> {
             return "OK"
         }
-        else -> {
+        else ->  {
             return "FAIL"
         }
     }

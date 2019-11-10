@@ -1,6 +1,0 @@
- Double.class
-public final class Double public <3>constructor() {
- ExtraKt.class
-public fun <1>processDouble(d: kotlin.Double): kotlin.Unit { /* compiled code */ }
-
-public fun <2>processDouble(d: testData.libraries.Double): kotlin.Unit { /* compiled code */ }

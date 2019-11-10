@@ -36,6 +36,10 @@ class DecompileIrTreeVisitor(
 
     internal val printer = Printer(out, "    ")
 
+    companion object {
+        val irFileNamesToImportedDeclarationsMap = mutableMapOf<String, Set<String>>()
+    }
+
     override fun visitGetObjectValue(expression: IrGetObjectValue, data: String) {
         with(expression) {
             val owner = symbol.owner
@@ -242,6 +246,7 @@ class DecompileIrTreeVisitor(
         }
     }
 
+    //Пока заглушил вывод типов для variable, но надо обсудить с Димой, когда они реально нужны
     override fun visitVariable(declaration: IrVariable, data: String) {
         printer.println(
             with(declaration) {
@@ -266,8 +271,8 @@ class DecompileIrTreeVisitor(
                             concatenateNonEmptyWithSpace(
                                 obtainVariableFlags(),
                                 name(),
-                                ":",
-                                type.obtainTypeDescription(),
+//                                ":",
+//                                type.obtainTypeDescription(),
                                 "=",
                                 lastStatement.decompile(data)
                             )
@@ -276,8 +281,8 @@ class DecompileIrTreeVisitor(
                     else -> concatenateNonEmptyWithSpace(
                         obtainVariableFlags(),
                         name(),
-                        ":",
-                        type.obtainTypeDescription(),
+//                        ":",
+//                        type.obtainTypeDescription(),
                         "=",
                         initializer?.decompile(data)
                     )
@@ -383,18 +388,21 @@ class DecompileIrTreeVisitor(
                 )
                 else -> {
                     if (data == "return") {
-                        printer.printWithNoIndent(IF_TOKEN)
+                        printer.printWithNoIndent("$IF_TOKEN  (${expression.branches[0].decompile(data)})")
                     } else {
-                        printer.print(IF_TOKEN)
+                        printer.print("$IF_TOKEN  (${expression.branches[0].decompile(data)})")
                     }
-                    printer.printWithNoIndent(" (${expression.branches[0].decompile(data)})")
-                    withBracesLn {
-                        printer.println(expression.branches[0].result.decompile(data))
-                    }
-                    if (expression.branches.size == 2) {
-                        printer.print(ELSE_TOKEN)
-                        withBracesLn {
-                            printer.println(expression.branches[1].result.decompile(data))
+                    indented {
+                        withBraces {
+                            printer.println(expression.branches[0].result.decompile(data))
+                        }
+                        if (expression.branches.size == 2) {
+                            printer.printWithNoIndent(" $ELSE_TOKEN")
+                            withBracesLn {
+                                printer.println(expression.branches[1].result.decompile(data))
+                            }
+                        } else {
+                            printer.println()
                         }
                     }
 
@@ -414,7 +422,7 @@ class DecompileIrTreeVisitor(
                         printer.print(" (${it.condition.decompile(data)}) ->")
                     }
                     withBracesLn {
-                        printer.println(it.decompile(data))
+                        printer.println(it.result.decompile(data))
                     }
                 }
             }
@@ -604,33 +612,34 @@ class DecompileIrTreeVisitor(
 
     override fun visitBlock(expression: IrBlock, data: String) {
         if (expression.origin == OBJECT_LITERAL) {
-            printer.println(expression.statements[0].decompile(""))
+            printer.println(expression.statements[0].decompile(data))
         } else {
             expression.acceptChildren(this, data)
         }
     }
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: String) {
-        printer.println(
-            declaration.files.joinToString("\n") {
-                "// FILE: ${it.path.substring(1)}\n${it.decompile("")}"
+        declaration.files.forEach {
+            printer.println("// FILE: ${it.path}")
+            // Чтобы соблюсти очередность package -> imports -> declarations вынуждено вытащил это из visitFile
+            if (it.fqName != FqName.ROOT) {
+                printer.println("package ${it.fqName.asString()}\n")
             }
-        )
+
+            val fileSources = it.decompile("")
+            printer.println(irFileNamesToImportedDeclarationsMap[it.path]?.joinToString("\n") { "import $it" })
+            printer.println(fileSources)
+        }
     }
 
     override fun visitFile(declaration: IrFile, data: String) {
         with(declaration) {
-            if (fqName != FqName.ROOT) {
-                printer.println("package ${fqName.asString()}\n")
-            }
             val importResolveVisitor = ImportResolveVisitor()
             accept(importResolveVisitor, fqName.asString().takeIf { declaration.fqName != FqName.ROOT } ?: EMPTY_TOKEN)
-            printer.println(
-                importResolveVisitor.importDirectivesSet.map { "import $it" }
-                    .sorted()
-                    .joinToString(separator = "\n", postfix = "\n")
-            )
-            declaration.acceptChildren(this@DecompileIrTreeVisitor, data)
+            irFileNamesToImportedDeclarationsMap[path] = importResolveVisitor.importDirectivesSet
+            declaration.declarations.forEach {
+                printer.printlnWithNoIndent("${it.decompile(data)}\n")
+            }
         }
     }
 
@@ -678,9 +687,9 @@ class DecompileIrTreeVisitor(
                             .apply { add(returnStatementCall.dispatchReceiver?.decompile("")) }
                             .filterNotNull()
                         if (leftFromArrowParams.isNotEmpty()) {
-                            printer.printWithNoIndent("{ ${leftFromArrowParams.joinToString(", ")}  -> ${firstStatement.decompile("lambda")} }")
+                            printer.printWithNoIndent(" { ${leftFromArrowParams.joinToString(", ")}  -> ${firstStatement.decompile("lambda")} }")
                         } else {
-                            printer.printlnWithNoIndent("{ ${firstStatement.decompile("lambda")} }")
+                            printer.printlnWithNoIndent(" { ${firstStatement.decompile("lambda")} }")
                         }
 //                        .joinToString(", ", postfix = " -> ") + firstStatement.decompile("lambda")
 //                    printer.printWithNoIndent("{ $result }")

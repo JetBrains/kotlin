@@ -1,11 +1,12 @@
+// FILE: /if_two_conditions.kt
+
 fun box() : String  {
     val x : Int = 42
     val y : Int = 777
     val z : Int = 3
-    if ((x == 42 && z == 3)) {
-        return "OK"
-    }
-    else {
-        return "FAIL"
-    }
+    if  ((x == 42 && z == 3)) {
+            return "OK"
+        } else {
+            return "FAIL"
+        }
 }

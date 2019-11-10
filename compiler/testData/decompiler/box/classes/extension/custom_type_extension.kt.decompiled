@@ -1,4 +1,6 @@
-class MyClass() {
+// FILE: /custom_type_extension.kt
+
+class MyClass {
 }
 fun MyClass.printOk() : String  {
     return "OK"

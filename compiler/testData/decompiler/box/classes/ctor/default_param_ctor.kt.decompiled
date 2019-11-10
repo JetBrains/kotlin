@@ -1,12 +1,13 @@
+// FILE: /default_param_ctor.kt
+
 class TestClass(val paramDef: String  = "DEFAULT") {
 }
 fun box() : String  {
     val testClassDef : TestClass = TestClass()
     val testClassNonDef : TestClass = TestClass("NON_DEF")
-    if (testClassDef.paramDef != testClassNonDef.paramDef) {
-        return "OK"
-    }
-    else {
-        return "FAIL"
-    }
+    if  (testClassDef.paramDef != testClassNonDef.paramDef) {
+            return "OK"
+        } else {
+            return "FAIL"
+        }
 }

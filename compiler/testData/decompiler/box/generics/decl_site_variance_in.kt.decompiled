@@ -1,5 +1,7 @@
+// FILE: /decl_site_variance_in.kt
+
 interface Comparable<in T> {
-    abstract  fun compareTo(other: T) : Int
+    operator abstract  fun compareTo(other: T) : Int
 }
 fun demo(x: Comparable<Number>) {
     x.compareTo(1.0)

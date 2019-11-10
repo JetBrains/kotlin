@@ -1,13 +1,14 @@
+// FILE: /if_simple_return.kt
+
 fun foo() : Int  {
     return 42
 }
 
 fun box() : String  {
     val f : Int = foo()
-    return if (f == 40) {
-    "FAIL"
-}
-else {
-    "OK"
-}
+    return if  (f == 40) {
+        "FAIL"
+    } else {
+        "OK"
+    }
 }

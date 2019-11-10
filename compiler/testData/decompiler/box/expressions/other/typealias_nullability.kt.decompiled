@@ -1,5 +1,8 @@
-class MyClass() {
-    val prop : Int? = 42
+// FILE: typealias_nullability.kt
+
+
+class MyClass {
+    val prop = 42
 }
 typealias MyClassNullable = MyClass?
 typealias MyIntNullable = Int?
@@ -11,7 +14,7 @@ fun box() : String  {
          (tmp0_subject == tmp) -> {
             return "OK"
         }
-        else -> {
+        else ->  {
             return "FAIL"
         }
     }

@@ -1,3 +1,5 @@
+// FILE: /decl_site_variance_out.kt
+
 interface Source<out T> {
     abstract  fun nextT() : T
 }

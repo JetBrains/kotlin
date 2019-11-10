@@ -1,4 +1,5 @@
-import kotlin.reflect.KProperty
+// FILE: /fromReference.kt
+
 interface Base {
     abstract  fun print()
 }
@@ -8,7 +9,7 @@ class BaseImpl(val x: Int): Base {
     }
 
 }
-class Derived(val b: Base): Base by b {
+class Derived(b: Base): Base by b {
 }
 fun box() : String  {
     val b : BaseImpl = BaseImpl(10)

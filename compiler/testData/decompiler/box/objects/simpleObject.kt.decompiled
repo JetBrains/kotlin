@@ -1,11 +1,12 @@
+// FILE: /simpleObject.kt
+
 object A {
-    val x : Int = 610
+    val x = 610
 }
 fun box() : String  {
-    return if (A.x != 610) {
-    "fail"
-}
-else {
-    "OK"
-}
+    return if  (A.x != 610) {
+        "fail"
+    } else {
+        "OK"
+    }
 }

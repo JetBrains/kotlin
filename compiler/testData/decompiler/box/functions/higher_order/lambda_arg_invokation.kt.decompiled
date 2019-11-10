@@ -1,8 +1,10 @@
+// FILE: /lambda_arg_invokation.kt
+
 fun lambdaReceiver(body: () -> Unit) {
     body.invoke()
 }
 
 fun box() : String  {
-    lambdaReceiver{ println() }
+    lambdaReceiver { println() }
     return "OK"
 }

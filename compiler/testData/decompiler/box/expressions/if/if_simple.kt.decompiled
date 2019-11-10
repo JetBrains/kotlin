@@ -1,3 +1,5 @@
+// FILE: /if_simple.kt
+
 fun foo() : Int  {
     return 42
 }
@@ -5,10 +7,9 @@ fun foo() : Int  {
 fun box() : String  {
     val f : Int = foo()
     val b : Int = 50
-    if (f > foo()) {
-        return "FAIL"
-    }
-    else {
-        return "OK"
-    }
+    if  (f > foo()) {
+            return "FAIL"
+        } else {
+            return "OK"
+        }
 }

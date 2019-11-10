@@ -39,11 +39,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
         runTest("compiler/testData/decompiler/box/javaEnum.kt");
     }
 
-    @TestMetadata("javaEnum.decompiled.kt")
-    public void testJavaEnum_decompiled() throws Exception {
-        runTest("compiler/testData/decompiler/box/javaEnum.decompiled.kt");
-    }
-
     @TestMetadata("valNotValInCtorArgs.kt")
     public void testValNotValInCtorArgs() throws Exception {
         runTest("compiler/testData/decompiler/box/valNotValInCtorArgs.kt");
@@ -1019,11 +1014,6 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
                 runTest("compiler/testData/decompiler/box/functions/higher_order/apply_usage.kt");
             }
 
-            @TestMetadata("apply_usage.decompiled.kt")
-            public void testApply_usage_decompiled() throws Exception {
-                runTest("compiler/testData/decompiler/box/functions/higher_order/apply_usage.decompiled.kt");
-            }
-
             @TestMetadata("custom_lambda_arg_fun.kt")
             public void testCustom_lambda_arg_fun() throws Exception {
                 runTest("compiler/testData/decompiler/box/functions/higher_order/custom_lambda_arg_fun.kt");
@@ -1117,6 +1107,11 @@ public class IrDecompilerBlackBoxTestGenerated extends AbstractIrDecompilerBlack
 
         public void testAllFilesPresentInImports() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/decompiler/box/imports"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("deep_nesting.kt")
+        public void testDeep_nesting() throws Exception {
+            runTest("compiler/testData/decompiler/box/imports/deep_nesting.kt");
         }
 
         @TestMetadata("enumEntries_classes.kt")
