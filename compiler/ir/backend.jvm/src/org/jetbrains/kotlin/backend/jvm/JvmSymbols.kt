@@ -235,7 +235,7 @@ class JvmSymbols(
     }
 
     val suspendLambdaClass: IrClassSymbol = createClass(FqName("kotlin.coroutines.jvm.internal.SuspendLambda")) { klass ->
-        klass.superTypes += suspendFunctionInterface.typeWith()
+        klass.superTypes += suspendFunctionInterface.owner.defaultType
         klass.addConstructor().apply {
             addValueParameter("arity", irBuiltIns.intType)
             addValueParameter("completion", continuationClass.typeWith(irBuiltIns.anyNType).makeNullable())
@@ -255,7 +255,7 @@ class JvmSymbols(
     private fun generateCallableReferenceMethods(klass: IrClass) {
         klass.addFunction("getSignature", irBuiltIns.stringType, Modality.OPEN)
         klass.addFunction("getName", irBuiltIns.stringType, Modality.OPEN)
-        klass.addFunction("getOwner", irBuiltIns.kDeclarationContainerClass.typeWith(), Modality.OPEN)
+        klass.addFunction("getOwner", irBuiltIns.kDeclarationContainerClass.owner.defaultType, Modality.OPEN)
     }
 
     val functionReference: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionReference")) { klass ->
@@ -339,7 +339,7 @@ class JvmSymbols(
         createClass(FqName("kotlin.jvm.internal.$className")) { klass ->
             if (impl) {
                 klass.addConstructor().apply {
-                    addValueParameter("owner", irBuiltIns.kDeclarationContainerClass.typeWith())
+                    addValueParameter("owner", irBuiltIns.kDeclarationContainerClass.owner.defaultType)
                     addValueParameter("name", irBuiltIns.stringType)
                     addValueParameter("string", irBuiltIns.stringType)
                 }
@@ -396,29 +396,27 @@ class JvmSymbols(
         propertyReferenceClasses(PropertyReferenceKey(mutable, parameterCount, impl))
 
     val reflection: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Reflection")) { klass ->
-        // We use raw types for java.lang.Class and kotlin.reflect.KClass here for simplicity and because this is what's used
-        // at declaration site at kotlin.jvm.internal.Reflection.
-        val rawJavaLangClass = javaLangClass.typeWith()
-        val rawKClass = irBuiltIns.kClassClass.typeWith()
+        val javaLangClassType = javaLangClass.starProjectedType
+        val kClassType = irBuiltIns.kClassClass.starProjectedType
 
-        klass.addFunction("getOrCreateKotlinPackage", irBuiltIns.kDeclarationContainerClass.typeWith(), isStatic = true).apply {
-            addValueParameter("javaClass", rawJavaLangClass)
+        klass.addFunction("getOrCreateKotlinPackage", irBuiltIns.kDeclarationContainerClass.owner.defaultType, isStatic = true).apply {
+            addValueParameter("javaClass", javaLangClassType)
             addValueParameter("moduleName", irBuiltIns.stringType)
         }
 
-        klass.addFunction("getOrCreateKotlinClass", rawKClass, isStatic = true).apply {
-            addValueParameter("javaClass", rawJavaLangClass)
+        klass.addFunction("getOrCreateKotlinClass", kClassType, isStatic = true).apply {
+            addValueParameter("javaClass", javaLangClassType)
         }
 
-        klass.addFunction("getOrCreateKotlinClasses", irBuiltIns.arrayClass.typeWith(rawKClass), isStatic = true).apply {
-            addValueParameter("javaClasses", irBuiltIns.arrayClass.typeWith(rawJavaLangClass))
+        klass.addFunction("getOrCreateKotlinClasses", irBuiltIns.arrayClass.typeWith(kClassType), isStatic = true).apply {
+            addValueParameter("javaClasses", irBuiltIns.arrayClass.typeWith(javaLangClassType))
         }
 
         for (mutable in listOf(false, true)) {
             for (n in 0..2) {
                 val functionName = (if (mutable) "mutableProperty" else "property") + n
-                klass.addFunction(functionName, irBuiltIns.getKPropertyClass(mutable, n).typeWith(), isStatic = true).apply {
-                    addValueParameter("p", getPropertyReferenceClass(mutable, n, impl = false).typeWith())
+                klass.addFunction(functionName, irBuiltIns.getKPropertyClass(mutable, n).starProjectedType, isStatic = true).apply {
+                    addValueParameter("p", getPropertyReferenceClass(mutable, n, impl = false).owner.defaultType)
                 }
             }
         }
@@ -459,14 +457,15 @@ class JvmSymbols(
         klass.origin = JvmLoweredDeclarationOrigin.TO_ARRAY
 
         val arrayType = irBuiltIns.arrayClass.typeWith(irBuiltIns.anyNType)
+        val collectionType = irBuiltIns.collectionClass.starProjectedType
         klass.addFunction("toArray", arrayType, isStatic = true).apply {
             origin = JvmLoweredDeclarationOrigin.TO_ARRAY
-            addValueParameter("collection", irBuiltIns.collectionClass.owner.typeWith(), JvmLoweredDeclarationOrigin.TO_ARRAY)
+            addValueParameter("collection", collectionType, JvmLoweredDeclarationOrigin.TO_ARRAY)
         }
         klass.addFunction("toArray", arrayType, isStatic = true).apply {
             origin = JvmLoweredDeclarationOrigin.TO_ARRAY
-            addValueParameter("collection", irBuiltIns.collectionClass.owner.typeWith(), JvmLoweredDeclarationOrigin.TO_ARRAY)
-            addValueParameter("array", arrayType, JvmLoweredDeclarationOrigin.TO_ARRAY)
+            addValueParameter("collection", collectionType, JvmLoweredDeclarationOrigin.TO_ARRAY)
+            addValueParameter("array", arrayType.makeNullable(), JvmLoweredDeclarationOrigin.TO_ARRAY)
         }
     }
 
@@ -482,8 +481,8 @@ class JvmSymbols(
         }.apply {
             parent = kotlinJvmPackage
             addGetter().apply {
-                addExtensionReceiver(irBuiltIns.kClassClass.typeWith())
-                returnType = javaLangClass.typeWith()
+                addExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
+                returnType = javaLangClass.starProjectedType
             }
         }.symbol
 
@@ -525,7 +524,7 @@ class JvmSymbols(
                 addValueParameter("element", irType)
             }
 
-            klass.addFunction("toArray", irBuiltIns.primitiveArrayForType.getValue(irType).owner.typeWith())
+            klass.addFunction("toArray", irBuiltIns.primitiveArrayForType.getValue(irType).owner.defaultType)
         }
     }
 

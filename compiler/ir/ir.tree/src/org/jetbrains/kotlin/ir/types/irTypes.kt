@@ -104,6 +104,17 @@ val IrTypeParameter.defaultType: IrType
         annotations = emptyList()
     )
 
+val IrClassSymbol.starProjectedType: IrSimpleType
+    get() = IrSimpleTypeImpl(
+        this,
+        hasQuestionMark = false,
+        arguments = owner.typeParameters.map { IrStarProjectionImpl },
+        annotations = emptyList()
+    )
+
+fun IrClassifierSymbol.typeWithParameters(parameters: List<IrTypeParameter>): IrSimpleType =
+    typeWith(parameters.map { it.defaultType })
+
 fun IrClassifierSymbol.typeWith(vararg arguments: IrType): IrSimpleType = typeWith(arguments.toList())
 
 fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
