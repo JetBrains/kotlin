@@ -282,10 +282,6 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
     }
 }
 
-internal class GradleSyncState {
-    var isSyncInProgress: Boolean = false
-}
-
 class GradleKotlinScriptDefinitionFromAnnotatedTemplate(
     base: KotlinScriptDefinitionFromAnnotatedTemplate
 ) : KotlinScriptDefinitionFromAnnotatedTemplate(base.template, base.environment, base.templateClasspath) {

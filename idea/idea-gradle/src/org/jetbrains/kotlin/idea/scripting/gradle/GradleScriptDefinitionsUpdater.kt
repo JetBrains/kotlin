@@ -35,3 +35,7 @@ class GradleScriptDefinitionsUpdater : ExternalSystemTaskNotificationListenerAda
         }
     }
 }
+
+internal class GradleSyncState {
+    var isSyncInProgress: Boolean = false
+}
