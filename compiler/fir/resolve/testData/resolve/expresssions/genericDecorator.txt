@@ -1,0 +1,11 @@
+FILE: test.kt
+    public final class MyDecorator : R|Decorator<LookupElement>| {
+        public constructor(): R|MyDecorator| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun getLookupString(): R|kotlin/String| {
+            ^getLookupString R|/Decorator.delegate|.R|/LookupElement.lookupString|
+        }
+
+    }
