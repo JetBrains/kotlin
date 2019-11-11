@@ -1,0 +1,1 @@
+<caret>fun foo(): Int = 1
