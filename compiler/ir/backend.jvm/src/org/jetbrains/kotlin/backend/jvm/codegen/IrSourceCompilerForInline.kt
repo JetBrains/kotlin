@@ -58,11 +58,11 @@ class IrSourceCompilerForInline(
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
-            //TODO: support nested inline calls
+            val root = generateSequence(codegen) { it.inlinedInto }.last()
             return InlineCallSiteInfo(
-                codegen.classCodegen.type.internalName,
-                codegen.signature.asmMethod.name,
-                codegen.signature.asmMethod.descriptor,
+                root.classCodegen.type.internalName,
+                root.signature.asmMethod.name,
+                root.signature.asmMethod.descriptor,
                 //compilationContextFunctionDescriptor.isInlineOrInsideInline()
                 false,
                 compilationContextFunctionDescriptor.isSuspend

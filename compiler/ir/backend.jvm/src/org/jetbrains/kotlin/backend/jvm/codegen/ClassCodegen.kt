@@ -52,6 +52,7 @@ open class ClassCodegen protected constructor(
     internal val irClass: IrClass,
     val context: JvmBackendContext,
     private val parentClassCodegen: ClassCodegen? = null,
+    private val parentFunction: IrFunction? = null,
     private val withinInline: Boolean = false
 ) : InnerClassConsumer {
     private val innerClasses = mutableListOf<IrClass>()
@@ -303,8 +304,8 @@ open class ClassCodegen protected constructor(
         }
     }
 
-    fun generateLocalClass(klass: IrClass, withinInline: Boolean): ReifiedTypeParametersUsages {
-        return ClassCodegen(klass, context, this, withinInline = withinInline || this.withinInline).generate()
+    fun generateLocalClass(klass: IrClass, parentFunction: IrFunction): ReifiedTypeParametersUsages {
+        return ClassCodegen(klass, context, this, parentFunction, withinInline = withinInline || parentFunction.isInline).generate()
     }
 
     private fun generateField(field: IrField) {
@@ -404,12 +405,9 @@ open class ClassCodegen protected constructor(
         // or constructor, the name and type of the function is recorded as well.
         if (parentClassCodegen != null) {
             val outerClassName = parentClassCodegen.type.internalName
-            // TODO: Since the class could have been reparented in lowerings, this could
-            // be a class instead of the actual function that the class is nested inside
-            // in the source.
-            val containingDeclaration = irClass.symbol.owner.parent
-            if (containingDeclaration is IrFunction) {
-                val method = methodSignatureMapper.mapAsmMethod(containingDeclaration)
+            // TODO: LocalDeclarationsLowering could have moved this class out of its enclosing method.
+            if (parentFunction != null) {
+                val method = methodSignatureMapper.mapAsmMethod(parentFunction)
                 visitor.visitOuterClass(outerClassName, method.name, method.descriptor)
             } else if (irClass.isAnonymousObject) {
                 visitor.visitOuterClass(outerClassName, null, null)
