@@ -6,7 +6,6 @@ package com.intellij.openapi.externalSystem.util
 import com.intellij.lang.LanguageParserDefinitions
 import com.intellij.lang.ParserDefinition
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.fileTypes.FileType
@@ -19,13 +18,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.tree.TokenSet
 import java.util.zip.CRC32
 
-fun Document.calculateCrc(project: Project, file: VirtualFile) =
-  when (modificationStamp) {
-    file.modificationStamp -> file.calculateCrc(project)
-    else -> findOrCalculateCrc(modificationStamp) {
-      doCalculateCrc(project, file.fileType)
-    }
+fun Document.calculateCrc(project: Project, file: VirtualFile): Long {
+  file.getCachedCrc(modificationStamp)?.let { return it }
+  return findOrCalculateCrc(modificationStamp) {
+    doCalculateCrc(project, file.fileType)
   }
+}
 
 fun VirtualFile.calculateCrc(project: Project) =
   findOrCalculateCrc(modificationStamp) {
@@ -92,8 +90,6 @@ private fun UserDataHolder.getCachedCrc(modificationStamp: Long): Long? {
 private fun UserDataHolder.setCachedCrc(value: Long, modificationStamp: Long) {
   putUserData(CRC_CACHE, CrcCache(value, modificationStamp))
 }
-
-private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
 
 private val CRC_CACHE = Key<CrcCache>("com.intellij.openapi.externalSystem.util.CRC_CACHE")
 
