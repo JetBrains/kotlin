@@ -20446,6 +20446,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 public void testMultipleModules() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/typeOf/js/multipleModules.kt");
                 }
+
+                @TestMetadata("typeOfReifiedUnit.kt")
+                public void testTypeOfReifiedUnit() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/typeOf/js/typeOfReifiedUnit.kt");
+                }
             }
 
             @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect")
