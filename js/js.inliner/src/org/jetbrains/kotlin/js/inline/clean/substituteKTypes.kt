@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.js.backend.ast.metadata.kType
 import org.jetbrains.kotlin.js.backend.ast.metadata.specialFunction
+import org.jetbrains.kotlin.js.backend.ast.metadata.staticRef
 
 // Replaces getReifiedTypeParameterKType(<Class Constructor>) with its KType
 fun substituteKTypes(root: JsNode) {
@@ -17,10 +18,25 @@ fun substituteKTypes(root: JsNode) {
             val qualifier = invocation.qualifier as? JsNameRef ?: return
             if (qualifier.name?.specialFunction != SpecialFunction.GET_REIFIED_TYPE_PARAMETER_KTYPE) return
             val firstArg = invocation.arguments.first()
-            firstArg.kType?.let {
+            getTransitiveKType(firstArg)?.let {
                 ctx.replaceMe(it)
             }
         }
     }
     visitor.accept(root)
+}
+
+// Get KType from expression or from staticRef of referenced name
+fun getTransitiveKType(e: JsExpression): JsExpression? {
+    return when {
+        e.kType != null ->
+            e.kType
+
+        e is JsNameRef -> {
+            val staticRef = e.name?.staticRef as? JsExpression ?: return null
+            getTransitiveKType(staticRef)
+        }
+
+        else -> null
+    }
 }
