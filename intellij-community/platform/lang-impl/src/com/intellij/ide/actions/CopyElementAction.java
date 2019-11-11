@@ -30,12 +30,6 @@ import com.intellij.refactoring.copy.CopyHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class CopyElementAction extends AnAction {
-
-  @Override
-  public boolean startInTransaction() {
-    return true;
-  }
-
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final DataContext dataContext = e.getDataContext();

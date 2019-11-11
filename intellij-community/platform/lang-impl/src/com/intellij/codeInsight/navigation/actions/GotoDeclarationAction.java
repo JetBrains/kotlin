@@ -294,11 +294,6 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
   }
 
   @Override
-  public boolean startInTransaction() {
-    return true;
-  }
-
-  @Override
   public boolean startInWriteAction() {
     return false;
   }

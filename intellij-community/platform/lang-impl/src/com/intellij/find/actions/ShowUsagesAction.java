@@ -130,11 +130,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
   }
 
   @Override
-  public boolean startInTransaction() {
-    return true;
-  }
-
-  @Override
   public void update(@NotNull AnActionEvent e) {
     FindUsagesInFileAction.updateFindUsagesAction(e);
 
@@ -486,11 +481,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
           cancel(popup[0]);
           showDialogAndFindUsages(handler, popupPosition, editor, maxUsages, myWidth);
         }
-
-        @Override
-        public boolean startInTransaction() {
-          return true;
-        }
       }.registerCustomShortcutSet(new CustomShortcutSet(shortcut.getFirstKeyStroke()), table);
     }
     shortcut = getShowUsagesShortcut();
@@ -500,11 +490,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
         public void actionPerformed(@NotNull AnActionEvent e) {
           cancel(popup[0]);
           searchEverywhere(options, handler, editor, popupPosition, maxUsages);
-        }
-
-        @Override
-        public boolean startInTransaction() {
-          return true;
         }
       }.registerCustomShortcutSet(new CustomShortcutSet(shortcut.getFirstKeyStroke()), table);
     }
@@ -571,11 +556,6 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
         {
           AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_USAGES);
           setShortcutSet(action.getShortcutSet());
-        }
-
-        @Override
-        public boolean startInTransaction() {
-          return true;
         }
 
         @Override

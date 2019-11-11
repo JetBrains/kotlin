@@ -85,11 +85,6 @@ public abstract class LfeBaseProxyAction extends AnAction {
   }
 
   @Override
-  public boolean startInTransaction() {
-    return originalAction.startInTransaction();
-  }
-
-  @Override
   public String toString() {
     return originalAction.toString();
   }
