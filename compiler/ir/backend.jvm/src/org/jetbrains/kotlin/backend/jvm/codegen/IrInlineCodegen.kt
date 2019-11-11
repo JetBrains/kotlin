@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
+import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -149,6 +150,8 @@ class IrExpressionLambdaImpl(
     override val isBoundCallableReference: Boolean,
     override val isExtensionLambda: Boolean
 ) : ExpressionLambda(isCrossInline), IrExpressionLambda {
+
+    override val isSuspend: Boolean = function.isSuspend
 
     override fun isReturnFromMe(labelName: String): Boolean {
         return false //always false

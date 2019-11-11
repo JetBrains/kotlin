@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isReleaseCoroutines
+import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -40,6 +41,8 @@ interface FunctionalArgument
 abstract class LambdaInfo(@JvmField val isCrossInline: Boolean) : FunctionalArgument, ReturnLabelOwner {
 
     abstract val isBoundCallableReference: Boolean
+
+    abstract val isSuspend: Boolean
 
     abstract val lambdaClassType: Type
 
@@ -107,6 +110,8 @@ class DefaultLambda(
 
     var originalBoundReceiverType: Type? = null
         private set
+
+    override val isSuspend = parameterDescriptor.isSuspendLambda
 
     override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {
         val classReader = buildClassReaderByInternalName(sourceCompiler.state, lambdaClassType.internalName)
@@ -218,6 +223,8 @@ class PsiExpressionLambda(
 
     private val labels: Set<String>
 
+    override val isSuspend: Boolean
+
     var closure: CalculatedClosure
         private set
 
@@ -253,6 +260,7 @@ class PsiExpressionLambda(
 
         labels = InlineCodegen.getDeclarationLabels(expression, invokeMethodDescriptor)
         invokeMethod = typeMapper.mapAsmMethod(invokeMethodDescriptor)
+        isSuspend = invokeMethodDescriptor.isSuspend
     }
 
     override val capturedVars: List<CapturedParamDesc> by lazy {

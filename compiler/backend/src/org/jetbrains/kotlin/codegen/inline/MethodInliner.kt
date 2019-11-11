@@ -234,7 +234,7 @@ class MethodInliner(
                     // we should create additional parameter for continuation.
                     var coroutineDesc = desc
                     val actualInvokeDescriptor: FunctionDescriptor
-                    if (info.invokeMethodDescriptor.isSuspend) {
+                    if (info.isSuspend) {
                         actualInvokeDescriptor = (info as ExpressionLambda).getInlineSuspendLambdaViewDescriptor()
                         val parametersSize = actualInvokeDescriptor.valueParameters.size +
                                 (if (actualInvokeDescriptor.extensionReceiverParameter != null) 1 else 0)
@@ -700,7 +700,7 @@ class MethodInliner(
     //   3) it is passed to invoke of lambda
     private fun replaceContinuationAccessesWithFakeContinuationsIfNeeded(processingNode: MethodNode) {
         val lambdaInfo = inliningContext.lambdaInfo ?: return
-        if (!lambdaInfo.invokeMethodDescriptor.isSuspend) return
+        if (!lambdaInfo.isSuspend) return
         val sources = analyzeMethodNodeBeforeInline(processingNode)
         val cfg = ControlFlowGraph.build(processingNode)
         val aload0s = processingNode.instructions.asSequence().filter { it.opcode == Opcodes.ALOAD && it.safeAs<VarInsnNode>()?.`var` == 0 }
