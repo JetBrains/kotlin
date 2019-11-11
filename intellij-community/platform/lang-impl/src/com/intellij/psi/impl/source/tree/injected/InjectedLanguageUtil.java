@@ -265,7 +265,7 @@ public class InjectedLanguageUtil {
   }
 
   @NotNull
-  public static Editor getInjectedEditorForInjectedFile(@NotNull Editor hostEditor, @NotNull Caret hostCaret, @Nullable final PsiFile injectedFile) {
+  private static Editor getInjectedEditorForInjectedFile(@NotNull Editor hostEditor, @NotNull Caret hostCaret, @Nullable final PsiFile injectedFile) {
     if (injectedFile == null || hostEditor instanceof EditorWindow || hostEditor.isDisposed()) return hostEditor;
     Project project = hostEditor.getProject();
     if (project == null) project = injectedFile.getProject();
