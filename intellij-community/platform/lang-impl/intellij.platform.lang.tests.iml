@@ -27,7 +27,7 @@
     <orderEntry type="module" module-name="intellij.platform.structureView.impl" exported="" />
     <orderEntry type="library" name="commons-logging" level="project" />
     <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
-    <orderEntry type="library" scope="TEST" name="Mocks" level="project" />
+    <orderEntry type="library" scope="TEST" name="jmock" level="project" />
     <orderEntry type="library" scope="TEST" name="flexmark" level="project" />
     <orderEntry type="module" module-name="intellij.platform.testExtensions" scope="TEST" />
   </component>
