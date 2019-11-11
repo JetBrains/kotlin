@@ -26,7 +26,8 @@ fun IrClassBuilder.buildClass(): IrClass {
         startOffset, endOffset, origin,
         IrClassSymbolImpl(wrappedDescriptor),
         name, kind, visibility, modality,
-        isCompanion = isCompanion, isInner = isInner, isData = isData, isExternal = isExternal, isInline = isInline, isExpect = isExpect
+        isCompanion = isCompanion, isInner = isInner, isData = isData, isExternal = isExternal,
+        isInline = isInline, isExpect = isExpect, isFun = isFun
     ).also {
         wrappedDescriptor.bind(it)
     }

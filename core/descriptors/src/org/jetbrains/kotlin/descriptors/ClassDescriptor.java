@@ -70,6 +70,8 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
 
     boolean isInline();
 
+    boolean isFun();
+
     @NotNull
     ReceiverParameterDescriptor getThisAsReceiverParameter();
 

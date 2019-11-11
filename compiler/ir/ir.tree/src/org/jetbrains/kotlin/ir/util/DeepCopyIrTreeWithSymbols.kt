@@ -147,7 +147,8 @@ open class DeepCopyIrTreeWithSymbols(
             declaration.isData,
             declaration.isExternal,
             declaration.isInline,
-            declaration.isExpect
+            declaration.isExpect,
+            declaration.isFun
         ).apply {
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)

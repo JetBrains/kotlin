@@ -97,6 +97,7 @@ class LazyJavaClassDescriptor(
     override fun isCompanionObject() = false
     override fun isExpect() = false
     override fun isActual() = false
+    override fun isFun() = false
 
     private val typeConstructor = LazyJavaClassTypeConstructor()
     override fun getTypeConstructor(): TypeConstructor = typeConstructor

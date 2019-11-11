@@ -153,4 +153,13 @@ public interface IrClassOrBuilder extends
    * <code>required bool is_expect = 15;</code>
    */
   boolean getIsExpect();
+
+  /**
+   * <code>required bool is_fun = 16;</code>
+   */
+  boolean hasIsFun();
+  /**
+   * <code>required bool is_fun = 16;</code>
+   */
+  boolean getIsFun();
 }

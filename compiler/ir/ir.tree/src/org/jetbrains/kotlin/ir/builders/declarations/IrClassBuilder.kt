@@ -19,6 +19,7 @@ class IrClassBuilder : IrDeclarationBuilder() {
     var isExternal: Boolean = false
     var isInline: Boolean = false
     var isExpect: Boolean = false
+    var isFun: Boolean = false
 
     fun updateFrom(from: IrClass) {
         super.updateFrom(from)
@@ -31,5 +32,6 @@ class IrClassBuilder : IrDeclarationBuilder() {
         isExternal = from.isExternal
         isInline = from.isInline
         isExpect = from.isExpect
+        isFun = from.isFun
     }
 }

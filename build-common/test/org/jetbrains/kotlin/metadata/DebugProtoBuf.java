@@ -10100,6 +10100,7 @@ public final class DebugProtoBuf {
      *isExternal
      *isExpect
      *isInline
+     *isFun
      * </pre>
      */
     boolean hasFlags();
@@ -10116,6 +10117,7 @@ public final class DebugProtoBuf {
      *isExternal
      *isExpect
      *isInline
+     *isFun
      * </pre>
      */
     int getFlags();
@@ -10853,6 +10855,7 @@ public final class DebugProtoBuf {
      *isExternal
      *isExpect
      *isInline
+     *isFun
      * </pre>
      */
     public boolean hasFlags() {
@@ -10871,6 +10874,7 @@ public final class DebugProtoBuf {
      *isExternal
      *isExpect
      *isInline
+     *isFun
      * </pre>
      */
     public int getFlags() {
@@ -12242,6 +12246,7 @@ public final class DebugProtoBuf {
        *isExternal
        *isExpect
        *isInline
+       *isFun
        * </pre>
        */
       public boolean hasFlags() {
@@ -12260,6 +12265,7 @@ public final class DebugProtoBuf {
        *isExternal
        *isExpect
        *isInline
+       *isFun
        * </pre>
        */
       public int getFlags() {
@@ -12278,6 +12284,7 @@ public final class DebugProtoBuf {
        *isExternal
        *isExpect
        *isInline
+       *isFun
        * </pre>
        */
       public Builder setFlags(int value) {
@@ -12299,6 +12306,7 @@ public final class DebugProtoBuf {
        *isExternal
        *isExpect
        *isInline
+       *isFun
        * </pre>
        */
       public Builder clearFlags() {
