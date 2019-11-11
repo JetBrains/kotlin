@@ -345,6 +345,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/nestedInlineArguments.kt");
         }
 
+        @TestMetadata("nothing.kt")
+        public void testNothing() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/nothing.kt");
+        }
+
         @TestMetadata("onClassHeader.kt")
         public void testOnClassHeader() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/onClassHeader.kt");
