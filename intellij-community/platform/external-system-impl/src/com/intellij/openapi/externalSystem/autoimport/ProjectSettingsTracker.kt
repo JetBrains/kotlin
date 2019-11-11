@@ -6,17 +6,33 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.openapi.editor.event.DocumentListener
+import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType
+import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.EXTERNAL
+import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
+import com.intellij.openapi.externalSystem.util.CompoundParallelOperationTrace
+import com.intellij.openapi.externalSystem.util.calculateCrc
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import com.intellij.psi.ExternalChangeAction
 import com.intellij.util.LocalTimeCounter.currentTime
 import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.annotations.ApiStatus
 import java.io.File
+import java.util.concurrent.atomic.AtomicReference
 
 @ApiStatus.Internal
-abstract class ProjectSettingsTracker(
+class ProjectSettingsTracker(
+  private val project: Project,
   private val projectTracker: ProjectTracker,
   private val projectAware: ExternalSystemProjectAware,
   private val parentDisposable: Disposable
@@ -24,16 +40,31 @@ abstract class ProjectSettingsTracker(
 
   private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
 
-  private val status = ProjectStatus(debugName = "${this::class.java.simpleName} (${projectAware.projectId.readableName})")
+  private val status = ProjectStatus(debugName = projectAware.projectId.readableName)
+
+  private val modificationType = AtomicReference<ModificationType?>(null)
 
   @Volatile
   private var settingsFilesCRC: Map<String, Long> = emptyMap()
 
-  protected val cachedSettingsFilesCRC get() = settingsFilesCRC
+  private fun calculateSettingsFilesCRC(): Map<String, Long> {
+    val localFileSystem = LocalFileSystem.getInstance()
+    return projectAware.settingsFiles
+      .mapNotNull { localFileSystem.findFileByPath(it) }
+      .map { it.path to calculateCrc(it) }
+      .toMap()
+  }
 
-  protected abstract fun calculateSettingsFilesCRC(): Map<String, Long>
+  private fun calculateCrc(file: VirtualFile): Long {
+    val fileDocumentManager = FileDocumentManager.getInstance()
+    val document = fileDocumentManager.getCachedDocument(file)
+    if (document != null) return document.calculateCrc(project, file)
+    return file.calculateCrc(project)
+  }
 
   fun isUpToDate() = status.isUpToDate()
+
+  fun getModificationType() = modificationType.get()
 
   private fun hasChanges(): Boolean {
     val oldSettingsFilesCRC = settingsFilesCRC
@@ -51,6 +82,7 @@ abstract class ProjectSettingsTracker(
     submitSettingsFilesRefresh {
       submitNonBlockingReadAction {
         settingsFilesCRC = calculateSettingsFilesCRC()
+        modificationType.set(null)
         status.markSynchronized(currentTime())
         projectTracker.scheduleProjectNotificationUpdate()
       }
@@ -60,6 +92,7 @@ abstract class ProjectSettingsTracker(
   fun refreshChanges() {
     submitSettingsFilesRefresh {
       submitNonBlockingReadAction {
+        modificationType.set(null)
         when (hasChanges()) {
           true -> status.markDirty(currentTime())
           else -> status.markReverted(currentTime())
@@ -68,7 +101,6 @@ abstract class ProjectSettingsTracker(
       }
     }
   }
-
 
   fun getState() = State(settingsFilesCRC.toMap())
 
@@ -108,9 +140,78 @@ abstract class ProjectSettingsTracker(
     }
   }
 
+  init {
+    val settingsListener = ProjectDocumentSettingsListener()
+    val eventMulticaster = EditorFactory.getInstance().eventMulticaster
+    eventMulticaster.addDocumentListener(settingsListener, parentDisposable)
+  }
+
+  init {
+    val settingsListener = ProjectVirtualFileSettingsListener()
+    val fileManager = VirtualFileManager.getInstance()
+    fileManager.addAsyncFileListener(settingsListener, parentDisposable)
+  }
+
   data class State(var settingsFiles: Map<String, Long> = emptyMap())
 
-  protected inner class ProjectSettingsListener {
+  private inner class ProjectVirtualFileSettingsListener : AsyncFileChangeListenerBase() {
+    private val delegate = ProjectSettingsListener()
+
+    override fun isRelevant(path: String) = delegate.isRelevant(path)
+
+    override fun updateFile(file: VirtualFile, event: VFileEvent) {
+      if (event.isFromSave) return
+      val modificationType = if (event.isFromRefresh) EXTERNAL else INTERNAL
+      delegate.updateFile(file.path, file.modificationStamp, modificationType)
+    }
+
+    override fun init() = delegate.init()
+
+    override fun apply() = delegate.apply()
+  }
+
+  private inner class ProjectDocumentSettingsListener : DocumentListener {
+    private val bulkUpdateOperation = CompoundParallelOperationTrace<Document>()
+    private val delegate = ProjectSettingsListener()
+
+    private fun isExternalModification() =
+      ApplicationManager.getApplication().hasWriteAction(ExternalChangeAction::class.java)
+
+    override fun documentChanged(event: DocumentEvent) {
+      if (isExternalModification()) return
+      val document = event.document
+      val fileDocumentManager = FileDocumentManager.getInstance()
+      val file = fileDocumentManager.getFile(document) ?: return
+      when (bulkUpdateOperation.isOperationCompleted()) {
+        true -> {
+          delegate.init()
+          if (!delegate.isRelevant(file.path)) return
+          delegate.updateFile(file.path, document.modificationStamp, INTERNAL)
+          delegate.apply()
+        }
+        else -> {
+          if (!delegate.isRelevant(file.path)) return
+          delegate.updateFile(file.path, document.modificationStamp, INTERNAL)
+        }
+      }
+    }
+
+    override fun bulkUpdateStarting(document: Document) {
+      bulkUpdateOperation.startOperation()
+      bulkUpdateOperation.startTask(document)
+    }
+
+    override fun bulkUpdateFinished(document: Document) {
+      bulkUpdateOperation.finishTask(document)
+    }
+
+    init {
+      bulkUpdateOperation.beforeOperation { delegate.init() }
+      bulkUpdateOperation.afterOperation { delegate.apply() }
+    }
+  }
+
+  private inner class ProjectSettingsListener {
     @Volatile
     private var hasRelevantChanges = false
 
@@ -123,21 +224,25 @@ abstract class ProjectSettingsTracker(
       return isRelevant
     }
 
-    fun updateFile(path: String, modificationStamp: Long) {
+    fun updateFile(path: String, modificationStamp: Long, type: ModificationType) {
       hasRelevantChanges = true
       logModificationAsDebug(path, modificationStamp)
+      modificationType.updateAndGet { if (it == INTERNAL) INTERNAL else type }
       status.markModified(currentTime())
     }
 
     fun init() {
       hasRelevantChanges = false
-      settingsFilesSnapshot = projectAware.settingsFiles + cachedSettingsFilesCRC.keys
+      settingsFilesSnapshot = projectAware.settingsFiles + settingsFilesCRC.keys
     }
 
     fun apply() {
       if (hasRelevantChanges) {
         submitNonBlockingReadAction {
-          if (!hasChanges()) status.markReverted(currentTime())
+          if (!hasChanges()) {
+            modificationType.set(null)
+            status.markReverted(currentTime())
+          }
           projectTracker.scheduleChangeProcessing()
         }
       }

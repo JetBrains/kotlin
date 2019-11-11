@@ -11,6 +11,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros.CACHE_FILE
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.SUCCESS
+import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.*
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
 import com.intellij.openapi.externalSystem.util.CompoundParallelOperationTrace
 import com.intellij.openapi.externalSystem.util.properties.BooleanProperty
@@ -50,8 +51,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
       override fun beforeProjectRefresh() {
         projectRefreshOperation.startOperation(id)
-        projectData.externalSettingsTracker.applyChanges()
-        projectData.internalSettingsTracker.applyChanges()
+        projectData.settingsTracker.applyChanges()
         projectData.status.markSynchronized(currentTime())
       }
 
@@ -84,8 +84,8 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     dispatcher.queue(object : Update("notify") {
       override fun run() {
         when (getModificationType()) {
-          ModificationType.INTERNAL -> updateProjectNotification()
-          ModificationType.EXTERNAL -> refreshProject()
+          INTERNAL -> updateProjectNotification()
+          EXTERNAL -> refreshProject()
           null -> updateProjectNotification()
         }
       }
@@ -126,8 +126,8 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
       .mapNotNull { it.getModificationType() }
       .toSet()
     return when {
-      ModificationType.INTERNAL in owners -> ModificationType.INTERNAL
-      ModificationType.EXTERNAL in owners -> ModificationType.EXTERNAL
+      INTERNAL in owners -> INTERNAL
+      EXTERNAL in owners -> EXTERNAL
       else -> null
     }
   }
@@ -136,9 +136,8 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     val projectId = projectAware.projectId
     val projectStatus = ProjectStatus(debugName = projectId.readableName)
     val parentDisposable = Disposer.newDisposable(projectId.readableName)
-    val externalSettingsTracker = ProjectExternalSettingsTracker(project, this, projectAware, parentDisposable)
-    val internalSettingsTracker = ProjectInternalSettingsTracker(project, this, projectAware, parentDisposable)
-    val projectData = ProjectData(projectStatus, projectAware, externalSettingsTracker, internalSettingsTracker, parentDisposable)
+    val settingsTracker = ProjectSettingsTracker(project, this, projectAware, parentDisposable)
+    val projectData = ProjectData(projectStatus, projectAware, settingsTracker, parentDisposable)
     val notificationAware = ProjectNotificationAware.getInstance(project)
 
     projectDataMap[projectId] = projectData
@@ -186,17 +185,14 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
   private fun loadState(projectId: ExternalSystemProjectId, projectData: ProjectData) {
     val projectState = projectStates.remove(projectId.getState())
-    val internalSettingsTrackerState = projectState?.externalSettingsTracker
-    val externalSettingsTrackerState = projectState?.internalSettingsTracker
-    if (internalSettingsTrackerState == null || externalSettingsTrackerState == null || projectState.isDirty) {
+    val settingsTrackerState = projectState?.settingsTracker
+    if (settingsTrackerState == null || projectState.isDirty) {
       projectData.status.markDirty(currentTime())
       scheduleProjectRefresh()
       return
     }
-    projectData.externalSettingsTracker.loadState(internalSettingsTrackerState)
-    projectData.internalSettingsTracker.loadState(externalSettingsTrackerState)
-    projectData.externalSettingsTracker.refreshChanges()
-    projectData.internalSettingsTracker.refreshChanges()
+    projectData.settingsTracker.loadState(settingsTrackerState)
+    projectData.settingsTracker.refreshChanges()
   }
 
   fun initialize() = initializationProperty.set()
@@ -211,8 +207,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   private fun reset() {
     LOG.debug("Reset project tracker")
     projectDataMap.values.forEach {
-      it.externalSettingsTracker.applyChanges()
-      it.internalSettingsTracker.applyChanges()
+      it.settingsTracker.applyChanges()
       it.status.markSynchronized(currentTime())
     }
   }
@@ -235,39 +230,26 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     }
   }
 
-  private fun ProjectData.getState() = State.Project(
-    status.isDirty(),
-    externalSettingsTracker.getState(),
-    internalSettingsTracker.getState()
-  )
+  private fun ProjectData.getState() = State.Project(status.isDirty(), settingsTracker.getState())
 
   private fun ExternalSystemProjectId.getState() = State.Id(systemId.id, externalProjectPath)
 
   private data class ProjectData(
     val status: ProjectStatus,
     val projectAware: ExternalSystemProjectAware,
-    val externalSettingsTracker: ProjectExternalSettingsTracker,
-    val internalSettingsTracker: ProjectInternalSettingsTracker,
+    val settingsTracker: ProjectSettingsTracker,
     val parentDisposable: Disposable
   ) {
-    fun isUpToDate() =
-      status.isUpToDate() &&
-      internalSettingsTracker.isUpToDate() &&
-      externalSettingsTracker.isUpToDate()
+    fun isUpToDate() = status.isUpToDate() && settingsTracker.isUpToDate()
 
-    fun getModificationType() = when {
-      !internalSettingsTracker.isUpToDate() -> ModificationType.INTERNAL
-      !externalSettingsTracker.isUpToDate() -> ModificationType.EXTERNAL
-      else -> null
-    }
+    fun getModificationType() = settingsTracker.getModificationType()
   }
 
   data class State(var projectSettingsTrackerStates: Map<Id, Project> = emptyMap()) {
     data class Id(var systemId: String? = null, var externalProjectPath: String? = null)
     data class Project(
       var isDirty: Boolean = false,
-      var externalSettingsTracker: ProjectSettingsTracker.State? = null,
-      var internalSettingsTracker: ProjectSettingsTracker.State? = null
+      var settingsTracker: ProjectSettingsTracker.State? = null
     )
   }
 
