@@ -856,7 +856,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                         isNullable,
                         unwrappedElement.receiverTypeReference.convertSafe(),
                         // TODO: probably implicit type should not be here
-                        unwrappedElement.returnTypeReference.toFirOrImplicitType()
+                        unwrappedElement.returnTypeReference.toFirOrErrorType()
                     )
                     for (valueParameter in unwrappedElement.parameters) {
                         functionType.valueParameters += valueParameter.convert<FirValueParameter>()

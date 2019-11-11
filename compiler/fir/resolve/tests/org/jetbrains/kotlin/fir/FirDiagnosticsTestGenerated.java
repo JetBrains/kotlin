@@ -240,6 +240,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/arguments/fieldPlusAssign.kt");
         }
 
+        @TestMetadata("incorrectFunctionalType.kt")
+        public void testIncorrectFunctionalType() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/incorrectFunctionalType.kt");
+        }
+
         @TestMetadata("invoke.kt")
         public void testInvoke() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/invoke.kt");
