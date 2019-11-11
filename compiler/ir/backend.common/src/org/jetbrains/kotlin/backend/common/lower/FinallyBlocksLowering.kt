@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol

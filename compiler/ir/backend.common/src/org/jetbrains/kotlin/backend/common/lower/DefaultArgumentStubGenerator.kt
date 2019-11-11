@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol

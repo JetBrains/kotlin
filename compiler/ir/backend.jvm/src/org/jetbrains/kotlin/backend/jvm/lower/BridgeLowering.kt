@@ -10,9 +10,6 @@ import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.findAllReachableDeclarations
 import org.jetbrains.kotlin.backend.common.bridges.findConcreteSuperDeclaration
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedReceiverParameterDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
 import org.jetbrains.kotlin.backend.common.lower.allOverridden
@@ -31,6 +28,9 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl

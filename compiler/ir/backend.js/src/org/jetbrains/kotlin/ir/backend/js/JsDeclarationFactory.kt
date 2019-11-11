@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.js
 
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -19,6 +17,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType

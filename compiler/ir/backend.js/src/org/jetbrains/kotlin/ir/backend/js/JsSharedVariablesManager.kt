@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -21,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable

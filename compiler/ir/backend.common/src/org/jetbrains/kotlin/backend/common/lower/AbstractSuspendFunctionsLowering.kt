@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -21,6 +17,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
