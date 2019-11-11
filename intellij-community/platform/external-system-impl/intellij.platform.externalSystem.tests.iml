@@ -15,7 +15,7 @@
     <orderEntry type="module" module-name="intellij.platform.objectSerializer" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.testExtensions" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.testFramework" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.configurationStore.impl" scope="TEST" />
+    <orderEntry type="module" module-name="intellij.platform.configurationStore.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.compiler.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.compiler.impl" scope="TEST" />
     <orderEntry type="library" name="kotlin-reflect" level="project" />

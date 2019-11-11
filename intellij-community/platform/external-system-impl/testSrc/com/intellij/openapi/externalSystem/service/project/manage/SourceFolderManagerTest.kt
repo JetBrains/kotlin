@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.manage
 
-import com.intellij.configurationStore.contentRootUrls
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
@@ -28,7 +27,7 @@ class SourceFolderManagerTest: HeavyPlatformTestCase() {
 
     val manager = SourceFolderManager.getInstance(project)
 
-    val folderUrl = module.contentRootUrls[0] + "/newFolder";
+    val folderUrl = ModuleRootManager.getInstance(module).contentRootUrls[0] + "/newFolder";
     val folderFile = File(VfsUtilCore.urlToPath(folderUrl))
 
     manager.addSourceFolder(module, folderUrl, JavaSourceRootType.SOURCE)

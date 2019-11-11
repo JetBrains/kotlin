@@ -2,10 +2,8 @@
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
-    <content url="file://$MODULE_DIR$">
+    <content url="file://$MODULE_DIR$/src">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" packagePrefix="com.intellij.configurationStore" />
-      <sourceFolder url="file://$MODULE_DIR$/testSrc" isTestSource="true" packagePrefix="com.intellij.configurationStore" />
-      <excludeFolder url="file://$MODULE_DIR$/testData" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -17,9 +15,6 @@
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
     <orderEntry type="module" module-name="intellij.platform.bootstrap" />
     <orderEntry type="module" module-name="intellij.platform.vcs" />
-    <orderEntry type="library" scope="TEST" name="assertJ" level="project" />
-    <orderEntry type="module" module-name="intellij.platform.testExtensions" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.platform.testFramework" scope="TEST" />
     <orderEntry type="library" name="XStream" level="project" />
     <orderEntry type="library" name="lz4-java" level="project" />
     <orderEntry type="library" name="kotlinx-coroutines-jdk8" level="project" />
