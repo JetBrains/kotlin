@@ -57,7 +57,7 @@ public interface KtTokens {
     KtKeywordToken SUPER_KEYWORD            = KtKeywordToken.keyword("super");
     KtKeywordToken VAL_KEYWORD              = KtKeywordToken.keyword("val");
     KtKeywordToken VAR_KEYWORD              = KtKeywordToken.keyword("var");
-    KtKeywordToken FUN_KEYWORD              = KtKeywordToken.keyword("fun");
+    KtModifierKeywordToken FUN_KEYWORD      = KtModifierKeywordToken.keywordModifier("fun");
     KtKeywordToken FOR_KEYWORD              = KtKeywordToken.keyword("for");
     KtKeywordToken NULL_KEYWORD             = KtKeywordToken.keyword("null");
     KtKeywordToken TRUE_KEYWORD             = KtKeywordToken.keyword("true");
@@ -229,7 +229,7 @@ public interface KtTokens {
                     REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD, LATEINIT_KEYWORD,
                     DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD,
                     CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD, SUSPEND_KEYWORD,
-                    HEADER_KEYWORD, IMPL_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD
+                    HEADER_KEYWORD, IMPL_KEYWORD, EXPECT_KEYWORD, ACTUAL_KEYWORD, FUN_KEYWORD
             };
 
     TokenSet MODIFIER_KEYWORDS = TokenSet.create(MODIFIER_KEYWORDS_ARRAY);

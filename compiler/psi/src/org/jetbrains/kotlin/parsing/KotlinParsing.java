@@ -51,9 +51,15 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, HASH, DYNAMIC_KEYWORD);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
     private static final TokenSet VALUE_PARAMETER_FIRST =
-            TokenSet.orSet(TokenSet.create(IDENTIFIER, LBRACKET, VAL_KEYWORD, VAR_KEYWORD), MODIFIER_KEYWORDS);
+            TokenSet.orSet(
+                    TokenSet.create(IDENTIFIER, LBRACKET, VAL_KEYWORD, VAR_KEYWORD),
+                    TokenSet.andNot(MODIFIER_KEYWORDS, TokenSet.create(FUN_KEYWORD))
+            );
     private static final TokenSet LAMBDA_VALUE_PARAMETER_FIRST =
-            TokenSet.orSet(TokenSet.create(IDENTIFIER, LBRACKET), MODIFIER_KEYWORDS);
+            TokenSet.orSet(
+                    TokenSet.create(IDENTIFIER, LBRACKET),
+                    TokenSet.andNot(MODIFIER_KEYWORDS, TokenSet.create(FUN_KEYWORD))
+            );
     private static final TokenSet SOFT_KEYWORDS_AT_MEMBER_START = TokenSet.create(CONSTRUCTOR_KEYWORD, INIT_KEYWORD);
     private static final TokenSet ANNOTATION_TARGETS = TokenSet.create(
             FILE_KEYWORD, FIELD_KEYWORD, GET_KEYWORD, SET_KEYWORD, PROPERTY_KEYWORD,
@@ -585,6 +591,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         if (atSet(modifierKeywords)) {
             IElementType lookahead = lookahead(1);
+
+            if (at(FUN_KEYWORD) && lookahead != INTERFACE_KEYWORD) {
+                marker.rollbackTo();
+                return false;
+            }
+
             if (lookahead != null && !noModifiersBefore.contains(lookahead)) {
                 IElementType tt = tt();
                 if (tokenConsumer != null) {
