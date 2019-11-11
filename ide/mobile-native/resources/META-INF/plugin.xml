@@ -28,6 +28,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <configurationType implementation="org.jetbrains.konan.execution.MobileAppRunConfigurationType"/>
     <configurationType implementation="org.jetbrains.konan.execution.testing.MobileTestRunConfigurationType"/>
+    <stepsBeforeRunProvider implementation="org.jetbrains.konan.execution.MobileBeforeRunTaskProvider"/>
 
     <applicationService serviceImplementation="org.jetbrains.konan.execution.testing.AppleXCTestLocator"
                         serviceInterface="com.jetbrains.cidr.execution.testing.xctest.OCUnitTestLocator"/>

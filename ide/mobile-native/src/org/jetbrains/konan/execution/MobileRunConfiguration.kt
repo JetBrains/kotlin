@@ -13,6 +13,7 @@ import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.execution.CidrExecutableDataHolder
 import com.jetbrains.cidr.execution.CidrRunConfiguration
 import com.jetbrains.cidr.execution.ExecutableData
@@ -30,6 +31,9 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
                 (canRunOnAndroid && target is AndroidDevice)
 
     open fun getProductBundle(environment: ExecutionEnvironment): File {
+        if (environment.executionTarget is AndroidDevice) {
+            return File(project.basePath, FileUtil.join("app", "build", "outputs", "apk", "debug", "app-debug.apk"))
+        }
         // TODO decide if we want to allow custom executable selection
         //  and retrieve info from gradle when executable not selected explicitly
         return File(_executableData!!.path!!)
@@ -40,8 +44,8 @@ abstract class MobileRunConfiguration(project: Project, factory: ConfigurationFa
 
     override fun getResolveConfiguration(target: ExecutionTarget): OCResolveConfiguration? = null
 
-    val canRunOnAndroid: Boolean get() = _executableData?.path?.endsWith(".apk") == true
     val canRunOnApple: Boolean get() = _executableData?.path?.endsWith(".app") == true
+    val canRunOnAndroid: Boolean get() = !canRunOnApple // TODO check for the selected module
 
     private var _executableData: ExecutableData? = null
 

@@ -14,6 +14,8 @@ import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.testing.*
 import org.jdom.Element
+import org.jetbrains.konan.execution.AndroidDevice
+import org.jetbrains.konan.execution.AppleDevice
 import org.jetbrains.konan.execution.Device
 import org.jetbrains.konan.execution.MobileRunConfiguration
 import java.io.File
@@ -25,9 +27,9 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     fun getTestRunnerBundle(environment: ExecutionEnvironment): File {
         val app = getProductBundle(environment)
         val appName = app.nameWithoutExtension
-        return when {
-            canRunOnApple -> File(File(app, "PlugIns"), "${appName}Tests.xctest")
-            canRunOnAndroid -> File(File(File(app.parentFile.parentFile, "androidTest"), app.parentFile.name), "$appName-androidTest.apk")
+        return when (environment.executionTarget) {
+            is AppleDevice -> File(File(app, "PlugIns"), "${appName}Tests.xctest")
+            is AndroidDevice -> File(File(File(app.parentFile.parentFile, "androidTest"), app.parentFile.name), "$appName-androidTest.apk")
             else -> throw IllegalStateException()
         }
     }
