@@ -146,7 +146,16 @@ open class DefaultArgumentStubGenerator(
             dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
             extensionReceiver = newIrFunction.extensionReceiverParameter?.let { irGet(it) }
 
-            params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
+            for ((i, variable) in params.withIndex()) {
+                val paramType = irFunction.valueParameters[i].type
+                // The JVM backend doesn't introduce new variables, and hence may have incompatible types here.
+                val value = if (!paramType.isNullable() && variable.type.isNullable()) {
+                    irImplicitCast(irGet(variable), paramType)
+                } else {
+                    irGet(variable)
+                }
+                putValueArgument(i, value)
+            }
         }
         return if (needSpecialDispatch(irFunction)) {
             val handlerDeclaration = newIrFunction.valueParameters.last()
