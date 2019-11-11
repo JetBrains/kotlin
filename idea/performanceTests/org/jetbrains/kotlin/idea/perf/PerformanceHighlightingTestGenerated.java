@@ -108,11 +108,6 @@ public class PerformanceHighlightingTestGenerated extends AbstractPerformanceHig
         runTest("idea/testData/highlighter/SmartCast.kt");
     }
 
-    @TestMetadata("Suspend.kt")
-    public void testSuspend() throws Exception {
-        runTest("idea/testData/highlighter/Suspend.kt");
-    }
-
     @TestMetadata("SyntheticExtensionProperty.kt")
     public void testSyntheticExtensionProperty() throws Exception {
         runTest("idea/testData/highlighter/SyntheticExtensionProperty.kt");
