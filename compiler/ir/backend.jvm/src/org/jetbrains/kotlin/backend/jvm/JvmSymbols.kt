@@ -328,72 +328,78 @@ class JvmSymbols(
         val impl: Boolean
     )
 
-    private val propertyReferenceClasses = storageManager.createMemoizedFunction { key: PropertyReferenceKey ->
-        val (mutable, n, impl) = key
-        val className = buildString {
-            if (mutable) append("Mutable")
-            append("PropertyReference")
-            append(n)
-            if (impl) append("Impl")
-        }
-        createClass(FqName("kotlin.jvm.internal.$className")) { klass ->
-            if (impl) {
-                klass.addConstructor().apply {
-                    addValueParameter("owner", irBuiltIns.kDeclarationContainerClass.owner.defaultType)
-                    addValueParameter("name", irBuiltIns.stringType)
-                    addValueParameter("string", irBuiltIns.stringType)
-                }
-            } else {
-                klass.addConstructor()
+    private val propertyReferenceClassCache = mutableMapOf<PropertyReferenceKey, IrClassSymbol>()
 
-                klass.addConstructor().apply {
-                    addValueParameter("receiver", irBuiltIns.anyNType)
-                }
+    fun getPropertyReferenceClass(mutable: Boolean, parameterCount: Int, impl: Boolean): IrClassSymbol {
+        val key = PropertyReferenceKey(mutable, parameterCount, impl)
+        return propertyReferenceClassCache.getOrPut(key) {
+            val className = buildString {
+                if (mutable) append("Mutable")
+                append("PropertyReference")
+                append(parameterCount)
+                if (impl) append("Impl")
             }
 
-            val receiverFieldName = Name.identifier("receiver")
-            klass.addProperty {
-                name = receiverFieldName
-            }.apply {
-                backingField = buildField {
+            createClass(
+                FqName("kotlin.jvm.internal.$className"),
+                classModality = if (impl) Modality.FINAL else Modality.ABSTRACT
+            ) { klass ->
+                if (impl) {
+                    klass.addConstructor().apply {
+                        addValueParameter("owner", irBuiltIns.kDeclarationContainerClass.owner.defaultType)
+                        addValueParameter("name", irBuiltIns.stringType)
+                        addValueParameter("string", irBuiltIns.stringType)
+                    }
+                    klass.superTypes += getPropertyReferenceClass(mutable, parameterCount, false).owner.defaultType
+                } else {
+                    klass.addConstructor()
+
+                    klass.addConstructor().apply {
+                        addValueParameter("receiver", irBuiltIns.anyNType)
+                    }
+                }
+
+                val receiverFieldName = Name.identifier("receiver")
+                klass.addProperty {
                     name = receiverFieldName
-                    type = irBuiltIns.anyNType
-                    visibility = Visibilities.PROTECTED
-                }.also { field ->
-                    field.parent = klass
+                }.apply {
+                    backingField = buildField {
+                        name = receiverFieldName
+                        type = irBuiltIns.anyNType
+                        visibility = Visibilities.PROTECTED
+                    }.also { field ->
+                        field.parent = klass
+                    }
                 }
-            }
 
-            generateCallableReferenceMethods(klass)
+                generateCallableReferenceMethods(klass)
 
-            // To avoid hassle with generic type parameters, we pretend that PropertyReferenceN.get takes and returns `Any?`
-            // (similarly with set). This should be enough for the JVM IR backend to generate correct calls and bridges.
-            klass.addFunction("get", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
-                for (i in 0 until n) {
-                    addValueParameter("receiver$i", irBuiltIns.anyNType)
-                }
-            }
-
-            // invoke redirects to get
-            klass.addFunction("invoke", irBuiltIns.anyNType, Modality.FINAL).apply {
-                for (i in 0 until n) {
-                    addValueParameter("receiver$i", irBuiltIns.anyNType)
-                }
-            }
-
-            if (mutable) {
-                klass.addFunction("set", irBuiltIns.unitType, Modality.ABSTRACT).apply {
-                    for (i in 0 until n) {
+                // To avoid hassle with generic type parameters, we pretend that PropertyReferenceN.get takes and returns `Any?`
+                // (similarly with set). This should be enough for the JVM IR backend to generate correct calls and bridges.
+                klass.addFunction("get", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
+                    for (i in 0 until parameterCount) {
                         addValueParameter("receiver$i", irBuiltIns.anyNType)
                     }
-                    addValueParameter("value", irBuiltIns.anyNType)
+                }
+
+                // invoke redirects to get
+                klass.addFunction("invoke", irBuiltIns.anyNType, Modality.FINAL).apply {
+                    for (i in 0 until parameterCount) {
+                        addValueParameter("receiver$i", irBuiltIns.anyNType)
+                    }
+                }
+
+                if (mutable) {
+                    klass.addFunction("set", irBuiltIns.unitType, Modality.ABSTRACT).apply {
+                        for (i in 0 until parameterCount) {
+                            addValueParameter("receiver$i", irBuiltIns.anyNType)
+                        }
+                        addValueParameter("value", irBuiltIns.anyNType)
+                    }
                 }
             }
         }
     }
-
-    fun getPropertyReferenceClass(mutable: Boolean, parameterCount: Int, impl: Boolean): IrClassSymbol =
-        propertyReferenceClasses(PropertyReferenceKey(mutable, parameterCount, impl))
 
     val reflection: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.Reflection")) { klass ->
         val javaLangClassType = javaLangClass.starProjectedType
