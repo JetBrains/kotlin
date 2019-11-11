@@ -7,17 +7,12 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.execution.configurations.CommandLineTokenizer
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
-import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.util.EnvironmentUtil
-import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
-import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinitionAdapterFromNewAPIBase
@@ -277,7 +272,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
     private class ErrorScriptDependenciesResolver(private val message: String? = null) : DependenciesResolver {
         override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
-            val failureMessage = if (ReloadGradleTemplatesOnSync.gradleState.isSyncInProgress) {
+            val failureMessage = if (GradleScriptDefinitionsUpdater.gradleState.isSyncInProgress) {
                 "Highlighting is impossible during Gradle Import"
             } else {
                 message ?: "Failed to load script definitions by ${GradleScriptDefinitionsContributor::class.java.name}"
@@ -297,28 +292,6 @@ class GradleKotlinScriptDefinitionFromAnnotatedTemplate(
     @Suppress("DEPRECATION")
     override val scriptExpectedLocations: List<ScriptExpectedLocation>
         get() = listOf(ScriptExpectedLocation.Project)
-}
-
-class ReloadGradleTemplatesOnSync : ExternalSystemTaskNotificationListenerAdapter() {
-    companion object {
-        internal val gradleState = GradleSyncState()
-    }
-
-    override fun onStart(id: ExternalSystemTaskId, workingDir: String?) {
-        if (id.type == ExternalSystemTaskType.RESOLVE_PROJECT && id.projectSystemId == GRADLE_SYSTEM_ID) {
-            gradleState.isSyncInProgress = true
-        }
-    }
-
-    override fun onEnd(id: ExternalSystemTaskId) {
-        if (id.type == ExternalSystemTaskType.RESOLVE_PROJECT && id.projectSystemId == GRADLE_SYSTEM_ID) {
-            gradleState.isSyncInProgress = false
-
-            val project = id.findProject() ?: return
-            val gradleDefinitionsContributor = ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(project)
-            gradleDefinitionsContributor?.reloadIfNeccessary()
-        }
-    }
 }
 
 class TopLevelSectionTokensEnumerator(script: CharSequence, identifier: String) : Enumeration<KotlinLexer> {

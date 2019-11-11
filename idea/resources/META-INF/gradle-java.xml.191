@@ -23,7 +23,7 @@
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinTargetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.KotlinJavaMPPSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryDataService"/>
-        <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.scripting.gradle.ReloadGradleTemplatesOnSync"/>
+        <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsUpdater"/>
 
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinJvmTestClassGradleConfigurationProducer"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinMultiplatformJvmTestClassGradleConfigurationProducer"/>
