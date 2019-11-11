@@ -9494,6 +9494,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/invertIfCondition/is.kt");
         }
 
+        @TestMetadata("isEmpty.kt")
+        public void testIsEmpty() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/isEmpty.kt");
+        }
+
+        @TestMetadata("isNotEmpty.kt")
+        public void testIsNotEmpty() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/isNotEmpty.kt");
+        }
+
         @TestMetadata("lambdaNonLocalAndLocalReturn.kt")
         public void testLambdaNonLocalAndLocalReturn() throws Exception {
             runTest("idea/testData/intentions/invertIfCondition/lambdaNonLocalAndLocalReturn.kt");
@@ -9557,6 +9567,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("negatedExpression.kt")
         public void testNegatedExpression() throws Exception {
             runTest("idea/testData/intentions/invertIfCondition/negatedExpression.kt");
+        }
+
+        @TestMetadata("negatedIsEmpty.kt")
+        public void testNegatedIsEmpty() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/negatedIsEmpty.kt");
+        }
+
+        @TestMetadata("negatedIsNotEmpty.kt")
+        public void testNegatedIsNotEmpty() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/negatedIsNotEmpty.kt");
         }
 
         @TestMetadata("nestedIfWithReturn.kt")
