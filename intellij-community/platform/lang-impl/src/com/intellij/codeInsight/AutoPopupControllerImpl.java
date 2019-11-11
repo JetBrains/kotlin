@@ -169,6 +169,6 @@ public class AutoPopupControllerImpl extends AutoPopupController {
    */
   @Deprecated
   public static void runTransactionWithEverythingCommitted(@NotNull final Project project, @NotNull final Runnable runnable) {
-    AppUIExecutor.onUiThread().later().withDocumentsCommitted(project).inTransaction(project).execute(runnable);
+    AppUIExecutor.onUiThread().later().withDocumentsCommitted(project).execute(runnable);
   }
 }
