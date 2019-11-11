@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.irArray
+import org.jetbrains.kotlin.backend.jvm.ir.isLambda
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
@@ -126,7 +128,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         private val superMethod =
             functionSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }
         private val superType =
-            samSuperType ?: (if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference).owner.typeWith()
+            samSuperType ?: (if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference).owner.defaultType
 
         private val functionReferenceClass = buildClass {
             setSourceRange(irFunctionReference)
@@ -140,7 +142,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             superTypes += superType
             if (samSuperType == null)
                 superTypes += functionSuperClass.typeWith(parameterTypes)
-            if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.typeWith()
+            if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.owner.defaultType
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
         }
@@ -358,11 +360,11 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
     companion object {
         private fun IrBuilderWithScope.kClassReference(classType: IrType) =
             IrClassReferenceImpl(
-                startOffset, endOffset, context.irBuiltIns.kClassClass.typeWith(), context.irBuiltIns.kClassClass, classType
+                startOffset, endOffset, context.irBuiltIns.kClassClass.starProjectedType, context.irBuiltIns.kClassClass, classType
             )
 
         private fun IrBuilderWithScope.kClassToJavaClass(kClassReference: IrExpression, context: JvmBackendContext) =
-            irGet(context.ir.symbols.javaLangClass.typeWith(), null, context.ir.symbols.kClassJava.owner.getter!!.symbol).apply {
+            irGet(context.ir.symbols.javaLangClass.starProjectedType, null, context.ir.symbols.kClassJava.owner.getter!!.symbol).apply {
                 extensionReceiver = kClassReference
             }
 

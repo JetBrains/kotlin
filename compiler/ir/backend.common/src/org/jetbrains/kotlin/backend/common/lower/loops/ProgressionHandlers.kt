@@ -228,7 +228,7 @@ internal class StepHandler(
     private val symbols = context.ir.symbols
 
     override val matcher = SimpleCalleeMatcher {
-        singleArgumentExtension(FqName("kotlin.ranges.step"), symbols.progressionClasses.map { it.typeWith() })
+        singleArgumentExtension(FqName("kotlin.ranges.step"), symbols.progressionClasses.map { it.owner.defaultType })
         parameter(0) { it.type.isInt() || it.type.isLong() }
     }
 

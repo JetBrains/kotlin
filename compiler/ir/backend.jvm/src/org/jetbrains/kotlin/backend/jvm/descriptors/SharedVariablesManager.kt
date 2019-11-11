@@ -153,7 +153,7 @@ class JvmSharedVariablesManager(
 
         override val elementType = refClass.typeParameters[0].defaultType
 
-        override fun getRefType(valueType: IrType) = refClass.typeWith(listOf(valueType))
+        override fun getRefType(valueType: IrType) = refClass.typeWith(valueType)
     }
 
     private fun getProvider(valueType: IrType): RefProvider =
