@@ -4,6 +4,8 @@ package com.intellij.codeInsight.editorActions.wordSelection;
 
 import com.intellij.codeInsight.completion.SkipAutopopupInStrings;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.PsiElement;
@@ -14,13 +16,10 @@ import com.intellij.util.text.CharArrayUtil;
 import com.intellij.util.text.CharSequenceSubSequence;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
- * This selectioner tries to guess location of file segments within a particular literal.
+ * This selectioner tries to guess location of file segments within a particular element.
  * Querying for exact file references locations from PsiElement on EDT might be too expensive
  * and cause long freezes. If the selectioner improperly behaves with a specific language
  * construct please improve it.
@@ -39,11 +38,11 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
 
     TextRange realRange = ElementManipulators.getValueTextRange(host).shiftRight(host.getTextRange().getStartOffset());
     realRange = limitToCurrentLineAndStripWhiteSpace(editorText, cursorOffset, realRange);
-    boolean withinLiteral = host instanceof PsiLiteralValue
-                            || SkipAutopopupInStrings.isInStringLiteral(host)
-                            || SkipAutopopupInStrings.isInStringLiteral(e);
-    List<TextRange> segments = buildSegments(editorText, cursorOffset, withinLiteral, realRange);
 
+    Set<Integer> charEscapeLocations = isWithinLiteral(e, host) ? findCharEscapeLocations(editor, editorText, host.getTextRange())
+                                                                : Collections.emptySet();
+
+    List<TextRange> segments = buildSegments(editorText, cursorOffset, charEscapeLocations, realRange);
     if (!segments.isEmpty()) {
       int endOffsetAlignment = segments.get(segments.size() - 1).getEndOffset();
       for (ListIterator<TextRange> it = segments.listIterator(); it.hasNext(); ) {
@@ -59,7 +58,7 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
   @NotNull
   private static List<TextRange> buildSegments(@NotNull CharSequence editorText,
                                                final int cursorOffset,
-                                               boolean withinLiteral,
+                                               @NotNull Set<Integer> charEscapeLocations,
                                                @NotNull TextRange range) {
     if (range.getLength() == 0) {
       return Collections.emptyList();
@@ -67,16 +66,16 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
     int hostTextOffset = range.getStartOffset();
     int hostTextEndOffset = range.getEndOffset();
 
-    ArrayList<TextRange> segments = new ArrayList<>();
+    List<TextRange> segments = new ArrayList<>();
     int rangeStart = hostTextOffset;
     boolean segmentsFinished = false;
     int hardSegmentCount = 0;
+
     for (int i = hostTextOffset; i < hostTextEndOffset; i++) {
       char ch = editorText.charAt(i);
       if (!segmentsFinished) {
         if (ch == '/'
-            // in literals recognize only double '\' as path separator
-            || (ch == '\\' && (!withinLiteral || (i + 1 < hostTextEndOffset && editorText.charAt(i + 1) == '\\')))
+            || (ch == '\\' && !charEscapeLocations.contains(i))
             //treat space as soft segment marker
             || (ch == ' ' && i <= cursorOffset)) {
           if (rangeStart < i) {
@@ -125,15 +124,38 @@ public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
 
     //limit to current line
     int start = CharArrayUtil.shiftBackwardUntil(rangeText, cursor - subsequenceOffset, "\n\r") + 1;
-    int end = CharArrayUtil.shiftForwardUntil(rangeText, cursor-subsequenceOffset, "\n\r");
+    int end = CharArrayUtil.shiftForwardUntil(rangeText, cursor - subsequenceOffset, "\n\r");
 
     //strip whitespace
-    start = CharArrayUtil.shiftForward(rangeText, start, cursor-subsequenceOffset, " \t");
-    end = CharArrayUtil.shiftBackward(rangeText, cursor-subsequenceOffset, end - 1, " \t") + 1;
+    start = CharArrayUtil.shiftForward(rangeText, start, cursor - subsequenceOffset, " \t");
+    end = CharArrayUtil.shiftBackward(rangeText, cursor - subsequenceOffset, end - 1, " \t") + 1;
 
     return new TextRange(
       subsequenceOffset + start,
       subsequenceOffset + end
     );
+  }
+
+  private static boolean isWithinLiteral(@NotNull PsiElement e, PsiElement host) {
+    return host instanceof PsiLiteralValue
+           || SkipAutopopupInStrings.isInStringLiteral(e);
+  }
+
+  private static Set<Integer> findCharEscapeLocations(@NotNull Editor editor, @NotNull CharSequence text, @NotNull TextRange range) {
+    HighlighterIterator iterator =
+      ((EditorEx)editor).getHighlighter().createIterator(range.getStartOffset());
+    int rangeEnd = range.getEndOffset();
+
+    Set<Integer> locations = new HashSet<>();
+    int pos;
+    while (!iterator.atEnd() && (pos = iterator.getStart()) < rangeEnd) {
+      if (text.charAt(pos) == '\\'
+          && (pos + 1 >= rangeEnd || text.charAt(pos + 1) != '\\')) {
+        locations.add(pos);
+      }
+      iterator.advance();
+    }
+
+    return locations;
   }
 }
