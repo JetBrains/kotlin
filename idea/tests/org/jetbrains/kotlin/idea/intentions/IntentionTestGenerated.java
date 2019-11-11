@@ -4500,6 +4500,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertFunctionToProperty/nothingFun.kt");
         }
 
+        @TestMetadata("onFunKeyword.kt")
+        public void testOnFunKeyword() throws Exception {
+            runTest("idea/testData/intentions/convertFunctionToProperty/onFunKeyword.kt");
+        }
+
         @TestMetadata("otherRefs.kt")
         public void testOtherRefs() throws Exception {
             runTest("idea/testData/intentions/convertFunctionToProperty/otherRefs.kt");
