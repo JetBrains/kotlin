@@ -39,13 +39,12 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.NullableConsumer;
 import com.intellij.util.text.UniqueNameGenerator;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -174,21 +173,6 @@ public class SdkConfigurationUtil {
       return null;
     }
     return sdk;
-  }
-
-  /**
-   * @deprecated Use {@link SdkConfigurationUtil#createSdk(Collection, VirtualFile, SdkType, SdkAdditionalData, String)} instead.
-   * This method will be removed in 2020.1.
-   */
-  @NotNull
-  @Deprecated
-  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
-  public static ProjectJdkImpl createSdk(@NotNull Sdk[] allSdks,
-                                         @NotNull VirtualFile homeDir,
-                                         @NotNull SdkType sdkType,
-                                         @Nullable SdkAdditionalData additionalData,
-                                         @Nullable String customSdkSuggestedName) {
-    return createSdk(Arrays.asList(allSdks), homeDir, sdkType, additionalData, customSdkSuggestedName);
   }
 
   @NotNull
