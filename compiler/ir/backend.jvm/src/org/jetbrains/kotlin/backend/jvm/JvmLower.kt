@@ -269,6 +269,7 @@ private val jvmFilePhases =
         additionalClassAnnotationPhase then
         typeOperatorLowering then
         replaceKFunctionInvokeWithFunctionInvokePhase then
+        resolveInlineCallsPhase then
 
         checkLocalNamesWithOldBackendPhase then
 

@@ -965,9 +965,8 @@ class ExpressionCodegen(
             }
         }
 
-        val original = (callee as? IrSimpleFunction)?.resolveFakeOverride() ?: irFunction
         val methodOwner = callee.parent.safeAs<IrClass>()?.let(typeMapper::mapClass) ?: MethodSignatureMapper.FAKE_OWNER_TYPE
-        val sourceCompiler = IrSourceCompilerForInline(state, element, original, this, data)
+        val sourceCompiler = IrSourceCompilerForInline(state, element, callee, this, data)
 
         val reifiedTypeInliner = ReifiedTypeInliner(mappings, object : ReifiedTypeInliner.IntrinsicsSupport<IrType> {
             override fun putClassInstance(v: InstructionAdapter, type: IrType) {
@@ -977,9 +976,7 @@ class ExpressionCodegen(
             override fun toKotlinType(type: IrType): KotlinType = type.toKotlinType()
         }, IrTypeCheckerContext(context.irBuiltIns), state.languageVersionSettings)
 
-        return IrInlineCodegen(
-            this, state, original.descriptor, methodOwner, signature, mappings, sourceCompiler, reifiedTypeInliner
-        )
+        return IrInlineCodegen(this, state, callee.descriptor, methodOwner, signature, mappings, sourceCompiler, reifiedTypeInliner)
     }
 
     override fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
