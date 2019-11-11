@@ -1,20 +1,9 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.core.script
+package org.jetbrains.kotlin.idea.scripting.gradle
 
 import com.intellij.execution.configurations.CommandLineTokenizer
 import com.intellij.openapi.diagnostic.Logger
@@ -24,6 +13,10 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.util.EnvironmentUtil
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
+import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -156,7 +149,11 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             Logger.getInstance(GradleScriptDefinitionsContributor::class.java)
                 .info("[kts] error loading gradle script templates: ${t.message}")
         }
-        listOf(ErrorGradleScriptDefinition(t.message))
+        listOf(
+            ErrorGradleScriptDefinition(
+                t.message
+            )
+        )
     }
 
 
@@ -226,7 +223,11 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                 if (legacyDef.scriptExpectedLocations.contains(ScriptExpectedLocation.Project)) null
                 else {
                     // Expand scope for old gradle script definition
-                    ScriptDefinition.FromLegacy(it.hostConfiguration, GradleKotlinScriptDefinitionFromAnnotatedTemplate(legacyDef))
+                    ScriptDefinition.FromLegacy(it.hostConfiguration,
+                                                GradleKotlinScriptDefinitionFromAnnotatedTemplate(
+                                                    legacyDef
+                                                )
+                    )
                 }
             } ?: it
         }
@@ -244,7 +245,11 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
     // TODO: refactor - minimize
     private class ErrorGradleScriptDefinition(message: String? = null) :
-        ScriptDefinition.FromLegacy(ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration), LegacyDefinition(message)) {
+        ScriptDefinition.FromLegacy(ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration),
+                                    LegacyDefinition(
+                                        message
+                                    )
+        ) {
 
         private class LegacyDefinition(message: String?) : KotlinScriptDefinitionAdapterFromNewAPIBase() {
             companion object {
@@ -252,13 +257,17 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             }
 
             override val name: String = "Default Kotlin Gradle Script"
-            override val fileExtension: String = KOTLIN_DSL_SCRIPT_EXTENSION
+            override val fileExtension: String =
+                KOTLIN_DSL_SCRIPT_EXTENSION
 
             override val scriptCompilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration.Default
             override val hostConfiguration: ScriptingHostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration)
             override val baseClass: KClass<*> = ScriptTemplateWithArgs::class
 
-            override val dependencyResolver: DependenciesResolver = ErrorScriptDependenciesResolver(message)
+            override val dependencyResolver: DependenciesResolver =
+                ErrorScriptDependenciesResolver(
+                    message
+                )
 
             override fun toString(): String = "ErrorGradleScriptDefinition"
             override fun equals(other: Any?): Boolean = other is ErrorGradleScriptDefinition

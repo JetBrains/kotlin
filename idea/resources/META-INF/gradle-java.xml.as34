@@ -23,7 +23,7 @@
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinTargetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.KotlinJavaMPPSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinNativeLibraryDataService"/>
-        <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.core.script.ReloadGradleTemplatesOnSync"/>
+        <externalSystemTaskNotificationListener implementation="org.jetbrains.kotlin.idea.scripting.gradle.ReloadGradleTemplatesOnSync"/>
 
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinJvmTestClassGradleConfigurationProducer"/>
         <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.run.KotlinJvmTestMethodGradleConfigurationProducer"/>
@@ -42,8 +42,8 @@
         <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsGradleModuleConfigurator"/>
         <gradleModelFacade implementation="org.jetbrains.kotlin.idea.inspections.gradle.DefaultGradleModelFacade"/>
 
-        <scriptDefinitionContributor implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptDefinitionsContributor" order="first"/>
-        <scriptAdditionalIdeaDependenciesProvider implementation="org.jetbrains.kotlin.idea.core.script.GradleScriptAdditionalIdeaDependenciesProvider"/>
+        <scriptDefinitionContributor implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor" order="first"/>
+        <scriptAdditionalIdeaDependenciesProvider implementation="org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptAdditionalIdeaDependenciesProvider"/>
 
         <moduleBuilder implementation="org.jetbrains.kotlin.ide.konan.gradle.KotlinGradleNativeMultiplatformModuleBuilder"/>
         <moduleBuilder implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleSharedMultiplatformModuleBuilder"/>
