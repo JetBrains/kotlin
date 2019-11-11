@@ -178,7 +178,7 @@ class LazyJavaPackageScope(
             emptyList()
         } else {
             // we don't use implementation from super which caches all descriptors and does not use filters
-            allDescriptors().filter { it is ClassDescriptor && nameFilter(it.name) }.toList()
+            allDescriptors().filter { it is ClassDescriptor && nameFilter(it.name) }
         }
     }
 }
