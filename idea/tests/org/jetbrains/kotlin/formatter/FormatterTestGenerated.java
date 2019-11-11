@@ -852,6 +852,16 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
                 runTest("idea/testData/formatter/callChain/CallChainWrapping.after.kt");
             }
 
+            @TestMetadata("CallChainWrappingChopDown.after.kt")
+            public void testCallChainWrappingChopDown() throws Exception {
+                runTest("idea/testData/formatter/callChain/CallChainWrappingChopDown.after.kt");
+            }
+
+            @TestMetadata("CallChainWrappingInElvis.after.kt")
+            public void testCallChainWrappingInElvis() throws Exception {
+                runTest("idea/testData/formatter/callChain/CallChainWrappingInElvis.after.kt");
+            }
+
             @TestMetadata("ConsecutiveCalls.after.kt")
             public void testConsecutiveCalls() throws Exception {
                 runTest("idea/testData/formatter/callChain/ConsecutiveCalls.after.kt");
@@ -1395,6 +1405,16 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             @TestMetadata("CallChainWrapping.after.inv.kt")
             public void testCallChainWrapping() throws Exception {
                 runTest("idea/testData/formatter/callChain/CallChainWrapping.after.inv.kt");
+            }
+
+            @TestMetadata("CallChainWrappingChopDown.after.inv.kt")
+            public void testCallChainWrappingChopDown() throws Exception {
+                runTest("idea/testData/formatter/callChain/CallChainWrappingChopDown.after.inv.kt");
+            }
+
+            @TestMetadata("CallChainWrappingInElvis.after.inv.kt")
+            public void testCallChainWrappingInElvis() throws Exception {
+                runTest("idea/testData/formatter/callChain/CallChainWrappingInElvis.after.inv.kt");
             }
 
             @TestMetadata("ConsecutiveSafeCallsIndent.after.inv.kt")
