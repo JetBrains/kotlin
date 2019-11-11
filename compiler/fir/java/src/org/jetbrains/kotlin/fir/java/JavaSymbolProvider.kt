@@ -146,7 +146,9 @@ class JavaSymbolProvider(
             .map { it.toFirTypeParameter(stack) }
             .also {
                 it.forEachIndexed { index, typeParameter ->
-                    typeParameter.addBounds(this[index], stack)
+                    if (typeParameter.bounds.isEmpty()) {
+                        typeParameter.addBounds(this[index], stack)
+                    }
                 }
             }
     }
