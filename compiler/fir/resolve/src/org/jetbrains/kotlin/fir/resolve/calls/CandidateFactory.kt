@@ -22,7 +22,6 @@ class CandidateFactory(
 
     init {
         val system = bodyResolveComponents.inferenceComponents.createConstraintSystem()
-        callInfo.explicitReceiver?.let { system.addSubsystemFromExpression(it) }
         callInfo.arguments.forEach {
             system.addSubsystemFromExpression(it)
         }
@@ -44,7 +43,7 @@ class CandidateFactory(
 
 fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(expression: FirExpression) {
     when (expression) {
-        is FirFunctionCall, is FirWhenExpression, is FirTryExpression, is FirCallableReferenceAccess ->
+        is FirFunctionCall, is FirQualifiedAccessExpression, is FirWhenExpression, is FirTryExpression, is FirCallableReferenceAccess ->
             (expression as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
         is FirWrappedArgumentExpression -> addSubsystemFromExpression(expression.expression)
         is FirBlock -> expression.returnExpressions().forEach { addSubsystemFromExpression(it) }

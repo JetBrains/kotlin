@@ -1,0 +1,19 @@
+FILE: User.kt
+    public abstract interface Freezable : R|kotlin/Any| {
+    }
+    public abstract class User<T : R|Freezable|> : R|kotlin/Any| {
+        public constructor<T : R|Freezable|>(): R|User<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final var settings: R|T| = this@R|/User|.R|FakeOverride</User.createSettings: R|T|>|()
+            private get(): R|T|
+            private set(value: R|T|): R|kotlin/Unit|
+
+        protected abstract fun createSettings(): R|T|
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/User|.R|/User.settings| = Q|StaticOwner|.R|/StaticOwner.newInstance|<R|T|>(this@R|/User|.R|/User.settings|.R|kotlin/jvm/javaClass|)
+        }
+
+    }
