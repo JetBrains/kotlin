@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.ir.util.render
 
 class JsUniqIdClashTracker : UniqIdClashTracker {

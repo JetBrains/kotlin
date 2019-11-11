@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.UniqId
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 
 class JsIrLinker(
