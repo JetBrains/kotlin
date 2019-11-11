@@ -1,4 +1,4 @@
-public open class ClassWithTypePRefNext<R : R|kotlin/collections/MutableIterable<P>|, P> : R|kotlin/Any| {
-    public constructor<R : R|kotlin/collections/MutableIterable<P>|, P>(): R|test/ClassWithTypePRefNext<R, P>|
+public open class ClassWithTypePRefNext<R : R|kotlin/collections/MutableIterable<P>?|, P> : R|kotlin/Any| {
+    public constructor<R : R|kotlin/collections/MutableIterable<P>?|, P>(): R|test/ClassWithTypePRefNext<R, P>|
 
 }

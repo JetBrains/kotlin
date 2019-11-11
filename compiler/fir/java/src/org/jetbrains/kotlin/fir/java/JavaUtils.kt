@@ -93,9 +93,9 @@ internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterSta
 }
 
 internal fun JavaClassifierType.toFirResolvedTypeRef(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
+    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack, isNullable: Boolean = false
 ): FirResolvedTypeRef {
-    val coneType = this.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable = false)
+    val coneType = this.toConeKotlinTypeWithNullability(session, javaTypeParameterStack, isNullable)
     return FirResolvedTypeRefImpl(
         source = null, type = coneType
     ).apply {

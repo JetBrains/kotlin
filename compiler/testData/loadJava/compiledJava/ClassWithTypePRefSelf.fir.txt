@@ -1,4 +1,4 @@
-public final class ClassWithTypePRefSelf<P : R|kotlin/Enum<P>|> : R|kotlin/Any| {
-    public constructor<P : R|kotlin/Enum<P>|>(): R|test/ClassWithTypePRefSelf<P>|
+public final class ClassWithTypePRefSelf<P : R|kotlin/Enum<P>?|> : R|kotlin/Any| {
+    public constructor<P : R|kotlin/Enum<P>?|>(): R|test/ClassWithTypePRefSelf<P>|
 
 }

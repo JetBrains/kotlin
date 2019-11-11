@@ -136,7 +136,7 @@ class JavaSymbolProvider(
     ) {
         require(this is FirTypeParameterImpl)
         for (upperBound in javaTypeParameter.upperBounds) {
-            bounds += upperBound.toFirResolvedTypeRef(this@JavaSymbolProvider.session, stack)
+            bounds += upperBound.toFirResolvedTypeRef(this@JavaSymbolProvider.session, stack, isNullable = true)
         }
         addDefaultBoundIfNecessary()
     }

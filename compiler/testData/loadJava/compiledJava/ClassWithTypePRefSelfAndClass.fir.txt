@@ -1,4 +1,4 @@
-public final class ClassWithTypePRefSelfAndClass<P : R|test/ClassWithTypePRefSelfAndClass<P>|> : R|kotlin/Any| {
-    public constructor<P : R|test/ClassWithTypePRefSelfAndClass<P>|>(): R|test/ClassWithTypePRefSelfAndClass<P>|
+public final class ClassWithTypePRefSelfAndClass<P : R|test/ClassWithTypePRefSelfAndClass<P>?|> : R|kotlin/Any| {
+    public constructor<P : R|test/ClassWithTypePRefSelfAndClass<P>?|>(): R|test/ClassWithTypePRefSelfAndClass<P>|
 
 }

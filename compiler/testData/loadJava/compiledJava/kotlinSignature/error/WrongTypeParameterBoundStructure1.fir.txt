@@ -1,5 +1,5 @@
 public open class WrongTypeParameterBoundStructure1 : R|kotlin/Any| {
-    public open operator fun <A, B : R|java/lang/Runnable|, R|kotlin/collections/MutableList<kotlin/Cloneable>|> foo(a: R|ft<A, A?>!|, b: R|ft<kotlin/collections/MutableList<out B>, kotlin/collections/List<out B>?>!|): R|kotlin/Unit|
+    public open operator fun <A, B : R|java/lang/Runnable?|, R|kotlin/collections/MutableList<kotlin/Cloneable>?|> foo(a: R|ft<A, A?>!|, b: R|ft<kotlin/collections/MutableList<out B>, kotlin/collections/List<out B>?>!|): R|kotlin/Unit|
 
     public constructor(): R|test/WrongTypeParameterBoundStructure1|
 

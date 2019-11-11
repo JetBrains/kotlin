@@ -1,4 +1,4 @@
 public abstract interface GenericMethodParameters : R|kotlin/Any| {
-    public abstract operator fun <A : R|kotlin/CharSequence|, B : R|kotlin/collections/MutableList<A>|> method(a: R|kotlin/Array<ft<A, A?>!>|, b: R|ft<B, B?>!|): R|kotlin/Unit|
+    public abstract operator fun <A : R|kotlin/CharSequence?|, B : R|kotlin/collections/MutableList<A>?|> method(a: R|kotlin/Array<ft<A, A?>!>|, b: R|ft<B, B?>!|): R|kotlin/Unit|
 
 }
