@@ -137,6 +137,6 @@ private fun generatePlatformLibraries(target: String, inputDirectory: File, outp
     }
     executorPool.shutdown()
     if (!saveTemps) {
-        File("$outputDirectory/clangModulesCache").deleteRecursively()
+        File("${outputDirectory.absolutePath}/clangModulesCache").deleteRecursively()
     }
 }

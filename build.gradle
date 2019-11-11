@@ -498,6 +498,7 @@ task bundleRestricted(type: Tar) {
             if (PlatformInfo.isAppleTarget(target))
                 exclude "klib/platform/${target.name}"
         }
+        exclude '**/xcode_license.pdf'
         into baseName
     }
 
