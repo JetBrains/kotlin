@@ -3545,6 +3545,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnJvmNameMain.kt");
         }
 
+        @TestMetadata("dontGenerateOnJvmOverloads.kt")
+        public void testDontGenerateOnJvmOverloads() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnJvmOverloads.kt");
+        }
+
         @TestMetadata("dontGenerateOnMain.kt")
         public void testDontGenerateOnMain() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnMain.kt");
@@ -3558,6 +3563,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("dontGenerateOnNullableArray.kt")
         public void testDontGenerateOnNullableArray() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnNullableArray.kt");
+        }
+
+        @TestMetadata("dontGenerateOnVarargsString.kt")
+        public void testDontGenerateOnVarargsString() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/parameterlessMain/dontGenerateOnVarargsString.kt");
         }
     }
 
