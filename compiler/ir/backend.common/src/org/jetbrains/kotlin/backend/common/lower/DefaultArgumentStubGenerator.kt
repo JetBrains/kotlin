@@ -375,17 +375,24 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
         val newType = it.type.remapTypeParameters(classIfConstructor, newFunction.classIfConstructor)
         val makeNullable = it.defaultValue != null &&
                 (context.ir.unfoldInlineClassType(it.type) ?: it.type) !in context.irBuiltIns.primitiveIrTypes
-        it.copyTo(newFunction, type = if (makeNullable) newType.makeNullable() else newType, defaultValue = null)
+        it.copyTo(
+            newFunction,
+            type = if (makeNullable) newType.makeNullable() else newType,
+            defaultValue = if (it.defaultValue != null) {
+                IrExpressionBodyImpl(IrErrorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.type, "Default Stub"))
+            } else null
+        )
+
     }
 
     for (i in 0 until (valueParameters.size + 31) / 32) {
-        newFunction.addValueParameter("mask$i".synthesizedString, context.irBuiltIns.intType)
+        newFunction.addValueParameter("mask$i".synthesizedString, context.irBuiltIns.intType, IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION)
     }
     if (this is IrConstructor) {
         val markerType = context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable()
-        newFunction.addValueParameter("marker".synthesizedString, markerType)
+        newFunction.addValueParameter("marker".synthesizedString, markerType, IrDeclarationOrigin.DEFAULT_CONSTRUCTOR_MARKER)
     } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
-        newFunction.addValueParameter("handler".synthesizedString, context.irBuiltIns.anyNType)
+        newFunction.addValueParameter("handler".synthesizedString, context.irBuiltIns.anyNType, IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION)
     }
 
     // TODO some annotations are needed (e.g. @JvmStatic), others need different values (e.g. @JvmName), the rest are redundant.
