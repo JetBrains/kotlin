@@ -740,6 +740,22 @@ public class KotlinTestUtils {
     }
 
     private static void runTestImpl(@NotNull DoTest test, @Nullable TestCase testCase, String testDataFilePath) throws Exception {
+        if (testCase != null) {
+            Function0<Unit> wrapWithMuteInDatabase = MuteWithDatabaseKt.wrapWithMuteInDatabase(testCase, () -> {
+                try {
+                    test.invoke(testDataFilePath);
+                }
+                catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
+                return null;
+            });
+            if (wrapWithMuteInDatabase != null) {
+                wrapWithMuteInDatabase.invoke();
+                return;
+            }
+        }
+
         DoTest wrappedTest = testCase != null ?
                              MuteWithFileKt.testWithMuteInFile(test, testCase) :
                              MuteWithFileKt.testWithMuteInFile(test, "");
