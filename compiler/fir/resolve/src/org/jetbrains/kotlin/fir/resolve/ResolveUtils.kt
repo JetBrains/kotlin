@@ -57,12 +57,15 @@ fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): FirClassLikeSym
     return firSymbolProvider.getSymbolByLookupTag(this)
 }
 
-fun ConeAbbreviatedType.directExpansionType(useSiteSession: FirSession): ConeClassLikeType? {
+fun ConeAbbreviatedType.directExpansionType(
+    useSiteSession: FirSession,
+    expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeType
+): ConeClassLikeType? {
     val typeAlias = abbreviationLookupTag
         .toSymbol(useSiteSession)
         ?.safeAs<FirTypeAliasSymbol>()?.fir ?: return null
 
-    val resultType = typeAlias.expandedConeType ?: return null
+    val resultType = expandedConeType(typeAlias) ?: return null
     if (resultType.typeArguments.isEmpty()) return resultType
     return mapTypeAliasArguments(typeAlias, this, resultType) as? ConeClassLikeType
 }

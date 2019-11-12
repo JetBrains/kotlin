@@ -4,7 +4,7 @@ FILE: K1.kt
             super<R|J1|>()
         }
 
-        public final class Q {
+        public final class Q : R|class error: Symbol not found, for `Nested`| {
             public constructor(): R|K2.Q| {
                 super<R|class error: Symbol not found, for `Nested`|>()
             }

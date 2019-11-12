@@ -13,14 +13,25 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 
+interface SupertypeSupplier {
+    fun forClass(firClass: FirClass<*>): List<ConeClassLikeType>
+    fun expansionForTypeAlias(typeAlias: FirTypeAlias): ConeClassLikeType?
+
+    object Default : SupertypeSupplier {
+        override fun forClass(firClass: FirClass<*>) = firClass.superConeTypes
+        override fun expansionForTypeAlias(typeAlias: FirTypeAlias) = typeAlias.expandedConeType
+    }
+}
+
 fun lookupSuperTypes(
     klass: FirClass<*>,
     lookupInterfaces: Boolean,
     deep: Boolean,
-    useSiteSession: FirSession
+    useSiteSession: FirSession,
+    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
 ): List<ConeClassLikeType> {
     return mutableListOf<ConeClassLikeType>().also {
-        klass.symbol.collectSuperTypes(it, mutableSetOf(), deep, lookupInterfaces, useSiteSession)
+        klass.symbol.collectSuperTypes(it, mutableSetOf(), deep, lookupInterfaces, useSiteSession, supertypeSupplier)
     }
 }
 
@@ -109,9 +120,15 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     }
 }
 
-private tailrec fun ConeClassLikeType.computePartialExpansion(useSiteSession: FirSession): ConeClassLikeType? {
+private tailrec fun ConeClassLikeType.computePartialExpansion(
+    useSiteSession: FirSession,
+    supertypeSupplier: SupertypeSupplier
+): ConeClassLikeType? {
     return when (this) {
-        is ConeAbbreviatedType -> directExpansionType(useSiteSession)?.computePartialExpansion(useSiteSession)
+        is ConeAbbreviatedType ->
+            directExpansionType(useSiteSession) {
+                supertypeSupplier.expansionForTypeAlias(it)
+            }?.computePartialExpansion(useSiteSession, supertypeSupplier)
         else -> this
     }
 }
@@ -121,14 +138,15 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
     visitedSymbols: MutableSet<FirClassifierSymbol<*>>,
     deep: Boolean,
     lookupInterfaces: Boolean,
-    useSiteSession: FirSession
+    useSiteSession: FirSession,
+    supertypeSupplier: SupertypeSupplier
 ) {
     if (!visitedSymbols.add(this)) return
     when (this) {
-        is FirClassSymbol -> {
+        is FirClassSymbol<*> -> {
             val superClassTypes =
-                superConeTypes.mapNotNull {
-                    it.computePartialExpansion(useSiteSession)
+                supertypeSupplier.forClass(fir).mapNotNull {
+                    it.computePartialExpansion(useSiteSession, supertypeSupplier)
                         .takeIf { type -> lookupInterfaces || type.isClassBasedType(useSiteSession) }
                 }
             list += superClassTypes
@@ -140,14 +158,17 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
                             visitedSymbols,
                             deep,
                             lookupInterfaces,
-                            useSiteSession
+                            useSiteSession,
+                            supertypeSupplier
                         )
                     }
                 }
         }
         is FirTypeAliasSymbol -> {
-            val expansion = fir.expandedConeType?.computePartialExpansion(useSiteSession) ?: return
-            expansion.lookupTag.toSymbol(useSiteSession)?.collectSuperTypes(list, visitedSymbols, deep, lookupInterfaces, useSiteSession)
+            val expansion =
+                supertypeSupplier.expansionForTypeAlias(fir)?.computePartialExpansion(useSiteSession, supertypeSupplier) ?: return
+            expansion.lookupTag.toSymbol(useSiteSession)
+                ?.collectSuperTypes(list, visitedSymbols, deep, lookupInterfaces, useSiteSession, supertypeSupplier)
         }
         else -> error("?!id:1")
     }

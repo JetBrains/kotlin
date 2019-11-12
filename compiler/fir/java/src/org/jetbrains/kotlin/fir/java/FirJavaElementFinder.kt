@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -94,15 +94,12 @@ class FirJavaElementFinder(
             firClass.typeParameters.map { Pair(it.name.asString(), arrayOf(CommonClassNames.JAVA_LANG_OBJECT)) }
         )
 
-        if (firClass.supertypesComputationStatus != SupertypesComputationStatus.COMPUTED) {
-            val firForSuperClassFile = firProvider.getFirClassifierContainerFile(classId)
-            FirSupertypeResolverTransformer().apply {
-                initFromFile(firForSuperClassFile)
-                transformRegularClass(firClass, null)
-            }
+        val superTypeRefs = when {
+            firClass.resolvePhase > FirResolvePhase.SUPER_TYPES -> firClass.superTypeRefs
+            else -> firClass.resolveSupertypesInTheAir(session)
         }
 
-        stub.addSupertypesReferencesLists(firClass, session)
+        stub.addSupertypesReferencesLists(firClass, superTypeRefs, session)
 
         for (nestedClass in firClass.declarations.filterIsInstance<FirRegularClass>()) {
             buildStub(nestedClass, stub)
@@ -134,9 +131,12 @@ private fun FirRegularClass.packFlags(): Int {
     return flags
 }
 
-private fun PsiClassStubImpl<*>.addSupertypesReferencesLists(firRegularClass: FirRegularClass, session: FirSession) {
-    if (firRegularClass.supertypesComputationStatus == SupertypesComputationStatus.COMPUTING) return
-    require(firRegularClass.superTypeRefs.all { it is FirResolvedTypeRef }) {
+private fun PsiClassStubImpl<*>.addSupertypesReferencesLists(
+    firRegularClass: FirRegularClass,
+    superTypeRefs: List<FirTypeRef>,
+    session: FirSession
+) {
+    require(superTypeRefs.all { it is FirResolvedTypeRef }) {
         "Supertypes for light class $qualifiedName are being added too early"
     }
 
@@ -145,7 +145,8 @@ private fun PsiClassStubImpl<*>.addSupertypesReferencesLists(firRegularClass: Fi
     val interfaceNames = mutableListOf<String>()
     var superName: String? = null
 
-    for (superConeType in firRegularClass.superConeTypes) {
+    for (superTypeRef in superTypeRefs) {
+        val superConeType = superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
         val supertypeFirClass = superConeType.toFirClass(session) ?: continue
 
         val canonicalString = superConeType.mapToCanonicalString(session)
