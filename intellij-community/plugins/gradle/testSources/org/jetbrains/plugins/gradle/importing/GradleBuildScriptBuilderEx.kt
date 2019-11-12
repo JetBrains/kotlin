@@ -77,18 +77,22 @@ class GradleBuildScriptBuilderEx : GradleBuildScriptBuilder() {
   }
 }
 
-fun GradleBuildScriptBuilder.withBuildScriptMavenCentral() = apply {
+@JvmOverloads
+fun GradleBuildScriptBuilder.withBuildScriptMavenCentral(useOldStyleMetadata: Boolean = false) = apply {
   addBuildScriptRepository("""
     maven {
       url 'http://maven.labs.intellij.net/repo1'
+      ${if (useOldStyleMetadata) { "metadataSources { mavenPom(); artifact(); } " } else {""}}
     }
   """.trimIndent())
 }
 
-fun GradleBuildScriptBuilder.withMavenCentral() = apply {
+@JvmOverloads
+fun GradleBuildScriptBuilder.withMavenCentral(useOldStyleMetadata: Boolean = false) = apply {
   addRepository("""
     maven {
       url 'http://maven.labs.intellij.net/repo1'
+      ${if (useOldStyleMetadata) { "metadataSources { mavenPom(); artifact(); } " } else {""}}
     }
   """.trimIndent())
 }

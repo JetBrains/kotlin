@@ -133,7 +133,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                                "\n")
 
     // successful import when repository is added
-    buildScript.withMavenCentral()
+    buildScript.withMavenCentral(isGradleNewerOrSameThen("6.0"))
     importProject(buildScript.generate())
     assertSyncViewTreeEquals("-\n" +
                              " finished")
@@ -212,7 +212,7 @@ open class GradleOutputParsersMessagesImportingTest : BuildViewMessagesImporting
                                "\n")
 
     // successful import when repository is added
-    buildScript.withBuildScriptMavenCentral()
+    buildScript.withBuildScriptMavenCentral(isGradleNewerOrSameThen("6.0"))
     importProject(buildScript.generate())
     assertSyncViewTreeEquals("-\n" +
                              " finished")

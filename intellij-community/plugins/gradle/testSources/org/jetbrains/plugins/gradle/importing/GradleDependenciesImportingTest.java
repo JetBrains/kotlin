@@ -299,6 +299,17 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
     final VirtualFile depTestsJar = createProjectJarSubFile("lib/dep/dep/1.0/dep-1.0-tests.jar");
     final VirtualFile depNonJar = createProjectSubFile("lib/dep/dep/1.0/dep-1.0.someExt");
 
+    createProjectSubFile("lib/dep/dep/1.0/dep-1.0.pom","" +
+                                                       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                                       "<project\n" +
+                                                       "  xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
+                                                       "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                                                       "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n" +
+                                                       "  <groupId>dep</groupId>\n" +
+                                                       "  <artifactId>dep</artifactId>\n" +
+                                                       "  <version>1.0</version>\n" +
+                                                       "\n" +
+                                                       "</project>\n");
     importProject(
       "allprojects {\n" +
       "  apply plugin: 'java'\n" +
@@ -425,6 +436,17 @@ public class GradleDependenciesImportingTest extends GradleImportingTestCase {
   @Test
   public void testProjectWithUnresolvedDependency() throws Exception {
     final VirtualFile depJar = createProjectJarSubFile("lib/dep/dep/1.0/dep-1.0.jar");
+    createProjectSubFile("lib/dep/dep/1.0/dep-1.0.pom","" +
+                                                       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                                       "<project\n" +
+                                                       "  xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
+                                                       "  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
+                                                       "  xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd\">\n" +
+                                                       "  <groupId>dep</groupId>\n" +
+                                                       "  <artifactId>dep</artifactId>\n" +
+                                                       "  <version>1.0</version>\n" +
+                                                       "\n" +
+                                                       "</project>\n");
     importProject(
       "apply plugin: 'java'\n" +
       "\n" +
