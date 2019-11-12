@@ -33,6 +33,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
                 }
             )
         }
+        is ConeRawType -> lowerBound.scope(useSiteSession, scopeSession)
         is ConeFlexibleType -> lowerBound.scope(useSiteSession, scopeSession)
         is ConeIntersectionType -> FirCompositeScope(
             intersectedTypes.mapNotNullTo(mutableListOf()) {

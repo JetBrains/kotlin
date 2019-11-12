@@ -91,8 +91,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun FlexibleTypeMarker.asRawType(): RawTypeMarker? {
-        assert(this is ConeKotlinType)
-        return null // TODO
+        require(this is ConeFlexibleType)
+        return this as? ConeRawType
     }
 
     override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {

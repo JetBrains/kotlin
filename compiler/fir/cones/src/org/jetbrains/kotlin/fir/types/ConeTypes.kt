@@ -119,7 +119,7 @@ abstract class ConeAbbreviatedType : ConeClassLikeType() {
     abstract val abbreviationLookupTag: ConeClassLikeLookupTag
 }
 
-data class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),
+open class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),
     FlexibleTypeMarker {
 
     init {
@@ -133,6 +133,25 @@ data class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: Cone
 
     override val nullability: ConeNullability
         get() = lowerBound.nullability.takeIf { it == upperBound.nullability } ?: ConeNullability.UNKNOWN
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ConeFlexibleType
+
+        if (lowerBound != other.lowerBound) return false
+        if (upperBound != other.upperBound) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = lowerBound.hashCode()
+        result = 31 * result + upperBound.hashCode()
+        return result
+    }
+
 }
 
 fun ConeKotlinType.upperBoundIfFlexible() = (this as? ConeFlexibleType)?.upperBound ?: this
@@ -181,6 +200,8 @@ class ConeDefinitelyNotNullType private constructor(val original: ConeKotlinType
         }
     }
 }
+
+class ConeRawType(lowerBound: ConeKotlinType, upperBound: ConeKotlinType) : ConeFlexibleType(lowerBound, upperBound), RawTypeMarker
 
 /*
  * Contract of the intersection type: it is flat. It means that
