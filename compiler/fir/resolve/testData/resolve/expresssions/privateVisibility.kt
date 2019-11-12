@@ -8,15 +8,32 @@ private class Private {
     fun baz() {
         bar()
         Nested()
+        fromCompanion()
+        NotCompanion.<!INAPPLICABLE_CANDIDATE!>foo<!>() // hidden
     }
 
     inner class Inner {
         fun foo() {
             bar()
+            fromCompanion()
+            NotCompanion.<!INAPPLICABLE_CANDIDATE!>foo<!>() // hidden
         }
     }
 
-    private class Nested
+    private class Nested {
+        fun foo() {
+            fromCompanion()
+            NotCompanion.<!INAPPLICABLE_CANDIDATE!>foo<!>() // hidden
+        }
+    }
+
+    companion object {
+        private fun fromCompanion() {}
+    }
+
+    object NotCompanion {
+        private fun foo() {}
+    }
 }
 
 fun withLocals() {
@@ -47,6 +64,7 @@ fun test() {
 
     Private().<!INAPPLICABLE_CANDIDATE!>bar<!>() // hidden
     Private.<!INAPPLICABLE_CANDIDATE!>Nested<!>() // hidden
+    Private.<!INAPPLICABLE_CANDIDATE!>fromCompanion<!>() // hidden
 }
 
 // FILE: second.kt

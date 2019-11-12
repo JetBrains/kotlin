@@ -12,6 +12,8 @@ FILE: first.kt
         public final fun baz(): R|kotlin/Unit| {
             this@R|/Private|.R|/Private.bar|()
             R|/Private.Nested.Nested|()
+            this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
+            Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
         }
 
         public final inner class Inner : R|kotlin/Any| {
@@ -21,6 +23,8 @@ FILE: first.kt
 
             public final fun foo(): R|kotlin/Unit| {
                 this@R|/Private|.R|/Private.bar|()
+                this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
+                Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
             }
 
         }
@@ -28,6 +32,31 @@ FILE: first.kt
         private final class Nested : R|kotlin/Any| {
             public constructor(): R|Private.Nested| {
                 super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+                this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
+                Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Private.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final fun fromCompanion(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final object NotCompanion : R|kotlin/Any| {
+            private constructor(): R|Private.NotCompanion| {
+                super<R|kotlin/Any|>()
+            }
+
+            private final fun foo(): R|kotlin/Unit| {
             }
 
         }
@@ -68,6 +97,7 @@ FILE: first.kt
         R|/Private.Private|().R|/Private.Inner.Inner|()
         R|/Private.Private|().<Inapplicable(HIDDEN): [/Private.bar]>#()
         Q|Private|.<Inapplicable(HIDDEN): [/Private.Nested.Nested]>#()
+        Q|Private|.<Inapplicable(HIDDEN): [/Private.Companion.fromCompanion]>#()
     }
 FILE: second.kt
     public final fun secondTest(): R|kotlin/Unit| {

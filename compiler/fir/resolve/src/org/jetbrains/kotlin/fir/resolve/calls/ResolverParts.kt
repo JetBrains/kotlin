@@ -277,7 +277,9 @@ internal object CheckVisibility : CheckerStage() {
     private fun ImplicitReceiverStack.canSeePrivateMemberOf(ownerId: ClassId): Boolean {
         for (implicitReceiverValue in receiversAsReversed()) {
             if (implicitReceiverValue !is ImplicitDispatchReceiverValue) continue
-            if (implicitReceiverValue.boundSymbol.classId == ownerId) return true
+            val boundSymbol = implicitReceiverValue.boundSymbol
+            if (boundSymbol.classId == ownerId) return true
+            if (boundSymbol is FirRegularClassSymbol && boundSymbol.fir.companionObject?.symbol?.classId == ownerId) return true
         }
         return false
     }
