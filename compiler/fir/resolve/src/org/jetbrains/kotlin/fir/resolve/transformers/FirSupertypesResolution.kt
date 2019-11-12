@@ -271,7 +271,7 @@ private class SupertypeComputationSession {
     private val scopesForNestedClassesMap = hashMapOf<FirRegularClass, FirImmutableCompositeScope>()
     private val supertypeStatusMap = linkedMapOf<FirClassLikeDeclaration<*>, SupertypeComputationStatus>()
 
-    val supertypesSupplier = object : SupertypeSupplier {
+    val supertypesSupplier = object : SupertypeSupplier() {
         override fun forClass(firClass: FirClass<*>): List<ConeClassLikeType> {
             if (firClass.resolvePhase > FirResolvePhase.SUPER_TYPES) return firClass.superConeTypes
             return (getSupertypesComputationStatus(firClass) as? SupertypeComputationStatus.Computed)?.supertypeRefs?.mapNotNull {

@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 
-interface SupertypeSupplier {
-    fun forClass(firClass: FirClass<*>): List<ConeClassLikeType>
-    fun expansionForTypeAlias(typeAlias: FirTypeAlias): ConeClassLikeType?
+abstract class SupertypeSupplier {
+    abstract fun forClass(firClass: FirClass<*>): List<ConeClassLikeType>
+    abstract fun expansionForTypeAlias(typeAlias: FirTypeAlias): ConeClassLikeType?
 
-    object Default : SupertypeSupplier {
+    object Default : SupertypeSupplier() {
         override fun forClass(firClass: FirClass<*>) = firClass.superConeTypes
         override fun expansionForTypeAlias(typeAlias: FirTypeAlias) = typeAlias.expandedConeType
     }
