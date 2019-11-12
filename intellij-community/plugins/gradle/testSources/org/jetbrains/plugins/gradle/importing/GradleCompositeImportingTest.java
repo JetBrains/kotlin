@@ -360,7 +360,7 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
   }
 
   @Test
-  @TargetVersions("3.3+")
+  @TargetVersions("4.1+")
   public void testApiDependenciesAreImported() throws Exception {
     createSettingsFile("rootProject.name = \"project-b\"\n" +
                        "includeBuild 'project-a'");
@@ -371,13 +371,13 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
 
     createProjectSubFile("project-a/core/build.gradle",
                          new GradleBuildScriptBuilderEx()
-                           .withKotlinPlugin("1.3.0")
+                           .withKotlinPlugin("1.3.50")
                            .addRepository(" maven { url 'http://maven.labs.intellij.net/repo1' }")
                            .addPrefix("apply plugin: 'java-library'").generate());
 
     createProjectSubFile("project-a/ext/build.gradle",
                          new GradleBuildScriptBuilderEx()
-                           .withKotlinPlugin("1.3.0")
+                           .withKotlinPlugin("1.3.50")
                            .addRepository(" maven { url 'http://maven.labs.intellij.net/repo1' }")
                            .addPrefix(
                              "apply plugin: 'java-library'",
