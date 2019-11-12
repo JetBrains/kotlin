@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBasedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.toKotlinType
@@ -1056,11 +1055,12 @@ open class WrappedFieldDescriptor(
 
 private fun getContainingDeclaration(declaration: IrDeclarationWithName): DeclarationDescriptor {
     val parent = declaration.parent
-    return if (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS && parent.parent is IrExternalPackageFragment) {
-        // JVM IR adds facade classes for IR of functions/properties loaded from dependencies. However, these shouldn't exist
-        // in the descriptor hierarchy, since this is what the old backend (dealing with descriptors) expects.
-        return (parent.parent as IrExternalPackageFragment).packageFragmentDescriptor
+    val parentDescriptor = (parent as IrSymbolOwner).symbol.descriptor
+    return if (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS) {
+        // JVM IR adds facade classes for IR of functions/properties loaded both from sources and dependencies. However, these shouldn't
+        // exist in the descriptor hierarchy, since this is what the old backend (dealing with descriptors) expects.
+        parentDescriptor.containingDeclaration!!
     } else {
-        (parent as IrSymbolOwner).symbol.descriptor
+        parentDescriptor
     }
 }
