@@ -9965,6 +9965,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/typeInferenceExpectedTypeMismatch.kt");
             }
 
+            @TestMetadata("typeParameterInConstructor.kt")
+            public void testTypeParameterInConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/typeParameterInConstructor.kt");
+            }
+
             @TestMetadata("useFunctionLiteralsToInferType.kt")
             public void testUseFunctionLiteralsToInferType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/useFunctionLiteralsToInferType.kt");
