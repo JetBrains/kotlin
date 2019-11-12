@@ -126,7 +126,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
             )
         }
 
-        private val filePathPattern by lazy {
+        val filePathPattern by lazy {
             compilationConfiguration[ScriptCompilationConfiguration.filePathPattern]?.takeIf { it.isNotBlank() }
         }
 
