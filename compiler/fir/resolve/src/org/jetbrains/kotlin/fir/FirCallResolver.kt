@@ -30,13 +30,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -67,7 +65,7 @@ class FirCallResolver(
         ConeEquivalentCallConflictResolver(TypeSpecificityComparator.NONE, inferenceComponents)
     )
 
-    fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?, file: FirFile): FirFunctionCall {
+    fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, file: FirFile): FirFunctionCall {
         qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
         val functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
@@ -100,44 +98,13 @@ class FirCallResolver(
             conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
         }
 
-
-/*
-        fun isInvoke()
-
-        val resultExpression =
-
-        when {
-            successCandidates.singleOrNull() as? ConeCallableSymbol -> {
-                FirFunctionCallImpl(functionCall.session, functionCall.psi, safe = functionCall.safe).apply {
-                    calleeReference =
-                        functionCall.calleeReference.transformSingle(this@FirBodyResolveTransformer, result.successCandidates())
-                    explicitReceiver =
-                        FirQualifiedAccessExpressionImpl(
-                            functionCall.session,
-                            functionCall.calleeReference.psi,
-                            functionCall.safe
-                        ).apply {
-                            calleeReference = createResolvedNamedReference(
-                                functionCall.calleeReference,
-                                result.variableChecker.successCandidates() as List<ConeCallableSymbol>
-                            )
-                            explicitReceiver = functionCall.explicitReceiver
-                        }
-                }
-            }
-            is ApplicabilityChecker -> {
-                functionCall.transformCalleeReference(this, result.successCandidates())
-            }
-            else -> functionCall
-        }
-*/
         val nameReference = createResolvedNamedReference(
             functionCall.calleeReference,
             reducedCandidates,
             result.currentApplicability
         )
 
-        val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference) as FirFunctionCall
+        val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference)
         val candidate = resultExpression.candidate()
 
         // We need desugaring
