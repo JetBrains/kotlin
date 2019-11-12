@@ -224,7 +224,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
         }
     }
 
-    fun reloadIfNeccessary() {
+    fun reloadIfNecessary() {
         if (failedToLoad.compareAndSet(true, false)) {
             reload()
         }

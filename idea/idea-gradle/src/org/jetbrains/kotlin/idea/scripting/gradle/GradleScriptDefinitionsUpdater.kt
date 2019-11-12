@@ -31,7 +31,7 @@ class GradleScriptDefinitionsUpdater : ExternalSystemTaskNotificationListenerAda
                 ScriptDefinitionContributor.find<GradleScriptDefinitionsContributor>(
                     project
                 )
-            gradleDefinitionsContributor?.reloadIfNeccessary()
+            gradleDefinitionsContributor?.reloadIfNecessary()
         }
     }
 }
