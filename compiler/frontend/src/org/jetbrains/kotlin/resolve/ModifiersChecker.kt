@@ -107,7 +107,8 @@ object ModifierCheckerCore {
             ENUM_CLASS,
             ANNOTATION_CLASS,
             TYPEALIAS
-        )
+        ),
+        FUN_KEYWORD to EnumSet.of(INTERFACE)
     )
 
     private val featureDependencies = mapOf(
@@ -117,14 +118,16 @@ object ModifierCheckerCore {
         IMPL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
         EXPECT_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
         ACTUAL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
-        LATEINIT_KEYWORD to listOf(LanguageFeature.LateinitTopLevelProperties, LanguageFeature.LateinitLocalVariables)
+        LATEINIT_KEYWORD to listOf(LanguageFeature.LateinitTopLevelProperties, LanguageFeature.LateinitLocalVariables),
+        FUN_KEYWORD to listOf(LanguageFeature.FunctionInterfaceConversion)
     )
 
     private val featureDependenciesTargets = mapOf(
         LanguageFeature.InlineProperties to setOf(PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER),
         LanguageFeature.LateinitLocalVariables to setOf(LOCAL_VARIABLE),
         LanguageFeature.LateinitTopLevelProperties to setOf(TOP_LEVEL_PROPERTY),
-        LanguageFeature.InlineClasses to setOf(CLASS_ONLY)
+        LanguageFeature.InlineClasses to setOf(CLASS_ONLY),
+        LanguageFeature.FunctionInterfaceConversion to setOf(INTERFACE)
     )
 
     // NOTE: deprecated targets must be possible!
@@ -412,7 +415,7 @@ object ModifierCheckerCore {
         return false
     }
 
-    private val MODIFIER_KEYWORD_SET = TokenSet.orSet(KtTokens.SOFT_KEYWORDS, TokenSet.create(KtTokens.IN_KEYWORD))
+    private val MODIFIER_KEYWORD_SET = TokenSet.orSet(SOFT_KEYWORDS, TokenSet.create(IN_KEYWORD, FUN_KEYWORD))
 
     private fun checkModifierList(
         list: KtModifierList,

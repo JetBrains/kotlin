@@ -7879,6 +7879,29 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/funInterface")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FunInterface extends AbstractDiagnosticsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInFunInterface() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/funInterface"), Pattern.compile("^(.*)\\.kts?$"), true);
+            }
+
+            @TestMetadata("basicFunInterface.kt")
+            public void testBasicFunInterface() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/funInterface/basicFunInterface.kt");
+            }
+
+            @TestMetadata("basicFunInterfaceDisabled.kt")
+            public void testBasicFunInterfaceDisabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/funInterface/basicFunInterfaceDisabled.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/functionAsExpression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
