@@ -44,6 +44,7 @@ import static com.intellij.testFramework.assertions.Assertions.assertThat;
 public abstract class KeymapsTestCaseBase extends LightPlatformTestCase {
   private static final Set<String> LINUX_KEYMAPS = ContainerUtil.newHashSet("Default for XWin", "Default for GNOME", "Default for KDE");
   protected static final String SECOND_STROKE = "SECOND_STROKE_SHORTCUT";
+  public static final String NO_DUPLICATES = "<no duplicates>";
 
   /**
    * @return Keymap -> Shortcut -> [ActionId]
@@ -69,12 +70,15 @@ public abstract class KeymapsTestCaseBase extends LightPlatformTestCase {
                             values.length > 0);
         TestCase.assertTrue("known duplicates list entry for '" + keymapName + "', shortcut '" + values[0] +
                             "' must contain at least two conflicting action ids",
-                            values.length > 2);
+                            values.length > 2 || values.length == 2 && NO_DUPLICATES.equals(values[1]));
         TestCase.assertFalse("known duplicates list entry for '" + keymapName + "', shortcut '" + values[0] +
                              "' must not contain duplicated shortcuts",
                              mapping.containsKey(values[0]));
 
-        mapping.put(values[0], ContainerUtil.newArrayList(values, 1, values.length));
+        List<String> actions = ContainerUtil.newArrayList(values);
+        actions.remove(0); // shortcut
+        actions.remove(NO_DUPLICATES);
+        mapping.put(values[0], actions);
       }
     }
     return result;
@@ -201,26 +205,22 @@ public abstract class KeymapsTestCaseBase extends LightPlatformTestCase {
 
       StringBuilder keymapFailure = new StringBuilder();
       for (Shortcut shortcut : ContainerUtil.union(actual.keySet(), expected.keySet())) {
-        List<String> expectedActions = expected.get(shortcut);
-        List<String> actualActions = actual.get(shortcut);
-        if (expectedActions == null || actualActions == null || !Comparing.haveEqualElements(expectedActions, actualActions)) {
+        List<String> expectedActions = ContainerUtil.notNullize(expected.get(shortcut));
+        List<String> actualActions = ContainerUtil.notNullize(actual.get(shortcut));
+        if (!Comparing.haveEqualElements(expectedActions, actualActions)) {
           String key = getText(shortcut);
 
-          if (actualActions == null) {
-            keymapFailure.append("    ").append(key).append(" - <empty>\n");
-          }
-          else {
-            int keyLength = 24;
+          int keyLength = 24;
 
-            keymapFailure.append("    { ");
-            keymapFailure.append("\"").append(key).append("\"").append(", ");
-            keymapFailure.append(StringUtil.repeat(" ", Math.max(0, keyLength - key.length())));
+          keymapFailure.append("    { ");
+          keymapFailure.append("\"").append(key).append("\"").append(", ");
+          keymapFailure.append(StringUtil.repeat(" ", Math.max(0, keyLength - key.length())));
 
-            List<String> values = ContainerUtil.map(ContainerUtil.sorted(actualActions), it -> "\"" + it + "\"");
-            keymapFailure.append(StringUtil.join(ContainerUtil.sorted(values), ", "));
+          List<String> values = actualActions.isEmpty() ? Collections.singletonList(NO_DUPLICATES)
+                                                        : ContainerUtil.map(ContainerUtil.sorted(actualActions), it -> "\"" + it + "\"");
+          keymapFailure.append(StringUtil.join(ContainerUtil.sorted(values), ", "));
 
-            keymapFailure.append("},\n");
-          }
+          keymapFailure.append("},\n");
         }
       }
 
