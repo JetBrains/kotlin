@@ -164,10 +164,6 @@ abstract class AbstractFirTreeImplementationConfigurator {
             }
         }
 
-        fun defaultSupertypesComputationStatus() {
-            default("supertypesComputationStatus", "SupertypesComputationStatus.NOT_COMPUTED")
-        }
-
         fun default(field: String, init: DefaultValueContext.() -> Unit) {
             DefaultValueContext(getField(field)).apply(init).applyConfiguration()
         }

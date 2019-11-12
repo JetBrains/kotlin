@@ -205,7 +205,6 @@ object NodeConfigurator : AbstractFieldConfigurator() {
         classLikeDeclaration.configure {
             withArg("F", "FirClassLikeDeclaration<F>")
             parentArg(symbolOwner, "F", "F")
-            +field("supertypesComputationStatus", type("fir.declarations", "SupertypesComputationStatus"), withReplace = true).apply { isMutable = true }
             +symbol("FirClassLikeSymbol", "F")
         }
 

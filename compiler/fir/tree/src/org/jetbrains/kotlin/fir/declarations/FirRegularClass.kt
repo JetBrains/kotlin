@@ -27,7 +27,6 @@ interface FirRegularClass : FirMemberDeclaration, FirTypeParametersOwner, FirCla
     override val annotations: List<FirAnnotationCall>
     override val typeParameters: List<FirTypeParameter>
     override val status: FirDeclarationStatus
-    override val supertypesComputationStatus: SupertypesComputationStatus
     override val classKind: ClassKind
     override val declarations: List<FirDeclaration>
     override val symbol: FirRegularClassSymbol

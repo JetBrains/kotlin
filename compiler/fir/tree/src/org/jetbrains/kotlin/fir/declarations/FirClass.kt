@@ -24,7 +24,6 @@ interface FirClass<F : FirClass<F>> : FirClassLikeDeclaration<F>, FirStatement, 
     override val source: FirSourceElement?
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
-    override val supertypesComputationStatus: SupertypesComputationStatus
     override val symbol: FirClassSymbol<F>
     val classKind: ClassKind
     val superTypeRefs: List<FirTypeRef>

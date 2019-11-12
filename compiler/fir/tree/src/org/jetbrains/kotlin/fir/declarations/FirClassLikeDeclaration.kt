@@ -23,10 +23,7 @@ interface FirClassLikeDeclaration<F : FirClassLikeDeclaration<F>> : FirDeclarati
     override val session: FirSession
     override val resolvePhase: FirResolvePhase
     override val annotations: List<FirAnnotationCall>
-    val supertypesComputationStatus: SupertypesComputationStatus
     override val symbol: FirClassLikeSymbol<F>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitClassLikeDeclaration(this, data)
-
-    fun replaceSupertypesComputationStatus(newSupertypesComputationStatus: SupertypesComputationStatus)
 }
