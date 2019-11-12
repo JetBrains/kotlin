@@ -36,24 +36,34 @@ class AddSemicolonBeforeLambdaExpressionFix(element: KtLambdaExpression) : Kotli
                     lastLambdaAcceptor = parent,
                     nodeBeforeSemicolon = callExpression
                 )
-                // Incorrect call is a part of dot-qualified expression before it
+                // Incorrect call is a part of the dot-qualified expression before or after it
                 is KtDotQualifiedExpression -> {
                     val grandparent = parent.parent
-                    if (grandparent.isCallOrDotExpression) {
-                        // Similar to call expression parent, but here correct lambda receiver is one level higher,
-                        // since our parent is the dot expression to the left
-                        liftTrailingNodesAndRelocateLastLambda(
-                            psiFactory, callExpression, endOfCall,
-                            lastLambdaAcceptor = grandparent,
-                            nodeBeforeSemicolon = parent
-                        )
-                    } else {
-                        // Extract trailing lambdas (and possible formatting) two levels higher,
-                        // before dot-qualified expression to the left of this call expression
-                        liftTrailingNodes(
-                            psiFactory, callExpression, endOfCall,
-                            addNodesAfter = parent
-                        )
+                    when {
+                        // Call expression is a receiver of the dot expression. Give last lambda as a new receiver to that dot expression
+                        parent.receiverExpression === callExpression -> {
+                            liftTrailingNodesAndRelocateLastLambda(
+                                psiFactory, callExpression, endOfCall,
+                                lastLambdaAcceptor = parent,
+                                nodeBeforeSemicolon = callExpression
+                            )
+                        }
+                        // Call expression is the right node of parent dot expression, possible call / dot to the right is a grandparent
+                        // If grandparent is call or dot expression, last lambda becomes its new receiver
+                        grandparent.isCallOrDotExpression -> {
+                            liftTrailingNodesAndRelocateLastLambda(
+                                psiFactory, callExpression, endOfCall,
+                                lastLambdaAcceptor = grandparent,
+                                nodeBeforeSemicolon = parent
+                            )
+                        }
+                        // Parent is dot expression, but there is no call or dot after it, so just lift everything up
+                        else -> {
+                            liftTrailingNodes(
+                                psiFactory, callExpression, endOfCall,
+                                addNodesAfter = parent
+                            )
+                        }
                     }
                 }
                 // Simple case: extract all trailing nodes right after call - it is a standalone call expression

@@ -1113,14 +1113,44 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/basic.kt");
         }
 
+        @TestMetadata("chainedDotsEnd.kt")
+        public void testChainedDotsEnd() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/chainedDotsEnd.kt");
+        }
+
+        @TestMetadata("chainedDotsStart.kt")
+        public void testChainedDotsStart() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/chainedDotsStart.kt");
+        }
+
+        @TestMetadata("chainedDotsStartEnd.kt")
+        public void testChainedDotsStartEnd() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/chainedDotsStartEnd.kt");
+        }
+
+        @TestMetadata("complex.kt")
+        public void testComplex() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/complex.kt");
+        }
+
         @TestMetadata("dotExpressionAndCallExpression.kt")
         public void testDotExpressionAndCallExpression() throws Exception {
             runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/dotExpressionAndCallExpression.kt");
         }
 
-        @TestMetadata("multipleCalls.kt")
-        public void testMultipleCalls() throws Exception {
-            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/multipleCalls.kt");
+        @TestMetadata("multipleCallsEnd.kt")
+        public void testMultipleCallsEnd() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/multipleCallsEnd.kt");
+        }
+
+        @TestMetadata("multipleCallsStart.kt")
+        public void testMultipleCallsStart() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/multipleCallsStart.kt");
+        }
+
+        @TestMetadata("multipleCallsStartEnd.kt")
+        public void testMultipleCallsStartEnd() throws Exception {
+            runTest("idea/testData/quickfix/addSemicolonBeforeLambdaExpression/multipleCallsStartEnd.kt");
         }
 
         @TestMetadata("multipleLambdas.kt")
