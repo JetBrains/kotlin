@@ -1,1 +1,4 @@
 Test key, Issue, State (optional: MUTE or FAIL)
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105

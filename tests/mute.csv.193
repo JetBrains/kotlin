@@ -1,4 +1,7 @@
 Test key, Issue, State (optional: MUTE or FAIL)
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryClassUsages, KT-34542, FAIL
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassUsages, KT-34542, FAIL
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryObjectUsages, KT-34542, FAIL

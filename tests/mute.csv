@@ -1,4 +1,7 @@
 Test key, Issue, State (optional: MUTE or FAIL)
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Common.StaticMembers.testJavaStaticMethodsFromImports, KT-32919
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast1, KT-32919
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast2, KT-32919
