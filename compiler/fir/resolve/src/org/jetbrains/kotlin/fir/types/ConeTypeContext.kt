@@ -112,7 +112,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? {
         require(this is ConeKotlinType)
-        return null // TODO
+        return this as? ConeDefinitelyNotNullType
     }
 
     override fun SimpleTypeMarker.isMarkedNullable(): Boolean {
@@ -130,11 +130,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeCapturedType -> constructor
             is ConeTypeVariableType -> this.lookupTag as ConeTypeVariableTypeConstructor // TODO: WTF
             is ConeAbbreviatedType -> this.directExpansionType(session)?.typeConstructor()
-                ?: ErrorTypeConstructor("Failed to expand alias: ${this}")
+                ?: ErrorTypeConstructor("Failed to expand alias: $this")
             is ConeLookupTagBasedType -> this.lookupTag.toSymbol(session) ?: ErrorTypeConstructor("Unresolved: ${this.lookupTag}")
             is ConeIntersectionType -> this
             is ConeStubType -> variable.typeConstructor
-            else -> error("?: ${this}")
+            is ConeDefinitelyNotNullType -> original.typeConstructor()
+            else -> error("?: $this")
         }
 
         // TODO: get rid of class types with type-alias symbols
@@ -371,6 +372,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (this is ConeTypeVariableType) return false
         if (this is ConeIntersectionType) return false
         if (this is ConeStubType) return true
+        if (this is ConeDefinitelyNotNullType) return true
         require(this is ConeLookupTagBasedType)
         val typeConstructor = this.typeConstructor()
         return typeConstructor is FirClassSymbol<*> ||

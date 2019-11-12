@@ -39,6 +39,7 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
                 it.scope(useSiteSession, scopeSession)
             }
         )
+        is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession)
         else -> error("Failed type $this")
     }
 }

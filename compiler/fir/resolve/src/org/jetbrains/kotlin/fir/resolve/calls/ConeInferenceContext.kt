@@ -251,7 +251,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
 
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker {
         require(this is ConeDefinitelyNotNullType)
-        return this.original()
+        return this.original as SimpleTypeMarker
     }
 
     override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {

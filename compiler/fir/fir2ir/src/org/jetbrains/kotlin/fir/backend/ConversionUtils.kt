@@ -47,7 +47,7 @@ fun FirTypeRef.toIrType(session: FirSession, declarationStorage: Fir2IrDeclarati
     return type.toIrType(session, declarationStorage)
 }
 
-fun ConeKotlinType.toIrType(session: FirSession, declarationStorage: Fir2IrDeclarationStorage): IrType {
+fun ConeKotlinType.toIrType(session: FirSession, declarationStorage: Fir2IrDeclarationStorage, definitelyNotNull: Boolean = false): IrType {
     return when (this) {
         is ConeKotlinErrorType -> createErrorType()
         is ConeLookupTagBasedType -> {
@@ -55,20 +55,22 @@ fun ConeKotlinType.toIrType(session: FirSession, declarationStorage: Fir2IrDecla
             val irSymbol = firSymbol.toIrSymbol(session, declarationStorage)
             // TODO: annotations
             IrSimpleTypeImpl(
-                irSymbol, this.isMarkedNullable,
+                irSymbol, !definitelyNotNull && this.isMarkedNullable,
                 typeArguments.map { it.toIrTypeArgument(session, declarationStorage) },
                 emptyList()
             )
         }
         is ConeFlexibleType -> {
             // TODO: yet we take more general type. Not quite sure it's Ok
-            upperBound.toIrType(session, declarationStorage)
+            upperBound.toIrType(session, declarationStorage, definitelyNotNull)
         }
         is ConeCapturedType -> TODO()
-        is ConeDefinitelyNotNullType -> TODO()
+        is ConeDefinitelyNotNullType -> {
+            original.toIrType(session, declarationStorage, definitelyNotNull = true)
+        }
         is ConeIntersectionType -> {
             // TODO: add intersectionTypeApproximation
-            intersectedTypes.first().toIrType(session, declarationStorage)
+            intersectedTypes.first().toIrType(session, declarationStorage, definitelyNotNull)
         }
         is ConeStubType -> createErrorType()
     }

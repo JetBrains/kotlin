@@ -188,6 +188,11 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
             ConeNullability.NOT_NULL -> this
         } as T
         is ConeStubType -> ConeStubType(variable, nullability) as T
+        is ConeDefinitelyNotNullType -> when (nullability) {
+            ConeNullability.NOT_NULL -> this
+            ConeNullability.NULLABLE -> original.withNullability(nullability)
+            ConeNullability.UNKNOWN -> original.withNullability(nullability)
+        } as T
         else -> error("sealed: ${this::class}")
     }
 }
@@ -206,6 +211,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeKotlinTypeProj
             arguments,
             nullability.isNullable
         ) as T
+        is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(original.withArguments(arguments)) as T
         else -> error("Not supported: $this: ${this.render()}")
     }
 }

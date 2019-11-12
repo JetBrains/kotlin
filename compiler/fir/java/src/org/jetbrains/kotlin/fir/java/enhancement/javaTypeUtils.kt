@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeProjection
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -116,6 +117,16 @@ private fun coneFlexibleOrSimpleType(
     upperBound: ConeLookupTagBasedType
 ): ConeKotlinType {
     if (AbstractStrictEqualityTypeChecker.strictEqualTypes(session.typeContext, lowerBound, upperBound)) {
+        val lookupTag = lowerBound.lookupTag
+        if (lookupTag is ConeTypeParameterLookupTag && !lowerBound.isMarkedNullable) {
+            if (lookupTag.typeParameterSymbol.fir.bounds.any {
+                    val type = (it as FirResolvedTypeRef).type
+                    type is ConeTypeParameterType || type.isNullable
+                }
+            ) {
+                return ConeDefinitelyNotNullType.create(lowerBound)
+            }
+        }
         return lowerBound
     }
     return ConeFlexibleType(lowerBound, upperBound)

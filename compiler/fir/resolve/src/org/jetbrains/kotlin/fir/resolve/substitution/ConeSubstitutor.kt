@@ -93,7 +93,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     }
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeDefinitelyNotNullType? {
-        TODO()
+        return ConeDefinitelyNotNullType.create(substituteType(original) ?: original)
     }
 
     private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {
