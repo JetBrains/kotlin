@@ -125,7 +125,7 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   private String requireRealJdkHome() {
     JavaVersion javaRuntimeVersion = JavaVersion.current();
     assumeTestJavaRuntime(javaRuntimeVersion);
-    GradleVersion baseVersion = GradleVersion.version(gradleVersion).getBaseVersion();
+    GradleVersion baseVersion = getCurrentGradleBaseVersion();
     if (javaRuntimeVersion.feature > 9 && baseVersion.compareTo(GradleVersion.version("4.8")) < 0) {
       List<String> paths = JavaHomeFinder.suggestHomePaths();
       for (String path : paths) {
@@ -262,10 +262,6 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
     return createProjectSubFile("settings.gradle", content);
   }
 
-  protected boolean isGradle40orNewer() {
-    return GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("4.0")) >= 0;
-  }
-
   private PathAssembler.LocalDistribution configureWrapper() throws IOException, URISyntaxException {
 
     final URI distributionUri = new DistributionLocator().getDistributionFor(GradleVersion.version(gradleVersion));
@@ -318,7 +314,7 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   }
 
   protected void assertMergedModuleCompileLibDepScope(String moduleName, String depName) {
-    if (isGradleOlderThen_3_4() || isGradleNewerThen_4_5()) {
+    if (isGradleOlderThen("3.4") || isGradleNewerThen("4.5")) {
       assertModuleLibDepScope(moduleName, depName, DependencyScope.COMPILE);
     }
     else {
@@ -327,7 +323,7 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
   }
 
   protected void assertMergedModuleCompileModuleDepScope(String moduleName, String depName) {
-    if (isGradleOlderThen_3_4() || isGradleNewerThen_4_5()) {
+    if (isGradleOlderThen("3.4") || isGradleNewerThen("4.5")) {
       assertModuleModuleDepScope(moduleName, depName, DependencyScope.COMPILE);
     }
     else {
@@ -335,37 +331,25 @@ public abstract class GradleImportingTestCase extends ExternalSystemImportingTes
     }
   }
 
-  protected boolean isGradleOlderThen_3_3() {
-    return GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("3.3")) < 0;
+  protected boolean isGradleOlderThen(@NotNull String ver) {
+    return getCurrentGradleBaseVersion().compareTo(GradleVersion.version(ver)) < 0;
   }
 
-  protected boolean isGradleOlderThen_3_4() {
-    return GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("3.4")) < 0;
+  protected boolean isGradleOlderOrSameThen(@NotNull String ver) {
+    return getCurrentGradleBaseVersion().compareTo(GradleVersion.version(ver)) <= 0;
   }
 
-  protected boolean isGradleOlderThen_4_0() {
-    return GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("4.0")) < 0;
+  protected boolean isGradleNewerOrSameThen(@NotNull String ver) {
+    return getCurrentGradleBaseVersion().compareTo(GradleVersion.version(ver)) >= 0;
   }
 
-  protected boolean isGradleNewerThen_4_5() {
-    return GradleVersion.version(gradleVersion).compareTo(GradleVersion.version("4.5")) > 0;
-  }
-
-  protected boolean isGradleOlderThen_5_2() {
-    return GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("5.2")) < 0;
-  }
-
-  protected boolean isGradleOlderThen_4_8() {
-    return GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("4.8")) < 0;
-  }
-
-  protected boolean isGradleNewerOrSameThen_5_0() {
-    return GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("5.0")) >= 0;
+  protected boolean isGradleNewerThen(@NotNull String ver) {
+    return getCurrentGradleBaseVersion().compareTo(GradleVersion.version(ver)) > 0;
   }
 
   protected String getExtraPropertiesExtensionFqn() {
-    return isGradleOlderThen_5_2() ? "org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension"
-                                   : "org.gradle.internal.extensibility.DefaultExtraPropertiesExtension";
+    return isGradleOlderThen("5.2") ? "org.gradle.api.internal.plugins.DefaultExtraPropertiesExtension"
+                                    : "org.gradle.internal.extensibility.DefaultExtraPropertiesExtension";
   }
 
   protected void enableGradleDebugWithSuspend() {

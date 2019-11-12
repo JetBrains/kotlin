@@ -126,7 +126,7 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
     assertModules("project", "project.main", "project.test");
     assertContentRoots("project", getProjectPath());
 
-    if (isGradle40orNewer()) {
+    if (isGradleNewerOrSameThen("4.0")) {
       assertModuleOutputs("project.main",
                           getProjectPath() + "/build/classes/java/main",
                           getProjectPath() + "/build/resources/main");
@@ -163,7 +163,7 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
   }
 
   private void assertDelegatedMergedBaseJavaProject() {
-    if (isGradle40orNewer()) {
+    if (isGradleNewerOrSameThen("4.0")) {
       assertModuleOutputs("project",
                           getProjectPath() + "/build/classes/java/main",
                           getProjectPath() + "/build/resources/main",
@@ -197,7 +197,7 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
     assertDefaultGradleJavaProjectFolders("project");
 
     assertModuleOutput("project.main", getProjectPath() + "/build", "");
-    String testClassesOutputPath = isGradle40orNewer() ? "/build/classes/java/test" : "/build/classes/test";
+    String testClassesOutputPath = isGradleNewerOrSameThen("4.0") ? "/build/classes/java/test" : "/build/classes/test";
     assertModuleOutput("project.test", "", getProjectPath() + testClassesOutputPath);
 
     importProjectUsingSingeModulePerGradleProject();
@@ -682,7 +682,7 @@ public class GradleFoldersImportingTest extends GradleImportingTestCase {
 
     assertModules("project", "project.app1", "project.app2");
 
-    if (isGradleOlderThen_3_4()) {
+    if (isGradleOlderThen("3.4")) {
       assertResources("project.app1");
       assertResources("project.app2", getProjectPath() + "/shared/resources");
     } else {

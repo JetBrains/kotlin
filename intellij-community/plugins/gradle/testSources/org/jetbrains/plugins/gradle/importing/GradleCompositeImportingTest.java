@@ -214,7 +214,7 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
                   "  compile 'my.group.lib_2:runtime'\n" +
                   "}");
 
-    if (isGradle40orNewer()) {
+    if (isGradleNewerOrSameThen("4.0")) {
       assertModules("app", "app_main", "app_test",
                     "app-runtime", "app-runtime_main", "app-runtime_test",
                     "lib1", "lib1-runtime", "lib1-runtime_main", "lib1-runtime_test",
@@ -227,7 +227,7 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
                     "lib2", "my.group.lib_2-runtime", "my.group.lib_2-runtime_main", "my.group.lib_2-runtime_test");
     }
 
-    if (isGradle40orNewer()) {
+    if (isGradleNewerOrSameThen("4.0")) {
       assertModuleModuleDepScope("app_main", "app-runtime_main", COMPILE);
       assertModuleModuleDepScope("app_main", "lib1-runtime_main", COMPILE);
       assertModuleModuleDepScope("app_main", "lib2-runtime_main", COMPILE);
@@ -303,8 +303,8 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
 
     String myAppApiModuleName = myTestDir.getName() + "-my-app-api";
     String myAppApiMainModuleName = myTestDir.getName() + "-my-app-api_main";
-    String myUtilsApiMainModuleName = isGradle40orNewer() ? "org.sample-my-utils-api_main" : "org.sample-api_main";
-    if (isGradle40orNewer()) {
+    String myUtilsApiMainModuleName = isGradleNewerOrSameThen("4.0") ? "org.sample-my-utils-api_main" : "org.sample-api_main";
+    if (isGradleNewerOrSameThen("4.0")) {
       assertModules(
         // non-gradle modules
         "api", "api_main", "my-app-api", "my-app-api_main", "my-utils-api", "my-utils-api_main",
