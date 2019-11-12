@@ -72,6 +72,30 @@ fun DelegatingFlow.conditionalInfosFromTopFlow(): ConditionalInfos {
     return ImmutableMultimap(conditionalInfos)
 }
 
+private fun DelegatingFlow.approvedInfosUntilParent(parent: DelegatingFlow): ApprovedInfos {
+    return when(level - parent.level) {
+        0 -> emptyMap()
+        1 -> approvedInfosFromTopFlow()
+        else -> mutableMapOf<RealDataFlowVariable, FirDataFlowInfo>().apply {
+            traverse(parent) {
+                it.approvedInfosFromTopFlow().forEach { (variable, info) ->
+                    compute(variable) { _, existingInfo ->
+                        existingInfo?.plus(info) ?: info
+                    }
+                }
+            }
+        }
+    }
+}
+
+private inline fun DelegatingFlow.traverse(untilFlow: DelegatingFlow, block: (DelegatingFlow) -> Unit) {
+    var flow = this
+    while (flow != untilFlow) {
+        block(flow)
+        flow = flow.previousFlow!!
+    }
+}
+
 private class ImmutableMultimap<K, V>(private val original: Multimap<K, V>) : Multimap<K, V> by original {
     override fun put(p0: K?, p1: V?): Boolean {
         throw IllegalStateException()
@@ -121,10 +145,12 @@ abstract class DelegatingLogicSystem(context: DataFlowInferenceContext) : LogicS
         rightVariable: DataFlowVariable
     ): InfoForBooleanOperator {
         require(leftFlow is DelegatingFlow && rightFlow is DelegatingFlow)
+        val parent = lowestCommonFlow(leftFlow, rightFlow)
+
         return InfoForBooleanOperator(
             leftFlow.previousFlow!!.conditionalInfosFromTopFlow()[leftVariable],
             rightFlow.conditionalInfosFromTopFlow()[rightVariable],
-            rightFlow.approvedInfosFromTopFlow()
+            rightFlow.approvedInfosUntilParent(parent)
         )
     }
 
