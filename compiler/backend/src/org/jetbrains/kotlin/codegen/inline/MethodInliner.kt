@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
-import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.inline.FieldRemapper.Companion.foldName
 import org.jetbrains.kotlin.codegen.inline.coroutines.*
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
@@ -260,11 +259,12 @@ class MethodInliner(
                     val invokeParameters = erasedInvokeFunction.valueParameters
 
                     val valueParamShift = max(nextLocalIndex, markerShift)//NB: don't inline cause it changes
+                    val parameterTypesFromDesc = info.invokeMethod.argumentTypes
                     putStackValuesIntoLocalsForLambdaOnInvoke(
-                        listOf(*info.invokeMethod.argumentTypes), valueParameters, invokeParameters, valueParamShift, this, coroutineDesc
+                        listOf(*parameterTypesFromDesc), valueParameters, invokeParameters, valueParamShift, this, coroutineDesc
                     )
 
-                    if (info.invokeMethodDescriptor.valueParameters.isEmpty()) {
+                    if (parameterTypesFromDesc.isEmpty()) {
                         // There won't be no parameters processing and line call can be left without actual instructions.
                         // Note: if function is called on the line with other instructions like 1 + foo(), 'nop' will still be generated.
                         visitInsn(Opcodes.NOP)
