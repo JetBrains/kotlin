@@ -11383,6 +11383,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/mergeIfs/comments.kt");
         }
 
+        @TestMetadata("comments2.kt")
+        public void testComments2() throws Exception {
+            runTest("idea/testData/intentions/mergeIfs/comments2.kt");
+        }
+
+        @TestMetadata("comments3.kt")
+        public void testComments3() throws Exception {
+            runTest("idea/testData/intentions/mergeIfs/comments3.kt");
+        }
+
         @TestMetadata("else1.kt")
         public void testElse1() throws Exception {
             runTest("testData/intentions/mergeIfs/else1.kt");
