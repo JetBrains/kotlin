@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class IrReplacementFunction(
     val function: IrFunction,
@@ -196,6 +197,7 @@ class MemoizedInlineClassReplacements {
                 copyTypeParameters(function.constructedClass.typeParameters + function.typeParameters)
             } else {
                 copyTypeParametersFrom(function)
+                correspondingPropertySymbol = function.safeAs<IrSimpleFunction>()?.correspondingPropertySymbol
             }
             body()
         }

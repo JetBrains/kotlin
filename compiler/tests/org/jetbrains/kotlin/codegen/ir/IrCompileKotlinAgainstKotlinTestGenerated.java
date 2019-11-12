@@ -128,6 +128,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFromBinaryDependencies.kt");
     }
 
+    @TestMetadata("inlineClassInlineProperty.kt")
+    public void testInlineClassInlineProperty() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassInlineProperty.kt");
+    }
+
     @TestMetadata("inlinedConstants.kt")
     public void testInlinedConstants() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlinedConstants.kt");
