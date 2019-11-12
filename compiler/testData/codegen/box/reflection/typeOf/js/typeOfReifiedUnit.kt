@@ -5,8 +5,9 @@
 
 import kotlin.reflect.typeOf
 
+var x: Int = 1
 fun sideEffects() {
-    println("Side effect")
+    x++
 }
 
 inline fun <reified T> foo(): String {

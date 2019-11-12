@@ -26,7 +26,10 @@ fun substituteKTypes(root: JsNode) {
     visitor.accept(root)
 }
 
-// Get KType from expression or from staticRef of referenced name
+// Get KType from expression or from staticRef of referenced name.
+// kType metadata is set on jsClass expressions.
+// There can be a chain of local variables from jsClass to its usage.
+// This methods uses staticRef to find the original expression with kType metadata.
 fun getTransitiveKType(e: JsExpression): JsExpression? {
     return when {
         e.kType != null ->
