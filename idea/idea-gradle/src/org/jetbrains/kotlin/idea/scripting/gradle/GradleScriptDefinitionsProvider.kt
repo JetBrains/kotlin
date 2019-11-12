@@ -77,7 +77,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
             failedToLoad.set(false)
 
-            val kotlinDslTemplates = LinkedHashSet<ScriptDefinition>()
+            val kotlinDslTemplates = ArrayList<ScriptDefinition>()
 
             loadGradleTemplates(
                 templateClass = "org.gradle.kotlin.dsl.KotlinInitScript",
@@ -102,12 +102,12 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
 
             if (kotlinDslTemplates.isNotEmpty()) {
-                return kotlinDslTemplates.asSequence()
+                return kotlinDslTemplates.distinct().asSequence()
             }
 
             val default = tryToLoadOldBuildScriptDefinition()
             if (default.isNotEmpty()) {
-                return default.asSequence()
+                return default.distinct().asSequence()
             }
 
             return sequenceOf(ErrorGradleScriptDefinition())
@@ -261,9 +261,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
                 )
 
             override fun toString(): String = "ErrorGradleScriptDefinition"
-            override fun equals(other: Any?): Boolean = other is ErrorGradleScriptDefinition
-            override fun hashCode(): Int = name.hashCode()
         }
+
+        override fun equals(other: Any?): Boolean = other is ErrorGradleScriptDefinition
+        override fun hashCode(): Int = name.hashCode()
     }
 
     private class ErrorScriptDependenciesResolver(private val message: String? = null) : DependenciesResolver {
