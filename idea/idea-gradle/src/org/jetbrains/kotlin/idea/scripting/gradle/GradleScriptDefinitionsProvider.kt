@@ -13,8 +13,6 @@ import com.intellij.util.EnvironmentUtil
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
-import org.jetbrains.kotlin.lexer.KotlinLexer
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinitionAdapterFromNewAPIBase
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.getEnvironment
@@ -176,9 +174,7 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
 
                 "gradleOptions" to emptyList<String>(), // There is no option in UI to set project wide gradleOptions
                 "gradleJvmOptions" to gradleJvmOptions,
-                "gradleEnvironmentVariables" to if (gradleExeSettings.isPassParentEnvs) EnvironmentUtil.getEnvironmentMap() else emptyMap(),
-
-                "getScriptSectionTokens" to ::topLevelSectionCodeTextTokens
+                "gradleEnvironmentVariables" to if (gradleExeSettings.isPassParentEnvs) EnvironmentUtil.getEnvironmentMap() else emptyMap()
             )
             return ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
                 getEnvironment { environment }
@@ -289,54 +285,3 @@ class GradleKotlinScriptDefinitionFromAnnotatedTemplate(
     override val scriptExpectedLocations: List<ScriptExpectedLocation>
         get() = listOf(ScriptExpectedLocation.Project)
 }
-
-class TopLevelSectionTokensEnumerator(script: CharSequence, identifier: String) : Enumeration<KotlinLexer> {
-
-    private val lexer = KotlinLexer().apply {
-        start(script.replace(Regex.fromLiteral("\r"), ""))
-        var depth = 0
-
-        loop@ while (tokenType != null) {
-            when (tokenType) {
-                KtTokens.IDENTIFIER -> if (depth == 0 && tokenText == identifier) {
-                    advance()
-                    skipWhiteSpaceAndComments()
-                    if (tokenType == KtTokens.LBRACE)
-                        break@loop
-                }
-                KtTokens.LBRACE -> depth += 1
-                KtTokens.RBRACE -> depth -= 1
-            }
-            advance()
-        }
-    }
-
-    private var depth = 1
-    private var finished = false
-
-    override fun hasMoreElements(): Boolean = !finished && lexer.tokenType != null
-
-    override fun nextElement(): KotlinLexer = lexer.apply {
-        advance()
-        when (tokenType) {
-            KtTokens.LBRACE -> depth += 1
-            KtTokens.RBRACE -> {
-                if (depth == 1) {
-                    finished = true
-                }
-                depth -= 1
-            }
-        }
-    }
-
-    private fun KotlinLexer.skipWhiteSpaceAndComments() {
-        while (tokenType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET) {
-            advance()
-        }
-    }
-}
-
-fun topLevelSectionCodeTextTokens(script: CharSequence, sectionIdentifier: String): Sequence<CharSequence> =
-    TopLevelSectionTokensEnumerator(script, sectionIdentifier).asSequence()
-        .filter { it.tokenType !in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET }
-        .map { it.tokenSequence }
