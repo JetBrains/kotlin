@@ -17,15 +17,15 @@ import org.jetbrains.kotlin.backend.common.phaser.namedIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
@@ -35,12 +35,15 @@ import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 internal val generateMultifileFacadesPhase = namedIrModulePhase(
@@ -57,7 +60,12 @@ internal val generateMultifileFacadesPhase = namedIrModulePhase(
             val movedFields = mutableMapOf<IrField, IrField>()
             val functionDelegates = mutableMapOf<IrFunction, IrFunction>()
 
-            input.files.addAll(generateMultifileFacades(input.descriptor, context, movedFields, functionDelegates))
+            // In -Xmultifile-parts-inherit mode, instead of generating "bridge" methods in the facade which call into parts,
+            // we construct an inheritance chain such that all part members are present as fake overrides in the facade.
+            val shouldGeneratePartHierarchy = context.state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts)
+            input.files.addAll(
+                generateMultifileFacades(input.descriptor, context, shouldGeneratePartHierarchy, movedFields, functionDelegates)
+            )
 
             UpdateFieldCallSites(movedFields).lower(input)
             UpdateFunctionCallSites(functionDelegates).lower(input)
@@ -94,6 +102,7 @@ internal class MultifileFacadeFileEntry(
 private fun generateMultifileFacades(
     module: ModuleDescriptor,
     context: JvmBackendContext,
+    shouldGeneratePartHierarchy: Boolean,
     movedFields: MutableMap<IrField, IrField>,
     functionDelegates: MutableMap<IrFunction, IrFunction>
 ): List<IrFile> =
@@ -111,6 +120,10 @@ private fun generateMultifileFacades(
         val fileEntry = MultifileFacadeFileEntry(jvmClassName, partClasses.map(IrClass::fileParent))
         val file = IrFileImpl(fileEntry, EmptyPackageFragmentDescriptor(module, kotlinPackageFqName))
 
+        context.log {
+            "Multifile facade $jvmClassName:\n  ${partClasses.joinToString("\n  ") { it.fqNameWhenAvailable!!.asString() }}\n"
+        }
+
         val facadeClass = buildClass {
             name = jvmClassName.fqNameForTopLevelClassMaybeWithDollars.shortName()
         }.apply {
@@ -118,6 +131,19 @@ private fun generateMultifileFacades(
             createImplicitParameterDeclarationWithWrappedDescriptor()
             if (jvmClassName.packageFqName != kotlinPackageFqName) {
                 context.classNameOverride[this] = jvmClassName
+            }
+            if (shouldGeneratePartHierarchy) {
+                val superClass = modifyMultifilePartsForHierarchy(context, partClasses)
+                superTypes.add(superClass.typeWith())
+
+                addConstructor {
+                    visibility = Visibilities.PRIVATE
+                    isPrimary = true
+                }.also { constructor ->
+                    constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
+                        +irDelegatingConstructorCall(superClass.primaryConstructor!!)
+                    }
+                }
             }
         }
         file.declarations.add(facadeClass)
@@ -128,8 +154,8 @@ private fun generateMultifileFacades(
             moveFieldsOfConstProperties(partClass, facadeClass, movedFields)
 
             for (member in partClass.declarations) {
-                if (member is IrFunction) {
-                    val newMember = member.createMultifileDelegateIfNeeded(context, facadeClass)
+                if (member is IrSimpleFunction) {
+                    val newMember = member.createMultifileDelegateIfNeeded(context, facadeClass, shouldGeneratePartHierarchy)
                     if (newMember != null) {
                         functionDelegates[member] = newMember
                     }
@@ -139,6 +165,31 @@ private fun generateMultifileFacades(
 
         file
     }
+
+// Changes supertypes of multifile part classes so that they inherit from each other, and returns the last part class.
+// The multifile facade should inherit from that part class.
+private fun modifyMultifilePartsForHierarchy(context: JvmBackendContext, unsortedParts: List<IrClass>): IrClass {
+    val parts = unsortedParts.sortedBy(IrClass::name)
+    val superClasses = listOf(context.irBuiltIns.anyClass.owner) + parts.subList(0, parts.size - 1)
+
+    for ((klass, superClass) in parts.zip(superClasses)) {
+        klass.modality = Modality.OPEN
+        klass.visibility = JavaVisibilities.PACKAGE_VISIBILITY
+
+        klass.superTypes.clear()
+        klass.superTypes.add(superClass.typeWith())
+
+        klass.addConstructor {
+            isPrimary = true
+        }.also { constructor ->
+            constructor.body = context.createIrBuilder(constructor.symbol).irBlockBody {
+                +irDelegatingConstructorCall(superClass.primaryConstructor!!)
+            }
+        }
+    }
+
+    return parts.last()
+}
 
 private fun moveFieldsOfConstProperties(partClass: IrClass, facadeClass: IrClass, movedFields: MutableMap<IrField, IrField>) {
     partClass.declarations.transformFlat { member ->
@@ -158,7 +209,11 @@ private fun IrField.shouldMoveToFacade(): Boolean {
     return property != null && property.isConst && !Visibilities.isPrivate(visibility)
 }
 
-private fun IrFunction.createMultifileDelegateIfNeeded(context: JvmBackendContext, facadeClass: IrClass): IrFunction? {
+private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
+    context: JvmBackendContext,
+    facadeClass: IrClass,
+    shouldGeneratePartHierarchy: Boolean
+): IrSimpleFunction? {
     if (Visibilities.isPrivate(visibility) ||
         name == StaticInitializersLowering.clinitName ||
         origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
@@ -166,18 +221,26 @@ private fun IrFunction.createMultifileDelegateIfNeeded(context: JvmBackendContex
 
     // TODO: perform copy of the signature only, without body
     val function = deepCopyWithSymbols(facadeClass)
-    function.body = context.createIrBuilder(function.symbol).irBlockBody {
-        +irReturn(irCall(this@createMultifileDelegateIfNeeded).also { call ->
-            call.passTypeArgumentsFrom(function)
-            function.extensionReceiverParameter?.let { parameter ->
-                call.extensionReceiver = irGet(parameter)
-            }
-            for (parameter in function.valueParameters) {
-                call.putValueArgument(parameter.index, irGet(parameter))
-            }
-        })
+
+    if (shouldGeneratePartHierarchy) {
+        function.body = null
+        function.origin = IrDeclarationOrigin.FAKE_OVERRIDE
+        function.overriddenSymbols.clear()
+        function.overriddenSymbols.add(symbol)
+    } else {
+        function.body = context.createIrBuilder(function.symbol).irBlockBody {
+            +irReturn(irCall(this@createMultifileDelegateIfNeeded).also { call ->
+                call.passTypeArgumentsFrom(function)
+                function.extensionReceiverParameter?.let { parameter ->
+                    call.extensionReceiver = irGet(parameter)
+                }
+                for (parameter in function.valueParameters) {
+                    call.putValueArgument(parameter.index, irGet(parameter))
+                }
+            })
+        }
+        function.origin = JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
     }
-    function.origin = JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
 
     facadeClass.declarations.add(function)
 
