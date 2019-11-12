@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class FirSupertypeResolverTransformerAdapter : FirTransformer<Nothing?>() {
+class FirSupertypeResolverTransformer : FirTransformer<Nothing?>() {
     private val supertypeComputationSession = SupertypeComputationSession()
     private val scopeSession = ScopeSession()
     private val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession)
