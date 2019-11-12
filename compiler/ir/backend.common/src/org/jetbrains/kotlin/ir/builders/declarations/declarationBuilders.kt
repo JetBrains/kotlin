@@ -116,12 +116,13 @@ inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
     }
 
 fun IrFunctionBuilder.buildFun(originalDescriptor: FunctionDescriptor? = null): IrFunctionImpl {
-    val wrappedDescriptor = if (originalDescriptor is DescriptorWithContainerSource)
-        WrappedFunctionDescriptorWithContainerSource(originalDescriptor.containerSource)
-    else if (originalDescriptor != null)
-        WrappedSimpleFunctionDescriptor(originalDescriptor)
-    else
-        WrappedSimpleFunctionDescriptor()
+    val wrappedDescriptor = when(originalDescriptor) {
+        is DescriptorWithContainerSource -> WrappedFunctionDescriptorWithContainerSource(originalDescriptor.containerSource)
+        is PropertyGetterDescriptor -> WrappedPropertyGetterDescriptor(originalDescriptor.annotations, originalDescriptor.source)
+        is PropertySetterDescriptor -> WrappedPropertySetterDescriptor(originalDescriptor.annotations, originalDescriptor.source)
+        null -> WrappedSimpleFunctionDescriptor()
+        else -> WrappedSimpleFunctionDescriptor(originalDescriptor)
+    }
     return IrFunctionImpl(
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),

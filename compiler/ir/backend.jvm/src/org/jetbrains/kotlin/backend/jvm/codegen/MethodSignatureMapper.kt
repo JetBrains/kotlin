@@ -74,7 +74,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         if (nameForSpecialFunction != null) return nameForSpecialFunction
 
         val property = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
-        if (property != null) {
+        if (property != null && function.name.isSpecial) {
             val propertyName = property.name.asString()
             if (property.parent.let { it is IrClass && it.isAnnotationClass }) return propertyName
 
