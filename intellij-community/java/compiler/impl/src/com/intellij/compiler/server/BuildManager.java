@@ -871,7 +871,7 @@ public final class BuildManager implements Disposable {
 
   private boolean isProcessPreloadingEnabled(Project project) {
     // automatically disable process preloading when debugging or testing
-    if (IS_UNIT_TEST_MODE || !Registry.is("compiler.process.preload") || myBuildProcessDebuggingEnabled || isPortableCachesModeEnabled()) {
+    if (IS_UNIT_TEST_MODE || !Registry.is("compiler.process.preload") || myBuildProcessDebuggingEnabled) {
       return false;
     }
     if (project.isDisposed()) {
@@ -883,10 +883,6 @@ public final class BuildManager implements Disposable {
       }
     }
     return true;
-  }
-
-  private static boolean isPortableCachesModeEnabled() {
-    return Registry.is("compiler.build.portable.caches");
   }
 
   private void notifySessionTerminationIfNeeded(@NotNull UUID sessionId, @Nullable Throwable execFailure) {
@@ -1160,7 +1156,7 @@ public final class BuildManager implements Disposable {
       }
     }
 
-    if (isPortableCachesModeEnabled()) {
+    if (Registry.is("compiler.build.portable.caches")) {
       //cmdLine.addParameter("-Didea.resizeable.file.truncate.on.close=true");
       cmdLine.addParameter("-Dkotlin.jps.non.caching.storage=true");
       cmdLine.addParameter("-Dorg.jetbrains.jps.portable.caches=true");
