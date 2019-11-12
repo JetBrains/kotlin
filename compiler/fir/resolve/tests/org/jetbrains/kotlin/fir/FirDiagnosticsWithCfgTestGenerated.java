@@ -123,6 +123,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/casts.kt");
         }
 
+        @TestMetadata("dataFlowInfoFromWhileCondition.kt")
+        public void testDataFlowInfoFromWhileCondition() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/dataFlowInfoFromWhileCondition.kt");
+        }
+
         @TestMetadata("elvis.kt")
         public void testElvis() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/elvis.kt");

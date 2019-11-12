@@ -1,0 +1,16 @@
+FILE: dataFlowInfoFromWhileCondition.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Boolean|
+
+    }
+    public abstract interface B : R|A| {
+    }
+    public abstract interface C : R|A| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lvar a: R|A?| = Null(null)
+        while((R|<local>/a| is R|B|) || (R|<local>/a| is R|C|)) {
+            R|<local>/a|.R|/A.foo|()
+        }
+
+    }

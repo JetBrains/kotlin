@@ -394,6 +394,15 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
         val (loopConditionExitNode, loopBlockEnterNode) = graphBuilder.exitWhileLoopCondition(loop)
         loopConditionExitNode.mergeIncomingFlow()
         loopBlockEnterNode.mergeIncomingFlow()
+        variableStorage[loop.condition]?.let { conditionVariable ->
+            loopBlockEnterNode.flow = logicSystem.approveFactsInsideFlow(
+                conditionVariable,
+                EqTrue,
+                loopBlockEnterNode.flow,
+                shouldForkFlow = false,
+                shouldRemoveSynthetics = true
+            )
+        }
     }
 
     fun exitWhileLoop(loop: FirLoop) {

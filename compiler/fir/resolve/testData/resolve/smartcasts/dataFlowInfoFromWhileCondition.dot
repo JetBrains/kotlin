@@ -1,0 +1,84 @@
+digraph dataFlowInfoFromWhileCondition_kt {
+  graph [splines=ortho nodesep=3]
+  node [shape=box penwidth=2]
+  edge [penwidth=2]
+
+  subgraph cluster_0 {
+    color=red
+    0 [label="Enter function foo" style="filled" fillcolor=red];
+    1 [label="Exit function foo" style="filled" fillcolor=red];
+  }
+
+  0 -> {1};
+
+  subgraph cluster_1 {
+    color=red
+    2 [label="Enter function test" style="filled" fillcolor=red];
+    subgraph cluster_2 {
+      color=blue
+      3 [label="Enter block"];
+      4 [label="Const: Null(null)"];
+      5 [label="Variable declaration: lvar a: R|A?|"];
+      subgraph cluster_3 {
+        color=blue
+        6 [label="Enter while loop"];
+        subgraph cluster_4 {
+          color=blue
+          7 [label="Enter loop condition"];
+          subgraph cluster_5 {
+            color=blue
+            8 [label="Enter ||"];
+            9 [label="Access variable R|<local>/a|"];
+            10 [label="Type operator: a is B"];
+            11 [label="Exit left part of ||"];
+            12 [label="Enter right part of ||"];
+            13 [label="Access variable R|<local>/a|"];
+            14 [label="Type operator: a is C"];
+            15 [label="Exit ||"];
+          }
+          16 [label="Exit loop condition"];
+        }
+        subgraph cluster_6 {
+          color=blue
+          17 [label="Enter loop block"];
+          subgraph cluster_7 {
+            color=blue
+            18 [label="Enter block"];
+            19 [label="Access variable R|<local>/a|"];
+            20 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            21 [label="Exit block"];
+          }
+          22 [label="Exit loop block"];
+        }
+        23 [label="Exit whileloop"];
+      }
+      24 [label="Exit block"];
+    }
+    25 [label="Exit function test" style="filled" fillcolor=red];
+  }
+
+  2 -> {3};
+  3 -> {4};
+  4 -> {5};
+  5 -> {6};
+  6 -> {7};
+  7 -> {8};
+  8 -> {9};
+  9 -> {10};
+  10 -> {11};
+  11 -> {15 12};
+  12 -> {13};
+  13 -> {14};
+  14 -> {15};
+  15 -> {16};
+  16 -> {23 17};
+  17 -> {18};
+  18 -> {19};
+  19 -> {20};
+  20 -> {21};
+  21 -> {22};
+  22 -> {7};
+  23 -> {24};
+  24 -> {25};
+
+}
