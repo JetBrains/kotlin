@@ -175,7 +175,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         requiredDependencies.add(versions.webpack)
         requiredDependencies.add(versions.webpackCli)
         requiredDependencies.add(versions.kotlinSourceMapLoader)
-        requiredDependencies.add(versions.sourceMapSupport)
     }
 
     fun useCoverage(

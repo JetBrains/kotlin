@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@types/node": "^10.12.21",
-    "source-map-support": "^0.5.11",
     "browser-process-hrtime": "^1.0.0"
   },
   "devDependencies": {
