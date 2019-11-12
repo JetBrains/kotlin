@@ -12,3 +12,6 @@ org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.S
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast, KT-32919
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSmartCast2, KT-32919
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.SyntheticExtensions.testSyntheticExtensions1, KT-32919
+org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJsModuleToJvmModule_MoveFromJsModuleToJvmModule, KT-34106
+org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJvmModuleToJsModule_MoveFromJvmModuleToJsModule, KT-34106
+org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveJdkDependentToJsModule_MoveJdkDependentToJsModule, KT-34106
