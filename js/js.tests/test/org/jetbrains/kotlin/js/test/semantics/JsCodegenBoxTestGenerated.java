@@ -13853,6 +13853,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/superCall.kt");
             }
 
+            @TestMetadata("suspend.kt")
+            public void testSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/suspend.kt");
+            }
+
             @TestMetadata("typeAlias.kt")
             public void testTypeAlias() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias.kt");
