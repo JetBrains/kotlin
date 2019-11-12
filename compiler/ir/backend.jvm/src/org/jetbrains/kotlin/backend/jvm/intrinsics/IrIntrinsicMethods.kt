@@ -51,13 +51,13 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(
                     kotlinJvmInternalUnsafe,
                     null,
-                    "monitorEnter",
+                    "access\$monitorEnter\$0",
                     listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
                 ) to MonitorInstruction.MONITOR_ENTER,
                 Key(
                     kotlinJvmInternalUnsafe,
                     null,
-                    "monitorExit",
+                    "access\$monitorExit\$1",
                     listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
                 ) to MonitorInstruction.MONITOR_EXIT,
                 Key(
