@@ -133,6 +133,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/nestedClass.kt");
     }
 
+    @TestMetadata("nestedClassContructor.kt")
+    public void testNestedClassContructor() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/nestedClassContructor.kt");
+    }
+
     @TestMetadata("NestedOfAliasedType.kt")
     public void testNestedOfAliasedType() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/NestedOfAliasedType.kt");

@@ -1,0 +1,18 @@
+FILE: nestedClassContructor.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class B : R|A| {
+            public constructor(): R|A.B| {
+                super<R|A|>()
+            }
+
+            public final fun copy(): <ERROR TYPE REF: Empty diagnostic> {
+                ^copy <Ambiguity: B, [/A.B.B, /A.B.B]>#()
+            }
+
+        }
+
+    }
