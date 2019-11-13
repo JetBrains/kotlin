@@ -3,13 +3,13 @@
 enum class E(n: Int) {
     A(1) {
         override val foo: Int
-            get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+            get() = TODO("Not yet implemented")
     }, B(2) {
         override val foo: Int
-            get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+            get() = TODO("Not yet implemented")
     }, C(3) {
         override val foo: Int
-            get() = <caret><selection>TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.</selection>
+            get() = <caret><selection>TODO("Not yet implemented")</selection>
     };
 
     abstract val foo: Int

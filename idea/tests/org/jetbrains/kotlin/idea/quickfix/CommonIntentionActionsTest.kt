@@ -407,7 +407,7 @@ class CommonIntentionActionsTest : LightPlatformCodeInsightFixtureTestCase() {
         |class Foo {
         |    fun bar() {}
         |    fun baz(param0: Int): Int {
-        |        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        |        TODO("Not yet implemented")
         |    }
         |}
         """.trim().trimMargin(), true)

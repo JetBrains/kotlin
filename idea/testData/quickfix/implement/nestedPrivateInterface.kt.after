@@ -9,7 +9,7 @@ class Container {
 
     class BaseImpl : Base {
         override var z: Double
-            get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+            get() = TODO("Not yet implemented")
             set(value) {}
     }
 }

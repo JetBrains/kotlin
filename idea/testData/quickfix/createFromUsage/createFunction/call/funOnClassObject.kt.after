@@ -3,7 +3,7 @@
 class A<T>(val n: T) {
     companion object {
         fun foo(i: Int): Int {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            TODO("Not yet implemented")
         }
 
     }

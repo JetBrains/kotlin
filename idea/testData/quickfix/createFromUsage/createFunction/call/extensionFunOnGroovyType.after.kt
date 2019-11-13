@@ -6,5 +6,5 @@ fun test(): Int {
 }
 
 private fun A.foo(): Int {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    TODO("Not yet implemented")
 }
