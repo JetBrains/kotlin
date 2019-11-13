@@ -1,10 +1,20 @@
-plugins {
-    id 'org.jetbrains.kotlin.multiplatform' version '{{kotlin_plugin_version}}'
-}
-repositories {
-    {{kotlin_plugin_repositories}}
+buildscript {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}")
+                {{extraPluginDependencies}}
+    }
 }
 
+allprojects {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
 
 group 'com.example'
 version '0.0.1'

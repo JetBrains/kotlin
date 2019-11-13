@@ -1,10 +1,18 @@
-plugins {
-    kotlin("multiplatform").version("{{kotlin_plugin_version}}")
+buildscript {
+    repositories {
+        {{kts_kotlin_plugin_repositories}}
+    }
+    dependencies {
+        {{extraPluginDependencies}}
+    }
 }
 
 repositories {
-    maven("https://kotlin.bintray.com/kotlin-dev")
-    jcenter()
+    {{kts_kotlin_plugin_repositories}}
+}
+
+plugins {
+    kotlin("multiplatform").version("{{kotlin_plugin_version}}")
 }
 
 group = "project"

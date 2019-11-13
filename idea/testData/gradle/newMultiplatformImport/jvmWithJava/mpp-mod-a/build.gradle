@@ -1,23 +1,6 @@
 version '1.0.0'
 
 apply plugin: 'kotlin-multiplatform'
-apply plugin: 'maven-publish'
-apply plugin: 'kotlin-allopen'
-apply plugin: 'kotlin-noarg'
-
-buildscript {
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
-    }
-    repositories {
-        {{kotlin_plugin_repositories}}
-    }
-}
-
-repositories {
-    {{kotlin_plugin_repositories}}
-}
 
 kotlin {
     jvm {

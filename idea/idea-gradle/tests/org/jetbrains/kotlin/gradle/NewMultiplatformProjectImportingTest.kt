@@ -812,6 +812,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     }
 
     @Test
+    @PluginTargetVersions(gradleVersion = "4.0+", pluginVersion = "1.3.30+")
     fun testJvmWithJava() {
         configureByFiles()
         importProject(true)

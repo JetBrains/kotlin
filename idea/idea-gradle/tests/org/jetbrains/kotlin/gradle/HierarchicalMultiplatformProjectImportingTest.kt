@@ -329,6 +329,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - zlib [linux_x64]", DependencyScope.PROVIDED)
             }
+
             module("jvm-on-mpp.hmpp-mod-a.main") {}
             module("jvm-on-mpp.hmpp-mod-a.test") {}
         }

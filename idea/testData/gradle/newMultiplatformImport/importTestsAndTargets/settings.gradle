@@ -1,9 +1,2 @@
-pluginManagement {
-    repositories {
-        {{kotlin_plugin_repositories}}
-    }
-}
 rootProject.name = 'project'
-
-
 enableFeaturePreview('GRADLE_METADATA')

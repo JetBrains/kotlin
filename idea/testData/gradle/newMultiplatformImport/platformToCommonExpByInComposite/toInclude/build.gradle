@@ -5,6 +5,7 @@ buildscript {
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}")
+                {{extraPluginDependencies}}
     }
 }
 
@@ -12,9 +13,7 @@ repositories {
     {{kotlin_plugin_repositories}}
 }
 
-
 apply plugin: 'kotlin-multiplatform'
-
 
 kotlin {
     jvm()

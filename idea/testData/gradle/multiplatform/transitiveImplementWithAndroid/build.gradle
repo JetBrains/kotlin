@@ -6,63 +6,6 @@ buildscript {
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}")
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.2.0'
     }
 }
-
-project('project1') {
-    apply plugin: 'kotlin-platform-common'
-
-    sourceSets {
-        custom
-    }
-}
-
-project('project2') {
-    repositories {
-        mavenCentral()
-    }
-
-    apply plugin: 'kotlin-platform-jvm'
-
-    sourceSets {
-        custom
-    }
-
-    dependencies {
-        implement project(':project1')
-    }
-}
-
-project('project3') {
-    repositories {
-        mavenCentral()
-    }
-
-    apply plugin: 'com.android.application'
-    apply plugin: 'kotlin-android'
-
-    sourceSets {
-        custom
-    }
-
-    android {
-        compileSdkVersion 26
-        buildToolsVersion "23.0.1"
-        defaultConfig {
-            applicationId "org.jetbrains.kotlin"
-            minSdkVersion 18
-            targetSdkVersion 26
-            versionCode 1
-            versionName "1.0"
-            testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        }
-    }
-
-    dependencies {
-        compile project(':project2')
-        customCompile project(':project2')
-        testCompile(project(':project2').sourceSets.test.output)
-    }
-}
-        

@@ -5,9 +5,7 @@ plugins {
 version 'unspecified'
 
 repositories {
-    mavenLocal()
-    jcenter()
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    {{kotlin_plugin_repositories}}
 }
 
 dependencies {
