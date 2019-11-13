@@ -243,20 +243,22 @@ class KotlinCompletionContributor : CompletionContributor() {
         val toFromOriginalFileMapper = ToFromOriginalFileMapper.create(parameters)
 
         if (position.node.elementType == KtTokens.LONG_TEMPLATE_ENTRY_START) {
-            val expression = (position.parent as KtBlockStringTemplateEntry).expression
+            val expression = (position.parent as? KtBlockStringTemplateEntry)?.expression
             if (expression is KtDotQualifiedExpression) {
-                val correctedPosition = (expression.selectorExpression as KtNameReferenceExpression).firstChild
-                // Workaround for KT-16848
-                // ex:
-                // expression: some.IntellijIdeaRulezzz
-                // correctedOffset: ^
-                // expression: some.funcIntellijIdeaRulezzz
-                // correctedOffset      ^
-                val correctedOffset = correctedPosition.endOffset - CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED.length
-                val correctedParameters = parameters.withPosition(correctedPosition, correctedOffset)
-                doComplete(correctedParameters, toFromOriginalFileMapper, result,
-                           lookupElementPostProcessor = { wrapLookupElementForStringTemplateAfterDotCompletion(it) })
-                return
+                val correctedPosition = (expression.selectorExpression as? KtNameReferenceExpression)?.firstChild
+                if (correctedPosition != null) {
+                    // Workaround for KT-16848
+                    // ex:
+                    // expression: some.IntellijIdeaRulezzz
+                    // correctedOffset: ^
+                    // expression: some.funcIntellijIdeaRulezzz
+                    // correctedOffset      ^
+                    val correctedOffset = correctedPosition.endOffset - CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED.length
+                    val correctedParameters = parameters.withPosition(correctedPosition, correctedOffset)
+                    doComplete(correctedParameters, toFromOriginalFileMapper, result,
+                               lookupElementPostProcessor = { wrapLookupElementForStringTemplateAfterDotCompletion(it) })
+                    return
+                }
             }
         }
 
