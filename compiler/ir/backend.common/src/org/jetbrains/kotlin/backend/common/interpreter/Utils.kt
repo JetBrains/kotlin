@@ -76,19 +76,25 @@ fun IrFunctionAccessExpression.getBody(): IrBody? {
     return this.symbol.owner.body
 }
 
-fun Any.toIrConst(expression: IrExpression): IrConst<*> {
+fun Any?.toIrConst(expression: IrExpression): IrConst<*> {
     return when (this) {
-        is Boolean -> IrConstImpl(expression.startOffset, expression.endOffset, expression.type, IrConstKind.Boolean, this)
-        is Char -> IrConstImpl(expression.startOffset, expression.endOffset, expression.type, IrConstKind.Char, this)
-        is Byte -> IrConstImpl(expression.startOffset, expression.endOffset, expression.type, IrConstKind.Byte, this)
-        is Short -> IrConstImpl(expression.startOffset, expression.endOffset, expression.type, IrConstKind.Short, this)
-        is Int -> IrConstImpl(expression.startOffset, expression.endOffset, expression.type, IrConstKind.Int, this)
-        is Long -> IrConstImpl(expression.startOffset, expression.endOffset, expression.type, IrConstKind.Long, this)
-        is String -> IrConstImpl(expression.startOffset, expression.endOffset, expression.type, IrConstKind.String, this)
-        is Float -> IrConstImpl(expression.startOffset, expression.endOffset, expression.type, IrConstKind.Float, this)
-        is Double -> IrConstImpl(expression.startOffset, expression.endOffset, expression.type, IrConstKind.Double, this)
+        is Boolean -> expression.copyParametersTo(IrConstKind.Boolean, this)
+        is Char -> expression.copyParametersTo(IrConstKind.Char, this)
+        is Byte -> expression.copyParametersTo(IrConstKind.Byte, this)
+        is Short -> expression.copyParametersTo(IrConstKind.Short, this)
+        is Int -> expression.copyParametersTo(IrConstKind.Int, this)
+        is Long -> expression.copyParametersTo(IrConstKind.Long, this)
+        is String -> expression.copyParametersTo(IrConstKind.String, this)
+        is Float -> expression.copyParametersTo(IrConstKind.Float, this)
+        is Double -> expression.copyParametersTo(IrConstKind.Double, this)
+        null -> expression.copyParametersTo(IrConstKind.Null, this)
         else -> throw UnsupportedOperationException("Unsupported const element type $this")
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun <T> IrExpression.copyParametersTo(kind: IrConstKind<T>, value: Any?): IrConst<T> {
+    return IrConstImpl(startOffset, endOffset, type, kind, value as T)
 }
 
 fun <T> IrConst<T>.toPrimitive(): Primitive<T> {

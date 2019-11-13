@@ -12,6 +12,7 @@ interface Frame {
     fun addVar(state: State)
     fun getVar(descriptor: DeclarationDescriptor): State
     fun getAll(): List<State>
+    fun contains(descriptor: DeclarationDescriptor): Boolean
 }
 
 class InterpreterFrame(val pool: MutableList<State> = mutableListOf()) : Frame {
@@ -26,5 +27,9 @@ class InterpreterFrame(val pool: MutableList<State> = mutableListOf()) : Frame {
 
     override fun getAll(): List<State> {
         return pool
+    }
+
+    override fun contains(descriptor: DeclarationDescriptor): Boolean {
+        return pool.any { it.isTypeOf(descriptor) }
     }
 }

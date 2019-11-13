@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.statements
@@ -22,12 +23,12 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
     private val any = Complex(builtIns.any, mutableListOf())
 
     fun interpret(expression: IrExpression): IrExpression {
-        return visitExpression(expression, InterpreterFrame()).toIrExpression()
+        return visitExpression(expression, InterpreterFrame()).convertToIrExpression(expression)
     }
 
-    private fun State.toIrExpression(): IrExpression {
+    private fun State.convertToIrExpression(expression: IrExpression): IrExpression {
         return when (this) {
-            is Primitive<*> -> this.getIrConst()
+            is Primitive<*> -> this.getIrConst().value.toIrConst(expression) // it is necessary to replace ir offsets
             else -> TODO("not supported")
         }
     }
@@ -128,5 +129,22 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
 
     override fun visitGetValue(expression: IrGetValue, data: Frame): State {
         return data.getVar(expression.symbol.descriptor).copy()
+    }
+
+    override fun visitVariable(declaration: IrVariable, data: Frame): State {
+        val variable = declaration.initializer?.accept(this, data)?.setDescriptor(declaration.descriptor)
+        variable?.let { data.addVar(it) }
+        return unit
+    }
+
+    override fun visitSetVariable(expression: IrSetVariable, data: Frame): State {
+        if (data.contains(expression.symbol.descriptor)) {
+            val variable = data.getVar(expression.symbol.descriptor)
+            variable.setState(expression.value.accept(this, data))
+        } else {
+            val variable = expression.value.accept(this, data).setDescriptor(expression.symbol.descriptor)
+            data.addVar(variable)
+        }
+        return unit
     }
 }
