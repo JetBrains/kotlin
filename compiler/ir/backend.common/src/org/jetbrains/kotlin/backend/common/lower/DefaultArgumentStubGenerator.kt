@@ -43,8 +43,6 @@ open class DefaultArgumentStubGenerator(
         }
     }
 
-    private val symbols get() = context.ir.symbols
-
     private fun lower(irFunction: IrFunction): List<IrFunction> {
         val newIrFunction = irFunction.generateDefaultsFunction(context, skipInlineMethods, skipExternalMethods)
             ?: return listOf(irFunction)
@@ -84,11 +82,9 @@ open class DefaultArgumentStubGenerator(
             for (valueParameter in irFunction.valueParameters) {
                 val parameter = newIrFunction.valueParameters[valueParameter.index]
                 val remapped = if (valueParameter.defaultValue != null) {
-                    val kIntAnd = symbols.intAnd.owner
-                    val condition = irNotEquals(irCall(kIntAnd).apply {
-                        dispatchReceiver = irGet(maskParameter(newIrFunction, valueParameter.index / 32))
-                        putValueArgument(0, irInt(1 shl (valueParameter.index % 32)))
-                    }, irInt(0))
+                    val mask = irGet(newIrFunction.valueParameters[irFunction.valueParameters.size + valueParameter.index / 32])
+                    val bit = irInt(1 shl (valueParameter.index % 32))
+                    val test = irCallOp(this@DefaultArgumentStubGenerator.context.ir.symbols.intAnd, context.irBuiltIns.intType, mask, bit)
 
                     val expressionBody = valueParameter.defaultValue!!
                     expressionBody.patchDeclarationParents(newIrFunction)
@@ -100,7 +96,7 @@ open class DefaultArgumentStubGenerator(
                         }
                     })
 
-                    selectArgumentOrDefault(condition, parameter, expressionBody.expression)
+                    selectArgumentOrDefault(irNotEquals(test, irInt(0)), parameter, expressionBody.expression)
                 } else {
                     parameter
                 }
@@ -109,15 +105,12 @@ open class DefaultArgumentStubGenerator(
             }
 
             when (irFunction) {
-                is IrConstructor -> +IrDelegatingConstructorCallImpl(
-                    startOffset = irFunction.startOffset,
-                    endOffset = irFunction.endOffset,
-                    type = context.irBuiltIns.unitType,
-                    symbol = irFunction.symbol,
-                    typeArgumentsCount = newIrFunction.parentAsClass.typeParameters.size + newIrFunction.typeParameters.size
-                ).apply {
+                is IrConstructor -> +irDelegatingConstructorCall(irFunction).apply {
                     passTypeArgumentsFrom(newIrFunction.parentAsClass)
-                    passTypeArgumentsFrom(newIrFunction)
+                    // This is for Kotlin/Native, which differs from the other backends in that constructors
+                    // apparently do have dispatch receivers (though *probably* not type arguments, but copy
+                    // those as well just in case):
+                    passTypeArgumentsFrom(newIrFunction, offset = newIrFunction.parentAsClass.typeParameters.size)
                     dispatchReceiver = newIrFunction.dispatchReceiverParameter?.let { irGet(it) }
                     params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
                 }
@@ -180,9 +173,6 @@ open class DefaultArgumentStubGenerator(
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-REPLACER: ${msg()}" }
 }
-
-private fun maskParameter(function: IrFunction, number: Int) =
-    function.valueParameters.single { it.name == parameterMaskName(number) }
 
 val DEFAULT_DISPATCH_CALL = object : IrStatementOriginImpl("DEFAULT_DISPATCH_CALL") {}
 
@@ -378,7 +368,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
         }
 
         for (i in 0 until (valueParameters.size + 31) / 32) {
-            newFunction.addValueParameter(parameterMaskName(i).asString(), context.irBuiltIns.intType)
+            newFunction.addValueParameter("mask$i".synthesizedString, context.irBuiltIns.intType)
         }
         if (this is IrConstructor) {
             val markerType = context.ir.symbols.defaultConstructorMarker.owner.defaultType.makeNullable()
@@ -391,5 +381,3 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
         annotations.mapTo(newFunction.annotations) { it.deepCopyWithSymbols() }
         newFunction
     }
-
-private fun parameterMaskName(number: Int) = "mask$number".synthesizedName
