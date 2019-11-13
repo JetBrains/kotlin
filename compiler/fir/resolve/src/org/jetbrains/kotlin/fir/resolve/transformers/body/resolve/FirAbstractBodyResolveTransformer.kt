@@ -120,7 +120,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             FirTypeResolveScopeForBodyResolve(topLevelScopes, implicitReceiverStack, localScopes), session
         )
         val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
-        val dataFlowAnalyzer: FirDataFlowAnalyzer = FirDataFlowAnalyzer(this)
+        override val dataFlowAnalyzer: FirDataFlowAnalyzer = FirDataFlowAnalyzer(this)
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this, callCompleter)
 
         internal var containerIfAny: FirDeclaration? = null

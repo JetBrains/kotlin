@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStackImpl
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.dfa.Condition.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
@@ -542,10 +543,11 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
     private val FirResolvable.resolvedSymbol: AbstractFirBasedSymbol<*>?
         get() = calleeReference.let {
-            if (it is FirExplicitThisReference) {
-                it.boundSymbol
-            } else {
-                (it as? FirResolvedNamedReference)?.resolvedSymbol
+            when (it) {
+                is FirExplicitThisReference -> it.boundSymbol
+                is FirResolvedNamedReference -> it.resolvedSymbol
+                is FirNamedReferenceWithCandidate -> it.candidateSymbol
+                else -> null
             }
         }
 
@@ -778,7 +780,7 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
     private val FirElement.realVariable: RealDataFlowVariable?
         get() {
-            val symbol: AbstractFirBasedSymbol<*> = if (this is FirThisReceiverExpressionImpl) {
+            val symbol: AbstractFirBasedSymbol<*> = if (this is FirThisReceiverExpression) {
                 calleeReference.boundSymbol
             } else {
                 resolvedSymbol

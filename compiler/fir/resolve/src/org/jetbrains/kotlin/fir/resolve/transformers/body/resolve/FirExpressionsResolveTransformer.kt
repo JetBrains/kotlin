@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.FirOperatorAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirVariableExpectedError
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -122,23 +121,10 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             }
         }
         if (result is FirQualifiedAccessExpression) {
-            result = transformQualifiedAccessUsingSmartcastInfo(result)
+            result = components.transformQualifiedAccessUsingSmartcastInfo(result)
             dataFlowAnalyzer.exitQualifiedAccessExpression(result)
         }
         return result.compose()
-    }
-
-    private fun transformQualifiedAccessUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): FirQualifiedAccessExpression {
-        val typesFromSmartCast = dataFlowAnalyzer.getTypeUsingSmartcastInfo(qualifiedAccessExpression) ?: return qualifiedAccessExpression
-        val allTypes = typesFromSmartCast.toMutableList().also {
-            it += qualifiedAccessExpression.resultType.coneTypeUnsafe<ConeKotlinType>()
-        }
-        val intersectedType = ConeTypeIntersector.intersectTypes(inferenceComponents.ctx as ConeInferenceContext, allTypes)
-        // TODO: add check that intersectedType is not equal to original type
-        val intersectedTypeRef = FirResolvedTypeRefImpl(qualifiedAccessExpression.resultType.source, intersectedType).apply {
-            annotations += qualifiedAccessExpression.resultType.annotations
-        }
-        return FirExpressionWithSmartcastImpl(qualifiedAccessExpression, intersectedTypeRef, typesFromSmartCast)
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {

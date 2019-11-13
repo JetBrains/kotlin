@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
+import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
@@ -37,6 +38,7 @@ interface BodyResolveComponents : SessionHolder {
     val callResolver: FirCallResolver
     val doubleColonExpressionResolver: FirDoubleColonExpressionResolver
     val syntheticCallGenerator: FirSyntheticCallGenerator
+    val dataFlowAnalyzer: FirDataFlowAnalyzer
 
     val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() = phasedFir(session, FirResolvePhase.DECLARATIONS)
