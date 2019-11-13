@@ -9,8 +9,7 @@ import com.intellij.execution.RunManager
 import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.externalSystem.debugger.DebuggerBackendExtension
 import com.intellij.openapi.project.Project
-import com.jetbrains.nodejs.run.NodeJsRunConfiguration
-import com.jetbrains.nodejs.run.NodeJsRunConfigurationType
+import com.jetbrains.debugger.wip.JSRemoteDebugConfigurationType
 
 class GradleNodeJsDebuggerBackend : DebuggerBackendExtension {
     override fun id(): String = "Gradle NodeJS"
@@ -21,7 +20,7 @@ class GradleNodeJsDebuggerBackend : DebuggerBackendExtension {
             "  if (task instanceof AbstractExecTask || task instanceof AbstractTestTask) {",
             "    if (task.hasProperty('executable') && task.executable) {",
             "      def debugPort = ForkedDebuggerHelper.setupDebugger('${id()}', task.path, '', $dispatchPort)",
-            "      task.args = task.args",
+            "      task.args = ['--inspect-brk'] + task.args",
             "    }",
             "  }",
             "}",
@@ -42,16 +41,9 @@ class GradleNodeJsDebuggerBackend : DebuggerBackendExtension {
     ): RunnerAndConfigurationSettings {
         val runManager = RunManager.getInstance(project)
 
-        val settings = runManager.createConfiguration(
+        return runManager.createConfiguration(
             processName,
-            NodeJsRunConfigurationType::class.java
+            JSRemoteDebugConfigurationType::class.java
         )
-
-        with(settings.configuration as NodeJsRunConfiguration) {
-            workingDirectory = "~/repos/check-kotlin-js-test"
-            inputPath = "build/js/packages/check-kotlin-js-test/kotlin/check-kotlin-js-test.js"
-        }
-
-        return settings
     }
 }
