@@ -4,7 +4,6 @@ package com.intellij.openapi.externalSystem.autoimport
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ReadAction
-import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.EditorFactory
@@ -18,6 +17,7 @@ import com.intellij.openapi.externalSystem.util.CompoundParallelOperationTrace
 import com.intellij.openapi.externalSystem.util.calculateCrc
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -131,12 +131,12 @@ class ProjectSettingsTracker(
   }
 
   private fun invokeLater(action: () -> Unit) {
-    val transactionGuard = TransactionGuard.getInstance()
+    val application = ApplicationManager.getApplication()
     if (!isAsyncAllowed()) {
-      transactionGuard.submitTransactionAndWait(Runnable { action() })
+      application.invokeAndWait(action)
     }
     else {
-      transactionGuard.submitTransactionLater(parentDisposable, Runnable { action() })
+      application.invokeLater(action)
     }
   }
 

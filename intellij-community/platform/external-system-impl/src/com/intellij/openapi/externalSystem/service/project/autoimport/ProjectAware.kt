@@ -2,7 +2,7 @@
 package com.intellij.openapi.externalSystem.service.project.autoimport
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.ExternalSystemAutoImportAware
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemProjectAware
@@ -13,8 +13,6 @@ import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListenerAdapter
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType.RESOLVE_PROJECT
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.*
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
@@ -50,9 +48,12 @@ class ProjectAware(
   }
 
   override fun refreshProject() {
-    TransactionGuard.getInstance().submitTransactionLater(project, Runnable {
-      ExternalSystemUtil.refreshProject(projectPath, ImportSpecBuilder(project, systemId).useDefaultCallback().build())
-    })
+    val application = ApplicationManager.getApplication()
+    application.invokeLater {
+      application.runWriteAction {
+        ExternalSystemUtil.refreshProject(projectPath, ImportSpecBuilder(project, systemId).build())
+      }
+    }
   }
 
   private inner class TaskNotificationListener(
