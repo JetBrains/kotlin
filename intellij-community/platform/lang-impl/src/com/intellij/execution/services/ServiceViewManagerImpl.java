@@ -644,6 +644,11 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   }
 
   boolean isSplitByTypeEnabled(@NotNull ServiceView selectedView) {
+    if (!isMainView(selectedView) ||
+        selectedView.getModel().getVisibleRoots().isEmpty()) {
+      return false;
+    }
+
     ServiceViewContentHolder holder = getContentHolder(selectedView);
     if (holder == null) return false;
 

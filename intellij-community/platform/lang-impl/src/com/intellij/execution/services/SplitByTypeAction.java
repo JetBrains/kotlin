@@ -3,7 +3,6 @@ package com.intellij.execution.services;
 
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -20,14 +19,13 @@ public class SplitByTypeAction extends DumbAwareAction {
     }
 
     ServiceView selectedView = getSelectedView(e);
-    if (selectedView == null || !ServiceViewManagerImpl.isMainView(selectedView)) {
+    if (selectedView == null) {
       e.getPresentation().setEnabledAndVisible(false);
       return;
     }
 
-    Presentation presentation = e.getPresentation();
     boolean enabled = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).isSplitByTypeEnabled(selectedView);
-    presentation.setEnabledAndVisible(enabled);
+    e.getPresentation().setEnabledAndVisible(enabled);
   }
 
   @Override
