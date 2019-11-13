@@ -243,7 +243,24 @@ public class ProjectSdksModel implements SdkModel {
     for (final SdkType type : types) {
       if (!type.allowCreationByUser()) continue;
       if (filter != null && !filter.value(type)) continue;
-      final AnAction addAction = new DumbAwareAction(type.getPresentableName(), null, type.getIconForAddAction()) {
+
+      if (type.supportsCustomDownloadUI()) {
+        String downloadText = ProjectBundle.message("sdk.configure.download.action", type.getPresentableName());
+
+        final AnAction downloadAction = new DumbAwareAction(downloadText, null, type.getIconForDownloadAction()) {
+          @Override
+          public void actionPerformed(@NotNull AnActionEvent e) {
+            doDownload(parent, selectedSdk, type, updateTree);
+          }
+        };
+        group.add(downloadAction);
+      }
+
+      String addOnDiskText = type.supportsCustomCreateUI()
+                             ? type.getPresentableName()
+                             : ProjectBundle.message("sdk.configure.add.action", type.getPresentableName());
+
+      final AnAction addAction = new DumbAwareAction(addOnDiskText, null, type.getIconForAddAction()) {
         @Override
         public void actionPerformed(@NotNull AnActionEvent e) {
           doAdd(parent, selectedSdk, type, updateTree);
@@ -255,6 +272,13 @@ public class ProjectSdksModel implements SdkModel {
 
   public void doAdd(@NotNull JComponent parent, @NotNull final SdkType type, @NotNull final Consumer<? super Sdk> callback) {
     doAdd(parent, null, type, callback);
+  }
+
+  public void doDownload(@NotNull JComponent parent, @Nullable final Sdk selectedSdk, @NotNull final SdkType type, @NotNull final Consumer<? super Sdk> callback) {
+    if (!type.supportsCustomDownloadUI()) return;
+    myModified = true;
+
+    type.showCustomDownloadUI(this, parent, selectedSdk, sdk -> setupSdk(sdk, callback));
   }
 
   public void doAdd(@NotNull JComponent parent, @Nullable final Sdk selectedSdk, @NotNull final SdkType type, @NotNull final Consumer<? super Sdk> callback) {
