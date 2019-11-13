@@ -72,4 +72,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> METADATA_ONLY =
             CompilerConfigurationKey.create("generate .meta.js and .kjsm files only");
+
+    public static final CompilerConfigurationKey<Boolean> DEVELOPER_MODE =
+            CompilerConfigurationKey.create("enables additional checkers");
 }
