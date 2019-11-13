@@ -35,8 +35,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 
 internal val enumClassPhase = makeIrFilePhase(
@@ -472,19 +470,12 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
 
             private fun createEnumValueOfBody(): IrBody {
                 val enumValueOf = context.irBuiltIns.enumValueOfSymbol
-                val returnType = irClass.defaultType
-
-                val unsubstitutedValueOfDescriptor = enumValueOf.descriptor
-                val typeParameter0 = unsubstitutedValueOfDescriptor.typeParameters[0]
-                val enumClassType = irClass.descriptor.defaultType
-                val typeSubstitutor = TypeSubstitutor.create(mapOf(typeParameter0.typeConstructor to TypeProjectionImpl(enumClassType)))
-                val substitutedValueOfDescriptor = unsubstitutedValueOfDescriptor.substitute(typeSubstitutor)!!
 
                 val irValueOfCall =
                     IrCallImpl(
                         UNDEFINED_OFFSET,
                         UNDEFINED_OFFSET,
-                        returnType,
+                        irClass.defaultType,
                         enumValueOf,
                         enumValueOf.owner.typeParameters.size
                     )
@@ -499,7 +490,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                         IrReturnImpl(
                             UNDEFINED_OFFSET,
                             UNDEFINED_OFFSET,
-                            returnType,
+                            irClass.defaultType,
                             valueOfFunction.symbol,
                             irValueOfCall
                         )
@@ -531,6 +522,4 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
             }
         }
     }
-
-
 }
