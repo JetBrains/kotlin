@@ -44,9 +44,9 @@ internal abstract class ScriptClassRootsCache(private val project: Project) {
 
     fun getScriptSdk(file: VirtualFile): Sdk? = scriptsSdksCache[file]
 
-    fun getFirstScriptsSdk(): Sdk? {
-        val firstCachedScript = all.firstOrNull()?.first ?: return null
-        return scriptsSdksCache[firstCachedScript]
+    val firstScriptSdk: Sdk? by lazy {
+        val firstCachedScript = all.firstOrNull() ?: return@lazy null
+        return@lazy getScriptSdk(firstCachedScript.second)
     }
 
     private val allSdks by lazy {
