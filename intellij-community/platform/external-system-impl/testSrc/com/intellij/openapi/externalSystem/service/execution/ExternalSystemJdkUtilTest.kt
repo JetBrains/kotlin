@@ -10,9 +10,8 @@ import com.intellij.openapi.projectRoots.impl.JavaSdkImpl
 import com.intellij.openapi.projectRoots.impl.MockSdk
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.roots.RootProvider
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.RunAll
@@ -54,8 +53,8 @@ class ExternalSystemJdkUtilTest : UsefulTestCase() {
   fun testGetJdk() {
     assertThat(getJdk(project, null)).isNull()
 
-    assertThat(getJdk(project, USE_INTERNAL_JAVA)?.homePath)
-      .isEqualTo(FileUtil.toSystemIndependentName(SystemProperties.getJavaHome()))
+    assertThat(resolveJdkName(null, USE_INTERNAL_JAVA)?.homePath)
+      .isEqualTo(StringUtil.trimEnd(FileUtil.toSystemIndependentName(SystemProperties.getJavaHome()), "/jre"))
 
     val javaHomeEnv = EnvironmentUtil.getValue("JAVA_HOME")?.let { FileUtil.toSystemIndependentName(it) }
     if (javaHomeEnv.isNullOrBlank()) {
@@ -81,7 +80,7 @@ class ExternalSystemJdkUtilTest : UsefulTestCase() {
     assertThat(resolveJdkName(null, null)).isNull()
 
     assertThat(resolveJdkName(null, USE_INTERNAL_JAVA)?.homePath)
-      .isEqualTo(FileUtil.toSystemIndependentName(SystemProperties.getJavaHome()))
+      .isEqualTo(StringUtil.trimEnd(FileUtil.toSystemIndependentName(SystemProperties.getJavaHome()), "/jre"))
 
     val javaHomeEnv = EnvironmentUtil.getValue("JAVA_HOME")?.let { FileUtil.toSystemIndependentName(it) }
     if (javaHomeEnv.isNullOrBlank()) {
