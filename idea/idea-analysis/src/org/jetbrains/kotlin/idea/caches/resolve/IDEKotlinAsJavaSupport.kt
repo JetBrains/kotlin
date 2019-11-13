@@ -119,6 +119,10 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
     }
 
     override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? {
+        if (!classOrObject.isValid) {
+            return null
+        }
+
         val virtualFile = classOrObject.containingFile.virtualFile
         if (virtualFile != null) {
             when {
@@ -139,8 +143,13 @@ class IDEKotlinAsJavaSupport(private val project: Project) : KotlinAsJavaSupport
         return null
     }
 
-    override fun getLightClassForScript(script: KtScript): KtLightClassForScript? =
-        KtLightClassForScript.create(script)
+    override fun getLightClassForScript(script: KtScript): KtLightClassForScript? {
+        if (!script.isValid) {
+            return null
+        }
+
+        return KtLightClassForScript.create(script)
+    }
 
     private fun withFakeLightClasses(
         lightClassForFacade: KtLightClassForFacade
