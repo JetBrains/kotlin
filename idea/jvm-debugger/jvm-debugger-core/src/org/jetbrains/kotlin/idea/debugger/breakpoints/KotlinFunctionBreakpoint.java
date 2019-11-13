@@ -110,7 +110,8 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 SourcePosition sourcePosition = KotlinFunctionBreakpoint.this.getSourcePosition();
-                MethodDescriptor descriptor = sourcePosition == null ? null : getMethodDescriptor(project, sourcePosition);
+                MethodDescriptor descriptor = sourcePosition == null
+                        ? null : ReadAction.compute(() -> getMethodDescriptor(project, sourcePosition));
 
                 ProgressIndicatorProvider.checkCanceled();
 
