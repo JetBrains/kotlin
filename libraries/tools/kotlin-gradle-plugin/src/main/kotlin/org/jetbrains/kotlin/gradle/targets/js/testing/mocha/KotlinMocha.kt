@@ -31,7 +31,8 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
     override val requiredNpmDependencies: Collection<RequiredKotlinJsDependency>
         get() = listOf(
             KotlinGradleNpmPackage("test-js-runner"),
-            versions.mocha
+            versions.mocha,
+            versions.sourceMapSupport
         )
 
     // https://mochajs.org/#-timeout-ms-t-ms
@@ -63,17 +64,17 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         val mocha = npmProject.require("mocha/bin/mocha")
         val adapter = npmProject.require("./$ADAPTER_NODEJS")
 
-        val args = mutableListOf(mocha).apply {
+        val args = mutableListOf(
+            "--require",
+            npmProject.require("source-map-support/register.js")
+
+        ).apply {
+            add(mocha)
             addAll(cliArg("--inspect-brk", debug))
             add(adapter)
             addAll(cliArgs.toList())
             addAll(cliArg("--reporter", "kotlin-test-js-runner/mocha-kotlin-reporter.js"))
             addAll(cliArg("--timeout", timeout))
-            addAll(
-                cliArg(
-                    "-r", "kotlin-test-js-runner/kotlin-nodejs-source-map-support.js"
-                )
-            )
         }
 
         return TCServiceMessagesTestExecutionSpec(
