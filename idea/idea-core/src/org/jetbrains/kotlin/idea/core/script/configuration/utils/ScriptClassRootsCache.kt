@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
-internal abstract class ScriptClassRootsCache(private val project: Project) {
-    protected abstract val all: Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
+internal abstract class ScriptClassRootsCache(
+    private val project: Project,
+    val all: Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
+) {
     protected abstract fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper?
 
     private fun getScriptSdk(compilationConfiguration: ScriptCompilationConfigurationWrapper?): Sdk? {
