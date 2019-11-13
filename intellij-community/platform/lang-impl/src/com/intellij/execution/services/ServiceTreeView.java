@@ -163,6 +163,21 @@ class ServiceTreeView extends ServiceView {
   }
 
   @Override
+  Promise<Void> expand(@NotNull Object service, @NotNull Class<?> contributorClass) {
+    AsyncPromise<Void> result = new AsyncPromise<>();
+    myTreeModel.findPath(service, contributorClass)
+      .onError(result::setError)
+      .onSuccess(path -> {
+        TreeUtil.promiseExpand(myTree, new PathSelectionVisitor(path))
+          .onError(result::setError)
+          .onSuccess(expandedPath -> {
+            result.setResult(null);
+          });
+      });
+    return result;
+  }
+
+  @Override
   void onViewSelected() {
     mySelected = true;
     if (myLastSelection != null) {

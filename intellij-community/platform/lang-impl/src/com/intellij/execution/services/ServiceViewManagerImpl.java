@@ -49,6 +49,7 @@ import org.jetbrains.concurrency.Promise;
 import javax.swing.*;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @State(name = "ServiceViewManager", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public final class ServiceViewManagerImpl implements ServiceViewManager, PersistentStateComponent<ServiceViewManagerImpl.State> {
@@ -290,9 +291,11 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           result.setError("Content not initialized");
           return;
         }
-
         Collections.reverse(contents);
-        select(myProject, contents.iterator(), result, service, contributorClass, focus);
+
+        promiseFindView(contents.iterator(), result,
+                        serviceView -> serviceView.select(service, contributorClass),
+                        content -> selectContent(content, focus, myProject));
       };
       ToolWindow toolWindow = activate ? ToolWindowManager.getInstance(myProject).getToolWindow(holder.toolWindowId) : null;
       if (toolWindow != null) {
@@ -305,40 +308,71 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     return result;
   }
 
-  private static void select(Project project, Iterator<Content> iterator, AsyncPromise<Void> result,
-                             @NotNull Object service, @NotNull Class<?> contributorClass, boolean focus) {
+  private static void promiseFindView(Iterator<Content> iterator, AsyncPromise<Void> result,
+                                      Function<ServiceView, Promise<?>> action, Consumer<Content> onSuccess) {
     Content content = iterator.next();
     ServiceView serviceView = getServiceView(content);
     if (serviceView == null) {
       if (iterator.hasNext()) {
-        select(project, iterator, result, service, contributorClass, focus);
+        promiseFindView(iterator, result, action, onSuccess);
       }
       else {
         result.setError("Not services content");
       }
       return;
     }
-    serviceView.select(service, contributorClass)
+    action.apply(serviceView)
       .onSuccess(v -> {
-        AppUIUtil.invokeOnEdt(() -> {
-          ContentManager contentManager = content.getManager();
-          if (contentManager == null) return;
-
-          if (contentManager.getSelectedContent() != content && contentManager.getIndexOfContent(content) >= 0) {
-            contentManager.setSelectedContent(content, focus);
-          }
-        }, project.getDisposed());
-
+        if (onSuccess != null) {
+          onSuccess.accept(content);
+        }
         result.setResult(null);
       })
       .onError(e -> {
         if (iterator.hasNext()) {
-          select(project, iterator, result, service, contributorClass, focus);
+          promiseFindView(iterator, result, action, onSuccess);
         }
         else {
           result.setError(e);
         }
       });
+  }
+
+  private static void selectContent(Content content, boolean focus, Project project) {
+    AppUIUtil.invokeOnEdt(() -> {
+      ContentManager contentManager = content.getManager();
+      if (contentManager == null) return;
+
+      if (contentManager.getSelectedContent() != content && contentManager.getIndexOfContent(content) >= 0) {
+        contentManager.setSelectedContent(content, focus);
+      }
+    }, project.getDisposed());
+  }
+
+  @NotNull
+  @Override
+  public Promise<Void> expand(@NotNull Object service, @NotNull Class<?> contributorClass) {
+    AsyncPromise<Void> result = new AsyncPromise<>();
+    // Ensure model is updated, then iterate over service views on EDT in order to find view with service and select it.
+    myModel.getInvoker().invoke(() -> AppUIUtil.invokeLaterIfProjectAlive(myProject, () -> {
+      ServiceViewContentHolder holder = getContentHolder(contributorClass);
+      if (holder == null) {
+        result.setError("Content manager not initialized");
+        return;
+      }
+
+      List<Content> contents = new SmartList<>(holder.contentManager.getContents());
+      if (contents.isEmpty()) {
+        result.setError("Content not initialized");
+        return;
+      }
+
+      Collections.reverse(contents);
+      promiseFindView(contents.iterator(), result,
+                      serviceView -> serviceView.expand(service, contributorClass),
+                      null);
+    }));
+    return result;
   }
 
   @NotNull

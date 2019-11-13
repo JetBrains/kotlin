@@ -48,6 +48,12 @@ class ServiceSingleView extends ServiceView {
   }
 
   @Override
+  Promise<Void> expand(@NotNull Object service, @NotNull Class<?> contributorClass) {
+    ServiceViewItem item = myRef.get();
+    return item == null || !item.getValue().equals(service) ? Promises.rejectedPromise("Service not found") : Promises.resolvedPromise();
+  }
+
+  @Override
   void onViewSelected() {
     showContent();
   }

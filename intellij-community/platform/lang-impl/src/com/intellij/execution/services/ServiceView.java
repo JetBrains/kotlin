@@ -59,6 +59,8 @@ abstract class ServiceView extends JPanel implements Disposable {
 
   abstract Promise<Void> select(@NotNull Object service, @NotNull Class<?> contributorClass);
 
+  abstract Promise<Void> expand(@NotNull Object service, @NotNull Class<?> contributorClass);
+
   abstract void onViewSelected();
 
   abstract void onViewUnselected();
