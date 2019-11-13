@@ -1,0 +1,57 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.idea.debugger
+
+import com.intellij.execution.RunManager
+import com.intellij.execution.RunnerAndConfigurationSettings
+import com.intellij.openapi.externalSystem.debugger.DebuggerBackendExtension
+import com.intellij.openapi.project.Project
+import com.jetbrains.nodejs.run.NodeJsRunConfiguration
+import com.jetbrains.nodejs.run.NodeJsRunConfigurationType
+
+class GradleNodeJsDebuggerBackend : DebuggerBackendExtension {
+    override fun id(): String = "Gradle NodeJS"
+
+    override fun initializationCode(dispatchPort: String, serializedParams: String): List<String> {
+        return listOf(
+            "gradle.taskGraph.beforeTask { Task task ->",
+            "  if (task instanceof AbstractExecTask || task instanceof AbstractTestTask) {",
+            "    if (task.hasProperty('executable') && task.executable) {",
+            "      def debugPort = ForkedDebuggerHelper.setupDebugger('${id()}', task.path, '', $dispatchPort)",
+            "      task.args = task.args",
+            "    }",
+            "  }",
+            "}",
+            "gradle.taskGraph.afterTask { Task task ->",
+            "  if (task instanceof Exec || task instanceof AbstractTestTask) {",
+            "    if (task.hasProperty('executable') && task.executable) {",
+            "      ForkedDebuggerHelper.signalizeFinish('${id()}', task.path, $dispatchPort)",
+            "    }",
+            "  }",
+            "}"
+        )
+    }
+
+    override fun debugConfigurationSettings(
+        project: Project,
+        processName: String,
+        processParameters: String
+    ): RunnerAndConfigurationSettings {
+        val runManager = RunManager.getInstance(project)
+
+        val settings = runManager.createConfiguration(
+            processName,
+            NodeJsRunConfigurationType::class.java
+        )
+
+        with(settings.configuration as NodeJsRunConfiguration) {
+            workingDirectory = "~/repos/check-kotlin-js-test"
+            inputPath = "build/js/packages/check-kotlin-js-test/kotlin/check-kotlin-js-test.js"
+        }
+
+        return settings
+    }
+}
