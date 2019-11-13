@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.MissingSupertypesResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
@@ -49,9 +50,12 @@ class ResolvedAtomCompleter(
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
     private val dataFlowValueFactory: DataFlowValueFactory,
-    private val typeApproximator: TypeApproximator
+    private val typeApproximator: TypeApproximator,
+    private val missingSupertypesResolver: MissingSupertypesResolver
 ) {
-    private val topLevelCallCheckerContext = CallCheckerContext(topLevelCallContext, deprecationResolver, moduleDescriptor)
+    private val topLevelCallCheckerContext = CallCheckerContext(
+        topLevelCallContext, deprecationResolver, moduleDescriptor, missingSupertypesResolver
+    )
     private val topLevelTrace = topLevelCallCheckerContext.trace
 
     private fun complete(resolvedAtom: ResolvedAtom) {
@@ -90,7 +94,7 @@ class ResolvedAtomCompleter(
         val lastCall = if (resolvedCall is VariableAsFunctionResolvedCall) resolvedCall.functionCall else resolvedCall
         if (ErrorUtils.isError(resolvedCall.candidateDescriptor)) {
             kotlinToResolvedCallTransformer.runArgumentsChecks(topLevelCallContext, topLevelTrace, lastCall as NewResolvedCallImpl<*>)
-            checkMissingReceiverSupertypes(resolvedCall, moduleDescriptor, topLevelTrace)
+            checkMissingReceiverSupertypes(resolvedCall, missingSupertypesResolver, topLevelTrace)
             return resolvedCall
         }
 
@@ -101,7 +105,8 @@ class ResolvedAtomCompleter(
             CallCheckerContext(
                 resolutionContextForPartialCall.replaceBindingTrace(topLevelTrace),
                 deprecationResolver,
-                moduleDescriptor
+                moduleDescriptor,
+                missingSupertypesResolver
             )
         else
             topLevelCallCheckerContext
@@ -119,7 +124,7 @@ class ResolvedAtomCompleter(
 
     private fun checkMissingReceiverSupertypes(
         resolvedCall: ResolvedCall<CallableDescriptor>,
-        moduleDescriptor: ModuleDescriptor,
+        missingSupertypesResolver: MissingSupertypesResolver,
         trace: BindingTrace
     ) {
         val receiverValue = resolvedCall.dispatchReceiver ?: resolvedCall.extensionReceiver
@@ -128,7 +133,7 @@ class ResolvedAtomCompleter(
                 receiverType,
                 resolvedCall.call.callElement,
                 trace,
-                moduleDescriptor
+                missingSupertypesResolver
             )
         }
     }

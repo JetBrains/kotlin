@@ -59,7 +59,8 @@ class CallCompleter(
     private val moduleDescriptor: ModuleDescriptor,
     private val deprecationResolver: DeprecationResolver,
     private val effectSystem: EffectSystem,
-    private val dataFlowValueFactory: DataFlowValueFactory
+    private val dataFlowValueFactory: DataFlowValueFactory,
+    private val missingSupertypesResolver: MissingSupertypesResolver
 ) {
     fun <D : CallableDescriptor> completeCall(
         context: BasicCallResolutionContext,
@@ -78,7 +79,7 @@ class CallCompleter(
 
         if (context.trace.wantsDiagnostics()) {
             if (resolvedCall == null) {
-                checkMissingSupertypes(context, moduleDescriptor)
+                checkMissingSupertypes(context, missingSupertypesResolver)
             } else {
                 val calleeExpression = if (resolvedCall is VariableAsFunctionResolvedCall)
                     resolvedCall.variableCall.call.calleeExpression
@@ -88,7 +89,7 @@ class CallCompleter(
                     if (calleeExpression != null && !calleeExpression.isFakeElement) calleeExpression
                     else resolvedCall.call.callElement
 
-                val callCheckerContext = CallCheckerContext(context, deprecationResolver, moduleDescriptor)
+                val callCheckerContext = CallCheckerContext(context, deprecationResolver, moduleDescriptor, missingSupertypesResolver)
                 for (callChecker in callCheckers) {
                     callChecker.check(resolvedCall, reportOn, callCheckerContext)
 
@@ -105,12 +106,15 @@ class CallCompleter(
         return results
     }
 
-    private fun checkMissingSupertypes(context: BasicCallResolutionContext, moduleDescriptor: ModuleDescriptor) {
+    private fun checkMissingSupertypes(
+        context: BasicCallResolutionContext,
+        missingSupertypesResolver: MissingSupertypesResolver
+    ) {
         val call = context.call
-        val explicitReceiver = call.explicitReceiver.safeAs<ReceiverValue>()
-            ?: return
+        val explicitReceiver = call.explicitReceiver.safeAs<ReceiverValue>() ?: return
+
         MissingDependencySupertypeChecker.checkSupertypes(
-            explicitReceiver.type, call.callElement, context.trace, moduleDescriptor
+            explicitReceiver.type, call.callElement, context.trace, missingSupertypesResolver
         )
     }
 

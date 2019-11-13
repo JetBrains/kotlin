@@ -72,7 +72,8 @@ class KotlinToResolvedCallTransformer(
     private val builtIns: KotlinBuiltIns,
     private val typeSystemContext: TypeSystemInferenceExtensionContextDelegate,
     private val smartCastManager: SmartCastManager,
-    private val typeApproximator: TypeApproximator
+    private val typeApproximator: TypeApproximator,
+    private val missingSupertypesResolver: MissingSupertypesResolver
 ) {
     companion object {
         private val REPORT_MISSING_NEW_INFERENCE_DIAGNOSTIC
@@ -134,7 +135,7 @@ class KotlinToResolvedCallTransformer(
                 val ktPrimitiveCompleter = ResolvedAtomCompleter(
                     resultSubstitutor, context, this, expressionTypingServices, argumentTypeResolver,
                     doubleColonExpressionResolver, builtIns, deprecationResolver, moduleDescriptor, dataFlowValueFactory,
-                    typeApproximator
+                    typeApproximator, missingSupertypesResolver
                 )
 
                 if (!ErrorUtils.isError(candidate.candidateDescriptor)) {

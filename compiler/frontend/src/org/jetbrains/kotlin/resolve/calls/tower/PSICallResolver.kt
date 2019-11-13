@@ -69,7 +69,8 @@ class PSICallResolver(
     private val deprecationResolver: DeprecationResolver,
     private val moduleDescriptor: ModuleDescriptor,
     private val callableReferenceResolver: CallableReferenceResolver,
-    private val candidateInterceptor: CandidateInterceptor
+    private val candidateInterceptor: CandidateInterceptor,
+    private val missingSupertypesResolver: MissingSupertypesResolver
 ) {
     private val givenCandidatesName = Name.special("<given candidates>")
 
@@ -182,7 +183,7 @@ class PSICallResolver(
             argumentTypeResolver, languageVersionSettings, kotlinToResolvedCallTransformer,
             dataFlowValueFactory, inferenceSession, constantExpressionEvaluator, typeResolver,
             this, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents,
-            doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context
+            doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, context, missingSupertypesResolver
         )
 
     private fun calculateExpectedType(context: BasicCallResolutionContext): UnwrappedType? {
