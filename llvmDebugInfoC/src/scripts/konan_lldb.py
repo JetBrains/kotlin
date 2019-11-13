@@ -70,8 +70,8 @@ __FACTORY = {}
 
 # Cache type info pointer to [ChildMetaInfo]
 SYNTHETIC_OBJECT_LAYOUT_CACHE = {}
-TO_STRING_DEPTH = 5
-ARRAY_TO_STRING_LIMIT = 20
+TO_STRING_DEPTH = 2
+ARRAY_TO_STRING_LIMIT = 10
 
 def kotlin_object_type_summary(lldb_val, internal_dict = []):
     """Hook that is run by lldb to display a Kotlin object."""
