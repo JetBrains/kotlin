@@ -17,16 +17,12 @@ import com.intellij.psi.search.NonClasspathDirectoriesScope
 import com.intellij.util.containers.ConcurrentFactoryMap
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationCache
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
-internal class ScriptClassRootsCache(
-    private val project: Project,
-    private val cache: ScriptConfigurationCache
-) {
-    private val all: Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>> get() = cache.allApplied()
-    private fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? = cache[file]?.applied?.configuration
+internal abstract class ScriptClassRootsCache(private val project: Project) {
+    protected abstract val all: Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
+    protected abstract fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper?
 
     private fun getScriptSdk(compilationConfiguration: ScriptCompilationConfigurationWrapper?): Sdk? {
         // workaround for mismatched gradle wrapper and plugin version

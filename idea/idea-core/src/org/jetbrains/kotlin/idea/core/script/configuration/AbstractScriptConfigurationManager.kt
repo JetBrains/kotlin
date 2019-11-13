@@ -254,11 +254,17 @@ internal abstract class AbstractScriptConfigurationManager(
                 val value2 = _classpathRoots
                 if (value2 != null) return value2
 
-                val value3 = ScriptClassRootsCache(project, cache)
+                val value3 = newClassRootsCache()
                 _classpathRoots = value3
                 return value3
             }
         }
+
+    private fun newClassRootsCache() = object : ScriptClassRootsCache(project) {
+        override val all get() = cache.allApplied()
+        override fun getConfiguration(file: VirtualFile) =
+            this@AbstractScriptConfigurationManager.getConfiguration(file)
+    }
 
     private fun clearClassRootsCaches() {
         debug { "class roots caches cleared" }
