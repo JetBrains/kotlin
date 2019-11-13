@@ -1,0 +1,28 @@
+import org.gradle.api.Task
+
+gradle.taskGraph.beforeTask { Task task ->
+    forNodeJsProcess(task) {
+        if (task.hasProperty('args') && task.args) {
+            ForkedDebuggerHelper.setupDebugger('%id', task.path, '', '%dispatchPort'.toInteger())
+            task.args = ['--inspect-brk'] + task.args
+        }
+    }
+}
+gradle.taskGraph.afterTask { Task task ->
+    forNodeJsProcess(task) {
+        ForkedDebuggerHelper.signalizeFinish('%id', task.path, '%dispatchPort'.toInteger())
+    }
+}
+
+static def forNodeJsProcess(Task task, Closure action) {
+    def taskSuperClass = task.class
+    while (taskSuperClass != Object.class) {
+        if (taskSuperClass.canonicalName == "org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec") {
+            action()
+
+            return
+        } else {
+            taskSuperClass = taskSuperClass.superclass
+        }
+    }
+}

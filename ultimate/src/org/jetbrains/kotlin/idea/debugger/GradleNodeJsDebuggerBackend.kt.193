@@ -15,23 +15,15 @@ class GradleNodeJsDebuggerBackend : DebuggerBackendExtension {
     override fun id(): String = "Gradle NodeJS"
 
     override fun initializationCode(dispatchPort: String, serializedParams: String): List<String> {
-        return listOf(
-            "gradle.taskGraph.beforeTask { Task task ->",
-            "  if (task instanceof AbstractExecTask || task instanceof AbstractTestTask) {",
-            "    if (task.hasProperty('executable') && task.executable) {",
-            "      def debugPort = ForkedDebuggerHelper.setupDebugger('${id()}', task.path, '', $dispatchPort)",
-            "      task.args = ['--inspect-brk'] + task.args",
-            "    }",
-            "  }",
-            "}",
-            "gradle.taskGraph.afterTask { Task task ->",
-            "  if (task instanceof Exec || task instanceof AbstractTestTask) {",
-            "    if (task.hasProperty('executable') && task.executable) {",
-            "      ForkedDebuggerHelper.signalizeFinish('${id()}', task.path, $dispatchPort)",
-            "    }",
-            "  }",
-            "}"
-        )
+        return javaClass
+            .getResourceAsStream("/org/jetbrains/kotlin/idea/debugger/GradleNodeJsDebugConfigurator.groovy")
+            .bufferedReader()
+            .readLines()
+            .map { line ->
+                line
+                    .replace("%id", id())
+                    .replace("%dispatchPort", dispatchPort)
+            }
     }
 
     override fun debugConfigurationSettings(
