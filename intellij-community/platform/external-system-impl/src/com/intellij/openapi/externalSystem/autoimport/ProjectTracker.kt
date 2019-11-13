@@ -14,7 +14,7 @@ import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatu
 import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.*
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
 import com.intellij.openapi.externalSystem.util.CompoundParallelOperationTrace
-import com.intellij.openapi.externalSystem.util.properties.BooleanProperty
+import com.intellij.openapi.externalSystem.util.properties.AtomicBooleanProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.util.LocalTimeCounter.currentTime
@@ -31,7 +31,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
   private val projectStates = ConcurrentHashMap<State.Id, State.Project>()
   private val projectDataMap = ConcurrentHashMap<ExternalSystemProjectId, ProjectData>()
-  private val initializationProperty = BooleanProperty(false)
+  private val initializationProperty = AtomicBooleanProperty(false)
   private val projectChangeOperation = CompoundParallelOperationTrace<Nothing?>()
   private val projectRefreshOperation = CompoundParallelOperationTrace<Long>()
   private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, ANY_COMPONENT, this)
