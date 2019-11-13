@@ -9,7 +9,7 @@ import kotlinx.cinterop.*
 @CNaturalStruct("data", "private_flags")
 class CXString(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(16, 8)
+    companion object : CStructVar.Type(16, 8)
     
     var data: COpaquePointer?
         get() = memberAt<COpaquePointerVar>(0).value
@@ -23,7 +23,7 @@ class CXString(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("Strings", "Count")
 class CXStringSet(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(16, 8)
+    companion object : CStructVar.Type(16, 8)
     
     var Strings: CPointer<CXString>?
         get() = memberAt<CPointerVar<CXString>>(0).value
@@ -45,7 +45,7 @@ class CXTranslationUnitImpl(rawPtr: NativePtr) : COpaque(rawPtr)
 @CNaturalStruct("Filename", "Contents", "Length")
 class CXUnsavedFile(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     var Filename: CPointer<ByteVar>?
         get() = memberAt<CPointerVar<ByteVar>>(0).value
@@ -63,7 +63,7 @@ class CXUnsavedFile(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("Major", "Minor", "Subminor")
 class CXVersion(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(12, 4)
+    companion object : CStructVar.Type(12, 4)
     
     var Major: Int
         get() = memberAt<IntVar>(0).value
@@ -81,7 +81,7 @@ class CXVersion(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("data")
 class CXFileUniqueID(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     @CLength(3)
     val data: CArrayPointer<LongVar>
@@ -91,7 +91,7 @@ class CXFileUniqueID(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("ptr_data", "int_data")
 class CXSourceLocation(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     @CLength(2)
     val ptr_data: CArrayPointer<COpaquePointerVar>
@@ -105,7 +105,7 @@ class CXSourceLocation(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("ptr_data", "begin_int_data", "end_int_data")
 class CXSourceRange(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     @CLength(2)
     val ptr_data: CArrayPointer<COpaquePointerVar>
@@ -123,7 +123,7 @@ class CXSourceRange(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("count", "ranges")
 class CXSourceRangeList(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(16, 8)
+    companion object : CStructVar.Type(16, 8)
     
     var count: Int
         get() = memberAt<IntVar>(0).value
@@ -137,7 +137,7 @@ class CXSourceRangeList(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("kind", "amount")
 class CXTUResourceUsageEntry(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(16, 8)
+    companion object : CStructVar.Type(16, 8)
     
     var kind: CXTUResourceUsageKind
         get() = memberAt<CXTUResourceUsageKind.Var>(0).value
@@ -151,7 +151,7 @@ class CXTUResourceUsageEntry(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("data", "numEntries", "entries")
 class CXTUResourceUsage(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     var data: COpaquePointer?
         get() = memberAt<COpaquePointerVar>(0).value
@@ -169,7 +169,7 @@ class CXTUResourceUsage(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("kind", "xdata", "data")
 class CXCursor(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(32, 8)
+    companion object : CStructVar.Type(32, 8)
     
     var kind: CXCursorKind
         get() = memberAt<CXCursorKind.Var>(0).value
@@ -187,7 +187,7 @@ class CXCursor(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("Platform", "Introduced", "Deprecated", "Obsoleted", "Unavailable", "Message")
 class CXPlatformAvailability(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(72, 8)
+    companion object : CStructVar.Type(72, 8)
     
     val Platform: CXString
         get() = memberAt(0)
@@ -214,7 +214,7 @@ class CXCursorSetImpl(rawPtr: NativePtr) : COpaque(rawPtr)
 @CNaturalStruct("kind", "data")
 class CXType(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     var kind: CXTypeKind
         get() = memberAt<CXTypeKind.Var>(0).value
@@ -228,7 +228,7 @@ class CXType(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("int_data", "ptr_data")
 class CXToken(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     @CLength(4)
     val int_data: CArrayPointer<IntVar>
@@ -242,7 +242,7 @@ class CXToken(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("CursorKind", "CompletionString")
 class CXCompletionResult(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(16, 8)
+    companion object : CStructVar.Type(16, 8)
     
     var CursorKind: CXCursorKind
         get() = memberAt<CXCursorKind.Var>(0).value
@@ -256,7 +256,7 @@ class CXCompletionResult(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("Results", "NumResults")
 class CXCodeCompleteResults(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(16, 8)
+    companion object : CStructVar.Type(16, 8)
     
     var Results: CPointer<CXCompletionResult>?
         get() = memberAt<CPointerVar<CXCompletionResult>>(0).value
@@ -270,7 +270,7 @@ class CXCodeCompleteResults(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("context", "visit")
 class CXCursorAndRangeVisitor(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(16, 8)
+    companion object : CStructVar.Type(16, 8)
     
     var context: COpaquePointer?
         get() = memberAt<COpaquePointerVar>(0).value
@@ -284,7 +284,7 @@ class CXCursorAndRangeVisitor(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("ptr_data", "int_data")
 class CXIdxLoc(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     @CLength(2)
     val ptr_data: CArrayPointer<COpaquePointerVar>
@@ -298,7 +298,7 @@ class CXIdxLoc(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("hashLoc", "filename", "file", "isImport", "isAngled", "isModuleImport")
 class CXIdxIncludedFileInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(56, 8)
+    companion object : CStructVar.Type(56, 8)
     
     val hashLoc: CXIdxLoc
         get() = memberAt(0)
@@ -327,7 +327,7 @@ class CXIdxIncludedFileInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("file", "module", "loc", "isImplicit")
 class CXIdxImportedASTFileInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(48, 8)
+    companion object : CStructVar.Type(48, 8)
     
     var file: CXFile?
         get() = memberAt<CXFileVar>(0).value
@@ -348,7 +348,7 @@ class CXIdxImportedASTFileInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("kind", "cursor", "loc")
 class CXIdxAttrInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(64, 8)
+    companion object : CStructVar.Type(64, 8)
     
     var kind: CXIdxAttrKind
         get() = memberAt<CXIdxAttrKindVar>(0).value
@@ -364,7 +364,7 @@ class CXIdxAttrInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("kind", "templateKind", "lang", "name", "USR", "cursor", "attributes", "numAttributes")
 class CXIdxEntityInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(80, 8)
+    companion object : CStructVar.Type(80, 8)
     
     var kind: CXIdxEntityKind
         get() = memberAt<CXIdxEntityKind.Var>(0).value
@@ -401,7 +401,7 @@ class CXIdxEntityInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("cursor")
 class CXIdxContainerInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(32, 8)
+    companion object : CStructVar.Type(32, 8)
     
     val cursor: CXCursor
         get() = memberAt(0)
@@ -410,7 +410,7 @@ class CXIdxContainerInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("attrInfo", "objcClass", "classCursor", "classLoc")
 class CXIdxIBOutletCollectionAttrInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(72, 8)
+    companion object : CStructVar.Type(72, 8)
     
     var attrInfo: CPointer<CXIdxAttrInfo>?
         get() = memberAt<CPointerVar<CXIdxAttrInfo>>(0).value
@@ -430,7 +430,7 @@ class CXIdxIBOutletCollectionAttrInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("entityInfo", "cursor", "loc", "semanticContainer", "lexicalContainer", "isRedeclaration", "isDefinition", "isContainer", "declAsContainer", "isImplicit", "attributes", "numAttributes", "flags")
 class CXIdxDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(128, 8)
+    companion object : CStructVar.Type(128, 8)
     
     var entityInfo: CPointer<CXIdxEntityInfo>?
         get() = memberAt<CPointerVar<CXIdxEntityInfo>>(0).value
@@ -486,7 +486,7 @@ class CXIdxDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("declInfo", "kind")
 class CXIdxObjCContainerDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(16, 8)
+    companion object : CStructVar.Type(16, 8)
     
     var declInfo: CPointer<CXIdxDeclInfo>?
         get() = memberAt<CPointerVar<CXIdxDeclInfo>>(0).value
@@ -500,7 +500,7 @@ class CXIdxObjCContainerDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("base", "cursor", "loc")
 class CXIdxBaseClassInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(64, 8)
+    companion object : CStructVar.Type(64, 8)
     
     var base: CPointer<CXIdxEntityInfo>?
         get() = memberAt<CPointerVar<CXIdxEntityInfo>>(0).value
@@ -516,7 +516,7 @@ class CXIdxBaseClassInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("protocol", "cursor", "loc")
 class CXIdxObjCProtocolRefInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(64, 8)
+    companion object : CStructVar.Type(64, 8)
     
     var protocol: CPointer<CXIdxEntityInfo>?
         get() = memberAt<CPointerVar<CXIdxEntityInfo>>(0).value
@@ -532,7 +532,7 @@ class CXIdxObjCProtocolRefInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("protocols", "numProtocols")
 class CXIdxObjCProtocolRefListInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(16, 8)
+    companion object : CStructVar.Type(16, 8)
     
     var protocols: CPointer<CPointerVar<CXIdxObjCProtocolRefInfo>>?
         get() = memberAt<CPointerVar<CPointerVar<CXIdxObjCProtocolRefInfo>>>(0).value
@@ -546,7 +546,7 @@ class CXIdxObjCProtocolRefListInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("containerInfo", "superInfo", "protocols")
 class CXIdxObjCInterfaceDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     var containerInfo: CPointer<CXIdxObjCContainerDeclInfo>?
         get() = memberAt<CPointerVar<CXIdxObjCContainerDeclInfo>>(0).value
@@ -564,7 +564,7 @@ class CXIdxObjCInterfaceDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("containerInfo", "objcClass", "classCursor", "classLoc", "protocols")
 class CXIdxObjCCategoryDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(80, 8)
+    companion object : CStructVar.Type(80, 8)
     
     var containerInfo: CPointer<CXIdxObjCContainerDeclInfo>?
         get() = memberAt<CPointerVar<CXIdxObjCContainerDeclInfo>>(0).value
@@ -588,7 +588,7 @@ class CXIdxObjCCategoryDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("declInfo", "getter", "setter")
 class CXIdxObjCPropertyDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     var declInfo: CPointer<CXIdxDeclInfo>?
         get() = memberAt<CPointerVar<CXIdxDeclInfo>>(0).value
@@ -606,7 +606,7 @@ class CXIdxObjCPropertyDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("declInfo", "bases", "numBases")
 class CXIdxCXXClassDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(24, 8)
+    companion object : CStructVar.Type(24, 8)
     
     var declInfo: CPointer<CXIdxDeclInfo>?
         get() = memberAt<CPointerVar<CXIdxDeclInfo>>(0).value
@@ -624,7 +624,7 @@ class CXIdxCXXClassDeclInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("kind", "cursor", "loc", "referencedEntity", "parentEntity", "container", "role")
 class CXIdxEntityRefInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(96, 8)
+    companion object : CStructVar.Type(96, 8)
     
     var kind: CXIdxEntityRefKind
         get() = memberAt<CXIdxEntityRefKindVar>(0).value
@@ -656,7 +656,7 @@ class CXIdxEntityRefInfo(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("abortQuery", "diagnostic", "enteredMainFile", "ppIncludedFile", "importedASTFile", "startedTranslationUnit", "indexDeclaration", "indexEntityReference")
 class IndexerCallbacks(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(64, 8)
+    companion object : CStructVar.Type(64, 8)
     
     var abortQuery: CPointer<CFunction<(CXClientData?, COpaquePointer?) -> Int>>?
         get() = memberAt<CPointerVar<CFunction<(CXClientData?, COpaquePointer?) -> Int>>>(0).value
@@ -694,7 +694,7 @@ class IndexerCallbacks(rawPtr: NativePtr) : CStructVar(rawPtr) {
 @CNaturalStruct("typeOpaquePtr")
 class CXTypeAttributes(rawPtr: NativePtr) : CStructVar(rawPtr) {
     
-    companion object : Type(8, 8)
+    companion object : CStructVar.Type(8, 8)
     
     var typeOpaquePtr: COpaquePointer?
         get() = memberAt<COpaquePointerVar>(0).value
@@ -3838,6 +3838,12 @@ fun clang_Cursor_isObjCConsumingSelfMethod(cursor: CValue<CXCursor>): Int {
     }
 }
 
+fun clang_isExtVectorType(type: CValue<CXType>): Int {
+    memScoped {
+        return kniBridge339(type.getPointer(memScope).rawValue)
+    }
+}
+
 val CINDEX_VERSION_MAJOR: Int get() = 0
 
 val CINDEX_VERSION_MINOR: Int get() = 50
@@ -4723,4 +4729,5 @@ private external fun kniBridge335(p0: NativePtr, p1: Int, p2: NativePtr): Unit
 private external fun kniBridge336(p0: NativePtr): Int
 private external fun kniBridge337(p0: NativePtr): Int
 private external fun kniBridge338(p0: NativePtr): Int
+private external fun kniBridge339(p0: NativePtr): Int
 private val loadLibrary = loadKonanLibrary("clangstubs")

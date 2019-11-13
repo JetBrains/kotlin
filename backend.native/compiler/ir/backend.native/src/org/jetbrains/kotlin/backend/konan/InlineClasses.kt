@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
@@ -81,7 +82,8 @@ enum class KonanPrimitiveType(val classId: ClassId, val binaryType: BinaryType.P
     LONG(PrimitiveType.LONG, PrimitiveBinaryType.LONG),
     FLOAT(PrimitiveType.FLOAT, PrimitiveBinaryType.FLOAT),
     DOUBLE(PrimitiveType.DOUBLE, PrimitiveBinaryType.DOUBLE),
-    NON_NULL_NATIVE_PTR(ClassId.topLevel(KonanFqNames.nonNullNativePtr.toSafe()), PrimitiveBinaryType.POINTER)
+    NON_NULL_NATIVE_PTR(ClassId.topLevel(KonanFqNames.nonNullNativePtr.toSafe()), PrimitiveBinaryType.POINTER),
+    VECTOR128(ClassId.topLevel(KonanFqNames.Vector128), PrimitiveBinaryType.VECTOR128)
 
     ;
 

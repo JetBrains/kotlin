@@ -764,6 +764,10 @@ task runtime_random(type: KonanLocalTest) {
     source = "runtime/basic/random.kt"
 }
 
+task runtime_basic_simd(type: KonanLocalTest) {
+    source = "runtime/basic/simd.kt"
+}
+
 task runtime_worker_random(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Uses workers.
     source = "runtime/basic/worker_random.kt"
@@ -3658,6 +3662,7 @@ dynamicTest("produce_dynamic") {
                 "singleton = I am single\n" +
                 "mutable = foo\n" +
                 "topLevel = 777 3\n" +
+                "getVector128 = (1, 2, 3, 4)\n" +
                 "Error handler: kotlin.Error: Expected error\n"
 }
 

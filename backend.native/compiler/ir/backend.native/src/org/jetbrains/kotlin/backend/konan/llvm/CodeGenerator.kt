@@ -558,6 +558,10 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         return LLVMBuildLandingPad(builder, landingpadType, personalityFunction, numClauses, name)!!
     }
 
+    fun extractElement(vector: LLVMValueRef, index: LLVMValueRef, name: String = ""): LLVMValueRef {
+        return LLVMBuildExtractElement(builder, vector, index, name)!!
+    }
+
     fun filteringExceptionHandler(codeContext: CodeContext): ExceptionHandler {
         val lpBlock = basicBlockInFunction("filteringExceptionHandler", position()?.start)
 

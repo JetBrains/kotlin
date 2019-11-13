@@ -9,6 +9,11 @@ void errorHandler(const char* str) {
   printf("Error handler: %s\n", str);
 }
 
+void testVector128() {
+    int __attribute__ ((__vector_size__ (16))) v4f = __ kotlin.root.getVector128();
+    printf("getVector128 = (%d, %d, %d, %d)\n",  v4f[0],  v4f[1],  v4f[2],  v4f[3]);
+}
+
 int main(void) {
     T_(Singleton) singleton = __ kotlin.root.Singleton._instance();
     T_(Base) base = __ kotlin.root.Base.Base();
@@ -64,6 +69,8 @@ int main(void) {
     __ kotlin.root.useInlineClasses(42, "bar", base);
 
     __ kotlin.root.testNullableWithNulls(nullableIntNull, nullableUnitNull);
+
+    testVector128();
 
     __ DisposeStablePointer(singleton.pinned);
     __ DisposeString(string1);

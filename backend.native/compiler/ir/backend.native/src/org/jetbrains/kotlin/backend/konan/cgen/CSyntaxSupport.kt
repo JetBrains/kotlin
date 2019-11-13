@@ -33,6 +33,8 @@ internal object CTypes {
     val C99Bool = simple("_Bool")
     val char = simple("char")
 
+    val vector128 = simple("float __attribute__ ((__vector_size__ (16)))")
+
     val id = simple("id")
 }
 

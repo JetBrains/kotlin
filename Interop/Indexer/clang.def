@@ -1,4 +1,4 @@
-headers = clang-c/Index.h clang-c/ext.h
+headers = clang-c/Index.h clang-c/ext.h clang-c/ExtVector.h
 
 headerFilter = clang-c/**
 

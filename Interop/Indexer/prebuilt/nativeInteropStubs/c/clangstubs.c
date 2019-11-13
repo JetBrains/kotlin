@@ -1119,3 +1119,6 @@ JNIEXPORT jint JNICALL Java_clang_clang_kniBridge337 (JNIEnv* jniEnv, jclass jcl
 JNIEXPORT jint JNICALL Java_clang_clang_kniBridge338 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
     return (jint)clang_Cursor_isObjCConsumingSelfMethod(*(CXCursor*)p0);
 }
+JNIEXPORT jint JNICALL Java_clang_clang_kniBridge339 (JNIEnv* jniEnv, jclass jclss, jlong p0) {
+    return (jint)clang_isExtVectorType(*(CXType*)p0);
+}

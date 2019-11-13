@@ -33,6 +33,7 @@ class IntrinsicType {
         const val UNSIGNED_COMPARE_TO   = "UNSIGNED_COMPARE_TO"
         const val NOT                   = "NOT"
         const val REINTERPRET           = "REINTERPRET"
+        const val EXTRACT_ELEMENT       = "EXTRACT_ELEMENT"
         const val ARE_EQUAL_BY_VALUE    = "ARE_EQUAL_BY_VALUE"
         const val IEEE_754_EQUALS       = "IEEE_754_EQUALS"
 

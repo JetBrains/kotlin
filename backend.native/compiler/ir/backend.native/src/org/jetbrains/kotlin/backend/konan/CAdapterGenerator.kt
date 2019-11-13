@@ -846,6 +846,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
         output("typedef unsigned long long ${prefix}_KULong;")
         output("typedef float              ${prefix}_KFloat;")
         output("typedef double             ${prefix}_KDouble;")
+        output("typedef float __attribute__ ((__vector_size__ (16))) ${prefix}_KVector128;")
         output("typedef void*              ${prefix}_KNativePtr;")
         output("struct ${prefix}_KType;")
         output("typedef struct ${prefix}_KType ${prefix}_KType;")
@@ -1026,6 +1027,7 @@ internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVi
             KonanPrimitiveType.FLOAT -> "${prefix}_KFloat"
             KonanPrimitiveType.DOUBLE -> "${prefix}_KDouble"
             KonanPrimitiveType.NON_NULL_NATIVE_PTR -> "void*"
+            KonanPrimitiveType.VECTOR128 -> "${prefix}_KVector128"
         }
     }
 

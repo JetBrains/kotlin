@@ -499,6 +499,43 @@ internal class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean 
                 spelling = clang_getTypeSpelling(type).convertAndDispose().dropConstQualifier()
         )
 
+        CXType_Unexposed -> {
+            // FIXME  Remove this cludge for libclang version >= 9 (CINDEX_VERSION > 55)
+            if (clang_isExtVectorType(type) != 0) {
+                val size = clang_Type_getSizeOf(type)
+                if (size == 16L) {
+                    //  ExtVector elementType and elementCount are ignored for now but stubs are still needed for
+                    //  CXType_Vector compatibility. Incoming clang v9 provide CXType_ExtVector compatible with CXType_Vector
+                    val spelling = "__attribute__((__vector_size__($size))) float"
+                    VectorType(FloatingType(4, "float"), 4, spelling)
+                } else {
+                    UnsupportedType
+                }
+            } else {
+                UnsupportedType
+            }
+        }
+
+        CXType_Vector -> {
+            val elementCXType = clang_getElementType(type)
+            val elementType = convertType(elementCXType)
+            val size = clang_Type_getSizeOf(type)
+            val elemSize = clang_Type_getSizeOf(elementCXType)
+            val elementCount = clang_getNumElements(type)
+            assert(size >= elemSize * elementCount && size % elemSize == 0L)
+
+            // Spelling example: `__attribute__((__vector_size__(4 * sizeof(float)))) const float`
+            // Re-generate spelling removing constness and typedefs to limit number of variants for bridge generator
+            // Supposed to be the same (i.e. natively compatible) as clang_getTypeSpelling(type) aka type.name
+            val spelling = "__attribute__((__vector_size__($size))) ${clang_getCanonicalType(elementCXType).name}"
+
+            if (size == 16L) {
+                VectorType(elementType, elementCount.toInt(), spelling)
+            } else {
+                UnsupportedType
+            }
+        }
+
         CXTypeKind.CXType_Bool -> CBoolType
 
         else -> UnsupportedType

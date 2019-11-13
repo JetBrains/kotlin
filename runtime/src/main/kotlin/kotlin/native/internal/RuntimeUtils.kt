@@ -14,6 +14,11 @@ fun ThrowNullPointerException(): Nothing {
 }
 
 @ExportForCppRuntime
+internal fun ThrowIndexOutOfBoundsException(): Nothing {
+    throw IndexOutOfBoundsException()
+}
+
+@ExportForCppRuntime
 internal fun ThrowArrayIndexOutOfBoundsException(): Nothing {
     throw ArrayIndexOutOfBoundsException()
 }

@@ -187,6 +187,7 @@ object KotlinTypes {
     val map by CollectionClassifier
 
     val nativePtr by InteropType
+    val vector128 by KotlinNativeType
 
     val cOpaque by InteropType
     val cOpaquePointer by InteropType
@@ -233,6 +234,7 @@ object KotlinTypes {
 
     private object InteropClassifier : ClassifierAtPackage("kotlinx.cinterop")
     private object InteropType : TypeAtPackage("kotlinx.cinterop")
+    private object KotlinNativeType : TypeAtPackage("kotlin.native")
 }
 
 abstract class KotlinFile(

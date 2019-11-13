@@ -219,6 +219,8 @@ internal class KonanSymbols(
 
     val throwArithmeticException = internalFunction("ThrowArithmeticException")
 
+    val throwIndexOutOfBoundsException = internalFunction("ThrowIndexOutOfBoundsException")
+
     override val ThrowNullPointerException = internalFunction("ThrowNullPointerException")
 
     override val ThrowNoWhenBranchMatchedException = internalFunction("ThrowNoWhenBranchMatchedException")

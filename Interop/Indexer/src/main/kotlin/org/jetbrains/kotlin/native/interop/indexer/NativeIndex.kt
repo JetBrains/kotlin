@@ -271,6 +271,8 @@ data class IntegerType(val size: Int, val isSigned: Boolean, val spelling: Strin
 // TODO: floating type is not actually defined entirely by its size.
 data class FloatingType(val size: Int, val spelling: String) : PrimitiveType
 
+data class VectorType(val elementType: Type, val elementCount: Int, val spelling: String) : PrimitiveType
+
 object VoidType : Type
 
 data class RecordType(val decl: StructDecl) : Type

@@ -139,3 +139,5 @@ fun getNullableString(param: Int) : String? {
         return null
     }
 }
+
+fun getVector128() = vectorOf(1, 2, 3, 4)

@@ -93,4 +93,12 @@ bool IsSubInterface(const TypeInfo* thiz, const TypeInfo* other) {
   return false;
 }
 
+KVector4f Kotlin_Vector4f_of(KFloat f0, KFloat f1, KFloat f2, KFloat f3) {
+	return {f0, f1, f2, f3};
+}
+
+KVector4i32 Kotlin_Vector4i32_of(KInt f0, KInt f1, KInt f2, KInt f3) {
+	return {f0, f1, f2, f3};
+}
+
 }  // extern "C"

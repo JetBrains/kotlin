@@ -16,5 +16,5 @@ fun BinaryType<*>.primitiveBinaryTypeOrNull(): PrimitiveBinaryType? = when (this
 }
 
 enum class PrimitiveBinaryType {
-    BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, POINTER
+    BOOLEAN, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, POINTER, VECTOR128
 }

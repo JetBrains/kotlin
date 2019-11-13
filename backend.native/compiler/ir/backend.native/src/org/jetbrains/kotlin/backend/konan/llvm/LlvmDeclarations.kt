@@ -89,7 +89,11 @@ private fun ContextUtils.createClassBodyType(name: String, fields: List<IrField>
 
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(context.llvmModule), name)!!
 
-    LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, 0)
+    // LLVMStructSetBody expects the struct to be properly aligned and will insert padding accordingly. In our case
+    // `allocInstance` returns 16x + 8 address, i.e. always misaligned for vector types. Workaround is to use packed struct.
+    val hasBigAlignment = fields.any { LLVMABIAlignmentOfType(context.llvm.runtime.targetData, getLLVMType(it.type)) > 8 }
+    val packed = if (hasBigAlignment) 1 else 0
+    LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, packed)
 
     return classType
 }
