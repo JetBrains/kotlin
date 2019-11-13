@@ -125,7 +125,8 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             fun KotlinSourceSet.isIntermediateNativeSourceSet(): Boolean {
                 val compilations = compilationsBySourceSets[this] ?: return false
 
-                if (compilations.size <= 1) return false // intermediate source-sets participate at least in two compilations
+                if (compilations.all { it.defaultSourceSet == this })
+                    return false
 
                 return compilations.all { it.target.platformType == KotlinPlatformType.native }
             }
