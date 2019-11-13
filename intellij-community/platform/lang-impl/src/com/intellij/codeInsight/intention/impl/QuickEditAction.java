@@ -155,7 +155,7 @@ public class QuickEditAction extends QuickEditActionKeys implements IntentionAct
   @Override
   @NotNull
   public String getFamilyName() {
-    return "Edit Injected Fragment";
+    return "Edit injected fragment";
   }
 
   public static Balloon.Position getBalloonPosition(Editor editor) {
