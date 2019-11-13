@@ -8,18 +8,18 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.project.Project
-import gnu.trove.THashMap
+import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 
 class ProjectNotificationAware : Disposable {
 
   private var isHidden = false
-  private val projectsWithNotification = THashMap<ExternalSystemProjectId, ExternalSystemProjectAware>()
+  private val projectsWithNotification = THashSet<ExternalSystemProjectId>()
 
   fun notificationNotify(projectAware: ExternalSystemProjectAware) = runInEdt {
     val projectId = projectAware.projectId
     LOG.debug("${projectId.readableName}: Notify notification")
-    projectsWithNotification[projectId] = projectAware
+    projectsWithNotification.add(projectId)
     revealNotification()
   }
 
@@ -49,20 +49,20 @@ class ProjectNotificationAware : Disposable {
 
   fun hideNotification() = setHideStatus(true)
 
-  fun isNotificationVisibleIn(path: String): Boolean {
+  fun isNotificationVisible(): Boolean {
     ApplicationManager.getApplication().assertIsDispatchThread()
-    return !isHidden && projectsWithNotification.values.any { path in it.settingsFiles }
+    return !isHidden && projectsWithNotification.isNotEmpty()
   }
 
   fun getSystemIds(): Set<ProjectSystemId> {
     ApplicationManager.getApplication().assertIsDispatchThread()
-    return projectsWithNotification.keys.map { it.systemId }.toSet()
+    return projectsWithNotification.map { it.systemId }.toSet()
   }
 
   @TestOnly
   fun getProjectsWithNotification(): Set<ExternalSystemProjectId> {
     ApplicationManager.getApplication().assertIsDispatchThread()
-    return projectsWithNotification.keys.toSet()
+    return projectsWithNotification.toSet()
   }
 
   companion object {
