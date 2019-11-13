@@ -57,6 +57,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     protected abstract fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration)
 
+    protected open fun IrBuilderWithScope.generateDelegatedCall(expectedType: IrType, delegatingCall: IrExpression): IrExpression = delegatingCall
 
     private val builtCoroutines = mutableMapOf<IrFunction, BuiltCoroutine>()
     private val suspendLambdas = mutableMapOf<IrFunction, IrFunctionReference>()
@@ -228,7 +229,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             val statements = (irFunction.body as IrBlockBody).statements
             val lastStatement = statements.last()
             assert(lastStatement == delegatingCall || lastStatement is IrReturn) { "Unexpected statement $lastStatement" }
-            statements[statements.lastIndex] = irReturn(returnValue)
+            statements[statements.lastIndex] = irReturn(generateDelegatedCall(irFunction.returnType, returnValue))
         }
     }
 
@@ -551,7 +552,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 Name.identifier("invoke"),
                 Visibilities.PROTECTED,
                 Modality.FINAL,
-                irFunction.returnType,
+                context.irBuiltIns.anyNType,
                 isInline = false,
                 isExternal = false,
                 isTailrec = false,

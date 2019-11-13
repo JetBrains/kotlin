@@ -44,14 +44,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
 
         val actualType = when (this) {
             is IrConstructorCall -> symbol.owner.returnType
-            is IrCall -> {
-                val function = this.symbol.owner
-                if (function.let { it is IrSimpleFunction && it.isSuspend }) {
-                    irBuiltIns.anyNType
-                } else {
-                    function.realOverrideTarget.returnType
-                }
-            }
+            is IrCall -> symbol.owner.realOverrideTarget.returnType
             is IrGetField -> this.symbol.owner.type
 
             is IrTypeOperatorCall -> {

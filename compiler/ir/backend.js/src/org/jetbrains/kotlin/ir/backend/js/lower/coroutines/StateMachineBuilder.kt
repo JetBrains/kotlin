@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.getInlinedClass
 import org.jetbrains.kotlin.ir.visitors.*
 
 class SuspendState(type: IrType) {
@@ -69,6 +70,7 @@ class StateMachineBuilder(
 
     private val loopMap = mutableMapOf<IrLoop, LoopBounds>()
     private val unit = context.irBuiltIns.unitType
+    private val anyN = context.irBuiltIns.anyNType
     private val nothing = context.irBuiltIns.nothingType
     private val booleanNotSymbol = context.irBuiltIns.booleanNotSymbol
     private val eqeqeqSymbol = context.irBuiltIns.eqeqeqSymbol
@@ -278,16 +280,22 @@ class StateMachineBuilder(
     override fun visitBlock(expression: IrBlock) =
         if (expression is IrReturnableBlock) processReturnableBlock(expression) else super.visitBlock(expression)
 
-    private fun implicitCast(value: IrExpression, toType: IrType) =
-        JsIrBuilder.buildImplicitCast(value, toType)
+    private fun implicitCast(value: IrExpression, toType: IrType) = JsIrBuilder.buildImplicitCast(value, toType)
+    private fun reinterpretCast(value: IrExpression, toType: IrType) = JsIrBuilder.buildReinterpretCast(value, toType)
 
     override fun visitCall(expression: IrCall) {
         super.visitCall(expression)
 
         if (expression.isSuspend) {
             val result = lastExpression()
+            val expectedType = expression.symbol.owner.returnType
+            val isInlineClassExpected = expectedType.getInlinedClass() != null
             val continueState = SuspendState(unit)
-            val dispatch = IrDispatchPoint(continueState)
+            val unboxState = if (isInlineClassExpected) SuspendState(unit) else null
+
+            val dispatch = IrDispatchPoint(unboxState ?: continueState)
+
+            if (unboxState != null) currentState.successors += unboxState
 
             currentState.successors += continueState
 
@@ -298,7 +306,7 @@ class StateMachineBuilder(
                 }
             }
 
-            addStatement(JsIrBuilder.buildSetVariable(suspendResult, result, unit))
+            addStatement(JsIrBuilder.buildSetVariable(suspendResult, reinterpretCast(result, anyN), unit))
 
             val irReturn = JsIrBuilder.buildReturn(function, JsIrBuilder.buildGetValue(suspendResult), nothing)
             val check = JsIrBuilder.buildCall(eqeqeqSymbol).apply {
@@ -308,11 +316,33 @@ class StateMachineBuilder(
 
             val suspensionBlock = JsIrBuilder.buildBlock(unit, listOf(irReturn))
             addStatement(JsIrBuilder.buildIfElse(unit, check, suspensionBlock))
+
+            if (isInlineClassExpected) {
+                addStatement(JsIrBuilder.buildCall(stateSymbolSetter.symbol, unit).apply {
+                    dispatchReceiver = thisReceiver
+                    putValueArgument(0, IrDispatchPoint(continueState))
+                })
+            }
+
             doContinue()
 
+            unboxState?.let { buildUnboxingState(it, continueState, expectedType) }
+
             updateState(continueState)
-            addStatement(implicitCast(JsIrBuilder.buildGetValue(suspendResult), expression.type))
+            val functionReturnType = expression.symbol.owner.returnType
+            addStatement(reinterpretCast(JsIrBuilder.buildGetValue(suspendResult), functionReturnType))
         }
+    }
+
+    private fun buildUnboxingState(unboxState: SuspendState, continueState: SuspendState, expectedType: IrType) {
+        unboxState.successors += continueState
+        updateState(unboxState)
+        val result = JsIrBuilder.buildGetValue(suspendResult)
+        val tmp = JsIrBuilder.buildVar(expectedType, function.owner, name = "unboxed", initializer = result)
+        addStatement(tmp)
+        addStatement(JsIrBuilder.buildSetVariable(suspendResult, reinterpretCast(JsIrBuilder.buildGetValue(tmp.symbol), anyN), anyN))
+
+        doDispatch(continueState)
     }
 
     override fun visitBreak(jump: IrBreak) {
