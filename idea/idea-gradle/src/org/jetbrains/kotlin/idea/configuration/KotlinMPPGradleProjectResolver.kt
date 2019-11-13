@@ -596,12 +596,14 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                             }
                         }
                     }
+                    val substitutedDependencies =
+                        substitutor.substituteDependencies(mergedDependencies)
                     buildDependencies(
                         resolverCtx,
                         sourceSetMap,
                         artifactsMap,
                         fromDataNode,
-                        preprocessDependencies(mergedDependencies),
+                        preprocessDependencies(substitutedDependencies),
                         ideProject
                     )
                     @Suppress("UNCHECKED_CAST")
@@ -870,7 +872,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 info.actualPlatforms.addSimplePlatforms(sourceSet.actualPlatforms.platforms)
                 info.isTestModule = sourceSet.isTestModule
                 info.dependsOn = sourceSet.dependsOnSourceSets.toList().map {
-                    getModuleId(resolverCtx, gradleModule) + ":" + it
+                    getGradleModuleQualifiedName(resolverCtx, gradleModule, it)
                 }
                 //TODO(auskov): target flours are lost here
                 info.compilerArguments = createCompilerArguments(emptyList(), sourceSet.actualPlatforms.getSinglePlatform()).also {
@@ -910,7 +912,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 sourceSetInfo.gradleModuleId = getModuleId(resolverCtx, gradleModule)
                 sourceSetInfo.actualPlatforms.addSimplePlatforms(listOf(compilation.platform))
                 sourceSetInfo.isTestModule = compilation.isTestModule
-                sourceSetInfo.dependsOn = compilation.sourceSets.flatMap { it.dependsOnSourceSets }.map { getModuleId(resolverCtx, gradleModule) + ":" + it }.distinct().toList()
+                sourceSetInfo.dependsOn = compilation.sourceSets.flatMap { it.dependsOnSourceSets }.map {
+                    getGradleModuleQualifiedName(resolverCtx, gradleModule, it)
+                }.distinct().toList()
                 sourceSetInfo.compilerArguments =
                     createCompilerArguments(compilation.arguments.currentArguments.toList(), compilation.platform).also {
                         it.multiPlatform = true
@@ -949,7 +953,14 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         }
 
         private fun getKotlinModuleId(gradleModule: IdeaModule, kotlinModule: KotlinModule, resolverCtx: ProjectResolverContext) =
-            getModuleId(resolverCtx, gradleModule) + ":" + kotlinModule.fullName()
+            getGradleModuleQualifiedName(resolverCtx, gradleModule, kotlinModule.fullName())
+
+        private fun getGradleModuleQualifiedName(
+            resolverCtx: ProjectResolverContext,
+            gradleModule: IdeaModule,
+            simpleName: String
+        ): String =
+            getModuleId(resolverCtx, gradleModule) + ":" + simpleName
 
         private fun ExternalProject.notImportedCommonSourceSets() =
             GradlePropertiesFileFacade.forExternalProject(this).readProperty(KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING)?.equals(
