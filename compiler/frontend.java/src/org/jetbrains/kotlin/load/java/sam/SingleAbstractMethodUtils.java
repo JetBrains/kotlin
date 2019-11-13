@@ -78,9 +78,12 @@ public class SingleAbstractMethodUtils {
         // e.g. samType == Comparator<String>?
 
         ClassifierDescriptor classifier = samType.getConstructor().getDeclarationDescriptor();
-        if (classifier instanceof JavaClassDescriptor) {
+        if (classifier instanceof ClassDescriptor) {
+            ClassDescriptor descriptor = (ClassDescriptor) classifier;
+            if (!(descriptor instanceof JavaClassDescriptor) && !descriptor.isFun()) return null;
+
             // Function2<T, T, Int>
-            SimpleType functionTypeDefault = samResolver.resolveFunctionTypeIfSamInterface((JavaClassDescriptor) classifier);
+            SimpleType functionTypeDefault = samResolver.resolveFunctionTypeIfSamInterface(descriptor);
 
             if (functionTypeDefault != null) {
                 SimpleType noProjectionsSamType = SingleAbstractMethodUtilsKt.nonProjectionParametrization(samType);
@@ -131,7 +134,7 @@ public class SingleAbstractMethodUtils {
     }
 
     @Nullable
-    public static FunctionDescriptor getSingleAbstractMethodOrNull(@NotNull JavaClassDescriptor klass) {
+    public static FunctionDescriptor getSingleAbstractMethodOrNull(@NotNull ClassDescriptor klass) {
         // NB: this check MUST BE at start. Please do not touch until following to-do is resolved
         // Otherwise android data binding can cause resolve re-entrance
         // For details see KT-18687, KT-16149
@@ -140,7 +143,13 @@ public class SingleAbstractMethodUtils {
             return null;
         }
 
-        if (klass.isDefinitelyNotSamInterface()) return null;
+        if (klass instanceof JavaClassDescriptor) {
+            if (((JavaClassDescriptor) klass).isDefinitelyNotSamInterface()) {
+                return null;
+            }
+        } else if (!klass.isFun()) {
+            return null;
+        }
 
         List<CallableMemberDescriptor> abstractMembers = getAbstractMembers(klass);
         if (abstractMembers.size() == 1) {
@@ -224,6 +233,9 @@ public class SingleAbstractMethodUtils {
     }
 
     public static boolean isSamType(@NotNull KotlinType type) {
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).isFun()) return true;
+
         return getFunctionTypeForSamType(type, SamConversionResolver.JavaBasedSamConversionResolver.INSTANCE) != null;
     }
 
