@@ -256,9 +256,9 @@ public class ProjectSdksModel implements SdkModel {
         group.add(downloadAction);
       }
 
-      String addOnDiskText = type.supportsCustomCreateUI()
-                             ? type.getPresentableName()
-                             : ProjectBundle.message("sdk.configure.add.action", type.getPresentableName());
+      String addOnDiskText = !type.supportsCustomCreateUI() && type.supportsCustomDownloadUI()
+                             ? ProjectBundle.message("sdk.configure.add.action", type.getPresentableName())
+                             : type.getPresentableName();
 
       final AnAction addAction = new DumbAwareAction(addOnDiskText, null, type.getIconForAddAction()) {
         @Override
