@@ -44,14 +44,18 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
             is IrGetField -> visitGetField(element, data)
             is IrGetValue -> visitGetValue(element, data)
             is IrConst<*> -> visitConst(element, data)
+            is IrWhen -> visitWhen(element, data)
             else -> TODO("${element.javaClass} not supported")
         }
     }
 
     override fun visitCall(expression: IrCall, data: Frame): State {
-        val newFrame = InterpreterFrame(convertValueParameters(expression, data))
+        val newFrame = InterpreterFrame() // it is important firstly to add receiver, then arguments
+        val valueParameters = convertValueParameters(expression, data)
+
         if (expression.symbol.owner.isFakeOverride) {
             expression.dispatchReceiver?.accept(this, data)?.let { newFrame.addVar(it) }
+            newFrame.addAll(valueParameters)
             return calculateOverridden(expression.symbol, newFrame)
         }
 
@@ -60,6 +64,7 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
         val extensionReceiver = expression.extensionReceiver?.accept(this, data)
             ?.setDescriptor(expression.symbol.descriptor.extensionReceiverParameter!!)
         (dispatchReceiver ?: extensionReceiver)?.also { newFrame.addVar(it) }
+        newFrame.addAll(valueParameters)
 
         return if (expression.getBody() == null) {
             calculateBuiltIns(expression.symbol.descriptor, newFrame).toIrConst(expression).toPrimitive()
@@ -100,13 +105,14 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
     }
 
     private fun visitStatements(statements: List<IrStatement>, data: Frame): State {
-        statements.forEach {
-            when (it) {
-                is IrReturn -> return it.accept(this, data)
-                else -> it.accept(this, data)
+        statements.forEachIndexed { index, statement ->
+            when {
+                statement is IrReturn || index == statements.lastIndex -> return statement.accept(this, data)
+                else -> statement.accept(this, data)
             }
         }
 
+        // unreachable state; method must return inside forEach
         return unit
     }
 
@@ -144,6 +150,15 @@ class IrInterpreter : IrElementVisitor<State, Frame> {
         } else {
             val variable = expression.value.accept(this, data).setDescriptor(expression.symbol.descriptor)
             data.addVar(variable)
+        }
+        return unit
+    }
+
+    override fun visitWhen(expression: IrWhen, data: Frame): State {
+        expression.branches.forEach {
+            if ((it.condition.accept(this, data) as? Primitive<*>)?.getIrConst()?.value == true) {
+                return it.result.accept(this, data)
+            }
         }
         return unit
     }

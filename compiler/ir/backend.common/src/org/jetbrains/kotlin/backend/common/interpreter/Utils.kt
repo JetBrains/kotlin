@@ -53,7 +53,7 @@ fun calculateBuiltIns(descriptor: FunctionDescriptor, frame: Frame): Any {
         2 -> {
             val function = binaryFunctions[signature]
                 ?: throw NoSuchMethodException("For given function $signature there is no entry in binary map")
-            function.invoke(argsValues[1], argsValues[0])
+            function.invoke(argsValues[0], argsValues[1])
         }
         else -> throw UnsupportedOperationException("Unsupported number of arguments")
     }

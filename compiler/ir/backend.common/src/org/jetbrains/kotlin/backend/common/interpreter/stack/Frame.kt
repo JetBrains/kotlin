@@ -10,6 +10,7 @@ import java.util.NoSuchElementException
 
 interface Frame {
     fun addVar(state: State)
+    fun addAll(states: List<State>)
     fun getVar(descriptor: DeclarationDescriptor): State
     fun getAll(): List<State>
     fun contains(descriptor: DeclarationDescriptor): Boolean
@@ -18,6 +19,10 @@ interface Frame {
 class InterpreterFrame(val pool: MutableList<State> = mutableListOf()) : Frame {
     override fun addVar(state: State) {
         pool.add(state)
+    }
+
+    override fun addAll(states: List<State>) {
+        pool.addAll(states)
     }
 
     override fun getVar(descriptor: DeclarationDescriptor): State {
