@@ -41,6 +41,8 @@ class ProjectNotificationAware : Disposable {
 
   private fun setHideStatus(isHidden: Boolean) = runInEdt {
     this.isHidden = isHidden
+    val toolbarProvider = ProjectReloadFloatingProvider.getInstance()
+    toolbarProvider.updateAllToolbarComponents()
   }
 
   private fun revealNotification() = setHideStatus(false)

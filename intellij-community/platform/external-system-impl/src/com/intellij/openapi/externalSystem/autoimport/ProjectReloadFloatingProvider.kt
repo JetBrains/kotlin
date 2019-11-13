@@ -2,6 +2,7 @@
 package com.intellij.openapi.externalSystem.autoimport
 
 import com.intellij.openapi.editor.toolbar.floating.AbstractFloatingToolbarProvider
+import com.intellij.openapi.editor.toolbar.floating.EditorFloatingToolbar.Companion.EP_NAME
 
 class ProjectReloadFloatingProvider : AbstractFloatingToolbarProvider(ACTION_GROUP) {
 
@@ -11,5 +12,9 @@ class ProjectReloadFloatingProvider : AbstractFloatingToolbarProvider(ACTION_GRO
 
   companion object {
     const val ACTION_GROUP = "ProjectReloadActionGroup"
+
+    fun getInstance(): ProjectReloadFloatingProvider {
+      return EP_NAME.findExtensionOrFail(ProjectReloadFloatingProvider::class.java)
+    }
   }
 }
