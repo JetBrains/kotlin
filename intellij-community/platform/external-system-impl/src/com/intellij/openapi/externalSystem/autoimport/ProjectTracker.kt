@@ -11,7 +11,8 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros.CACHE_FILE
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.autoimport.ExternalSystemRefreshStatus.SUCCESS
-import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.*
+import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.EXTERNAL
+import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
 import com.intellij.openapi.externalSystem.util.CompoundParallelOperationTrace
 import com.intellij.openapi.externalSystem.util.properties.AtomicBooleanProperty
@@ -21,6 +22,7 @@ import com.intellij.util.LocalTimeCounter.currentTime
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.MergingUpdateQueue.ANY_COMPONENT
 import com.intellij.util.ui.update.Update
+import org.jetbrains.annotations.TestOnly
 import java.util.concurrent.ConcurrentHashMap
 
 @State(name = "ExternalSystemProjectTracker", storages = [Storage(CACHE_FILE)])
@@ -31,6 +33,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
   private val projectStates = ConcurrentHashMap<State.Id, State.Project>()
   private val projectDataMap = ConcurrentHashMap<ExternalSystemProjectId, ProjectData>()
+  private val isDisabled = AtomicBooleanProperty(ApplicationManager.getApplication().isHeadlessEnvironment)
   private val initializationProperty = AtomicBooleanProperty(false)
   private val projectChangeOperation = CompoundParallelOperationTrace<Nothing?>()
   private val projectRefreshOperation = CompoundParallelOperationTrace<Long>()
@@ -94,6 +97,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
 
   private fun refreshProject() {
     LOG.debug("Incremental project refresh")
+    if (isDisabled.get()) return
     if (!projectChangeOperation.isOperationCompleted()) return
     for (projectData in projectDataMap.values) {
       val projectId = projectData.projectAware.projectId.readableName
@@ -210,6 +214,11 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
       it.settingsTracker.applyChanges()
       it.status.markSynchronized(currentTime())
     }
+  }
+
+  @TestOnly
+  fun enableAutoImportInTests() {
+    isDisabled.set(false)
   }
 
   init {

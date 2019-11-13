@@ -26,7 +26,10 @@ abstract class AutoImportTestCase : ExternalSystemTestCase() {
   override fun getExternalSystemConfigFileName() = throw UnsupportedOperationException()
 
   private val notificationAware get() = ProjectNotificationAware.getInstance(myProject)
-  private val projectTracker get() = ExternalSystemProjectTracker.getInstance(myProject) as ProjectTracker
+  private val projectTracker
+    get() = (ExternalSystemProjectTracker.getInstance(myProject) as ProjectTracker).also {
+      it.enableAutoImportInTests()
+    }
 
   private fun doRecursive(relativePath: String, stepInto: VirtualFile.(String) -> VirtualFile) = runWriteAction {
     var file = myProjectRoot!!
