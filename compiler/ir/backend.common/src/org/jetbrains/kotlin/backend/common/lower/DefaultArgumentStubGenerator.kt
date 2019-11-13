@@ -181,14 +181,8 @@ open class DefaultArgumentStubGenerator(
     private fun log(msg: () -> String) = context.log { "DEFAULT-REPLACER: ${msg()}" }
 }
 
-private fun maskParameterDeclaration(function: IrFunction, number: Int) =
-    maskParameter(function, number)
-
 private fun maskParameter(function: IrFunction, number: Int) =
     function.valueParameters.single { it.name == parameterMaskName(number) }
-
-private fun markerParameterDeclaration(function: IrFunction) =
-    function.valueParameters.single { it.name == kConstructorMarkerName }
 
 val DEFAULT_DISPATCH_CALL = object : IrStatementOriginImpl("DEFAULT_DISPATCH_CALL") {}
 
@@ -206,29 +200,23 @@ open class DefaultParameterInjector(
         irBody.transformChildrenVoid(this)
     }
 
-    private fun visitFunctionAccessExpression(
-        expression: IrFunctionAccessExpression,
-        builder: (IrFunctionSymbol) -> IrFunctionAccessExpression
-    ): IrExpression {
+    private fun <T : IrFunctionAccessExpression> visitFunctionAccessExpression(expression: T, builder: (IrFunctionSymbol) -> T): T {
         val argumentsCount = (0 until expression.valueArgumentsCount).count { expression.getValueArgument(it) != null }
         if (argumentsCount == expression.symbol.owner.valueParameters.size)
             return expression
 
         val (symbol, params) = parametersForCall(expression) ?: return expression
-        val descriptor = symbol.descriptor
-        val declaration = symbol.owner
-
         for (i in 0 until expression.typeArgumentsCount) {
-            log { "$descriptor [$i]: $expression.getTypeArgument(i)" }
+            log { "${symbol.descriptor}[$i]: ${expression.getTypeArgument(i)}" }
         }
-        declaration.typeParameters.forEach { log { "$declaration[${it.index}] : $it" } }
+        symbol.owner.typeParameters.forEach { log { "${symbol.owner}[${it.index}] : $it" } }
 
         return builder(symbol).apply {
-            this.copyTypeArgumentsFrom(expression)
+            copyTypeArgumentsFrom(expression)
 
-            params.forEach {
-                log { "call::params@${it.first.index}/${it.first.name.asString()}: ${ir2string(it.second)}" }
-                putValueArgument(it.first.index, it.second)
+            params.forEachIndexed { i, value ->
+                log { "call::params@$i/${symbol.owner.valueParameters[i].name}: ${ir2string(value)}" }
+                putValueArgument(i, value)
             }
 
             dispatchReceiver = expression.dispatchReceiver
@@ -240,106 +228,73 @@ open class DefaultParameterInjector(
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-        super.visitDelegatingConstructorCall(expression)
-
+        expression.transformChildrenVoid()
         return visitFunctionAccessExpression(expression) {
-            IrDelegatingConstructorCallImpl(
-                startOffset = expression.startOffset,
-                endOffset = expression.endOffset,
-                type = context.irBuiltIns.unitType,
-                symbol = it as IrConstructorSymbol,
-                typeArgumentsCount = expression.typeArgumentsCount
-            )
+            with(expression) {
+                IrDelegatingConstructorCallImpl(startOffset, endOffset, type, it as IrConstructorSymbol, typeArgumentsCount)
+            }
         }
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        super.visitConstructorCall(expression)
-
+        expression.transformChildrenVoid()
         return visitFunctionAccessExpression(expression) {
-            IrConstructorCallImpl.fromSymbolOwner(
-                expression.startOffset,
-                expression.endOffset,
-                expression.type,
-                it as IrConstructorSymbol,
-                it.owner.parentAsClass.typeParameters.size,
-                DEFAULT_DISPATCH_CALL
-            )
+            with(expression) {
+                IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, it as IrConstructorSymbol, DEFAULT_DISPATCH_CALL)
+            }
         }
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
-        super.visitEnumConstructorCall(expression)
-
+        expression.transformChildrenVoid()
         return visitFunctionAccessExpression(expression) {
-            IrEnumConstructorCallImpl(
-                expression.startOffset,
-                expression.endOffset,
-                expression.type,
-                it as IrConstructorSymbol
-            )
+            with(expression) {
+                IrEnumConstructorCallImpl(startOffset, endOffset, type, it as IrConstructorSymbol)
+            }
         }
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        super.visitCall(expression)
-
+        expression.transformChildrenVoid()
         return visitFunctionAccessExpression(expression) {
-            IrCallImpl(
-                startOffset = expression.startOffset,
-                endOffset = expression.endOffset,
-                type = expression.type,
-                symbol = it,
-                typeArgumentsCount = expression.typeArgumentsCount,
-                origin = DEFAULT_DISPATCH_CALL,
-                superQualifierSymbol = expression.superQualifierSymbol
-            )
+            with(expression) {
+                IrCallImpl(startOffset, endOffset, type, it, typeArgumentsCount, DEFAULT_DISPATCH_CALL, superQualifierSymbol)
+            }
         }
     }
 
-    private fun parametersForCall(
-        expression: IrFunctionAccessExpression
-    ): Pair<IrFunctionSymbol, List<Pair<IrValueParameter, IrExpression?>>>? {
-        val declaration = expression.symbol.owner
-        val keyFunction = declaration.generateDefaultsFunction(context, skipInline, skipExternalMethods) ?: return null
-        val realFunction = if (keyFunction is IrSimpleFunction) keyFunction.resolveFakeOverride()!! else keyFunction
-
-        log { "$declaration -> $realFunction" }
-        val maskValues = Array((declaration.valueParameters.size + 31) / 32) { 0 }
-        val params = mutableListOf<Pair<IrValueParameter, IrExpression?>>()
-        params += declaration.valueParameters.mapIndexed { argIndex, _ ->
-            val valueArgument = expression.getValueArgument(argIndex)
-            if (valueArgument == null) {
-                val maskIndex = argIndex / 32
-                maskValues[maskIndex] = maskValues[maskIndex] or (1 shl (argIndex % 32))
-            }
-            val valueParameterDeclaration = realFunction.valueParameters[argIndex]
-            val defaultValueArgument = nullConst(expression.startOffset, expression.endOffset, valueParameterDeclaration)
-            valueParameterDeclaration to (valueArgument ?: defaultValueArgument)
-        }
-
+    private fun parametersForCall(expression: IrFunctionAccessExpression): Pair<IrFunctionSymbol, List<IrExpression?>>? {
         val startOffset = expression.startOffset
         val endOffset = expression.endOffset
-        maskValues.forEachIndexed { i, maskValue ->
-            params += maskParameterDeclaration(realFunction, i) to IrConstImpl.int(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                type = context.irBuiltIns.intType,
-                value = maskValue
-            )
+        val declaration = expression.symbol.owner
+
+        val stubOverride = declaration.generateDefaultsFunction(context, skipInline, skipExternalMethods) ?: return null
+        // We *have* to resolve the fake override here since on the JVM, a default stub for a function implemented
+        // in an interface does not leave an abstract method after being moved to DefaultImpls (see InterfaceLowering).
+        // Calling the fake override on an implementation of that interface would then result in a call to a method
+        // that does not actually exist as DefaultImpls is not part of the inheritance hierarchy.
+        val stubFunction = if (stubOverride is IrSimpleFunction) stubOverride.resolveFakeOverride()!! else stubOverride
+        log { "$declaration -> $stubFunction" }
+
+        val realArgumentsNumber = declaration.valueParameters.size
+        val maskValues = IntArray((declaration.valueParameters.size + 31) / 32)
+        assert((stubFunction.valueParameters.size - realArgumentsNumber - maskValues.size) in listOf(0, 1)) {
+            "argument count mismatch: expected $realArgumentsNumber arguments + ${maskValues.size} masks + optional handler/marker, " +
+                    "got ${stubFunction.valueParameters.size} total in ${stubFunction.render()}"
         }
-        if (expression.symbol is IrConstructorSymbol) {
-            val defaultArgumentMarker = context.ir.symbols.defaultConstructorMarker
-            params += markerParameterDeclaration(realFunction) to
-                    IrConstImpl.constNull(startOffset, endOffset, defaultArgumentMarker.owner.defaultType.makeNullable())
-        } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
-            params += realFunction.valueParameters.last() to
-                    IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
+        return stubFunction.symbol to stubFunction.valueParameters.mapIndexed { i, parameter ->
+            when {
+                i >= realArgumentsNumber + maskValues.size -> IrConstImpl.constNull(startOffset, endOffset, parameter.type)
+                i >= realArgumentsNumber -> IrConstImpl.int(startOffset, endOffset, parameter.type, maskValues[i - realArgumentsNumber])
+                else -> {
+                    val valueArgument = expression.getValueArgument(i)
+                    if (valueArgument == null) {
+                        maskValues[i / 32] = maskValues[i / 32] or (1 shl (i % 32))
+                    }
+                    valueArgument ?: nullConst(startOffset, endOffset, parameter)
+                }
+            }
         }
-        params.forEach {
-            log { "descriptor::${realFunction.name.asString()}#${it.first.index}: ${it.first.name.asString()}" }
-        }
-        return Pair(realFunction.symbol, params)
     }
 
     protected open fun nullConst(startOffset: Int, endOffset: Int, irParameter: IrValueParameter): IrExpression? =
@@ -426,10 +381,8 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
             newFunction.addValueParameter(parameterMaskName(i).asString(), context.irBuiltIns.intType)
         }
         if (this is IrConstructor) {
-            newFunction.addValueParameter(
-                kConstructorMarkerName.asString(),
-                context.ir.symbols.defaultConstructorMarker.owner.defaultType.makeNullable()
-            )
+            val markerType = context.ir.symbols.defaultConstructorMarker.owner.defaultType.makeNullable()
+            newFunction.addValueParameter("marker".synthesizedString, markerType)
         } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
             newFunction.addValueParameter("handler".synthesizedString, context.irBuiltIns.anyNType)
         }
@@ -438,7 +391,5 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
         annotations.mapTo(newFunction.annotations) { it.deepCopyWithSymbols() }
         newFunction
     }
-
-internal val kConstructorMarkerName = "marker".synthesizedName
 
 private fun parameterMaskName(number: Int) = "mask$number".synthesizedName
