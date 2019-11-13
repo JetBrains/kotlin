@@ -175,11 +175,11 @@ internal class DefaultScriptConfigurationManager(project: Project) :
 
         val (async, sync) = loaders.partition { it.shouldRunInBackground(scriptDefinition) }
 
-        val syncLoader = sync.firstOrNull { it.loadDependencies(isFirstLoad, virtualFile, scriptDefinition, loadingContext) }
+        val syncLoader = sync.firstOrNull { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
         if (syncLoader == null) {
             // run async loader
             if (forceSync) {
-                async.first { it.loadDependencies(isFirstLoad, virtualFile, scriptDefinition, loadingContext) }
+                async.first { it.loadDependencies(isFirstLoad, file, scriptDefinition, loadingContext) }
             } else {
                 backgroundExecutor.ensureScheduled(virtualFile) {
                     val cached = getCachedConfigurationState(virtualFile)
@@ -192,7 +192,7 @@ internal class DefaultScriptConfigurationManager(project: Project) :
                         // don't start loading if nothing was changed
                         // (in case we checking for up-to-date and loading concurrently)
                         val actualIsFirstLoad = cached == null
-                        async.first { it.loadDependencies(actualIsFirstLoad, virtualFile, scriptDefinition, loadingContext) }
+                        async.first { it.loadDependencies(actualIsFirstLoad, file, scriptDefinition, loadingContext) }
                     }
                 }
             }

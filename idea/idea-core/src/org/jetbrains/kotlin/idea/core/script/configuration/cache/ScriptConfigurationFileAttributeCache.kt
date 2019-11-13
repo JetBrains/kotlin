@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigur
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.idea.core.util.*
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
@@ -30,12 +31,13 @@ internal class ScriptConfigurationFileAttributeCache(
      */
     override fun loadDependencies(
         isFirstLoad: Boolean,
-        virtualFile: VirtualFile,
+        ktFile: KtFile,
         scriptDefinition: ScriptDefinition,
         context: ScriptConfigurationLoadingContext
     ): Boolean {
         if (!isFirstLoad) return false
 
+        val virtualFile = ktFile.originalFile.virtualFile
         val fromFs = load(virtualFile) ?: return false
         val result =
             ScriptConfigurationSnapshot(

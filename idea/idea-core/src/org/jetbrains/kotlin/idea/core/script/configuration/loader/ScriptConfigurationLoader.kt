@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.core.script.configuration.loader
 
-import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 
 /**
@@ -23,7 +23,7 @@ internal interface ScriptConfigurationLoader {
      */
     fun loadDependencies(
         isFirstLoad: Boolean,
-        virtualFile: VirtualFile,
+        ktFile: KtFile,
         scriptDefinition: ScriptDefinition,
         context: ScriptConfigurationLoadingContext
     ): Boolean

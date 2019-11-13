@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
-import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.core.script.debug
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
@@ -33,18 +32,18 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
 
     override fun loadDependencies(
         isFirstLoad: Boolean,
-        virtualFile: VirtualFile,
+        ktFile: KtFile,
         scriptDefinition: ScriptDefinition,
         context: ScriptConfigurationLoadingContext
     ): Boolean {
-        val file = project.getKtFile(virtualFile) ?: return false
+        val virtualFile = ktFile.originalFile.virtualFile
 
-        debug(file) { "start dependencies loading" }
+        debug(ktFile) { "start dependencies loading" }
 
-        val inputs = getInputsStamp(virtualFile, file)
+        val inputs = getInputsStamp(virtualFile, ktFile)
         val scriptingApiResult = try {
             refineScriptCompilationConfiguration(
-                KtFileScriptSource(file), scriptDefinition, file.project
+                KtFileScriptSource(ktFile), scriptDefinition, ktFile.project
             )
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
@@ -60,7 +59,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
 
         context.suggestNewConfiguration(virtualFile, result)
 
-        debug(file) { "finish dependencies loading" }
+        debug(ktFile) { "finish dependencies loading" }
 
         return true
     }
