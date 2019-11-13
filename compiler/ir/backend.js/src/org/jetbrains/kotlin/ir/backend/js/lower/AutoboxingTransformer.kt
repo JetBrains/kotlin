@@ -54,14 +54,9 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
             }
             is IrGetField -> this.symbol.owner.type
 
-            is IrTypeOperatorCall -> when (this.operator) {
-                IrTypeOperator.IMPLICIT_INTEGER_COERCION ->
-                    // TODO: is it a workaround for inconsistent IR?
-                    this.typeOperand
-
-                IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> context.irBuiltIns.anyNType
-
-                else -> this.type
+            is IrTypeOperatorCall -> {
+                assert(operator == IrTypeOperator.REINTERPRET_CAST) { "Only REINTERPRET_CAST expected at this point" }
+                this.typeOperand
             }
 
             is IrGetValue -> {

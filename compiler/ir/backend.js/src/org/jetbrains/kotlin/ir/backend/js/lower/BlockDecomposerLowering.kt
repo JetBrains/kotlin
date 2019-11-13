@@ -456,6 +456,16 @@ class BlockDecomposerTransformer(
             }
         }
 
+        override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+            expression.transformChildrenVoid(expressionTransformer)
+
+            val composite = expression.argument as? IrComposite ?: return expression
+
+            return materializeLastExpression(composite) {
+                expression.apply { argument = it }
+            }
+        }
+
         override fun visitGetClass(expression: IrGetClass): IrExpression {
             expression.transformChildrenVoid(expressionTransformer)
 

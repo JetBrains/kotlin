@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.ConversionNames
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 
@@ -87,6 +86,6 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
     }
 
     private fun useDispatchReceiver(call: IrFunctionAccessExpression): IrExpression {
-        return JsIrBuilder.buildImplicitCast(call.dispatchReceiver!!, call.type)
+        return JsIrBuilder.buildReinterpretCast(call.dispatchReceiver!!, call.type)
     }
 }

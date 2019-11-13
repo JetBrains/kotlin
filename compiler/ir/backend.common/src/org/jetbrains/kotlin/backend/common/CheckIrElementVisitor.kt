@@ -203,7 +203,8 @@ class CheckIrElementVisitor(
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
             IrTypeOperator.IMPLICIT_INTEGER_COERCION,
             IrTypeOperator.SAM_CONVERSION,
-            IrTypeOperator.IMPLICIT_DYNAMIC_CAST ->
+            IrTypeOperator.IMPLICIT_DYNAMIC_CAST,
+            IrTypeOperator.REINTERPRET_CAST ->
                 typeOperand
 
             IrTypeOperator.SAFE_CAST ->

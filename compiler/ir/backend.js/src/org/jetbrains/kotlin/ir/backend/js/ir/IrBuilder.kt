@@ -251,6 +251,8 @@ object JsIrBuilder {
     fun buildImplicitCast(value: IrExpression, toType: IrType) =
         buildTypeOperator(toType, IrTypeOperator.IMPLICIT_CAST, value, toType)
 
+    fun buildReinterpretCast(value: IrExpression, toType: IrType) =
+        buildTypeOperator(toType, IrTypeOperator.REINTERPRET_CAST, value, toType)
 
     fun buildNull(type: IrType) = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type)
     fun buildBoolean(type: IrType, v: Boolean) = IrConstImpl.boolean(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, v)
