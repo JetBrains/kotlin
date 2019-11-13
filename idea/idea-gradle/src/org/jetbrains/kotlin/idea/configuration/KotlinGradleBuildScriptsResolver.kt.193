@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.util.Pair
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Consumer
 import org.gradle.tooling.model.idea.IdeaProject
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters.*
@@ -30,7 +31,9 @@ class KotlinGradleBuildScriptsResolver : AbstractProjectResolverExtension() {
     }
 
     override fun enhanceTaskProcessing(taskNames: MutableList<String>, jvmParametersSetup: String?, initScriptConsumer: Consumer<String>) {
-        initScriptConsumer.consume("startParameter.taskNames += [\"${PREPARATION_TASK_NAME}\"]")
+        if (Registry.`is`("kotlin.gradle.scripts.useIdeaProjectImport", false)) {
+            initScriptConsumer.consume("startParameter.taskNames += [\"${PREPARATION_TASK_NAME}\"]")
+        }
     }
 
     override fun getModelProvider(): ProjectImportModelProvider {
