@@ -152,10 +152,11 @@ class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
     }
 
     private fun analyzeFileRange(file: KtFile, rangeMarker: RangeMarker?): Diagnostics {
-        val elements = if (rangeMarker == null)
+        val range = rangeMarker?.range
+        val elements = if (range == null)
             listOf(file)
         else
-            file.elementsInRange(rangeMarker.range!!).filterIsInstance<KtElement>()
+            file.elementsInRange(range).filterIsInstance<KtElement>()
 
         return if (elements.isNotEmpty())
             file.getResolutionFacade().analyzeWithAllCompilerChecks(elements).bindingContext.diagnostics
