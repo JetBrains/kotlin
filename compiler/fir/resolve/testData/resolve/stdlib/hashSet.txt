@@ -18,7 +18,7 @@ FILE: hashSet.kt
     public final fun foo(): R|kotlin/Unit| {
         lvar c: R|kotlin/collections/MutableSet<kotlin/String>?| = Null(null)
         R|<local>/c| = R|java/util/HashSet.HashSet|<R|kotlin/String|>()
-        when (lval <bangbang>: R|kotlin/collections/MutableSet<kotlin/String>?| = R|<local>/c|) {
+        when (lval <bangbang>: R|java/util/HashSet<kotlin/String>| = R|<local>/c|) {
             ==($subj$, Null(null)) ->  {
                 throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
             }

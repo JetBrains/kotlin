@@ -9,11 +9,13 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
       VAR name:x type:IrErrorType [var]
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
         CONST Int type=kotlin.Int value=0
-      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:IrErrorType [val]
-        GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+        GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=kotlin.Int origin=null
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
-        ERROR_CALL 'Unresolved reference: <Ambiguity: inc, [kotlin/inc, kotlin/inc]>#' type=IrErrorType
-      GET_VAR 'val tmp_0: IrErrorType [val] declared in <root>.test2' type=IrErrorType origin=null
-      CALL 'public final fun plusAssign (element: T of <uninitialized parent>): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
-        $receiver: GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
-        element: CONST Int type=kotlin.Int value=1
+        CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
+        CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+          $this: GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=kotlin.Int origin=null
+          other: CONST Int type=kotlin.Int value=1

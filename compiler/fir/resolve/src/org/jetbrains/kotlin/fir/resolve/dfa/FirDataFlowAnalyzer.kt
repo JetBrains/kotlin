@@ -584,10 +584,22 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
     }
 
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
-        graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow()
-        val lhsVariable = variableStorage[assignment.resolvedSymbol ?: return] ?: return
-        val rhsVariable = variableStorage[assignment.rValue.resolvedSymbol ?: return]?.takeIf { !it.isSynthetic() } ?: return
-        variableStorage.rebindAliasVariable(lhsVariable, rhsVariable)
+        val node = graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow()
+        val lhsSymbol: AbstractFirBasedSymbol<*> = (assignment.lValue as? FirResolvedNamedReference)?.resolvedSymbol ?: return
+        val lhsVariable = getOrCreateRealVariable(lhsSymbol.fir) ?: return
+        val rhsSymbol = assignment.rValue.resolvedSymbol
+        val rhsVariable = rhsSymbol?.let { variableStorage[it]?.takeIf { !it.isSynthetic() } }
+        if (rhsVariable == null) {
+            val type = assignment.rValue.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
+            logicSystem.addApprovedInfo(
+                node.flow,
+                lhsVariable,
+                FirDataFlowInfo(setOf(type), emptySet())
+            )
+            return
+        } else {
+            variableStorage.rebindAliasVariable(lhsVariable, rhsVariable)
+        }
     }
 
     fun exitThrowExceptionNode(throwExpression: FirThrowExpression) {

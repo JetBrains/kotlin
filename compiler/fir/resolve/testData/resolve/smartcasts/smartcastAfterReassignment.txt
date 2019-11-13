@@ -1,0 +1,23 @@
+FILE: smartcastAfterReassignment.kt
+    public final fun test_1(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Any| = Int(1)
+        R|<local>/x| = String()
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lvar x: R|kotlin/String?| = Null(null)
+        when () {
+            ==(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x| = String()
+            }
+        }
+
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun test_3(): R|kotlin/Unit| {
+        lvar x: R|kotlin/String?| = Null(null)
+        R|<local>/x| = String()
+        R|<local>/x|.R|kotlin/String.length|
+        R|<local>/x| = Null(null)
+        R|<local>/x|.<Unresolved name: length>#
+    }

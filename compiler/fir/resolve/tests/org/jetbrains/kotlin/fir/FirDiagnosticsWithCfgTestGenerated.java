@@ -133,6 +133,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/dataFlowInfoFromWhileCondition.kt");
         }
 
+        @TestMetadata("delayedAssignment.kt")
+        public void testDelayedAssignment() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/delayedAssignment.kt");
+        }
+
         @TestMetadata("elvis.kt")
         public void testElvis() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/elvis.kt");
@@ -181,6 +186,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
         @TestMetadata("simpleIf.kt")
         public void testSimpleIf() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/simpleIf.kt");
+        }
+
+        @TestMetadata("smartcastAfterReassignment.kt")
+        public void testSmartcastAfterReassignment() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/smartcastAfterReassignment.kt");
         }
 
         @TestMetadata("when.kt")
