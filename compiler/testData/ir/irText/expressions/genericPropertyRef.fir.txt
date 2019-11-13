@@ -131,7 +131,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
   PROPERTY name:recivier visibility:public modality:FINAL [var]
     FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:private [static]
       EXPRESSION_BODY
-        CONST String type=kotlin.Any value="fail"
+        CONST String type=kotlin.String value="fail"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-recivier> visibility:public modality:FINAL <> () returnType:kotlin.Any?
       correspondingProperty: PROPERTY name:recivier visibility:public modality:FINAL [var]
       BLOCK_BODY
@@ -146,7 +146,7 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
   PROPERTY name:value2 visibility:public modality:FINAL [var]
     FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:private [static]
       EXPRESSION_BODY
-        CONST String type=kotlin.Any value="fail2"
+        CONST String type=kotlin.String value="fail2"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value2> visibility:public modality:FINAL <> () returnType:kotlin.Any?
       correspondingProperty: PROPERTY name:value2 visibility:public modality:FINAL [var]
       BLOCK_BODY

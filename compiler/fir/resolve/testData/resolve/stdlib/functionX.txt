@@ -1,5 +1,5 @@
 FILE: functionX.kt
-    public final val x: R|kotlin/jvm/functions/Function0<kotlin/Int>| = fun <anonymous>(): R|kotlin/jvm/functions/Function0<kotlin/Int>| {
+    public final val x: R|kotlin/jvm/functions/Function0<kotlin/Int>| = fun <anonymous>(): R|kotlin/Int| {
         Int(42)
     }
 

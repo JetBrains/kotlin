@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Long visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Int type=kotlin.Long value=42
+        CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Long
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Short visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Int type=kotlin.Short value=42
+        CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Short
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
   PROPERTY name:test3 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Byte visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Int type=kotlin.Byte value=42
+        CONST Int type=kotlin.Int value=42
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Byte
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -61,9 +61,9 @@ FILE fqName:<root> fileName:/primitivesImplicitConversions.kt
       VAR name:test1 type:kotlin.Int? [val]
         CONST Int type=kotlin.Int value=42
       VAR name:test2 type:kotlin.Long [val]
-        CONST Int type=kotlin.Long value=42
+        CONST Int type=kotlin.Int value=42
       VAR name:test3 type:kotlin.Long? [val]
-        CONST Int type=kotlin.Long value=42
+        CONST Int type=kotlin.Int value=42
       VAR name:test4 type:kotlin.Long? [val]
         CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CONST Int type=kotlin.Int value=1

@@ -123,7 +123,7 @@ FILE fqName:<root> fileName:/literals.kt
   PROPERTY name:testB visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testB type:kotlin.Byte visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Int type=kotlin.Byte value=1
+        CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testB> visibility:public modality:FINAL <> () returnType:kotlin.Byte
       correspondingProperty: PROPERTY name:testB visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -132,7 +132,7 @@ FILE fqName:<root> fileName:/literals.kt
   PROPERTY name:testS visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testS type:kotlin.Short visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Int type=kotlin.Short value=1
+        CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testS> visibility:public modality:FINAL <> () returnType:kotlin.Short
       correspondingProperty: PROPERTY name:testS visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -150,7 +150,7 @@ FILE fqName:<root> fileName:/literals.kt
   PROPERTY name:testL visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testL type:kotlin.Long visibility:private [final,static]
       EXPRESSION_BODY
-        CONST Int type=kotlin.Long value=1
+        CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testL> visibility:public modality:FINAL <> () returnType:kotlin.Long
       correspondingProperty: PROPERTY name:testL visibility:public modality:FINAL [val]
       BLOCK_BODY

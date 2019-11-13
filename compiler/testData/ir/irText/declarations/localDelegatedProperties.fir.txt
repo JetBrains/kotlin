@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/localDelegatedProperties.kt
     BLOCK_BODY
       VAR name:x type:IrErrorType [var]
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
-        CONST Int type=IrErrorType value=0
+        CONST Int type=kotlin.Int value=0
       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:IrErrorType [val]
         GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null

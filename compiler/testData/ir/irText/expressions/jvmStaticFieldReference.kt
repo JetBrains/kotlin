@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 fun testFun() {
     System.out.println("testFun")
 }

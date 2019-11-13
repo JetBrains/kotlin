@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
               CONSTRUCTOR visibility:private <> () returnType:<root>.Outer.Inner [primary]
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int) [primary] declared in <root>.Outer.Inner'
-                    x: CONST Int type=<uninitialized parent>.<anonymous> value=42
+                    x: CONST Int type=kotlin.Int value=42
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Outer.Inner]'
               PROPERTY name:xx visibility:public modality:FINAL [val]
                 FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.Int visibility:private [final]
