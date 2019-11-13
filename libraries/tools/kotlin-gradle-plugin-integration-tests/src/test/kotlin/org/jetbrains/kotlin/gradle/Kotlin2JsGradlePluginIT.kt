@@ -451,8 +451,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
             assertFileExists("build/js/node_modules/kotlin-test/kotlin-test.js.map")
             assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-test-nodejs-runner.js")
             assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-test-nodejs-runner.js.map")
-            assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-nodejs-source-map-support.js")
-            assertFileExists("build/js/node_modules/kotlin-test-js-runner/kotlin-nodejs-source-map-support.js.map")
             assertFileExists("build/js/node_modules/kotlin-js-plugin/kotlin/kotlin-js-plugin.js")
             assertFileExists("build/js/node_modules/kotlin-js-plugin/kotlin/kotlin-js-plugin.js.map")
             assertFileExists("build/js/node_modules/kotlin-js-plugin-test/kotlin/kotlin-js-plugin-test.js")
