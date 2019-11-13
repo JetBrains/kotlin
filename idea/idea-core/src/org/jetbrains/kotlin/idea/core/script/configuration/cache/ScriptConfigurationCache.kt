@@ -32,6 +32,7 @@ interface ScriptConfigurationCache {
     fun markOutOfDate(file: VirtualFile)
 
     fun allApplied(): Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
+    fun clear()
 }
 
 data class ScriptConfigurationState(

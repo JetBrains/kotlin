@@ -214,7 +214,8 @@ internal abstract class AbstractScriptConfigurationManager(
     override fun clearConfigurationCachesAndRehighlight() {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
-        // todo: invalidate caches?
+        cache.clear()
+        clearClassRootsCaches()
 
         if (project.isOpen) {
             val openedScripts = FileEditorManager.getInstance(project).openFiles.filterNot { it.isNonScript() }
@@ -261,7 +262,7 @@ internal abstract class AbstractScriptConfigurationManager(
         }
 
     private fun newClassRootsCache() = object : ScriptClassRootsCache(project) {
-        override val all get() = cache.allApplied()
+        override val all = cache.allApplied()
         override fun getConfiguration(file: VirtualFile) =
             this@AbstractScriptConfigurationManager.getConfiguration(file)
     }
@@ -285,7 +286,7 @@ internal abstract class AbstractScriptConfigurationManager(
 
     override fun getScriptSdk(file: VirtualFile): Sdk? = classpathRoots.getScriptSdk(file)
 
-    override fun getFirstScriptsSdk(): Sdk? = classpathRoots.getFirstScriptsSdk()
+    override fun getFirstScriptsSdk(): Sdk? = classpathRoots.firstScriptSdk
 
     override fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope =
         classpathRoots.getScriptDependenciesClassFilesScope(file)

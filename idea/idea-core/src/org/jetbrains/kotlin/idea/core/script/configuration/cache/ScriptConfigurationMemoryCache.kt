@@ -54,4 +54,9 @@ open class ScriptConfigurationMemoryCache(
             if (it.value.applied?.configuration == null) null
             else it.key to it.value.applied?.configuration
         } as Collection<Pair<VirtualFile, ScriptCompilationConfigurationWrapper>>
+
+    @Synchronized
+    override fun clear() {
+        memoryCache.clear()
+    }
 }
