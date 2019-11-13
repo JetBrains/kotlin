@@ -29,11 +29,11 @@ class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigura
 
     override fun loadDependencies(
         isFirstLoad: Boolean,
-        virtualFile: VirtualFile,
+        ktFile: KtFile,
         scriptDefinition: ScriptDefinition,
         context: ScriptConfigurationLoadingContext
     ): Boolean {
-        if (!isGradleKotlinScript(virtualFile)) return false
+        if (!isGradleKotlinScript(ktFile.originalFile.virtualFile)) return false
 
         if (useProjectImport) {
             // do nothing, project import notification will be already showed
@@ -49,7 +49,7 @@ class GradleScriptConfigurationLoader(project: Project) : DefaultScriptConfigura
                 }
             }
 
-            return super.loadDependencies(isFirstLoad, virtualFile, scriptDefinition, context)
+            return super.loadDependencies(isFirstLoad, ktFile, scriptDefinition, context)
         }
     }
 

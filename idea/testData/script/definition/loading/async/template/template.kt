@@ -34,9 +34,4 @@ class TestDependenciesResolver : AsyncDependenciesResolver {
 
 @ScriptExpectedLocations([ScriptExpectedLocation.Everywhere])
 @ScriptTemplateDefinition(TestDependenciesResolver::class, scriptFilePattern = "script.kts")
-class Template : Base()
-
-open class Base {
-    val i = 3
-    val str = ""
-}
+class Template

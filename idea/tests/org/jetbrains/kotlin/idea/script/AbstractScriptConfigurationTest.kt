@@ -271,10 +271,14 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     protected open fun loadScriptConfigurationSynchronously(script: VirtualFile) {
         updateScriptDependenciesSynchronously(myFile, project)
 
-        VfsUtil.markDirtyAndRefresh(false, true, true, project.baseDir)
         // This is needed because updateScriptDependencies invalidates psiFile that was stored in myFile field
+        VfsUtil.markDirtyAndRefresh(false, true, true, project.baseDir)
         myFile = psiManager.findFile(script)
 
+        checkHighlighting()
+    }
+
+    protected fun checkHighlighting() {
         val ktFile = myFile as KtFile
         val reports = IdeScriptReportSink.getReports(ktFile)
         val isFatalErrorPresent = reports.any { it.severity == ScriptDiagnostic.Severity.FATAL }

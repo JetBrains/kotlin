@@ -18,6 +18,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions.LOADER
+import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptConfigurationManagerExtensions.LISTENER
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationFileAttributeCache
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationMemoryCache
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
@@ -107,18 +108,23 @@ internal class DefaultScriptConfigurationManager(project: Project) :
         if (ApplicationManager.getApplication().isUnitTestMode) TestingBackgroundExecutor(rootsIndexer)
         else DefaultBackgroundExecutor(project, rootsIndexer)
 
+    private val outsiderLoader = ScriptOutsiderFileConfigurationLoader(project)
     private val fileAttributeCache = ScriptConfigurationFileAttributeCache(project)
+    private val defaultLoader = DefaultScriptConfigurationLoader(project)
+    private val loaders: Sequence<ScriptConfigurationLoader>
+        get() = sequence {
+            yield(outsiderLoader)
+            yield(fileAttributeCache)
+            yieldAll(LOADER.getPoint(project).extensionList)
+            yield(defaultLoader)
+        }
 
-    private val loaders: List<ScriptConfigurationLoader>
-        get() = listOf(
-            ScriptOutsiderFileConfigurationLoader(project),
-            ScriptConfigurationFileAttributeCache(project)
-        ) + project[LOADER] + listOf(
-            DefaultScriptConfigurationLoader(project)
-        )
-
-    private val listeners: List<ScriptChangeListener>
-        get() = project[DefaultScriptConfigurationManagerExtensions.LISTENER] + listOf(DefaultScriptChangeListener())
+    private val defaultListener = DefaultScriptChangeListener()
+    private val listeners: Sequence<ScriptChangeListener>
+        get() = sequence {
+            yieldAll(LISTENER.getPoint(project).extensionList)
+            yield(defaultListener)
+        }
 
     private val notifier = ScriptChangesNotifier(project, updater, listeners)
 
@@ -130,9 +136,6 @@ internal class DefaultScriptConfigurationManager(project: Project) :
             fileAttributeCache.save(file, configurationSnapshot.configuration)
         }
     }
-
-    private operator fun <T> Project.get(epName: ExtensionPointName<T>): List<T> =
-        Extensions.getArea(this).getExtensionPoint(epName).extensionList
 
     /**
      * Will be called on [cache] miss to initiate loading of [file]'s script configuration.

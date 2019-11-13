@@ -141,5 +141,7 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
         assertAndDoAllBackgroundTasks()
         assertSingleLoading()
         assertAppliedConfiguration("initial")
+
+        checkHighlighting()
     }
 }

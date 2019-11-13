@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.scripting.definitions.isNonScript
 internal class ScriptChangesNotifier(
     private val project: Project,
     private val updater: ScriptConfigurationUpdater,
-    private val listeners: List<ScriptChangeListener>
+    private val listeners: Sequence<ScriptChangeListener>
 ) {
     private val scriptsQueue = Alarm(Alarm.ThreadToUse.SWING_THREAD, project)
     private val scriptChangesListenerDelay = 1400
