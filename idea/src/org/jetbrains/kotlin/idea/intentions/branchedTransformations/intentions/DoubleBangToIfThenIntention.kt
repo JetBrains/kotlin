@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
@@ -61,26 +50,12 @@ class DoubleBangToIfThenIntention :
         val ifStatement = if (isStatement)
             element.convertToIfNullExpression(base, defaultException)
         else {
-            val selectorExpression = element.getQualifiedExpressionForReceiver()?.selectorExpression
+            val qualifiedExpressionForReceiver = element.getQualifiedExpressionForReceiver()
+            val selectorExpression = qualifiedExpressionForReceiver?.selectorExpression
             val thenClause = selectorExpression?.let {
                 KtPsiFactory(element).createExpressionByPattern("$0.$1", base, it)
             } ?: base
-            val hasSelector = thenClause != base
-
-            if (hasSelector) {
-                val prevSibling = selectorExpression?.prevSibling
-                selectorExpression?.delete()
-                prevSibling?.delete()
-            }
-
-            element.convertToIfNotNullExpression(base, thenClause, defaultException).apply {
-                if (hasSelector) {
-                    with(parent) {
-                        firstChild.delete()
-                        lastChild.delete()
-                    }
-                }
-            }
+            (qualifiedExpressionForReceiver ?: element).convertToIfNotNullExpression(base, thenClause, defaultException)
         }
 
         val thrownExpression =
