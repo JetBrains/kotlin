@@ -3,6 +3,7 @@ package com.intellij.ide.projectView.impl
 
 import com.intellij.ide.projectView.ProjectViewSettings
 import com.intellij.ide.ui.UISettings
+import com.intellij.openapi.application.ApplicationManager.getApplication
 import com.intellij.openapi.components.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
@@ -38,6 +39,8 @@ class ProjectViewState : PersistentStateComponent<ProjectViewState> {
   var useFileNestingRules = ProjectViewSettings.Immutable.DEFAULT.isUseFileNestingRules
 
   override fun noStateLoaded() {
+    val application = getApplication()
+    if (application == null || application.isUnitTestMode) return
     // for backward compatibility
     abbreviatePackageNames = ProjectViewSharedSettings.instance.abbreviatePackages
     autoscrollFromSource = ProjectViewSharedSettings.instance.autoscrollFromSource
