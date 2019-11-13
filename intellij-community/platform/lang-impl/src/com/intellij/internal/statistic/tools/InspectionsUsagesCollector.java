@@ -14,6 +14,7 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesColle
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.lang.Language;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
@@ -138,8 +139,9 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
 
   @Nullable
   private static PluginInfo getInfo(InspectionToolWrapper<?, ?> tool) {
-    final InspectionEP extension = tool.getExtension();
-    return extension != null ? PluginInfoDetectorKt.getPluginInfoById(extension.getPluginDescriptor().getPluginId()) : null;
+    InspectionEP extension = tool.getExtension();
+    PluginDescriptor pluginDescriptor = extension == null ? null : extension.getPluginDescriptor();
+    return pluginDescriptor != null ? PluginInfoDetectorKt.getPluginInfoByDescriptor(pluginDescriptor) : null;
   }
 
   @NotNull
