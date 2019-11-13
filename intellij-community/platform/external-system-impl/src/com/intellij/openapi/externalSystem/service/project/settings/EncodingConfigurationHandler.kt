@@ -1,7 +1,7 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.externalSystem.service.project.settings
 
-import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.model.project.settings.ConfigurationData
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
@@ -13,7 +13,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.encoding.EncodingProjectManager
 import com.intellij.openapi.vfs.encoding.EncodingProjectManagerImpl
-import com.intellij.openapi.vfs.encoding.EncodingProjectManagerImpl.*
+import com.intellij.openapi.vfs.encoding.EncodingProjectManagerImpl.BOMForNewUTF8Files
 import java.nio.charset.Charset
 
 class EncodingConfigurationHandler : ConfigurationHandler {
@@ -24,7 +24,7 @@ class EncodingConfigurationHandler : ConfigurationHandler {
     configuration.onEncodingBlock {
       val encodingManager = EncodingProjectManager.getInstance(project) as EncodingProjectManagerImpl
       val mapping = getCharsetProjectMapping(encodingManager)
-      TransactionGuard.getInstance().submitTransactionAndWait {
+      ApplicationManager.getApplication().invokeAndWait {
         encodingManager.setMapping(mapping)
         onCharset("encoding") {
           encodingManager.defaultCharsetName = it?.name() ?: ""
