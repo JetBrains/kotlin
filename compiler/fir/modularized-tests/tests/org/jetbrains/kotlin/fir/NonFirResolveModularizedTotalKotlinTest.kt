@@ -36,7 +36,16 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val project = environment.project
 
         val time = measureNanoTime {
-            KotlinToJVMBytecodeCompiler.analyze(environment, null)
+            try {
+                KotlinToJVMBytecodeCompiler.analyze(environment, null)
+            } catch (e: Throwable) {
+                var exception: Throwable? = e
+                while (exception != null && exception != exception.cause) {
+                    exception.printStackTrace()
+                    exception = exception.cause
+                }
+                throw e
+            }
         }
 
         files += environment.getSourceFiles().size
