@@ -1,0 +1,6 @@
+package
+
+public fun stringCollection(): kotlin.collections.Collection<kotlin.String>
+public fun </*0*/ K> test(/*0*/ c: kotlin.collections.Collection<K>): kotlin.Unit
+public fun </*0*/ T> kotlin.collections.Iterable<T>.filter(/*0*/ predicate: (T) -> kotlin.Boolean): kotlin.collections.List<T>
+public operator fun </*0*/ T> kotlin.collections.Collection<T>.plus(/*0*/ elements: kotlin.collections.Iterable<T>): kotlin.collections.List<T>

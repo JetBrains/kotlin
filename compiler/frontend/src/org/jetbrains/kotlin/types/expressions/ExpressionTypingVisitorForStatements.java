@@ -21,6 +21,7 @@ import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -214,8 +215,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             context.trace.report(UNRESOLVED_REFERENCE.on(operationSign, operationSign));
             temporary.commit();
             return rightInfo.clearType();
-        } else if (ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(right, context) == null &&
-                   ArgumentTypeResolver.getCallableReferenceExpressionIfAny(right, context) == null) {
+        } else if (!ArgumentTypeResolver.isFunctionLiteralOrCallableReference(right, context) &&
+                   !context.languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers)
+        ) {
             // Cache the type info for the right hand side so that we don't evaluate it twice if there is no valid plusAssign.
             // We skip over function literals and references, since ArgumentTypeResolver will only resolve the shape of the
             // function type before attempting to resolve the call.

@@ -7957,6 +7957,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/functionLiterals/functionLiteralWithoutArgumentList.kt");
         }
 
+        @TestMetadata("genericFunctionalTypeOnRHSOfPlusAssign.kt")
+        public void testGenericFunctionalTypeOnRHSOfPlusAssign() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/functionLiterals/genericFunctionalTypeOnRHSOfPlusAssign.kt");
+        }
+
         @TestMetadata("higherOrderCallMissingParameters.kt")
         public void testHigherOrderCallMissingParameters() throws Exception {
             runTest("compiler/testData/diagnostics/tests/functionLiterals/higherOrderCallMissingParameters.kt");
