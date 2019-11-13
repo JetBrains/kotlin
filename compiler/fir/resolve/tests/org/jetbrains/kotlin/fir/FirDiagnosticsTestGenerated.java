@@ -771,6 +771,24 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         }
     }
 
+    @TestMetadata("compiler/fir/resolve/testData/resolve/problems")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Problems extends AbstractFirDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInProblems() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("propertyFromJavaPlusAssign.kt")
+        public void testPropertyFromJavaPlusAssign() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/propertyFromJavaPlusAssign.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/resolve/testData/resolve/references")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
