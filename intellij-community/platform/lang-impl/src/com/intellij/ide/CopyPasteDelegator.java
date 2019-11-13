@@ -5,7 +5,6 @@ package com.intellij.ide;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
@@ -142,10 +141,10 @@ public class CopyPasteDelegator implements CopyPasteSupport {
         final Module module = LangDataKeys.MODULE.getData(dataContext);
         PsiElement target = getPasteTarget(dataContext, module);
         if (isCopied[0]) {
-          TransactionGuard.getInstance().submitTransactionAndWait(() -> pasteAfterCopy(elements, module, target, true));
+          pasteAfterCopy(elements, module, target, true);
         }
         else if (MoveHandler.canMove(elements, target)) {
-          TransactionGuard.getInstance().submitTransactionAndWait(() -> pasteAfterCut(dataContext, elements, target));
+          pasteAfterCut(dataContext, elements, target);
         }
         else {
           return false;

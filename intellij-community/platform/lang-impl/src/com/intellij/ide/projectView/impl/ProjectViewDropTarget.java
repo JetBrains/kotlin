@@ -6,7 +6,6 @@ import com.intellij.ide.dnd.*;
 import com.intellij.ide.projectView.impl.nodes.DropTargetNode;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -284,8 +283,7 @@ abstract class ProjectViewDropTarget implements DnDNativeTarget {
           return externalDrop ? null : dataContext.getData(dataId);
         }
       };
-      TransactionGuard.getInstance().submitTransactionAndWait(
-        () -> getActionHandler().invoke(myProject, sources, context));
+      getActionHandler().invoke(myProject, sources, context);
     }
 
     private RefactoringActionHandler getActionHandler() {
@@ -359,7 +357,7 @@ abstract class ProjectViewDropTarget implements DnDNativeTarget {
         LOG.assertTrue(containingFile != null, targetElement);
         psiDirectory = containingFile.getContainingDirectory();
       }
-      TransactionGuard.getInstance().submitTransactionAndWait(() -> CopyHandler.doCopy(sources, psiDirectory));
+      CopyHandler.doCopy(sources, psiDirectory);
     }
 
     @Override

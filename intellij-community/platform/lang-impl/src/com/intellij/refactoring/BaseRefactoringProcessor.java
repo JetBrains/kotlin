@@ -10,7 +10,6 @@ import com.intellij.lang.Language;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.application.ex.ApplicationEx;
 import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.command.CommandProcessor;
@@ -434,11 +433,9 @@ public abstract class BaseRefactoringProcessor implements Runnable {
     Runnable refactoringRunnable = () -> {
       Set<UsageInfo> usagesToRefactor = UsageViewUtil.getNotExcludedUsageInfos(usageView);
       final UsageInfo[] infos = usagesToRefactor.toArray(UsageInfo.EMPTY_ARRAY);
-      TransactionGuard.getInstance().submitTransactionAndWait(() -> {
-        if (ensureElementsWritable(infos, viewDescriptor)) {
-          execute(infos);
-        }
-      });
+      if (ensureElementsWritable(infos, viewDescriptor)) {
+        execute(infos);
+      }
     };
 
     String canNotMakeString = RefactoringBundle.message("usageView.need.reRun");
