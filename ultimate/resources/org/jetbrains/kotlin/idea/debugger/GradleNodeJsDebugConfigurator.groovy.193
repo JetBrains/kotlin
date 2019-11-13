@@ -18,8 +18,10 @@ import org.gradle.api.Task
         doIfInstance(task, "org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec", action)
     }
 
-    def forJsTestTask = { Task task, Closure action ->
-        doIfInstance(task, "org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest", action)
+    def forNodeJsTestTask = { Task task, Closure action ->
+        if (task.name.startsWith("node")) {
+            doIfInstance(task, "org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest", action)
+        }
     }
 
     gradle.taskGraph.beforeTask { Task task ->
@@ -30,7 +32,7 @@ import org.gradle.api.Task
             }
         }
 
-        forJsTestTask(task) {
+        forNodeJsTestTask(task) {
             if (task.hasProperty('debug')) {
                 ForkedDebuggerHelper.setupDebugger('%id', task.path, '', '%dispatchPort'.toInteger())
                 task.debug = true
@@ -40,9 +42,11 @@ import org.gradle.api.Task
 
     gradle.taskGraph.afterTask { Task task ->
         forNodeJsTask(task) {
-            if (task.hasProperty('args') && task.args) {
-                ForkedDebuggerHelper.signalizeFinish('%id', task.path, '%dispatchPort'.toInteger())
-            }
+            ForkedDebuggerHelper.signalizeFinish('%id', task.path, '%dispatchPort'.toInteger())
+        }
+
+        forNodeJsTestTask(task) {
+            ForkedDebuggerHelper.signalizeFinish('%id', task.path, '%dispatchPort'.toInteger())
         }
     }
 })()
