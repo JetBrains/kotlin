@@ -54,19 +54,14 @@ public interface CodeBlockSupportHandler {
   @NotNull
   static TextRange findCodeBlockRange(@NotNull Editor editor,
                                       @NotNull PsiFile psiFile) {
-    PsiElement contextElement = psiFile.findElementAt(
-      TargetElementUtil.adjustOffset(psiFile, editor.getDocument(), editor.getCaretModel().getOffset()));
-    if (contextElement == null) {
-      return EMPTY_RANGE;
-    }
+    int offset = TargetElementUtil.adjustOffset(psiFile, editor.getDocument(), editor.getCaretModel().getOffset());
+    PsiElement contextElement = psiFile.findElementAt(offset);
+    if (contextElement == null) return EMPTY_RANGE;
 
-    for (CodeBlockSupportHandler handler : EP.allForLanguage(contextElement.getLanguage())) {
-      TextRange codeBlockRange = handler.getCodeBlockRange(contextElement);
-      if (!codeBlockRange.isEmpty()) {
-        return codeBlockRange;
-      }
-    }
-    return EMPTY_RANGE;
+    return EP.allForLanguage(contextElement.getLanguage()).stream()
+      .map(handler -> handler.getCodeBlockRange(contextElement))
+      .filter(codeBlockRange -> !codeBlockRange.isEmpty())
+      .findFirst().orElse(EMPTY_RANGE);
   }
 }
 
