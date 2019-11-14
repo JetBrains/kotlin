@@ -151,8 +151,7 @@ public class ProjectSdksModel implements SdkModel {
       for (final Sdk projectJdk : myProjectSdks.keySet()) {
         LOG.assertTrue(projectJdk != null);
         if (ArrayUtilRt.find(allJdks, projectJdk) == -1) {
-          jdkTable.addJdk(projectJdk);
-          jdkTable.updateJdk(projectJdk, myProjectSdks.get(projectJdk));
+          jdkTable.addJdk(myProjectSdks.get(projectJdk));
         }
       }
     });
@@ -345,10 +344,12 @@ public class ProjectSdksModel implements SdkModel {
     doAdd(sdk, null);
   }
 
-  public void doAdd(@NotNull Sdk newSdk, @Nullable Consumer<? super Sdk> updateTree) {
+  public void doAdd(@NotNull Sdk editableCopy, @Nullable Consumer<? super Sdk> updateTree) {
     myModified = true;
     try {
-      Sdk editableCopy = (Sdk)newSdk.clone();
+      //we keep the original Sdk instance as editable, to allow SdkDownload and other extensions
+      //to update the returned Sdk instance
+      Sdk newSdk = (Sdk)editableCopy.clone();
       myProjectSdks.put(newSdk, editableCopy);
       if (updateTree != null) {
         updateTree.consume(editableCopy);
