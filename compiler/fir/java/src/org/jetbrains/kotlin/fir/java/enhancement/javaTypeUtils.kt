@@ -127,6 +127,8 @@ private fun coneFlexibleOrSimpleType(
     if (AbstractStrictEqualityTypeChecker.strictEqualTypes(session.typeContext, lowerBound, upperBound)) {
         val lookupTag = lowerBound.lookupTag
         if (lookupTag is ConeTypeParameterLookupTag && !lowerBound.isMarkedNullable) {
+            // TODO: we need enhancement for type parameter bounds for this code to work properly
+            // At this moment, this condition is always true
             if (lookupTag.typeParameterSymbol.fir.bounds.any {
                     val type = (it as FirResolvedTypeRef).type
                     type is ConeTypeParameterType || type.isNullable
