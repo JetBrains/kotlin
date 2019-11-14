@@ -27,7 +27,7 @@ import org.jetbrains.annotations.TestOnly
 import java.awt.Component
 import kotlin.streams.asSequence
 
-open class ShowTypeDefinitionAction : ShowImplementationsAction() {
+open class ShowTypeDefinitionAction : ShowRelatedElementsActionBase() {
   override fun getSessionFactories(): List<ImplementationViewSessionFactory> = listOf(TypeDefinitionsViewSessionFactory)
 
   override fun getPopupTitle(session: ImplementationViewSession): String {
