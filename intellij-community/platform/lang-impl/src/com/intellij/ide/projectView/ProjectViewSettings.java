@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView;
 
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane;
@@ -35,7 +35,7 @@ public interface ProjectViewSettings extends ViewSettings {
 
     public Immutable(ProjectViewSettings settings) {
       super(settings);
-      myShowExcludedFiles = settings != null && settings.isShowExcludedFiles();
+      myShowExcludedFiles = settings == null || settings.isShowExcludedFiles();
       myShowVisibilityIcons = settings != null && settings.isShowVisibilityIcons();
       myUseFileNestingRules = settings == null || settings.isUseFileNestingRules();
     }
