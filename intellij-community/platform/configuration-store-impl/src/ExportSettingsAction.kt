@@ -25,7 +25,6 @@ import com.intellij.openapi.ui.showOkCancelDialog
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.serviceContainer.ServiceManagerImpl
 import com.intellij.util.ArrayUtil
-import com.intellij.util.PlatformUtils
 import com.intellij.util.ReflectionUtil
 import com.intellij.util.containers.putValue
 import com.intellij.util.io.*
@@ -287,21 +286,17 @@ private fun getComponentPresentableName(state: State, aClass: Class<*>, pluginDe
     if (message !== defaultName) {
       return message
     }
-
-    if (PlatformUtils.isRubyMine()) {
-      // ruby plugin in RubyMine has id "com.intellij", so, we cannot set "resource-bundle" in plugin.xml
-      return messageOrDefault(classLoader, "org.jetbrains.plugins.ruby.RBundle", defaultName)
-    }
   }
   return trimDefaultName()
 }
 
 private fun messageOrDefault(classLoader: ClassLoader, bundleName: String, defaultName: String): String {
-  val bundle = try {
-    AbstractBundle.getResourceBundle(bundleName, classLoader)
+  try {
+    return CommonBundle.messageOrDefault(
+      AbstractBundle.getResourceBundle(bundleName, classLoader), "exportable.$defaultName.presentable.name", defaultName)
   }
   catch (e: MissingResourceException) {
-    null
-  } ?: return defaultName
-  return CommonBundle.messageOrDefault(bundle, "exportable.$defaultName.presentable.name", defaultName)
+    LOG.warn("Missing bundle ${bundleName} at ${classLoader}: ${e.message}")
+    return defaultName
+  }
 }
