@@ -106,7 +106,7 @@ public class GradleProjectOpenProcessorTest extends GradleImportingTestCase {
   }
 
   @Test
-  @Bombed(user = "Sergey.Vorobyov", year=2019, month = Calendar.OCTOBER, day = 1, description = "Should be enabled when https://youtrack.jetbrains.com/issue/IJP-485 will be implemented")
+  @Bombed(user = "Sergey.Vorobyov", year=2019, month = Calendar.DECEMBER, day = 1, description = "Should be enabled when https://youtrack.jetbrains.com/issue/IJP-485 will be implemented")
   public void testGradleSettingsFileModification() throws IOException {
     VirtualFile foo = createProjectSubDir("foo");
     createProjectSubFile("foo/build.gradle", "apply plugin: 'java'");
