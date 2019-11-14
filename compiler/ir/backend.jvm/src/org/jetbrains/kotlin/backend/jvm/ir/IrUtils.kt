@@ -85,8 +85,10 @@ val IrType.erasedUpperBound: IrClass
 
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
-    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*>
-    return const?.value as? String
+    // TODO lower @JvmName?
+    val const = getAnnotation(DescriptorUtils.JVM_NAME)?.getValueArgument(0) as? IrConst<*> ?: return null
+    val value = const.value as? String ?: return null
+    return if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) "$value\$default" else value
 }
 
 val IrFunction.propertyIfAccessor: IrDeclaration

@@ -15091,6 +15091,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/jvmName/functionName.kt");
         }
 
+        @TestMetadata("functionWithDefault.kt")
+        public void testFunctionWithDefault() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmName/functionWithDefault.kt");
+        }
+
         @TestMetadata("loadJvmName.kt")
         public void testLoadJvmName() throws Exception {
             runTest("compiler/testData/codegen/box/jvmName/loadJvmName.kt");
