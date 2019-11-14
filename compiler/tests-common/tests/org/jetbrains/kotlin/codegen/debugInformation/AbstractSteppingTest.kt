@@ -53,12 +53,12 @@ abstract class AbstractSteppingTest : AbstractDebugTest() {
             .dropWhile { !it.startsWith(LINENUMBER_PREFIX) }
             .drop(1)
             .map { it.drop(3).trim() }
-            .joinToString(" ")
+            .joinToString("\n")
         val actualLineNumbers = loggedItems
             .map { event ->
                 "${(event as LocatableEvent).location().method()}:${event.location().lineNumber()}"
             }
-        TestCase.assertEquals(expectedLineNumbers, actualLineNumbers.joinToString(" "))
+        TestCase.assertEquals(expectedLineNumbers, actualLineNumbers.joinToString("\n"))
     }
 }
 
