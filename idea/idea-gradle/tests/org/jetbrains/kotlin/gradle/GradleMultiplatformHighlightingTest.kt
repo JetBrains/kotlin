@@ -40,79 +40,85 @@ class GradleMultiplatformHighlightingTest : GradleImportingTestCase() {
         val files = importProjectFromTestData()
         val project = myTestFixture.project
 
-        checkFiles(files, project) { editor ->
-            daemonAnalyzerTestCase.checkHighlighting(project, editor)
+        checkFiles(files, project, GradleDaemonAnalyzerTestCase(testLineMarkers = true, checkWarnings = true, checkInfos = false)) { file ->
+            file.extension == "kt"
         }
-    }
-
-    private val daemonAnalyzerTestCase = object : DaemonAnalyzerTestCase() {
-        override fun doTestLineMarkers() = true
-
-        fun checkHighlighting(project: Project, editor: Editor) {
-            myProject = project
-            runInEdtAndWait {
-                checkHighlighting(editor, /* checkWarnings = */ true, /* checkInfos = */ false)
-            }
-        }
-    }
-
-    private fun checkFiles(files: List<VirtualFile>, project: Project, check: (Editor) -> Unit) {
-        var atLeastOneFile = false
-        val kotlinFiles = files.filter { it.extension == "kt" }
-        val content = mutableMapOf<VirtualFile, String>()
-        kotlinFiles.forEach { file ->
-            val (_, textWithTags) = configureEditorByExistingFile(file, project)
-            atLeastOneFile = true
-            content[file] = textWithTags
-        }
-        Assert.assertTrue(atLeastOneFile)
-        kotlinFiles.forEach { file ->
-            val (editor, _) = configureEditorByExistingFile(file, project, content[file])
-            check(editor)
-        }
-    }
-
-    private fun configureEditorByExistingFile(
-        virtualFile: VirtualFile,
-        project: Project,
-        contentToSet: String? = null
-    ): Pair<Editor, String> {
-        var result: Pair<Editor, String>? = null
-        runInEdtAndWait {
-            val editor = createEditor(virtualFile, project)
-            val document = editor.document
-            val editorInfo = EditorInfo(document.text)
-            val textWithTags = editorInfo.newFileText
-            ApplicationManager.getApplication().runWriteAction {
-                val newText = contentToSet ?: textWithTags.withoutTags()
-                if (document.text != newText) {
-                    document.setText(newText)
-                }
-
-                editorInfo.applyToEditor(editor)
-            }
-            PsiDocumentManager.getInstance(project).commitAllDocuments()
-            result = editor to textWithTags
-        }
-        return result!!
-    }
-
-    private fun String.withoutTags(): String {
-        val regex = "</?(error|warning|lineMarker).*?>".toRegex()
-        return regex.replace(this, "")
-    }
-
-    private fun createEditor(file: VirtualFile, project: Project): Editor {
-        val instance = FileEditorManager.getInstance(this.myProject)
-        PsiDocumentManager.getInstance(project).commitAllDocuments()
-        val editor = instance.openTextEditor(OpenFileDescriptor(this.myProject, file, 0), false)
-        (editor as EditorImpl).setCaretActive()
-        PsiDocumentManager.getInstance(project).commitAllDocuments()
-        DaemonCodeAnalyzer.getInstance(project).restart()
-        return editor
     }
 
     override fun testDataDirName(): String {
         return "newMultiplatformHighlighting"
     }
+}
+
+class GradleDaemonAnalyzerTestCase(val testLineMarkers: Boolean, val checkWarnings: Boolean, val checkInfos: Boolean) :
+    DaemonAnalyzerTestCase() {
+    override fun doTestLineMarkers() = testLineMarkers
+
+    fun checkHighlighting(project: Project, editor: Editor) {
+        myProject = project
+        runInEdtAndWait {
+            checkHighlighting(editor, checkWarnings, checkInfos)
+        }
+    }
+}
+
+internal fun checkFiles(
+    files: List<VirtualFile>,
+    project: Project,
+    analyzer: GradleDaemonAnalyzerTestCase,
+    fileFilter: (VirtualFile) -> Boolean
+) {
+    var atLeastOneFile = false
+    val kotlinFiles = files.filter(fileFilter)
+    val content = mutableMapOf<VirtualFile, String>()
+    kotlinFiles.forEach { file ->
+        val (_, textWithTags) = configureEditorByExistingFile(file, project)
+        atLeastOneFile = true
+        content[file] = textWithTags
+    }
+    Assert.assertTrue(atLeastOneFile)
+    kotlinFiles.forEach { file ->
+        val (editor, _) = configureEditorByExistingFile(file, project, content[file])
+        analyzer.checkHighlighting(project, editor)
+    }
+}
+
+internal fun textWithoutTags(text: String): String {
+    val regex = "</?(error|warning|lineMarker).*?>".toRegex()
+    return regex.replace(text, "")
+}
+
+private fun createEditor(file: VirtualFile, project: Project): Editor {
+    val instance = FileEditorManager.getInstance(project)
+    PsiDocumentManager.getInstance(project).commitAllDocuments()
+    val editor = instance.openTextEditor(OpenFileDescriptor(project, file, 0), false)
+    (editor as EditorImpl).setCaretActive()
+    PsiDocumentManager.getInstance(project).commitAllDocuments()
+    DaemonCodeAnalyzer.getInstance(project).restart()
+    return editor
+}
+
+internal fun configureEditorByExistingFile(
+    virtualFile: VirtualFile,
+    project: Project,
+    contentToSet: String? = null
+): Pair<Editor, String> {
+    var result: Pair<Editor, String>? = null
+    runInEdtAndWait {
+        val editor = createEditor(virtualFile, project)
+        val document = editor.document
+        val editorInfo = EditorInfo(document.text)
+        val textWithTags = editorInfo.newFileText
+        ApplicationManager.getApplication().runWriteAction {
+            val newText = contentToSet ?: textWithoutTags(textWithTags)
+            if (document.text != newText) {
+                document.setText(newText)
+            }
+
+            editorInfo.applyToEditor(editor)
+        }
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
+        result = editor to textWithTags
+    }
+    return result!!
 }
