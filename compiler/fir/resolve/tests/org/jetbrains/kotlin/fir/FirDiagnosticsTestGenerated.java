@@ -133,11 +133,6 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/resolve/testData/resolve/nestedClass.kt");
     }
 
-    @TestMetadata("nestedClassContructor.kt")
-    public void testNestedClassContructor() throws Exception {
-        runTest("compiler/fir/resolve/testData/resolve/nestedClassContructor.kt");
-    }
-
     @TestMetadata("NestedOfAliasedType.kt")
     public void testNestedOfAliasedType() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/NestedOfAliasedType.kt");
@@ -781,6 +776,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
 
         public void testAllFilesPresentInProblems() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("nestedClassContructor.kt")
+        public void testNestedClassContructor() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/nestedClassContructor.kt");
         }
 
         @TestMetadata("propertyFromJavaPlusAssign.kt")
