@@ -245,7 +245,7 @@ public class ProjectSdksModel implements SdkModel {
       if (downloadExtension != null) {
         String downloadText = ProjectBundle.message("sdk.configure.download.action", type.getPresentableName());
 
-        final AnAction downloadAction = new DumbAwareAction(downloadText, null, type.getIconForDownloadAction()) {
+        final AnAction downloadAction = new DumbAwareAction(downloadText, null, downloadExtension.getIconForDownloadAction(type)) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
             doDownload(downloadExtension, parent, selectedSdk, type, updateTree);

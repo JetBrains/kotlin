@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.roots.ui.configuration.projectRoot;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -20,6 +21,11 @@ import java.util.function.Consumer;
  */
 public interface SdkDownload {
   ExtensionPointName<SdkDownload> EP_NAME = ExtensionPointName.create("com.intellij.sdkDownload");
+
+  @NotNull
+  default Icon getIconForDownloadAction(@NotNull SdkTypeId sdkTypeId) {
+    return AllIcons.Actions.Download;
+  }
 
   /**
    * Returns true if the download is supported for the given SdkType
