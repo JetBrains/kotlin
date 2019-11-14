@@ -302,6 +302,7 @@ public inline class Duration internal constructor(internal val value: Double) : 
      *
      * @sample samples.time.Durations.toIsoString
      */
+    @UseExperimental(ExperimentalStdlibApi::class)
     public fun toIsoString(): String = buildString {
         if (isNegative()) append('-')
         append("PT")
@@ -321,8 +322,8 @@ public inline class Duration internal constructor(internal val value: Double) : 
                     append('.')
                     val nss = nanoseconds.toString().padStart(9, '0')
                     when {
-                        nanoseconds % 1_000_000 == 0 -> append(nss, 0, 3)
-                        nanoseconds % 1_000 == 0 -> append(nss, 0, 6)
+                        nanoseconds % 1_000_000 == 0 -> appendRange(nss, 0, 3)
+                        nanoseconds % 1_000 == 0 -> appendRange(nss, 0, 6)
                         else -> append(nss)
                     }
                 }

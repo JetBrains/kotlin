@@ -438,13 +438,14 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
  * @param startIndex the index of the first character to be replaced.
  * @param endIndex the index of the first character after the replacement to keep in the string.
  */
+@UseExperimental(ExperimentalStdlibApi::class)
 public fun CharSequence.replaceRange(startIndex: Int, endIndex: Int, replacement: CharSequence): CharSequence {
     if (endIndex < startIndex)
         throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex).")
     val sb = StringBuilder()
-    sb.append(this, 0, startIndex)
+    sb.appendRange(this, 0, startIndex)
     sb.append(replacement)
-    sb.append(this, endIndex, length)
+    sb.appendRange(this, endIndex, length)
     return sb
 }
 
@@ -483,6 +484,7 @@ public inline fun String.replaceRange(range: IntRange, replacement: CharSequence
  *
  * [endIndex] is not included in the removed part.
  */
+@UseExperimental(ExperimentalStdlibApi::class)
 public fun CharSequence.removeRange(startIndex: Int, endIndex: Int): CharSequence {
     if (endIndex < startIndex)
         throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex).")
@@ -491,8 +493,8 @@ public fun CharSequence.removeRange(startIndex: Int, endIndex: Int): CharSequenc
         return this.subSequence(0, length)
 
     val sb = StringBuilder(length - (endIndex - startIndex))
-    sb.append(this, 0, startIndex)
-    sb.append(this, endIndex, length)
+    sb.appendRange(this, 0, startIndex)
+    sb.appendRange(this, endIndex, length)
     return sb
 }
 
