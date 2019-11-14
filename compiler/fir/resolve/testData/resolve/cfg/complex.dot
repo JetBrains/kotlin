@@ -325,8 +325,8 @@ digraph complex_kt {
     110 [label="Access variable this@R|/firstIsInstanceOrNull|"];
     111 [label="Variable declaration: lval <range>: R|kotlin/sequences/Sequence<*>|"];
     112 [label="Access variable R|<local>/<range>|"];
-    113 [label="Function call: R|<local>/<range>|.R|kotlin/sequences/Sequence.iterator|()"];
-    114 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<T>|"];
+    113 [label="Function call: R|<local>/<range>|.R|FakeOverride<kotlin/sequences/Sequence.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()"];
+    114 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>|"];
     subgraph cluster_25 {
       color=blue
       115 [label="Enter while loop"];
@@ -344,8 +344,8 @@ digraph complex_kt {
           color=blue
           121 [label="Enter block"];
           122 [label="Access variable R|<local>/<iterator>|"];
-          123 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|T|>|()"];
-          124 [label="Variable declaration: lval element: R|T|"];
+          123 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()"];
+          124 [label="Variable declaration: lval element: R|kotlin/Any?|"];
           subgraph cluster_29 {
             color=blue
             125 [label="Enter when"];

@@ -11,6 +11,6 @@ FILE: test.kt
         R|<local>/resolvedCall|.R|/ResolvedCall.resultingDescriptor|.R|/name|
     }
     public final fun otherTest(call: R|Call<*>|, resolvedCall: R|ResolvedCall<*>|): R|kotlin/Unit| {
-        R|<local>/call|.R|/Call.resultingDescriptor|.R|/name|
+        R|<local>/call|.R|FakeOverride</Call.resultingDescriptor: R|Descriptor|>|.R|/name|
         R|<local>/resolvedCall|.R|/ResolvedCall.resultingDescriptor|.R|/name|
     }

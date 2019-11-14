@@ -93,7 +93,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     }
 
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeDefinitelyNotNullType? {
-        return ConeDefinitelyNotNullType.create(substituteType(original) ?: original)
+        return ConeDefinitelyNotNullType.create(substituteType(original)?.withNullability(ConeNullability.NOT_NULL) ?: original)
     }
 
     private fun ConeFlexibleType.substituteBounds(): ConeFlexibleType? {
@@ -144,7 +144,6 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
 
 
 }
-
 
 fun substitutorByMap(substitution: Map<FirTypeParameterSymbol, ConeKotlinType>): ConeSubstitutor {
     if (substitution.isEmpty()) return ConeSubstitutor.Empty

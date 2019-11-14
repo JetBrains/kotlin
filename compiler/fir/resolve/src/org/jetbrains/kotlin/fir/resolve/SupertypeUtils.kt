@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.inferenceContext
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -113,8 +114,19 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
         val typeParameters = (declaration as? FirTypeParametersOwner)?.typeParameters.orEmpty()
         @Suppress("UNCHECKED_CAST")
         val substitution = typeParameters.zip(this.typeArguments) { typeParameter, typeArgument ->
-            typeParameter.symbol to (typeArgument as? ConeTypedProjection)?.type
-        }.filter { (_, type) -> type != null }.toMap() as Map<FirTypeParameterSymbol, ConeKotlinType>
+            val typeParameterSymbol = typeParameter.symbol
+            typeParameterSymbol to when (typeArgument) {
+                is ConeTypedProjection -> {
+                    typeArgument.type
+                }
+                else /* StarProjection */ -> {
+                    ConeTypeIntersector.intersectTypes(
+                        session.inferenceContext(),
+                        typeParameterSymbol.fir.bounds.map { it.coneTypeUnsafe() }
+                    )
+                }
+            }
+        }.toMap()
 
         FirClassSubstitutionScope(session, useSiteMemberScope, builder, substitution)
     }
