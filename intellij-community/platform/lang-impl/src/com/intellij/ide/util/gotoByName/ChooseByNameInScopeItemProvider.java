@@ -46,7 +46,7 @@ public interface ChooseByNameInScopeItemProvider extends ChooseByNameWeightedIte
    * @see FoundItemDescriptor
    */
   boolean filterElementsWithWeights(@NotNull ChooseByNameBase base,
-                         @NotNull FindSymbolParameters parameters,
-                         @NotNull ProgressIndicator indicator,
-                         @NotNull Processor<FoundItemDescriptor<?>> consumer);
+                                    @NotNull FindSymbolParameters parameters,
+                                    @NotNull ProgressIndicator indicator,
+                                    @NotNull Processor<? super FoundItemDescriptor<?>> consumer);
 }

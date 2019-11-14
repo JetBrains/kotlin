@@ -28,5 +28,5 @@ public interface ChooseByNameWeightedItemProvider extends ChooseByNameItemProvid
                                     @NotNull String pattern,
                                     boolean everywhere,
                                     @NotNull ProgressIndicator indicator,
-                                    @NotNull Processor<FoundItemDescriptor<?>> consumer);
+                                    @NotNull Processor<? super FoundItemDescriptor<?>> consumer);
 }
