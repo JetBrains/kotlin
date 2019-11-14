@@ -454,7 +454,7 @@ public class FunctionCodegen {
         OwnerKind contextKind = methodContext.getContextKind();
         if (!state.getClassBuilderMode().generateBodies ||
                 isAbstractMethod(functionDescriptor, contextKind) ||
-                (state.getClassBuilderMode() == ClassBuilderMode.ABI && !InlineUtil.isInlineOrContainingInline(origin.getDescriptor()))) {
+                (state.getClassBuilderMode() == ClassBuilderMode.ABI && origin.getDescriptor() != null && !InlineUtil.isInlineOrContainingInline(origin.getDescriptor()))) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
