@@ -69,6 +69,7 @@ class FirCallResolver(
         qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
         val functionCall = functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
+            .also { dataFlowAnalyzer.enterQualifiedAccessExpression(functionCall) }
             .transformArguments(transformer, ResolutionMode.ContextDependent)
 
         val name = functionCall.calleeReference.name

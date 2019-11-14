@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirVariableAssignmentImpl
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.calls.ConeInferenceContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirOperatorAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirVariableExpectedError
@@ -121,6 +119,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             }
         }
         if (result is FirQualifiedAccessExpression) {
+            dataFlowAnalyzer.enterQualifiedAccessExpression(result)
             result = components.transformQualifiedAccessUsingSmartcastInfo(result)
             dataFlowAnalyzer.exitQualifiedAccessExpression(result)
         }
@@ -131,7 +130,6 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
         if (functionCall.calleeReference is FirResolvedNamedReference && functionCall.resultType is FirImplicitTypeRef) {
             storeTypeFromCallee(functionCall)
         }
-        dataFlowAnalyzer.enterFunctionCall(functionCall)
         if (functionCall.calleeReference !is FirSimpleNamedReference) return functionCall.compose()
         functionCall.transform<FirFunctionCall, Nothing?>(InvocationKindTransformer, null)
         functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)

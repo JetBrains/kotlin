@@ -80,6 +80,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             runTest("compiler/fir/resolve/testData/resolve/cfg/propertiesAndInitBlocks.kt");
         }
 
+        @TestMetadata("safeCalls.kt")
+        public void testSafeCalls() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/safeCalls.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/simple.kt");
@@ -181,6 +186,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
         @TestMetadata("returns.kt")
         public void testReturns() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/returns.kt");
+        }
+
+        @TestMetadata("safeCalls.kt")
+        public void testSafeCalls() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/safeCalls.kt");
         }
 
         @TestMetadata("simpleIf.kt")

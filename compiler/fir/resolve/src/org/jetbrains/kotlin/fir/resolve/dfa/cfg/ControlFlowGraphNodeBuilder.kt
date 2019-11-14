@@ -171,3 +171,9 @@ fun ControlFlowGraphBuilder.createBinaryAndEnterRightOperandNode(fir: FirBinaryL
 
 fun ControlFlowGraphBuilder.createBinaryOrEnterRightOperandNode(fir: FirBinaryLogicExpression): BinaryOrEnterRightOperandNode =
     BinaryOrEnterRightOperandNode(graph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createExitSafeCallNode(fir: FirQualifiedAccess): ExitSafeCallNode =
+    ExitSafeCallNode(graph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createEnterSafeCallNode(fir: FirQualifiedAccess): EnterSafeCallNode =
+    EnterSafeCallNode(graph, fir, levelCounter)

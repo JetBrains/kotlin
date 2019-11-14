@@ -43,6 +43,8 @@ class ControlFlowGraphBuilder {
 
     private val initBlockExitNodes: Stack<InitBlockExitNode> = stackOf()
 
+    private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
+
     var levelCounter: Int = 0
         private set
 
@@ -569,6 +571,25 @@ class ControlFlowGraphBuilder {
             lexicalScopes.pop()
             exitNodes.pop()
             graphs.pop()
+        }
+    }
+
+    // ----------------------------------- Safe calls -----------------------------------
+
+    fun enterSafeCall(qualifiedAccess: FirQualifiedAccess): EnterSafeCallNode {
+        val lastNode = lastNodes.pop()
+        val enterNode = createEnterSafeCallNode(qualifiedAccess)
+        lastNodes.push(enterNode)
+        val exitNode = createExitSafeCallNode(qualifiedAccess)
+        exitSafeCallNodes.push(exitNode)
+        addEdge(lastNode, enterNode)
+        addEdge(lastNode, exitNode)
+        return enterNode
+    }
+
+    fun exitSafeCall(qualifiedAccess: FirQualifiedAccess): ExitSafeCallNode {
+        return exitSafeCallNodes.pop().also {
+            addNewSimpleNode(it)
         }
     }
 

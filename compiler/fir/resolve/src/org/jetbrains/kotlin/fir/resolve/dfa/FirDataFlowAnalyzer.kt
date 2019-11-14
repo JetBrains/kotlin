@@ -22,13 +22,11 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.FqName
@@ -469,21 +467,63 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
     // ----------------------------------- Resolvable call -----------------------------------
 
-    fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
-        graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow()
+    private fun enterSafeCall(qualifiedAccess: FirQualifiedAccess) {
+        if (!qualifiedAccess.safe) return
+        val node = graphBuilder.enterSafeCall(qualifiedAccess).mergeIncomingFlow()
+        val previousNode = node.alivePreviousNodes.first()
+        val shouldFork: Boolean
+        var flow= if (previousNode is ExitSafeCallNode) {
+            shouldFork = false
+            previousNode.alivePreviousNodes.getOrNull(1)?.flow ?: node.flow
+        } else {
+            shouldFork = true
+            node.flow
+        }
+        qualifiedAccess.explicitReceiver?.let {
+            val type = it.typeRef.coneTypeSafe<ConeKotlinType>()
+                ?.takeIf { it.isMarkedNullable }
+                ?.withNullability(ConeNullability.NOT_NULL)
+                ?: return@let
+
+            when (val variable = getOrCreateVariable(it)) {
+                is RealDataFlowVariable -> {
+                    if (shouldFork) {
+                        flow = logicSystem.forkFlow(flow)
+                    }
+                    logicSystem.addApprovedInfo(flow, variable, FirDataFlowInfo(setOf(type), emptySet()))
+                }
+                is SyntheticDataFlowVariable -> {
+                    flow = logicSystem.approveFactsInsideFlow(variable, NotEqNull, flow, shouldFork, true)
+                }
+            }
+        }
+
+        node.flow = flow
     }
 
-    fun enterFunctionCall(functionCall: FirFunctionCall) {
-        // TODO: add processing in-place lambdas
+    private fun exitSafeCall(qualifiedAccess: FirQualifiedAccess) {
+        if (!qualifiedAccess.safe) return
+        graphBuilder.exitSafeCall(qualifiedAccess).mergeIncomingFlow()
+    }
+
+    fun enterQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+        enterSafeCall(qualifiedAccessExpression)
+    }
+
+    fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+        graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow()
+        exitSafeCall(qualifiedAccessExpression)
     }
 
     fun exitFunctionCall(functionCall: FirFunctionCall) {
         val node = graphBuilder.exitFunctionCall(functionCall).mergeIncomingFlow()
         if (functionCall.isBooleanNot()) {
             exitBooleanNot(functionCall, node)
-            return
         }
         processConditionalContract(functionCall)
+        if (functionCall.safe) {
+            exitSafeCall(functionCall)
+        }
     }
 
     private fun processConditionalContract(functionCall: FirFunctionCall) {
