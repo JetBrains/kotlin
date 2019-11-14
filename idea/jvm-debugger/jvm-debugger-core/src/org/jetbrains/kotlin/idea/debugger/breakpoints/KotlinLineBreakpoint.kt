@@ -17,6 +17,7 @@ import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.idea.debugger.isDexDebug
 import org.jetbrains.kotlin.idea.debugger.safeSourceName
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.util.containingNonLocalDeclaration
@@ -26,7 +27,7 @@ class KotlinLineBreakpoint(
     xBreakpoint: XBreakpoint<out XBreakpointProperties<*>>?
 ) : KotlinLineBreakpointBase(project, xBreakpoint) {
     override fun processClassPrepare(debugProcess: DebugProcess?, classType: ReferenceType?) {
-        val sourcePosition = xBreakpoint?.sourcePosition
+        val sourcePosition = runReadAction { xBreakpoint?.sourcePosition }
 
         if (classType != null && sourcePosition != null) {
             if (!hasTargetLine(classType, sourcePosition)) {
