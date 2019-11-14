@@ -307,8 +307,8 @@ public class ProjectSdksModel implements SdkModel {
 
   @NotNull
   @Override
-  public Sdk createSdk(@NotNull SdkType type, @NotNull String newSdkName, @NotNull String home) {
-    SdkConfigurationUtil.createUniqueSdkName(newSdkName, myProjectSdks.values());
+  public Sdk createSdk(@NotNull SdkType type, @NotNull String suggestedName, @NotNull String home) {
+    String newSdkName = SdkConfigurationUtil.createUniqueSdkName(suggestedName, myProjectSdks.values());
     return createSdkInternal(type, newSdkName, home);
   }
 
