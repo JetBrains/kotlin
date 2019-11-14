@@ -34,10 +34,11 @@ class CandidateFactory(
         implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
         explicitReceiverKind: ExplicitReceiverKind
     ): Candidate {
-        return Candidate(
+        val candidate = Candidate(
             symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
             explicitReceiverKind, bodyResolveComponents, baseSystem, callInfo
         )
+        return candidate
     }
 }
 

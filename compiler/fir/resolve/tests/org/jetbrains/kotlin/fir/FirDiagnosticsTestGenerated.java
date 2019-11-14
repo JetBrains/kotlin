@@ -230,6 +230,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/arguments"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
+        @TestMetadata("ambiguityOnJavaOverride.kt")
+        public void testAmbiguityOnJavaOverride() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/ambiguityOnJavaOverride.kt");
+        }
+
         @TestMetadata("default.kt")
         public void testDefault() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/default.kt");
