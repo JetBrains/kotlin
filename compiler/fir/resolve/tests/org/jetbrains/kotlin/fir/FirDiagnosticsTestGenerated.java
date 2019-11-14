@@ -778,6 +778,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/fir/resolve/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), true);
         }
 
+        @TestMetadata("javaAccessorConversion.kt")
+        public void testJavaAccessorConversion() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/problems/javaAccessorConversion.kt");
+        }
+
         @TestMetadata("nestedClassContructor.kt")
         public void testNestedClassContructor() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/problems/nestedClassContructor.kt");
