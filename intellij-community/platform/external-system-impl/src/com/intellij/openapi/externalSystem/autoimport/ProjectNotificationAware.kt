@@ -68,6 +68,7 @@ class ProjectNotificationAware : Disposable {
   companion object {
     private val LOG = Logger.getInstance("#com.intellij.openapi.externalSystem.autoimport")
 
+    @JvmStatic
     fun getInstance(project: Project): ProjectNotificationAware {
       return ServiceManager.getService(project, ProjectNotificationAware::class.java)
     }

@@ -73,7 +73,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     })
   }
 
-  fun scheduleProjectNotificationUpdate() {
+  override fun scheduleProjectNotificationUpdate() {
     LOG.debug("Schedule notification status update")
     dispatcher.queue(object : Update("notify") {
       override fun run() {
