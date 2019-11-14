@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.state.TypeMapperUtilsKt;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
@@ -62,21 +63,25 @@ public class SamType {
     }
 
     @NotNull
-    public JavaClassDescriptor getJavaClassDescriptor() {
+    public ClassDescriptor getClassDescriptor() {
         ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
-        assert classifier instanceof JavaClassDescriptor : "Sam interface not a Java class: " + classifier;
-        return (JavaClassDescriptor) classifier;
+        assert classifier instanceof ClassDescriptor : "Sam/Fun interface not a class descriptor: " + classifier;
+        return (ClassDescriptor) classifier;
     }
 
     @NotNull
     public KotlinType getKotlinFunctionType() {
-        //noinspection ConstantConditions
-        return getJavaClassDescriptor().getDefaultFunctionTypeForSamInterface();
+        ClassDescriptor descriptor = getClassDescriptor();
+        if (descriptor instanceof JavaClassDescriptor) {
+            return ((JavaClassDescriptor) descriptor).getDefaultFunctionTypeForSamInterface();
+        }
+
+        return null;
     }
 
     @NotNull
     public SimpleFunctionDescriptor getOriginalAbstractMethod() {
-        return (SimpleFunctionDescriptor) SingleAbstractMethodUtils.getAbstractMembers(getJavaClassDescriptor()).get(0);
+        return (SimpleFunctionDescriptor) SingleAbstractMethodUtils.getAbstractMembers(getClassDescriptor()).get(0);
     }
 
     @Override

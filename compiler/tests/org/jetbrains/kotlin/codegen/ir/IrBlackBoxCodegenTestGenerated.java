@@ -12534,6 +12534,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             public void testBasicFunInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/basicFunInterface.kt");
             }
+
+            @TestMetadata("basicFunInterfaceConversion.kt")
+            public void testBasicFunInterfaceConversion() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/basicFunInterfaceConversion.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/functionNameMangling")
