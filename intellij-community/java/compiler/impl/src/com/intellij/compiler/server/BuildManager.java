@@ -84,8 +84,7 @@ import org.jetbrains.jps.cmdline.ClasspathBootstrap;
 import org.jetbrains.jps.incremental.Utils;
 import org.jetbrains.jps.model.java.compiler.JavaCompilers;
 
-import javax.tools.JavaCompiler;
-import javax.tools.ToolProvider;
+import javax.tools.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -170,7 +169,7 @@ public final class BuildManager implements Disposable {
     @Override
     public void runTask() {
       if (shouldSaveDocuments()) {
-        TransactionGuard.getInstance().submitTransactionAndWait(() ->
+        ApplicationManager.getApplication().invokeAndWait(() ->
           ((FileDocumentManagerImpl)FileDocumentManager.getInstance()).saveAllDocuments(false));
       }
     }
@@ -790,7 +789,7 @@ public final class BuildManager implements Disposable {
                   // ensure project model is saved on disk, so that automake sees the latest model state.
                   // For ordinary make all project, app settings and unsaved docs are always saved before build starts.
                   try {
-                    TransactionGuard.getInstance().submitTransactionAndWait(project::save);
+                    ApplicationManager.getApplication().invokeAndWait(project::save);
                   }
                   catch (Throwable e) {
                     LOG.info(e);
