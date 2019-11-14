@@ -312,11 +312,13 @@ private fun IrFunction.generateDefaultsFunction(
     context: CommonBackendContext,
     skipInlineMethods: Boolean,
     skipExternalMethods: Boolean
-): IrFunction? = when {
+): IrFunction? = context.ir.defaultParameterDeclarationsCache[this] ?: when {
     skipInlineMethods && isInline -> null
     skipExternalMethods && isExternalOrInheritedFromExternal() -> null
     valueParameters.any { it.defaultValue != null } ->
-        generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER)
+        generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER).also {
+            context.ir.defaultParameterDeclarationsCache[this] = it
+        }
     this is IrSimpleFunction -> {
         // If this is an override of a function with default arguments, produce a fake override of a default stub.
         val overriddenStubs = overriddenSymbols.mapNotNull {
@@ -325,6 +327,7 @@ private fun IrFunction.generateDefaultsFunction(
         if (overriddenStubs.isNotEmpty())
             generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FAKE_OVERRIDE).also {
                 (it as IrSimpleFunction).overriddenSymbols.addAll(overriddenStubs)
+                context.ir.defaultParameterDeclarationsCache[this] = it
             }
         else
             null
@@ -332,52 +335,51 @@ private fun IrFunction.generateDefaultsFunction(
     else -> null
 }
 
-private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContext, newOrigin: IrDeclarationOrigin): IrFunction =
-    context.ir.defaultParameterDeclarationsCache.getOrPut(this) {
-        val newFunction = when (this) {
-            is IrConstructor ->
-                buildConstructor {
-                    updateFrom(this@generateDefaultsFunctionImpl)
-                    origin = newOrigin
-                    isExternal = false
-                    isPrimary = false
-                    isExpect = false
-                }
-            is IrSimpleFunction ->
-                buildFunWithDescriptorForInlining(descriptor) {
-                    updateFrom(this@generateDefaultsFunctionImpl)
-                    name = Name.identifier("${this@generateDefaultsFunctionImpl.name}\$default")
-                    origin = newOrigin
-                    modality = Modality.FINAL
-                    isExternal = false
-                    isTailrec = false
-                }
-            else -> throw IllegalStateException("Unknown function type")
-        }
-        newFunction.copyTypeParametersFrom(this)
-        newFunction.parent = parent
-        newFunction.returnType = returnType.remapTypeParameters(classIfConstructor, newFunction.classIfConstructor)
-        newFunction.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(newFunction)
-        newFunction.extensionReceiverParameter = extensionReceiverParameter?.copyTo(newFunction)
-
-        valueParameters.mapTo(newFunction.valueParameters) {
-            val newType = it.type.remapTypeParameters(classIfConstructor, newFunction.classIfConstructor)
-            val makeNullable = it.defaultValue != null &&
-                    (context.ir.unfoldInlineClassType(it.type) ?: it.type) !in context.irBuiltIns.primitiveIrTypes
-            it.copyTo(newFunction, type = if (makeNullable) newType.makeNullable() else newType, defaultValue = null)
-        }
-
-        for (i in 0 until (valueParameters.size + 31) / 32) {
-            newFunction.addValueParameter("mask$i".synthesizedString, context.irBuiltIns.intType)
-        }
-        if (this is IrConstructor) {
-            val markerType = context.ir.symbols.defaultConstructorMarker.owner.defaultType.makeNullable()
-            newFunction.addValueParameter("marker".synthesizedString, markerType)
-        } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
-            newFunction.addValueParameter("handler".synthesizedString, context.irBuiltIns.anyNType)
-        }
-
-        // TODO some annotations are needed (e.g. @JvmStatic), others need different values (e.g. @JvmName), the rest are redundant.
-        annotations.mapTo(newFunction.annotations) { it.deepCopyWithSymbols() }
-        newFunction
+private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContext, newOrigin: IrDeclarationOrigin): IrFunction {
+    val newFunction = when (this) {
+        is IrConstructor ->
+            buildConstructor {
+                updateFrom(this@generateDefaultsFunctionImpl)
+                origin = newOrigin
+                isExternal = false
+                isPrimary = false
+                isExpect = false
+            }
+        is IrSimpleFunction ->
+            buildFunWithDescriptorForInlining(descriptor) {
+                updateFrom(this@generateDefaultsFunctionImpl)
+                name = Name.identifier("${this@generateDefaultsFunctionImpl.name}\$default")
+                origin = newOrigin
+                modality = Modality.FINAL
+                isExternal = false
+                isTailrec = false
+            }
+        else -> throw IllegalStateException("Unknown function type")
     }
+    newFunction.copyTypeParametersFrom(this)
+    newFunction.parent = parent
+    newFunction.returnType = returnType.remapTypeParameters(classIfConstructor, newFunction.classIfConstructor)
+    newFunction.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(newFunction)
+    newFunction.extensionReceiverParameter = extensionReceiverParameter?.copyTo(newFunction)
+
+    valueParameters.mapTo(newFunction.valueParameters) {
+        val newType = it.type.remapTypeParameters(classIfConstructor, newFunction.classIfConstructor)
+        val makeNullable = it.defaultValue != null &&
+                (context.ir.unfoldInlineClassType(it.type) ?: it.type) !in context.irBuiltIns.primitiveIrTypes
+        it.copyTo(newFunction, type = if (makeNullable) newType.makeNullable() else newType, defaultValue = null)
+    }
+
+    for (i in 0 until (valueParameters.size + 31) / 32) {
+        newFunction.addValueParameter("mask$i".synthesizedString, context.irBuiltIns.intType)
+    }
+    if (this is IrConstructor) {
+        val markerType = context.ir.symbols.defaultConstructorMarker.owner.defaultType.makeNullable()
+        newFunction.addValueParameter("marker".synthesizedString, markerType)
+    } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
+        newFunction.addValueParameter("handler".synthesizedString, context.irBuiltIns.anyNType)
+    }
+
+    // TODO some annotations are needed (e.g. @JvmStatic), others need different values (e.g. @JvmName), the rest are redundant.
+    annotations.mapTo(newFunction.annotations) { it.deepCopyWithSymbols() }
+    return newFunction
+}
