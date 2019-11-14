@@ -226,7 +226,6 @@ internal abstract class AbstractScriptConfigurationManager(
     override fun clearConfigurationCachesAndRehighlight() {
         ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()
 
-        cache.clear()
         clearClassRootsCaches()
 
         if (project.isOpen) {
