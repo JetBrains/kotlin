@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-internal val resolveInlineCallsPhase = makeIrFilePhase(
+@Suppress("RemoveExplicitTypeArguments")
+internal val resolveInlineCallsPhase = makeIrFilePhase<JvmBackendContext>(
     ::ResolveInlineCalls,
     name = "ResolveInlineCalls",
     description = "Statically resolve calls to inline methods to particular implementations"
@@ -35,7 +36,7 @@ class ResolveInlineCalls(val context: JvmBackendContext) : IrElementTransformerV
         val resolved = maybeFakeOverride.resolveFakeOverride()
             ?: return super.visitCall(expression)
         return super.visitCall(with(expression) {
-            IrCallImpl(startOffset, endOffset, type, resolved.symbol, superQualifierSymbol).apply {
+            IrCallImpl(startOffset, endOffset, type, resolved.symbol, expression.typeArgumentsCount, null, superQualifierSymbol).apply {
                 copyTypeAndValueArgumentsFrom(expression)
             }
         })
