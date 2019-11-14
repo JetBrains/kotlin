@@ -443,8 +443,8 @@ class ExpressionCodegen(
 
         declaration.initializer?.let {
             it.accept(this, data).coerce(varType, declaration.type).materialize()
-            mv.store(index, varType)
             it.markLineNumber(startOffset = true)
+            mv.store(index, varType)
         }
 
         data.variables.add(VariableInfo(declaration, index, varType, markNewLabel()))
