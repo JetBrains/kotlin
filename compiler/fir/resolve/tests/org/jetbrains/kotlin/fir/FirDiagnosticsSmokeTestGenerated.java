@@ -7823,6 +7823,16 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
         public void testBasicFunInterfaceDisabled() throws Exception {
             runTest("compiler/testData/diagnostics/tests/funInterface/basicFunInterfaceDisabled.kt");
         }
+
+        @TestMetadata("genericSubstitutionForFunInterface.kt")
+        public void testGenericSubstitutionForFunInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/genericSubstitutionForFunInterface.kt");
+        }
+
+        @TestMetadata("severalConversionsForFunInterface.kt")
+        public void testSeveralConversionsForFunInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/funInterface/severalConversionsForFunInterface.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/tests/functionAsExpression")
