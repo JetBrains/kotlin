@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.render
@@ -274,14 +275,72 @@ internal object CheckVisibility : CheckerStage() {
         }
     }
 
+    // 'local' isn't taken into account here
+    private fun ClassId.isSame(other: ClassId): Boolean =
+        packageFqName == other.packageFqName && relativeClassName == other.relativeClassName
+
     private fun ImplicitReceiverStack.canSeePrivateMemberOf(ownerId: ClassId): Boolean {
         for (implicitReceiverValue in receiversAsReversed()) {
             if (implicitReceiverValue !is ImplicitDispatchReceiverValue) continue
             val boundSymbol = implicitReceiverValue.boundSymbol
-            if (boundSymbol.classId == ownerId) return true
-            if (boundSymbol is FirRegularClassSymbol && boundSymbol.fir.companionObject?.symbol?.classId == ownerId) return true
+            if (boundSymbol.classId.isSame(ownerId)) {
+                return true
+            }
+            if (boundSymbol is FirRegularClassSymbol && boundSymbol.fir.companionObject?.symbol?.classId?.isSame(ownerId) == true) {
+                return true
+            }
         }
         return false
+    }
+
+    private fun FirRegularClassSymbol.canSeeProtectedMemberOf(
+        ownerId: ClassId,
+        session: FirSession,
+        visited: MutableSet<ClassId>
+    ): Boolean {
+        if (classId in visited) return false
+        visited += classId
+        if (classId.isSame(ownerId)) return true
+        val superTypes = fir.superConeTypes
+        for (superType in superTypes) {
+            val superTypeSymbol = superType.lookupTag.toSymbol(session) as? FirRegularClassSymbol ?: continue
+            if (superTypeSymbol.canSeeProtectedMemberOf(ownerId, session, visited)) return true
+        }
+        return false
+    }
+
+    private fun ImplicitReceiverStack.canSeeProtectedMemberOf(ownerId: ClassId, session: FirSession): Boolean {
+        if (canSeePrivateMemberOf(ownerId)) return true
+        val visited = mutableSetOf<ClassId>()
+        for (implicitReceiverValue in receiversAsReversed()) {
+            if (implicitReceiverValue !is ImplicitDispatchReceiverValue) continue
+            val boundSymbol = implicitReceiverValue.boundSymbol
+            val superTypes = boundSymbol.fir.superConeTypes
+            for (superType in superTypes) {
+                val superTypeSymbol = superType.lookupTag.toSymbol(session) as? FirRegularClassSymbol ?: continue
+                if (superTypeSymbol.canSeeProtectedMemberOf(ownerId, session, visited)) return true
+            }
+        }
+        return false
+    }
+
+    private fun AbstractFirBasedSymbol<*>.getOwnerId(): ClassId? {
+        return when (this) {
+            is FirClassLikeSymbol<*> -> {
+                val ownerId = classId.outerClassId
+                if (classId.isLocal) {
+                    ownerId?.asLocal() ?: classId
+                } else {
+                    ownerId
+                }
+            }
+            is FirCallableSymbol<*> -> {
+                callableId.classId
+            }
+            else -> {
+                throw AssertionError("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")
+            }
+        }
     }
 
     private fun ClassId.asLocal(): ClassId = ClassId(packageFqName, relativeClassName, true)
@@ -294,69 +353,42 @@ internal object CheckVisibility : CheckerStage() {
     ): Boolean {
         val useSiteFile = callInfo.containingFile
         val implicitReceiverStack = callInfo.implicitReceiverStack
+        val session = callInfo.session
+        val provider = session.firProvider
+        val candidateFile = when (symbol) {
+            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
+            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
+            else -> null
+        }
+        val ownerId = symbol.getOwnerId()
         val visible = when (declaration.visibility) {
             JavaVisibilities.PACKAGE_VISIBILITY -> {
                 symbol.packageFqName() == useSiteFile.packageFqName
             }
+            Visibilities.INTERNAL -> {
+                declaration.session == callInfo.session
+            }
             Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
                 if (declaration.session == callInfo.session) {
-                    val provider = callInfo.session.firProvider
-                    when (symbol) {
-                        is FirClassLikeSymbol<*> -> {
-                            val classId = symbol.classId
-                            val ownerId = classId.outerClassId
-                            when {
-                                classId.isLocal -> {
-                                    // Normally should not be here
-                                    implicitReceiverStack.canSeePrivateMemberOf(ownerId?.asLocal() ?: classId)
-                                }
-                                ownerId == null -> {
-                                    // Top-level: visible in file
-                                    provider.getFirClassifierContainerFile(classId) == useSiteFile
-                                }
-                                else -> {
-                                    // Member: visible inside parent class, including all its member classes
-                                    implicitReceiverStack.canSeePrivateMemberOf(ownerId)
-                                }
-                            }
-                        }
-                        is FirCallableSymbol<*> -> {
-                            val candidateFile = provider.getFirCallableContainerFile(symbol)
-                            val ownerId = symbol.callableId.classId
-                            when {
-                                candidateFile == null -> {
-                                    // Local
-                                    ownerId != null && implicitReceiverStack.canSeePrivateMemberOf(ownerId.asLocal())
-                                }
-                                ownerId == null -> {
-                                    // Top-level: visible in file
-                                    candidateFile == useSiteFile
-                                }
-                                else -> {
-                                    // Member: visible inside parent class, including all its member classes
-                                    implicitReceiverStack.canSeePrivateMemberOf(ownerId)
-                                }
-                            }
-                        }
-                        else -> {
-                            throw AssertionError("Unsupported visibility check for ${declaration.javaClass}: ${declaration.render()}")
-                        }
+                    if (ownerId == null) {
+                        // Top-level: visible in file
+                        candidateFile == useSiteFile
+                    } else {
+                        // Member: visible inside parent class, including all its member classes
+                        implicitReceiverStack.canSeePrivateMemberOf(ownerId)
                     }
                 } else {
                     false
                 }
             }
-            Visibilities.INTERNAL -> {
-                declaration.session == callInfo.session
-            }
             Visibilities.PROTECTED -> {
-                true // TODO: Support protected visibility
+                ownerId != null && implicitReceiverStack.canSeeProtectedMemberOf(ownerId, session)
             }
-            JavaVisibilities.PROTECTED_AND_PACKAGE -> {
+            JavaVisibilities.PROTECTED_AND_PACKAGE, JavaVisibilities.PROTECTED_STATIC_VISIBILITY -> {
                 if (symbol.packageFqName() == useSiteFile.packageFqName) {
                     true
                 } else {
-                    true // TODO: Support protected visibility
+                    ownerId != null && implicitReceiverStack.canSeeProtectedMemberOf(ownerId, session)
                 }
             }
             else -> true

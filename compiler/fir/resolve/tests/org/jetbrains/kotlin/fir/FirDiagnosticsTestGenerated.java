@@ -479,6 +479,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/memberExtension.kt");
         }
 
+        @TestMetadata("nestedVisibility.kt")
+        public void testNestedVisibility() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/nestedVisibility.kt");
+        }
+
         @TestMetadata("objectVsProperty.kt")
         public void testObjectVsProperty() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/objectVsProperty.kt");
@@ -502,6 +507,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("privateVisibility.kt")
         public void testPrivateVisibility() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/privateVisibility.kt");
+        }
+
+        @TestMetadata("protectedVisibility.kt")
+        public void testProtectedVisibility() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/protectedVisibility.kt");
         }
 
         @TestMetadata("qualifiedExpressions.kt")

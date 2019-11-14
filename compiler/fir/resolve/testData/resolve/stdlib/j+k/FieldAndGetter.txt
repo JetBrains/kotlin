@@ -1,4 +1,4 @@
 FILE: test.kt
     public final fun test(jc: R|JavaClass|): R|kotlin/Unit| {
-        R|<local>/jc|.<Ambiguity: field, [/JavaClass.field, /JavaClass.field]>#
+        R|<local>/jc|.R|/JavaClass.field|
     }

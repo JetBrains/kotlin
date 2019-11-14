@@ -396,6 +396,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/FunctionTypeInJava.kt");
         }
 
+        @TestMetadata("JavaVisibility2.kt")
+        public void testJavaVisibility2() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/JavaVisibility2.kt");
+        }
+
         @TestMetadata("KJKComplexHierarchy.kt")
         public void testKJKComplexHierarchy() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/stdlib/j+k/KJKComplexHierarchy.kt");
