@@ -14,10 +14,9 @@
     "build": "rimraf lib/* && rollup -c rollup.config.js"
   },
   "dependencies": {
-    "@types/node": "^10.12.21",
-    "browser-process-hrtime": "^1.0.0"
   },
   "devDependencies": {
+    "@types/node": "^10.12.21",
     "rimraf": "^2.6.3",
     "rollup": "^1.1.2",
     "rollup-plugin-commonjs": "^9.2.0",
