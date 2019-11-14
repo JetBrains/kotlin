@@ -7,9 +7,6 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectBundle;
@@ -127,37 +124,6 @@ public class ProjectSdksModel implements SdkModel {
   }
 
   private void doApply() {
-    Map<Sdk, InstallableSdk> installItems = new HashMap<>();
-    for (Map.Entry<Sdk, Sdk> entry : myProjectSdks.entrySet()) {
-      if (entry.getValue() instanceof InstallableSdk) {
-        installItems.put(entry.getKey(), (InstallableSdk)entry.getValue());
-      }
-    }
-
-    if (!installItems.isEmpty()) {
-      ProgressManager.getInstance().run(new Task.Modal(null, "Configuring Project SDKs...", true) {
-        @Override
-        public void run(@NotNull ProgressIndicator indicator) {
-          for (Map.Entry<Sdk, InstallableSdk> entry : installItems.entrySet()) {
-
-            InstallableSdk installableSdk = entry.getValue();
-            Sdk newSdk = installableSdk.prepareSdk(indicator);
-
-            SdkModificator mod = newSdk.getSdkModificator();
-            mod.setName(installableSdk.getName());
-            mod.commitChanges();
-
-            //TODO: handle exceptions
-            myProjectSdks.put(entry.getKey(), newSdk);
-
-            if (myProjectSdk == installableSdk) {
-              myProjectSdk = newSdk;
-            }
-          }
-        }
-      });
-    }
-
     ApplicationManager.getApplication().runWriteAction(() -> {
       final ArrayList<Sdk> itemsInTable = new ArrayList<>();
       final ProjectJdkTable jdkTable = ProjectJdkTable.getInstance();
@@ -186,9 +152,7 @@ public class ProjectSdksModel implements SdkModel {
         LOG.assertTrue(projectJdk != null);
         if (ArrayUtilRt.find(allJdks, projectJdk) == -1) {
           jdkTable.addJdk(projectJdk);
-          if (!(projectJdk instanceof InstallableSdk)) {
-            jdkTable.updateJdk(projectJdk, myProjectSdks.get(projectJdk));
-          }
+          jdkTable.updateJdk(projectJdk, myProjectSdks.get(projectJdk));
         }
       }
     });
@@ -277,21 +241,22 @@ public class ProjectSdksModel implements SdkModel {
       if (!type.allowCreationByUser()) continue;
       if (filter != null && !filter.value(type)) continue;
 
-      if (type.supportsCustomDownloadUI()) {
+      SdkDownload downloadExtension = SdkDownload.EP_NAME.findFirstSafe(it -> it.supportsDownload(type));
+      if (downloadExtension != null) {
         String downloadText = ProjectBundle.message("sdk.configure.download.action", type.getPresentableName());
 
         final AnAction downloadAction = new DumbAwareAction(downloadText, null, type.getIconForDownloadAction()) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
-            doDownload(parent, selectedSdk, type, updateTree);
+            doDownload(downloadExtension, parent, selectedSdk, type, updateTree);
           }
         };
         group.add(downloadAction);
       }
 
-      String addOnDiskText = !type.supportsCustomCreateUI() && type.supportsCustomDownloadUI()
-                             ? ProjectBundle.message("sdk.configure.add.action", type.getPresentableName())
-                             : type.getPresentableName();
+      String addOnDiskText = !type.supportsCustomCreateUI() && downloadExtension != null
+                             ? ProjectBundle.message("sdk.configure.add.fromDisk.action", type.getPresentableName())
+                             : ProjectBundle.message("sdk.configure.add.default.action", type.getPresentableName());
 
       final AnAction addAction = new DumbAwareAction(addOnDiskText, null, type.getIconForAddAction()) {
         @Override
@@ -307,11 +272,15 @@ public class ProjectSdksModel implements SdkModel {
     doAdd(parent, null, type, callback);
   }
 
-  public void doDownload(@NotNull JComponent parent, @Nullable final Sdk selectedSdk, @NotNull final SdkType type, @NotNull final Consumer<? super Sdk> callback) {
-    if (!type.supportsCustomDownloadUI()) return;
+  public void doDownload(@NotNull SdkDownload downloadExtension,
+                         @NotNull JComponent parent,
+                         @Nullable final Sdk selectedSdk,
+                         @NotNull final SdkType type,
+                         @NotNull final Consumer<? super Sdk> callback) {
+    LOG.assertTrue(downloadExtension.supportsDownload(type));
     myModified = true;
 
-    type.showCustomDownloadUI(this, parent, selectedSdk, sdk -> setupInstallableSdk(sdk, callback));
+    downloadExtension.showDownloadUI(type,  this, parent, selectedSdk, sdk -> setupInstallableSdk(sdk, callback));
   }
 
   public void doAdd(@NotNull JComponent parent, @Nullable final Sdk selectedSdk, @NotNull final SdkType type, @NotNull final Consumer<? super Sdk> callback) {
@@ -330,14 +299,31 @@ public class ProjectSdksModel implements SdkModel {
   }
 
   @NotNull
+  @Override
   public Sdk createSdk(@NotNull SdkType type, @NotNull String home) {
     String newSdkName = SdkConfigurationUtil.createUniqueSdkName(type, home, myProjectSdks.values());
+    return createSdkInternal(type, newSdkName, home);
+  }
+
+  @NotNull
+  @Override
+  public Sdk createSdk(@NotNull SdkType type, @NotNull String newSdkName, @NotNull String home) {
+    SdkConfigurationUtil.createUniqueSdkName(newSdkName, myProjectSdks.values());
+    return createSdkInternal(type, newSdkName, home);
+  }
+
+  @NotNull
+  private static Sdk createSdkInternal(@NotNull SdkType type,
+                                       @NotNull String newSdkName,
+                                       @NotNull String home) {
     final ProjectJdkImpl newJdk = new ProjectJdkImpl(newSdkName, type);
     newJdk.setHomePath(home);
     return newJdk;
   }
 
-  private void setupInstallableSdk(@NotNull InstallableSdk newJdk, @Nullable Consumer<? super Sdk> callback) {
+  private void setupInstallableSdk(@NotNull Sdk newJdk, @Nullable Consumer<? super Sdk> callback) {
+    // we do not ask the SdkType to set up the SDK for us, instead, we return an incomplete SDK to the
+    // model with an expectation it would be updated later on
     doAdd(newJdk, callback);
   }
 
