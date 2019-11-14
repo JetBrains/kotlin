@@ -5,13 +5,6 @@
 
 package kotlin.text
 
-
-public actual interface Appendable {
-    public actual fun append(csq: CharSequence?): Appendable
-    public actual fun append(csq: CharSequence?, start: Int, end: Int): Appendable
-    public actual fun append(c: Char): Appendable
-}
-
 public actual class StringBuilder(content: String = "") : Appendable, CharSequence {
     actual constructor(capacity: Int) : this() {}
 

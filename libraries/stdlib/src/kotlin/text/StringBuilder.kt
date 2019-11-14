@@ -26,15 +26,6 @@ public inline fun buildString(capacity: Int, builderAction: StringBuilder.() -> 
     StringBuilder(capacity).apply(builderAction).toString()
 
 /**
- * Appends all arguments to the given [Appendable].
- */
-public fun <T : Appendable> T.append(vararg value: CharSequence?): T {
-    for (item in value)
-        append(item)
-    return this
-}
-
-/**
  * Appends all arguments to the given StringBuilder.
  */
 public fun StringBuilder.append(vararg value: String?): StringBuilder {
@@ -50,14 +41,4 @@ public fun StringBuilder.append(vararg value: Any?): StringBuilder {
     for (item in value)
         append(item)
     return this
-}
-
-
-internal fun <T> Appendable.appendElement(element: T, transform: ((T) -> CharSequence)?) {
-    when {
-        transform != null -> append(transform(element))
-        element is CharSequence? -> append(element)
-        element is Char -> append(element)
-        else -> append(element.toString())
-    }
 }
