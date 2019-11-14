@@ -29,12 +29,16 @@ import org.jetbrains.kotlin.idea.core.script.configuration.getGradleScriptInputs
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
+import org.jetbrains.kotlin.scripting.resolve.adjustByDefinition
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
-import kotlin.script.experimental.dependencies.ScriptDependencies
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.jdkHome
+import kotlin.script.experimental.jvm.jvm
 
 class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSourceSetData, Void>() {
     override fun getTargetDataKey(): Key<GradleSourceSetData> = GradleSourceSetData.KEY
@@ -67,21 +71,25 @@ class KotlinGradleBuildScriptsDataService : AbstractProjectDataService<GradleSou
             // todo(KT-34440): take inputs snapshot before starting import
             val inputs = getGradleScriptInputsStamp(project, virtualFile)
 
+            val definition = virtualFile.findScriptDefinition(project) ?: return@forEach
+
+            val configuration =
+                definition.compilationConfiguration.with {
+                    jvm.jdkHome(javaHome)
+                    defaultImports(buildScript.imports)
+                    dependencies(JvmDependency(buildScript.classPath.map { File(it) }))
+                    ide.dependenciesSources(JvmDependency(buildScript.sourcePath.map { File(it) }))
+                }.adjustByDefinition(definition)
+
             files.add(
                 Pair(
                     virtualFile,
                     ScriptConfigurationSnapshot(
                         inputs ?: CachedConfigurationInputs.OutOfDate,
                         listOf(),
-                        ScriptCompilationConfigurationWrapper.FromLegacy(
+                        ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(
                             VirtualFileScriptSource(virtualFile),
-                            ScriptDependencies(
-                                javaHome = javaHome,
-                                classpath = buildScript.classPath.map { File(it) },
-                                sources = buildScript.sourcePath.map { File(it) },
-                                imports = buildScript.imports
-                            ),
-                            virtualFile.findScriptDefinition(project)
+                            configuration
                         )
                     )
                 )
