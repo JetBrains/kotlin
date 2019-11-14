@@ -303,7 +303,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         private fun visitArguments(arguments: List<FirExpression>, data: StringBuilder) {
             arguments.joinTo(data, ", ", "(", ")") {
                 if (it is FirResolvedQualifier) {
-                    val lookupTag = (it.typeRef as FirResolvedTypeRefImpl).coneTypeSafe<ConeClassType>()?.lookupTag
+                    val lookupTag = (it.typeRef as FirResolvedTypeRefImpl).coneTypeSafe<ConeClassLikeType>()?.lookupTag
                     val type = lookupTag?.let {
                         (symbolProvider.getSymbolByLookupTag(it)?.fir as? FirClass)?.superTypeRefs?.first()?.render()
                     }
@@ -351,7 +351,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             if (valueParameter.isVararg) {
                 data.append("vararg ")
             }
-            valueParameter.returnTypeRef.coneTypeSafe<ConeClassType>()?.arrayElementType(session)?.let { data.append(it.render()) }
+            valueParameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType(session)?.let { data.append(it.render()) }
                 ?: valueParameter.returnTypeRef.accept(this, data)
             valueParameter.defaultValue?.let { data.append(" = ...") }
         }

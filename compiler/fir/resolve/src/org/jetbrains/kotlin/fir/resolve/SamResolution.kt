@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -46,7 +49,7 @@ class FirSamResolverImpl(
 
     override fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
-            is ConeClassType -> getFunctionTypeForPossibleSamType(type)
+            is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type)
             is ConeFlexibleType -> ConeFlexibleType(
                 getFunctionTypeForPossibleSamType(type.lowerBound) ?: return null,
                 getFunctionTypeForPossibleSamType(type.upperBound) ?: return null
@@ -60,7 +63,7 @@ class FirSamResolverImpl(
         }
     }
 
-    private fun getFunctionTypeForPossibleSamType(type: ConeClassType): ConeLookupTagBasedType? {
+    private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
         val firRegularClass =
             firSession.firSymbolProvider
                 .getSymbolByLookupTag(type.lookupTag)
