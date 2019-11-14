@@ -68,7 +68,6 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 import com.intellij.openapi.util.Key
-import com.intellij.usageView.UsageViewContentManager
 
 abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected constructor(
     declaration: T,
