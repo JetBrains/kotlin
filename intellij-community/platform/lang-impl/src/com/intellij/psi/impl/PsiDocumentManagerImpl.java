@@ -19,7 +19,6 @@ import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectLocator;
 import com.intellij.openapi.project.impl.ProjectImpl;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Segment;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
@@ -58,7 +57,6 @@ public final class PsiDocumentManagerImpl extends PsiDocumentManagerBase {
         fireDocumentCreated(document, psiFile);
       }
     });
-    Disposer.register(this, () -> ((DocumentCommitThread)myDocumentCommitProcessor).cancelTasksOnProjectDispose(project));
   }
 
   @Nullable
