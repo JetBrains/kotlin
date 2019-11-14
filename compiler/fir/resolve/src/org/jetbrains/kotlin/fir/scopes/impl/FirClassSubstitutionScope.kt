@@ -36,6 +36,7 @@ class FirClassSubstitutionScope(
     private val fakeOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
     private val fakeOverrideProperties = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
     private val fakeOverrideFields = mutableMapOf<FirFieldSymbol, FirFieldSymbol>()
+    private val fakeOverrideAccessors = mutableMapOf<FirAccessorSymbol, FirAccessorSymbol>()
 
     private val substitutor = substitutorByMap(substitution)
 
@@ -60,6 +61,10 @@ class FirClassSubstitutionScope(
                 is FirFieldSymbol -> {
                     val field = fakeOverrideFields.getOrPut(original) { createFakeOverrideField(original) }
                     processor(field)
+                }
+                is FirAccessorSymbol -> {
+                    val accessor = fakeOverrideAccessors.getOrPut(original) { createFakeOverrideAccessor(original) }
+                    processor(accessor)
                 }
                 else -> {
                     processor(original)
@@ -127,17 +132,33 @@ class FirClassSubstitutionScope(
         return createFakeOverrideField(session, member, original, newReturnType)
     }
 
+    private fun createFakeOverrideAccessor(original: FirAccessorSymbol): FirAccessorSymbol {
+        val member = original.fir
+
+        val returnType = typeCalculator.tryCalculateReturnType(member).type
+        val newReturnType = returnType.substitute()
+
+        val newParameterTypes = member.valueParameters.map {
+            it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>().substitute()
+        }
+
+        if (newReturnType == null && newParameterTypes.all { it == null }) {
+            return original
+        }
+
+        return createFakeOverrideAccessor(session, member, original, newReturnType, newParameterTypes)
+    }
+
     companion object {
-        fun createFakeOverrideFunction(
+        private fun createFakeOverrideFunction(
+            fakeOverrideSymbol: FirFunctionSymbol<FirSimpleFunction>,
             session: FirSession,
             baseFunction: FirSimpleFunction,
-            baseSymbol: FirNamedFunctionSymbol,
             newReceiverType: ConeKotlinType? = null,
             newReturnType: ConeKotlinType? = null,
             newParameterTypes: List<ConeKotlinType?>? = null
-        ): FirNamedFunctionSymbol {
-            val symbol = FirNamedFunctionSymbol(baseSymbol.callableId, true, baseSymbol)
-            with(baseFunction) {
+        ): FirSimpleFunction {
+            return with(baseFunction) {
                 // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
                 // As second alternative, we can invent some light-weight kind of FirRegularClass
                 FirSimpleFunctionImpl(
@@ -147,7 +168,7 @@ class FirClassSubstitutionScope(
                     baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType),
                     name,
                     baseFunction.status,
-                    symbol
+                    fakeOverrideSymbol
                 ).apply {
                     resolvePhase = baseFunction.resolvePhase
                     valueParameters += baseFunction.valueParameters.zip(
@@ -169,6 +190,18 @@ class FirClassSubstitutionScope(
                     }
                 }
             }
+        }
+
+        fun createFakeOverrideFunction(
+            session: FirSession,
+            baseFunction: FirSimpleFunction,
+            baseSymbol: FirNamedFunctionSymbol,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null,
+            newParameterTypes: List<ConeKotlinType?>? = null
+        ): FirNamedFunctionSymbol {
+            val symbol = FirNamedFunctionSymbol(baseSymbol.callableId, true, baseSymbol)
+            createFakeOverrideFunction(symbol, session, baseFunction, newReceiverType, newReturnType, newParameterTypes)
             return symbol
         }
 
@@ -216,6 +249,18 @@ class FirClassSubstitutionScope(
                     resolvePhase = baseField.resolvePhase
                 }
             }
+            return symbol
+        }
+
+        fun createFakeOverrideAccessor(
+            session: FirSession,
+            baseFunction: FirSimpleFunction,
+            baseSymbol: FirAccessorSymbol,
+            newReturnType: ConeKotlinType? = null,
+            newParameterTypes: List<ConeKotlinType?>? = null
+        ): FirAccessorSymbol {
+            val symbol = FirAccessorSymbol(baseSymbol.callableId, baseSymbol.accessorId)
+            createFakeOverrideFunction(symbol, session, baseFunction, null, newReturnType, newParameterTypes)
             return symbol
         }
     }

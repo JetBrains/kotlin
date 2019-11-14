@@ -1,0 +1,19 @@
+FILE: genericUsedInFunction.kt
+    public final class Generic<T : R|kotlin/CharSequence?|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/CharSequence?|>(value: R|T|): R|Generic<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|T| = R|<local>/value|
+            public get(): R|T|
+
+        public final fun foo(): R|T| {
+            ^foo this@R|/Generic|.R|FakeOverride</Generic.value: R|T|>|
+        }
+
+    }
+    public final fun test(arg: R|Generic<kotlin/String>|): R|kotlin/Unit| {
+        lval value: R|kotlin/String| = R|<local>/arg|.R|FakeOverride</Generic.value: R|kotlin/String|>|
+        lval foo: R|kotlin/String| = R|<local>/arg|.R|FakeOverride</Generic.foo: R|kotlin/String|>|()
+        lval length: R|kotlin/Int| = R|<local>/foo|.R|kotlin/String.length|.R|kotlin/Int.plus|(R|<local>/value|.R|kotlin/String.length|)
+    }

@@ -20,8 +20,8 @@ interface Call<D : Descriptor> {
     val resultingDescriptor: D
 }
 
-fun <D> test(call: Call<D>, resolvedCall: ResolvedCall<D>) {
-    call.resultingDescriptor.<!INAPPLICABLE_CANDIDATE!>name<!>
+fun <D : Descriptor> test(call: Call<D>, resolvedCall: ResolvedCall<D>) {
+    call.resultingDescriptor.name
     resolvedCall.resultingDescriptor.name
 }
 

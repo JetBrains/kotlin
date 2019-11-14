@@ -1,0 +1,22 @@
+FILE: test.kt
+    public final class Fix : R|kotlin/Any| {
+        public constructor(e: R|DerivedElement|): R|Fix| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun create(d: R|Diagnostic<DerivedElement>|): R|kotlin/Unit| {
+        lval element: R|DerivedElement!| = R|<local>/d|.R|/Diagnostic.element|
+        R|/Fix.Fix|(R|<local>/element|)
+    }
+    public final fun <DE : R|DerivedElement|> createGeneric(d: R|Diagnostic<DE>|): R|kotlin/Unit| {
+        lval element: R|DE!| = R|<local>/d|.R|/Diagnostic.element|
+        R|/Fix.Fix|(R|<local>/element|)
+    }
+    private final val DERIVED_FACTORY: R|DiagnosticFactory0<DerivedElement>| = R|/DiagnosticFactory0.DiagnosticFactory0|<R|DerivedElement|>()
+        private get(): R|DiagnosticFactory0<DerivedElement>|
+    public final fun createViaFactory(d: R|EmptyDiagnostic|): R|kotlin/Unit| {
+        lval casted: R|Diagnostic<*>!| = R|/DERIVED_FACTORY|.R|FakeOverride</DiagnosticFactory.cast: R|Diagnostic<*>!|>|(R|<local>/d|)
+        lval element: R|E!| = R|<local>/casted|.R|/Diagnostic.element|
+        <Inapplicable(INAPPLICABLE): [/Fix.Fix]>#(R|<local>/element|)
+    }

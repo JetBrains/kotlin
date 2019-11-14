@@ -379,9 +379,19 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/genericDescriptor.kt");
         }
 
+        @TestMetadata("genericDiagnostic.kt")
+        public void testGenericDiagnostic() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/genericDiagnostic.kt");
+        }
+
         @TestMetadata("genericPropertyAccess.kt")
         public void testGenericPropertyAccess() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/genericPropertyAccess.kt");
+        }
+
+        @TestMetadata("genericUsedInFunction.kt")
+        public void testGenericUsedInFunction() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/genericUsedInFunction.kt");
         }
 
         @TestMetadata("importedReceiver.kt")
