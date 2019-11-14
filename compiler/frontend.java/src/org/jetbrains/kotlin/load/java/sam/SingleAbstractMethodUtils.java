@@ -58,19 +58,7 @@ public class SingleAbstractMethodUtils {
     }
 
     @Nullable
-    public static SimpleType getFunctionTypeForSamInterface(
-            @NotNull JavaClassDescriptor clazz,
-            @Nullable SamConversionResolver samResolver
-    ) {
-        if (samResolver == null) {
-            return clazz.getDefaultFunctionTypeForSamInterface();
-        }
-
-        return samResolver.resolveFunctionTypeIfSamInterface(clazz);
-    }
-
-    @Nullable
-    public static KotlinType getFunctionTypeForSamType(@NotNull KotlinType samType, @Nullable SamConversionResolver samResolver) {
+    public static KotlinType getFunctionTypeForSamType(@NotNull KotlinType samType, @NotNull SamConversionResolver samResolver) {
         UnwrappedType unwrappedType = samType.unwrap();
         if (unwrappedType instanceof FlexibleType) {
             SimpleType lower = getFunctionTypeForSamType(((FlexibleType) unwrappedType).getLowerBound(), samResolver);
@@ -86,13 +74,13 @@ public class SingleAbstractMethodUtils {
     }
 
     @Nullable
-    private static SimpleType getFunctionTypeForSamType(@NotNull SimpleType samType, @Nullable SamConversionResolver samResolver) {
+    private static SimpleType getFunctionTypeForSamType(@NotNull SimpleType samType, @NotNull SamConversionResolver samResolver) {
         // e.g. samType == Comparator<String>?
 
         ClassifierDescriptor classifier = samType.getConstructor().getDeclarationDescriptor();
         if (classifier instanceof JavaClassDescriptor) {
             // Function2<T, T, Int>
-            SimpleType functionTypeDefault = getFunctionTypeForSamInterface((JavaClassDescriptor) classifier, samResolver);
+            SimpleType functionTypeDefault = samResolver.resolveFunctionTypeIfSamInterface((JavaClassDescriptor) classifier);
 
             if (functionTypeDefault != null) {
                 SimpleType noProjectionsSamType = SingleAbstractMethodUtilsKt.nonProjectionParametrization(samType);
@@ -236,7 +224,7 @@ public class SingleAbstractMethodUtils {
     }
 
     public static boolean isSamType(@NotNull KotlinType type) {
-        return getFunctionTypeForSamType(type, null) != null;
+        return getFunctionTypeForSamType(type, SamConversionResolver.JavaBasedSamConversionResolver.INSTANCE) != null;
     }
 
     public static boolean isSamAdapterNecessary(@NotNull FunctionDescriptor fun) {
