@@ -2,7 +2,7 @@
 package com.intellij.openapi.externalSystem.util.ui
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.externalSystem.util.properties.UiProperty
+import com.intellij.openapi.observable.properties.UiProperty
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.ui.ValidationInfo

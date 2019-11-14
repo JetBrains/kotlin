@@ -7,11 +7,11 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemBundle
-import com.intellij.openapi.externalSystem.util.properties.PropertyGraph
-import com.intellij.openapi.externalSystem.util.properties.ObservableClearableProperty
-import com.intellij.openapi.externalSystem.util.properties.PropertyView.Companion.comap
-import com.intellij.openapi.externalSystem.util.properties.PropertyView.Companion.map
-import com.intellij.openapi.externalSystem.util.properties.UiPropertyImpl.Companion.uiProperty
+import com.intellij.openapi.observable.properties.PropertyGraph
+import com.intellij.openapi.observable.properties.ObservableClearableProperty
+import com.intellij.openapi.observable.properties.PropertyView.Companion.comap
+import com.intellij.openapi.observable.properties.PropertyView.Companion.map
+import com.intellij.openapi.observable.properties.UiPropertyImpl.Companion.uiProperty
 import com.intellij.openapi.externalSystem.util.ui.DataView
 import com.intellij.openapi.externalSystem.util.ui.bind
 import com.intellij.openapi.externalSystem.util.ui.myComboBox

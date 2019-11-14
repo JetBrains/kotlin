@@ -13,11 +13,10 @@ import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.Modificatio
 import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.EXTERNAL
 import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
-import com.intellij.openapi.externalSystem.util.CompoundParallelOperationTrace
+import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
 import com.intellij.openapi.externalSystem.util.calculateCrc
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
