@@ -22,6 +22,7 @@ import com.intellij.psi.impl.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -55,9 +56,12 @@ class KotlinLightConstantExpressionEvaluator : ConstantExpressionEvaluator {
         val evaluator = FrontendConstantExpressionEvaluator(
             resolutionFacade.moduleDescriptor, expressionToCompute.languageVersionSettings, resolutionFacade.project
         )
-        val evaluatorTrace = DelegatingBindingTrace(resolutionFacade.analyze(expressionToCompute), "Evaluating annotation argument")
 
-        val constant = evaluator.evaluateExpression(expressionToCompute, evaluatorTrace) ?: return null
+        val constant = runReadAction {
+            val evaluatorTrace = DelegatingBindingTrace(resolutionFacade.analyze(expressionToCompute), "Evaluating annotation argument")
+            evaluator.evaluateExpression(expressionToCompute, evaluatorTrace)
+        } ?: return null
+
         if (constant.isError) return null
         return evalConstantValue(constant.toConstantValue(TypeUtils.NO_EXPECTED_TYPE))
     }
