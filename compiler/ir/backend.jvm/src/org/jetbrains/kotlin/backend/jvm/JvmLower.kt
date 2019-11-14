@@ -304,8 +304,6 @@ private val jvmFilePhases =
 
         mainMethodGenerationPhase then
 
-        // should be last transformation
-        removeDeclarationsThatWouldBeInlined then
         makePatchParentsPhase(3)
 
 val jvmPhases = namedIrModulePhase(
@@ -316,6 +314,8 @@ val jvmPhases = namedIrModulePhase(
             fileClassPhase then
             performByIrFile(lower = jvmFilePhases) then
             generateMultifileFacadesPhase then
+            // should be last transformation
+            removeDeclarationsThatWouldBeInlined then
             validateIrAfterLowering
 )
 
