@@ -260,7 +260,7 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-testng",
-    ":kotlin-test:kotlin-test-js",
+    ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
     ":kotlin-reflect"
 )
 
@@ -472,7 +472,7 @@ tasks {
     register("coreLibsTest") {
         (coreLibProjects + listOf(
             ":kotlin-stdlib:samples",
-            ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
+            ":kotlin-test:kotlin-test-js:kotlin-test-js-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlinx-metadata-jvm",
             ":tools:binary-compatibility-validator"
         )).forEach {

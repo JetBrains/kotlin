@@ -19,7 +19,9 @@ convention.getPlugin(MavenPluginConvention::class.java).also {
 }
 
 dependencies {
-    archives(project(":kotlin-test:kotlin-test-js"))
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        archives(project(":kotlin-test:kotlin-test-js"))
+    }
 }
 
 node {

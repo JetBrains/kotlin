@@ -153,8 +153,6 @@ include ":kotlin-build-common",
         ":kotlin-test:kotlin-test-junit",
         ":kotlin-test:kotlin-test-junit5",
         ":kotlin-test:kotlin-test-testng",
-        ":kotlin-test:kotlin-test-js",
-        ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
         ":kotlin-test-js-runner",
         ":kotlin-source-map-loader",
         ":kotlinx-metadata",
@@ -292,7 +290,10 @@ if (flags.inJpsBuildIdeaSync) {
             ":tools:binary-compatibility-validator",
             ":tools:kotlin-stdlib-gen",
 
-            ":include:kotlin-stdlib-common-sources"
+            ":include:kotlin-stdlib-common-sources",
+
+            ":kotlin-test:kotlin-test-js",
+            ":kotlin-test:kotlin-test-js:kotlin-test-js-it"
 
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib/jvm" as File
@@ -305,6 +306,9 @@ if (flags.inJpsBuildIdeaSync) {
 
     project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
     project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
+
+    project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
+    project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
 }
 
 rootProject.name = "kotlin"
@@ -317,8 +321,6 @@ project(':kotlin-test:kotlin-test-jvm').projectDir = "$rootDir/libraries/kotlin.
 project(':kotlin-test:kotlin-test-junit').projectDir = "$rootDir/libraries/kotlin.test/junit" as File
 project(':kotlin-test:kotlin-test-junit5').projectDir = "$rootDir/libraries/kotlin.test/junit5" as File
 project(':kotlin-test:kotlin-test-testng').projectDir = "$rootDir/libraries/kotlin.test/testng" as File
-project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
-project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
 project(':kotlin-test-js-runner').projectDir = "$rootDir/libraries/tools/kotlin-test-js-runner" as File
 project(':kotlin-source-map-loader').projectDir = "$rootDir/libraries/tools/kotlin-source-map-loader" as File
 project(':kotlin-reflect').projectDir = "$rootDir/libraries/reflect" as File
