@@ -15,12 +15,15 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.FirInapplicableCandidateError
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
@@ -575,14 +579,8 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-
-    private fun FlowContent.generate(klass: FirRegularClass) {
-        inl()
-
-        declarationStatus(klass.status)
-
-
-        when (klass.classKind) {
+    private fun FlowContent.classKind(kind: ClassKind) {
+        when (kind) {
             ClassKind.CLASS -> keyword("class")
             ClassKind.INTERFACE -> keyword("interface")
             ClassKind.ENUM_CLASS -> keyword("enum class")
@@ -590,6 +588,13 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             ClassKind.ANNOTATION_CLASS -> keyword("annotation class")
             ClassKind.OBJECT -> keyword("object")
         }
+    }
+
+    private fun FlowContent.generate(klass: FirRegularClass) {
+        inl()
+
+        declarationStatus(klass.status)
+        classKind(klass.classKind)
         ws
         anchoredName(klass.name, klass.classId.asString())
         if (klass.superTypeRefs.isNotEmpty()) {
@@ -946,6 +951,114 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
+    private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirMemberFunction<*>) {
+        describeTypeParameters(fir)
+
+        fir.receiverTypeRef?.let {
+            +"("
+            generate(it)
+            +")."
+        }
+        symbolRef(symbol) {
+            +symbol.callableId.toString()
+        }
+        +"("
+        generateList(fir.valueParameters) {
+            generate(it.returnTypeRef)
+        }
+        +"): "
+        generate(fir.returnTypeRef)
+    }
+
+    private fun FlowContent.describeVerbose(symbol: FirCallableSymbol<*>, fir: FirVariable<*>) {
+        if (fir is FirTypeParametersOwner) describeTypeParameters(fir)
+
+        fir.receiverTypeRef?.let {
+            +"("
+            generate(it)
+            +")."
+        }
+        symbolRef(symbol) {
+            +symbol.callableId.toString()
+        }
+        +":"
+        generate(fir.returnTypeRef)
+    }
+
+    private fun FlowContent.describeTypeParameters(typeParameterContainer: FirTypeParametersOwner) {
+        if (typeParameterContainer.typeParameters.isEmpty()) return
+        +"<"
+        generateList(typeParameterContainer.typeParameters) {
+            generate(it.variance)
+            if (it.isReified) {
+                keyword("reified ")
+            }
+
+            simpleName(it.name)
+
+            if (it.bounds.isNotEmpty()) {
+                +": "
+                generateList(it.bounds) { bound ->
+                    generate(bound)
+                }
+            }
+        }
+        +"> "
+    }
+
+    private fun FlowContent.describeVerbose(symbol: FirBasedSymbol<*>) {
+        when (symbol) {
+            is FirClassLikeSymbol<*> ->
+                when (val fir = symbol.fir) {
+                    is FirRegularClass -> {
+                        declarationStatus(fir.status)
+                        classKind(fir.classKind)
+                        ws
+                        symbolRef(symbol) {
+                            +fir.classId.asString()
+                        }
+                        describeTypeParameters(fir)
+                    }
+                    is FirTypeAlias -> {
+                        keyword("typealias ")
+                        symbolRef(symbol) {
+                            +symbol.classId.asString()
+                        }
+                        describeTypeParameters(fir)
+                    }
+                    else -> +symbol.describe()
+                }
+            is FirCallableSymbol<*> -> {
+                when (val fir = symbol.fir) {
+                    is FirSimpleFunction -> {
+                        declarationStatus(fir.status)
+                        keyword("fun ")
+                        describeVerbose(symbol, fir)
+                    }
+                    is FirConstructor -> {
+                        declarationStatus(fir.status)
+                        keyword("constructor ")
+                        describeVerbose(symbol, fir)
+                    }
+                    is FirField -> {
+                        declarationStatus(fir.status)
+                        keyword("field ")
+                        describeVerbose(symbol, fir)
+                    }
+                    is FirProperty -> {
+                        declarationStatus(fir.status)
+                        if (fir.isVal)
+                            keyword("val ")
+                        else if (fir.isVar)
+                            keyword("var ")
+                        describeVerbose(symbol, fir)
+                    }
+                }
+            }
+            else -> +symbol.describe()
+        }
+    }
+
     private fun FlowContent.symbolRef(symbol: FirBasedSymbol<*>?, body: FlowContent.() -> Unit) {
         val (link, classes) = when (symbol) {
             null -> null to setOf()
@@ -957,6 +1070,58 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 title = symbol.describe()
             }
             body()
+        }
+    }
+
+    private fun FlowContent.diagnosticHover(body: FlowContent.() -> Unit) {
+        span(classes = "diagnostic-hover") {
+            body()
+        }
+    }
+
+    private fun FlowContent.errorWithDiagnostic(body: FlowContent.() -> Unit) {
+        error {
+            classes = classes + "diagnostic-hover-container"
+            body()
+        }
+    }
+
+    private fun FlowContent.generate(diagnostic: FirDiagnostic) {
+        when (diagnostic) {
+            is FirInapplicableCandidateError -> {
+                for (candidate in diagnostic.candidates) {
+                    describeVerbose(candidate.symbol)
+                    br
+                    candidate.diagnostics.forEach { callDiagnostic ->
+                        when (callDiagnostic) {
+                            is NewConstraintError -> {
+                                ident()
+                                +"Lower: "
+                                generate(callDiagnostic.lowerType as ConeKotlinType)
+                                br
+                                ident()
+                                +"Upper: "
+                                generate(callDiagnostic.upperType as ConeKotlinType)
+                            }
+                            else -> {
+                                ident()
+                                callDiagnostic::class.qualifiedName?.let { +it }
+                                Unit
+                            }
+                        }
+                        br
+                    }
+                }
+            }
+            is FirAmbiguityError -> {
+                +"Ambiguity: "
+                br
+                for (candidate in diagnostic.candidates) {
+                    describeVerbose(candidate)
+                    br
+                }
+            }
+            else -> +diagnostic.reason
         }
     }
 
@@ -972,9 +1137,11 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 }
             }
             is FirErrorNamedReference -> {
-                error {
-                    title = reference.diagnostic.reason
+                errorWithDiagnostic {
                     simpleName(reference.name)
+                    diagnosticHover {
+                        generate(reference.diagnostic)
+                    }
                 }
             }
             is FirSimpleNamedReference -> {

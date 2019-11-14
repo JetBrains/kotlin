@@ -83,3 +83,8 @@ body.dark {
 .dark .error-counter {
     color: #ff1010;
 }
+
+.dark .diagnostic-hover {
+    background-color: #3a3a3a;
+    color: #dfdfdf;
+}

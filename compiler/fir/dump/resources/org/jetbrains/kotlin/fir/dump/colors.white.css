@@ -21,7 +21,7 @@
 }
 
 .white .keyword {
-    color: #8ba558;
+    color: rgb(203, 159, 52);
 }
 
 .white a.ref.selected {
@@ -71,4 +71,9 @@
 
 .white .error-counter {
     color: #f00;
+}
+
+.white .diagnostic-hover {
+    background-color: #eaeaea;
+    color: #000;
 }

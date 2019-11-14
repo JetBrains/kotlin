@@ -67,9 +67,12 @@ class Candidate(
     private val baseSystem: ConstraintStorage,
     val callInfo: CallInfo
 ) {
+
+    var systemInitialized: Boolean = false
     val system by lazy {
         val system = bodyResolveComponents.inferenceComponents.createConstraintSystem()
         system.addOtherSystem(baseSystem)
+        systemInitialized = true
         system
     }
 

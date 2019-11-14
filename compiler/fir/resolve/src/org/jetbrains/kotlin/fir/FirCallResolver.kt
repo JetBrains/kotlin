@@ -349,7 +349,12 @@ class FirCallResolver(
             applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
                 FirErrorNamedReferenceImpl(
                     source,
-                    FirInapplicableCandidateError(applicability, candidates.map { it.symbol })
+                    FirInapplicableCandidateError(applicability, candidates.map {
+                        FirInapplicableCandidateError.CandidateInfo(
+                            it.symbol,
+                            if (it.systemInitialized) it.system.diagnostics else emptyList()
+                        )
+                    })
                 )
             }
             candidates.size == 1 -> {
