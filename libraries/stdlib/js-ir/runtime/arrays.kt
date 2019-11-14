@@ -9,6 +9,7 @@ import withType
 
 external fun <T> Array(size: Int): Array<T>
 
+@PublishedApi
 internal fun <T> fillArrayVal(array: Array<T>, initValue: T): Array<T> {
     for (i in 0..array.size - 1) {
         array[i] = initValue
