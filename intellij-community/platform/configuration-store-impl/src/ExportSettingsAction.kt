@@ -297,6 +297,11 @@ private fun getComponentPresentableName(state: State, aClass: Class<*>, pluginDe
 }
 
 private fun messageOrDefault(classLoader: ClassLoader, bundleName: String, defaultName: String): String {
-  val bundle = AbstractBundle.getResourceBundle(bundleName, classLoader) ?: return defaultName
+  val bundle = try {
+    AbstractBundle.getResourceBundle(bundleName, classLoader)
+  }
+  catch (e: MissingResourceException) {
+    null
+  } ?: return defaultName
   return CommonBundle.messageOrDefault(bundle, "exportable.$defaultName.presentable.name", defaultName)
 }
