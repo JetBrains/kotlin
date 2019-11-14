@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.copyValueParametersToStatic
-import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
-import org.jetbrains.kotlin.backend.common.ir.remapTypeParameters
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
@@ -228,7 +225,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
         return buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-            name = source.accessorName()
+            name = source.accessorName(expression.superQualifierSymbol)
             visibility = Visibilities.PUBLIC
             modality = if (parent is IrClass && parent.isJvmInterface) Modality.OPEN else Modality.FINAL
             isSuspend = source.isSuspend // synthetic accessors of suspend functions are handled in codegen
@@ -447,23 +444,52 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         }
     }
 
-    // Counter used to disambiguate accessors to functions with the same base name.
-    private var nameCounter = 0
-
-    private fun IrFunction.accessorName(): Name {
+    private fun IrFunction.accessorName(superQualifier: IrClassSymbol?): Name {
         val jvmName = context.methodSignatureMapper.mapFunctionName(this)
-        return Name.identifier("access\$$jvmName\$${nameCounter++}")
+        val suffix = when {
+            // The only function accessors placed on interfaces are for JvmDefault implementations
+            parent.safeAs<IrClass>()?.isJvmInterface == true -> "\$jd"
+
+            // Accessor for _s_uper-qualified call
+            superQualifier != null -> "\$s" + superQualifier.descriptor.name.asString().hashCode()
+
+            // Access to static members that need an accessor must be because they are inherited,
+            // hence accessed on a _s_upertype.
+            isStatic -> "\$s" + hashForAccessorDisambiguation()
+
+            else -> ""
+        }
+        return Name.identifier("access\$$jvmName$suffix")
     }
 
     private fun IrField.accessorNameForGetter(): Name {
         val getterName = JvmAbi.getterName(name.asString())
-        return Name.identifier("access\$prop\$$getterName\$${nameCounter++}")
+        return Name.identifier("access\$$getterName\$${fieldAccessorSuffix()}")
     }
 
     private fun IrField.accessorNameForSetter(): Name {
         val setterName = JvmAbi.setterName(name.asString())
-        return Name.identifier("access\$prop\$$setterName\$${nameCounter++}")
+        return Name.identifier("access\$$setterName\$${fieldAccessorSuffix()}")
     }
+
+    private fun IrField.fieldAccessorSuffix(): String {
+        // The only static field accessors are those for fields moved from companion objects, hence a
+        // _c_ompanion _p_roperty suffix. However, companion objects for interfaces keep their fields
+        // (as interfaces cannot own fields), hence are simple _p_roperty accessors, like everything else.
+        val companionSuffix = if (isStatic && !parentAsClass.isCompanion) "cp" else "p"
+
+        // Static accesses that need an accessor must be due to being inherited, hence accessed on a
+        // _s_upertype
+        val staticSuffix = if (isStatic) "\$s"+ hashForAccessorDisambiguation() else ""
+        return companionSuffix + staticSuffix
+    }
+
+    private fun IrDeclaration.hashForAccessorDisambiguation() =
+        if (parentAsClass.name.isSpecial) {
+            context.getLocalClassType(parentAsClass)?.className.hashCode() ?: parentAsClass.name.hashCode()
+        } else {
+            parentAsClass.name.identifier.hashCode()
+        }
 
     private val Visibility.isPrivate
         get() = Visibilities.isPrivate(this)

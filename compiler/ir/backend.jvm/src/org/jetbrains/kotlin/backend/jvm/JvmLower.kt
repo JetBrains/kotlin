@@ -244,7 +244,6 @@ private val jvmFilePhases =
         propertiesToFieldsPhase then
         remapObjectFieldAccesses then
         propertiesPhase then
-        renameFieldsPhase then
         anonymousObjectSuperConstructorPhase then
         tailrecPhase then
 
@@ -308,6 +307,7 @@ private val jvmFilePhases =
         checkLocalNamesWithOldBackendPhase then
 
         mainMethodGenerationPhase then
+        renameFieldsPhase then
         fakeInliningLocalVariablesLowering then
 
         makePatchParentsPhase(3)

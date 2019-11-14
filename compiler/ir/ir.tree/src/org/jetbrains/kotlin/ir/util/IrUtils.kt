@@ -347,8 +347,7 @@ tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     val vParent = (this as? IrDeclaration)?.parent
     return when (vParent) {
         is IrPackageFragment -> vParent
-        is IrClass -> vParent.getPackageFragment()
-        else -> null
+        else -> vParent?.getPackageFragment()
     }
 }
 

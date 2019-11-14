@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // Checks that accessor methods are always used due to the overriding of the default setter of 'my' property.
 
 class My {
@@ -19,11 +18,17 @@ class My {
     // GETSTATIC My.my into 'access$getMy$cp'
 }
 
-// 2 GETSTATIC My.my
 // 2 PUTSTATIC My.my
 // 0 INVOKESTATIC My\$Companion.access\$getMy\$p
-// 1 INVOKESTATIC My\$Companion.access\$setMy\$p
 // 1 INVOKESTATIC My.access\$setMy\$cp
+// 1 INVOKESPECIAL My\$Companion.setMy
+
+// JVM_TEMPLATES
+// 2 GETSTATIC My.my
+// 1 INVOKESTATIC My\$Companion.access\$setMy\$p
 // 1 INVOKESTATIC My.access\$getMy\$cp
 // 1 INVOKESPECIAL My\$Companion.getMy
-// 1 INVOKESPECIAL My\$Companion.setMy
+
+// IR only generates the accessors actually needed
+// JVM_IR_TEMPLATES
+// 1 GETSTATIC My.my
