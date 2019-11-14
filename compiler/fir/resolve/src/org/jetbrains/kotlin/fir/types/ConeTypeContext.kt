@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 
-class ErrorTypeConstructor(val reason: String) : TypeConstructorMarker
+class ErrorTypeConstructor(val reason: String) : TypeConstructorMarker {
+    override fun toString(): String = reason
+}
 
 interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext, TypeSystemCommonBackendContext {
     val session: FirSession
