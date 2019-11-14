@@ -188,7 +188,7 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
       throw new ProcessCanceledException();
     }
     synchronized (outInjected) {
-      return outInjected;
+      return outInjected.isEmpty() ? Collections.emptySet() : new THashSet<>(outInjected);
     }
   }
 

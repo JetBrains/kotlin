@@ -207,7 +207,9 @@ public class DefaultChooseByNameItemProvider implements ChooseByNameInScopeItemP
         LOG.debug("matched:"+ (System.currentTimeMillis() - started)+ "," + names.length);
       }
     }
-    return namesList;
+    synchronized (collect) {
+      return new ArrayList<>(namesList);
+    }
   }
 
   @NotNull
