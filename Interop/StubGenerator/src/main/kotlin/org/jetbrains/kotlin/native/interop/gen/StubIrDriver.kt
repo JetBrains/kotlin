@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
+import kotlinx.metadata.klib.KlibModuleMetadata
 import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 import org.jetbrains.kotlin.native.interop.gen.jvm.InteropConfiguration
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
@@ -101,8 +102,7 @@ class StubIrDriver(
     sealed class Result {
         object SourceCode : Result()
 
-        // Will contain Km* objects.
-        class Metadata(): Result()
+        class Metadata(val metadata: KlibModuleMetadata): Result()
     }
 
     fun run(): Result {
@@ -133,7 +133,7 @@ class StubIrDriver(
     }
 
     private fun emitMetadata(builderResult: StubIrBuilderResult): Result.Metadata {
-        return Result.Metadata()
+        return Result.Metadata(KlibModuleMetadata("test", emptyList(), emptyList()))
     }
 
     private fun emitCFile(context: StubIrContext, cFile: Appendable, entryPoint: String?, nativeBridges: NativeBridges) {

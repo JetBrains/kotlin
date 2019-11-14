@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.native.interop.gen.wasm.processIdlLib
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
 import kotlinx.cli.ArgParser
+import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.lang.IllegalArgumentException
@@ -218,6 +219,8 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
 
     val (nativeIndex, compilation) = buildNativeIndex(library, verbose)
 
+    val moduleName = File(cinteropArguments.output).nameWithoutExtension
+
     // Our current approach to arm64_32 support is to compile armv7k version of bitcode
     // for arm64_32. That's the reason for this substitution.
     // TODO: Add proper support with the next LLVM update.
@@ -260,7 +263,7 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
             file.parentFile.mkdirs()
             file
         }
-        val driverOptions = StubIrDriver.DriverOptions(mode, entryPoint, File(outCFile.absolutePath), outKtFileCreator)
+        val driverOptions = StubIrDriver.DriverOptions(mode, entryPoint, moduleName, File(outCFile.absolutePath), outKtFileCreator)
         val stubIrDriver = StubIrDriver(stubIrContext, driverOptions)
         stubIrDriver.run()
     }
@@ -272,9 +275,10 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
         _, oldValue, newValue ->
             warn("The package value `$oldValue` specified in .def file is overridden with explicit $newValue")
     }
-
     def.manifestAddendProperties["interop"] = "true"
-
+    if (stubIrOutput is StubIrDriver.Result.Metadata) {
+        def.manifestAddendProperties["ir_provider"] = KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
+    }
     stubIrContext.addManifestProperties(def.manifestAddendProperties)
 
     manifestAddend?.parentFile?.mkdirs()
@@ -310,8 +314,8 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
             argsToCompiler(staticLibraries, libraryPaths)
         }
         is StubIrDriver.Result.Metadata -> {
-            val moduleName = File(cinteropArguments.output).nameWithoutExtension
             val args = LibraryCreationArguments(
+                    metadata = stubIrOutput.metadata,
                     nativeBitcodePath = nativeOutputPath,
                     target = tool.target,
                     moduleName = moduleName,

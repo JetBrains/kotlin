@@ -35,6 +35,7 @@ dependencies {
     compile project(':Interop:Indexer')
     compile "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     compile project(path: ":endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
+    compile "org.jetbrains.kotlinx:kotlinx-metadata-klib:0.0.1-dev-4"
 
     testCompile "junit:junit:4.12"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
