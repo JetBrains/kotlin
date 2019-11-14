@@ -580,7 +580,7 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
       new GradleBuildScriptBuilderEx()
         .withGradleIdeaExtPlugin(IDEA_EXT_PLUGIN_VERSION)
         .withJavaPlugin()
-        .withKotlinPlugin("1.3.0")
+        .withKotlinPlugin("1.3.50")
         .addPostfix("idea {")
         .addPostfix("  module {")
         .addPostfix("    settings {")
