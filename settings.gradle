@@ -9,12 +9,25 @@ pluginManagement {
 
         if (cacheRedirectorEnabled == 'true') {
             logger.info("Using cache redirector for settings.gradle pluginManagement")
-            maven {
-                url "https://cache-redirector.jetbrains.com/plugins.gradle.org/m2"
-            }
+            maven { url "https://cache-redirector.jetbrains.com/plugins.gradle.org/m2" }
+            maven { url "https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-dependencies" }
         } else {
             gradlePluginPortal()
+            maven { url "https://kotlin.bintray.com/kotlin-dependencies" }
         }
+    }
+}
+
+buildscript {
+    repositories {
+        if (cacheRedirectorEnabled == 'true') {
+            maven { url "https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-dependencies" }
+        } else {
+            maven { url "https://kotlin.bintray.com/kotlin-dependencies" }
+        }
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.1")
     }
 }
 

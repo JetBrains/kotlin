@@ -83,9 +83,10 @@ extra["versions.androidDxSources"] = "5.0.0_r2"
 extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
-    maven("https://plugins.gradle.org/m2/")
     jcenter()
+    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
+    maven("https://kotlin.bintray.com/kotlin-dependencies")
+    gradlePluginPortal()
 
     extra["buildSrcKotlinRepo"]?.let {
         maven(url = it)
@@ -94,6 +95,8 @@ repositories {
 
 dependencies {
     compile(kotlin("stdlib", embeddedKotlinVersion))
+    compile("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.1")
+
     compile("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
