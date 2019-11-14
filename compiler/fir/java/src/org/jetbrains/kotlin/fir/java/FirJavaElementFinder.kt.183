@@ -136,7 +136,6 @@ private fun PsiClassStubImpl<*>.addSupertypesReferencesLists(
     superTypeRefs: List<FirTypeRef>,
     session: FirSession
 ) {
-    if (firRegularClass.supertypesComputationStatus == SupertypesComputationStatus.COMPUTING) return
     require(superTypeRefs.all { it is FirResolvedTypeRef }) {
         "Supertypes for light class $qualifiedName are being added too early"
     }
