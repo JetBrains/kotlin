@@ -82,13 +82,6 @@ expect enum class RegexOption {
     MULTILINE
 }
 
-/**
- *  The exception thrown when a character encoding or decoding error occurs.
- */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
-public expect open class CharacterCodingException() : Exception
-
 
 // From char.kt
 
