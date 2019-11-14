@@ -24,7 +24,6 @@ import com.intellij.injected.editor.EditorWindow;
 import com.intellij.internal.statistic.collectors.fus.actions.persistence.IntentionsCollector;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.application.WriteAction;
 import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.command.CommandProcessor;
@@ -192,8 +191,7 @@ public class ShowIntentionActionsHandler implements CodeInsightActionHandler {
     if (pair == null) return false;
 
     CommandProcessor.getInstance().executeCommand(project, () ->
-      TransactionGuard.getInstance().submitTransactionAndWait(
-        () -> invokeIntention(action, pair.second, pair.first)), text, null);
+      invokeIntention(action, pair.second, pair.first), text, null);
 
     checkPsiTextConsistency(hostFile);
 
