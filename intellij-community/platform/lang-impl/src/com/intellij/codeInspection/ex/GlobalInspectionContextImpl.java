@@ -740,14 +740,20 @@ public class GlobalInspectionContextImpl extends GlobalInspectionContextBase {
               throw e;
             }
           }
-          ApplicationManager.getApplication().runReadAction(() -> {
+          ThrowableRunnable<RuntimeException> runnable = () -> {
             tool.runInspection(scopeForState, inspectionManager, this, toolPresentation);
             //skip phase when we are sure that scope already contains everything, unused declaration though needs to proceed with its suspicious code
             if ((canBeExternalUsages || tool.getAdditionalJobs(this) != null) &&
                 tool.queryExternalUsagesRequests(inspectionManager, this, toolPresentation)) {
               needRepeatSearchRequest.add(toolWrapper);
             }
-          });
+          };
+          if (tool.isReadActionNeeded()) {
+            ReadAction.run(runnable);
+          }
+          else {
+            runnable.run();
+          }
         }
         catch (ProcessCanceledException | IndexNotReadyException e) {
           throw e;
