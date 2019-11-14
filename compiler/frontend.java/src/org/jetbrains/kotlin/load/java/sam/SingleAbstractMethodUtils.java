@@ -129,7 +129,7 @@ public class SingleAbstractMethodUtils {
 
         return FunctionTypesKt.createFunctionType(
                 DescriptorUtilsKt.getBuiltIns(function), Annotations.Companion.getEMPTY(),
-                receiverType, parameterTypes, parameterNames, returnType
+                receiverType, parameterTypes, parameterNames, returnType, function.isSuspend()
         );
     }
 
