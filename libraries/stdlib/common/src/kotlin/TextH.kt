@@ -5,22 +5,6 @@
 
 package kotlin.text
 
-expect class StringBuilder : Appendable, CharSequence {
-    constructor()
-    constructor(capacity: Int)
-    constructor(content: CharSequence)
-
-    override val length: Int
-    override operator fun get(index: Int): Char
-    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence
-
-    fun reverse(): StringBuilder
-    override fun append(c: Char): StringBuilder
-    override fun append(csq: CharSequence?): StringBuilder
-    override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder
-    fun append(obj: Any?): StringBuilder
-}
-
 expect class Regex {
     constructor(pattern: String)
     constructor(pattern: String, option: RegexOption)
@@ -223,15 +207,6 @@ public expect fun String.toLowerCase(): String
 public expect fun String.capitalize(): String
 public expect fun String.decapitalize(): String
 public expect fun CharSequence.repeat(n: Int): String
-
-
-/**
- * Clears the content of this string builder making it empty.
- *
- * @sample samples.text.Strings.clearStringBuilder
- */
-@SinceKotlin("1.3")
-public expect fun StringBuilder.clear(): StringBuilder
 
 
 /**

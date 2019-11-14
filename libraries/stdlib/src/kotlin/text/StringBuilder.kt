@@ -8,6 +8,30 @@
 
 package kotlin.text
 
+expect class StringBuilder : Appendable, CharSequence {
+    constructor()
+    constructor(capacity: Int)
+    constructor(content: CharSequence)
+
+    override val length: Int
+    override operator fun get(index: Int): Char
+    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence
+
+    fun reverse(): StringBuilder
+    override fun append(c: Char): StringBuilder
+    override fun append(csq: CharSequence?): StringBuilder
+    override fun append(csq: CharSequence?, start: Int, end: Int): StringBuilder
+    fun append(obj: Any?): StringBuilder
+}
+
+/**
+ * Clears the content of this string builder making it empty.
+ *
+ * @sample samples.text.Strings.clearStringBuilder
+ */
+@SinceKotlin("1.3")
+public expect fun StringBuilder.clear(): StringBuilder
+
 /**
  * Builds new string by populating newly created [StringBuilder] using provided [builderAction]
  * and then converting it to [String].
