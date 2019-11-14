@@ -19,16 +19,6 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.StorageManager
 
-private val KotlinLibrary.fileSources: KlibMetadataFileRegistry get() {
-        val result = KlibMetadataFileRegistry()
-        val proto = parseModuleHeader(moduleHeaderData)
-        proto.fileList.forEachIndexed { index, it ->
-                result.provide(it.name, index, this)
-            }
-        return result
-}
-
-
 class KlibMetadataDeserializedPackageFragment(
     fqName: FqName,
     private val library: KotlinLibrary,
@@ -43,11 +33,6 @@ class KlibMetadataDeserializedPackageFragment(
     override val protoForNames: ProtoBuf.PackageFragment by lazy {
         (packageAccessHandler ?: SimplePackageAccessHandler).loadPackageFragment(library, fqName.asString(), partName)
     }
-
-    val fileRegistry: KlibMetadataFileRegistry by lazy {
-        library.fileSources
-    }
-
 
     override val proto: ProtoBuf.PackageFragment
         get() {
