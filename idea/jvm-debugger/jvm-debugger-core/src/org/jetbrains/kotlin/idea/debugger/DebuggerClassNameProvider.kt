@@ -306,7 +306,7 @@ private fun DebugProcess.findTargetClasses(outerClass: ReferenceType, lineAt: In
     val targetClasses = ArrayList<ReferenceType>(1)
 
     try {
-        for (location in outerClass.allLineLocations()) {
+        for (location in outerClass.safeAllLineLocations()) {
             val locationLine = location.lineNumber() - 1
             if (locationLine < 0) {
                 // such locations are not correspond to real lines in code
