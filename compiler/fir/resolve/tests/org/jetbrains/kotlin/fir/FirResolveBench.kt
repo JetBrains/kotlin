@@ -8,7 +8,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.diagnostics.FirEmptyDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.FirStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -228,7 +228,7 @@ class FirResolveBench(val withProgress: Boolean) {
                         unresolvedTypes++
 
                         if (typeRef.psi != null) {
-                            if (typeRef is FirErrorTypeRef && typeRef.diagnostic == FirEmptyDiagnostic) {
+                            if (typeRef is FirErrorTypeRef && typeRef.diagnostic is FirStubDiagnostic) {
                                 return
                             }
                             val psi = typeRef.psi!!
@@ -253,7 +253,7 @@ class FirResolveBench(val withProgress: Boolean) {
                                 implicitTypes++
                             } else {
                                 errorTypes++
-                                if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic == FirEmptyDiagnostic) {
+                                if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic is FirStubDiagnostic) {
                                     return
                                 }
                                 val psi = resolvedTypeRef.psi!!

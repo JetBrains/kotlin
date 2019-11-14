@@ -5,7 +5,7 @@ FILE: test.kt
         }
         )
         lval otherResult: R|kotlin/String| = R|<local>/map|.R|FakeOverride<kotlin/collections/Map.getOrDefault: R|kotlin/String|>|(String(key), String(value))
-        lval anotherResult: <ERROR TYPE REF: Empty diagnostic> = R|<local>/map|.<Unresolved name: replace>#(String(key), String(value))
+        lval anotherResult: <ERROR TYPE REF: Unresolved name: replace> = R|<local>/map|.<Unresolved name: replace>#(String(key), String(value))
         R|<local>/map|.<Inapplicable(INAPPLICABLE): [kotlin/collections/forEach]>#(<L> = forEach@fun <implicit>.<anonymous>(key: <ERROR TYPE REF: Unsupported: implicit VP type>, value: <ERROR TYPE REF: Unsupported: implicit VP type>): R|kotlin/Unit| {
             R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
         }
@@ -23,7 +23,7 @@ FILE: test.kt
         }
         )
         lval otherResult: R|kotlin/String| = R|<local>/map|.R|FakeOverride<kotlin/collections/Map.getOrDefault: R|kotlin/String|>|(String(key), String(value))
-        lval anotherResult: <ERROR TYPE REF: Empty diagnostic> = R|<local>/map|.<Unresolved name: replace>#(String(key), String(value))
+        lval anotherResult: <ERROR TYPE REF: Unresolved name: replace> = R|<local>/map|.<Unresolved name: replace>#(String(key), String(value))
         R|<local>/map|.<Inapplicable(INAPPLICABLE): [kotlin/collections/forEach]>#(<L> = forEach@fun <implicit>.<anonymous>(key: <ERROR TYPE REF: Unsupported: implicit VP type>, value: <ERROR TYPE REF: Unsupported: implicit VP type>): R|kotlin/Unit| {
             R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
         }

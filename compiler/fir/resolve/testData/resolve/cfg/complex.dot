@@ -28,7 +28,7 @@ digraph complex_kt {
             12 [label="Access variable R|<local>/url|"];
             13 [label="Access variable R|<local>/url|"];
             14 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|)"];
-            15 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <ERROR TYPE REF: Empty diagnostic> {
+            15 [label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <ERROR TYPE REF: Unresolved name: fromJson> {
     <Unresolved name: GsonBuilder>#().<Unresolved name: create>#().<Unresolved name: fromJson>#(<Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#(), <getClass>(<Inapplicable(PARAMETER_MAPPING_ERROR): [kotlin/Array.Array]>#<R|class error: Symbol not found, for `PluginDTO`|>()).<Inapplicable(WRONG_RECEIVER): [kotlin/jvm/java]>#)
 }
 )"];

@@ -2,7 +2,7 @@ FILE: complex.kt
     @R|kotlin/jvm/Throws|(<getClass>(<Unresolved name: IOException>#), <getClass>(<Unresolved name: ResponseParseException>#)) public final fun fetchPluginReleaseDate(pluginId: R|class error: Symbol not found, for `PluginId`|, version: R|kotlin/String|, channel: R|kotlin/String?|): R|class error: Symbol not found, for `LocalDate?`| {
         lval url: R|kotlin/String| = <strcat>(String(https://plugins.jetbrains.com/api/plugins/), R|<local>/pluginId|.<Unresolved name: idString>#, String(/updates?version=), R|<local>/version|)
         lval pluginDTOs: R|kotlin/Array<class error: Symbol not found, for `PluginDTO`>| = try {
-            <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <ERROR TYPE REF: Empty diagnostic> {
+            <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <ERROR TYPE REF: Unresolved name: fromJson> {
                 <Unresolved name: GsonBuilder>#().<Unresolved name: create>#().<Unresolved name: fromJson>#(<Unresolved name: it>#.<Unresolved name: inputStream>#.<Ambiguity: reader, [kotlin/io/reader, kotlin/io/reader, kotlin/io/reader]>#(), <getClass>(<Inapplicable(PARAMETER_MAPPING_ERROR): [kotlin/Array.Array]>#<R|class error: Symbol not found, for `PluginDTO`|>()).<Inapplicable(WRONG_RECEIVER): [kotlin/jvm/java]>#)
             }
             )

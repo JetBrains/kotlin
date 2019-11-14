@@ -47,5 +47,5 @@ FILE: companion.kt
         Q|B|.R|/B.Companion.baz|()
         lval x: R|kotlin/String| = Q|A|.R|/A.Companion.D|
         lval y: R|kotlin/String| = Q|B|.R|/B.Companion.C|
-        lval z: <ERROR TYPE REF: Empty diagnostic> = Q|B|.<Unresolved name: D>#
+        lval z: <ERROR TYPE REF: Unresolved name: D> = Q|B|.<Unresolved name: D>#
     }

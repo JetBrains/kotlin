@@ -9,7 +9,7 @@ FILE: nestedClassContructor.kt
                 super<R|A|>()
             }
 
-            public final fun copy(): <ERROR TYPE REF: Empty diagnostic> {
+            public final fun copy(): <ERROR TYPE REF: Ambiguity: B, [/A.B.B, /A.B.B]> {
                 ^copy <Ambiguity: B, [/A.B.B, /A.B.B]>#()
             }
 
