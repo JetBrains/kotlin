@@ -113,6 +113,7 @@ enum class LanguageFeature(
     AllowNullableArrayArgsInMain(KOTLIN_1_4),
     TrailingCommas(KOTLIN_1_4),
     ProhibitInvisibleAbstractMethodsInSuperclasses(KOTLIN_1_4, kind = BUG_FIX),
+    ProhibitNonReifiedArraysAsReifiedTypeArguments(KOTLIN_1_4, kind = BUG_FIX),
 
     ProperVisibilityForCompanionObjectInstanceField(sinceVersion = null, kind = BUG_FIX),
     // Temporarily disabled, see KT-27084/KT-22379

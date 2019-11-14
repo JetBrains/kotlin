@@ -9054,6 +9054,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/Conventions.kt");
                 }
 
+                @TestMetadata("GenericArrayAsReifiedArgument.kt")
+                public void testGenericArrayAsReifiedArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/GenericArrayAsReifiedArgument.kt");
+                }
+
+                @TestMetadata("GenericArrayAsReifiedArgumentWarning.kt")
+                public void testGenericArrayAsReifiedArgumentWarning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/GenericArrayAsReifiedArgumentWarning.kt");
+                }
+
                 @TestMetadata("GenericAsReifiedArgument.kt")
                 public void testGenericAsReifiedArgument() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/generics/tpAsReified/GenericAsReifiedArgument.kt");
