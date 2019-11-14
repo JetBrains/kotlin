@@ -16,6 +16,7 @@ import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
 import org.jetbrains.kotlin.idea.debugger.isDexDebug
+import org.jetbrains.kotlin.idea.debugger.safeSourceName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.util.containingNonLocalDeclaration
@@ -50,14 +51,15 @@ class KotlinLineBreakpoint(
         val lineNumber = sourcePosition.line + 1
 
         for (location in allLineLocations) {
-            try {
-                val kotlinFileName = location.sourceName(KOTLIN_STRATA_NAME)
-                val kotlinLineNumber = location.lineNumber(KOTLIN_STRATA_NAME)
+            val kotlinFileName = location.safeSourceName(KOTLIN_STRATA_NAME)
+            val kotlinLineNumber = location.lineNumber(KOTLIN_STRATA_NAME)
+
+            if (kotlinFileName != null) {
                 if (kotlinFileName == fileName && kotlinLineNumber == lineNumber) {
                     return true
                 }
-            } catch (e: AbsentInformationException) {
-                if (location.sourceName() == fileName && location.lineNumber() == lineNumber) {
+            } else {
+                if (location.safeSourceName() == fileName && location.lineNumber() == lineNumber) {
                     return true
                 }
             }
