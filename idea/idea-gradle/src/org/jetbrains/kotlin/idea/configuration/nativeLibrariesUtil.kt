@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -118,9 +119,8 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
     private val kotlinVersion: String? by lazy {
         val classpathData = buildClasspathData(gradleModule, resolverCtx)
         val result = findKotlinPluginVersion(classpathData)
-        if (result == null)
-            LOG.error(
-                """
+        if (result == null) {
+            val message = """
                     Unexpectedly can't obtain Kotlin Gradle plugin version for ${gradleModule.name} module.
                     Build classpath is ${classpathData.classpathEntries.flatMap { it.classesFile }}.
                     ${KotlinNativeLibrariesDependencySubstitutor::class.java.simpleName} will run in idle mode. No dependencies will be substituted.
@@ -132,8 +132,11 @@ internal class KotlinNativeLibrariesDependencySubstitutor(
                         kotlin("multiplatform") version "${bundledRuntimeVersion()}"
                     }
                 """.trimIndent()
-            )
-
+            if (ApplicationManager.getApplication().isUnitTestMode)
+                LOG.warn(message)
+            else
+                LOG.error(message)
+        }
         result
     }
 
