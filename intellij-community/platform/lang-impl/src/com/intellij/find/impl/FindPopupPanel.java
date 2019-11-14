@@ -1758,7 +1758,7 @@ public class FindPopupPanel extends JBPanel<FindPopupPanel> implements FindUI {
   }
 
   private class MyPinAction extends ToggleAction {
-    private MyPinAction() {super(null, "Pin Window", AllIcons.General.Pin_tab);}
+    private MyPinAction() {super("Pin Window", "Pin Window", AllIcons.General.Pin_tab);}
 
     @Override
     public boolean isDumbAware() {
