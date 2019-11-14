@@ -56,9 +56,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         useMocha()
         useWebpack()
         useSourceMapSupport()
-
-        config.singleRun = true
-        config.autoWatch = false
     }
 
     private fun useKotlinReporter() {
@@ -309,9 +306,16 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         val nodeModules = listOf("karma/bin/karma")
 
-        val args = nodeJsArgs +
-                nodeModules.map { npmProject.require(it) } +
-                listOf("start", karmaConfJs.absolutePath)
+        val args = if (debug) {
+            config.client.mocha.timeout = "0"
+
+            //TODO need generate it
+            listOf("./debugRunner.js")
+        } else {
+            nodeJsArgs +
+                    nodeModules.map { npmProject.require(it) } +
+                    listOf("start", karmaConfJs.absolutePath)
+        }
 
         return object : JSServiceMessagesTestExecutionSpec(
             forkOptions,

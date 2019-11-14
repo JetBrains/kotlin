@@ -22,7 +22,12 @@ data class KarmaConfig(
 )
 
 data class KarmaClient(
-    val args: MutableList<String> = mutableListOf()
+    val args: MutableList<String> = mutableListOf(),
+    val mocha: KarmaMocha = KarmaMocha()
+)
+
+data class KarmaMocha(
+    var timeout: String = "2s"
 )
 
 class CustomLauncher(var base: String) {
