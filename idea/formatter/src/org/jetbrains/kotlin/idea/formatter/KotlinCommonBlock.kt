@@ -664,6 +664,12 @@ private fun hasLineBreakBefore(node: ASTNode): Boolean {
     return prevSibling?.elementType == TokenType.WHITE_SPACE && prevSibling?.textContains('\n') == true
 }
 
+private fun hasDoubleLineBreakBefore(node: ASTNode): Boolean {
+    val prevSibling = node.leaves(false).firstOrNull() ?: return false
+
+    return prevSibling.text.count { it == '\n' } >= 2
+}
+
 fun NodeIndentStrategy.PositionStrategy.continuationIf(
     option: (KotlinCodeStyleSettings) -> Boolean,
     indentFirst: Boolean = false
@@ -909,8 +915,10 @@ private fun getAlignmentForChildInParenthesis(
             val childNodeType = node.elementType
 
             val prev = getPrevWithoutWhitespace(node)
-            if (prev != null && prev.elementType === TokenType.ERROR_ELEMENT || childNodeType === TokenType.ERROR_ELEMENT) {
-                // Prefer align to parameters on incomplete code (case of line break after comma, when next parameters is absent)
+            val hasTrailingComma = childNodeType === closeBracket && prev?.elementType == COMMA
+
+            if (hasTrailingComma && hasDoubleLineBreakBefore(node)) {
+                // Prefer align to parameters on code with trailing comma (case of line break after comma, when before closing bracket there was a line break)
                 return parameterAlignment
             }
 
