@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
@@ -821,12 +820,16 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
 
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
         print("R|")
-        val isFakeOverride = (resolvedNamedReference.resolvedSymbol as? FirNamedFunctionSymbol)?.isFakeOverride == true
+        val symbol = resolvedNamedReference.resolvedSymbol
+        val isFakeOverride = when (symbol) {
+            is FirNamedFunctionSymbol -> symbol.isFakeOverride
+            is FirPropertySymbol -> symbol.isFakeOverride
+            else -> false
+        }
 
         if (isFakeOverride) {
             print("FakeOverride<")
         }
-        val symbol = resolvedNamedReference.resolvedSymbol
         print(symbol.render())
 
 

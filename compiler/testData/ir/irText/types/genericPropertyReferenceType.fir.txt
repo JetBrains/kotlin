@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
       correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:v index:0 type:T of <uninitialized parent>
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: R|/C.x|' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: R|FakeOverride</C.x: R|T|>|' type=IrErrorType
   FUN name:use visibility:public modality:FINAL <> (p:kotlin.reflect.KMutableProperty<kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:p index:0 type:kotlin.reflect.KMutableProperty<kotlin.String>
     BLOCK_BODY

@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/smartCastOnReceiverOfGenericType.kt
         GET_VAR 'a: kotlin.Any declared in <root>.testProperty' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.String origin=CAST typeOperand=kotlin.String
         GET_VAR 'b: kotlin.Any declared in <root>.testProperty' type=kotlin.Any origin=null
-      ERROR_CALL 'Unresolved reference: R|/Cell.value|' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: R|FakeOverride</Cell.value: R|kotlin/String|>|' type=IrErrorType
   FUN name:testInnerClass visibility:public modality:FINAL <> (a:kotlin.Any, b:kotlin.Any, c:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     VALUE_PARAMETER name:b index:1 type:kotlin.Any
