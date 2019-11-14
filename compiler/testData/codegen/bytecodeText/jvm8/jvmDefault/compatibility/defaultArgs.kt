@@ -9,7 +9,7 @@ interface KInterface {
     }
 }
 
-// 1 INVOKESTATIC KInterface.access\$test\$
+// 1 INVOKESTATIC KInterface.access\$test\$jd
 // 1 INVOKESTATIC KInterface.test\$default
 
 // from $default

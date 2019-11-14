@@ -175,7 +175,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
     }
 
     private fun createDefaultImpl(function: IrSimpleFunction): IrSimpleFunction =
-        context.declarationFactory.getDefaultImplsFunction(function).also {newFunction ->
+        context.declarationFactory.getDefaultImplsFunction(function).also { newFunction ->
             newFunction.body = function.body?.patchDeclarationParents(newFunction)
             newFunction.parentAsClass.declarations.add(newFunction)
         }
