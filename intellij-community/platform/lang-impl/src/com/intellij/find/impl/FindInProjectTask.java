@@ -401,7 +401,7 @@ class FindInProjectTask {
   private Set<VirtualFile> getFilesForFastWordSearch() {
     String stringToFind = myStringToFindInIndices;
 
-    if (stringToFind.isEmpty() || (DumbService.getInstance(myProject).isDumb() && !FileBasedIndex.indexAccessDuringDumbModeEnabled())) {
+    if (stringToFind.isEmpty() || (DumbService.getInstance(myProject).isDumb() && !FileBasedIndex.isIndexAccessDuringDumbModeEnabled())) {
       return Collections.emptySet();
     }
 

@@ -1193,7 +1193,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex {
   @Override
   public void ignoreDumbMode(@NotNull Runnable runnable, @NotNull Project project) {
     assert ApplicationManager.getApplication().isReadAccessAllowed();
-    if (DumbService.isDumb(project) && FileBasedIndex.indexAccessDuringDumbModeEnabled()) {
+    if (DumbService.isDumb(project) && FileBasedIndex.isIndexAccessDuringDumbModeEnabled()) {
       ourDumbModeIgnored.set(Boolean.TRUE);
       try {
         runnable.run();
