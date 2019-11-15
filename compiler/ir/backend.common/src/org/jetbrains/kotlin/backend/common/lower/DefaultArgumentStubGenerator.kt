@@ -290,7 +290,15 @@ open class DefaultParameterInjector(
                     if (valueArgument == null) {
                         maskValues[i / 32] = maskValues[i / 32] or (1 shl (i % 32))
                     }
-                    valueArgument ?: nullConst(startOffset, endOffset, parameter)
+                    valueArgument ?: nullConst(startOffset, endOffset, parameter)?.let {
+                        IrCompositeImpl(
+                            expression.startOffset,
+                            expression.endOffset,
+                            parameter.type,
+                            IrStatementOrigin.DEFAULT_VALUE,
+                            listOf(it)
+                        )
+                    }
                 }
             }
         }

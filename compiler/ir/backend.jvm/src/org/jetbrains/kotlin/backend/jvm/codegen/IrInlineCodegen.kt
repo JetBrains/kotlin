@@ -97,8 +97,9 @@ class IrInlineCodegen(
             val kind = when (irValueParameter.origin) {
                 IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION -> ValueKind.DEFAULT_MASK
                 IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION -> ValueKind.METHOD_HANDLE_IN_DEFAULT
-                //TODO: support DEFAULT_PARAMETER
-                else -> ValueKind.CAPTURED
+                else -> if (argumentExpression is IrContainerExpression && argumentExpression.origin == IrStatementOrigin.DEFAULT_VALUE)
+                    ValueKind.DEFAULT_PARAMETER
+                else ValueKind.CAPTURED
             }
 
             val onStack = when {
