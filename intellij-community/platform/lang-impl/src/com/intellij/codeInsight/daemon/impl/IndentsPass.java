@@ -143,7 +143,7 @@ public class IndentsPass extends TextEditorHighlightingPass implements DumbAware
     //     1. Show only active indent if it crosses soft wrap-introduced text;
     //     2. Show indent as is if it doesn't intersect with soft wrap-introduced text;
     if (selected) {
-      LinePainter2D.paint((Graphics2D)g, start.x + 2, start.y, start.x + 2, maxY - 1);
+      if (maxY > start.y) LinePainter2D.paint((Graphics2D)g, start.x + 2, start.y, start.x + 2, maxY - 1);
     }
     else {
       int y = start.y;
