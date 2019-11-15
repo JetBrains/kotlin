@@ -3,7 +3,6 @@ package com.intellij.configurationStore
 
 import com.intellij.ProjectTopics
 import com.intellij.ide.highlighter.ModuleFileType
-import com.intellij.idea.IdeaTestApplication
 import com.intellij.openapi.application.AppUIExecutor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
@@ -17,8 +16,8 @@ import com.intellij.openapi.project.ModuleListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.modifyModules
 import com.intellij.openapi.project.rootManager
+import com.intellij.openapi.roots.ModuleRootManagerEx
 import com.intellij.openapi.roots.ModuleRootModificationUtil
-import com.intellij.openapi.roots.impl.ModuleRootManagerComponent
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.testFramework.*
 import com.intellij.testFramework.assertions.Assertions.assertThat
@@ -192,14 +191,14 @@ internal class ModuleStoreRenameTest {
     }
     module.stateStore.save()
 
-    val rootManager = module.rootManager as ModuleRootManagerComponent
-    val stateModificationCount = rootManager.stateModificationCount
+    val rootManager = module.rootManager as ModuleRootManagerEx
+    val stateModificationCount = rootManager.modificationCountForTests
 
     withContext(AppUIExecutor.onUiThread().inWriteAction().coroutineDispatchingContext()) {
       src.rename(null, "bar.dot")
     }
 
-    assertThat(stateModificationCount).isLessThan(rootManager.stateModificationCount)
+    assertThat(stateModificationCount).isLessThan(rootManager.modificationCountForTests)
   }
 
   private suspend fun saveModules() {
