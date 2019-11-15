@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.google.common.collect.ImmutableMap
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.project.DumbService
@@ -24,7 +25,7 @@ import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.*
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
@@ -136,10 +137,16 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
                         val newResult = analyze(inBlockModification, trace)
                         analysisResult = wrapResult(result, newResult, trace)
                     }
+                    file.clearInBlockModifications()
+
                     analysisResult
                 }
-            } finally {
-                file.clearInBlockModifications()
+            } catch (e: Throwable) {
+                if (e !is ControlFlowException) {
+                    file.clearInBlockModifications()
+                    fileResult = null
+                }
+                throw e
             }
         }
         return fileResult
