@@ -1590,6 +1590,16 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testNoJumpInSingleBranch() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/disabledOptimizations/noJumpInSingleBranch.kt");
         }
+
+        @TestMetadata("noUnitInstanceInDefaultParameterInitialization.kt")
+        public void testNoUnitInstanceInDefaultParameterInitialization() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/disabledOptimizations/noUnitInstanceInDefaultParameterInitialization.kt");
+        }
+
+        @TestMetadata("noUnitInstanceOnVoidFunctionCall.kt")
+        public void testNoUnitInstanceOnVoidFunctionCall() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/disabledOptimizations/noUnitInstanceOnVoidFunctionCall.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/enum")

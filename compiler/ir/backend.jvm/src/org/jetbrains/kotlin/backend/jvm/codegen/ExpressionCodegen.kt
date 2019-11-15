@@ -329,7 +329,7 @@ class ExpressionCodegen(
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: BlockInfo): PromisedValue {
         classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
-            ?.invoke(expression, this, data)?.let { return it.coerce(expression.type) }
+            ?.invoke(expression, this, data)?.let { return it }
 
         val callable = methodSignatureMapper.mapToCallableMethod(expression)
         val callee = expression.symbol.owner
@@ -409,7 +409,8 @@ class ExpressionCodegen(
             }
             expression is IrConstructorCall ->
                 MaterialValue(this, asmType, expression.type)
-            expression is IrDelegatingConstructorCall ->
+            expression.type.isUnit() && callable.asmMethod.returnType == Type.VOID_TYPE ->
+                //don't generate redundant UNIT/pop instructions
                 immaterialUnitValue
             expression.type.isUnit() ->
                 // NewInference allows casting `() -> T` to `() -> Unit`. A CHECKCAST here will fail.
