@@ -271,14 +271,14 @@ private fun extractInputOutputTypesFromCallableReferenceExpectedType(expectedTyp
 private fun extractInputOutputTypesFromFunctionType(functionType: ConeKotlinType): InputOutputTypes {
     val receiver = null// TODO: functionType.receiverType()
     val parameters = functionType.valueParameterTypes.map {
-        it ?: ConeClassTypeImpl(
+        it ?: ConeClassLikeTypeImpl(
             ConeClassLikeLookupTagImpl(StandardClassIds.Nothing), emptyArray(),
             isNullable = false
         )
     }
 
     val inputTypes = /*listOfNotNull(receiver) +*/ parameters
-    val outputType = functionType.returnType ?: ConeClassTypeImpl(
+    val outputType = functionType.returnType ?: ConeClassLikeTypeImpl(
         ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(),
         isNullable = true
     )

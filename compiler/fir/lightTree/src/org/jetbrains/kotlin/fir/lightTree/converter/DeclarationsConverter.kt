@@ -1459,7 +1459,7 @@ class DeclarationsConverter(
         null,
         FirResolvedTypeRefImpl(
             null,
-            ConeClassTypeImpl(
+            ConeClassLikeTypeImpl(
                 ConeClassLikeLookupTagImpl(ClassId.fromString(EXTENSION_FUNCTION_ANNOTATION)),
                 emptyArray(),
                 false

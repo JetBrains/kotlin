@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -398,7 +398,7 @@ class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) :
             IrConstKind.Double -> StandardClassIds.Double(symbolProvider)
         }
 
-        val type = ConeClassTypeImpl(symbol.toLookupTag(), emptyArray(), isNullable = kind == IrConstKind.Null)
+        val type = ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), isNullable = kind == IrConstKind.Null)
 
         constExpression.resultType = FirResolvedTypeRefImpl(null, type)
         dataFlowAnalyzer.exitConstExpresion(constExpression as FirConstExpression<*>)

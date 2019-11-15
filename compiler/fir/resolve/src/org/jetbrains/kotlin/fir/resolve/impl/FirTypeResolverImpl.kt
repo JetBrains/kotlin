@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
 
@@ -92,7 +92,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
             listOfNotNull((typeRef.receiverTypeRef as FirResolvedTypeRef?)?.type) +
                     typeRef.valueParameters.map { it.returnTypeRef.coneTypeUnsafe<ConeKotlinType>() } +
                     listOf(typeRef.returnTypeRef.coneTypeUnsafe())
-        return ConeClassTypeImpl(
+        return ConeClassLikeTypeImpl(
             resolveBuiltInQualified(KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount), session).toLookupTag(),
             parameters.toTypedArray(),
             typeRef.isMarkedNullable

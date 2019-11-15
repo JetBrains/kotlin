@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 
@@ -125,7 +125,7 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
             }
             @Suppress("UNCHECKED_CAST")
             return when (this) {
-                is ConeClassTypeImpl -> ConeClassTypeImpl(
+                is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(
                     lookupTag,
                     newArguments as Array<ConeKotlinTypeProjection>,
                     nullability.isNullable

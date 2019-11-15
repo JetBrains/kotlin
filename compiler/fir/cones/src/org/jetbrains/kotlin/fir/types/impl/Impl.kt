@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types.impl
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
 
-open class ConeClassTypeImpl(
+open class ConeClassLikeTypeImpl(
     override val lookupTag: ConeClassLikeLookupTag,
     override val typeArguments: Array<out ConeKotlinTypeProjection>,
     isNullable: Boolean
@@ -18,7 +18,7 @@ open class ConeClassTypeImpl(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ConeClassTypeImpl
+        other as ConeClassLikeTypeImpl
 
         if (lookupTag != other.lookupTag) return false
         if (!typeArguments.contentEquals(other.typeArguments)) return false
@@ -33,8 +33,6 @@ open class ConeClassTypeImpl(
         result = 31 * result + nullability.hashCode()
         return result
     }
-
-
 }
 
 class ConeAbbreviatedTypeImpl(

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.Name
@@ -77,7 +77,7 @@ class FirSamResolverImpl(
                     .map { it.symbol }
                     .zip(type.typeArguments.map {
                         (it as? ConeTypedProjection)?.type
-                            ?: ConeClassTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(), isNullable = true)
+                            ?: ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(), isNullable = true)
                     })
                     .toMap()
             )
@@ -146,7 +146,7 @@ class FirSamResolverImpl(
 
         val substitutedFunctionType = substitutor.substituteOrSelf(functionType)
         val substitutedReturnType =
-            ConeClassTypeImpl(
+            ConeClassLikeTypeImpl(
                 firRegularClass.symbol.toLookupTag(), newTypeParameterTypes.toTypedArray(), isNullable = false
             )
 

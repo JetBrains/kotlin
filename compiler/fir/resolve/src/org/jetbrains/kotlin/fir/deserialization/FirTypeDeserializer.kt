@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -128,7 +128,7 @@ class FirTypeDeserializer(
             //createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
             ConeClassErrorType("createSuspendFunctionType not supported")
         } else {
-            ConeClassTypeImpl(constructor, arguments, isNullable = proto.nullable)
+            ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable)
         }
 
         val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType

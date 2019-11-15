@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.name.FqName
@@ -40,10 +40,10 @@ fun FirModifiableRegularClass.generateValuesFunction(
         FirSimpleFunctionImpl(
             source, session,
             FirResolvedTypeRefImpl(
-                source, ConeClassTypeImpl(
+                source, ConeClassLikeTypeImpl(
                     ConeClassLikeLookupTagImpl(StandardClassIds.Array),
                     arrayOf(
-                        ConeClassTypeImpl(ConeClassLikeLookupTagImpl(this.symbol.classId), emptyArray(), isNullable = false)
+                        ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this.symbol.classId), emptyArray(), isNullable = false)
                     ),
                     isNullable = false
                 )
@@ -66,7 +66,7 @@ fun FirModifiableRegularClass.generateValueOfFunction(
         FirSimpleFunctionImpl(
             source, session,
             FirResolvedTypeRefImpl(
-                source, ConeClassTypeImpl(
+                source, ConeClassLikeTypeImpl(
                     ConeClassLikeLookupTagImpl(this.symbol.classId),
                     emptyArray(),
                     isNullable = false

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 
 fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? {
@@ -45,8 +45,8 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
     }
 }
 
-fun FirRegularClass.defaultType(): ConeClassTypeImpl {
-    return ConeClassTypeImpl(
+fun FirRegularClass.defaultType(): ConeClassLikeTypeImpl {
+    return ConeClassLikeTypeImpl(
         symbol.toLookupTag(),
         typeParameters.map {
             ConeTypeParameterTypeImpl(
@@ -58,8 +58,8 @@ fun FirRegularClass.defaultType(): ConeClassTypeImpl {
     )
 }
 
-fun FirAnonymousObject.defaultType(): ConeClassTypeImpl {
-    return ConeClassTypeImpl(
+fun FirAnonymousObject.defaultType(): ConeClassLikeTypeImpl {
+    return ConeClassLikeTypeImpl(
         symbol.toLookupTag(),
         emptyArray(),
         isNullable = false
