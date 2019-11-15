@@ -5,6 +5,7 @@ open class A() {
 
 class C : A() {
     val constant = 42
+
     // Some comment
     override val bar: Int
         get() = <selection><caret>super.bar</selection>

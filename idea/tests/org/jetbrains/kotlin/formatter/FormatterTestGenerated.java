@@ -270,6 +270,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/EmptyLineBetweeAbstractFunctions.after.kt");
         }
 
+        @TestMetadata("EmptyLineBetweeSecondaryConstructors.after.kt")
+        public void testEmptyLineBetweeSecondaryConstructors() throws Exception {
+            runTest("idea/testData/formatter/EmptyLineBetweeSecondaryConstructors.after.kt");
+        }
+
         @TestMetadata("EmptyLineBetweenClassAndFunction.after.kt")
         public void testEmptyLineBetweenClassAndFunction() throws Exception {
             runTest("idea/testData/formatter/EmptyLineBetweenClassAndFunction.after.kt");

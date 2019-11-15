@@ -5,10 +5,13 @@ interface Z<T>
 open class A<T : I, U : I, V> {
     // INFO: {"checked": "true"}
     var foo1: T
+
     // INFO: {"checked": "true"}
     var foo2: Z<T>
+
     // INFO: {"checked": "true"}
     var foo3: Any
+
     // INFO: {"checked": "true"}
     var foo4: Z<Any>
 
