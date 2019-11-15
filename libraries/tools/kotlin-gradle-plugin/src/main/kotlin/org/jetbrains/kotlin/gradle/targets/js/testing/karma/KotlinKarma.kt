@@ -238,6 +238,8 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
             val adapterJs = npmProject.dir.resolve("adapter-browser.js")
             adapterJs.printWriter().use { writer ->
                 val karmaRunner = npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js")
+                // It is necessary for debugger attaching (--inspect-brk analogue)
+                writer.println("debugger;")
                 writer.println("require(${karmaRunner.jsQuoted()})")
 
                 writer.println("module.exports = require(${file.jsQuoted()})")
@@ -253,6 +255,11 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         nodeJsArgs: MutableList<String>,
         debug: Boolean
     ): TCServiceMessagesTestExecutionSpec {
+        if (debug) {
+            config.client.mocha.timeout = "0"
+            config.singleRun = false
+        }
+
         if (config.browsers.isEmpty()) {
             error("No browsers configured for $task")
         }
@@ -306,15 +313,16 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
 
         val nodeModules = listOf("karma/bin/karma")
 
+        val karmaConfigAbsolutePath = karmaConfJs.absolutePath
         val args = if (debug) {
-            config.client.mocha.timeout = "0"
-
-            //TODO need generate it
-            listOf("./debugRunner.js")
+            listOf(
+                npmProject.require("kotlin-test-js-runner/karma-debug.js"),
+                karmaConfigAbsolutePath
+            )
         } else {
             nodeJsArgs +
                     nodeModules.map { npmProject.require(it) } +
-                    listOf("start", karmaConfJs.absolutePath)
+                    listOf("start", karmaConfigAbsolutePath)
         }
 
         return object : JSServiceMessagesTestExecutionSpec(

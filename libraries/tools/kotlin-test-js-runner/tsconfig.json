@@ -4,8 +4,7 @@
     "module": "ESNext",
     "strict": true,
     "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
-    "inlineSourceMap": true
+    "allowSyntheticDefaultImports": true
   },
   "exclude": [
     "**/*Debug.ts"
