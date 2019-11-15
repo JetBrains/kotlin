@@ -26,6 +26,15 @@ import java.io.File;
 import static org.jetbrains.kotlin.resolve.lazy.ResolveSession.areDescriptorsCreatedForDeclaration;
 
 public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtureTestCase {
+    static int i = 0;
+
+
+    @Override
+    protected void setUp() {
+        i++;
+        super.setUp();
+    }
+
     public void doTest(@NotNull VirtualFile file) throws Exception {
         myFixture.configureFromExistingVirtualFile(file);
         checkHighlighting(true, false, false);
@@ -61,6 +70,7 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
     }
 
     protected long checkHighlighting(boolean checkWarnings, boolean checkInfos, boolean checkWeakWarnings) {
+        System.out.println(i);
         PsiFile file = getFile();
         boolean configured = KotlinLightCodeInsightFixtureTestCaseKt.configureCompilerOptions(file.getText(), getProject(), getModule());
         try {
@@ -70,7 +80,8 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
             return myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings);
         }
         catch (FileComparisonFailure e) {
-            throw new FileComparisonFailure(e.getMessage(), e.getExpected(), e.getActual(), new File(e.getFilePath()).getAbsolutePath());
+            throw new FileComparisonFailure(e.getMessage(), e.getExpected(), e.getActual(),
+                                            new File(e.getFilePath()).getAbsolutePath());
         } finally {
             if (configured) {
                 KotlinLightCodeInsightFixtureTestCaseKt.rollbackCompilerOptions(getProject(), getModule());
