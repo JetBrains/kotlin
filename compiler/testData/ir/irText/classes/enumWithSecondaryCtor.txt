@@ -171,7 +171,8 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.ZERO
         CONSTRUCTOR visibility:private <> () returnType:<root>.Test2.ZERO [primary]
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test2'
+            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test2'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ZERO modality:FINAL visibility:public superTypes:[<root>.Test2]'
         FUN name:foo visibility:public modality:OPEN <> ($this:<root>.Test2.ZERO) returnType:kotlin.Unit
           overridden:
@@ -234,8 +235,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test2.ONE
         CONSTRUCTOR visibility:private <> () returnType:<root>.Test2.ONE [primary]
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test2'
-              x: CONST Int type=kotlin.Int value=1
+            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test2'
+                x: CONST Int type=kotlin.Int value=1
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ONE modality:FINAL visibility:public superTypes:[<root>.Test2]'
         FUN name:foo visibility:public modality:OPEN <> ($this:<root>.Test2.ONE) returnType:kotlin.Unit
           overridden:

@@ -12,7 +12,8 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyEnum.Z
         CONSTRUCTOR visibility:private <> () returnType:<root>.MyEnum.Z [primary]
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
+            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.MyEnum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:Z modality:FINAL visibility:public superTypes:[<root>.MyEnum]'
         PROPERTY name:counter visibility:public modality:FINAL [var]
           FIELD PROPERTY_BACKING_FIELD name:counter type:kotlin.Int visibility:private

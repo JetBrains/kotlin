@@ -160,9 +160,10 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             if (dispatchReceiver != null) throw AssertionError("Dispatch receiver should be null: $dispatchReceiver")
             if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
             val constructorSymbol = context.symbolTable.referenceConstructor(constructorDescriptor.original)
-            val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, context.irBuiltIns.unitType, constructorSymbol)
+            val returnType = constructorDescriptor.returnType.toIrType()
+            val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, returnType, constructorSymbol)
             context.callToSubstitutedDescriptorMap[irCall] = constructorDescriptor
-            addParametersToCall(startOffset, endOffset, call, irCall, context.irBuiltIns.unitType)
+            addParametersToCall(startOffset, endOffset, call, irCall, irCall.type)
         }
     }
 

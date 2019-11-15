@@ -12,7 +12,8 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.X.B
         CONSTRUCTOR visibility:private <> () returnType:<root>.X.B [primary]
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.X'
+            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.X'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:B modality:FINAL visibility:public superTypes:[<root>.X]'
         PROPERTY name:value2 visibility:public modality:FINAL [val]
           FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.String visibility:private [final]

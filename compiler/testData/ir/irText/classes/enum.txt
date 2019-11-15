@@ -145,7 +145,8 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum3.TEST
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum3.TEST [primary]
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum3'
+            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum3'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST modality:FINAL visibility:public superTypes:[<root>.TestEnum3]'
         FUN name:foo visibility:public modality:OPEN <> ($this:<root>.TestEnum3.TEST) returnType:kotlin.Unit
           overridden:
@@ -270,8 +271,9 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum4.TEST1
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum4.TEST1 [primary]
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestEnum4'
-              x: CONST Int type=kotlin.Int value=1
+            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestEnum4'
+                x: CONST Int type=kotlin.Int value=1
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST1 modality:FINAL visibility:public superTypes:[<root>.TestEnum4]'
         FUN name:foo visibility:public modality:OPEN <> ($this:<root>.TestEnum4.TEST1) returnType:kotlin.Unit
           overridden:
@@ -334,8 +336,9 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum4.TEST2
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum4.TEST2 [primary]
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestEnum4'
-              x: CONST Int type=kotlin.Int value=2
+            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestEnum4'
+                x: CONST Int type=kotlin.Int value=2
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:public superTypes:[<root>.TestEnum4]'
         PROPERTY name:z visibility:public modality:FINAL [val]
           FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]
@@ -529,5 +532,96 @@ FILE fqName:<root> fileName:/enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum5>
       SYNTHETIC_BODY kind=ENUM_VALUES
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum5
+      VALUE_PARAMETER name:value index:0 type:kotlin.String
+      SYNTHETIC_BODY kind=ENUM_VALUEOF
+  FUN name:f visibility:public modality:FINAL <> () returnType:kotlin.Int
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun f (): kotlin.Int declared in <root>'
+        CONST Int type=kotlin.Int value=1
+  CLASS ENUM_CLASS name:TestEnum6 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum6>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum6
+    CONSTRUCTOR visibility:private <> (x:kotlin.Int, y:kotlin.Int) returnType:<root>.TestEnum6 [primary]
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      VALUE_PARAMETER name:y index:1 type:kotlin.Int
+      BLOCK_BODY
+        ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
+          <E>: <root>.TestEnum6
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum6 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum6>]'
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'x: kotlin.Int declared in <root>.TestEnum6.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestEnum6) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum6
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum6'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.TestEnum6 declared in <root>.TestEnum6.<get-x>' type=<root>.TestEnum6 origin=null
+    PROPERTY name:y visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'y: kotlin.Int declared in <root>.TestEnum6.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.TestEnum6) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum6
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.TestEnum6'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.TestEnum6 declared in <root>.TestEnum6.<get-y>' type=<root>.TestEnum6 origin=null
+    ENUM_ENTRY name:TEST
+      init: BLOCK type=<root>.TestEnum6 origin=ARGUMENTS_REORDERING_FOR_CALL
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+          CALL 'public final fun f (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+          CALL 'public final fun f (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int, y: kotlin.Int) [primary] declared in <root>.TestEnum6'
+          x: GET_VAR 'val tmp_1: kotlin.Int [val] declared in <root>.TestEnum6' type=kotlin.Int origin=null
+          y: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.TestEnum6' type=kotlin.Int origin=null
+    FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>) returnType:kotlin.Any [fake_override]
+      overridden:
+        protected final fun clone (): kotlin.Any declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
+    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>) returnType:kotlin.Unit [fake_override]
+      overridden:
+        protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>) returnType:java.lang.Class<<root>.TestEnum6?>? [fake_override]
+      overridden:
+        public final fun getDeclaringClass (): java.lang.Class<E of kotlin.Enum?>? declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
+    FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>, other:<root>.TestEnum6) returnType:kotlin.Int [fake_override]
+      overridden:
+        public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
+      VALUE_PARAMETER name:other index:0 type:<root>.TestEnum6
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override]
+      overridden:
+        public final fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>) returnType:kotlin.Int [fake_override]
+      overridden:
+        public final fun hashCode (): kotlin.Int declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
+    PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+      FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>) returnType:kotlin.String [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-name> (): kotlin.String declared in kotlin.Enum
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
+    PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+      FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.TestEnum6>) returnType:kotlin.Int [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<<root>.TestEnum6>) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum6>
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.TestEnum6>
+      SYNTHETIC_BODY kind=ENUM_VALUES
+    FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum6
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
