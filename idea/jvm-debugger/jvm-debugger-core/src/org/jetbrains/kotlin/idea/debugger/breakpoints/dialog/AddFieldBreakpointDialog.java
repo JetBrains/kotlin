@@ -20,6 +20,7 @@ import com.intellij.debugger.DebuggerBundle;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.ide.util.TreeClassChooser;
 import com.intellij.ide.util.TreeClassChooserFactory;
+import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
@@ -87,7 +88,7 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
             MemberChooser<DescriptorMemberChooserObject> chooser = new MemberChooser<>(properties, false, false, myProject);
             chooser.setTitle(DebuggerBundle.message("add.field.breakpoint.dialog.field.chooser.title", properties.length));
             chooser.setCopyJavadocVisible(false);
-            chooser.show();
+            TransactionGuard.getInstance().submitTransactionAndWait(chooser::show);
             List<DescriptorMemberChooserObject> selectedElements = chooser.getSelectedElements();
             if (selectedElements != null && selectedElements.size() == 1) {
                 KtProperty field = (KtProperty) selectedElements.get(0).getElement();
