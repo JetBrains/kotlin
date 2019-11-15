@@ -6,296 +6,233 @@ digraph safeCalls_kt {
   subgraph cluster_0 {
     color=red
     0 [label="Enter function foo" style="filled" fillcolor=red];
-    subgraph cluster_1 {
-      color=blue
-      1 [label="Enter block"];
-      2 [label="Const: String()"];
-      3 [label="Jump: ^foo String()"];
-      4 [label="Stub" style="filled" fillcolor=gray];
-      5 [label="Exit block" style="filled" fillcolor=gray];
-    }
-    6 [label="Exit function foo" style="filled" fillcolor=red];
+    1 [label="Const: String()"];
+    2 [label="Jump: ^foo String()"];
+    3 [label="Stub" style="filled" fillcolor=gray];
+    4 [label="Exit function foo" style="filled" fillcolor=red];
   }
 
   0 -> {1};
   1 -> {2};
-  2 -> {3};
-  3 -> {6};
+  2 -> {4};
+  2 -> {3} [style=dotted];
   3 -> {4} [style=dotted];
-  4 -> {5} [style=dotted];
-  5 -> {6} [style=dotted];
+
+  subgraph cluster_1 {
+    color=red
+    5 [label="Enter function let" style="filled" fillcolor=red];
+    6 [label="Exit function let" style="filled" fillcolor=red];
+  }
+
+  5 -> {6};
 
   subgraph cluster_2 {
     color=red
-    7 [label="Enter function let" style="filled" fillcolor=red];
-    subgraph cluster_3 {
-      color=blue
-      8 [label="Enter block"];
-      9 [label="Exit block"];
-    }
-    10 [label="Exit function let" style="filled" fillcolor=red];
+    7 [label="Enter function test" style="filled" fillcolor=red];
+    8 [label="Access variable R|<local>/x|"];
+    9 [label="Enter safe call"];
+    10 [label="Access variable R|<local>/x|"];
+    11 [label="Access variable R|kotlin/String.length|"];
+    12 [label="Const: Int(1)"];
+    13 [label="Operator =="];
+    14 [label="Function call: R|<local>/x|?.R|/foo|(==(R|<local>/x|.R|kotlin/String.length|, Int(1)))"];
+    15 [label="Exit safe call"];
+    16 [label="Access variable R|<local>/x|"];
+    17 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+    18 [label="Exit function test" style="filled" fillcolor=red];
   }
 
   7 -> {8};
-  8 -> {9};
+  8 -> {9 15};
   9 -> {10};
-
-  subgraph cluster_4 {
-    color=red
-    11 [label="Enter function test" style="filled" fillcolor=red];
-    subgraph cluster_5 {
-      color=blue
-      12 [label="Enter block"];
-      13 [label="Access variable R|<local>/x|"];
-      14 [label="Enter safe call"];
-      15 [label="Access variable R|<local>/x|"];
-      16 [label="Access variable R|kotlin/String.length|"];
-      17 [label="Const: Int(1)"];
-      18 [label="Operator =="];
-      19 [label="Function call: R|<local>/x|?.R|/foo|(==(R|<local>/x|.R|kotlin/String.length|, Int(1)))"];
-      20 [label="Exit safe call"];
-      21 [label="Access variable R|<local>/x|"];
-      22 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
-      23 [label="Exit block"];
-    }
-    24 [label="Exit function test" style="filled" fillcolor=red];
-  }
-
+  10 -> {11};
   11 -> {12};
   12 -> {13};
-  13 -> {14 20};
+  13 -> {14};
   14 -> {15};
   15 -> {16};
   16 -> {17};
   17 -> {18};
-  18 -> {19};
+
+  subgraph cluster_3 {
+    color=red
+    19 [label="Enter function bar" style="filled" fillcolor=red];
+    20 [label="Exit function bar" style="filled" fillcolor=red];
+  }
+
   19 -> {20};
-  20 -> {21};
+
+  subgraph cluster_4 {
+    color=red
+    21 [label="Enter function bool" style="filled" fillcolor=red];
+    22 [label="Exit function bool" style="filled" fillcolor=red];
+  }
+
   21 -> {22};
-  22 -> {23};
+
+  subgraph cluster_5 {
+    color=red
+    23 [label="Enter function id" style="filled" fillcolor=red];
+    24 [label="Exit function id" style="filled" fillcolor=red];
+  }
+
   23 -> {24};
 
   subgraph cluster_6 {
     color=red
-    25 [label="Enter function bar" style="filled" fillcolor=red];
-    26 [label="Exit function bar" style="filled" fillcolor=red];
+    25 [label="Enter function test_2" style="filled" fillcolor=red];
+    26 [label="Access variable R|<local>/x|"];
+    27 [label="Type operator: x as? A"];
+    28 [label="Enter safe call"];
+    29 [label="Access variable R|<local>/x|"];
+    30 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)"];
+    31 [label="Exit safe call"];
+    32 [label="Exit function test_2" style="filled" fillcolor=red];
   }
 
   25 -> {26};
+  26 -> {27};
+  27 -> {28 31};
+  28 -> {29};
+  29 -> {30};
+  30 -> {31};
+  31 -> {32};
 
   subgraph cluster_7 {
     color=red
-    27 [label="Enter function bool" style="filled" fillcolor=red];
-    28 [label="Exit function bool" style="filled" fillcolor=red];
-  }
-
-  27 -> {28};
-
-  subgraph cluster_8 {
-    color=red
-    29 [label="Enter function id" style="filled" fillcolor=red];
-    30 [label="Exit function id" style="filled" fillcolor=red];
-  }
-
-  29 -> {30};
-
-  subgraph cluster_9 {
-    color=red
-    31 [label="Enter function test_2" style="filled" fillcolor=red];
-    subgraph cluster_10 {
-      color=blue
-      32 [label="Enter block"];
-      33 [label="Access variable R|<local>/x|"];
-      34 [label="Type operator: x as? A"];
-      35 [label="Enter safe call"];
-      36 [label="Access variable R|<local>/x|"];
-      37 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)"];
-      38 [label="Exit safe call"];
-      39 [label="Exit block"];
-    }
-    40 [label="Exit function test_2" style="filled" fillcolor=red];
-  }
-
-  31 -> {32};
-  32 -> {33};
-  33 -> {34};
-  34 -> {35 38};
-  35 -> {36};
-  36 -> {37};
-  37 -> {38};
-  38 -> {39};
-  39 -> {40};
-
-  subgraph cluster_11 {
-    color=red
-    41 [label="Enter function test_3" style="filled" fillcolor=red];
-    subgraph cluster_12 {
-      color=blue
-      42 [label="Enter block"];
-      43 [label="Access variable R|<local>/x|"];
-      44 [label="Type operator: x as? A"];
-      45 [label="Enter safe call"];
-      46 [label="Access variable R|<local>/x|"];
-      47 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)"];
-      48 [label="Exit safe call"];
-      49 [label="Enter safe call"];
-      50 [label="Access variable R|<local>/x|"];
-      51 [label="Function call: R|<local>/x|.R|/A.bool|()"];
-      52 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)?.R|/foo|(R|<local>/x|.R|/A.bool|())"];
-      53 [label="Exit safe call"];
-      54 [label="Enter safe call"];
-      55 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)?.R|/foo|(R|<local>/x|.R|/A.bool|())?.R|/let|(<L> = let@fun <anonymous>(): R|kotlin/Unit| {
+    33 [label="Enter function test_3" style="filled" fillcolor=red];
+    34 [label="Access variable R|<local>/x|"];
+    35 [label="Type operator: x as? A"];
+    36 [label="Enter safe call"];
+    37 [label="Access variable R|<local>/x|"];
+    38 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)"];
+    39 [label="Exit safe call"];
+    40 [label="Enter safe call"];
+    41 [label="Access variable R|<local>/x|"];
+    42 [label="Function call: R|<local>/x|.R|/A.bool|()"];
+    43 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)?.R|/foo|(R|<local>/x|.R|/A.bool|())"];
+    44 [label="Exit safe call"];
+    45 [label="Enter safe call"];
+    46 [label="Function call: (R|<local>/x| as? R|A|)?.R|/A.bar|(R|<local>/x|)?.R|/foo|(R|<local>/x|.R|/A.bool|())?.R|/let|(<L> = let@fun <anonymous>(): R|kotlin/Unit| {
     R|<local>/x|.R|/A.bool|()
 }
 )"];
-      56 [label="Exit safe call"];
-      57 [label="Access variable R|<local>/x|"];
-      58 [label="Function call: R|<local>/x|.<Unresolved name: bool>#()"];
-      59 [label="Exit block"];
-    }
-    60 [label="Exit function test_3" style="filled" fillcolor=red];
+    47 [label="Exit safe call"];
+    48 [label="Access variable R|<local>/x|"];
+    49 [label="Function call: R|<local>/x|.<Unresolved name: bool>#()"];
+    50 [label="Exit function test_3" style="filled" fillcolor=red];
   }
 
+  33 -> {34};
+  34 -> {35};
+  35 -> {36 39};
+  36 -> {37};
+  37 -> {38};
+  38 -> {39};
+  39 -> {40 44};
+  40 -> {41};
   41 -> {42};
   42 -> {43};
   43 -> {44};
-  44 -> {45 48};
+  44 -> {45 47};
   45 -> {46};
   46 -> {47};
   47 -> {48};
-  48 -> {49 53};
+  48 -> {49};
   49 -> {50};
-  50 -> {51};
-  51 -> {52};
-  52 -> {53};
-  53 -> {54 56};
-  54 -> {55};
-  55 -> {56};
-  56 -> {57};
-  57 -> {58};
-  58 -> {59};
-  59 -> {60};
 
-  subgraph cluster_13 {
+  subgraph cluster_8 {
     color=red
-    61 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-    subgraph cluster_14 {
-      color=blue
-      62 [label="Enter block"];
-      63 [label="Access variable R|<local>/x|"];
-      64 [label="Function call: R|<local>/x|.R|/A.bool|()"];
-      65 [label="Exit block"];
-    }
-    66 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+    51 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+    52 [label="Access variable R|<local>/x|"];
+    53 [label="Function call: R|<local>/x|.R|/A.bool|()"];
+    54 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
   }
 
+  51 -> {52};
+  52 -> {53};
+  53 -> {54};
+
+  subgraph cluster_9 {
+    color=red
+    55 [label="Enter function test_4" style="filled" fillcolor=red];
+    56 [label="Access variable R|<local>/x|"];
+    57 [label="Enter safe call"];
+    58 [label="Function call: R|<local>/x|?.R|/A.id|()"];
+    59 [label="Exit safe call"];
+    60 [label="Enter safe call"];
+    61 [label="Function call: R|<local>/x|?.R|/A.id|()?.R|/A.bool|()"];
+    62 [label="Exit safe call"];
+    63 [label="Access variable R|<local>/x|"];
+    64 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
+    65 [label="Exit function test_4" style="filled" fillcolor=red];
+  }
+
+  55 -> {56};
+  56 -> {57 59};
+  57 -> {58};
+  58 -> {59};
+  59 -> {60 62};
+  60 -> {61};
   61 -> {62};
   62 -> {63};
   63 -> {64};
   64 -> {65};
-  65 -> {66};
 
-  subgraph cluster_15 {
+  subgraph cluster_10 {
     color=red
-    67 [label="Enter function test_4" style="filled" fillcolor=red];
-    subgraph cluster_16 {
+    66 [label="Enter function boo" style="filled" fillcolor=red];
+    67 [label="Exit function boo" style="filled" fillcolor=red];
+  }
+
+  66 -> {67};
+
+  subgraph cluster_11 {
+    color=red
+    68 [label="Enter function test_5" style="filled" fillcolor=red];
+    69 [label="Access variable R|<local>/x|"];
+    70 [label="Enter safe call"];
+    subgraph cluster_12 {
       color=blue
-      68 [label="Enter block"];
-      69 [label="Access variable R|<local>/x|"];
-      70 [label="Enter safe call"];
-      71 [label="Function call: R|<local>/x|?.R|/A.id|()"];
-      72 [label="Exit safe call"];
-      73 [label="Enter safe call"];
-      74 [label="Function call: R|<local>/x|?.R|/A.id|()?.R|/A.bool|()"];
-      75 [label="Exit safe call"];
-      76 [label="Access variable R|<local>/x|"];
-      77 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
-      78 [label="Exit block"];
+      71 [label="Enter function anonymousFunction"];
+      72 [label="Jump: ^ Unit"];
+      73 [label="Stub" style="filled" fillcolor=gray];
+      74 [label="Exit function anonymousFunction"];
     }
-    79 [label="Exit function test_4" style="filled" fillcolor=red];
-  }
-
-  67 -> {68};
-  68 -> {69};
-  69 -> {70 72};
-  70 -> {71};
-  71 -> {72};
-  72 -> {73 75};
-  73 -> {74};
-  74 -> {75};
-  75 -> {76};
-  76 -> {77};
-  77 -> {78};
-  78 -> {79};
-
-  subgraph cluster_17 {
-    color=red
-    80 [label="Enter function boo" style="filled" fillcolor=red];
-    81 [label="Exit function boo" style="filled" fillcolor=red];
-  }
-
-  80 -> {81};
-
-  subgraph cluster_18 {
-    color=red
-    82 [label="Enter function test_5" style="filled" fillcolor=red];
-    subgraph cluster_19 {
-      color=blue
-      83 [label="Enter block"];
-      84 [label="Access variable R|<local>/x|"];
-      85 [label="Enter safe call"];
-      subgraph cluster_20 {
-        color=blue
-        86 [label="Enter function anonymousFunction"];
-        subgraph cluster_21 {
-          color=blue
-          87 [label="Enter block"];
-          88 [label="Jump: ^ Unit"];
-          89 [label="Stub" style="filled" fillcolor=gray];
-          90 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        91 [label="Exit function anonymousFunction"];
-      }
-      92 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    75 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
     ^ Unit
 }
 )"];
-      93 [label="Exit safe call"];
-      94 [label="Enter safe call"];
-      95 [label="Access variable R|<local>/x|"];
-      96 [label="Function call: R|<local>/x|.R|/A.bool|()"];
-      97 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Nothing|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+    76 [label="Exit safe call"];
+    77 [label="Enter safe call"];
+    78 [label="Access variable R|<local>/x|"];
+    79 [label="Function call: R|<local>/x|.R|/A.bool|()"];
+    80 [label="Function call: R|<local>/x|?.R|kotlin/let|<R|A|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
     ^ Unit
 }
 )?.R|/boo|(R|<local>/x|.R|/A.bool|())"];
-      98 [label="Exit safe call"];
-      99 [label="Access variable R|<local>/x|"];
-      100 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
-      101 [label="Exit block"];
-    }
-    102 [label="Exit function test_5" style="filled" fillcolor=red];
+    81 [label="Exit safe call"];
+    82 [label="Access variable R|<local>/x|"];
+    83 [label="Function call: R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.id]>#()"];
+    84 [label="Exit function test_5" style="filled" fillcolor=red];
   }
 
+  68 -> {69};
+  69 -> {70 76};
+  70 -> {71};
+  71 -> {72};
+  72 -> {74};
+  72 -> {73} [style=dotted];
+  73 -> {74} [style=dotted];
+  74 -> {75};
+  75 -> {76};
+  76 -> {77 81};
+  77 -> {78};
+  78 -> {79};
+  79 -> {80};
+  80 -> {81};
+  81 -> {82};
   82 -> {83};
   83 -> {84};
-  84 -> {85 93};
-  85 -> {86};
-  86 -> {87};
-  87 -> {88};
-  88 -> {91};
-  88 -> {89} [style=dotted];
-  89 -> {90} [style=dotted];
-  90 -> {91} [style=dotted];
-  91 -> {92};
-  92 -> {93};
-  93 -> {94 98};
-  94 -> {95};
-  95 -> {96};
-  96 -> {97};
-  97 -> {98};
-  98 -> {99};
-  99 -> {100};
-  100 -> {101};
-  101 -> {102};
 
 }

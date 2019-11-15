@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.diagnostics.FirSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.FirUnresolvedReferenceError
@@ -37,7 +38,7 @@ interface LambdaAnalyzer {
         expectedReturnType: ConeKotlinType?, // null means, that return type is not proper i.e. it depends on some type variables
         rawReturnType: ConeKotlinType,
         stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
-    ): Pair<List<FirExpression>, InferenceSession>
+    ): Pair<List<FirStatement>, InferenceSession>
 }
 
 
@@ -142,6 +143,7 @@ class PostponedArgumentsAnalyzer(
         val checkerSink: CheckerSink = CheckerSinkImpl(components)
 
         val subResolvedKtPrimitives = returnArguments.map {
+            if (it !is FirExpression) return@map
             var atom: PostponedResolvedAtomMarker? = null
             candidate.resolveArgumentExpression(
                 c.getBuilder(),

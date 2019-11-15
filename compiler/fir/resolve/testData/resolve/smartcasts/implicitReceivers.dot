@@ -14,243 +14,199 @@ digraph implicitReceivers_kt {
   subgraph cluster_1 {
     color=red
     2 [label="Enter function foo" style="filled" fillcolor=red];
-    subgraph cluster_2 {
-      color=blue
-      3 [label="Enter block"];
-      4 [label="Exit block"];
-    }
-    5 [label="Exit function foo" style="filled" fillcolor=red];
+    3 [label="Exit function foo" style="filled" fillcolor=red];
   }
 
   2 -> {3};
-  3 -> {4};
+
+  subgraph cluster_2 {
+    color=red
+    4 [label="Enter function with" style="filled" fillcolor=red];
+    5 [label="Exit function with" style="filled" fillcolor=red];
+  }
+
   4 -> {5};
 
   subgraph cluster_3 {
     color=red
-    6 [label="Enter function with" style="filled" fillcolor=red];
+    6 [label="Enter function test_1" style="filled" fillcolor=red];
     subgraph cluster_4 {
       color=blue
-      7 [label="Enter block"];
-      8 [label="Exit block"];
+      7 [label="Enter when"];
+      subgraph cluster_5 {
+        color=blue
+        8 [label="Enter when branch condition "];
+        9 [label="Access variable this@R|/test_1|"];
+        10 [label="Type operator: this is A"];
+        11 [label="Exit when branch condition"];
+      }
+      subgraph cluster_6 {
+        color=blue
+        12 [label="Enter when branch condition else"];
+        13 [label="Exit when branch condition"];
+      }
+      14 [label="Enter when branch result"];
+      subgraph cluster_7 {
+        color=blue
+        15 [label="Enter block"];
+        16 [label="Access variable this@R|/test_1|"];
+        17 [label="Function call: this@R|/test_1|.<Unresolved name: foo>#()"];
+        18 [label="Function call: <Unresolved name: foo>#()"];
+        19 [label="Exit block"];
+      }
+      20 [label="Exit when branch result"];
+      21 [label="Enter when branch result"];
+      subgraph cluster_8 {
+        color=blue
+        22 [label="Enter block"];
+        23 [label="Access variable this@R|/test_1|"];
+        24 [label="Function call: this@R|/test_1|.R|/A.foo|()"];
+        25 [label="Function call: this@R|/A|.R|/A.foo|()"];
+        26 [label="Exit block"];
+      }
+      27 [label="Exit when branch result"];
+      28 [label="Exit when"];
     }
-    9 [label="Exit function with" style="filled" fillcolor=red];
+    29 [label="Access variable this@R|/test_1|"];
+    30 [label="Function call: this@R|/test_1|.<Unresolved name: foo>#()"];
+    31 [label="Function call: <Unresolved name: foo>#()"];
+    32 [label="Exit function test_1" style="filled" fillcolor=red];
   }
 
   6 -> {7};
   7 -> {8};
   8 -> {9};
-
-  subgraph cluster_5 {
-    color=red
-    10 [label="Enter function test_1" style="filled" fillcolor=red];
-    subgraph cluster_6 {
-      color=blue
-      11 [label="Enter block"];
-      subgraph cluster_7 {
-        color=blue
-        12 [label="Enter when"];
-        subgraph cluster_8 {
-          color=blue
-          13 [label="Enter when branch condition "];
-          14 [label="Access variable this@R|/test_1|"];
-          15 [label="Type operator: this is A"];
-          16 [label="Exit when branch condition"];
-        }
-        subgraph cluster_9 {
-          color=blue
-          17 [label="Enter when branch condition else"];
-          18 [label="Exit when branch condition"];
-        }
-        19 [label="Enter when branch result"];
-        subgraph cluster_10 {
-          color=blue
-          20 [label="Enter block"];
-          21 [label="Access variable this@R|/test_1|"];
-          22 [label="Function call: this@R|/test_1|.<Unresolved name: foo>#()"];
-          23 [label="Function call: <Unresolved name: foo>#()"];
-          24 [label="Exit block"];
-        }
-        25 [label="Exit when branch result"];
-        26 [label="Enter when branch result"];
-        subgraph cluster_11 {
-          color=blue
-          27 [label="Enter block"];
-          28 [label="Access variable this@R|/test_1|"];
-          29 [label="Function call: this@R|/test_1|.R|/A.foo|()"];
-          30 [label="Function call: this@R|/A|.R|/A.foo|()"];
-          31 [label="Exit block"];
-        }
-        32 [label="Exit when branch result"];
-        33 [label="Exit when"];
-      }
-      34 [label="Access variable this@R|/test_1|"];
-      35 [label="Function call: this@R|/test_1|.<Unresolved name: foo>#()"];
-      36 [label="Function call: <Unresolved name: foo>#()"];
-      37 [label="Exit block"];
-    }
-    38 [label="Exit function test_1" style="filled" fillcolor=red];
-  }
-
+  9 -> {10};
   10 -> {11};
-  11 -> {12};
+  11 -> {21 12};
   12 -> {13};
   13 -> {14};
   14 -> {15};
   15 -> {16};
-  16 -> {26 17};
+  16 -> {17};
   17 -> {18};
   18 -> {19};
   19 -> {20};
-  20 -> {21};
+  20 -> {28};
   21 -> {22};
   22 -> {23};
   23 -> {24};
   24 -> {25};
-  25 -> {33};
+  25 -> {26};
   26 -> {27};
   27 -> {28};
   28 -> {29};
   29 -> {30};
   30 -> {31};
   31 -> {32};
-  32 -> {33};
+
+  subgraph cluster_9 {
+    color=red
+    33 [label="Enter function test_2" style="filled" fillcolor=red];
+    subgraph cluster_10 {
+      color=blue
+      34 [label="Enter when"];
+      subgraph cluster_11 {
+        color=blue
+        35 [label="Enter when branch condition "];
+        36 [label="Access variable this@R|/test_2|"];
+        37 [label="Type operator: this !is A"];
+        38 [label="Exit when branch condition"];
+      }
+      subgraph cluster_12 {
+        color=blue
+        39 [label="Enter when branch condition else"];
+        40 [label="Exit when branch condition"];
+      }
+      41 [label="Enter when branch result"];
+      subgraph cluster_13 {
+        color=blue
+        42 [label="Enter block"];
+        43 [label="Access variable this@R|/test_2|"];
+        44 [label="Function call: this@R|/test_2|.R|/A.foo|()"];
+        45 [label="Function call: this@R|/A|.R|/A.foo|()"];
+        46 [label="Exit block"];
+      }
+      47 [label="Exit when branch result"];
+      48 [label="Enter when branch result"];
+      subgraph cluster_14 {
+        color=blue
+        49 [label="Enter block"];
+        50 [label="Access variable this@R|/test_2|"];
+        51 [label="Function call: this@R|/test_2|.<Unresolved name: foo>#()"];
+        52 [label="Function call: <Unresolved name: foo>#()"];
+        53 [label="Exit block"];
+      }
+      54 [label="Exit when branch result"];
+      55 [label="Exit when"];
+    }
+    56 [label="Access variable this@R|/test_2|"];
+    57 [label="Function call: this@R|/test_2|.<Unresolved name: foo>#()"];
+    58 [label="Function call: <Unresolved name: foo>#()"];
+    59 [label="Exit function test_2" style="filled" fillcolor=red];
+  }
+
   33 -> {34};
   34 -> {35};
   35 -> {36};
   36 -> {37};
   37 -> {38};
-
-  subgraph cluster_12 {
-    color=red
-    39 [label="Enter function test_2" style="filled" fillcolor=red];
-    subgraph cluster_13 {
-      color=blue
-      40 [label="Enter block"];
-      subgraph cluster_14 {
-        color=blue
-        41 [label="Enter when"];
-        subgraph cluster_15 {
-          color=blue
-          42 [label="Enter when branch condition "];
-          43 [label="Access variable this@R|/test_2|"];
-          44 [label="Type operator: this !is A"];
-          45 [label="Exit when branch condition"];
-        }
-        subgraph cluster_16 {
-          color=blue
-          46 [label="Enter when branch condition else"];
-          47 [label="Exit when branch condition"];
-        }
-        48 [label="Enter when branch result"];
-        subgraph cluster_17 {
-          color=blue
-          49 [label="Enter block"];
-          50 [label="Access variable this@R|/test_2|"];
-          51 [label="Function call: this@R|/test_2|.R|/A.foo|()"];
-          52 [label="Function call: this@R|/A|.R|/A.foo|()"];
-          53 [label="Exit block"];
-        }
-        54 [label="Exit when branch result"];
-        55 [label="Enter when branch result"];
-        subgraph cluster_18 {
-          color=blue
-          56 [label="Enter block"];
-          57 [label="Access variable this@R|/test_2|"];
-          58 [label="Function call: this@R|/test_2|.<Unresolved name: foo>#()"];
-          59 [label="Function call: <Unresolved name: foo>#()"];
-          60 [label="Exit block"];
-        }
-        61 [label="Exit when branch result"];
-        62 [label="Exit when"];
-      }
-      63 [label="Access variable this@R|/test_2|"];
-      64 [label="Function call: this@R|/test_2|.<Unresolved name: foo>#()"];
-      65 [label="Function call: <Unresolved name: foo>#()"];
-      66 [label="Exit block"];
-    }
-    67 [label="Exit function test_2" style="filled" fillcolor=red];
-  }
-
+  38 -> {48 39};
   39 -> {40};
   40 -> {41};
   41 -> {42};
   42 -> {43};
   43 -> {44};
   44 -> {45};
-  45 -> {55 46};
+  45 -> {46};
   46 -> {47};
-  47 -> {48};
+  47 -> {55};
   48 -> {49};
   49 -> {50};
   50 -> {51};
   51 -> {52};
   52 -> {53};
   53 -> {54};
-  54 -> {62};
+  54 -> {55};
   55 -> {56};
   56 -> {57};
   57 -> {58};
   58 -> {59};
-  59 -> {60};
-  60 -> {61};
-  61 -> {62};
-  62 -> {63};
-  63 -> {64};
-  64 -> {65};
-  65 -> {66};
-  66 -> {67};
 
-  subgraph cluster_19 {
+  subgraph cluster_15 {
     color=red
-    68 [label="Enter function test_3" style="filled" fillcolor=red];
-    subgraph cluster_20 {
+    60 [label="Enter function test_3" style="filled" fillcolor=red];
+    61 [label="Access variable R|<local>/a|"];
+    subgraph cluster_16 {
       color=blue
-      69 [label="Enter block"];
-      70 [label="Access variable R|<local>/a|"];
-      subgraph cluster_21 {
+      62 [label="Enter function anonymousFunction"];
+      63 [label="Access variable R|<local>/b|"];
+      subgraph cluster_17 {
         color=blue
-        71 [label="Enter function anonymousFunction"];
-        subgraph cluster_22 {
+        64 [label="Enter function anonymousFunction"];
+        65 [label="Access variable R|<local>/c|"];
+        subgraph cluster_18 {
           color=blue
-          72 [label="Enter block"];
-          73 [label="Access variable R|<local>/b|"];
-          subgraph cluster_23 {
-            color=blue
-            74 [label="Enter function anonymousFunction"];
-            subgraph cluster_24 {
-              color=blue
-              75 [label="Enter block"];
-              76 [label="Access variable R|<local>/c|"];
-              subgraph cluster_25 {
-                color=blue
-                77 [label="Enter function anonymousFunction"];
-                subgraph cluster_26 {
-                  color=blue
-                  78 [label="Enter block"];
-                  79 [label="Access variable this@R|special/anonymous|"];
-                  80 [label="Type operator: this@wb as A"];
-                  81 [label="Access variable this@R|special/anonymous|"];
-                  82 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
-                  83 [label="Function call: this@R|/A|.R|/A.foo|()"];
-                  84 [label="Exit block"];
-                }
-                85 [label="Exit function anonymousFunction"];
-              }
-              86 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+          66 [label="Enter function anonymousFunction"];
+          67 [label="Access variable this@R|special/anonymous|"];
+          68 [label="Type operator: this@wb as A"];
+          69 [label="Access variable this@R|special/anonymous|"];
+          70 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
+          71 [label="Function call: this@R|/A|.R|/A.foo|()"];
+          72 [label="Exit function anonymousFunction"];
+        }
+        73 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
     (this@R|special/anonymous| as R|A|)
     this@R|special/anonymous|.R|/A.foo|()
     this@R|/A|.R|/A.foo|()
 }
 )"];
-              87 [label="Access variable this@R|special/anonymous|"];
-              88 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
-              89 [label="Function call: this@R|/A|.R|/A.foo|()"];
-              90 [label="Exit block"];
-            }
-            91 [label="Exit function anonymousFunction"];
-          }
-          92 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+        74 [label="Access variable this@R|special/anonymous|"];
+        75 [label="Function call: this@R|special/anonymous|.R|/A.foo|()"];
+        76 [label="Function call: this@R|/A|.R|/A.foo|()"];
+        77 [label="Exit function anonymousFunction"];
+      }
+      78 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
     R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
         (this@R|special/anonymous| as R|A|)
         this@R|special/anonymous|.R|/A.foo|()
@@ -261,11 +217,9 @@ digraph implicitReceivers_kt {
     this@R|/A|.R|/A.foo|()
 }
 )"];
-          93 [label="Exit block"];
-        }
-        94 [label="Exit function anonymousFunction"];
-      }
-      95 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/a|, <L> = wa@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+      79 [label="Exit function anonymousFunction"];
+    }
+    80 [label="Function call: R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/a|, <L> = wa@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
     R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/b|, <L> = wb@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
         R|kotlin/with|<R|kotlin/Any|, R|kotlin/Unit|>(R|<local>/c|, <L> = wc@fun R|kotlin/Any|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             (this@R|special/anonymous| as R|A|)
@@ -279,11 +233,17 @@ digraph implicitReceivers_kt {
     )
 }
 )"];
-      96 [label="Exit block"];
-    }
-    97 [label="Exit function test_3" style="filled" fillcolor=red];
+    81 [label="Exit function test_3" style="filled" fillcolor=red];
   }
 
+  60 -> {61};
+  61 -> {62};
+  62 -> {63};
+  63 -> {64};
+  64 -> {65};
+  65 -> {66};
+  66 -> {67};
+  67 -> {68};
   68 -> {69};
   69 -> {70};
   70 -> {71};
@@ -297,21 +257,5 @@ digraph implicitReceivers_kt {
   78 -> {79};
   79 -> {80};
   80 -> {81};
-  81 -> {82};
-  82 -> {83};
-  83 -> {84};
-  84 -> {85};
-  85 -> {86};
-  86 -> {87};
-  87 -> {88};
-  88 -> {89};
-  89 -> {90};
-  90 -> {91};
-  91 -> {92};
-  92 -> {93};
-  93 -> {94};
-  94 -> {95};
-  95 -> {96};
-  96 -> {97};
 
 }

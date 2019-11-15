@@ -80,6 +80,11 @@ public class FirDiagnosticsWithCfgTestGenerated extends AbstractFirDiagnosticsWi
             runTest("compiler/fir/resolve/testData/resolve/cfg/propertiesAndInitBlocks.kt");
         }
 
+        @TestMetadata("returnValuesFromLambda.kt")
+        public void testReturnValuesFromLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/returnValuesFromLambda.kt");
+        }
+
         @TestMetadata("safeCalls.kt")
         public void testSafeCalls() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/safeCalls.kt");

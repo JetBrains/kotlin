@@ -260,6 +260,16 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/resolve/testData/resolve/arguments/lambda.kt");
         }
 
+        @TestMetadata("lambdaInLambda.kt")
+        public void testLambdaInLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/lambdaInLambda.kt");
+        }
+
+        @TestMetadata("lambdaInLambda2.kt")
+        public void testLambdaInLambda2() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/lambdaInLambda2.kt");
+        }
+
         @TestMetadata("overloadByReceiver.kt")
         public void testOverloadByReceiver() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/overloadByReceiver.kt");
@@ -273,6 +283,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/arguments/simple.kt");
+        }
+
+        @TestMetadata("tryInLambda.kt")
+        public void testTryInLambda() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/arguments/tryInLambda.kt");
         }
 
         @TestMetadata("vararg.kt")

@@ -54,59 +54,45 @@ digraph safeCalls_kt {
   subgraph cluster_6 {
     color=red
     12 [label="Enter function test_1" style="filled" fillcolor=red];
-    subgraph cluster_7 {
-      color=blue
-      13 [label="Enter block"];
-      14 [label="Access variable R|<local>/x|"];
-      15 [label="Enter safe call"];
-      16 [label="Function call: R|<local>/x|?.R|/A.foo|()"];
-      17 [label="Exit safe call"];
-      18 [label="Enter safe call"];
-      19 [label="Function call: R|<local>/x|?.R|/A.foo|()?.R|/A.bar|()"];
-      20 [label="Exit safe call"];
-      21 [label="Exit block"];
-    }
-    22 [label="Exit function test_1" style="filled" fillcolor=red];
+    13 [label="Access variable R|<local>/x|"];
+    14 [label="Enter safe call"];
+    15 [label="Function call: R|<local>/x|?.R|/A.foo|()"];
+    16 [label="Exit safe call"];
+    17 [label="Enter safe call"];
+    18 [label="Function call: R|<local>/x|?.R|/A.foo|()?.R|/A.bar|()"];
+    19 [label="Exit safe call"];
+    20 [label="Exit function test_1" style="filled" fillcolor=red];
   }
 
   12 -> {13};
-  13 -> {14};
-  14 -> {15 17};
+  13 -> {14 16};
+  14 -> {15};
   15 -> {16};
-  16 -> {17};
-  17 -> {18 20};
+  16 -> {17 19};
+  17 -> {18};
   18 -> {19};
   19 -> {20};
-  20 -> {21};
-  21 -> {22};
 
-  subgraph cluster_8 {
+  subgraph cluster_7 {
     color=red
-    23 [label="Enter function test_2" style="filled" fillcolor=red];
-    subgraph cluster_9 {
-      color=blue
-      24 [label="Enter block"];
-      25 [label="Access variable R|<local>/x|"];
-      26 [label="Enter safe call"];
-      27 [label="Access variable R|/B.foo|"];
-      28 [label="Exit safe call"];
-      29 [label="Enter safe call"];
-      30 [label="Access variable R|/B.bar|"];
-      31 [label="Exit safe call"];
-      32 [label="Exit block"];
-    }
-    33 [label="Exit function test_2" style="filled" fillcolor=red];
+    21 [label="Enter function test_2" style="filled" fillcolor=red];
+    22 [label="Access variable R|<local>/x|"];
+    23 [label="Enter safe call"];
+    24 [label="Access variable R|/B.foo|"];
+    25 [label="Exit safe call"];
+    26 [label="Enter safe call"];
+    27 [label="Access variable R|/B.bar|"];
+    28 [label="Exit safe call"];
+    29 [label="Exit function test_2" style="filled" fillcolor=red];
   }
 
+  21 -> {22};
+  22 -> {23 25};
   23 -> {24};
   24 -> {25};
   25 -> {26 28};
   26 -> {27};
   27 -> {28};
-  28 -> {29 31};
-  29 -> {30};
-  30 -> {31};
-  31 -> {32};
-  32 -> {33};
+  28 -> {29};
 
 }

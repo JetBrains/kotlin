@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.withNullability
+import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -77,13 +79,16 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
 
     fun exitFunction(function: FirFunction<*>): ControlFlowGraph? {
         val (node, graph) = graphBuilder.exitFunction(function)
-        node.mergeIncomingFlow()
+        if (function.body == null) {
+            node.mergeIncomingFlow()
+        }
         for (valueParameter in function.valueParameters) {
             variableStorage.removeRealVariable(valueParameter.symbol)
         }
         if (graphBuilder.isTopLevel()) {
             flowOnNodes.clear()
             variableStorage.reset()
+            graphBuilder.reset()
         }
         return graph
     }
@@ -103,11 +108,31 @@ class FirDataFlowAnalyzer(private val components: FirAbstractBodyResolveTransfor
     // ----------------------------------- Block -----------------------------------
 
     fun enterBlock(block: FirBlock) {
-        graphBuilder.enterBlock(block).mergeIncomingFlow()
+        graphBuilder.enterBlock(block)?.mergeIncomingFlow()
     }
 
     fun exitBlock(block: FirBlock) {
         graphBuilder.exitBlock(block).mergeIncomingFlow()
+    }
+
+    private fun FirElement.extractReturnType(target: FirFunction<*>?): ConeKotlinType? {
+        return when (this) {
+            is FirReturnExpression -> {
+                if (this.target.labeledElement == target) {
+                    result.extractReturnType(target)
+                } else {
+                    result.resultType.coneTypeSafe()
+                }
+            }
+            is FirExpression -> {
+                typeRef.coneTypeSafe()
+            }
+            else -> session.builtinTypes.unitType.type
+        }
+    }
+
+    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): List<FirStatement> {
+        return graphBuilder.returnExpressionsOfAnonymousFunction(function)
     }
 
     // ----------------------------------- Operator call -----------------------------------

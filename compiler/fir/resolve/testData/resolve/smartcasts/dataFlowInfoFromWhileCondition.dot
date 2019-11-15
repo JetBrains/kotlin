@@ -14,47 +14,42 @@ digraph dataFlowInfoFromWhileCondition_kt {
   subgraph cluster_1 {
     color=red
     2 [label="Enter function test" style="filled" fillcolor=red];
+    3 [label="Const: Null(null)"];
+    4 [label="Variable declaration: lvar a: R|A?|"];
     subgraph cluster_2 {
       color=blue
-      3 [label="Enter block"];
-      4 [label="Const: Null(null)"];
-      5 [label="Variable declaration: lvar a: R|A?|"];
+      5 [label="Enter while loop"];
       subgraph cluster_3 {
         color=blue
-        6 [label="Enter while loop"];
+        6 [label="Enter loop condition"];
         subgraph cluster_4 {
           color=blue
-          7 [label="Enter loop condition"];
-          subgraph cluster_5 {
-            color=blue
-            8 [label="Enter ||"];
-            9 [label="Access variable R|<local>/a|"];
-            10 [label="Type operator: a is B"];
-            11 [label="Exit left part of ||"];
-            12 [label="Enter right part of ||"];
-            13 [label="Access variable R|<local>/a|"];
-            14 [label="Type operator: a is C"];
-            15 [label="Exit ||"];
-          }
-          16 [label="Exit loop condition"];
+          7 [label="Enter ||"];
+          8 [label="Access variable R|<local>/a|"];
+          9 [label="Type operator: a is B"];
+          10 [label="Exit left part of ||"];
+          11 [label="Enter right part of ||"];
+          12 [label="Access variable R|<local>/a|"];
+          13 [label="Type operator: a is C"];
+          14 [label="Exit ||"];
         }
+        15 [label="Exit loop condition"];
+      }
+      subgraph cluster_5 {
+        color=blue
+        16 [label="Enter loop block"];
         subgraph cluster_6 {
           color=blue
-          17 [label="Enter loop block"];
-          subgraph cluster_7 {
-            color=blue
-            18 [label="Enter block"];
-            19 [label="Access variable R|<local>/a|"];
-            20 [label="Function call: R|<local>/a|.R|/A.foo|()"];
-            21 [label="Exit block"];
-          }
-          22 [label="Exit loop block"];
+          17 [label="Enter block"];
+          18 [label="Access variable R|<local>/a|"];
+          19 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+          20 [label="Exit block"];
         }
-        23 [label="Exit whileloop"];
+        21 [label="Exit loop block"];
       }
-      24 [label="Exit block"];
+      22 [label="Exit whileloop"];
     }
-    25 [label="Exit function test" style="filled" fillcolor=red];
+    23 [label="Exit function test" style="filled" fillcolor=red];
   }
 
   2 -> {3};
@@ -65,20 +60,18 @@ digraph dataFlowInfoFromWhileCondition_kt {
   7 -> {8};
   8 -> {9};
   9 -> {10};
-  10 -> {11};
-  11 -> {15 12};
+  10 -> {14 11};
+  11 -> {12};
   12 -> {13};
   13 -> {14};
   14 -> {15};
-  15 -> {16};
-  16 -> {23 17};
+  15 -> {22 16};
+  16 -> {17};
   17 -> {18};
   18 -> {19};
   19 -> {20};
   20 -> {21};
-  21 -> {22};
-  22 -> {7};
-  23 -> {24};
-  24 -> {25};
+  21 -> {6};
+  22 -> {23};
 
 }

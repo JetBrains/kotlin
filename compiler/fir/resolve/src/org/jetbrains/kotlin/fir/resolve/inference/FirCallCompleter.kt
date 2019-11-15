@@ -107,7 +107,7 @@ class FirCallCompleter(
             expectedReturnType: ConeKotlinType?,
             rawReturnType: ConeKotlinType,
             stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>
-        ): Pair<List<FirExpression>, InferenceSession> {
+        ): Pair<List<FirStatement>, InferenceSession> {
 
             val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
 
@@ -144,7 +144,8 @@ class FirCallCompleter(
             replacements[lambdaArgument] =
                 newLambdaExpression.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
 
-            return (newLambdaExpression.body?.returnExpressions() ?: emptyList()) to InferenceSession.default
+            val returnArguments = dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(newLambdaExpression)
+            return returnArguments to InferenceSession.default
         }
     }
 }

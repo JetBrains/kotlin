@@ -8,32 +8,27 @@ digraph smartcastOnLambda_kt {
     0 [label="Enter function test" style="filled" fillcolor=red];
     subgraph cluster_1 {
       color=blue
-      1 [label="Enter block"];
+      1 [label="Enter when"];
       subgraph cluster_2 {
         color=blue
-        2 [label="Enter when"];
-        subgraph cluster_3 {
-          color=blue
-          3 [label="Enter when branch condition "];
-          4 [label="Access variable R|<local>/func|"];
-          5 [label="Const: Null(null)"];
-          6 [label="Operator !="];
-          7 [label="Exit when branch condition"];
-        }
-        8 [label="Synthetic else branch"];
-        9 [label="Enter when branch result"];
-        subgraph cluster_4 {
-          color=blue
-          10 [label="Enter block"];
-          11 [label="Function call: R|<local>/func|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
-          12 [label="Exit block"];
-        }
-        13 [label="Exit when branch result"];
-        14 [label="Exit when"];
+        2 [label="Enter when branch condition "];
+        3 [label="Access variable R|<local>/func|"];
+        4 [label="Const: Null(null)"];
+        5 [label="Operator !="];
+        6 [label="Exit when branch condition"];
       }
-      15 [label="Exit block"];
+      7 [label="Synthetic else branch"];
+      8 [label="Enter when branch result"];
+      subgraph cluster_3 {
+        color=blue
+        9 [label="Enter block"];
+        10 [label="Function call: R|<local>/func|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+        11 [label="Exit block"];
+      }
+      12 [label="Exit when branch result"];
+      13 [label="Exit when"];
     }
-    16 [label="Exit function test" style="filled" fillcolor=red];
+    14 [label="Exit function test" style="filled" fillcolor=red];
   }
 
   0 -> {1};
@@ -42,15 +37,13 @@ digraph smartcastOnLambda_kt {
   3 -> {4};
   4 -> {5};
   5 -> {6};
-  6 -> {7};
-  7 -> {9 8};
-  8 -> {14};
+  6 -> {8 7};
+  7 -> {13};
+  8 -> {9};
   9 -> {10};
   10 -> {11};
   11 -> {12};
   12 -> {13};
   13 -> {14};
-  14 -> {15};
-  15 -> {16};
 
 }

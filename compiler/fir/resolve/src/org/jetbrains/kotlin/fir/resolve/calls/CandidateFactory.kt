@@ -42,12 +42,13 @@ class CandidateFactory(
     }
 }
 
-fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(expression: FirExpression) {
-    when (expression) {
+fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(statement: FirStatement) {
+    when (statement) {
         is FirFunctionCall, is FirQualifiedAccessExpression, is FirWhenExpression, is FirTryExpression, is FirCallableReferenceAccess ->
-            (expression as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
-        is FirWrappedArgumentExpression -> addSubsystemFromExpression(expression.expression)
-        is FirBlock -> expression.returnExpressions().forEach { addSubsystemFromExpression(it) }
+            (statement as FirResolvable).candidate()?.let { addOtherSystem(it.system.asReadOnlyStorage()) }
+        is FirWrappedArgumentExpression -> addSubsystemFromExpression(statement.expression)
+        is FirBlock -> statement.returnExpressions().forEach { addSubsystemFromExpression(it) }
+        else -> {}
     }
 }
 

@@ -45,6 +45,9 @@ class ControlFlowGraphBuilder {
 
     private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
 
+    private val blocksOfFunctions: MutableMap<FirBlock, FirFunction<*>> = mutableMapOf()
+    private val exitsOfAnonymousFunctions: MutableMap<FirAnonymousFunction, FunctionExitNode> = mutableMapOf()
+
     var levelCounter: Int = 0
         private set
 
@@ -86,6 +89,9 @@ class ControlFlowGraphBuilder {
             }
         }
         val exitNode = createFunctionExitNode(function, isInplace)
+        if (function is FirAnonymousFunction) {
+            exitsOfAnonymousFunctions[function] = exitNode
+        }
 
         @Suppress("NON_EXHAUSTIVE_WHEN")
         when (invocationKind) {
@@ -111,13 +117,14 @@ class ControlFlowGraphBuilder {
             exitNodes.pop()
         }
         if (isInplace) {
-            addNewSimpleNode(exitNode)
             val enterNode = functionEnterNodes.pop()
             when (invocationKind) {
                 InvocationKind.AT_LEAST_ONCE, InvocationKind.UNKNOWN -> addEdge(exitNode, enterNode, propagateDeadness = false)
             }
         } else {
-            addEdge(lastNodes.pop(), exitNode)
+            if (function.body == null) {
+                addEdge(lastNodes.pop(), exitNode)
+            }
             lexicalScopes.pop()
         }
         exitNode.markAsDeadIfNecessary()
@@ -129,15 +136,47 @@ class ControlFlowGraphBuilder {
         return exitNode to graph
     }
 
-    // ----------------------------------- Block -----------------------------------
+    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): List<FirStatement> {
+        fun FirElement.extractArgument(): FirElement = when {
+            this is FirReturnExpression && target.labeledElement.symbol == function.symbol -> result.extractArgument()
+            else -> this
+        }
 
-    fun enterBlock(block: FirBlock): BlockEnterNode {
-        return createBlockEnterNode(block).also { addNewSimpleNode(it) }.also { levelCounter++ }
+        fun CFGNode<*>.extractArgument(): FirElement? = when(this) {
+            is FunctionEnterNode, is TryMainBlockEnterNode, is CatchClauseEnterNode -> null
+            is ExitSafeCallNode -> previousNodes.last().extractArgument()
+            is StubNode -> previousNodes.first().extractArgument()
+            else -> fir.extractArgument()
+        }
+        return exitsOfAnonymousFunctions.getValue(function).previousNodes.mapNotNull {
+            it.extractArgument() as FirStatement?
+        }
     }
 
-    fun exitBlock(block: FirBlock): BlockExitNode {
-        levelCounter--
-        return createBlockExitNode(block).also { addNewSimpleNode(it) }
+    // ----------------------------------- Block -----------------------------------
+
+    fun enterBlock(block: FirBlock): BlockEnterNode? {
+        val lastNode = lastNode
+        return if (lastNode is FunctionEnterNode) {
+            blocksOfFunctions[block] = lastNode.fir
+            null
+        } else {
+            createBlockEnterNode(block).also { addNewSimpleNode(it) }.also { levelCounter++ }
+        }
+    }
+
+    fun exitBlock(block: FirBlock): CFGNode<*> {
+        val function = blocksOfFunctions.remove(block)
+        return if (function != null) {
+            functionExitNodes.top().also {
+                addEdge(lastNodes.pop(), it)
+                lastNodes.push(it)
+                it.markAsDeadIfNecessary()
+            }
+        } else {
+            levelCounter--
+            createBlockExitNode(block).also { addNewSimpleNode(it) }
+        }
     }
 
     // ----------------------------------- Property -----------------------------------
@@ -648,5 +687,9 @@ class ControlFlowGraphBuilder {
 
     private fun InvocationKind?.isInplace(): Boolean {
         return this != null
+    }
+
+    fun reset() {
+        exitsOfAnonymousFunctions.clear()
     }
 }
