@@ -8,10 +8,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.project.Project
-import com.intellij.serviceContainer.ServiceManagerImpl
+import com.intellij.serviceContainer.PlatformComponentManagerImpl
+import com.intellij.serviceContainer.processAllImplementationClasses
 import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.TemporaryDirectory
 import com.intellij.testFramework.assertions.Assertions.assertThat
@@ -42,29 +42,29 @@ internal class DoNotSaveDefaultsTest {
   @Test
   fun testApp() = runBlocking {
     useAppConfigDir {
-      doTest(ApplicationManager.getApplication() as ComponentManagerImpl)
+      doTest(ApplicationManager.getApplication() as PlatformComponentManagerImpl)
     }
   }
 
   @Test
   fun testProject() = runBlocking {
     createOrLoadProject(tempDir, directoryBased = false) { project ->
-      doTest(project as ComponentManagerImpl)
+      doTest(project as PlatformComponentManagerImpl)
     }
   }
 
   @Test
   fun `project - load empty state`() = runBlocking {
     createOrLoadProject(tempDir, directoryBased = false) { project ->
-      doTest(project as ComponentManagerImpl, isTestEmptyState = true)
+      doTest(project as PlatformComponentManagerImpl, isTestEmptyState = true)
     }
   }
 
-  private suspend fun doTest(componentManager: ComponentManagerImpl, isTestEmptyState: Boolean = false) {
+  private suspend fun doTest(componentManager: PlatformComponentManagerImpl, isTestEmptyState: Boolean = false) {
     // wake up (edt, some configurables want read action)
     withContext(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
       val picoContainer = componentManager.picoContainer
-      ServiceManagerImpl.processAllImplementationClasses(componentManager) { clazz, _ ->
+      processAllImplementationClasses(componentManager.picoContainer) { clazz, _ ->
         val className = clazz.name
         // CvsTabbedWindow calls invokeLater in constructor
         if (className != "com.intellij.cvsSupport2.ui.CvsTabbedWindow"

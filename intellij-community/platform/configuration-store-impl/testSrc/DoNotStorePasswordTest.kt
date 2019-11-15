@@ -3,9 +3,10 @@ package com.intellij.configurationStore
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.PersistentStateComponent
-import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.extensions.PluginDescriptor
-import com.intellij.serviceContainer.ServiceManagerImpl
+import com.intellij.serviceContainer.PlatformComponentManagerImpl
+import com.intellij.serviceContainer.processAllImplementationClasses
+import com.intellij.serviceContainer.processComponentInstancesOfType
 import com.intellij.testFramework.ProjectRule
 import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jdom.Attribute
@@ -45,18 +46,16 @@ class DoNotStorePasswordTest {
       true
     }
 
-    val app = ApplicationManager.getApplication() as ComponentManagerImpl
-    ServiceManagerImpl.processAllImplementationClasses(app, processor)
+    val app = ApplicationManager.getApplication() as PlatformComponentManagerImpl
+    processAllImplementationClasses(app.picoContainer, processor::test)
     // yes, we don't use default project here to be sure
-    ServiceManagerImpl.processAllImplementationClasses(projectRule.project, processor)
+    processAllImplementationClasses(projectRule.project.picoContainer, processor::test)
 
-    @Suppress("DEPRECATION")
-    for (c in app.getComponentInstancesOfType(PersistentStateComponent::class.java)) {
-      processor.test(c.javaClass, null)
+    processComponentInstancesOfType(app.picoContainer, PersistentStateComponent::class.java) {
+      processor.test(it.javaClass, null)
     }
-    @Suppress("DEPRECATION")
-    for (c in (projectRule.project as ComponentManagerImpl).getComponentInstancesOfType(PersistentStateComponent::class.java)) {
-      processor.test(c.javaClass, null)
+    processComponentInstancesOfType(projectRule.project.picoContainer, PersistentStateComponent::class.java) {
+      processor.test(it.javaClass, null)
     }
   }
 

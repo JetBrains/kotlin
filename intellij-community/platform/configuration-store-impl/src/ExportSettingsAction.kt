@@ -15,7 +15,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.*
-import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.options.OptionsBundle
 import com.intellij.openapi.options.SchemeManagerFactory
@@ -23,7 +22,8 @@ import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.showOkCancelDialog
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.serviceContainer.ServiceManagerImpl
+import com.intellij.serviceContainer.PlatformComponentManagerImpl
+import com.intellij.serviceContainer.processAllImplementationClasses
 import com.intellij.util.ArrayUtil
 import com.intellij.util.ReflectionUtil
 import com.intellij.util.containers.putValue
@@ -138,7 +138,7 @@ fun getExportableComponentsMap(isOnlyExisting: Boolean,
     }
   }
 
-  val app = ApplicationManager.getApplication() as ComponentManagerImpl
+  val app = ApplicationManager.getApplication() as PlatformComponentManagerImpl
 
   @Suppress("DEPRECATION")
   app.getComponentInstancesOfType(ExportableApplicationComponent::class.java).forEach(processor)
@@ -167,7 +167,7 @@ fun getExportableComponentsMap(isOnlyExisting: Boolean,
 
   val fileToContent = THashMap<Path, String>()
 
-  ServiceManagerImpl.processAllImplementationClasses(app) { aClass, pluginDescriptor ->
+  processAllImplementationClasses(app.picoContainer) { aClass, pluginDescriptor ->
     val stateAnnotation = getStateSpec(aClass)
     @Suppress("DEPRECATION")
     if (stateAnnotation == null || stateAnnotation.name.isEmpty() || ExportableComponent::class.java.isAssignableFrom(aClass)) {

@@ -3,14 +3,15 @@ package com.intellij.configurationStore
 
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.StoragePathMacros
+import com.intellij.openapi.diagnostic.runAndLogException
 import com.intellij.openapi.module.impl.ModuleManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.serviceContainer.ServiceManagerImpl
+import com.intellij.serviceContainer.processAllImplementationClasses
+import com.intellij.serviceContainer.processComponentInstancesOfType
 import com.intellij.util.LineSeparator
 import com.intellij.util.SmartList
-import com.intellij.util.containers.forEachGuaranteed
 import com.intellij.util.io.exists
 import com.intellij.util.io.outputStream
 import com.intellij.util.isEmpty
@@ -110,12 +111,13 @@ internal fun moveComponentConfiguration(defaultProject: Project, element: Elemen
     }
   }
 
-  @Suppress("DEPRECATION")
-  defaultProject.getComponentInstancesOfType(PersistentStateComponent::class.java).forEachGuaranteed {
-    processComponents(it.javaClass)
+  processComponentInstancesOfType(defaultProject.picoContainer, PersistentStateComponent::class.java) {
+    LOG.runAndLogException {
+      processComponents(it.javaClass)
+    }
   }
 
-  ServiceManagerImpl.processAllImplementationClasses(defaultProject) { aClass, _ ->
+  processAllImplementationClasses(defaultProject.picoContainer) { aClass, _ ->
     processComponents(aClass)
     true
   }
