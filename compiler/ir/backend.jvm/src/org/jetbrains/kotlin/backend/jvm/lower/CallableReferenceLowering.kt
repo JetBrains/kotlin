@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
@@ -145,6 +142,17 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
+        }
+
+        private val receiverFieldFromSuper = context.ir.symbols.functionReferenceReceiverField.owner
+
+        val fakeOverrideReceiverField = functionReferenceClass.addField {
+            name = receiverFieldFromSuper.name
+            origin = IrDeclarationOrigin.FAKE_OVERRIDE
+            type = receiverFieldFromSuper.type
+            isFinal = receiverFieldFromSuper.isFinal
+            isStatic = receiverFieldFromSuper.isStatic
+            visibility = receiverFieldFromSuper.visibility
         }
 
         fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
@@ -282,7 +290,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                                 // will put it into a field.
                                 if (samSuperType == null)
                                     irImplicitCast(
-                                        irGetField(irGet(dispatchReceiverParameter!!), irSymbols.functionReferenceReceiverField.owner),
+                                        irGetField(irGet(dispatchReceiverParameter!!), fakeOverrideReceiverField),
                                         boundReceiver.second.type
                                     )
                                 else
