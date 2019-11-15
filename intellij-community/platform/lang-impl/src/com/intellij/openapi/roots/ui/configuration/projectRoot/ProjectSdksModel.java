@@ -25,7 +25,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author anna
@@ -151,7 +154,8 @@ public class ProjectSdksModel implements SdkModel {
       for (final Sdk projectJdk : myProjectSdks.keySet()) {
         LOG.assertTrue(projectJdk != null);
         if (ArrayUtilRt.find(allJdks, projectJdk) == -1) {
-          jdkTable.addJdk(myProjectSdks.get(projectJdk));
+          jdkTable.addJdk(projectJdk);
+          jdkTable.updateJdk(projectJdk, myProjectSdks.get(projectJdk));
         }
       }
     });
@@ -244,7 +248,7 @@ public class ProjectSdksModel implements SdkModel {
       if (downloadExtension != null) {
         String downloadText = ProjectBundle.message("sdk.configure.download.action", type.getPresentableName());
 
-        final AnAction downloadAction = new DumbAwareAction(downloadText, null, downloadExtension.getIconForDownloadAction(type)) {
+        AnAction downloadAction = new DumbAwareAction(downloadText, null, downloadExtension.getIconForDownloadAction(type)) {
           @Override
           public void actionPerformed(@NotNull AnActionEvent e) {
             doDownload(downloadExtension, parent, selectedSdk, type, updateTree);
@@ -344,12 +348,10 @@ public class ProjectSdksModel implements SdkModel {
     doAdd(sdk, null);
   }
 
-  public void doAdd(@NotNull Sdk editableCopy, @Nullable Consumer<? super Sdk> updateTree) {
+  public void doAdd(@NotNull Sdk newSdk, @Nullable Consumer<? super Sdk> updateTree) {
     myModified = true;
     try {
-      //we keep the original Sdk instance as editable, to allow SdkDownload and other extensions
-      //to update the returned Sdk instance
-      Sdk newSdk = (Sdk)editableCopy.clone();
+      Sdk editableCopy = (Sdk)newSdk.clone();
       myProjectSdks.put(newSdk, editableCopy);
       if (updateTree != null) {
         updateTree.consume(editableCopy);

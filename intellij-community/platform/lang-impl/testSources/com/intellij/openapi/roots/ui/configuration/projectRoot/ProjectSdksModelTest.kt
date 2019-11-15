@@ -10,24 +10,24 @@ import org.junit.Test
 import java.lang.Exception
 
 class ProjectSdksModelTest : LightPlatformTestCase() {
-  val model = ProjectSdksModel()
-  val sdkType = SimpleJavaSdkType()
+  private val model = ProjectSdksModel()
+  private val sdkType = SimpleJavaSdkType()
 
   @Test
-  fun testAddedSdkIsModifiable() {
+  fun testAddedSdkIsClonedModifiable() {
     val sdk = model.createSdk(sdkType, "testJdskd123", "mock")
     model.addSdk(sdk)
 
-    //we assume that added Sdk is now kept in as editable, so to allow
-    //external code to update it in the background.
+    //we fix current behaviour of the code - the added Sdk is cloned
+    //to be edited
 
-    Assert.assertSame(sdk, model.findSdk(sdk.name))
-    Assert.assertTrue(model.projectSdks.values.contains(sdk))
-    Assert.assertFalse(model.projectSdks.keys.contains(sdk))
+    Assert.assertNotSame(sdk, model.findSdk(sdk.name))
+    Assert.assertFalse(model.projectSdks.values.contains(sdk))
+    Assert.assertTrue(model.projectSdks.keys.contains(sdk))
   }
 
   @Test
-  fun testEditableJdkIsAddedToJdkTable() {
+  fun testEditableSdkIsAddedToJdkTable() {
     val sdk = model.createSdk(sdkType, "testJdskd123", "mock")
     model.addSdk(sdk)
     model.apply()
