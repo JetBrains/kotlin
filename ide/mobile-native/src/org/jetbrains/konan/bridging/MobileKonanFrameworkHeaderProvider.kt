@@ -76,7 +76,7 @@ class MobileKonanFrameworkHeaderProvider : CustomHeaderProvider() {
             val projectNode = ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID).first()
                 .externalProjectStructure as DataNode<*>
             return ExternalSystemApiUtil.find(projectNode, ProjectKeys.MODULE) {
-                FileUtil.pathsEqual(it.data.id.replace('-', '_'), frameworkName)
+                FileUtil.pathsEqual(it.data.id.trimStart(':').replace('-', '_'), frameworkName)
             }?.data?.id
         }
     }
