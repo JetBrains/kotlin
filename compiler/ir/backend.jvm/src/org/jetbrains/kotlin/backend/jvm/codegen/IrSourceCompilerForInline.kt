@@ -40,7 +40,7 @@ class IrSourceCompilerForInline(
     override val state: GenerationState,
     override val callElement: IrMemberAccessExpression,
     private val callee: IrFunction,
-    private val codegen: ExpressionCodegen,
+    internal val codegen: ExpressionCodegen,
     private val data: BlockInfo
 ) : SourceCompilerForInline {
 

@@ -96,7 +96,7 @@ val IrFunction.propertyIfAccessor: IrDeclaration
 
 fun IrFunction.hasJvmDefault(): Boolean = propertyIfAccessor.hasAnnotation(JVM_DEFAULT_FQ_NAME)
 
-fun IrValueParameter.isInlineParameter() =
+fun IrValueParameter.isInlineParameter(type: IrType = this.type) =
     index >= 0 && !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype())
 
 val IrType.isBoxedArray: Boolean

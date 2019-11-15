@@ -15,31 +15,36 @@ import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.getArgumentsWithIr
 import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class IrInlineCodegen(
     codegen: ExpressionCodegen,
     state: GenerationState,
-    function: FunctionDescriptor,
+    private val function: IrFunction,
     methodOwner: Type,
     signature: JvmMethodSignature,
     typeParameterMappings: TypeParameterMappings<IrType>,
     sourceCompiler: SourceCompilerForInline,
     reifiedTypeInliner: ReifiedTypeInliner<IrType>
 ) : InlineCodegen<ExpressionCodegen>(
-    codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
+    codegen, state, function.descriptor, methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
 ), IrCallGenerator {
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
         if (info.generateAssertField && (sourceCompiler as IrSourceCompilerForInline).isPrimaryCopy) {
@@ -52,12 +57,16 @@ class IrInlineCodegen(
     }
 
     override fun putClosureParametersOnStack(next: LambdaInfo, functionReferenceReceiver: StackValue?) {
-        val lambdaInfo = next as IrExpressionLambdaImpl
-        activeLambda = lambdaInfo
+        activeLambda = next
 
-        lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
-            putCapturedValueOnStack(ir, lambdaInfo.capturedParamsInDesc[index], index)
+        when (next) {
+            is IrExpressionLambdaImpl -> next.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
+                putCapturedValueOnStack(ir, next.capturedParamsInDesc[index], index)
+            }
+            is IrDefaultLambda -> rememberCapturedForDefaultLambda(next)
+            else -> throw RuntimeException("Unknown lambda: $next")
         }
+
         activeLambda = null
     }
 
@@ -68,7 +77,11 @@ class IrInlineCodegen(
         codegen: ExpressionCodegen,
         blockInfo: BlockInfo
     ) {
-        if (irValueParameter.isInlineParameter() && isInlineIrExpression(argumentExpression)) {
+        if (irValueParameter.isInlineParameter(
+                /*after transformation inlinable lambda parameter with default value would have nullable type: check default value type first*/
+                irValueParameter.defaultValue?.expression?.type ?: irValueParameter.type
+            ) && isInlineIrExpression(argumentExpression)
+        ) {
             val irReference: IrFunctionReference =
                 (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
             val boundReceiver = argumentExpression.statements.filterIsInstance<IrVariable>().singleOrNull()
@@ -81,20 +94,39 @@ class IrInlineCodegen(
                 activeLambda = null
             }
         } else {
-            val onStack = if (irValueParameter.index >= 0)
-                // Reuse an existing local if possible. NOTE: when stopping at a breakpoint placed
-                // in an inline function, arguments which reuse an existing local will not be visible
-                // in the debugger.
-                codegen.genOrGetLocal(argumentExpression, blockInfo)
-            else
-                // Do not reuse locals for receivers. While it's actually completely fine, the non-IR
-                // backend does not do it for internal reasons, and here we replicate the debugging
-                // experience.
-                codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
-            // TODO support default argument erasure: do nothing if the parameter is a default mask, the argument is a constant int,
-            //      and processDefaultMaskOrMethodHandler(StackValue.constant(...), ValueKind.DEFAULT_MASK) is true.
-            val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toKotlinType())
-            putArgumentOrCapturedToLocalVal(expectedType, onStack, -1, irValueParameter.index, ValueKind.CAPTURED)
+            val kind = when (irValueParameter.origin) {
+                IrDeclarationOrigin.MASK_FOR_DEFAULT_FUNCTION -> ValueKind.DEFAULT_MASK
+                IrDeclarationOrigin.METHOD_HANDLER_IN_DEFAULT_FUNCTION -> ValueKind.METHOD_HANDLE_IN_DEFAULT
+                //TODO: support DEFAULT_PARAMETER
+                else -> ValueKind.CAPTURED
+            }
+
+            val onStack = when {
+                kind == ValueKind.METHOD_HANDLE_IN_DEFAULT -> StackValue.constant(null, AsmTypes.OBJECT_TYPE)
+                kind == ValueKind.DEFAULT_MASK -> StackValue.constant((argumentExpression as IrConst<*>).value, Type.INT_TYPE)
+                kind == ValueKind.DEFAULT_PARAMETER -> StackValue.constant(null, AsmTypes.OBJECT_TYPE)
+                irValueParameter.index >= 0
+                    // Reuse an existing local if possible. NOTE: when stopping at a breakpoint placed
+                    // in an inline function, arguments which reuse an existing local will not be visible
+                    // in the debugger.
+                -> codegen.genOrGetLocal(argumentExpression, blockInfo)
+                else
+                    // Do not reuse locals for receivers. While it's actually completely fine, the non-IR
+                    // backend does not do it for internal reasons, and here we replicate the debugging
+                    // experience.
+                -> codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+            }
+
+
+            //TODO support default argument erasure
+            if (!processDefaultMaskOrMethodHandler(
+                    onStack,
+                    kind
+                )
+            ) {
+                val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toKotlinType())
+                putArgumentOrCapturedToLocalVal(expectedType, onStack, -1, irValueParameter.index, kind)
+            }
         }
     }
 
@@ -116,7 +148,12 @@ class IrInlineCodegen(
         // TODO port inlining cycle detection to IrFunctionAccessExpression & pass it
         state.globalInlineContext.enterIntoInlining(null)
         try {
-            performInline(expression.symbol.owner.typeParameters.map { it.symbol }, false, codegen.typeMapper.typeSystem, codegen)
+            performInline(
+                expression.symbol.owner.typeParameters.map { it.symbol },
+                function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+                false,
+                codegen.typeMapper.typeSystem
+            )
         } finally {
             state.globalInlineContext.exitFromInliningOf(null)
         }
@@ -137,6 +174,14 @@ class IrInlineCodegen(
             closureInfo.functionalArgument = lambda
             expressionMap[closureInfo.index] = lambda
         }
+    }
+
+    override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
+        return expandMaskConditionsAndUpdateVariableNodes(
+            node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
+            extractDefaultLambdaOffsetAndDescriptor(jvmSignature, function),
+            ::IrDefaultLambda
+        )
     }
 }
 
@@ -191,6 +236,21 @@ class IrExpressionLambdaImpl(
 
     override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor {
         return function.getOrCreateSuspendFunctionViewIfNeeded(context).descriptor
+    }
+}
+
+class IrDefaultLambda(
+    lambdaClassType: Type,
+    capturedArgs: Array<Type>,
+    private val irValueParameter: IrValueParameter,
+    offset: Int,
+    needReification: Boolean
+) : DefaultLambda(lambdaClassType, capturedArgs, irValueParameter.descriptor as ValueParameterDescriptor, offset, needReification) {
+
+    override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method {
+        val invoke =
+            irValueParameter.type.classOrNull!!.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "invoke" }
+        return (sourceCompiler as IrSourceCompilerForInline).codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(invoke).asmMethod
     }
 }
 

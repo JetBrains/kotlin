@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class PsiInlineCodegen(
     codegen: ExpressionCodegen,
@@ -64,7 +65,7 @@ class PsiInlineCodegen(
             return
         }
         try {
-            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, codegen.typeSystem, codegen)
+            performInline(resolvedCall?.typeArguments?.keys?.toList(), callDefault, callDefault, codegen.typeSystem)
         } finally {
             state.globalInlineContext.exitFromInliningOf(resolvedCall)
         }
@@ -192,5 +193,13 @@ class PsiInlineCodegen(
         assert(delayedHiddenWriting != null) { "processAndPutHiddenParameters(true) should be called before putHiddenParamsIntoLocals" }
         delayedHiddenWriting!!.invoke()
         delayedHiddenWriting = null
+    }
+
+    override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
+        return expandMaskConditionsAndUpdateVariableNodes(
+            node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
+            extractDefaultLambdaOffsetAndDescriptor(jvmSignature, functionDescriptor),
+            ::PsiDefaultLambda
+        )
     }
 }
