@@ -21,22 +21,19 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializer
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 class SerializableCompanionIrGenerator(
     val irClass: IrClass,
-    override val compilerContext: BackendContext,
+    override val compilerContext: SerializationPluginContext,
     bindingContext: BindingContext
 ) : SerializableCompanionCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
-    override val translator: TypeTranslator = compilerContext.createTypeTranslator(serializableDescriptor.module)
-    private val _table = SymbolTable()
-    override val BackendContext.localSymbolTable: SymbolTable
-        get() = _table
 
     companion object {
         fun generate(
             irClass: IrClass,
-            context: BackendContext,
+            context: SerializationPluginContext,
             bindingContext: BindingContext
         ) {
             val companionDescriptor = irClass.descriptor
@@ -63,9 +60,9 @@ class SerializableCompanionIrGenerator(
             compilerContext.externalSymbols.referenceConstructor(it)
         })
 
-        val annotationType = compilerContext.externalSymbols.referenceClass(annotationMarkerClass).owner.defaultType
+        val annotationType = annotationMarkerClass.defaultType.toIrType()
         val irSerializableClass = compilerContext.externalSymbols.referenceClass(serializableDescriptor).owner
-        val annotationCtorCall = IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor, annotationMarkerClass.declaredTypeParameters.size).apply {
+        val annotationCtorCall = IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, annotationType, annotationCtor).apply {
             val serializerType = serializer.toSimpleType(false)
             putValueArgument(
                 0,
@@ -81,7 +78,7 @@ class SerializableCompanionIrGenerator(
     }
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) =
-        irClass.contributeFunction(methodDescriptor, fromStubs = true) { getter ->
+        irClass.contributeFunction(methodDescriptor) { getter ->
             val serializer = requireNotNull(
                 findTypeSerializer(
                     serializableDescriptor.module,

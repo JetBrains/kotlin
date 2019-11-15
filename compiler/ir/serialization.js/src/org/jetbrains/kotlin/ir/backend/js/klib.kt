@@ -177,6 +177,7 @@ fun loadIr(
     }
 
     val moduleFragment = psi2IrContext.generateModuleFragment(files, deserializer)
+    // todo: add postprocessing step
 
     return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, deserializer)
 }

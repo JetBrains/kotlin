@@ -28,21 +28,18 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
 
 class SerializableIrGenerator(
     val irClass: IrClass,
-    override val compilerContext: BackendContext,
+    override val compilerContext: SerializationPluginContext,
     bindingContext: BindingContext
 ) : SerializableCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
-    override val translator: TypeTranslator = compilerContext.createTypeTranslator(serializableDescriptor.module)
-    private val _table = SymbolTable()
-    override val BackendContext.localSymbolTable: SymbolTable
-        get() = _table
 
     override fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor) =
-        irClass.contributeConstructor(constructorDescriptor, fromStubs = true, overwriteValueParameters = true) { ctor ->
+        irClass.contributeConstructor(constructorDescriptor, overwriteValueParameters = true) { ctor ->
             val transformFieldInitializer = buildInitializersRemapping(irClass)
 
             // Missing field exception parts
@@ -50,7 +47,7 @@ class SerializableIrGenerator(
                 serializableDescriptor.getClassFromSerializationPackage(MISSING_FIELD_EXC)
                     .unsubstitutedPrimaryConstructor!!
             val exceptionCtorRef = compilerContext.externalSymbols.referenceConstructor(exceptionCtor)
-            val exceptionType = exceptionCtorRef.owner.returnType
+            val exceptionType = exceptionCtor.returnType.toIrType()
 
             val serializableProperties = properties.serializableProperties
             val seenVarsOffset = serializableProperties.bitMaskSlotCount()
@@ -166,7 +163,7 @@ class SerializableIrGenerator(
     companion object {
         fun generate(
             irClass: IrClass,
-            context: BackendContext,
+            context: SerializationPluginContext,
             bindingContext: BindingContext
         ) {
             val serializableClass = irClass.descriptor

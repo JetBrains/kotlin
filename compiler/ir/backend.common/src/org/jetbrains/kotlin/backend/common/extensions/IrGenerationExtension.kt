@@ -5,18 +5,31 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.kotlin.backend.common.BackendContext
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
+
+class IrPluginContext(
+    val moduleDescriptor: ModuleDescriptor,
+    val bindingContext: BindingContext,
+    val languageVersionSettings: LanguageVersionSettings,
+    val symbolTable: SymbolTable,
+    val typeTranslator: TypeTranslator,
+    override val irBuiltIns: IrBuiltIns
+): IrGeneratorContext()
 
 interface IrGenerationExtension {
     companion object :
         ProjectExtensionDescriptor<IrGenerationExtension>("org.jetbrains.kotlin.irGenerationExtension", IrGenerationExtension::class.java)
 
     fun generate(
-        file: IrFile,
-        backendContext: BackendContext,
-        bindingContext: BindingContext
+        moduleFragment: IrModuleFragment,
+        pluginContext: IrPluginContext
     )
 }

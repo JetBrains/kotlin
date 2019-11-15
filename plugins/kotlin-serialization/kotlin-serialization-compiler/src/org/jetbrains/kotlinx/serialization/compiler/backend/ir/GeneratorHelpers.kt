@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
-import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
@@ -27,7 +26,9 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
@@ -37,21 +38,15 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.allSealedSeri
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.serialName
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
-val BackendContext.externalSymbols: ReferenceSymbolTable get() = ir.symbols.externalSymbolTable
-
-internal fun BackendContext.createTypeTranslator(moduleDescriptor: ModuleDescriptor): TypeTranslator =
-    TypeTranslator(externalSymbols, irBuiltIns.languageVersionSettings, moduleDescriptor.builtIns).apply {
-        constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable = externalSymbols)
-        constantValueGenerator.typeTranslator = this
-    }
+val SerializationPluginContext.externalSymbols: SymbolTable get() = symbolTable // Todo: deprecate and remove
+val SerializationPluginContext.localSymbolTable: SymbolTable get() = symbolTable // Todo: deprecate and remove
 
 interface IrBuilderExtension {
-    val compilerContext: BackendContext
-    val translator: TypeTranslator
-
-    val BackendContext.localSymbolTable: SymbolTable
+    val compilerContext: SerializationPluginContext
+    val translator: TypeTranslator get() = compilerContext.typeTranslator // Todo: deprecate and remove
 
     private fun IrClass.declareSimpleFunctionWithExternalOverrides(descriptor: FunctionDescriptor): IrSimpleFunction {
         return compilerContext.localSymbolTable.declareSimpleFunction(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, descriptor)
@@ -64,26 +59,26 @@ interface IrBuilderExtension {
 
     fun IrClass.contributeFunction(
         descriptor: FunctionDescriptor,
-        fromStubs: Boolean = false,
+        declareNew: Boolean = true,
         bodyGen: IrBlockBodyBuilder.(IrFunction) -> Unit
     ) {
-        val f: IrSimpleFunction = if (!fromStubs) declareSimpleFunctionWithExternalOverrides(
+        val f: IrSimpleFunction = if (declareNew) declareSimpleFunctionWithExternalOverrides(
             descriptor
         ) else compilerContext.externalSymbols.referenceSimpleFunction(descriptor).owner
         f.parent = this
         f.returnType = descriptor.returnType!!.toIrType()
-        if (!fromStubs) f.createParameterDeclarations(this.thisReceiver!!)
-        f.body = compilerContext.createIrBuilder(f.symbol).at(this).irBlockBody(this.startOffset, this.endOffset) { bodyGen(f) }
+        if (declareNew) f.createParameterDeclarations(this.thisReceiver!!)
+        f.body = DeclarationIrBuilder(compilerContext, f.symbol, this.startOffset, this.endOffset).irBlockBody(this.startOffset, this.endOffset) { bodyGen(f) }
         this.addMember(f)
     }
 
     fun IrClass.contributeConstructor(
         descriptor: ClassConstructorDescriptor,
-        fromStubs: Boolean = false,
+        declareNew: Boolean = true,
         overwriteValueParameters: Boolean = false,
         bodyGen: IrBlockBodyBuilder.(IrConstructor) -> Unit
     ) {
-        val c = if (!fromStubs) compilerContext.localSymbolTable.declareConstructor(
+        val c = if (declareNew) compilerContext.localSymbolTable.declareConstructor(
             this.startOffset,
             this.endOffset,
             SERIALIZABLE_PLUGIN_ORIGIN,
@@ -91,12 +86,12 @@ interface IrBuilderExtension {
         ) else compilerContext.externalSymbols.referenceConstructor(descriptor).owner
         c.parent = this
         c.returnType = descriptor.returnType.toIrType()
-        if (!fromStubs || overwriteValueParameters) c.createParameterDeclarations(
+        if (declareNew || overwriteValueParameters) c.createParameterDeclarations(
             receiver = null,
             overwriteValueParameters = overwriteValueParameters,
             copyTypeParameters = false
         )
-        c.body = compilerContext.createIrBuilder(c.symbol).at(this).irBlockBody(this.startOffset, this.endOffset) { bodyGen(c) }
+        c.body = DeclarationIrBuilder(compilerContext, c.symbol, this.startOffset, this.endOffset).irBlockBody(this.startOffset, this.endOffset) { bodyGen(c) }
         this.addMember(c)
     }
 
@@ -106,7 +101,8 @@ interface IrBuilderExtension {
         vararg args: IrExpression,
         typeHint: IrType? = null
     ): IrMemberAccessExpression {
-        val call = typeHint?.let { irCall(callee, type = it) } ?: irCall(callee)
+        val returnType = typeHint ?: callee.descriptor.returnType!!.toIrType()
+        val call = irCall(callee, type = returnType)
         call.dispatchReceiver = dispatchReceiver
         args.forEachIndexed(call::putValueArgument)
         return call
@@ -126,25 +122,44 @@ interface IrBuilderExtension {
             typeHint = returnTypeHint
         ).also { call -> typeArguments.forEachIndexed(call::putTypeArgument) }
 
+    // todo: remove copypasta
+
+    private fun SerializationPluginContext.builtInsPackage(vararg packageNameSegments: String) =
+        builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope
+
+    private fun SerializationPluginContext.getSimpleFunction(
+        name: Name,
+        vararg packageNameSegments: String = arrayOf("kotlin"),
+        condition: (SimpleFunctionDescriptor) -> Boolean
+    ): IrSimpleFunctionSymbol =
+        symbolTable.referenceSimpleFunction(
+            builtInsPackage(*packageNameSegments).getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                .first(condition)
+        )
+
+
     fun IrBuilderWithScope.createArrayOfExpression(
         arrayElementType: IrType,
         arrayElements: List<IrExpression>
     ): IrExpression {
 
-        val arrayType = compilerContext.ir.symbols.array.typeWith(arrayElementType)
+        val arrayType = context.irBuiltIns.arrayClass.typeWith(arrayElementType)
         val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
         val typeArguments = listOf(arrayElementType)
 
-        return irCall(compilerContext.ir.symbols.arrayOf, arrayType, typeArguments = typeArguments).apply {
+        val arrayOf = compilerContext.getSimpleFunction(Name.identifier("arrayOf")) {
+            it.extensionReceiverParameter == null && it.dispatchReceiverParameter == null && it.valueParameters.size == 1 &&
+                    it.valueParameters[0].isVararg
+        }
+        return irCall(arrayOf, arrayType, typeArguments = typeArguments).apply {
             putValueArgument(0, arg0)
         }
     }
 
     fun IrBuilderWithScope.irBinOp(name: Name, lhs: IrExpression, rhs: IrExpression): IrExpression {
-        val symbol = compilerContext.ir.symbols.getBinaryOperator(
-            name,
-            lhs.type.toKotlinType(),
-            rhs.type.toKotlinType()
+        val symbol = compilerContext.symbolTable.referenceSimpleFunction(
+            lhs.type.toKotlinType().memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
+                .first { it.valueParameters.size == 1 && it.valueParameters[0].type == rhs.type.toKotlinType() }
         )
         return irInvoke(lhs, symbol, rhs)
     }
@@ -271,9 +286,9 @@ interface IrBuilderExtension {
         descriptor: PropertyAccessorDescriptor,
         fieldSymbol: IrFieldSymbol
     ): IrSimpleFunction {
-        // Declaration can also be called from user code. Since we lookup descriptor getter in externalSymbols
-        // (see generateSave/generateLoad), seems it is correct approach to declare getter lazily there.
-        val declaration = compilerContext.externalSymbols.referenceSimpleFunction(descriptor).owner
+        val declaration = compilerContext.externalSymbols.declareSimpleFunctionWithOverrides(fieldSymbol.owner.startOffset,
+                                                                                 fieldSymbol.owner.endOffset,
+                                                                                 SERIALIZABLE_PLUGIN_ORIGIN,descriptor)
         return declaration.buildWithScope { irAccessor ->
             irAccessor.createParameterDeclarations(receiver = null)
             irAccessor.returnType = irAccessor.descriptor.returnType!!.toIrType()
@@ -481,7 +496,7 @@ interface IrBuilderExtension {
     ): IrExpression {
         return if (type.isMarkedNullable)
             irInvoke(
-                null, nullableSerializerClass.constructors.toList()[0],
+                null, compilerContext.symbolTable.referenceConstructor(nullableSerializerClass.descriptor.constructors.toList().first()),
                 typeArguments = listOf(type.makeNotNullable().toIrType()),
                 valueArguments = listOf(expression),
                 returnTypeHint = wrapIrTypeIntoKSerializerIrType(module, type.toIrType())
