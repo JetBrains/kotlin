@@ -178,7 +178,7 @@ class MultiThreadSearcher implements SESearcher {
                                       descriptor -> processFoundItem(descriptor.getItem(), descriptor.getWeight(), wrapperIndicator))
                                 : () -> myContributor.fetchElements(myPattern, wrapperIndicator,
                                       element -> {
-                                        int priority = myContributor.getElementPriority(element, myPattern);
+                                        int priority = myContributor.getElementPriority(Objects.requireNonNull(element), myPattern);
                                         return processFoundItem(element, priority, wrapperIndicator);
                                       });
 
