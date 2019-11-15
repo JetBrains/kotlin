@@ -55,6 +55,9 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
     project.getMessageBus().connect().subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootListener() {
       @Override
       public void rootsChanged(@NotNull ModuleRootEvent event) {
+        if (LOG.isTraceEnabled()) {
+          LOG.trace(new Throwable("Processing roots changed event (caused by file type change: " + event.isCausedByFileTypesChange() + ")"));
+        }
         for (FilePropertyPusher<?> pusher : FilePropertyPusher.EP_NAME.getExtensionList()) {
           pusher.afterRootsChanged(project);
         }
