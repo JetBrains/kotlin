@@ -8067,6 +8067,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/enum/companionObjectInEnum.kt");
         }
 
+        @TestMetadata("constructorWithReordering.kt")
+        public void testConstructorWithReordering() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/constructorWithReordering.kt");
+        }
+
         @TestMetadata("deepInnerClassInEnumEntryClass.kt")
         public void testDeepInnerClassInEnumEntryClass() throws Exception {
             runTest("compiler/testData/codegen/box/enum/deepInnerClassInEnumEntryClass.kt");

@@ -48,7 +48,8 @@ FILE fqName:<root> fileName:/enumEntriesWithAnnotations.kt
         $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum.ENTRY2
         CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum.ENTRY2 [primary]
           BLOCK_BODY
-            ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum'
+            TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+              ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum'
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:ENTRY2 modality:FINAL visibility:public superTypes:[<root>.TestEnum]'
         PROPERTY name:x visibility:public modality:FINAL [val]
           FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
