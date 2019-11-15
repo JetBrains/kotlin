@@ -4,21 +4,36 @@ package com.intellij.execution.impl;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.icons.AllIcons;
+import com.intellij.ide.util.treeView.AbstractTreeStructure;
+import com.intellij.ide.util.treeView.NodeDescriptor;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.ListPopupStep;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.ui.popup.util.BaseTreePopupStep;
+import com.intellij.openapi.util.registry.Registry;
+import com.intellij.ui.ActiveComponent;
+import com.intellij.ui.UIBundle;
 import com.intellij.ui.popup.list.ListPopupImpl;
+import com.intellij.ui.popup.tree.TreePopupImpl;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.EmptyIcon;
+import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author Irina.Chernushina on 10/8/2015.
@@ -55,12 +70,16 @@ public class NewRunConfigurationPopup {
   };
 
   @NotNull
-  public static ListPopup createAddPopup(@NotNull Project project,
-                                         @NotNull final List<? extends ConfigurationType> typesToShow,
-                                         @NotNull final String defaultText,
-                                         @NotNull final Consumer<? super ConfigurationFactory> creator,
-                                         @Nullable final ConfigurationType selectedConfigurationType,
-                                         @Nullable final Runnable finalStep, boolean showTitle) {
+  public static JBPopup createAddPopup(@NotNull Project project,
+                                       @NotNull final List<? extends ConfigurationType> typesToShow,
+                                       @NotNull final String defaultText,
+                                       @NotNull final Consumer<? super ConfigurationFactory> creator,
+                                       @Nullable final ConfigurationType selectedConfigurationType,
+                                       @Nullable final Runnable finalStep, boolean showTitle) {
+    if (Registry.is("run.configuration.use.tree.popup.to.add.new", false)) {
+      return createAddTreePopup(project, typesToShow, creator, selectedConfigurationType, showTitle);
+    }
+
     BaseListPopupStep<ConfigurationType> step = new BaseListPopupStep<ConfigurationType>(
       showTitle ? ExecutionBundle.message("add.new.run.configuration.action2.name") : null, typesToShow) {
 
@@ -81,7 +100,7 @@ public class NewRunConfigurationPopup {
       }
 
       @Override
-      public PopupStep onChosen(final ConfigurationType type, final boolean finalChoice) {
+      public PopupStep<?> onChosen(final ConfigurationType type, final boolean finalChoice) {
         if (hasSubstep(type)) {
           return getSupStep(type);
         }
@@ -98,10 +117,12 @@ public class NewRunConfigurationPopup {
 
       @Override
       public int getDefaultOptionIndex() {
-        return selectedConfigurationType != HIDDEN_ITEMS_STUB ? typesToShow.indexOf(selectedConfigurationType) : super.getDefaultOptionIndex();
+        return selectedConfigurationType != HIDDEN_ITEMS_STUB
+               ? typesToShow.indexOf(selectedConfigurationType)
+               : super.getDefaultOptionIndex();
       }
 
-      private ListPopupStep getSupStep(final ConfigurationType type) {
+      private ListPopupStep<?> getSupStep(final ConfigurationType type) {
         final ConfigurationFactory[] factories = type.getConfigurationFactories();
         Arrays.sort(factories, (factory1, factory2) -> factory1.getName().compareToIgnoreCase(factory2.getName()));
         return new BaseListPopupStep<ConfigurationFactory>(
@@ -119,7 +140,7 @@ public class NewRunConfigurationPopup {
           }
 
           @Override
-          public PopupStep onChosen(final ConfigurationFactory factory, final boolean finalChoice) {
+          public PopupStep<?> onChosen(final ConfigurationFactory factory, final boolean finalChoice) {
             creator.consume(factory);
             return FINAL_CHOICE;
           }
@@ -145,5 +166,126 @@ public class NewRunConfigurationPopup {
         super.onSpeedSearchPatternChanged();
       }
     };
+  }
+
+  private static JBPopup createAddTreePopup(@NotNull Project project,
+                                            @NotNull final List<? extends ConfigurationType> typesToShow,
+                                            @NotNull final Consumer<? super ConfigurationFactory> creator,
+                                            @Nullable final ConfigurationType selectedConfigurationType,
+                                            boolean showTitle) {
+    typesToShow.remove(HIDDEN_ITEMS_STUB);
+    List<ConfigurationType> otherTypes = new ArrayList<>(ConfigurationType.CONFIGURATION_TYPE_EP.getExtensionList());
+    Collections.sort(otherTypes, (o1, o2) -> RunConfigurationListManagerHelperKt.compareTypesForUi(o1, o2));
+    otherTypes.removeAll(typesToShow);
+    //todo get IDE-specific factory from some ExtensionPoint or smth like this
+    DefaultNewRunConfigurationTreePopupFactory treePopupFactory = new DefaultNewRunConfigurationTreePopupFactory(project, typesToShow, otherTypes);
+
+    AbstractTreeStructure structure = new AbstractTreeStructure() {
+      private final Map<NodeDescriptor<?>, NodeDescriptor<?>[]> myCache = new HashMap<>();
+
+      @NotNull
+      @Override
+      public Object getRootElement() {
+        return treePopupFactory.getRootElement();
+      }
+
+      @NotNull
+      @Override
+      public NodeDescriptor<?>[] getChildElements(@NotNull Object element) {
+        NodeDescriptor<?> nodeDescriptor = (NodeDescriptor<?>)element;
+        if (!myCache.containsKey(nodeDescriptor)) {
+          myCache.put(nodeDescriptor, treePopupFactory.createChildElements(nodeDescriptor));
+        }
+        return myCache.get(nodeDescriptor);
+      }
+
+      @Nullable
+      @Override
+      public Object getParentElement(@NotNull Object element) {
+        return ((NodeDescriptor<?>)element).getParentDescriptor();
+      }
+
+      @NotNull
+      @Override
+      public NodeDescriptor<?> createDescriptor(@NotNull Object element, @Nullable NodeDescriptor parentDescriptor) {
+        return treePopupFactory.createDescriptor(element, parentDescriptor, NodeDescriptor.DEFAULT_WEIGHT);
+      }
+
+      @Override
+      public void commit() {
+      }
+
+      @Override
+      public boolean hasSomethingToCommit() {
+        return false;
+      }
+    };
+
+    final AtomicBoolean isAutoSelectionPassed = new AtomicBoolean(selectedConfigurationType == null);
+
+    BaseTreePopupStep<Object> treePopupStep = new BaseTreePopupStep<Object>(
+      project,
+      showTitle ? ExecutionBundle.message("add.new.run.configuration.action2.name") : null, structure
+    ) {
+      @Override
+      public boolean isRootVisible() {
+        return false;
+      }
+
+      @Override
+      public boolean isSelectable(Object node, Object userData) {
+        if (!(userData instanceof NodeDescriptor)) return false;
+        if (getStructure().getChildElements(userData).length > 0) return false;
+        userData = ((NodeDescriptor<?>)userData).getElement();
+        return isAutoSelectionPassed.get() || userData == selectedConfigurationType;
+      }
+
+      @Override
+      public PopupStep<?> onChosen(Object selectedValue, boolean finalChoice) {
+        Object element = ((NodeDescriptor<?>)selectedValue).getElement();
+        if (element instanceof ConfigurationType) {
+          ConfigurationFactory[] factories = ((ConfigurationType)element).getConfigurationFactories();
+          if (factories.length == 1) {
+            creator.consume(factories[0]);
+            return FINAL_CHOICE;
+          }
+        }
+        if (element instanceof ConfigurationFactory) {
+          creator.consume((ConfigurationFactory)element);
+          return FINAL_CHOICE;
+        }
+        return super.onChosen(selectedValue, finalChoice);
+      }
+    };
+    TreePopupImpl treePopup = new TreePopupImpl(project, null, treePopupStep, null) {
+      @Override
+      protected void afterShow() {
+        super.afterShow();
+        isAutoSelectionPassed.set(true);
+        scrollToSelection();
+      }
+    };
+    DumbAwareAction collapseAllAction =
+      new DumbAwareAction(UIBundle.message("tree.view.collapse.all.action.name"), null, AllIcons.Actions.Collapseall) {
+        @Override
+        public void actionPerformed(@NotNull AnActionEvent e) {
+          treePopup.collapseAll();
+        }
+      };
+    ActionToolbarImpl toolbar = (ActionToolbarImpl)ActionManager.getInstance()
+      .createActionToolbar(ActionPlaces.POPUP, new DefaultActionGroup(collapseAllAction), true);
+    toolbar.setMiniMode(true);
+    treePopup.getTitle().setButtonComponent(new ActiveComponent() {
+      @Override
+      public void setActive(boolean active) {
+      }
+
+      @NotNull
+      @Override
+      public JComponent getComponent() {
+        return toolbar.getComponent();
+      }
+    }, JBUI.Borders.empty(2, 1, 0, 1));
+    return treePopup;
   }
 }
