@@ -23,11 +23,13 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ModuleRootManagerEx;
+import com.intellij.openapi.roots.impl.RootConfigurationAccessor;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class IdeModifiableModelsProviderImpl extends AbstractIdeModifiableModelsProvider {
 
@@ -52,7 +54,17 @@ public class IdeModifiableModelsProviderImpl extends AbstractIdeModifiableModels
   @Override
   @NotNull
   protected ModifiableRootModel doGetModifiableRootModel(@NotNull final Module module) {
-    return ReadAction.compute(() -> ModuleRootManager.getInstance(module).getModifiableModel());
+    return ReadAction.compute(() -> ModuleRootManagerEx.getInstanceEx(module).getModifiableModel(new RootConfigurationAccessor() {
+      @Nullable
+      @Override
+      public Library getLibrary(Library library, String libraryName, String libraryLevel) {
+        if (LibraryTablesRegistrar.PROJECT_LEVEL.equals(libraryLevel)) {
+          return myLibrariesModel.getLibraryByName(libraryName);
+        }
+
+        return library;
+      }
+    }));
   }
 
   @Override
