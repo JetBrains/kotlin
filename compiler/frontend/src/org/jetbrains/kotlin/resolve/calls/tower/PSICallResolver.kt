@@ -94,6 +94,8 @@ class PSICallResolver(
         val scopeTower = ASTScopeTower(context)
         val resolutionCallbacks = createResolutionCallbacks(context)
 
+        println("Name: $name, args: ${kotlinCall.argumentsInParenthesis.joinToString()}")
+
         val expectedType = calculateExpectedType(context)
         var result =
             kotlinCallResolver.resolveCall(scopeTower, resolutionCallbacks, kotlinCall, expectedType, context.collectAllCandidates) {

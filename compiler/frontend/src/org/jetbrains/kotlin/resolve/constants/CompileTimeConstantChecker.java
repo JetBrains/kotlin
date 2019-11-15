@@ -293,6 +293,7 @@ public class CompileTimeConstantChecker {
         if (DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(context, expression, expectedType, expressionType)) return true;
 
         trace.report(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, typeName, expectedType));
+        System.out.println("DIAGNOSTIC REPORTED: " + expression.getText());
         return true;
     }
 
