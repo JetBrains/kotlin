@@ -2,7 +2,8 @@
 
 package com.intellij.codeInsight.lookup;
 
-import com.intellij.codeInsight.*;
+import com.intellij.codeInsight.CharTailType;
+import com.intellij.codeInsight.TailType;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.impl.ElementLookupRenderer;
@@ -251,9 +252,10 @@ public class LookupItem<T> extends MutableLookupElement<T> implements Comparable
 
   @Override
   public void renderElement(LookupElementPresentation presentation) {
-    for (final ElementLookupRenderer renderer : ElementLookupRenderer.EP_NAME.getExtensionList()) {
-      if (renderer.handlesItem(getObject())) {
-        renderer.renderElement(this, getObject(), presentation);
+    for (ElementLookupRenderer renderer : ElementLookupRenderer.EP_NAME.getExtensionList()) {
+      T object = getObject();
+      if (renderer.handlesItem(object)) {
+        renderer.renderElement(this, object, presentation);
         return;
       }
     }
