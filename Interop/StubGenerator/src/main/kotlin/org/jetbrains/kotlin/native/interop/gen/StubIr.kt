@@ -6,6 +6,10 @@ package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.native.interop.indexer.*
 
+// TODO: Replace all usages of these strings with constants.
+const val cinteropPackage = "kotlinx.cinterop"
+const val cinteropInternalPackage = "$cinteropPackage.internal"
+
 interface StubIrElement {
     fun <T, R> accept(visitor: StubIrVisitor<T, R>, data: T): R
 }
@@ -60,7 +64,10 @@ class TypeParameterStub(
 }
 
 interface TypeArgument {
-    object StarProjection : TypeArgument
+    object StarProjection : TypeArgument {
+        override fun toString(): String =
+                "*"
+    }
 
     enum class Variance {
         INVARIANT,
@@ -72,7 +79,10 @@ interface TypeArgument {
 class TypeArgumentStub(
         val type: StubType,
         val variance: TypeArgument.Variance = TypeArgument.Variance.INVARIANT
-) : TypeArgument
+) : TypeArgument {
+    override fun toString(): String =
+            type.toString()
+}
 
 /**
  * Represents a source of StubIr element.
@@ -171,8 +181,6 @@ sealed class AnnotationStub(val classifier: Classifier) {
             AnnotationStub(Classifier.topLevel("kotlin", "Deprecated"))
 
     private companion object {
-        const val cinteropInternalPackage = "kotlinx.cinterop.internal"
-        const val cinteropPackage = "kotlinx.cinterop"
         val cCallClassifier = Classifier.topLevel(cinteropInternalPackage, "CCall")
     }
 }

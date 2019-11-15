@@ -5,34 +5,44 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 sealed class StubType {
     abstract val nullable: Boolean
+    abstract val typeArguments: List<TypeArgument>
 }
 
 /**
  * Wrapper over [Classifier].
- * @property underlyingType is not null if this type is an typealias.
  */
 class ClassifierStubType(
         val classifier: Classifier,
-        val typeArguments: List<TypeArgument> = emptyList(),
-        val underlyingType: StubType? = null,
+        override val typeArguments: List<TypeArgument> = emptyList(),
         override val nullable: Boolean = false
 ) : StubType() {
-    fun nested(name: String): ClassifierStubType {
-        assert(underlyingType == null) {
-            "Cannot access nested class `$name` of typealias ${classifier.fqName}"
-        }
-        return ClassifierStubType(classifier.nested(name))
-    }
+
+    fun nested(name: String): ClassifierStubType =
+            ClassifierStubType(classifier.nested(name))
+
+    override fun toString(): String =
+            "${classifier.topLevelName}${typeArguments.ifNotEmpty { joinToString(prefix = "<", postfix = ">") } ?: ""}"
+}
+
+class AbbreviatedType(
+        val underlyingType: StubType,
+        val abbreviatedClassifier: Classifier,
+        override val typeArguments: List<TypeArgument>,
+        override val nullable: Boolean = false
+) : StubType() {
+    override fun toString(): String =
+            "${abbreviatedClassifier.topLevelName}${typeArguments.ifNotEmpty { joinToString(prefix = "<", postfix = ">") } ?: ""}"
 }
 
 /**
  * @return type from kotlinx.cinterop package
  */
 fun KotlinPlatform.getRuntimeType(name: String, nullable: Boolean = false): StubType {
-    val classifier = Classifier.topLevel("kotlinx.cinterop", name)
+    val classifier = Classifier.topLevel(cinteropPackage, name)
     PredefinedTypesHandler.tryExpandPlatformDependentTypealias(classifier, this, nullable)?.let { return it }
     return ClassifierStubType(classifier, nullable = nullable)
 }
@@ -41,18 +51,24 @@ fun KotlinPlatform.getRuntimeType(name: String, nullable: Boolean = false): Stub
  * Functional type from kotlin package: ([parameterTypes]) -> [returnType]
  */
 class FunctionalType(
-      val parameterTypes: List<StubType>,
+      val parameterTypes: List<StubType>, // TODO: Use TypeArguments.
       val returnType: StubType,
       override val nullable: Boolean = false
 ) : StubType() {
     val classifier: Classifier =
             Classifier.topLevel("kotlin", "Function${parameterTypes.size}")
+
+    override val typeArguments: List<TypeArgument> by lazy {
+        listOf(*parameterTypes.toTypedArray(), returnType).map { TypeArgumentStub(it) }
+    }
 }
 
 class TypeParameterType(
         val name: String,
         override val nullable: Boolean
-) : StubType()
+) : StubType() {
+    override val typeArguments: List<TypeArgument> = emptyList()
+}
 
 fun KotlinType.toStubIrType(): StubType = when (this) {
     is KotlinFunctionType -> this.toStubIrType()
@@ -61,13 +77,16 @@ fun KotlinType.toStubIrType(): StubType = when (this) {
 }
 
 private fun KotlinFunctionType.toStubIrType(): StubType =
-        FunctionalType(parameterTypes.map { it.toStubIrType() }, returnType.toStubIrType(), nullable)
+        FunctionalType(parameterTypes.map(KotlinType::toStubIrType), returnType.toStubIrType(), nullable)
 
 private fun KotlinClassifierType.toStubIrType(): StubType {
-    PredefinedTypesHandler.tryExpandPredefinedTypealias(classifier, nullable)?.let { return it }
-    val typeArguments = arguments.map { it.toStubIrType() }
-    val underlyingType = underlyingType?.toStubIrType()
-    return ClassifierStubType(classifier, typeArguments, underlyingType, nullable)
+    val typeArguments = arguments.map(KotlinTypeArgument::toStubIrType)
+    PredefinedTypesHandler.tryExpandPredefinedTypealias(classifier, nullable, typeArguments)?.let { return it }
+    return if (underlyingType == null) {
+        ClassifierStubType(classifier, typeArguments, nullable)
+    } else {
+        AbbreviatedType(underlyingType.toStubIrType(), classifier, typeArguments, nullable)
+    }
 }
 
 private fun KotlinTypeArgument.toStubIrType(): TypeArgument = when (this) {
@@ -114,53 +133,60 @@ private object PredefinedTypesHandler {
         return ClassifierStubType(classifier, listOf(TypeArgumentStub(primitiveType.toStubIrType())), nullable = nullable)
     }
 
-    private fun expandCOpaquePointerVar(nullable: Boolean): ClassifierStubType {
+    private fun expandCOpaquePointerVar(nullable: Boolean): AbbreviatedType {
         val typeArgument = TypeArgumentStub(expandCOpaquePointer(nullable=false))
         val underlyingType = ClassifierStubType(
                 KotlinTypes.cPointerVarOf, listOf(typeArgument), nullable = nullable
         )
-        return ClassifierStubType(
-                KotlinTypes.cOpaquePointerVar.classifier, underlyingType = underlyingType, nullable = nullable
-        )
+        return AbbreviatedType(underlyingType, KotlinTypes.cOpaquePointerVar.classifier, emptyList(), nullable)
     }
 
-    private fun expandCOpaquePointer(nullable: Boolean): ClassifierStubType {
+    private fun expandCOpaquePointer(nullable: Boolean): AbbreviatedType {
         val typeArgument = TypeArgumentStub(ClassifierStubType(KotlinTypes.cPointed), TypeArgument.Variance.OUT)
         val underlyingType = ClassifierStubType(
                 KotlinTypes.cPointer, listOf(typeArgument), nullable = nullable
         )
-        return ClassifierStubType(
-                KotlinTypes.cOpaquePointer.classifier, underlyingType = underlyingType, nullable = nullable
+        return AbbreviatedType(underlyingType, KotlinTypes.cOpaquePointer.classifier, emptyList(), nullable)
+    }
+
+    private fun expandCPointerVar(typeArguments: List<TypeArgument>, nullable: Boolean): AbbreviatedType {
+        require(typeArguments.size == 1) { "CPointerVar has only one type argument." }
+        val cPointer = ClassifierStubType(KotlinTypes.cPointer, typeArguments)
+        val cPointerVarOfTypeArgument = TypeArgumentStub(cPointer)
+        val underlyingType = ClassifierStubType(
+                KotlinTypes.cPointerVarOf, listOf(cPointerVarOfTypeArgument), nullable = nullable
         )
+        return AbbreviatedType(underlyingType, KotlinTypes.cPointerVar, typeArguments, nullable)
     }
 
     /**
      * @param primitiveVarType one of kotlinx.cinterop.{primitive}Var types.
      * @return typealias in terms of StubIR types.
      */
-    private fun expandPrimitiveVarType(primitiveVarClassifier: Classifier, nullable: Boolean): ClassifierStubType {
+    private fun expandPrimitiveVarType(primitiveVarClassifier: Classifier, nullable: Boolean): AbbreviatedType {
         val primitiveType = primitiveVarClassifierToPrimitiveType.getValue(primitiveVarClassifier)
         val underlyingType = getVarOfTypeFor(primitiveType, nullable)
-        return ClassifierStubType(primitiveVarClassifier, underlyingType = underlyingType, nullable = nullable)
+        return AbbreviatedType(underlyingType, primitiveVarClassifier, listOf(), nullable)
     }
 
-    private fun expandNativePtr(platform: KotlinPlatform, nullable: Boolean): ClassifierStubType {
+    private fun expandNativePtr(platform: KotlinPlatform, nullable: Boolean): StubType {
         val underlyingTypeClassifier = when (platform) {
             KotlinPlatform.JVM -> KotlinTypes.long.classifier
             KotlinPlatform.NATIVE -> Classifier.topLevel("kotlin.native.internal", "NativePtr")
         }
         val underlyingType = ClassifierStubType(underlyingTypeClassifier, nullable = nullable)
-        return ClassifierStubType(nativePtrClassifier, underlyingType = underlyingType, nullable = nullable)
+        return AbbreviatedType(underlyingType, nativePtrClassifier, listOf(), nullable)
     }
 
     /**
      * @return [ClassifierStubType] if [classifier] is a typealias from [kotlinx.cinterop] package.
      */
-    fun tryExpandPredefinedTypealias(classifier: Classifier, nullable: Boolean): ClassifierStubType? =
+    fun tryExpandPredefinedTypealias(classifier: Classifier, nullable: Boolean, typeArguments: List<TypeArgument>): AbbreviatedType? =
             when (classifier) {
                 in primitiveVarClassifierToPrimitiveType.keys -> expandPrimitiveVarType(classifier, nullable)
                 KotlinTypes.cOpaquePointer.classifier -> expandCOpaquePointer(nullable)
                 KotlinTypes.cOpaquePointerVar.classifier -> expandCOpaquePointerVar(nullable)
+                KotlinTypes.cPointerVar -> expandCPointerVar(typeArguments, nullable)
                 else -> null
             }
 
@@ -169,7 +195,7 @@ private object PredefinedTypesHandler {
      */
     fun tryExpandPlatformDependentTypealias(
             classifier: Classifier, platform: KotlinPlatform, nullable: Boolean
-    ): ClassifierStubType? =
+    ): StubType? =
             when (classifier) {
                 nativePtrClassifier -> expandNativePtr(platform, nullable)
                 else -> null
