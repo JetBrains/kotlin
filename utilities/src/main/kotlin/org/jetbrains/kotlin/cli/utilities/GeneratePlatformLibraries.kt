@@ -20,17 +20,22 @@ fun generatePlatformLibraries(args: Array<String>) {
             ArgType.String, "target", "t", "Compilation target").required()
     val saveTemps by argParser.option(
             ArgType.Boolean, "save-temps", "s", "Save temporary files").default(false)
+    val cacheDirectoryPath by argParser.option(
+            ArgType.String, "cache-directory", "c", "Cache output directory")
+
     argParser.parse(args)
 
     val inputDirectory = File(inputDirectoryPath)
     val outputDirectory = File(outputDirectoryPath)
+    val cacheDirectory = cacheDirectoryPath?.File()
 
     if (!inputDirectory.exists) throw Error("input directory doesn't exist")
     if (!outputDirectory.exists) {
         outputDirectory.mkdirs()
     }
+    File("${outputDirectoryPath}/../cache").mkdirs()
 
-    generatePlatformLibraries(target, inputDirectory, outputDirectory, saveTemps)
+    generatePlatformLibraries(target, inputDirectory, outputDirectory, saveTemps, cacheDirectory)
 }
 
 private class DefFile(val name: String, val depends: MutableList<DefFile>) {
@@ -62,7 +67,8 @@ private fun topoSort(defFiles: List<DefFile>): List<DefFile> {
     return result
 }
 
-private fun generatePlatformLibraries(target: String, inputDirectory: File, outputDirectory: File, saveTemps: Boolean) {
+private fun generatePlatformLibraries(target: String, inputDirectory: File, outputDirectory: File,
+                                      saveTemps: Boolean, cacheDirectory: File?) {
     fun buildKlib(def: DefFile) {
         val file = File("$inputDirectory/${def.name}.def")
         File("${outputDirectory.absolutePath}/build-${def.name}").mkdirs()
@@ -81,13 +87,28 @@ private fun generatePlatformLibraries(target: String, inputDirectory: File, outp
                     "-target", target,
                     "-repository", "${outputDirectory.absolutePath}"
             ))
+            if (cacheDirectory != null)
+                K2Native.mainNoExit(arrayOf("-p", "dynamic_cache",
+                    "-target", target,
+                    "-repo", "${outputDirectory.absolutePath}",
+                    "-Xadd-cache=${outputDirectory.absolutePath}/${def.name}",
+                    "-Xcache-directory=${cacheDirectory.absolutePath}"))
         } finally {
             if (!saveTemps) {
                 File("$outputDirectory/build-${def.name}").deleteRecursively()
             }
         }
     }
-    println("generate platform libraries from $inputDirectory to $outputDirectory for $target")
+    if (cacheDirectory != null) {
+        val stdlib = inputDirectory.parentFile.parentFile.parentFile.child("klib/common/stdlib")
+        println("Caching standard library ${stdlib.absolutePath} to ${cacheDirectory.absolutePath}...")
+        K2Native.mainNoExit(arrayOf("-p", "dynamic_cache",
+                "-target", target,
+                "-Xadd-cache=${stdlib.absolutePath}",
+                "-Xcache-directory=${cacheDirectory.absolutePath}"))
+    }
+
+    println("Generating platform libraries from $inputDirectory to $outputDirectory for $target")
     // Build dependencies graph.
     val defFiles = mutableMapOf<String, DefFile>()
     val dependsRegex = Regex("^depends = (.*)")
