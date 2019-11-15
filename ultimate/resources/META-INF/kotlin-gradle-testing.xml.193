@@ -17,9 +17,6 @@
     <runConfigurationProducer implementation="org.jetbrains.kotlin.idea.gradle.testing.common.KotlinMultiplatformCommonTestMethodGradleConfigurationProducer"/>
 
     <externalSystem.debuggerBackend implementation="org.jetbrains.kotlin.idea.debugger.GradleNodeJsDebuggerBackend"/>
-
-    <configurationType implementation="org.jetbrains.kotlin.idea.debugger.KotlinKarmaDebugConfigurationType"/>
-    <programRunner implementation="org.jetbrains.kotlin.idea.debugger.KotlinKarmaDebugProgramRunner"/>
     <externalSystem.debuggerBackend implementation="org.jetbrains.kotlin.idea.debugger.GradleBrowserDebuggerBackend"/>
   </extensions>
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
