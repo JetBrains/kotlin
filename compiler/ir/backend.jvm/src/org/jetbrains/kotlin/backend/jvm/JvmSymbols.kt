@@ -235,7 +235,7 @@ class JvmSymbols(
     }
 
     val suspendLambdaClass: IrClassSymbol = createClass(FqName("kotlin.coroutines.jvm.internal.SuspendLambda")) { klass ->
-        klass.superTypes += suspendFunctionInterface.owner.defaultType
+        klass.superTypes += suspendFunctionInterface.defaultType
         klass.addConstructor().apply {
             addValueParameter("arity", irBuiltIns.intType)
             addValueParameter("completion", continuationClass.typeWith(irBuiltIns.anyNType).makeNullable())
@@ -255,7 +255,7 @@ class JvmSymbols(
     private fun generateCallableReferenceMethods(klass: IrClass) {
         klass.addFunction("getSignature", irBuiltIns.stringType, Modality.OPEN)
         klass.addFunction("getName", irBuiltIns.stringType, Modality.OPEN)
-        klass.addFunction("getOwner", irBuiltIns.kDeclarationContainerClass.owner.defaultType, Modality.OPEN)
+        klass.addFunction("getOwner", irBuiltIns.kDeclarationContainerClass.defaultType, Modality.OPEN)
     }
 
     val functionReference: IrClassSymbol = createClass(FqName("kotlin.jvm.internal.FunctionReference")) { klass ->
@@ -346,11 +346,11 @@ class JvmSymbols(
             ) { klass ->
                 if (impl) {
                     klass.addConstructor().apply {
-                        addValueParameter("owner", irBuiltIns.kDeclarationContainerClass.owner.defaultType)
+                        addValueParameter("owner", irBuiltIns.kDeclarationContainerClass.defaultType)
                         addValueParameter("name", irBuiltIns.stringType)
                         addValueParameter("string", irBuiltIns.stringType)
                     }
-                    klass.superTypes += getPropertyReferenceClass(mutable, parameterCount, false).owner.defaultType
+                    klass.superTypes += getPropertyReferenceClass(mutable, parameterCount, false).defaultType
                 } else {
                     klass.addConstructor()
 
@@ -405,7 +405,7 @@ class JvmSymbols(
         val javaLangClassType = javaLangClass.starProjectedType
         val kClassType = irBuiltIns.kClassClass.starProjectedType
 
-        klass.addFunction("getOrCreateKotlinPackage", irBuiltIns.kDeclarationContainerClass.owner.defaultType, isStatic = true).apply {
+        klass.addFunction("getOrCreateKotlinPackage", irBuiltIns.kDeclarationContainerClass.defaultType, isStatic = true).apply {
             addValueParameter("javaClass", javaLangClassType)
             addValueParameter("moduleName", irBuiltIns.stringType)
         }
@@ -422,7 +422,7 @@ class JvmSymbols(
             for (n in 0..2) {
                 val functionName = (if (mutable) "mutableProperty" else "property") + n
                 klass.addFunction(functionName, irBuiltIns.getKPropertyClass(mutable, n).starProjectedType, isStatic = true).apply {
-                    addValueParameter("p", getPropertyReferenceClass(mutable, n, impl = false).owner.defaultType)
+                    addValueParameter("p", getPropertyReferenceClass(mutable, n, impl = false).defaultType)
                 }
             }
         }
@@ -530,7 +530,7 @@ class JvmSymbols(
                 addValueParameter("element", irType)
             }
 
-            klass.addFunction("toArray", irBuiltIns.primitiveArrayForType.getValue(irType).owner.defaultType)
+            klass.addFunction("toArray", irBuiltIns.primitiveArrayForType.getValue(irType).defaultType)
         }
     }
 

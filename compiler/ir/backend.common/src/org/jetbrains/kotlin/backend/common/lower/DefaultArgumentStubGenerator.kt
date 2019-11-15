@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -382,7 +382,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(context: CommonBackendContex
         newFunction.addValueParameter("mask$i".synthesizedString, context.irBuiltIns.intType)
     }
     if (this is IrConstructor) {
-        val markerType = context.ir.symbols.defaultConstructorMarker.owner.defaultType.makeNullable()
+        val markerType = context.ir.symbols.defaultConstructorMarker.defaultType.makeNullable()
         newFunction.addValueParameter("marker".synthesizedString, markerType)
     } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
         newFunction.addValueParameter("handler".synthesizedString, context.irBuiltIns.anyNType)

@@ -44,7 +44,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
             is ClassDescriptor ->
                 mapClass(context.referenceClass(classifier).owner)
             is TypeParameterDescriptor ->
-                mapType(context.referenceTypeParameter(classifier).owner.defaultType)
+                mapType(context.referenceTypeParameter(classifier).defaultType)
             else ->
                 error("Unknown descriptor: $classifier")
         }
