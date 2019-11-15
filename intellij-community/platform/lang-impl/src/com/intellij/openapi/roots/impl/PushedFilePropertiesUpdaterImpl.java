@@ -5,6 +5,8 @@ import com.intellij.ProjectTopics;
 import com.intellij.diagnostic.PluginException;
 import com.intellij.openapi.application.*;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.extensions.ExtensionPointListener;
+import com.intellij.openapi.extensions.PluginDescriptor;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.fileTypes.InternalFileType;
@@ -16,9 +18,9 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.util.ProgressWrapper;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.roots.*;
+import com.intellij.openapi.util.ClearableLazyValue;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.EmptyRunnable;
-import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.*;
@@ -42,7 +44,7 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
 
   private final Project myProject;
 
-  private final NotNullLazyValue<List<FilePropertyPusher<?>>> myFilePushers = NotNullLazyValue.createValue(() -> {
+  private final ClearableLazyValue<List<FilePropertyPusher<?>>> myFilePushers = ClearableLazyValue.create(() -> {
     //noinspection CodeBlock2Expr
     return ContainerUtil.findAll(FilePropertyPusher.EP_NAME.getExtensionList(), pusher -> !pusher.pushDirectoriesOnly());
   });
@@ -63,6 +65,23 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
         }
       }
     });
+    FilePropertyPusher.EP_NAME.addExtensionPointListener(new ExtensionPointListener<FilePropertyPusher<?>>() {
+      @Override
+      public void extensionAdded(@NotNull FilePropertyPusher<?> pusher, @NotNull PluginDescriptor pluginDescriptor) {
+        queueFullUpdate();
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull FilePropertyPusher<?> extension, @NotNull PluginDescriptor pluginDescriptor) {
+        myFilePushers.drop();
+      }
+    }, project);
+  }
+
+  private void queueFullUpdate() {
+    myFilePushers.drop();
+    myTasks.clear();
+    queueTasks(Arrays.asList(this::initializeProperties, () -> doPushAll(FilePropertyPusher.EP_NAME.getExtensionList())));
   }
 
   @ApiStatus.Internal
@@ -187,6 +206,19 @@ public final class PushedFilePropertiesUpdaterImpl extends PushedFilePropertiesU
         DumbService.getInstance(myProject).cancelTask(task);
       }
     });
+    FilePropertyPusher.EP_NAME.addExtensionPointListener(new ExtensionPointListener<FilePropertyPusher<?>>() {
+      @Override
+      public void extensionAdded(@NotNull FilePropertyPusher<?> pusher, @NotNull PluginDescriptor pluginDescriptor) {
+        DumbService.getInstance(myProject).cancelTask(task);
+        queueFullUpdate();
+      }
+
+      @Override
+      public void extensionRemoved(@NotNull FilePropertyPusher<?> pusher, @NotNull PluginDescriptor pluginDescriptor) {
+        DumbService.getInstance(myProject).cancelTask(task);
+        queueFullUpdate();
+      }
+    }, task);
     DumbService.getInstance(myProject).queueTask(task);
   }
 
