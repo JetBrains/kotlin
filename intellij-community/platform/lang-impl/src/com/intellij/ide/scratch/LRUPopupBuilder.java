@@ -164,7 +164,7 @@ public abstract class LRUPopupBuilder<T> {
     List<T> extra = myExtraItems.toList();
     if (myItemsIterable != null) {
       for (T t : myItemsIterable) {
-        (ids.indexOf(getStorageId(t)) != -1 ? lru : items).add(t);
+        (ids.contains(getStorageId(t)) ? lru : items).add(t);
       }
     }
     if (myComparator != null) {
