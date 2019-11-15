@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
-
-abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Annotations) :
-    DeclarationDescriptor, IrBasedDeclarationDescriptor {
-
+abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Annotations) : DeclarationDescriptor {
     private val annotations_ = annotations
 
     override val annotations: Annotations
