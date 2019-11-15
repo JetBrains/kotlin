@@ -1,0 +1,37 @@
+import org.gradle.api.Task
+
+({
+    def doIfInstance = { Task task, String fqn, Closure action ->
+        def taskSuperClass = task.class
+        while (taskSuperClass != Object.class) {
+            if (taskSuperClass.canonicalName == fqn) {
+                action()
+
+                return
+            } else {
+                taskSuperClass = taskSuperClass.superclass
+            }
+        }
+    }
+
+    def forJsTestTask = { Task task, Closure action ->
+        doIfInstance(task, "org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest", action)
+    }
+
+    gradle.taskGraph.beforeTask { Task task ->
+        forJsTestTask(task) {
+            if (task.name.startsWith("browser") && task.hasProperty('debug')) {
+                ForkedDebuggerHelper.setupDebugger('%id', task.path, '', '%dispatchPort'.toInteger())
+                task.debug = true
+            }
+        }
+    }
+
+    gradle.taskGraph.afterTask { Task task ->
+        forJsTestTask(task) {
+            if (task.name.startsWith("browser") && task.hasProperty('debug')) {
+                ForkedDebuggerHelper.signalizeFinish('%id', task.path, '%dispatchPort'.toInteger())
+            }
+        }
+    }
+})()

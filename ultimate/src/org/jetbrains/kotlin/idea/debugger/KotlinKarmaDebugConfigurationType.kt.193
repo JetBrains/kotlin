@@ -1,0 +1,39 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.idea.debugger
+
+import com.intellij.execution.configurations.*
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NotNullLazyValue
+import icons.JavaScriptDebuggerIcons
+
+class KotlinKarmaDebugConfigurationType : ConfigurationTypeBase(
+    "KotlinKarmaDebugType",
+    "Kotlin Karma Debug",
+    "Kotlin Karma Debug Configuration Type",
+    NotNullLazyValue.createValue { JavaScriptDebuggerIcons.JavaScript_debug_configuration }
+) {
+
+    val factory: ConfigurationFactory
+        get() = object : ConfigurationFactory(this) {
+            override fun getSingletonPolicy() = RunConfigurationSingletonPolicy.SINGLE_INSTANCE_ONLY
+
+            override fun createTemplateConfiguration(project: Project): RunConfiguration {
+                return KotlinKarmaDebugConfiguration(project, this, configurationTypeDescription)
+            }
+
+            override fun getId(): String = "kotlinKarmaDebugConfigurationFactory"
+        }
+
+    init {
+        addFactory(factory)
+    }
+
+    companion object {
+        val instance: KotlinKarmaDebugConfigurationType
+            get() = ConfigurationTypeUtil.findConfigurationType(KotlinKarmaDebugConfigurationType::class.java)
+    }
+}
