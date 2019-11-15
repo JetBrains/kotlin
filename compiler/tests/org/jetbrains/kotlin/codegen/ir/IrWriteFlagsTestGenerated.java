@@ -41,36 +41,36 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
-        @TestMetadata("compiler/testData/writeFlags/callableReference/visibility")
+        @TestMetadata("compiler/testData/writeFlags/callableReference/flags")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Visibility extends AbstractIrWriteFlagsTest {
+        public static class Flags extends AbstractIrWriteFlagsTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
             }
 
-            public void testAllFilesPresentInVisibility() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference/visibility"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
+            public void testAllFilesPresentInFlags() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/callableReference/flags"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("functionReference.kt")
             public void testFunctionReference() throws Exception {
-                runTest("compiler/testData/writeFlags/callableReference/visibility/functionReference.kt");
+                runTest("compiler/testData/writeFlags/callableReference/flags/functionReference.kt");
             }
 
             @TestMetadata("functionReferenceInInlineFunction.kt")
             public void testFunctionReferenceInInlineFunction() throws Exception {
-                runTest("compiler/testData/writeFlags/callableReference/visibility/functionReferenceInInlineFunction.kt");
+                runTest("compiler/testData/writeFlags/callableReference/flags/functionReferenceInInlineFunction.kt");
             }
 
             @TestMetadata("propertyReference.kt")
             public void testPropertyReference() throws Exception {
-                runTest("compiler/testData/writeFlags/callableReference/visibility/propertyReference.kt");
+                runTest("compiler/testData/writeFlags/callableReference/flags/propertyReference.kt");
             }
 
             @TestMetadata("propertyReferenceInInlineFunction.kt")
             public void testPropertyReferenceInInlineFunction() throws Exception {
-                runTest("compiler/testData/writeFlags/callableReference/visibility/propertyReferenceInInlineFunction.kt");
+                runTest("compiler/testData/writeFlags/callableReference/flags/propertyReferenceInInlineFunction.kt");
             }
         }
     }

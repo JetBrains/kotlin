@@ -172,7 +172,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         private fun createConstructor(): IrConstructor =
             functionReferenceClass.addConstructor {
                 setSourceRange(irFunctionReference)
-                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
                 returnType = functionReferenceClass.defaultType
                 isPrimary = true
             }.apply {
@@ -323,7 +323,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         private fun buildOverride(superFunction: IrSimpleFunction, newReturnType: IrType = superFunction.returnType): IrSimpleFunction =
             functionReferenceClass.addFunction {
                 setSourceRange(irFunctionReference)
-                origin = functionReferenceClass.origin
+                origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
                 name = superFunction.name
                 returnType = newReturnType
                 visibility = superFunction.visibility

@@ -79,7 +79,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
             val function = buildFun {
                 setSourceRange(expression)
-                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
                 name = Name.identifier("stub_for_inline")
                 visibility = Visibilities.LOCAL
                 returnType = field.type
@@ -124,7 +124,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
             val function = buildFun {
                 setSourceRange(expression)
-                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+                origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
                 name = Name.identifier("stub_for_inlining")
                 visibility = Visibilities.LOCAL
                 returnType = referencedFunction.returnType
