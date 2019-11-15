@@ -33,7 +33,7 @@ class FileSystemDependenciesResolver(vararg paths: File) : ExternalDependenciesR
             // TODO: add coordinates and wildcard matching
             val file = if (repo == null) File(artifactCoordinates) else File(repo, artifactCoordinates)
             when {
-                !file.exists() -> messages.add("File '$file' does not exists")
+                !file.exists() -> messages.add("File '$file' not found")
                 !file.isFile && !file.isDirectory -> messages.add("Path '$file' is neither file nor directory")
                 else -> return ResultWithDiagnostics.Success(listOf(file))
             }

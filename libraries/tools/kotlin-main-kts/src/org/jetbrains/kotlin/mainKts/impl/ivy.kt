@@ -19,34 +19,40 @@ import org.apache.ivy.plugins.resolver.IBiblioResolver
 import org.apache.ivy.plugins.resolver.URLResolver
 import org.apache.ivy.util.DefaultMessageLogger
 import org.apache.ivy.util.Message
-import org.jetbrains.kotlin.script.util.KotlinAnnotatedScriptDependenciesResolver
-import org.jetbrains.kotlin.script.util.resolvers.DirectResolver
-import org.jetbrains.kotlin.script.util.resolvers.experimental.GenericArtifactCoordinates
-import org.jetbrains.kotlin.script.util.resolvers.experimental.GenericRepositoryCoordinates
-import org.jetbrains.kotlin.script.util.resolvers.experimental.GenericRepositoryWithBridge
-import org.jetbrains.kotlin.script.util.resolvers.experimental.MavenArtifactCoordinates
 import java.io.File
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
+import kotlin.script.experimental.dependencies.RepositoryCoordinates
+import kotlin.script.experimental.dependencies.impl.toRepositoryUrlOrNull
 
-class IvyResolver : GenericRepositoryWithBridge {
+class IvyResolver : ExternalDependenciesResolver {
 
     private fun String?.isValidParam() = this?.isNotBlank() ?: false
 
-    override fun tryResolve(artifactCoordinates: GenericArtifactCoordinates): Iterable<File>? = with (artifactCoordinates) {
-        if (this is MavenArtifactCoordinates && (groupId.isValidParam() || artifactId.isValidParam())) {
-            resolveArtifact(groupId.orEmpty(), artifactId.orEmpty(), version.orEmpty())
-        } else {
-            val artifactType = string.substringAfterLast('@', "").trim()
-            val stringCoordinates = if (artifactType.isNotEmpty()) string.removeSuffix("@$artifactType") else string
-            if (stringCoordinates.isValidParam() && stringCoordinates.count { it == ':' }.let { it == 2 || it == 3 }) {
-                val artifactId = stringCoordinates.split(':')
+    override fun acceptsArtifact(artifactCoordinates: String): Boolean = with(artifactCoordinates) {
+        isValidParam() && count { it == ':' }.let { it == 2 || it == 3 }
+    }
+
+    override fun acceptsRepository(repositoryCoordinates: RepositoryCoordinates): Boolean =
+        repositoryCoordinates.toRepositoryUrlOrNull() != null
+
+    override suspend fun resolve(artifactCoordinates: String): ResultWithDiagnostics<List<File>> {
+
+        val artifactType = artifactCoordinates.substringAfterLast('@', "").trim()
+        val stringCoordinates = if (artifactType.isNotEmpty()) artifactCoordinates.removeSuffix("@$artifactType") else artifactCoordinates
+        return if (acceptsArtifact(stringCoordinates)) {
+            val artifactId = stringCoordinates.split(':')
+            try {
                 resolveArtifact(
                     artifactId[0], artifactId[1], artifactId[2],
                     if (artifactId.size > 3) artifactId[3] else null,
                     if (artifactType.isNotEmpty()) artifactType else null
                 )
-            } else {
-                error("Unrecognized set of arguments to ivy resolver: $stringCoordinates")
+            } catch (e: Exception) {
+                makeFailureResult(e.asDiagnostics())
             }
+        } else {
+            makeFailureResult("Unrecognized set of arguments to ivy resolver: $stringCoordinates")
         }
     }
 
@@ -54,7 +60,7 @@ class IvyResolver : GenericRepositoryWithBridge {
 
     private fun resolveArtifact(
         groupId: String, artifactName: String, revision: String, conf: String? = null, type: String? = null
-    ): List<File> {
+    ): ResultWithDiagnostics<List<File>> {
 
         if (ivyResolvers.isEmpty() || ivyResolvers.none { it.name == "central" }) {
             ivyResolvers.add(
@@ -111,22 +117,23 @@ class IvyResolver : GenericRepositoryWithBridge {
         XmlModuleDescriptorWriter.write(moduleDescriptor, ivyFile)
         val report = ivy.resolve(ivyFile.toURI().toURL(), resolveOptions)
 
-        return report.allArtifactsReports.map { it.localFile }
+        val diagnostics = report.allProblemMessages.map { it.asErrorDiagnostics() }
+
+        return if (report.hasError()) makeFailureResult(diagnostics)
+        else report.allArtifactsReports.map { it.localFile }.asSuccess(diagnostics)
     }
 
-    override fun tryAddRepository(repositoryCoordinates: GenericRepositoryCoordinates): Boolean {
-        val url = repositoryCoordinates.url
+    override fun addRepository(repositoryCoordinates: RepositoryCoordinates) {
+        val url = repositoryCoordinates.toRepositoryUrlOrNull()
         if (url != null) {
             ivyResolvers.add(
                 IBiblioResolver().apply {
                     isM2compatible = true
-                    name = repositoryCoordinates.name.takeIf { it.isValidParam() } ?: url.host
+                    name = url.host
                     root = url.toExternalForm()
                 }
             )
-            return true
         }
-        return false
     }
 
     companion object {
@@ -135,6 +142,3 @@ class IvyResolver : GenericRepositoryWithBridge {
         }
     }
 }
-
-class FilesAndIvyResolver :
-    KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver(), IvyResolver()).asIterable())

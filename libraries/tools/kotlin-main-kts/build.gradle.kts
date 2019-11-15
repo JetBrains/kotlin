@@ -16,6 +16,7 @@ dependencies {
     compileOnly("org.apache.ivy:ivy:2.5.0")
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-scripting-jvm-host"))
+    compileOnly(project(":kotlin-scripting-dependencies"))
     compileOnly(project(":kotlin-script-util"))
     testCompile(project(":kotlin-scripting-jvm-host"))
     testCompile(project(":kotlin-script-util"))
@@ -26,6 +27,7 @@ dependencies {
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm-host")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
     embedded(project(":kotlin-script-util")) { isTransitive = false }
     embedded("org.apache.ivy:ivy:2.5.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
