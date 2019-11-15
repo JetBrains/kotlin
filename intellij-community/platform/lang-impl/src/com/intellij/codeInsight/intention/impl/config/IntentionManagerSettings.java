@@ -4,6 +4,7 @@ package com.intellij.codeInsight.intention.impl.config;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.intention.IntentionActionBean;
 import com.intellij.codeInsight.intention.IntentionManager;
+import com.intellij.ide.ui.OptionsTopHitProvider;
 import com.intellij.ide.ui.search.SearchableOptionsRegistrar;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -51,6 +52,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
       @Override
       public void extensionAdded(@NotNull IntentionActionBean extension, @NotNull PluginDescriptor pluginDescriptor) {
         registerMetaDataForEP(extension);
+        OptionsTopHitProvider.invalidateCachedOptions(IntentionsOptionsTopHitProvider.class);
       }
 
       @Override
@@ -59,6 +61,7 @@ public final class IntentionManagerSettings implements PersistentStateComponent<
         if (categories == null) return;
         String familyName = extension.getInstance().getFamilyName();
         unregisterMetaData(categories, familyName);
+        OptionsTopHitProvider.invalidateCachedOptions(IntentionsOptionsTopHitProvider.class);
       }
     }, true, this);
   }
