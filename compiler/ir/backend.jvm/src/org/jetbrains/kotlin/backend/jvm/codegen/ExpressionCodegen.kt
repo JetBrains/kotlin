@@ -603,6 +603,7 @@ class ExpressionCodegen(
         assert(exhaustive || expression.type.isUnit()) {
             "non-exhaustive conditional should return Unit: ${expression.dump()}"
         }
+        val lastBranch = expression.branches.lastOrNull()
         for (branch in expression.branches) {
             val elseLabel = Label()
             if (branch.condition.isFalseConst() || branch.condition.isTrueConst()) {
@@ -628,7 +629,10 @@ class ExpressionCodegen(
                     return materializedResult
                 }
             }
-            mv.goTo(endLabel)
+
+            if (branch != lastBranch) {
+                mv.goTo(endLabel)
+            }
             mv.mark(elseLabel)
         }
         mv.mark(endLabel)

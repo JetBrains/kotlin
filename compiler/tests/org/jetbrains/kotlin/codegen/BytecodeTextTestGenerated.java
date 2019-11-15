@@ -1614,6 +1614,29 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/disabledOptimizations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DisabledOptimizations extends AbstractBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDisabledOptimizations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/disabledOptimizations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("noJumpInLastBranch.kt")
+        public void testNoJumpInLastBranch() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/disabledOptimizations/noJumpInLastBranch.kt");
+        }
+
+        @TestMetadata("noJumpInSingleBranch.kt")
+        public void testNoJumpInSingleBranch() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/disabledOptimizations/noJumpInSingleBranch.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/enum")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
