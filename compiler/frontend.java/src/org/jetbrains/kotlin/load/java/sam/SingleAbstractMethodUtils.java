@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.SamConversionResolver;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
+import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -167,7 +168,7 @@ public class SingleAbstractMethodUtils {
     @NotNull
     public static SamConstructorDescriptor createSamConstructorFunction(
             @NotNull DeclarationDescriptor owner,
-            @NotNull JavaClassDescriptor samInterface,
+            @NotNull ClassDescriptor samInterface,
             @NotNull SamConversionResolver samResolver
     ) {
         assert getSingleAbstractMethodOrNull(samInterface) != null : samInterface;
@@ -182,7 +183,7 @@ public class SingleAbstractMethodUtils {
     }
 
     private static void initializeSamConstructorDescriptor(
-            @NotNull JavaClassDescriptor samInterface,
+            @NotNull ClassDescriptor samInterface,
             @NotNull SimpleFunctionDescriptorImpl samConstructor,
             @NotNull List<TypeParameterDescriptor> samTypeParameters,
             @NotNull KotlinType unsubstitutedSamType,
@@ -224,12 +225,21 @@ public class SingleAbstractMethodUtils {
     ) {
         SamTypeAliasConstructorDescriptorImpl result = new SamTypeAliasConstructorDescriptorImpl(typeAliasDescriptor, underlyingSamConstructor);
 
-        JavaClassDescriptor samInterface = underlyingSamConstructor.getBaseDescriptorForSynthetic();
+        ClassDescriptor samInterface = underlyingSamConstructor.getBaseDescriptorForSynthetic();
         List<TypeParameterDescriptor> samTypeParameters = typeAliasDescriptor.getTypeConstructor().getParameters();
         SimpleType unsubstitutedSamType = typeAliasDescriptor.getExpandedType();
         initializeSamConstructorDescriptor(samInterface, result, samTypeParameters, unsubstitutedSamType, samResolver);
 
         return result;
+    }
+
+    public static boolean isSamClassDescriptor(@NotNull ClassDescriptor descriptor) {
+        if (descriptor.isFun()) return true;
+        if (descriptor instanceof LazyJavaClassDescriptor &&
+            ((LazyJavaClassDescriptor) descriptor).getDefaultFunctionTypeForSamInterface() != null
+        ) return true;
+
+        return false;
     }
 
     public static boolean isSamType(@NotNull KotlinType type) {
