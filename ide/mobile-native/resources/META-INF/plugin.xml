@@ -71,6 +71,7 @@
 
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
     <projectResolve implementation="com.jetbrains.cidr.apple.gradle.AppleProjectResolver"/>
+    <projectResolve implementation="org.jetbrains.konan.gradle.AndroidTestModelResolver"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.lang">

@@ -29,6 +29,8 @@ import org.jetbrains.konan.AndroidToolkit
 import org.jetbrains.konan.MobileBundle
 import org.jetbrains.konan.execution.testing.AndroidTestCommandLineState
 import org.jetbrains.konan.execution.testing.MobileTestRunConfiguration
+import org.jetbrains.konan.gradle.AndroidTestModelResolver
+import org.jetbrains.konan.gradle.forEachModule
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
@@ -121,7 +123,11 @@ abstract class AndroidDevice(uniqueID: String, name: String, osVersion: AndroidV
             indicator.fraction = 0.8
             indicator.text = MobileBundle.message("run.starting.tests")
 
-            val testRunner = RemoteAndroidTestRunner(testAppId, "androidx.test.runner.AndroidJUnitRunner", handler.raw)
+            var runner = "androidx.test.runner.AndroidJUnitRunner"
+            project.forEachModule(AndroidTestModelResolver.KEY) { model, _, _ ->
+                runner = model.testInstrumentationRunner
+            }
+            val testRunner = RemoteAndroidTestRunner(testAppId, runner, handler.raw)
             testRunner.setDebug(waitForDebugger)
             log.info("Running tests: ${testRunner.amInstrumentCommand}")
 

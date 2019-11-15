@@ -59,13 +59,11 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
         settings.externalSystemIdString = GRADLE_SYSTEM_ID.id
         settings.externalProjectPath = projectData.externalProjectPath
         settings.executionName = name
-        settings.taskNames = listOf(
-            when (configuration) {
-                is MobileAppRunConfiguration -> ":app:assemble"
-                is MobileTestRunConfiguration -> ":app:assembleAndroidTest"
-                else -> throw IllegalStateException()
-            }
-        )
+        settings.taskNames = when (configuration) {
+            is MobileAppRunConfiguration -> listOf(":app:assemble")
+            is MobileTestRunConfiguration -> listOf(":app:assemble", ":app:assembleAndroidTest")
+            else -> throw IllegalStateException()
+        }
 
         val success = FutureResult<Boolean>()
         val callback = object : TaskCallback {

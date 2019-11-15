@@ -1,1 +1,2 @@
 com.jetbrains.cidr.apple.gradle.AppleProjectModelBuilder
+org.jetbrains.konan.gradle.AndroidTestModelBuilder
