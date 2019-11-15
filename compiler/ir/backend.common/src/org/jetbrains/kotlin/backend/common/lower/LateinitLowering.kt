@@ -48,6 +48,7 @@ open class LateinitLowering(val context: CommonBackendContext) : FileLoweringPas
             }.apply {
                 parent = originalField.parent
                 correspondingPropertySymbol = originalField.correspondingPropertySymbol
+                annotations += originalField.annotations
             }
         }
     }
