@@ -41,11 +41,11 @@ open class FirConstructorImpl(
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
-    override var body: FirBlock? = null
     override val name: Name = Name.special("<init>")
     override var containerSource: DeserializedContainerSource? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override var delegatedConstructor: FirDelegatedConstructorCall? = null
+    override var body: FirBlock? = null
     override val isPrimary: Boolean get() = false
 
     init {
@@ -57,10 +57,10 @@ open class FirConstructorImpl(
         receiverTypeRef?.accept(visitor, data)
         controlFlowGraphReference.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
-        body?.accept(visitor, data)
         status.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         delegatedConstructor?.accept(visitor, data)
+        body?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
@@ -68,10 +68,10 @@ open class FirConstructorImpl(
         transformReceiverTypeRef(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
-        body = body?.transformSingle(transformer, data)
         transformStatus(transformer, data)
         annotations.transformInplace(transformer, data)
         delegatedConstructor = delegatedConstructor?.transformSingle(transformer, data)
+        body = body?.transformSingle(transformer, data)
         return this
     }
 

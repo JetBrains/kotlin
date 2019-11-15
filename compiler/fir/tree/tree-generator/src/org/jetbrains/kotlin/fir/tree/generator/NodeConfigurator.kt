@@ -316,6 +316,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
             parentArg(memberFunction, "F", constructor)
             +symbol("FirConstructorSymbol")
             +field("delegatedConstructor", delegatedConstructorCall, nullable = true)
+            +body(nullable = true)
             +booleanField("isPrimary")
         }
 
