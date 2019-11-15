@@ -63,7 +63,12 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
                     return
                 }
 
-                val actualParameter = function.findActualForExpected().valueParameters[index]
+                // If the containing declaration is an `expect class` that matches an `actual typealias`,
+                // the `actual fun` or `actual constructor` for this may be in a different module.
+                // Nothing we can do with those.
+                // TODO they may not actually have the defaults though -- may be a frontend bug.
+                val actualFunction = function.findActualForExpected() ?: return
+                val actualParameter = actualFunction.valueParameters[index]
 
                 // Keep actual default value if present. They are generally not allowed but can be suppressed with
                 // @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
@@ -79,19 +84,19 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         })
     }
 
-    private fun IrFunction.findActualForExpected(): IrFunction =
-        symbolTable.referenceFunction(descriptor.findActualForExpect()).owner
+    private fun IrFunction.findActualForExpected(): IrFunction? =
+        descriptor.findActualForExpect()?.let { symbolTable.referenceFunction(it).owner }
 
-    private fun IrClass.findActualForExpected(): IrClass =
-        symbolTable.referenceClass(descriptor.findActualForExpect()).owner
+    private fun IrClass.findActualForExpected(): IrClass? =
+        descriptor.findActualForExpect()?.let { symbolTable.referenceClass(it).owner }
 
     private inline fun <reified T : MemberDescriptor> T.findActualForExpect() = with(ExpectedActualResolver) {
         val descriptor = this@findActualForExpect
 
         if (!descriptor.isExpect) error(this)
 
-        findCompatibleActualForExpected(descriptor.module).singleOrNull() ?: error(descriptor)
-    } as T
+        findCompatibleActualForExpected(descriptor.module).singleOrNull()
+    } as T?
 
     private fun IrExpression.remapExpectValueSymbols(): IrExpression {
         return this.transform(object : IrElementTransformerVoid() {
@@ -123,17 +128,17 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         return when (parent) {
             is IrClass -> {
                 assert(parameter == parent.thisReceiver)
-                parent.findActualForExpected().thisReceiver!!
+                parent.findActualForExpected()!!.thisReceiver!!
             }
 
             is IrFunction -> when (parameter) {
                 parent.dispatchReceiverParameter ->
-                    parent.findActualForExpected().dispatchReceiverParameter!!
+                    parent.findActualForExpected()!!.dispatchReceiverParameter!!
                 parent.extensionReceiverParameter ->
-                    parent.findActualForExpected().extensionReceiverParameter!!
+                    parent.findActualForExpected()!!.extensionReceiverParameter!!
                 else -> {
                     assert(parent.valueParameters[parameter.index] == parameter)
-                    parent.findActualForExpected().valueParameters[parameter.index]
+                    parent.findActualForExpected()!!.valueParameters[parameter.index]
                 }
             }
 

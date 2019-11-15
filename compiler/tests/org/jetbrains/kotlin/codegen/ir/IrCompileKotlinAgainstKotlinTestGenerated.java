@@ -123,6 +123,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/enum.kt");
     }
 
+    @TestMetadata("expectClassActualTypeAlias.kt")
+    public void testExpectClassActualTypeAlias() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/expectClassActualTypeAlias.kt");
+    }
+
     @TestMetadata("inlineClassFromBinaryDependencies.kt")
     public void testInlineClassFromBinaryDependencies() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFromBinaryDependencies.kt");
