@@ -252,7 +252,9 @@ class ExpressionCodegen(
             writeValueParameterInLocalVariableTable(extensionReceiverParameter, startLabel, endLabel, true)
         }
         for (param in irFunction.valueParameters) {
-            writeValueParameterInLocalVariableTable(param, startLabel, endLabel, false)
+            if (!param.origin.isSynthetic) {
+                writeValueParameterInLocalVariableTable(param, startLabel, endLabel, false)
+            }
         }
     }
 

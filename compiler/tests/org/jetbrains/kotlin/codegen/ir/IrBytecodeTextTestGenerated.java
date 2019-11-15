@@ -1539,6 +1539,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testNoEmptyArray() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/defaultArguments/noEmptyArray.kt");
         }
+
+        @TestMetadata("noSyntheticParameters.kt")
+        public void testNoSyntheticParameters() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/defaultArguments/noSyntheticParameters.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/directInvoke")
