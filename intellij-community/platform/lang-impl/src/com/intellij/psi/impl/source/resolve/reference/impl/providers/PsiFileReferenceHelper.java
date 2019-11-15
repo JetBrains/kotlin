@@ -49,6 +49,11 @@ import static java.util.Collections.singletonList;
  */
 public class PsiFileReferenceHelper extends FileReferenceHelper {
   @NotNull
+  public static PsiFileReferenceHelper getInstance() {
+    return Objects.requireNonNull(FileReferenceHelper.EP_NAME.findExtension(PsiFileReferenceHelper.class));
+  }
+
+  @NotNull
   @Override
   public List<? extends LocalQuickFix> registerFixes(FileReference reference) {
     return FileReferenceQuickFixProvider.registerQuickFix(reference);
@@ -82,7 +87,8 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
       if (module == null) return emptyList();
 
       contexts = getContextsForModule(module, "", module.getModuleWithDependenciesScope());
-    } else {
+    }
+    else {
       contexts = getContexts(project, file, true);
     }
 
@@ -91,7 +97,8 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
       if (context instanceof VirtualPsiDirectory) {
         VirtualPsiDirectory virtual = (VirtualPsiDirectory)context;
         fileTargetContexts.add(new FileTargetContext(virtual.getRoot(), virtual.getPathToCreate()));
-      } else {
+      }
+      else {
         fileTargetContexts.add(new FileTargetContext(context));
       }
     }
@@ -184,7 +191,7 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
 
               String rootPackagePrefix = getSourceRootPackagePrefix(orderEntry, root);
               if (!rootPackagePrefix.isEmpty()) {
-                path +=  "." + rootPackagePrefix;
+                path += "." + rootPackagePrefix;
               }
 
               List<PsiFileSystemItem> contextsForModule = getContextsForModule(module, path, module.getModuleWithDependenciesScope());
@@ -231,7 +238,8 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
       String[] pathToCreate;
       if (srcPackagePrefix.isEmpty()) {
         pathToCreate = relativePath;
-      } else {
+      }
+      else {
         pathToCreate = removeCommonStartPackages(relativePath, srcPackagePrefix);
       }
 
@@ -275,7 +283,9 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
     return url.trim();
   }
 
-  static List<PsiFileSystemItem> getContextsForModule(@NotNull Module module, @NotNull String packageName, @Nullable GlobalSearchScope scope) {
+  static List<PsiFileSystemItem> getContextsForModule(@NotNull Module module,
+                                                      @NotNull String packageName,
+                                                      @Nullable GlobalSearchScope scope) {
     List<PsiFileSystemItem> result = null;
     Query<VirtualFile> query = DirectoryIndex.getInstance(module.getProject()).getDirectoriesByPackageName(packageName, false);
     PsiManager manager = null;
@@ -290,7 +300,7 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
       if (psiDirectory != null) result.add(psiDirectory);
     }
 
-    return result != null ? result: emptyList();
+    return result != null ? result : emptyList();
   }
 
   private static class VirtualPsiDirectory extends SyntheticFileSystemItem {
