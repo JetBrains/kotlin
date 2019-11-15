@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
-import org.jetbrains.kotlin.scripting.definitions.getEnvironment
+import org.jetbrains.kotlin.scripting.definitions.*
 import java.io.File
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 
@@ -70,12 +67,15 @@ class ScriptingCompilerConfigurationExtension(
                 )
             }
 
-            configuration.add(
+            configuration.addAll(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES,
-                ScriptDefinitionsFromClasspathDiscoverySource(
-                    configuration.jvmClasspathRoots,
-                    hostConfiguration,
-                    messageCollector.reporter
+                listOf(
+                    ScriptDefinitionsFromClasspathDiscoverySource(
+                        configuration.jvmClasspathRoots,
+                        hostConfiguration,
+                        messageCollector.reporter
+                    ),
+                    AutoloadedScriptDefinitions(hostConfiguration, this::class.java.classLoader, messageCollector.reporter)
                 )
             )
 
