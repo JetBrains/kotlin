@@ -1650,6 +1650,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testNoUnitInstanceOnVoidFunctionCall() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/disabledOptimizations/noUnitInstanceOnVoidFunctionCall.kt");
         }
+
+        @TestMetadata("noUnusedLabel.kt")
+        public void testNoUnusedLabel() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/disabledOptimizations/noUnusedLabel.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/enum")

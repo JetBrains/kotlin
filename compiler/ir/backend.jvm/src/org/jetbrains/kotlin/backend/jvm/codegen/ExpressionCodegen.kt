@@ -289,7 +289,9 @@ class ExpressionCodegen(
         val info = BlockInfo(data)
         // Force materialization to avoid reading from out-of-scope variables.
         return super.visitBlock(expression, info).materialized.also {
-            writeLocalVariablesInTable(info, markNewLabel())
+            if (info.variables.isNotEmpty()) {
+                writeLocalVariablesInTable(info, markNewLabel())
+            }
         }
     }
 
