@@ -5091,6 +5091,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/javaMapForEach/destructuringDeclaration.kt");
         }
 
+        @TestMetadata("implicitReceiver.kt")
+        public void testImplicitReceiver() throws Exception {
+            runTest("idea/testData/inspectionsLocal/javaMapForEach/implicitReceiver.kt");
+        }
+
         @TestMetadata("java.kt")
         public void testJava() throws Exception {
             runTest("idea/testData/inspectionsLocal/javaMapForEach/java.kt");
