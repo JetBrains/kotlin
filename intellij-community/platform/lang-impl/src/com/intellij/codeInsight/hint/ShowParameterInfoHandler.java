@@ -3,6 +3,7 @@
 package com.intellij.codeInsight.hint;
 
 import com.intellij.codeInsight.CodeInsightActionHandler;
+import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupManager;
@@ -10,23 +11,33 @@ import com.intellij.lang.Language;
 import com.intellij.lang.parameterInfo.LanguageParameterInfo;
 import com.intellij.lang.parameterInfo.ParameterInfoHandler;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.DumbService;
+import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.LightweightHint;
+import com.intellij.util.Consumer;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class ShowParameterInfoHandler implements CodeInsightActionHandler {
+  private static final ParameterInfoHandler[] EMPTY_HANDLERS = new ParameterInfoHandler[0];
   private final boolean myRequestFocus;
 
   public ShowParameterInfoHandler() {
@@ -57,11 +68,17 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
 
   public static void invoke(final Project project, final Editor editor, PsiFile file,
                             int lbraceOffset, PsiElement highlightedElement, boolean requestFocus) {
-    invoke(project, editor, file, lbraceOffset, highlightedElement, requestFocus, false);
+    invoke(project, editor, file, lbraceOffset, highlightedElement, requestFocus, false,
+           CodeInsightBundle.message("parameter.info.progress.title"),
+           e -> DumbService.getInstance(project)
+             .showDumbModeNotification(CodeInsightBundle.message("parameter.info.indexing.mode.not.supported")));
   }
 
   public static void invoke(final Project project, final Editor editor, PsiFile file,
-                            int lbraceOffset, PsiElement highlightedElement, boolean requestFocus, boolean singleParameterHint) {
+                            int lbraceOffset, PsiElement highlightedElement,
+                            boolean requestFocus, boolean singleParameterHint,
+                            String progressTitle,
+                            Consumer<IndexNotReadyException> indexNotReadyExceptionConsumer) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     PsiDocumentManager.getInstance(project).commitAllDocuments();
 
@@ -85,8 +102,9 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
     // file.findElementAt(file.getTextLength()) returns null but we may need to show parameter info at EOF offset (for example in SQL)
     final int offsetForLangDetection = offset > 0 && offset == fileLength ? offset - 1 : offset;
     final Language language = PsiUtilCore.getLanguageAtOffset(file, offsetForLangDetection);
-    ParameterInfoHandler[] handlers = getHandlers(project, language, file.getViewProvider().getBaseLanguage());
-    if (handlers == null) handlers = new ParameterInfoHandler[0];
+
+    final ParameterInfoHandler<PsiElement, Object>[] handlers =
+      ObjectUtils.notNull(getHandlers(project, language, file.getViewProvider().getBaseLanguage()), EMPTY_HANDLERS);
 
     Lookup lookup = LookupManager.getInstance(project).getActiveLookup();
 
@@ -94,7 +112,7 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
       LookupElement item = lookup.getCurrentItem();
 
       if (item != null) {
-        for(ParameterInfoHandler handler:handlers) {
+        for (ParameterInfoHandler<PsiElement, Object> handler : handlers) {
           if (handler.couldShowInLookup()) {
             final Object[] items = handler.getParametersForLookup(item, context);
             if (items != null && items.length > 0) {
@@ -107,19 +125,60 @@ public class ShowParameterInfoHandler implements CodeInsightActionHandler {
       return;
     }
 
-    DumbService.getInstance(project).setAlternativeResolveEnabled(true);
-    try {
-      for (ParameterInfoHandler<Object, ?> handler : handlers) {
-        Object element = handler.findElementForParameterInfo(context);
-        if (element != null) {
-          handler.showParameterInfo(element, context);
-          break;
+    final Component focusOwner = IdeFocusManager.getInstance(project).getFocusOwner();
+
+    ProgressManager.getInstance().run(
+      new Task.Backgroundable(project, progressTitle, true) {
+        @Override
+        public void run(@NotNull ProgressIndicator indicator) {
+          PsiElement element = null;
+          ParameterInfoHandler<PsiElement, Object> handler = null;
+
+          DumbService dumbService = DumbService.getInstance(project);
+          dumbService.setAlternativeResolveEnabled(true);
+
+          try {
+            for (int i = 0; i < handlers.length; i++) {
+              final ParameterInfoHandler<PsiElement, Object> h = handlers[i];
+              handler = h;
+              element = ReadAction
+                .nonBlocking(() -> {
+                  try {
+                    return h.findElementForParameterInfo(context);
+                  }
+                  catch (IndexNotReadyException e) {
+                    indexNotReadyExceptionConsumer.consume(e);
+                    return null;
+                  }
+                })
+                .cancelWith(indicator)
+                .expireWhen(() -> editor.getCaretModel().getOffset() != offset)
+                .executeSynchronously();
+
+              if (element != null) {
+                break;
+              }
+            }
+          }
+          finally {
+            dumbService.setAlternativeResolveEnabled(false);
+          }
+
+          if (element != null && !indicator.isCanceled()) {
+            final PsiElement el = element;
+            final ParameterInfoHandler<PsiElement, Object> h = handler;
+            ApplicationManager.getApplication().invokeLater(() -> {
+              if (!el.isValid()) return;
+
+              if (editor.getCaretModel().getOffset() != context.getOffset() ||
+                  !Objects.equals(focusOwner, IdeFocusManager.getInstance(project).getFocusOwner())) return;
+
+              h.showParameterInfo(el, context);
+            });
+          }
         }
       }
-    }
-    finally {
-      DumbService.getInstance(project).setAlternativeResolveEnabled(false);
-    }
+    );
   }
 
   private static void showLookupEditorHint(Object[] descriptors,
