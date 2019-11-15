@@ -1,5 +1,6 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <externalSystem.debuggerBackend implementation="org.jetbrains.kotlin.idea.debugger.GradleNodeJsDebuggerBackend"/>
+    <externalSystem.debuggerBackend implementation="org.jetbrains.kotlin.idea.debugger.GradleBrowserDebuggerBackend"/>
   </extensions>
 </idea-plugin>
