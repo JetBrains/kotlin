@@ -84,7 +84,7 @@ open class DefaultArgumentStubGenerator(
                 val remapped = if (valueParameter.defaultValue != null) {
                     val mask = irGet(newIrFunction.valueParameters[irFunction.valueParameters.size + valueParameter.index / 32])
                     val bit = irInt(1 shl (valueParameter.index % 32))
-                    val test = irCallOp(this@DefaultArgumentStubGenerator.context.ir.symbols.intAnd, context.irBuiltIns.intType, mask, bit)
+                    val defaultFlag = irCallOp(this@DefaultArgumentStubGenerator.context.ir.symbols.intAnd, context.irBuiltIns.intType, mask, bit)
 
                     val expressionBody = valueParameter.defaultValue!!
                     expressionBody.patchDeclarationParents(newIrFunction)
@@ -96,7 +96,7 @@ open class DefaultArgumentStubGenerator(
                         }
                     })
 
-                    selectArgumentOrDefault(irNotEquals(test, irInt(0)), parameter, expressionBody.expression)
+                    selectArgumentOrDefault(defaultFlag, parameter, expressionBody.expression)
                 } else {
                     parameter
                 }
@@ -128,11 +128,11 @@ open class DefaultArgumentStubGenerator(
     }
 
     protected open fun IrBlockBodyBuilder.selectArgumentOrDefault(
-        shouldUseDefault: IrExpression,
+        defaultFlag: IrExpression,
         parameter: IrValueParameter,
         default: IrExpression
     ): IrValueDeclaration {
-        val value = irIfThenElse(parameter.type, shouldUseDefault, default, irGet(parameter))
+        val value = irIfThenElse(parameter.type, irNotEquals(defaultFlag, irInt(0)), default, irGet(parameter))
         return createTmpVariable(value, nameHint = parameter.name.asString())
     }
 
