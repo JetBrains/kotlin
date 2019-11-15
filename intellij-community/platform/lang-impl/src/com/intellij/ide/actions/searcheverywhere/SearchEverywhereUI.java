@@ -217,6 +217,20 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       setEverywhereAuto(false);
     }
 
+    rebuildSearchFieldExtensions();
+
+    if (prevTabIsAll != nextTabIsAll) {
+      //reset cell renderer to show/hide group titles in "All" tab
+      myResultsList.setCellRenderer(myResultsList.getCellRenderer());
+    }
+    if (myToolbar != null) {
+      myToolbar.updateActionsImmediately();
+    }
+    repaint();
+    rebuildList();
+  }
+
+  private void rebuildSearchFieldExtensions() {
     if (mySearchField != null) {
       Boolean commandsSupported = mySelectedTab.getContributor()
         .map(contributor -> !contributor.getSupportedCommands().isEmpty())
@@ -230,20 +244,10 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
 
       mySearchField.removeExtension(myAdvertisement);
       if (!commandsSupported) {
-        tab.getContributor().map(c -> c.getAdvertisement()).
+        mySelectedTab.getContributor().map(c -> c.getAdvertisement()).
           ifPresent(s -> mySearchField.addExtension(myAdvertisement.withText(s)));
       }
     }
-
-    if (prevTabIsAll != nextTabIsAll) {
-      //reset cell renderer to show/hide group titles in "All" tab
-      myResultsList.setCellRenderer(myResultsList.getCellRenderer());
-    }
-    if (myToolbar != null) {
-      myToolbar.updateActionsImmediately();
-    }
-    repaint();
-    rebuildList();
   }
 
   private final MyAdvertisement myAdvertisement = new MyAdvertisement();
@@ -700,6 +704,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       @Override
       public void exitDumbMode() {
         ApplicationManager.getApplication().invokeLater(() -> {
+          rebuildSearchFieldExtensions();
           rebuildList();
         });
       }

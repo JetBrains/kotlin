@@ -60,6 +60,10 @@ public abstract class ContributorsBasedGotoByModel implements ChooseByNameModelE
     return ContainerUtil.find(getContributorList(), o -> DumbService.isDumbAware(o)) != null;
   }
 
+  public boolean isIncompleteInDumbMode() {
+    return ContainerUtil.find(getContributorList(), o -> !DumbService.isDumbAware(o)) != null;
+  }
+
   @NotNull
   @Override
   public ListCellRenderer getListCellRenderer() {
