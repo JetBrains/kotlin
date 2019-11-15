@@ -35,7 +35,7 @@ public abstract class BigPopupUI extends BorderLayoutPanel implements Disposable
   private static final int MINIMAL_SUGGESTIONS_LIST_HEIGHT= 100;
 
   protected final Project myProject;
-  protected JBTextField mySearchField;
+  protected ExtendableTextField mySearchField;
   protected JPanel suggestionsPanel;
   protected JBList<Object> myResultsList;
   protected JBPopup myHint;

@@ -217,23 +217,21 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       setEverywhereAuto(false);
     }
 
-    if (mySearchField instanceof ExtendableTextField) {
-      ExtendableTextField textField = (ExtendableTextField)mySearchField;
-
+    if (mySearchField != null) {
       Boolean commandsSupported = mySelectedTab.getContributor()
         .map(contributor -> !contributor.getSupportedCommands().isEmpty())
         .orElse(true);
       if (commandsSupported) {
-        textField.addExtension(hintExtension);
+        mySearchField.addExtension(hintExtension);
       }
       else {
-        textField.removeExtension(hintExtension);
+        mySearchField.removeExtension(hintExtension);
       }
 
-      textField.removeExtension(myAdvertisement);
+      mySearchField.removeExtension(myAdvertisement);
       if (!commandsSupported) {
         tab.getContributor().map(c -> c.getAdvertisement()).
-          ifPresent(s -> textField.addExtension(myAdvertisement.withText(s)));
+          ifPresent(s -> mySearchField.addExtension(myAdvertisement.withText(s)));
       }
     }
 
@@ -701,7 +699,9 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
     projectBusConnection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
       @Override
       public void exitDumbMode() {
-        ApplicationManager.getApplication().invokeLater(() -> rebuildList());
+        ApplicationManager.getApplication().invokeLater(() -> {
+          rebuildList();
+        });
       }
     });
     projectBusConnection.subscribe(AnActionListener.TOPIC, new AnActionListener() {
