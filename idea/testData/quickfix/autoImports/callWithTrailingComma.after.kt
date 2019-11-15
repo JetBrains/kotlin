@@ -1,26 +1,19 @@
-// FILE: first.before.kt
-// "Import" "false"
-// ERROR: The feature "trailing commas" is only available since language version 1.4
+// "Import" "true"
 // ERROR: Type mismatch: inferred type is Int but String was expected
 // ACTION: Add 'toString()' call
 // ACTION: Change parameter 'p' type of function 'foo' to 'Int'
 // ACTION: Create function 'foo'
+// COMPILER_ARGUMENTS: -XXLanguage:+TrailingCommas
 
 package main
+
+import other.foo
 
 class X {
     fun foo(p: String) {
     }
 
     fun f(p: Int) {
-        foo(<caret>p, )
+        foo(<selection><caret></selection>p, )
     }
-}
-
-// FILE: second.kt
-package other
-
-import main.X
-
-fun X.foo(p: Int) {
 }
