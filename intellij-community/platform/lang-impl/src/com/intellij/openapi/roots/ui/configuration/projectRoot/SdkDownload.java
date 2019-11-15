@@ -4,6 +4,7 @@ package com.intellij.openapi.roots.ui.configuration.projectRoot;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModel;
 import com.intellij.openapi.projectRoots.SdkType;
@@ -22,15 +23,64 @@ import java.util.function.Consumer;
 public interface SdkDownload {
   ExtensionPointName<SdkDownload> EP_NAME = ExtensionPointName.create("com.intellij.sdkDownload");
 
+  /**
+   * Returns true if the download is supported for the given SdkType,
+   * if so, the {@link #showDownloadUI(SdkTypeId, SdkModel, JComponent, Sdk, Consumer)}
+   * method could be called
+   */
+  boolean supportsDownload(@NotNull SdkTypeId sdkTypeId);
+
+  /**
+   * @return the icon to show for the download action in the UI
+   * for the given {@param sdkTypeId}, which satisfies the
+   * {@link #supportsDownload(SdkTypeId)} test
+   */
   @NotNull
   default Icon getIconForDownloadAction(@NotNull SdkTypeId sdkTypeId) {
     return AllIcons.Actions.Download;
   }
 
   /**
-   * Returns true if the download is supported for the given SdkType
+   * Implement that interface and return an instance back via the callback
+   * of the {@link #showDownloadUI(SdkTypeId, SdkModel, JComponent, Sdk, Consumer)}
+   * method to register an SDK in the model and to initiate a background process
+   * of downloading and preparing of it.
    */
-  boolean supportsDownload(@NotNull SdkTypeId sdkTypeId);
+  interface SdkDownloadTask {
+    /**
+     * @return the suggested name for an SDK to be created, still, the name could
+     * be altered to avoid conflicts
+     */
+    default @Nullable String getSuggestedSdkName() { return null; }
+
+    /**
+     * @return SDK is expected to have the a home directory.
+     * Return the planned directory where the SDK will be installed
+     * by the {@link #getDownloadTask()}
+     */
+    @NotNull String getPlannedHomeDir();
+
+    /**
+     * @return it is helpful for the UI to know the version of the SDK
+     * before hand (e.g. while the SDK is downloading)
+     */
+    @NotNull String getPlannedVersion();
+
+    /**
+     * @return the task to execute in order to have the proposed
+     * SDK ready. Once completed, we will setup the SDK the same was
+     * as it would be installed from the home path via the {@link SdkType}
+     * and {@link ProjectSdksModel#setProjectSdk(Sdk)}.
+     *
+     * Should the task fail - the SDK will be rejected and the
+     * message from the thrown exception will be shown to the user,
+     * make sure it is ready to be presented (some details could be
+     * still hidden in the {@link Throwable#cause} field)
+     */
+    @NotNull Task.Backgroundable getDownloadTask();
+  }
+
+
 
   /**
    * Shows the custom SDK download UI based on selected SDK in parent component. The implementation should do the
