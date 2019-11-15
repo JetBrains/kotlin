@@ -15,6 +15,7 @@ import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.Modificatio
 import com.intellij.openapi.externalSystem.autoimport.ProjectTracker.ModificationType.INTERNAL
 import com.intellij.openapi.externalSystem.service.project.autoimport.ProjectStatus
 import com.intellij.openapi.observable.operations.CompoundParallelOperationTrace
+import com.intellij.openapi.observable.operations.SuperCompoundParallelOperationTrace
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -35,17 +36,19 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   private val projectDataMap = ConcurrentHashMap<ExternalSystemProjectId, ProjectData>()
   private val isDisabled = AtomicBooleanProperty(ApplicationManager.getApplication().isHeadlessEnvironment)
   private val initializationProperty = AtomicBooleanProperty(false)
-  private val projectChangeOperation = CompoundParallelOperationTrace<Nothing?>()
+  private val projectChangeOperation = SuperCompoundParallelOperationTrace()
   private val projectRefreshOperation = CompoundParallelOperationTrace<Long>()
   private val dispatcher = MergingUpdateQueue("project tracker", AUTO_REPARSE_DELAY, false, ANY_COMPONENT, this)
 
   private fun createProjectChangesListener() =
     object : ProjectBatchFileChangeListener(project) {
-      override fun batchChangeStarted(activityName: String?) =
-        projectChangeOperation.startOperation(null)
+      override fun batchChangeStarted(activityName: String?) {
+        projectChangeOperation.startOperation()
+        projectChangeOperation.startTask()
+      }
 
       override fun batchChangeCompleted() =
-        projectChangeOperation.finishTask(null)
+        projectChangeOperation.finishTask()
     }
 
   private fun createProjectRefreshListener(projectData: ProjectData) =
@@ -53,8 +56,8 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
       val id = currentTime()
 
       override fun beforeProjectRefresh() {
-        projectRefreshOperation.startOperation(id)
-        projectData.settingsTracker.applyChanges()
+        projectRefreshOperation.startOperation()
+        projectRefreshOperation.startTask(id)
         projectData.status.markSynchronized(currentTime())
       }
 
@@ -115,9 +118,6 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     LOG.debug("Notification status update")
     val notificationAware = ProjectNotificationAware.getInstance(project)
     for ((projectId, data) in projectDataMap) {
-      if (!projectRefreshOperation.isOperationCompleted()) {
-        if (!data.isUpToDate()) data.status.markDirty(currentTime())
-      }
       when (data.isUpToDate()) {
         true -> notificationAware.notificationExpire(projectId)
         else -> notificationAware.notificationNotify(data.projectAware)
@@ -145,6 +145,10 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     val notificationAware = ProjectNotificationAware.getInstance(project)
 
     projectDataMap[projectId] = projectData
+
+    val id = currentTime()
+    settingsTracker.beforeApplyChanges { projectRefreshOperation.startTask(id) }
+    settingsTracker.afterApplyChanges { projectRefreshOperation.finishTask(id) }
 
     Disposer.register(this, parentDisposable)
     projectAware.subscribe(createProjectRefreshListener(projectData), parentDisposable)
@@ -208,14 +212,6 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     dispatcher.activate()
   }
 
-  private fun reset() {
-    LOG.debug("Reset project tracker")
-    projectDataMap.values.forEach {
-      it.settingsTracker.applyChanges()
-      it.status.markSynchronized(currentTime())
-    }
-  }
-
   @TestOnly
   fun enableAutoImportInTests() {
     isDisabled.set(false)
@@ -233,10 +229,7 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
     projectChangeOperation.afterOperation { scheduleChangeProcessing() }
     projectChangeOperation.afterOperation { LOG.debug("Project change finished") }
     initializationProperty.afterSet { init() }
-    projectRefreshOperation.afterOperation {
-      initializationProperty.afterSet { reset() }
-      initializationProperty.set()
-    }
+    projectRefreshOperation.afterOperation { initializationProperty.set() }
   }
 
   private fun ProjectData.getState() = State.Project(status.isDirty(), settingsTracker.getState())
@@ -263,11 +256,4 @@ class ProjectTracker(private val project: Project) : ExternalSystemProjectTracke
   }
 
   enum class ModificationType { EXTERNAL, INTERNAL }
-
-  companion object {
-    private fun <Id> CompoundParallelOperationTrace<Id>.startOperation(taskId: Id) {
-      startOperation()
-      startTask(taskId)
-    }
-  }
 }

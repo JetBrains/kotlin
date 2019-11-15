@@ -176,16 +176,16 @@ class AutoImportTest : AutoImportTestCase() {
   @Test
   fun `test project link-unlink`() {
     simpleTest("settings.groovy") { settingsFile ->
-      assertState(refresh = 1, notified = false, event = "register project without cache")
+      assertState(refresh = 1, subscribe = 2, unsubscribe = 0, notified = false, event = "register project without cache")
 
       settingsFile.appendString("println 'hello'")
-      assertState(refresh = 1, subscribe = 1, unsubscribe = 0, notified = true, event = "modification")
+      assertState(refresh = 1, subscribe = 2, unsubscribe = 0, notified = true, event = "modification")
 
       removeProjectAware()
-      assertState(refresh = 1, subscribe = 1, unsubscribe = 1, notified = false, event = "remove project")
+      assertState(refresh = 1, subscribe = 2, unsubscribe = 2, notified = false, event = "remove project")
 
       registerProjectAware()
-      assertState(refresh = 2, subscribe = 2, unsubscribe = 1, notified = false, event = "register project without cache")
+      assertState(refresh = 2, subscribe = 4, unsubscribe = 2, notified = false, event = "register project without cache")
     }
   }
 

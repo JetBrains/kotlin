@@ -44,7 +44,7 @@ class ProjectStatus(private val debugName: String? = null) {
       val stateName = state::class.java.simpleName
       LOG.debug("${debugPrefix}Event $eventName is happened at ${event.stamp}. Current state $stateName is changed at ${state.stamp}")
     }
-    return state.updateAndGet { currentState ->
+    val newState = state.updateAndGet { currentState ->
       when (currentState) {
         is Synchronized -> when (event) {
           is Synchronize -> event.withFuture(currentState, ::Synchronized)
@@ -72,6 +72,14 @@ class ProjectStatus(private val debugName: String? = null) {
         }
       }
     }
+    if (LOG.isDebugEnabled) {
+      val debugPrefix = if (debugName == null) "" else "$debugName: "
+      val eventName = event::class.simpleName
+      val state = state.get()
+      val stateName = state::class.java.simpleName
+      LOG.debug("${debugPrefix}State is $stateName at ${state.stamp} after event $eventName that happen at ${event.stamp}.")
+    }
+    return newState
   }
 
   private fun ProjectEvent.withFuture(state: ProjectState, action: (Long) -> ProjectState): ProjectState {
