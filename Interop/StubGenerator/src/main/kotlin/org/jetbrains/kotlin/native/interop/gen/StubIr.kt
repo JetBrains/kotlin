@@ -113,29 +113,54 @@ interface AnnotationHolder {
     val annotations: List<AnnotationStub>
 }
 
-sealed class AnnotationStub {
-    sealed class ObjC : AnnotationStub() {
-        object ConsumesReceiver : ObjC()
-        object ReturnsRetained : ObjC()
-        class Method(val selector: String, val encoding: String, val isStret: Boolean = false) : ObjC()
-        class Factory(val selector: String, val encoding: String, val isStret: Boolean = false) : ObjC()
-        object Consumed : ObjC()
-        class Constructor(val selector: String, val designated: Boolean) : ObjC()
-        class ExternalClass(val protocolGetter: String = "", val binaryName: String = "") : ObjC()
+sealed class AnnotationStub(val classifier: Classifier) {
+
+    sealed class ObjC(classifier: Classifier) : AnnotationStub(classifier) {
+        object ConsumesReceiver :
+                ObjC(cCallClassifier.nested("ConsumesReceiver"))
+
+        object ReturnsRetained :
+                ObjC(cCallClassifier.nested("ReturnsRetained"))
+
+        class Method(val selector: String, val encoding: String, val isStret: Boolean = false) :
+                ObjC(Classifier.topLevel(cinteropPackage, "ObjCMethod"))
+
+        class Factory(val selector: String, val encoding: String, val isStret: Boolean = false) :
+                ObjC(Classifier.topLevel(cinteropPackage, "ObjCFactory"))
+
+        object Consumed :
+                ObjC(cCallClassifier.nested("Consumed"))
+
+        class Constructor(val selector: String, val designated: Boolean) :
+                ObjC(Classifier.topLevel(cinteropPackage, "ObjCConstructor"))
+
+        class ExternalClass(val protocolGetter: String = "", val binaryName: String = "") :
+                ObjC(Classifier.topLevel(cinteropPackage, "ExternalClass"))
     }
 
-    sealed class CCall : AnnotationStub() {
-        object CString : CCall()
-        object WCString : CCall()
-        class Symbol(val symbolName: String) : CCall()
+    sealed class CCall(classifier: Classifier) : AnnotationStub(classifier) {
+        object CString : CCall(cCallClassifier.nested("CString"))
+        object WCString : CCall(cCallClassifier.nested("WCString"))
+        class Symbol(val symbolName: String) : CCall(cCallClassifier)
     }
 
-    class CStruct(val struct: String) : AnnotationStub()
-    class CNaturalStruct(val members: List<StructMember>) : AnnotationStub()
+    class CStruct(val struct: String) :
+            AnnotationStub(Classifier.topLevel(cinteropInternalPackage, "CStruct"))
 
-    class CLength(val length: Long) : AnnotationStub()
+    class CNaturalStruct(val members: List<StructMember>) :
+            AnnotationStub(Classifier.topLevel(cinteropPackage, "CNaturalStruct"))
 
-    class Deprecated(val message: String, val replaceWith: String) : AnnotationStub()
+    class CLength(val length: Long) :
+            AnnotationStub(Classifier.topLevel(cinteropPackage, "CLength"))
+
+    class Deprecated(val message: String, val replaceWith: String) :
+            AnnotationStub(Classifier.topLevel("kotlin", "Deprecated"))
+
+    private companion object {
+        const val cinteropInternalPackage = "kotlinx.cinterop.internal"
+        const val cinteropPackage = "kotlinx.cinterop"
+        val cCallClassifier = Classifier.topLevel(cinteropInternalPackage, "CCall")
+    }
 }
 
 /**
