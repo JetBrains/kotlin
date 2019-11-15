@@ -18,10 +18,15 @@ internal fun UniqId.writeUniqId(): KlibMetadataProtoBuf.DescriptorUniqId.Builder
         index = this@writeUniqId.index
     }
 
+private fun wrapModuleName(moduleName: String): String =
+    moduleName
+        .let { if (it.startsWith("<")) it else "<$it" }
+        .let { if (it.endsWith(">")) it else "$it>" }
+
 internal fun KlibHeader.writeHeader(context: WriteContext): KlibMetadataProtoBuf.Header.Builder =
     KlibMetadataProtoBuf.Header.newBuilder().also { proto ->
         val (strings, qualifiedNames) = (context.strings as StringTableImpl).buildProto()
-        proto.moduleName = moduleName
+        proto.moduleName = wrapModuleName(moduleName)
         proto.qualifiedNames = qualifiedNames
         proto.strings = strings
         proto.addAllPackageFragmentName(packageFragmentName)

@@ -104,7 +104,7 @@ class KlibModuleMetadata(
         writeStrategy: KlibModuleFragmentWriteStrategy = KlibModuleFragmentWriteStrategy.DEFAULT
     ): SerializedKlibMetadata {
         val reverseIndex = ReverseSourceFileIndexWriteExtension()
-        val c = WriteContext(KlibMetadataStringTable(), listOf(reverseIndex))
+
 
         val groupedFragments = fragments
             .groupBy(KmModuleFragment::fqNameOrFail)
@@ -119,9 +119,12 @@ class KlibModuleMetadata(
         )
         val groupedProtos = groupedFragments.mapValues { (_, fragments) ->
             fragments.map {
+                val c = WriteContext(KlibMetadataStringTable(), listOf(reverseIndex))
                 KlibModuleFragmentWriter(c.strings as KlibMetadataStringTable, c.contextExtensions).also(it::accept).write()
             }
         }
+        // This context and string table is only required for module-level annotations.
+        val c = WriteContext(KlibMetadataStringTable(), listOf(reverseIndex))
         return SerializedKlibMetadata(
             header.writeHeader(c).build().toByteArray(),
             groupedProtos.map { it.value.map(ProtoBuf.PackageFragment::toByteArray) },

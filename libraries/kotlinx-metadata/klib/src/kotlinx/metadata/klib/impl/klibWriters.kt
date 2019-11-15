@@ -34,6 +34,12 @@ class KlibModuleFragmentWriter(
         t.build()
 
     override fun visitEnd() {
+
+        // TODO: This should be moved to ModuleFragmentWriter.
+        val (strings, qualifiedNames) = (c.strings as KlibMetadataStringTable).buildProto()
+        t.strings = strings
+        t.qualifiedNames = qualifiedNames
+
         val isPackageEmpty = if (t.`package` == null) {
             true
         } else {

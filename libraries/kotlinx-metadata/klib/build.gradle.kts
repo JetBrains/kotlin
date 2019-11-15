@@ -28,6 +28,8 @@ configurations.getByName("testCompile").extendsFrom(shadows)
 dependencies {
     compile(kotlinStdlib())
     shadows(project(":kotlinx-metadata"))
+    // TODO: Get rid of this heavyweight dependency.
+    shadows(project(":core:descriptors"))
     shadows(project(":core:metadata"))
     shadows(project(":compiler:serialization"))
     shadows(project(":kotlin-util-klib-metadata"))
