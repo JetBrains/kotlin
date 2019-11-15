@@ -128,7 +128,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         private val superMethod =
             functionSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }
         private val superType =
-            samSuperType ?: (if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference).owner.defaultType
+            samSuperType ?: (if (isLambda) context.ir.symbols.lambdaClass else context.ir.symbols.functionReference).defaultType
 
         private val functionReferenceClass = buildClass {
             setSourceRange(irFunctionReference)
@@ -142,7 +142,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             superTypes += superType
             if (samSuperType == null)
                 superTypes += functionSuperClass.typeWith(parameterTypes)
-            if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.owner.defaultType
+            if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
         }
