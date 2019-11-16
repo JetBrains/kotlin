@@ -598,6 +598,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("idea/testData/quickfix/addExclExclCall/implicit.kt");
         }
 
+        @TestMetadata("implicit2.kt")
+        public void testImplicit2() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/implicit2.kt");
+        }
+
+        @TestMetadata("implicit3.kt")
+        public void testImplicit3() throws Exception {
+            runTest("idea/testData/quickfix/addExclExclCall/implicit3.kt");
+        }
+
         @TestMetadata("implicitFunctionCall.kt")
         public void testImplicitFunctionCall() throws Exception {
             runTest("idea/testData/quickfix/addExclExclCall/implicitFunctionCall.kt");
