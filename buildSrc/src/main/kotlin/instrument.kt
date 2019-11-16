@@ -111,17 +111,21 @@ open class IntelliJInstrumentCodeTask : ConventionTask() {
         private const val LOADER_REF = "java2.loader"
     }
 
-    var sourceSet: SourceSet? = null
-
+    @Classpath
     var instrumentationClasspath: Configuration? = null
 
-    @Input
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
     var originalClassesDirs: FileCollection? = null
 
     @get:Input
     var instrumentNotNull: Boolean = false
 
+    @Internal
+    var sourceSet: SourceSet? = null
+
     @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     val sourceDirs: FileCollection
         get() = project.files(sourceSet!!.allSource.srcDirs.filter { !sourceSet!!.resources.contains(it) && it.exists() })
 
