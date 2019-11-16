@@ -3,7 +3,7 @@ import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 
 plugins {
     base
-    id("com.github.jk1.tcdeps") version "1.1"
+    id("com.github.jk1.tcdeps") version "1.2"
 }
 
 rootProject.apply {

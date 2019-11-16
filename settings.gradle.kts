@@ -6,7 +6,8 @@ val cacheRedirectorEnabled: String? by settings
 
 pluginManagement {
     repositories {
-        if (parseBoolean(cacheRedirectorEnabled)) {
+        val cacheRedirectorEnabled: String? by settings
+        if (cacheRedirectorEnabled == "true") {
             maven("https://cache-redirector.jetbrains.com/plugins.gradle.org/m2")
         }
         gradlePluginPortal()
