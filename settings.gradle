@@ -31,6 +31,17 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.gradle.enterprise" version "3.0"
+}
+
+gradleEnterprise {
+    buildScan {
+        setTermsOfServiceUrl("https://gradle.com/terms-of-service")
+        setTermsOfServiceAgree("yes")
+    }
+}
+
 // modules
 include ":kotlin-build-common",
         ":benchmarks",

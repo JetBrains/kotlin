@@ -36,7 +36,6 @@ buildscript {
 }
 
 plugins {
-    `build-scan`
     idea
     id("jps-compatible")
     id("org.jetbrains.gradle.plugin.idea-ext")
@@ -49,11 +48,6 @@ pill {
         "buildSrc/prepare-deps/android-dx/build",
         "buildSrc/prepare-deps/intellij-sdk/build"
     )
-}
-
-buildScan {
-    setTermsOfServiceUrl("https://gradle.com/terms-of-service")
-    setTermsOfServiceAgree("yes")
 }
 
 val configuredJdks: List<JdkId> =
