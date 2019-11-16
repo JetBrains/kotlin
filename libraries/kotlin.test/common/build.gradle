@@ -23,8 +23,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.kotlin
 }
 
-classes.dependsOn.remove("compileJava")
-
 artifacts {
     archives sourcesJar
 }
